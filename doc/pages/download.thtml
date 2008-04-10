@@ -19,16 +19,19 @@ and use it from within your ruby code
 If you want it <b>fresh</b> from the source, check out the source by running
 
 <pre>
-   svn checkout svn://rubyforge.org/var/svn/openwferu
+   git clone git://github.com/jmettraux/ruote.git
 </pre>
 
 and then run
 
 <pre>
+   cd ruote
    rake gem
 </pre>
 
 to build the latest gem with the latest source.
+
+("ruote" is the nickname of the workflow engine itself).
 
 You can run the unit tests with
 

@@ -1,0 +1,17 @@
+
+h2. OpenWFEru source code
+
+Since April 2008, the source code of OpenWFEru is hosted at "http://github.com/jmettraux/ruote":http://github.com/jmettraux/ruote
+
+If the "git":http://git.or.cz/ tools is available on your system, you can check out (clone) the source of OpenWFEru by doing :
+
+<pre>
+    git clone git://github.com/jmettraux/ruote.git
+</pre>
+
+That will check out OpenWFEru's source under a <tt>ruote/</tt> directory.
+
+If you're a github user, it's pretty easy for you to fork OpenWFEru there and to play with it.
+
+The developer mailing list for OpenWFE is at "http://groups.google.com/group/openwferu-dev":http://groups.google.com/group/openwferu-dev
+

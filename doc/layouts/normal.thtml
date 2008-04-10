@@ -18,7 +18,7 @@ $MENU = [
     [ 'participants', '/participants.html' ],
     [ 'patterns', '/patterns.html' ],
     :space,
-    [ 'source', 'http://rubyforge.org/scm/?group_id=2609' ],
+    [ 'source', 'source.html' ],
     [ 'rdoc', '/rdoc/index.html' ],
     :space,
     [ 'activity', '/activity.html' ],
