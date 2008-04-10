@@ -199,10 +199,10 @@ module Extras
                 if wi.attributes["compact_workitems"]
 
                     wi.attributes.delete("compact_workitems")
-                    i.yattributes= wi.attributes
+                    i.yattributes = wi.attributes
                 else
 
-                    i.yattributes= nil
+                    i.yattributes = nil
 
                     wi.attributes.each do |k, v|
                         i.fields << Field.new_field(k, v)

@@ -1,27 +1,25 @@
 
-
 require 'test/unit'
 
-require 'extras/active_connection'
+require 'extras/ap_test_base'
 
 #require 'openwfe/workitem'
 require 'openwfe/extras/participants/activeparticipants'
 require 'test/rutest_utils'
 
-include OpenWFE::Extras
 
-
-class ActiveBasicTest < Test::Unit::TestCase
+class Active0Test < Test::Unit::TestCase
+    include ApTestBase
 
     def setup
-        #Workitem.delete_all
-        #Field.delete_all
-        Workitem.destroy_all
+        #OpenWFE::Extras::Workitem.delete_all
+        #OpenWFE::Extras::Field.delete_all
+        OpenWFE::Extras::Workitem.destroy_all
             # let's make sure there are no workitems left
     end
 
     def teardown
-        Workitem.destroy_all
+        OpenWFE::Extras::Workitem.destroy_all
     end
     
     #
@@ -31,14 +29,14 @@ class ActiveBasicTest < Test::Unit::TestCase
 
         wi = new_wi "participant x"
 
-        wi.fields << Field.new_field("toto", "a")
-        wi.fields << Field.new_field("toto", "b")
+        wi.fields << OpenWFE::Extras::Field.new_field("toto", "a")
+        wi.fields << OpenWFE::Extras::Field.new_field("toto", "b")
 
         assert_raise ActiveRecord::StatementInvalid do
             wi.save
         end
 
-        wis = Workitem.find :all
+        wis = OpenWFE::Extras::Workitem.find :all
 
         assert_equal 0, wis.size
     end
@@ -47,14 +45,14 @@ class ActiveBasicTest < Test::Unit::TestCase
 
         wi = new_wi "participant x"
 
-        wi.fields << Field.new_field("toto", "a")
-        wi.fields << Field.new_field("list", [ 1, 2, "trois" ])
-        wi.fields << Field.new_field("smurf", "")
-        wi.fields << Field.new_field("grand schtroumpf", " ")
+        wi.fields << OpenWFE::Extras::Field.new_field("toto", "a")
+        wi.fields << OpenWFE::Extras::Field.new_field("list", [ 1, 2, "trois" ])
+        wi.fields << OpenWFE::Extras::Field.new_field("smurf", "")
+        wi.fields << OpenWFE::Extras::Field.new_field("grand schtroumpf", " ")
 
         wi.save
 
-        wis = Workitem.find :all
+        wis = OpenWFE::Extras::Workitem.find :all
 
         assert_equal 1, wis.size
 
@@ -67,25 +65,25 @@ class ActiveBasicTest < Test::Unit::TestCase
     def test_2
 
         wi = new_wi "participant y"
-        wi.fields << Field.new_field("toto", "a")
+        wi.fields << OpenWFE::Extras::Field.new_field("toto", "a")
         wi.store_name = "store_a"
         wi.save
 
         wi = new_wi "participant y"
-        wi.fields << Field.new_field("toto", "b")
+        wi.fields << OpenWFE::Extras::Field.new_field("toto", "b")
         wi.store_name = "store_b"
         wi.save
 
         wi = new_wi "participant z"
-        wi.fields << Field.new_field("toto", "c")
+        wi.fields << OpenWFE::Extras::Field.new_field("toto", "c")
         wi.store_name = "store_c"
         wi.save
 
-        wis = Workitem.find :all
+        wis = OpenWFE::Extras::Workitem.find :all
 
         assert_equal 3, wis.size
 
-        wl = Workitem.find_all_by_participant_name "participant y"
+        wl = OpenWFE::Extras::Workitem.find_all_by_participant_name "participant y"
 
         assert_equal 2, wl.size
 
@@ -95,16 +93,16 @@ class ActiveBasicTest < Test::Unit::TestCase
 
         assert_equal(
             2, 
-            Workitem.find_in_stores([ "store_a", "store_b" ]).size)
+            OpenWFE::Extras::Workitem.find_in_stores([ "store_a", "store_b" ]).size)
         assert_equal(
             1, 
-            Workitem.find_in_stores([ "store_a", "store_b" ])["store_a"].size)
+            OpenWFE::Extras::Workitem.find_in_stores([ "store_a", "store_b" ])["store_a"].size)
         assert_equal(
             1, 
-            Workitem.find_in_stores([ "store_a", "store_b" ])["store_b"].size)
+            OpenWFE::Extras::Workitem.find_in_stores([ "store_a", "store_b" ])["store_b"].size)
         assert_equal(
             nil, 
-            Workitem.find_in_stores([ "store_a", "store_b" ])["store_c"])
+            OpenWFE::Extras::Workitem.find_in_stores([ "store_a", "store_b" ])["store_c"])
     end
 
     def test_3
@@ -115,7 +113,7 @@ class ActiveBasicTest < Test::Unit::TestCase
         wi.replace_fields({ "toto" => "nada", "tada" => { 1 => 10 } })
         wi.save!
 
-        wi = Workitem.find_by_participant_name "participant 3"
+        wi = OpenWFE::Extras::Workitem.find_by_participant_name "participant 3"
 
         assert_equal({ "toto"=>"nada", "tada"=> {1 => 10} }, wi.fields_hash) 
     end
@@ -131,14 +129,14 @@ class ActiveBasicTest < Test::Unit::TestCase
         wi = new_wi "petra", { "color" => "yellow" }
         wi.save!
 
-        assert_equal 1, Workitem.search("blue").size
-        assert_equal 0, Workitem.search("lu").size
+        assert_equal 1, OpenWFE::Extras::Workitem.search("blue").size
+        assert_equal 0, OpenWFE::Extras::Workitem.search("lu").size
 
-        assert_equal 3, Workitem.search("color").size
-        assert_equal 2, Workitem.search("pet%").size
-        assert_equal 0, Workitem.search("pet").size
+        assert_equal 3, OpenWFE::Extras::Workitem.search("color").size
+        assert_equal 2, OpenWFE::Extras::Workitem.search("pet%").size
+        assert_equal 0, OpenWFE::Extras::Workitem.search("pet").size
 
-        assert_equal 1, Workitem.search("hello").size
+        assert_equal 1, OpenWFE::Extras::Workitem.search("hello").size
     end
 
     def test_5
@@ -153,11 +151,11 @@ class ActiveBasicTest < Test::Unit::TestCase
         wi.store_name = "s2"
         wi.save!
 
-        assert_equal 1, Workitem.search("blue").size
-        assert_equal 2, Workitem.search("color", "s1").size
-        assert_equal 1, Workitem.search("pet%", [ "s2" ]).size
-        assert_equal 2, Workitem.search("pet%", [ "s1", "s2" ]).size
-        assert_equal 0, Workitem.search("pet").size
+        assert_equal 1, OpenWFE::Extras::Workitem.search("blue").size
+        assert_equal 2, OpenWFE::Extras::Workitem.search("color", "s1").size
+        assert_equal 1, OpenWFE::Extras::Workitem.search("pet%", [ "s2" ]).size
+        assert_equal 2, OpenWFE::Extras::Workitem.search("pet%", [ "s1", "s2" ]).size
+        assert_equal 0, OpenWFE::Extras::Workitem.search("pet").size
     end
 
     def _test_6
@@ -170,10 +168,10 @@ class ActiveBasicTest < Test::Unit::TestCase
         wi.name = "Maarten"
         wi.birthdate = Date.new
 
-        awi = Workitem.from_owfe_workitem wi
+        awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
         awi.save!
 
-        awi = Workitem.find awi.id
+        awi = OpenWFE::Extras::Workitem.find awi.id
         wi2 = awi.as_owfe_workitem
 
         assert_equal wi.fields, wi2.fields
@@ -202,11 +200,11 @@ class ActiveBasicTest < Test::Unit::TestCase
             # with this we enable the following function the behave in
             # the comapct_workitems way
 
-        awi = Workitem.from_owfe_workitem wi
+        awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
             #
             # in flow workitem to workitem(see activeparticipants)
  
-        awi = Workitem.find awi.id
+        awi = OpenWFE::Extras::Workitem.find awi.id
             # 
             # let's reload it 
 
@@ -226,13 +224,13 @@ class ActiveBasicTest < Test::Unit::TestCase
         wi.participant_name = "part x"
         wi.attributes = { "toto" => "a" }
 
-        awi = Workitem.from_owfe_workitem wi
+        awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
             #
             # in flow workitem to workitem(see activeparticipants)
 
         awi.replace_fields({ "toto" => "nada", "tada" => { 1 => 10 } })
 
-        awi = Workitem.find_by_participant_name "part x"
+        awi = OpenWFE::Extras::Workitem.find_by_participant_name "part x"
 
         assert_equal({ "toto"=>"nada", "tada"=> {1 => 10} }, awi.fields_hash)
     end
@@ -249,9 +247,9 @@ class ActiveBasicTest < Test::Unit::TestCase
         wi.participant_name = "part 9"
         wi['fat_field'] = t
 
-        awi = Workitem.from_owfe_workitem wi
+        awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
 
-        awi = Workitem.find_by_participant_name "part 9"
+        awi = OpenWFE::Extras::Workitem.find_by_participant_name "part 9"
 
         assert_equal t, awi.fields_hash['fat_field']
 
@@ -260,31 +258,11 @@ class ActiveBasicTest < Test::Unit::TestCase
         assert_equal t, f.yvalue
         assert_nil f.svalue
 
-        assert_equal 0, Workitem.search("blue").size
-        assert_equal 1, Workitem.search("% red").size
+        assert_equal 0, OpenWFE::Extras::Workitem.search("blue").size
+        assert_equal 1, OpenWFE::Extras::Workitem.search("% red").size
 
         #p awi.connection.native_database_types[:string][:limit]
     end
 
-
-
-    protected
-
-        def new_wi (participant_name, hash={})
-
-            wi = Workitem.new
-
-            wi.fei = "fei"
-            wi.wfid = "wfid"
-            wi.wf_name = "wf_name"
-            wi.wf_revision = "wf_revision"
-            wi.participant_name = participant_name
-
-            hash.each do |k, v|
-                wi.fields << Field.new_field(k, v)
-            end
-
-            wi
-        end
 end
 
