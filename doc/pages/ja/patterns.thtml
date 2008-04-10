@@ -1,0 +1,560 @@
+h2. workflow control patterns(ワークフロー制御パターン)
+
+"Workflow Patterns":http://workflowpatterns.com/patterns/control/index.php はワークフロー実行のための様々なブロックのカタログです。
+
+ここにはそれらを OpenWFEru で実現する方法を述べます。
+
+それぞれ、XML と Ruby 両方のサンプルを示します。また、パターンに関する学術的なリンクも示しておきます。
+
+"Basic Control Flow Patterns":#pat_a <br/>
+"Advanced Branching and Synchronization Patterns":#pat_b <br/>
+"Structural Patterns":#pat_c <br/>
+"Multiple Instance Patterns":#pat_d <br/>
+"State-based Patterns":#pat_e <br/>
+"Cancellation Patterns":#pat_f <br/>
+"New Control Flow Patterns":#pat_g
+
+
+
+<img src="images/ru-light.png" align="right"/>
+h2. <a name="pat_a"></a>Basic Control Flow Patterns
+
+
+h3. <a name="pat_1_seqence"></a>Sequence
+
+#:code#xml#
+    <sequence>
+        <participant ref="alpha" />
+        <participant ref="bravo" />
+    </sequence>
+#:code#
+
+#:code#ruby#
+    sequence do
+        alpha
+        bravo
+    end
+#:code#
+
+(OpenWFEru は 'alpha' and 'bravo' に関して expression・subprocess とも定義が無い時には、自動的にそれらの participant をマッピングします。)
+
+他に何か ?
+
+"original explanation":http://workflowpatterns.com/patterns/control/basic/wcp1.php
+
+
+h3. <a name="pat_2_parallel"></a>Parallel Split
+
+プロセスインスタンスを2つの並列実行パスに分けます。
+
+#:code#xml#
+    <concurrence>
+        <participant ref="alpha" />
+        <participant ref="bravo" />
+    </concurrence>
+#:code#
+
+#:code#ruby#
+    concurrence do
+        alpha
+        bravo
+    end
+#:code#
+
+"concurrence":expressions.html#exp_concurrence
+"original explanation":http://workflowpatterns.com/patterns/control/basic/wcp2.php
+
+
+h3. <a name="pat_3_synchronization"></a>Synchronization
+
+Synchronization は暗黙のうちに <a href="#pat_2_parallel">concurrence</a> expression によってサポートています。
+
+しかし 'concurrence' expression はさらなるパターン/シナリオを扱うことができます。 :  concurrence expression  はその全ての分岐からの返答を回復前に待つことができます (その親・そしてそれを含むexpression に返答する前に) 。
+
+"concurrence":expressions.html#exp_concurrence
+"original explanation":http://workflowpatterns.com/patterns/control/basic/wcp3.php
+
+
+h3. <a name="pat_4_exclusive_choice"></a>Exclusive Choice
+
+プロセス内での排他的ルーティング : 以下の例ではどちらか片方のパスを行きますが、両方には行きません。
+
+このパターンの実装に関して、OpenWFEru の2つの expression が使われます。 : 'if' と 'case' です。
+
+#:code#xml#
+    <if>
+        <equals field-value="x" other-value="y" />
+        <!-- then -->
+        <participant ref="theodor" />
+        <!-- else -->
+        <participant ref="emma" />
+    </if>
+#:code#
+
+#:code#ruby#
+    _if do
+        equals :field_value => :x, :other-value => "y"
+        # then
+        participant :theodor
+        # else
+        participant :emma
+    end
+#:code#
+
+(Ruby の 'if' と混合しないよう、OpenWFEru の Ruby プロセス定義では 'if' は先頭に "_" をつけます。'case' も同様です。)
+
+#:code#xml#
+    <case>
+
+        <equals field-value="x" other-value="y" />
+        <participant ref="alpha" />
+
+        <if test="${field:price} > 12.0" />
+        <participant ref="bravo" />
+
+        <!-- optional else -->
+        <participant ref="emma" />
+
+    </case>
+#:code#
+
+(ここにはシンプルな条件分岐 expression で子供なしの 'if' の使い方を書く予定)
+
+#:code#ruby#
+    _case do
+
+        equals :field_value => "x", :other_value => "y"
+        alpha
+
+        _if :test => "${field:price} > 12.0"
+        bravo
+
+        # optional else :
+        emma
+
+    end
+#:code#
+
+(このRuby プロセス定義で、シンプルな一単語の名前のparticipant はそれらを使って直接参照されます。'participant ref="alpha"' の構築はありません。)
+
+"if":expressions.html#exp_if
+"case":expressions.html#exp_case
+"original explanation":http://workflowpatterns.com/patterns/control/basic/wcp4.php
+
+
+h3. <a name="pat_5_simple_merge"></a>Simple Merge
+
+'simple merge' は、 'if' ・ 'case' expression で暗黙的にサポートされています。
+
+"if":expressions.html#exp_if
+"case":expressions.html#exp_case
+"original explanation":http://workflowpatterns.com/patterns/control/basic/wcp5.php
+
+
+
+<img src="images/ru-light.png" align="right"/>
+h2. <a name="pat_b"></a>Advanced Branching and Synchronization Patterns
+
+
+h3. <a name="pat_6_multi_choice"></a>Multi-Choice
+
+OpenWFE[ru] でのこのパターンの素直な実装方法は、 'concurrence' でネストされた 'if'  を使うことです。:
+
+#:code#xml#
+    <concurrence>
+        <if test="${field:price} > 12.0" >
+            <participant ref="alpha" />
+        </if>
+        <if>
+            <equals field="price" value="0">
+            <participant ref="bravo" />
+        </if>
+        <if test="${f:price} > 100.0" >
+            <participant ref="charly" />
+        </if>
+    </concurrence>
+#:code#
+
+もし price が 100 以上なら、participant alpha と participant charly がフローを受け取るでしょう。
+
+#:code#ruby#
+    concurrence do
+        _if :test => "${field:price} > 12.0" do
+            participant :alpha
+        end
+        _if do
+            _equals :field => "price", :value => "0"
+            participant :ref => :bravo
+        end
+        _if :test => "${f:price} > 100.0" do
+            participant :ref => "charly"
+        end
+    end
+#:code#
+
+(participant expression はとてもフレキシブルなので、あなたにとってより見やすい方法を選んでください。)
+
+"if":expressions.html#exp_if
+"concurrence":expressions.html#exp_concurrence
+"original explanation":http://workflowpatterns.com/patterns/control/advanced_branching/wcp6.php
+
+
+h3. <a name="pat_7_multi_choice"></a>Structured Synchronizing Merge
+
+OpenWFEru での pattern 7 実装は、pattern 6 'Multi-Choice' 実装と同様です。  concurrence expression  はその全ての分岐からの返答を回復前に待つことができます (その親・そしてそれを含むexpression に返答する前に) 。
+
+"concurrence":expressions.html#exp_concurrence
+"original explanation":http://workflowpatterns.com/patterns/control/advanced_branching/wcp7.php
+
+
+h3. <a name="pat_8_multi_merge"></a>Multi-Merge
+
+このパターンは面白いですよ。グラフベースのワークフローと OpenWFEru の違いをお見せしましょう。
+
+このパターンでの "multi-choice" の後の "merge" は同期をとりません。前のパターンでは、 concurrence の後に並列パス上の workitem は再集結して 1つの workitem になります。ここで、それぞれの並列 workitem は独立して 'track' を追います。
+
+以下が OpenWFE[ru] での実装方法です。:
+
+#:code#xml#
+    <process-definition name="pat8multimerge" revision="2">
+
+        <concurrence>
+            <if test="${field:price} > 12.0" >
+                <sequence>
+                    <participant ref="alpha" />
+                    <after/>
+                </sequence>
+            </if>
+            <if>
+                <equals field="price" value="0">
+                <sequence>
+                    <participant ref="bravo" />
+                    <after/>
+                </sequence>
+            </if>
+            <if test="${f:price} > 100.0" >
+                <sequence>
+                    <participant ref="charly" />
+                    <after/>
+                </sequence>
+            </if>
+        </concurrence>
+
+        <process-definition name="after">
+            <sequence>
+                <participant ref="delta" />
+                <participant ref="echo" />
+            </sequence>
+        </process-definition>
+    </process-definition>
+#:code#
+
+それぞれの並列の workitem は 'after' サブプロセスの後の自分のインスタンスになるでしょう。
+
+#:code#ruby#
+    require 'openwfe/def'
+
+    class Pat8MultiMerge2 < OpenWFE::ProcessDefinition
+
+        concurrence do
+            _if :test => "${field:price} > 12.0" do
+                sequence do
+                    alpha
+                    after
+                end
+            end
+            _if do
+                equals :field => "price", :value => "0"
+                sequence do
+                    bravo
+                    after
+                end
+            end
+            _if :test => "${f:price} > 100.0" do
+                sequence do
+                    charly
+                    after
+                end
+            end
+        end
+
+        process_definition :name => "after" do
+            sequence do
+                delta
+                echo
+            end
+        end
+    end
+#:code#
+
+"original explanation":http://workflowpatterns.com/patterns/control/advanced_branching/wcp8.php
+
+
+h3. <a name="pat_9_structured_discriminator"></a>Structured Discriminator
+
+並列した分岐の終了と同時に concurrence expression でフローを再開させます。
+
+#:code#xml#
+    <sequence>
+        <participant ref="alpha" />
+        <concurrence count="1" remaining="forget">
+            <participant ref="bravo" />
+            <participant ref="charly" />
+        </concurrence>
+        <participant ref="delta" />
+    </sequence>
+#:code#
+
+1 の分岐が返答して残りの分岐は単純に忘れられた(それらの返答は無視されます)時、"count" 属性・ "remaining" 属性は並列実行が終わったことを示します。
+
+#:code#ruby#
+    sequence do
+        alpha
+        concurrence :count => "2", :remaining => "forget" do
+            bravo
+            charly
+            delta
+        end
+        echo
+    end
+#:code#
+
+Rubyで書かれたこの例では、2つの分岐が返答したらすぐフローは 'echo' へと処理を再開します。
+
+"original explanation":http://workflowpatterns.com/patterns/control/advanced_branching/wcp9.php
+
+
+<img src="images/ru-light.png" align="right"/>
+h2. <a name="pat_c"></a>Structural Patterns
+
+
+h3. <a name="pat_10_arbitrary_cycles"></a>Arbitrary Cycles
+
+_1つ以上の入り口もしくは出口を持つプロセスモデルのサイクルの再提示の可能性_
+
+ "cursor":expressions.html#exp_cursor expression がこのパターンで使われます。これには "jump"・ "skip" ・ "back" のコマンドがあります。
+
+このプロセスは Workflow Patterns のサイトで "flash アニメーション":http://workflowpatterns.com/patterns/control/structural/wcp10_animation.php で提示されています。実装するとこんな感じです。 :
+
+#:code#xml#
+    <cursor>
+        <participant ref="alpha" />
+        <participant ref="bravo" />
+        <participant ref="charly" />
+        <if test="${condition}">
+            <back step="2" />
+        </if>
+        <participant ref="delta" />
+        <if test="${condition}">
+            <back step="3" />
+        </if>
+        <participant ref="echo" />
+    </cursor>
+#:code#
+
+しかし、これでは予期すべき複数の入り口にあたる強調符がありません。こうすべきです。:
+
+#:code#ruby#
+    class Pat10Definition < OpenWFE::ProcessDefinition
+
+        sequence do
+            jump :step => "1"
+            sub # will enter subprocess 'sub' at participant 'bravo'
+
+            jump :step => "0"
+            sub # will enter subprocess 'sub' at participant 'alpha' (useless)
+
+            jump 2
+            sub # will enter subprocess 'sub' at participant 'charly'
+
+            #
+            # as jump is used in a sequence, it has no direct effect, but as soon
+            # as a cursor spots it (here, when entering the 'sub'), the jump
+            # is performed
+        end
+
+        process_definition :name => "sub" do
+            cursor do
+                participant "alpha"
+                participant "bravo"
+                participant "charly"
+            end
+        end
+    end
+#:code#
+
+これはこのように書き直せます。
+
+#:code#ruby#
+    class Pat10Definition < OpenWFE::ProcessDefinition
+
+        sequence do
+            sub :step => "1"
+            sub :step => "0"
+            sub :step => "2"
+        end
+
+        process_definition :name => "sub" do
+            sequence do
+                jump "${step}"
+                cursor do
+                    participant "alpha"
+                    participant "bravo"
+                    participant "charly"
+                end
+            end
+        end
+    end
+#:code#
+
+(サブプロセス call の属性は変数として保存されます...)
+
+"original explanation":http://workflowpatterns.com/patterns/control/structural/wcp10.php
+
+
+h3. <a name="pat_11_implicit_termination"></a>Implicit Termination
+
+このパターンの "flash アニメーション":http://workflowpatterns.com/patterns/control/structural/wcp11_animation.php を実装するには… :
+
+#:code#xml#
+    <sequence>
+        <participant ref="alpha" />
+        <concurrence>
+            <sequence>
+                <participant ref="bravo" />
+                <participant ref="delta" />
+            </sequence>
+            <sequence>
+                <participant ref="charly" />
+                <participant ref="echo" />
+            </sequence>
+        <concurrence/>
+    </sequence>
+#:code#
+
+並列処理・順列処理の '暗示的な終端' となります。
+
+Ruby プロセス定義ではこんな感じです。:
+
+#:code#ruby#
+    sequence do
+        alpha
+        concurrence do
+            sequence do
+                bravo
+                delta
+            end
+            sequence do
+                charly
+                echo
+            end
+        end
+    end
+#:code#
+
+ "明示的な終端受信" を使わない OpenWFE[ru] プロセス定義を書くこともできます。
+
+"original explanation":http://workflowpatterns.com/patterns/control/structural/wcp11.php
+
+
+<img src="images/ru-light.png" align="right"/>
+h2. <a name="pat_d"></a>Multiple Instance Patterns
+
+
+h3. <a name="pat_12_multiple_instances_without_synchronization"></a>Multiple instances without synchronization
+
+記述によると… : "与えられたプロセスインスタンス内でアクティビティな複数インスタンスが作られます。これらのインスタンスはそれぞれ独立して並列に実行します。それらは同期をとる必要はありません。"
+
+#:code#xml#
+    <sequence>
+        <participant ref="alpha" />
+        <concurrent-iterator on-field="count" to-field="f" >
+            <forget>
+                <participant ref="bravo" />
+            </forget>
+        </concurrent-iterator>
+        <participant ref="charly" />
+    </sequence>
+#:code#
+
+Ruby プロセス定義ではこんな感じです。 :
+
+#:code#ruby#
+    sequence do
+        alpha
+        concurrent_iterator :on_field => "count", :to_field => "f" do
+            forget do
+                bravo
+            end
+        end
+        charly
+    end
+#:code#
+
+同期をとる必要がないということで、participant bravo は 'forget' expression で包まれています。フローは participant "charly" へとダイレクトに続きます。
+
+"original explanation":http://workflowpatterns.com/patterns/control/multiple_instance/wcp12.php
+
+
+h3. <a name="pat_13_multiple_instances_with_a_priori_design_time_knowledge"></a>Multiple instances with a priori design-time knowledge
+
+"インスタンスの必要数はデザイン時に知らされます。これらのインスタンスはそれぞれ独立して並列に実行します。副次的なアクティビティが実行される前に、今アクティビティなインスタンスの完全な同期が必要になります。"
+
+この '平凡な' 実装はこうなるでしょう。 :
+
+#:code#xml#
+    <sequence>
+        <participant ref="alpha" />
+        <concurrence>
+            <participant ref="bravo" />
+            <participant ref="bravo" />
+            <participant ref="bravo" />
+        </concurrence>
+        <participant ref="charly" />
+    </sequence>
+#:code#
+
+このデザイン時、私たちはその動きすなわち participant 'bravo' は並列に3 回実行されるということがわかっています。
+
+もちょっと、ライトに… :
+
+#:code#xml#
+    <sequence>
+        <participant ref="alpha" />
+        <concurrent-iterator on-value="a, b, c" to-field="index">
+            <participant ref="bravo" />
+        </concurrent-iterator>
+        <participant ref="charly" />
+    </sequence>
+#:code#
+
+Ruby プロセス定義ではこんな感じです。:
+
+#:code#ruby#
+require 'openwfe/def'
+
+class Pattern13 < OpenWFE::ProcessDefinition
+    sequence do
+        participant :ref => "alpha"
+        concurrent-iterator :on_value => "a, b, c", :to_field => "index"
+            participant :ref => "bravo"
+        end
+        participant :ref => "charly"
+    end
+end
+#:code#
+
+"original explanation":http://workflowpatterns.com/patterns/control/multiple_instance/wcp13.php
+
+
+<img src="images/ru-light.png" align="right"/>
+h2. <a name="pat_e"></a>State-based Patterns
+
+
+<img src="images/ru-light.png" align="right"/>
+h2. <a name="pat_f"></a>Cancellation Patterns
+
+
+<img src="images/ru-light.png" align="right"/>
+h2. <a name="pat_g"></a>New Control Flow Patterns
+

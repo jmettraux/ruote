@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="TeaTesting" revision="0.2">
+    <sequence>
+        <participant ref="reception" />
+        <concurrence>
+            <participant ref="ted" />
+            <participant ref="tang" />
+        </concurrence>
+        <participant ref="takeshi" />
+        <participant ref="planning" />
+    </sequence>
+</process-definition>
+

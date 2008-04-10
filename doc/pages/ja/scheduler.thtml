@@ -1,0 +1,108 @@
+h2. OpenWFEru スケジューラー
+
+ワークフロー / ビジネスプロセスエンジンであるOpenWFEru にはタスクを後で実行したり(_at_) 、繰り返し実行する(_cron_)ためのスケジューラーが必要です。 
+
+このスケジューラーは OpenWFE の核心ではないので、ここでは OpenWFEru のコンテキストの外側での使用方法を説明します。
+
+OpenWFEru の他の部分同様、"BSD":license.html ライセンスです。
+
+OpenWFEru スケジューラーは Ilya Grigorik's blog post の "Scheduling tasks in Ruby / Rails":http://www.igvita.com/blog/2007/03/29/scheduling-tasks-in-ruby-rails/ で説明されています。
+
+
+h3. 単独での使用方法(gem)
+
+スケジューラーを使うにあたっては、OpenWFEru 全てが必要ではありません。以下の2 つのファイルのみが必要となります。 :
+
+<pre>
+
+    lib/openwfe/util/otime.rb
+    lib/openwfe/util/scheduler.rb
+
+</pre>
+
+これらは OpenWFEru のサブディレクトリの "util":http://rubyforge.org/viewvc/trunk/openwfe-ruby/lib/openwfe/util/?root=openwferu にあります。
+
+2007 年4月1日より、, "openwferu-scheduler" 用の *gem* ができました。それを使えば以下のようにするだけです。
+
+<pre>
+    [sudo] gem install openwferu-scheduler
+</pre>
+
+ここまでいいですか?で、それを使うには、直接以下のように…
+
+#:code#ruby#
+
+    require 'rubygems'
+    require 'openwfe/util/scheduler'
+
+    include OpenWFE
+
+    scheduler = Scheduler.new
+    scheduler.start
+
+    scheduler.schedule_in("1h12m") do
+        puts "...taking out the garbage (as requested one hour and twelve minutes ago)"
+    end
+
+    # ...
+#:code#
+
+
+h3. rdoc
+
+スケジューラーの "rdoc":http://openwferu.rubyforge.org/rdoc/classes/OpenWFE/Scheduler.html です。これはスケジューラーに関する最新の情報ソースです。
+
+h3. "at" ジョブ
+
+"at" ジョブは、将来一度だけ実行されるジョブです。これはスケジューラーの schedule_in() メソッドや schedule_at() メソッドで登録されます。
+
+基本的な使い方は…。 :
+
+#:code#ruby#
+    scheduler.schedule_in("1h12m") do
+        puts "one hour and twelve minutes later..."
+    end
+#:code#
+
+"at" ジョブの "例":/examples/scheduler_usage.rb です。
+
+h3. "cron" ジョブ
+
+"cron" ジョブは、Unix のそれと同等の機能です。なので、このRubyのスケジューラーもその "従来どおりの指定":http://en.wikipedia.org/wiki/Cron に従っています。
+
+#:code#ruby#
+    scheduler.schedule("1-60/3 * * * mon-fri") do
+        puts "...popping up every 3 minutes on weekdays..."
+    end
+#:code#
+
+"cron" ジョブの "例":/examples/scheduler_cron_usage.rb です。
+
+h3. "every" ジョブ
+
+cron よりも柔軟性があります。:
+
+#:code#ruby#
+    scheduler.schedule_every("12m45s") do
+        puts "...popping up every 12 minutes and 45 seconds..."
+    end
+#:code#
+
+もしあなたのジョブに 2 秒かかるとして、それが10秒毎にスケジューリングされていたら、実際は12 秒毎に実行されるということに注意してください。(新しい実行スレッド内のコードをラップできます。)
+
+
+h3. スケジューラーと永続化
+
+OpenWFEru のコンテキストでは、永続化はスケジューラーではなくエンジンの責任範囲です。
+
+
+h3. (openwferu-scheduler のアンインストール)
+
+もし必要ないならば…。 :
+
+<pre>
+    $ sudo gem uninstall openwferu-scheduler
+</pre>
+
+_(続く)_
+

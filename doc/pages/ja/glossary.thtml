@@ -1,0 +1,32 @@
+h2. OpenWFEru 用語集
+
+OpenWFE(ru)  にある用語を定義・説明するささやかな試み…。
+
+
+h3. エンジンのコンポーネントは…。
+
+<img src="images/engine0.png" align="right">
+
+* <b>Engine</b> (ワークフローエンジン) はRuby のインスタンスです。それにはあなたがワークフローを使うのに必要なメソッドが全て含まれています。まあ、あなたはこれ以外のことにタッチしたくないでしょ? (いくつかの participant を除いて).
+
+* <b>Expression Map</b> は 'sequence', 'concurrence' や 'participant' などの expression 名を、SequenceExpression, ConcurrenceExpression や ParticipantExpressionなどの実際の実装クラスにマッピングする小さなサービスです。
+
+* <b>Expression Pool</b> はワークフローエンジン心臓部です。
+
+* <b>Expression Storage</b> は expression pool の永続的なジョブをします。. 現在、2つの主な実装ができています : "in memory" と "yaml files" です。
+
+* <b>Participant Map</b> はビジネスプロセス・ワークフローの participant のディレクトリです。このディレクトリのキーとして正規表現も使うことができます。participant map は participant の expression が実際の participant  を実行するため(ワークアイテムとそれをディスパッチするため)に参照します。
+
+* <b>Scheduler</b> は 、'sleep', 'cron', 'when' など時間に関する expression を、後のある時間またはさまざまな周期で(cron)実行するために使います。scheduler は OpenWFEru ビジネスプロセスエンジンの外側で" '単独で' 使う":scheduler.html こともできます。
+
+
+h3. Definitions and Expressions(定義とexpression) 
+
+
+h3. いくつかのリンク
+
+さらにワークフローやビジネスプロセスエンジン・bpmについて学びたいなら…。 :
+
+* "http://en.wikipedia.org/wiki/Workflow":http://en.wikipedia.org/wiki/Workflow
+* "http://en.wikipedia.org/wiki/Business_Process_Management":http://en.wikipedia.org/wiki/Business_Process_Management
+

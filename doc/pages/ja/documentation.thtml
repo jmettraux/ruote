@@ -1,0 +1,38 @@
+h2. OpenWFEru ドキュメント
+
+h3. 基本ドキュメント
+
+* "OpenWFEru クイックスタート":quickstart.html : OpenWFEru の gem install から最初の OpenWFEru プログラムの実行まで。
+
+* "OpenWFE マニュアル":http://www.openwfe.org/manual/index.html : OpenWFE [java] マニュアル。プロセス定義言語は同じなので、このマニュアルの大部分は OpenWFEru とコンパチブルです。"Sakaguchi-san":http://machine.homeunix.org/weblog/ が作ってくれた OpenWFE マニュアルの"日本語訳":http://machine.homeunix.org/my_stuff/openwfe_manual_ja/ もあります。
+
+* "用語集":glossary.html : OpenWFE[ru] や他のワークフロー /bpm エンジンで使っている用語を説明しています。
+
+* "Expressions":expressions.html :  OpenWFE(ru)のプロセス定義言語で使うそれぞれのexpressionに関する幾つかのパラグラフと例です。
+
+* "Participants":participants.html : OpenWFEru で実装されているparticipant の一覧およびその説明です。
+
+* "OpenWFEru - 開発者用概要":dev0.html : OpenWFEru の内側に興味がある人のための幾つかのNoteです。
+
+* "Rdoc インフォメーション":rdoc/index.html : コードから作られたドキュメントです。
+
+* "エンジン  テンプレート":examples/engine_template.rb : OpenWFEru ワークフローエンジンのコンフィグのためにコピー・修正して使うRubyのコードです。そして単なるインスピレーションの源は…。
+
+* "OpenWFE's technical blog":http://jmettraux.wordpress.com : OpenWFE, OpenWFEru, ワークフロー, bpm に関する John のblog です。
+
+
+h3. admin 用ドキュメント
+
+プロセスエンジン管理者のためのドキュメントを集めたものです。
+
+* "business process journaling":journal.html - OpenWFEru のジャーナル(ログ)の活用方法および壊れたプロセスの回復方法・マイグレーション方法です。
+
+
+h3. 開発者用ドキュメント
+
+OpenWFEru に関する幾つかのドキュメントは単独で使うこともできます。
+
+* "OpenWFEru スケジューラー":scheduler.html - OpenWFEru のスケジューラーの使用方法と幾つかの注意事項です。
+
+* "Kotoba":http://jmettraux.wordpress.com/2007/03/18/kotoba/ - OpenWFEru のワークフローインスタンスのIDとして使っているデフォルトのネーミング / ナンバリングのスキームに関するBlogのエントリです。
+

@@ -1,0 +1,134 @@
+h2. Vamsee's Newbie Guide Part 1
+
+h3. Welcome
+
+Hello.  Welcome to OpenWFEru.  This documentation is a _translation_ of 
+_Vamsee's Newbie Guide_ for OpenWFE.  Since, OpenWFEru is a moving target
+and some things in OpenWFEru are different compared to its Java cousin
+this documentation is a reflection of the changes while still keeping
+the tutorial nature of the original guide.  Feel free to point out any
+inaccuracies or errors in this document to me.
+
+h3. Starting Out
+
+If you are a newbie, I suggest you _don't_ plunge into the 
+"OpenWFE book":http://www.openwfe.org/manual The reason is because workflow
+systems are still very new so most of the terminology wouldn't make any
+sense to you.  The first place I would say is, start with the
+"Technical Presentation":http://web.archive.org/web/20060213054749/http://www.openwfe.org/openwfe.pdf
+and try to understand what the different parts of OpenWFE are and how they
+interact with each other.
+
+Now, skim through the "OpenWFE book":http://www.openwfe.org/manual .
+Don't get stuck on trying to understand everything.  Now, go back
+and take a look at the
+"Technical Presentation":http://web.archive.org/web/20060213054749/http://www.openwfe.org/openwfe.pdf
+again.  Things should be a little more clearer (at least that was the case
+for me).  Now, try to run the example program discussed in this 
+"Discussion Thread":http://sourceforge.net/forum/forum.php?thread_id=1229863&forum_id=181920
+Be careful though, you have to launch at least one workitem logged in as
+alice before you can set the variable to the workitem in this program.
+
+h3. Let's do an example!
+
+I believe the best way to know the internals of OpenWFEru is through writing
+some process flows and some code to play with it.  Let's take a 'Documentation
+Work Flow' that is being planned in an imaginary cmopany to understand
+workflow systems and their potential.
+
+The usecase is pretty simple.  It traces the flow of technical documentation
+for the different projects we handle in our team.  Let's define the
+participants:
+
+*Participants*
+# Documentation Head (DH)
+# Project Leader (PL)
+# Developer
+# Technical Writer (TW)
+
+We shall discuss about what each participant does in detail a little later.
+Some initial points:
+* DH(Documentation Head) is the person who okays the prepartion of a product manual/documentation.
+* PL(Project Leader) is the guy who is responsible for a project
+* Developer is one of the guys on the team.
+* TW(Technical Writer) is the guy who does all the wring up of all the manuals/user guides for the software built
+
+h3. Documentation Process
+
+The flow in simple terms is described as:
+* The whole process starts with either a documentation request from the
+  developer or the project leader.  There could be several documents
+  accompanying the request but we ignore this case in this example.
+* Next, *both* _DH_ and _TW_ will get this
+  request and documentsion.   Then, _DH_ will review these and the go ahead
+  (or send a request back seeking clarifications), from where the _TW_ will
+  pick up and prepare the user manual.
+* Next, the _TW_ will send a review request to the _DH_ and _PL_ & the
+  developer with the documents he prepared and  _DH_ will do an Editorial
+  Review while the _PL_ and the developer will do a Technical Review at
+  the same time.
+* Both _DH_ and _PL_ can ask for changes and those changes will be updated.
+  And finally, this will be approved as a valid user manual.
+
+Below is an image of the workflow given by our _DH_
+
+*INSERT IMAGE HERE*
+
+h3. Let's get our hands dirty!
+
+Well, seems like everything that we need to get started is ready.  The
+above processflow may look a bit complex, but we'll go there step-by-step.
+We'll do the simplest possible thing first - let's write part of our process
+flow definition.  Though not complete, this step will give you ideas about
+how to set up everything so you can make gradual improvements on that.
+Here we go:
+<pre>
+<code>
+<?xml version="1.0" encoding="UTF-8"?> 
+<process-definition 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.openwfe.org/flowdef_r1.5.0.xsd"
+    name="docflow" 
+    revision="1.0">
+	
+	<description language="default">
+		This just the complete flow definition of docflow process.
+	</description>
+	
+	<sequence>
+		<participant ref="developer"/>
+		<participant ref="project-leader"/>				
+	</sequence>
+	
+</process-definition>
+</code>
+</pre>
+
+The above workflow definition is pretty simple - we defined a "sequence of"
+events which flows from developer to the project leader.  Save this
+as the filename docflow__1.0.xml in OPENWFERU_HOME and type this:
+<pre>
+<code>
+bin/validate-workflow.rb docflow__1.0.xml
+</code>
+</pre>
+It should show some results like this:
+<pre>
+<code>
+Trying to validate docflow__1.0.xml...  PASSED
+</code>
+</pre>
+If the validation passed, congratulations! You just wrote your first
+workflow.  The validation script works by validating a workflow definition
+against the XML Schema defined at http://www.openwfe.org/flowdef.xsd.
+This means that you will need a network connection to be able to validate
+your workflow definition.
+
+Let us move on to the next steps.  As you might have observed, we have
+declared two "roles" in the above process definition.  One is 
+_developer_ and the other is _project-leader_.  It's time we told
+OpenWFEru about the roles.  Remember that these are *roles* not *users*.
+Multiple users can be assigned to one specific role which will make
+user management simpler later on.   We shall assign a user to a role, but
+that will come later.  So, for now let's add these lines at the bottom of
+

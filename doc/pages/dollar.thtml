@@ -1,0 +1,138 @@
+h2. the "dollar notation"
+
+Many of the examples of OpenWFEru process definition, Ruby or XML, feature some 'dollar notation'.
+
+A long time ago (2002), OpenWFE had no dollar notation, but already featured ways to extract values from fields or variables.
+
+#:code#xml#
+    <sequence>
+        <participant field-ref="customer" />
+        <participant variable-ref="customer" />
+    </sequence>
+#:code#
+
+With the dollar notation, this XML process definition can also be written as :
+
+#:code#xml#
+    <sequence>
+        <participant ref="${f:customer}" />
+        <participant ref="${customer}" />
+    </sequence>
+#:code#
+
+(The original documentation about the 'dollar notation' may still be found in the old "OpenWFE Manual":http://www.openwfe.org/manual/ch06s10.html).
+
+It doesn't look much different in a Ruby process definition :
+
+#:code#ruby#
+    sequence do
+        participant :ref => "${f:customer}"
+        participant :ref => "${customer}"
+    end
+#:code#
+
+or even :
+
+#:code#ruby#
+    sequence do
+        participant "${f:customer}"
+        participant "${customer}"
+    end
+#:code#
+
+More examples :
+
+#:code#ruby#
+    sequence do
+
+        participant "${f:customer}"
+        participant "${field:customer}"
+            #
+            # the participant name is in a workitem field (attribute) named 'customer'
+
+        participant "${customer}"
+        participant "${v:customer}"
+        participant "${variable:customer}"
+            #
+            # the participant name is in a variable named 'customer'
+
+        participant "${/customer}"
+        participant "${v:/customer}"
+        participant "${variable:/customer}"
+            #
+            # the participant name is in a variable named 'customer' bound at
+            # the root of this process instance (or at the engine level)
+
+        participant "${//customer}"
+        participant "${v://customer}"
+        participant "${variable://customer}"
+            #
+            # the participant name is in a variable named 'customer' bound at
+            # the engine level
+    end
+#:code#
+
+Nesting dollar notations is permitted :
+
+#:code#ruby#
+        participant "${customer_${f:index}}"
+#:code#
+
+Aggregation as well :
+
+#:code#ruby#
+        participant "${customer}__${customer_dept}"
+#:code#
+
+
+h3. The 'dollar notation' with arrays and hashes
+
+The examples so far dealt with flat structures : the desired value was immediately at hand. What if it's a bit further ?
+
+#:code#ruby#
+    #
+    # we have a workitem that looks like this :
+    #
+    workitem.customers = [ 
+        { :name => "Alfred", :region => "Queensland" }, 
+        { :name => "Berth", :city => "Palo Alto" }
+    ]
+#:code#
+
+This is possible :
+
+#:code#ruby#
+    participant "${f:customers.0.name}" # for Alfred
+
+    set :field => customer, :value => "${f:customers.1.name}"
+#:code#
+
+The concepts in the next paragraph can also be used to extract values out of more complex structures.
+
+
+h3. The 'dollar notation' and Ruby code evaluation
+
+OpenWFE Java had functions, but instead of reimplementing them for OpenWFEru, direct evaluation of Ruby code got added instead.
+
+But by default, an engine will not evaluate ruby code found in the dollar notation. To enable it, you have to explicitely set the <tt>:ruby_eval_allowed</tt> parameter to true in the engine's application context :
+
+#:code#ruby#
+    engine.application_context[:ruby_eval_allowed] = true
+#:code#
+
+(the expression "reval":expressions.html#exp_reval is also affected by this parameter, as well as the condition attributes like "rif", "rtest" and so on)
+
+Beware of untrusted ruby code.
+
+Once the parameter is set to true, it's possible to write things like :
+
+#:code#xml#
+    <sequence>
+        <set field="now" value="${ruby:Time.now.to_s}" />
+        <participant ref="${r:'toto'.reverse}" />
+        <set field="balance" value="${r:wi.credit - wi.debit}" />
+    </sequence>
+#:code#
+
+Future releases of OpenWFEru will provide a enhanced security model, the OpenWFEru team hopes that Ruby will feature standard sandboxing mechanism in the near future and will incorporate them ASAP.
+

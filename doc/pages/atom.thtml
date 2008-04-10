@@ -1,0 +1,46 @@
+h2. OpenWFEru and Atom
+
+A perhaps better name for this page would have been 'OpenWFEru and syndication', but syndication is just a small aspect.
+
+OpenWFEru features participants and services for interacting via <a href="http://tools.ietf.org/html/rfc4287">Atom</a> and <a href="http://bitworking.org/projects/atom/rfc5023.html">AtomPub</a> over the web.
+
+h3. <a name="activity_feed"></a>ActivityFeedService
+
+This feed service was first documented in this "atom feed for process engine activity":http://jmettraux.wordpress.com/2007/11/11/an-atom-feed-for-process-engine-activity/ blog post.
+
+It's integrated into "Densha":http://difference.openwfe.org:3000, here is how its instantiation code looks like :
+
+#:code#ruby#
+$openwferu_engine.init_service(
+    'activityFeedService', OpenWFE::Extras::ActivityFeedService)
+#:code#
+
+It's that simple, this service simply observes the participants and its Atom feed has one entry per apply / reply of a workitem to / from a participant.
+
+The workitems are currently dumped in the content of the Atom entry as YAML, JSON or a simple text representation.
+
+Future releases of this activity service and especially its integration within Densha will restrict who can thus browse the process engine activity.
+
+
+h3. <a name="atom_feed_participant"></a>AtomFeedParticipant
+
+(this participant is part of the "openwferu-extras" gem)
+
+more documentation coming soon.
+
+"rdoc":rdoc/classes/OpenWFE/Extras/AtomFeedParticipant.html
+
+
+h3. <a name="atom_pub_participant"></a>AtomPubParticipant
+
+more documentation coming soon.
+
+"rdoc":rdoc/classes/OpenWFE/Extras/AtomPubParticipant.html
+
+
+h4. <a name="blog_participant"></a>BlogParticipant
+
+A specialization of the AtomPubParticipant for posting blog entries [to WordPress via AtomPub].
+
+"rdoc":rdoc/classes/OpenWFE/Extras/BlogParticipant.html
+

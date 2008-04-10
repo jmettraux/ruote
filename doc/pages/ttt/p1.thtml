@@ -1,0 +1,27 @@
+
+h2. The "Tea Testing Team" example (<%= extract_index(__FILE__) + 1 %> / <%= TITLES.size %>)
+
+<%= render_ttt_menu(__FILE__) %>
+
+
+h3. initial context
+
+Your organization deals with the acquisition of raw tea within a company selling various tea-based products.
+
+You've been asked to implement an application that would help track tea samples as they are received from the "scout", divided into test batches passed to the three wisemen that do the "tasting" and finally to the Planning Team for a potential order or set of orders to the producer.
+
+
+h3. first draft
+
+<img src="../images/ttt/initial_process.png" align="right" />With the manager, you agreed on the diagram here which describes what is currently happening in the organization. It's an UML diagram (the BPMN one will be for later).
+
+There are five steps in this business process.
+
+* Reception : the process is initiated upon receiving a sample from the "scout"
+* Ted, Tang and Takeshi-san : they are the 3 wisemen who will decide if a sample is worth it, they'll tag it as well to determine which final product this type of tea should belong to.
+* The Planning team : these guys will read the reports emitted by the wisemen and decide which quantity of tea to order. (They might also require the scout to send further samples).
+
+
+<%= render_next_page(__FILE__) %>
+<%= render_questions %>
+

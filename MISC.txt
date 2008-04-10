@@ -1,0 +1,10 @@
+
+=misc
+
+misc information
+
+
+==coverage
+
+    openwfe-ruby$ rcov -Ilib:test -t test/rake_qtest.rb
+

@@ -1,0 +1,42 @@
+h2. getting OpenWFEru
+
+You can either "download it":http://rubyforge.org/frs/?group_id=2609 as a gem,
+
+or if you have the <b>gem</b> system installed :
+
+<pre>
+    gem install openwferu
+</pre>
+
+and use it from within your ruby code 
+
+#:code#ruby#
+    require "rubygems"
+    require "openwferu"
+    #...
+#:code#
+
+If you want it <b>fresh</b> from the source, check out the source by running
+
+<pre>
+   svn checkout svn://rubyforge.org/var/svn/openwferu
+</pre>
+
+and then run
+
+<pre>
+   rake gem
+</pre>
+
+to build the latest gem with the latest source.
+
+You can run the unit tests with
+
+<pre>
+   rake qtest
+</pre>
+
+(more about unit tests in the "devdoc":dev0.html)
+
+
+More info in the "README.txt":http://rubyforge.org/viewvc/trunk/openwfe-ruby/README.txt?revision=213&root=openwferu coming with OpenWFEru.

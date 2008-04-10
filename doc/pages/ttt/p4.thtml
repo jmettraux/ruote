@@ -1,0 +1,52 @@
+
+h2. The "Tea Testing Team" example (<%= extract_index(__FILE__) + 1 %> / <%= TITLES.size %>)
+
+<%= render_ttt_menu(__FILE__) %>
+
+<%= description(__FILE__) %>
+
+
+h3. out of the box
+
+Out of the box, Densha comes with a bunch of pre-defined users, groups, stores and launch permissions.
+
+* users : they are Densha users, ie they can log in into the Densha web application, modify workitems proceed them and eventually launch new processes
+* groups : a way of grouping users. They may used to gather them in roles, teams, units, whatever
+* stores : they are sets of workitems. When arriving from the workflow engine to the worklist, regular expression matching is used to determine in which store a workitem should be placed.
+* store permissions : are used to grant read/write/delegate rights to groups of users on stores.
+* launch permissions : each user group can be granted launch rights, "launching" is about creating a new instance of a business process based on a given process definition. A launch permission maps a user group to a process definition URL.
+
+Still out of the box, Densha features a store "users" with special rules.
+
+All these concepts are Densha concepts, not OpenWFEru concepts.
+
+
+h3. what we need
+
+We have four participants, why not stay simple and use only five users ? Thus we can leverage the properties of the "users" store.
+
+<%= thumbnail("../images/ttt/wa_screen.png", 40, :right) %>That makes five regular users plus one admin user.
+
+All the workitems will get routed to the "users" store, provided that their participant name matches one of the user names.
+
+Launch permissions are connected to user groups, the only user[s] that has to launch processes is the 'reception' user, let's create a unique group for 'reception'. 
+
+Then add a launch permission to the local URL '/process_definitions/teatesting_0.2.xml' for this 'reception' group.
+
+(you can use the upload process definition functionality in the worklist screen of Densha to upload the process definition and have its launch permission added on the fly)
+
+(click on the image on the right to see the resulting settings)
+
+Here is a summary :
+
+* 5 regular users (reception, ted, tang, takeshi, planning) plus 1 admin user
+* 1 group (reception)
+* no store permissions (relying on the implicit permissions on the special 'users' workitem store
+* 1 launch permission for the group 'reception' on '/process_definitions/teatesting_0.2.xml' 
+
+The interface of this "worklist admin" screen should be quite obvious, hit '-' (minus) to remove an entry and '+' (plus) to add/confirm a new one.
+
+
+<%= render_next_page(__FILE__) %>
+<%= render_questions %>
+

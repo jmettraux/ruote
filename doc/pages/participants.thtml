@@ -1,0 +1,522 @@
+h2. OpenWFEru participants
+
+Usually, a process definition weaves the trajectory of workitems among participants.
+
+#:code#xml#
+    <process-definition name="def0" revision="0.1">
+        <sequence>
+            <participant ref="accounting" />
+                <!-- send invoice -->
+            <participant ref="logistics" />
+                <!-- deliver items -->
+        </sequence>
+    </process-definition>
+#:code#
+
+As seen, participants are invoked with the <a href="expressions.html#exp_participant">'participant' expression</a> but you can write :
+
+#:code#xml#
+    <process-definition name="def0" revision="0.1">
+        <sequence>
+            <accounting />
+            <logistics />
+        </sequence>
+    </process-definition>
+#:code#
+
+Provided that your participant names don't conflict with XML.
+
+In OpenWFEru you can define processes as Ruby classes :
+
+#:code#ruby#
+    class Def0 < OpenWFE::ProcessDefinition
+        sequence do
+            accounting
+            logistics
+            #
+            # sometimes you'll prefer the more explicit :
+            #
+            # participant :ref => "accounting"
+            # participant :ref => "logistics"
+        end
+    end
+#:code#
+
+Participants are registered in the engine in this way :
+
+#:code#ruby#
+    require 'openwfe/engine/engine'
+    require 'openwfe/worklist/storeparticipants'
+
+    (...)
+
+    engine = Engine.new
+
+    hpAlice = HashParticipant.new
+    hpBob = HashParticipant.new
+
+    engine.register_participant(:alice, hpAlice)
+    engine.register_participant(:bob, hpBob)
+
+    (...)
+#:code#
+
+To remove participants from the engine :
+
+#:code#ruby#
+    engine.unregister_participant(:alice)
+    engine.unregister_participant("bob")
+#:code#
+
+Participants can be categorized in two flavours : push and pull. Push participants like for example a MailParticipant or the BlockParticipant react immediately upon receiving a workitem (sending an email, executing some code).
+Pull participants like store participants, simply keep the workitems for later consumption by external services.
+
+&nbsp;
+
+Here are the participant implementations that ship with OpenWFEru :
+
+* <a href="#ActiveParticipant">ActiveParticipant</a>  - a participants that uses "ActiveRecord":http://ar.rubyonrails.com/ for storing workitems.
+* <a href="#ActiveStoreParticipant">ActiveStoreParticipant</a>  - a refinement of the ActiveParticipant
+* <a href="#AliasParticipant">AliasParticipant</a>  - adding extra names to participants
+* <a href="#AtomFeedParticipant">AtomFeedParticipant</a>  - outputting workitem to an Atom feed
+* <a href="#AtomPubParticipant">AtomPubParticipant</a>  - posting workitems as Atom entries to an AtomPub enabled resource
+* <a href="#BlockParticipant">BlockParticipant</a>  - a simple Ruby block as a business process participant
+* <a href="#BlogParticipant">BlogParticipant</a>  - a specialization of the AtomPubParticipant for posting blog entries
+* <a href="#CsvParticipant">CsvParticipant</a>  - a decision table participant
+* <a href="#FileParticipant">FileParticipant</a>  - dumping workitems to files
+* <a href="#HashParticipant">HashParticipant</a>  - storing workitems in an in-memory hash
+* <a href="#MailParticipant">MailParticipant</a>  - sending a email [notification] for each workitem passing in the participant
+* <a href="#NoOperationParticipant">NoOperationParticipant</a>  - immediately replying to the engine, no operation
+* <a href="#NullParticipant">NullParticipant</a>  - a bit like /dev/null, this participant will simply receive any workitem and discard them, but it never replies to the engine
+* <a href="#ProcessParticipant">ProcessParticipant</a>  - placing a [sub-]process launch behind a participant name (or names)
+* <a href="#SoapParticipant">SoapParticipant</a>  - invoking webservices from a process instance
+* <a href="#SocketParticipant">SocketParticipant</a>  - dispatching workitems over TCP sockets
+* <a href="#SqsParticipant">SqsParticipant</a>  - dispatching worktiems via "Amazon SQS":http://aws.amazon.com
+* <a href="#TwitterParticipant">TwitterParticipant</a>  - for notifications of users via "Twitter":http://www.twitter.com
+* <a href="#YamlParticipant">YamlParticipant</a>  - storing workitems in a persisted worklist
+
+&nbsp;
+
+Their descriptions :
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="ActiveParticipant"></a>ActiveParticipant
+
+(this participant is part of the "openwferu-extras" gem)
+
+It's too bad this participant comes first in this [alphabetical] list. It's a bit advanced.
+
+The "active page":active.html is dedicated to the ActiveRecord items in OpenWFEru.
+
+"rdoc":rdoc/classes/OpenWFE/Extras/ActiveParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="ActiveStoreParticipant"></a>ActiveStoreParticipant
+
+(this participant is part of the "openwferu-extras" gem)
+
+It's a refinement of the <a href="#ActiveParticipant">ActiveParticipant</a>. This is the participant used by <a href="rquickstart.html">'densha'</a> for its workitem stores.
+
+"rdoc":rdoc/classes/OpenWFE/Extras/ActiveStoreParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="AliasParticipant"></a>AliasParticipant
+
+Given a list of 'user participant' :
+
+#:code#ruby#
+    engine.register_participant :alice do |workitem|
+        workitem.whatever = "oh and by the way"
+    end
+    engine.register_participant :bob do |workitem|
+        workitem.decision = "there is a coordination problem, let's decide later"
+    end
+    engine.register_participant :charly do |workitem|
+        workitem.time_estimate = "Carlito says : cuando la vaca vuela"
+    end
+#:code#
+
+Some aliases may get helpful :
+
+#:code#ruby#
+    engine.register_participant :boss, AliasParticipant.new("bob")
+    engine.register_participant :hr_head, AliasParticipant.new("alice")
+    engine.register_participant "engineering_.*", AliasParticipant.new("charly")
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/AliasParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="AtomFeedParticipant"></a>AtomFeedParticipant
+
+More at "atom :: AtomFeedParticipant":atom.html#atom_feed_participant
+
+"rdoc":rdoc/classes/OpenWFE/Extras/AtomFeedParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="AtomPubParticipant"></a>AtomPubParticipant
+
+More at "atom :: AtomPubParticipant":atom.html#atom_pub_participant
+
+"rdoc":rdoc/classes/OpenWFE/Extras/AtomPubParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="BlockParticipant"></a>BlockParticipant
+
+The participant with the most Ruby-feel.
+
+The idea is to directly map a Ruby block as a participant to a workflow.
+
+#:code#ruby#
+    engine.register_participant(:vat) do |workitem|
+        price = Integer(workitem.price)
+        price = price + price * $vat
+        workitem.net_price = price
+    end
+#:code#
+
+The reply to the engine is implicit, it has not to be stated in the block.
+
+This participant is used in "one":/examples/quotereporter.rb of the examples in the "examples/":/examples/ folder of OpenWFEru.
+In that example, it's barely used to dump the incoming workitem to the standard output (stdout).
+
+You can pass a block that accepts no arguments, one (workitem) or two (flow expression and workitem) to this participant.
+
+The last value in the block (its return value) is set as the value of the field '__result__' of the outgoing workitem. Beware : do not set this value to something not serializable (like a reference to a complex object or something like that).
+
+#:code#ruby#
+    engine.register_participant(:my_participant) do |flow_expression, workitem|
+        workitem.attributes["parent"] = flow_expression.parent_id.to_s
+            #
+            # just storing the parent expression of the participant expression
+            # that sent the workitem, as a string in the workitem
+            #
+            # you could do more complicated and dangerous things with
+            # handle on the flow expression (but that's an advanced topic)
+    end
+#:code#
+
+Note that if the block's execution could take a certain amount of time, it'd be better to provide error handling and CancelItem handling inside of it. A short and hypothetical example :
+
+#:code#ruby#
+    engine.register_participant "sluggy" do |workitem|
+    
+        if workitem.is_a?(OpenWFE::CancelItem)
+            #
+            # cancel job 
+
+            job_id = jobs[workitem.fei]
+
+            external_sluggy_system.cancel_job(job_id)
+        else
+            #
+            # launch job
+
+            job_id = external_sluggy_system.execute_job(
+                workitem.param0, workitem.param1)
+
+            jobs[workitem.fei] = job_id
+        end
+    end
+#:code#
+
+Maybe in such a case, a dedicated participant class could be better, leaving BlockParticipant for tiny chunk of ruby code.
+
+"rdoc":rdoc/classes/OpenWFE/BlockParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="BlogParticipant"></a>BlogParticipant
+
+More at "atom :: BlogParticipant":atom.html#blog_participant
+
+"rdoc":rdoc/classes/OpenWFE/Extras/BlogParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="CsvParticipant"></a>CsvParticipant
+
+(this participant is part of the "openwferu-extras" gem)
+
+CsvParticipants are called "decision tables" or "decision participants" in Java OpenWFE.
+
+Here is a blog entry about the "CSV tables":http://jmettraux.wordpress.com/2007/02/11/ruby-decision-tables/ behind decision participants.
+
+Note that since OpenWFEru 0.9.13, the CSVParticipant has been moved to the OpenWFE::Extras namespace.
+
+"rdoc":rdoc/classes/OpenWFE/Extras/CsvParticipant.html
+
+"rdoc":rdoc/classes/OpenWFE/Extras/CsvTable.html (CSV table)
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="FileParticipant"></a>FileParticipant
+
+This participant just dumps workitems to files. By default, it dumps the workitem as a YAML string, but you can override the encode_workitem() method.
+
+#:code#ruby#
+    require 'openwfe/participants/participants'
+
+    engine.register_participant("Fedor", OpenWFE::FileParticipant)
+#:code#
+
+In this example, workitems for participant 'Fedor' will get dispatched (dumped) in the directory ./work/out/
+
+"rdoc":rdoc/classes/OpenWFE/FileParticipant.html
+
+The FileParticipant has a counterpart : the "FileListener":rdoc/classes/OpenWFE/FileListener.html which polls directory for incoming 'file' workitems.
+
+The FileParticipant alone is interesting as well for debugging a business process, it can be placed at special places to "dump" the workitem as it reaches those points.
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="HashParticipant"></a>HashParticipant
+
+OpenWFEja features a worklist component. OpenWFEru (0.9.3) not yet, but this 'HashParticipant' is the first step towards a worklist.
+
+It directly maps a participant with a hash for storing workitems waiting for treatment.
+
+This participant is used in "one":/examples/mano_tracker.rb of the examples in the "examples/":/examples/ folder of OpenWFEru.
+
+"rdoc":rdoc/classes/OpenWFE/HashParticipant.html
+
+But the better rdoc to browse is the one of the "StoreParticipantMixin":rdoc/classes/OpenWFE/StoreParticipantMixin.html module HashParticipant implements.
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="MailParticipant"></a>MailParticipant
+
+This participant sends a notification per email. The text of the email is generated by filling a template with the data found in the workitem payload.
+
+"rdoc":rdoc/classes/OpenWFE/MailParticipant.html
+
+"rdoc":rdoc/classes/OpenWFE/EMailNotificationParticipant.html (a former version of the MailParticipant)
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="NoOperationParticipant"></a>NoOperationParticipant
+
+Immediately replies to the engine, doesn't touch the workitem (no operation).
+
+"rdoc":rdoc/classes/OpenWFE/NoOperationParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="NullParticipant"></a>NullParticipant
+
+Discards the workitem (no operation), but doesn't reply to the engine. A bit like a BPM /dev/null
+
+"rdoc":rdoc/classes/OpenWFE/NullParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="ProcessParticipant"></a>ProcessParticipant
+
+The classical way to call a participant is via the "subprocess":expressions.html#exp_subprocess :
+
+#:code#xml#
+    <sequence>
+        <participant ref="alice" />
+        <subprocess ref="review" />
+        <participant ref="bob" />
+        <subprocess ref="review" />
+        <subprocess ref="http://process.server.company.org/processes/proc0.xml" />
+    </sequence>
+
+    <process-definition name="review">
+        <loop>
+            <participant ref="boss1" />
+            <participant ref="boss2" />
+            <break if="${f:boss2_decision} == ok" />
+        </loop>
+    </process-definition>
+#:code#
+
+With a Ruby process definition it would look like :
+
+#:code#ruby#
+    sequence do
+        alice
+        review
+        bob
+        review
+        subprocess :ref => "http://process.server.company.org/processes/proc0.xml"
+    end
+
+    process_definition :name => "review" do
+        _loop do
+            boss1
+            boss2
+            _break :if => "${f:boss2_decision} == ok"
+        end
+    end
+#:code#
+
+Note that the participant and the subprocess are simply referred directly via their names, except for the subprocess call using an URL. (Note too that expressions whose names are Ruby keywords like 'loop' and 'break' are escaped with an underscore as a prefix.
+
+A ProcessParticipant can solve this URL problem :
+
+#:code#ruby#
+    require 'openwfe/participants/participants'
+
+    engine.register_participant(
+        "proc0", 
+        ProcessParticipant.new("http://process.server.company.org/processes/proc0.xml"))
+#:code#
+
+The process definition body would then look like :
+
+#:code#ruby#
+    sequence do
+        alice
+        review
+        bob
+        review
+        proc0
+    end
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/ProcessParticipant.html for more information on how to register a participant (as a URL, as a Ruby process class, ...)
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="SoapParticipant"></a>SoapParticipant
+
+Wraps a call to a webservice within a participant. The '__result__' field of the workitem receives then the result of the call.
+
+This is a minimal implementation, but it's Ruby, the extension possibilities are huge.
+
+"rdoc":rdoc/classes/OpenWFE/SoapParticipant.html
+
+This participant is used in "one":/examples/quotereporter.rb of the examples in the "examples/":/examples/ folder of OpenWFEru.
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="SocketParticipant"></a>SocketParticipant
+
+A quite straightforward participant, it dumps the workitems over a TCP connection.
+
+#:code#ruby#
+    require 'openwfe/participants/socketparticipants'
+
+    sp = OpenWFE::SocketParticipant.new("localhost", 7007)
+
+    engine.register_participant(:stuart, sp)
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/SocketParticipant.html
+
+An extension : "XmlSocketParticipant":rdoc/classes/OpenWFE/SocketParticipant.html which dispatches workitems encoded as XML (as OpenWFEja understands them).
+
+Of course, there is a "SocketListener":rdoc/classes/OpenWFE/SocketListener.html available.
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="SqsParticipant"></a>SqsParticipant
+
+(this participant and its listener is part of the "openwferu-extras" gem)
+
+SQS is an Amazon web service : 'Amazon Simple Queue Service (Amazon SQS) offers a reliable, highly scalable hosted queue for storing messages as they travel between computers', learn more at "http://aws.amazon.com":http://aws.amazon.com
+
+The SqsParticipant deposits workitems on a SQS queue where they can be read by other applications.
+
+#:code#ruby#
+    require 'openwfe/extras/participants/sqsparticipants'
+
+    engine.register_participant(:queue, OpenWFE::Extras::SqsParticipant.new("workqueue0"))
+#:code#
+
+By default, this participant does a YAML dump of the workitem in its 'hash version' and then encodes it as Base64 before putting it in the queue.
+You can very easily change that by overriding encode_workitem(), for example :
+
+#:code#ruby#
+    require 'openwfe/extras/participants/sqsparticipants'
+
+    sp = OpenWFE::Extras::SqsParticipant.new("workqueue0")
+    class << sp
+        #
+        # instead of extending SqsParticipant, we simply modify the 
+        # method implementation just for that sp instance
+        #
+        def encode_workitem (wi)
+            msg = ""
+            msg << wi.fei.to_s
+            msg << "\n"
+            msg << wi.attributes["task_description"]
+            msg << "\n"
+            msg
+        end
+    end
+
+    engine.register_participant(:queue, sp)
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/Extras/SqsParticipant.html
+
+There is a counterpart to the SqsParticipant : an "SqsListener":rdoc/classes/OpenWFE/Extras/SqsListener.html
+
+#:code#ruby#
+    require 'openwfe/extras/listeners/sqslisteners'
+
+    engine.add_workitem_listener(
+        OpenWFE::Extras::SqsListener.new(:wiqueue3, engine.application_context),
+        "2m15s")
+            #
+            # will poll our SQS queue named "wiqueue3" for workitems
+            # every 2 minutes and 15 seconds
+#:code#
+
+A listener allows InFlowWorkItems to resume back in their originating process instance. They also accept (if allowed) LaunchItems and launch a brand new process instance according to the info found in the LaunchItem.
+
+The SqsListener expects by default that workitems (InFlowWorkItem and LaunchItem instances) are encoded as hashes, then dumped via YAML, then encoded with Base64 (like SqsParticipant does).
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="TwitterParticipant"></a>TwitterParticipant
+
+The TwitterParticipant was first documented in this "blog post":http://jmettraux.wordpress.com/2007/07/21/twitterparticipant/ on the tech blog.
+
+Twitter notification could be a lightweight substitute for email notification.
+
+#:code#ruby#
+    require 'openwfe/extras/participants/twitterparticipants'
+
+    tp = OpenWFE::Extras::TwitterParticipant.new(
+        twitter_account, twitter_password, :no_ssl => true)
+            #
+            # remove this :no_ssl param if the Participant should use SSL
+            # (as sometimes Twitter doesn't listen on SSL)
+
+    engine.register_participant("twitter_notification", tp)
+#:code#
+
+The TwitterParticipant, out of the box supports status and direct messages. The message itself is the value of the "twitter_message" workitem field. To send a direct message, set the "twitter_target" workitem field to a twitter login name and the twitter user will receive the message via email, thanks to Twitter (email notification anyway).
+
+The way the message and the target are determined can be changed by overriding (or monkey patching) the extract_message() method. Here is an example :
+
+#:code#ruby#
+    require 'openwfe/extras/participants/twitterparticipants'
+
+    class MyTwitterParticipant < OpenWFE::Extras
+
+        #
+        # This method is meant to return a pair login name / message.
+        #
+        def extract_message (workitem)
+
+            message = ""
+            message << "customer '#{workitem.customer_name}'"
+            message << " replied '#{workitem.customer_reply}'"
+            message << " (#{Time.now.to_s})"
+            
+            [ nil, message ]
+                #
+                # always returning nil as the twitter target, the message
+                # will thus always be a status message, not a direct message
+        end
+    end
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/Extras/TwitterParticipant.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="YamlParticipant"></a>YamlParticipant
+
+This participant is an extension of the HashParticipant built on top of a YAML file persistence.
+
+By default, the workitems are stored under "./work/participants/name_of_the_participant/"
+
+This participant is used in the sample code of the "ManoTracker":/examples/mano_tracker.rb
+
+"rdoc":rdoc/classes/OpenWFE/YamlParticipant.html
+
+As for the HashParticipant, it's interesting to browse the rdoc of the "StoreParticipantMixin":rdoc/classes/OpenWFE/StoreParticipantMixin.html module that this participant implements.
+

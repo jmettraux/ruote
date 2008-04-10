@@ -1,0 +1,28 @@
+h2. Process definitions in Ruby
+
+OpenWFEru (Rufus for short) understands process definitions expressed as XML documents. The language is not BPEL nor XPDL, hence it's not the product of a comittee but it has evolved since 2001 to satisfy the needs of a varied community of people.
+
+With the move to Ruby, it became clear that the same constructs expressed via XML could be formulated via the Ruby language itself. Thus
+
+#:code#xml#
+    <process-definition name="myBusinessProcess" revision="0.1">
+        <sequence>
+            <participant ref="Alice" />
+            <participant ref="Bob" />
+        </sequence>
+    </process-definition>
+#:code#
+
+is understood by Rufus as well as
+
+#:code#ruby#
+    class MyBusinessProcess01 < OpenWFE::ProcessDefinition
+        sequence do
+            participant :ref => 'Alice'
+            participant :ref => 'Bob'
+        end
+    end
+#:code#
+
+After all, there are process definitions that are interpreted to give process instances, it parallels classes interpreted to give object / instances.
+

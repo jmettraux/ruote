@@ -1,0 +1,168 @@
+<% 
+
+$JA_MENU = [
+    [ 'index', '/ja/index.html' ],
+    [ 'license', '/ja/license.html' ],
+    [ 'quickstart', '/ja/quickstart.html' ],
+    :space,
+    [ 'download', '/ja/download.html' ],
+    :space,
+    #[ 'links', '/ja/links.html' ],
+    [ 'documentation', '/ja/documentation.html' ],
+    [ 'expressions', '/ja/expressions.html' ],
+    [ 'participants', '/ja/participants.html' ],
+    [ 'patterns', '/ja/patterns.html' ],
+    :space,
+    [ 'source', 'http://rubyforge.org/scm/?group_id=2609' ],
+    [ 'rdoc', '/rdoc/index.html' ],
+    :space,
+    [ 'activity', '/ja/activity.html' ],
+    [ 'mailing lists', '/ja/lists.html' ],
+    :space,
+    [ 'tech blog', 'http://jmettraux.wordpress.com' ],
+    :space,
+    [ 'credits', 'http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/CREDITS.txt' ],
+    [ 'on rubyforge', 'http://rubyforge.org/projects/openwferu' ],
+    :space,
+    [ 'the scheduler', '/ja/scheduler.html' ],
+    [ 'amazon sqs', '/ja/sqs.html' ],
+    [ 'kotoba', '/ja/kotoba.html' ],
+    :space,
+    [ 'Taskr', 'http://code.google.com/p/ruby-taskr/' ],
+    [ 'Rufus', 'http://rufus.rubyforge.org' ],
+    [ 'Rools', 'http://rools.rubyforge.org' ]
+]
+
+def render_menu
+    s = ""
+    s << "<ul>\n"
+    $JA_MENU.each do |row|
+        if row == :space
+            s << "<li>&nbsp;</li>\n"
+        else
+            name, link = row
+            current = (name == @page_id)
+            link = link_rel(link) if link
+            content = name
+            content = "<strong>#{content}</strong>" if current
+            content = "<a href=#{link}>#{content}</a>" if link and not current
+            s << "<li class='collapsed'>#{content}</li>\n"
+        end
+    end
+    s << "</ul>"
+    return s
+end
+
+
+# --- the page itself ---
+%>
+<html>
+  <head>
+    <%# Use our custom vars for the title %>
+    <title><%= "#{@page_title}" %></title>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="<%= link_rel '/xml.css' %>" type="text/css" rel="stylesheet"/>
+    <link href="<%= link_rel '/ruby.css' %>" type="text/css" rel="stylesheet"/>
+    <link href="<%= link_rel '/openwferu.css' %>" type="text/css" rel="stylesheet"/>
+  </head>
+
+  <body class="composite">
+
+    <a name="top"></a>
+
+    <div id="banner">
+      <a href="<%= link_rel '/index.html' %>"
+        ><img src="<%= link_rel '/images/openwfe-logo.png' %>" alt="OpenWFEru"/></a>
+      <div id="siteSearch">
+        <!--siteSearch-->
+      </div>
+    </div>
+
+    <div id="breadcrumbs">
+        <div style="float:left">
+            open source ruby workflow and bpm engine
+        </div>
+        <div style="float:right">
+            <a href="/index.html">english</a> | <a href="/ja/index.html">japanese</a>
+        </div>
+    </div>
+
+    <div id="coreBox">
+
+      <div id="leftColumn">
+        <div id="navColumn">
+
+         <br/>
+         <%= render_menu() %>
+
+         <!--hostedOnRubyForge-->
+
+         <br/>
+         <br/>
+
+         <p align="right">
+             <span 
+                style='font-size: 7pt; color: #7c7c90'
+             >website<br/>generated with</span><br/>
+             <a href='http://rote.rubyforge.org/' target='_blank'
+                 ><img 
+                    src='<%= link_rel '/images/rote-tiny.png' %>' 
+                    alt='Rote' /></a>
+         </p>
+
+         <!--fisheye?-->
+        </div>
+      </div>
+
+      <div id="rightColumn">
+        <script type="text/javascript"><!--
+google_ad_client = "pub-2190386866693134";
+google_ad_width = 120;
+google_ad_height = 240;
+google_ad_format = "120x240_as";
+google_ad_type = "text_image";
+google_ad_channel ="";
+//--></script>
+        <script 
+            type="text/javascript" 
+            src="http://pagead2.googlesyndication.com/pagead/show_ads.js"
+        >
+        </script>
+        <div id="googleReferral">
+          <script type="text/javascript"><!--
+google_ad_client = "pub-2190386866693134";
+google_ad_width = 110;
+google_ad_height = 32;
+google_ad_format = "110x32_as_rimg";
+google_cpa_choice = "CAAQ7dSXhAIaCJqvuMO26aj7KOP143Q";
+google_ad_channel = "";
+//--></script>
+          <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+          </script>
+        </div>
+      </div>
+
+      <div id="bodyColumn">
+        <%= @content_for_layout %>
+      </div>
+
+      <div id="footer">
+        <div class="xright">&#169;2005-2008 OpenWFE.org</div>
+        <div class="clear">
+          <hr/>
+        </div>
+      </div>
+
+    </div>
+
+<script type="text/javascript" src="http://www.google-analytics.com/ga.js"></script>
+<script type="text/javascript">
+var pageTracker=_gat._getTracker('UA-138748-2');
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+
+  </body>
+</html>
+

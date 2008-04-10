@@ -1,0 +1,42 @@
+h2.  OpenWFEru の入手方法
+
+gem として "download it":http://rubyforge.org/frs/?group_id=2609 からダウンロードする方法もありますが、
+
+もしあなたのシステムに <b>gem</b> がインストールされているなら :
+
+<pre>
+    gem install openwferu
+</pre>
+
+であなたのRubyのコードから使うようにできます。 
+
+#:code#ruby#
+    require "rubygems"
+    require "openwferu"
+    #...
+#:code#
+
+もし<b>最新</b>のソースが欲しいなら、まず以下のようにsvn でcheck out してください。
+
+<pre>
+   svn checkout svn://rubyforge.org/var/svn/openwferu
+</pre>
+
+で、以下を実行します。
+
+<pre>
+   rake gem
+</pre>
+
+すると最新のソースで最新の gem をビルドできます。
+
+ユニットテストを実行するには…。
+
+<pre>
+   rake qtest
+</pre>
+
+(ユニットテストに関しては "devdoc":dev0.html も参照のこと)
+
+
+さらなる情報は "README.txt":http://rubyforge.org/viewvc/trunk/openwfe-ruby/README.txt?revision=213&root=openwferu にあります。

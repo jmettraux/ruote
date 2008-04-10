@@ -1,0 +1,291 @@
+h2. the OpenWFEru scheduler
+
+<b>update</b> : The scheduler has moved. It has become the "rufus-scheduler":http://rufus.rubyforge.org/rufus-scheduler gem.
+
+You can install it with :
+
+<pre>
+    sudo gem install rufus-scheduler
+</pre>
+
+Backward compatibility has been preserved. This is still ok :
+
+#:code#ruby#
+    require 'rubygems'
+    require 'openwfe/util/scheduler'
+
+    scheduler = OpenWFE::Scheduler.new
+    scheduler.start
+
+    # ...
+#:code#
+
+Though the new gem will simply require :
+
+#:code#ruby#
+    require 'rubygems'
+    require 'rufus/scheduler'
+
+    scheduler = Rufus::Scheduler.new
+    scheduler.start
+
+    # ...
+#:code#
+
+This 'move' is part of a move of some of the OpenWFEru subprojects from OpenWFEru to "Rufus":http://rufus.rubyforge.org
+
+<hr>
+
+OpenWFEru being a workflow / business process engine needs a scheduler for tasks to execute later (_at_) and tasks to execute repetitively (_cron_).
+
+This scheduler isn't OpenWFE focused so this page details how to use it outside of the OpenWFEru context.
+
+Like the rest of OpenWFEru, it's licensed under the "BSD":license.html license.
+
+The OpenWFEru scheduler was presented in Ilya Grigorik's blog post about "Scheduling tasks in Ruby / Rails":http://www.igvita.com/blog/2007/03/29/scheduling-tasks-in-ruby-rails/.
+
+
+h3. independent (own gem)
+
+You don't need the full OpenWFEru suite to use the scheduler. Only those 2 files are required :
+
+<pre>
+
+    lib/openwfe/util/otime.rb
+    lib/openwfe/util/scheduler.rb
+
+</pre>
+
+They are all located in the "util":http://rubyforge.org/viewvc/trunk/openwfe-ruby/lib/openwfe/util/?root=openwferu subdir of OpenWFEru.
+
+The "openwferu-scheduler" is available in its *own gem*, just do
+
+<pre>
+    [sudo] gem install openwferu-scheduler
+</pre>
+
+to get it. You can then use it straightaway like in
+
+#:code#ruby#
+
+    require 'rubygems'
+    require 'openwfe/util/scheduler'
+
+    include OpenWFE
+
+    scheduler = Scheduler.new
+    scheduler.start
+
+    scheduler.schedule_in("1h12m") do
+        puts "...taking out the garbage (as requested one hour and twelve minutes ago)"
+    end
+
+    # ...
+#:code#
+
+
+h3. rdoc
+
+The "rdocumentation":http://openwferu.rubyforge.org/rdoc/classes/OpenWFE/Scheduler.html for the scheduler. It is the most up to date source of information about the scheduler.
+
+
+h3. "at" jobs
+
+"at" jobs are jobs to be executed in the future once (and only once). They are registered via the schedule_in() and the schedule_at() methods of the Scheduler.
+
+The basic idea is :
+
+#:code#ruby#
+    scheduler.schedule_in("1h12m") do
+        puts "one hour and twelve minutes later..."
+    end
+
+    scheduler.schedule_at("Fri Jul 20 09:07:02 +0900 2007") do
+        puts "on this beautiful July day..."
+    end
+
+
+    require 'time'
+        #
+        # so that the Time class now features the parse() methods
+
+    scheduler.schedule_at Time.parse('18 July 2007 14:09:00') do
+        puts "yet another beautiful July day in the current time zone..."
+    end
+#:code#
+
+Note that jobs meant to be scheduled at past dates will be triggered immediately but not scheduled. There is a :discard_past parameter to prevent the immediate triggering.
+
+#:code#ruby#
+    jobid = scheduler.schedule_at yesterday do
+        puts "yesterday or today ?"
+    end
+        #
+        # the message will be displayed immediately. 'jobid' will yield nil.
+
+    jobid = scheduler.schedule_at(yesterday, :discard_past => true) do
+        puts "yesterday or today ?"
+    end
+        #
+        # the message will not be displayed. 'jobid' will yield nil.
+#:code#
+
+An "example":/examples/scheduler_usage.rb of "at" jobs (mostly schedule_in()).
+
+
+h3. "cron" jobs
+
+Cron jobs have been around since as long as unixes have. The cron aspect of our ruby scheduler follows thus the "established practice":http://en.wikipedia.org/wiki/Cron
+
+#:code#ruby#
+    scheduler.schedule("1-60/3 * * * mon-fri") do
+        puts "...popping up every 3 minutes on weekdays..."
+    end
+#:code#
+
+A "small example":/examples/scheduler_cron_usage.rb
+
+You can type "man 5 crontab" on your favourite unix box or look "there":http://www.google.com/search?q=man%205%20crontab to learn more about the cron format.
+
+Since OpenWFEru 0.9.16, cron jobs can be specified at the second level.
+
+#:code#ruby#
+    scheduler.schedule("7 1-60/3 * * * *") do
+        puts "...popping up every 3 minutes, at the seventh second ..."
+    end
+#:code#
+
+The first column is dedicated to seconds and optional, it behaves like the other columns, accepting a single value, or list or ranges of values.
+
+#:code#ruby#
+    scheduler.schedule("7,27 * * * * *") do
+        puts "...popping up at the seventh and the twenty-seventh seconds..."
+    end
+#:code#
+
+
+h3. "every" jobs
+
+For something more relaxed than cron :
+
+#:code#ruby#
+    scheduler.schedule_every("12m45s") do
+        puts "...popping up every 12 minutes and 45 seconds..."
+    end
+#:code#
+
+Since OpenWFEru 0.9.17, 'every' jobs can reschedule/unschedule themselves.
+
+Two examples in an "internet electronic mail" context :
+
+#:code#ruby#
+    schedule.schedule_every "5h" do |job_id, at, params|
+    
+        mails = $inbox.fetch_mails
+        mails.each { |m| $inbox.mark_as_spam(m) if is_spam(m) }
+    
+        params[:every] = if mails.size > 100
+            "1h" # lots of spam, check every hour
+        else
+            "5h" # normal schedule, every 5 hours
+        end
+    end
+#:code#
+
+#:code#ruby#
+    schedule.schedule_every "10s" do |job_id, at, params|
+        #
+        # polls every 10 seconds until a mail arrives
+    
+        $mail = $inbox.fetch_last_mail
+    
+        params[:dont_reschedule] = true if $mail
+    end
+#:code#
+
+
+h3. unscheduling jobs
+
+The scheduling methods each return a job identifier that can be used to unschedule the jobs :
+
+#:code#ruby#
+    job_id = scheduler.schedule_every("12m45s") do
+        puts "...popping up every 12 minutes and 45 seconds..."
+    end
+
+    # a bit later...
+
+    scheduler.unschedule(job_id)
+#:code#
+
+
+h3. stopping the scheduler
+
+To stop the scheduler :
+
+#:code#ruby#
+    scheduler.stop
+#:code#
+
+
+h3. scheduler precision
+
+By default, the scheduler checks for jobs to trigger 4 times per second. This is configurable at instantiation.
+    
+#:code#ruby#
+    scheduler = OpenWFE::Scheduler.new(:scheduler_precision => 0.500)
+    scheduler.start
+        #
+        # instatiates a scheduler that checks its jobs twice per second
+        # (the default is 4 times per second (0.250))
+
+    puts "scheduler precision is #{scheduler.precision}"
+#:code#
+
+
+h3. <a name="tags"></a>tagging jobs
+
+Since OpenWFEru 0.9.16, it's possible to tag jobs at schedule time.
+
+#:code#ruby#
+    scheduler.schedule_in "2h", :tags => "backup" do
+        init_backup_sequence()
+    end
+    scheduler.schedule "0 24 * * *", :tags => [ "old_day", "backup" ] do
+        init_backup_sequence()
+    end
+
+    scheduler.schedule "0 09 * * *", :tags => "new_day" do
+        unlock_building_doors()
+    end
+
+    # fetching the jobs with the backup tag
+
+    backup_jobs = scheduler.find_jobs('backup')
+
+    # and cancelling them ...
+
+    backup_jobs.each { |j| scheduler.unschedule(j.job_id) }
+#:code#
+
+
+h3. questions ?
+
+If you have questions, feel free to ask them on OpenWFEru's "users mailing list":http://groups.google.com/group/openwferu-users.
+
+
+h3. scheduler and persistence
+
+In the context of OpenWFEru, the persistence responsibility is assumed by the engine, not the scheduler.
+
+
+h3. (uninstalling openwferu-scheduler)
+
+if you don't need it :
+
+<pre>
+    $ sudo gem uninstall openwferu-scheduler
+</pre>
+
+_(to be continued)_
+

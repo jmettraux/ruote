@@ -1,0 +1,25 @@
+
+[x] $ rake qtest && rake ptest && rake ctest && rake ltest (twice each)
+[x] $ vi RELEASE.txt
+
+[x] make sure version is at 0.9.17
+[x] $ svn ci openwfe-ruby
+[x] $ svn ci densha
+[x] $ svn cp svn+ssh://jmettraux@rubyforge.org/var/svn/openwferu/trunk svn+ssh://jmettraux@rubyforge.org/var/svn/openwferu/tags/release-0.9.17
+
+[x] $ rake clean
+[x] $ rake
+[x] upload gem
+[x] upload extras gem
+[x] upload source
+
+[x] upload densha
+
+[ ] $ rake upload_website
+
+[x] announce on RubyForge.org
+[x] announce on Freshmeat.net
+[x] announce on http://raa.ruby-lang.org/index.html
+[ ] announce on blog
+[ ] announce on ml (with link to blog)
+

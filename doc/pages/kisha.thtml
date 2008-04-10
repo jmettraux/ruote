@@ -1,0 +1,46 @@
+h2. RESTful workflow engine
+
+(or rather RESTful Rails envelope to OpenWFEru)
+
+
+h3. getting it (zip release)
+
+There is a binary release at "openwferu-kisha-0.9.17.1384.zip":http://rubyforge.org/frs/download.php/29498/openwferu-kisha-0.9.17.1384.zip
+
+
+h3. getting it (fresh from the svn)
+
+Run the following from your command line :
+
+<pre>
+    svn checkout http://openwferu.rubyforge.org/svn/trunk/kisha
+    cd kisha
+    rake rails:freeze:edge TAG=rel_2-0-2
+    cd vendor
+    svn checkout http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/lib/openwfe
+</pre>
+
+
+h3. setting up the db (MySQL)
+
+Don't forget to create a 'kisha_development' database :
+
+<pre>
+    cd kisha
+    mysql -u root -p -e "create database kisha_development CHARACTER SET utf8 COLLATE utf8_general_ci;"
+    rake db:migrate
+</pre>
+
+(if you wish to set up another database, Kisha is just a plain "Rails":http://rubyonrails.org application, follow the Rails guidelines).
+
+h3. running it
+
+Start Rails with :
+
+<pre>
+    cd kisha
+    ruby script/server
+</pre>
+
+head to "http://localhost:3000/processes":http://localhost:3000 to play with it.
+

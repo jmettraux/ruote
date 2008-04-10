@@ -1,0 +1,144 @@
+h2. business process journaling
+
+<i>(Starting with OpenWFEru 0.9.12, journaling might be overkill, as 0.9.12 features extends "process administration":padmin.html facilities)</i>
+
+Journaling is a technique for keeping track of all the events composing a business process, to be able to play it again, entirely or until a certain point.
+
+This technique (service) is mainly useful in "Time Machine" cases : restoring a process instance at a given point of its execution.
+
+Journaling has a certain performance cost.
+
+
+h3. <a name="activating"></a>activating journaling
+
+#:code#ruby#
+    engine.init_service("journal", Journal)
+#:code#
+
+Journals will be placed in the directory <tt>work/journal/</tt> by default.
+
+Once a process terminates, its journal will be deleted.
+
+Journals are sequence of YAML serialized events, it's quite human readable, but it's no J.K. Rowling.
+
+
+h3. keeping all the journals
+
+By default, the journaling implementation that ships with OpenWFEru discards the journals of business processes that terminated.
+
+You can tell the engine to keep the old journal with that directive :
+
+#:code#ruby#
+    engine.application_context[:keep_journals] = true
+#:code#
+
+Terminated journals will be placed in the directory <tt>work/journal/done/</tt> by default.
+
+(suggestion : cron job for compressing old terminated journals)
+
+
+h3. browsing journals
+
+A journal will look like :
+
+<pre>
+
+--- 
+- :update
+- 2007-03-26 17:40:16.054666 +09:00
+- &id001 !ruby/OpenWFE::FlowExpressionId 
+  s: (fei 0.9.8 engine/engine field:__definition Test 0 20070326-gobadayopa environment 0)
+- !ruby/object:OpenWFE::Environment 
+  apply_time: 
+  attributes: 
+  environment_id: 
+  fei: *id001
+  parent_id: 
+  variables: {}
+
+--- 
+- :update
+- 2007-03-26 17:40:16.057057 +09:00
+- &id001 !ruby/OpenWFE::FlowExpressionId 
+  s: (fei 0.9.8 engine/engine field:__definition Test 0 20070326-gobadayopa environment 0)
+- !ruby/object:OpenWFE::Environment 
+  apply_time: 
+  attributes: 
+  environment_id: 
+  fei: *id001
+  parent_id: 
+  variables: {}
+
+--- 
+- :reply
+- 2007-03-26 17:40:16.058434 +09:00
+- &id001 !ruby/OpenWFE::FlowExpressionId 
+  s: (fei 0.9.8 engine/engine field:__definition Test 0 20070326-gobadayopa participant 0.0.0)
+- !ruby/object:OpenWFE::InFlowWorkItem 
+  attributes: 
+    ___map_type: smap
+    __result__: |
+      alpha
+
+  flow_expression_id: *id001
+  last_modified: 
+  participant_name: alpha
+
+</pre>
+
+It's quite boring and hard to digest.
+
+There is a tool for easier browsing of journals (and determining at which point to 'replay' a journal).
+
+
+h3. replaying journals
+
+__( section under construction )__
+
+
+h3. <a name="at_error"></a>replaying after errors
+
+(since OpenWFEru 0.9.12, this usage of the journal feature might become *obsolete*, see "process administration":padmin.html)
+
+(initially documented in this "replay_at_last_error":http://jmettraux.wordpress.com/2007/06/04/replay_at_last_error/ blog post)
+
+Replaying journals might be a bit tough, there is a simpler alternative that fit the 80% of the failure cases : a simple error blocks a process. After a bit of fixing, the process could be restarted.
+
+In order to replay after errors, the journaling service has to be present in the engine (see "activating journaling":#activating)
+
+The 'restart' process goes like :
+
+# spot the error / identify stuck process
+** in the engine log
+** in the journal
+# fix the error at its root
+# restart the process
+
+
+&nbsp;
+h4. spotting the error
+
+By default, the engine logs its activity in a file named 'logs/openwferu.log', any error for a process instance should appear there, with a full stacktrace.
+
+Alternatively, if you know the workflow instance id of the process that went wrong, you can directly look at its journal under work/journal/, the exception is there as well.
+
+
+&nbsp;
+h4. fix the error at its root
+
+You should carefully read the exception, I repeat, you should carefully read the exception (before posting/pasting on any mailing list), especially in the open source world, exception usually have a simple and obvious message, but you have to read it.
+
+Take then the necessary steps for fixing the error. In the blog post, the error is triggered by a missing participant, the fix is simply to add (register) the participant.
+
+
+&nbsp;
+h4. restart the process
+
+By now, you should know the workflow instance id of your stuck process, it's something that goes like "20070604-hahosakedo" or "20080529-habashikade" (if you didn't replace the workflow instance id generator of OpenWFEru)
+
+#:code#ruby#
+engine.get_journal.replay_at_last_error("20080529-habashikade")
+#:code#
+
+Done, your process instance got restarted (until the next error maybe).
+

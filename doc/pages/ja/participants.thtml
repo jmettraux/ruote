@@ -1,0 +1,295 @@
+h2. OpenWFEru の participant
+
+通常、プロセス定義は participant でできたworkitemの軌道を作ります。
+
+#:code#xml#
+    <process-definition name="def0" revision="0.1">
+        <sequence>
+            <participant ref="accounting" />
+                <!-- send invoice -->
+            <participant ref="logistics" />
+                <!-- deliver items -->
+        </sequence>
+    </process-definition>
+#:code#
+
+ご覧の通り、participant は 'participant' expression を起動します。こうも書けます。
+
+#:code#xml#
+    <process-definition name="def0" revision="0.1">
+        <sequence>
+            <accounting />
+            <logistics />
+        </sequence>
+    </process-definition>
+#:code#
+
+あなたの participant 名が XML と混合しないようにしてください。
+
+OpenWFEru では、Ruby の Class を使ってプロセス定義することもできます。
+
+#:code#ruby#
+    class MyProcessDefinition < OpenWFE::ProcessDefinition
+        def make
+            process_definition :name => "def0", :revision => "0.2" do
+                sequence do
+                    accounting
+                    logistics
+                    #
+                    # sometimes you'll prefer the more explicit :
+                    #
+                    # participant :ref => "accounting"
+                    # participant :ref => "logistics"
+                end
+            end
+        end
+#:code#
+
+participant はエンジンではこのように登録されます。
+
+#:code#ruby#
+    require 'openwfe/engine/engine'
+    require 'openwfe/worklist/storeparticipants'
+
+    (...)
+
+    engine = Engine.new
+
+    hpAlice = HashParticipant.new
+    hpBob = HashParticipant.new
+
+    engine.register_participant(:alice, hpAlice)
+    engine.register_participant(:bob, hpBob)
+
+    (...)
+#:code#
+
+
+OpenWFEru リリース時の participant 実装は以下のとおりです。
+
+* <a href="#AtomParticipant">AtomParticipant</a>  - workitem を  Atom feed で出力します。
+* <a href="#BlockParticipant">BlockParticipant</a>  - ビジネスプロセス の participant としての単純な Ruby block 
+* <a href="#CsvParticipant">CsvParticipant</a>  - デシジョンテーブル participant
+* <a href="#EmailNotificationParticipant">EmailNotificationParticipant</a>  - participant を通過した各 workitem に関してのメール[notification] 送信 
+* <a href="#FileParticipant">FileParticipant</a>  - workitems のファイルへのダンプ出力
+* <a href="#HashParticipant">HashParticipant</a>  - インメモリー・ハッシュへの workitem の格納
+* <a href="#NoOperationParticipant">NoOperationParticipant</a>  - エンジンへの直接返答(オペレーションなし)
+* <a href="#NullParticipant">NullParticipant</a>  -  /dev/null に似たこの participant は単に workitem を受け取って破棄、エンジンにも返答しません。
+* <a href="#SoapParticipant">SoapParticipant</a>  - プロセスインスタンスから webservices を invoke
+* <a href="#SocketParticipant">SocketParticipant</a>  - workitem を TCP ソケットとディスパッチ
+* <a href="#SqsParticipant">SqsParticipant</a>  - worktiem を "Amazon SQS":http://aws.amazon.com とディスパッチ
+* <a href="#YamlParticipant">YamlParticipant</a>  - workitems を 永続的 worklist に格納
+
+詳細 :
+
+
+h3. <a name="AtomParticipant"></a>AtomParticipant
+
+ AtomParticipant に到達した workitem それぞれが、participant が保持するatom feed のエントリを生成します。
+
+さらにこのコンセプトのいいところは、 atom ・ rss のフィードからの情報を取得したり待機する participant も含まれているところです。
+
+この初期値の atom の実装は人間・コンピュータ両方にとってとてもエレガントな worklist となっています。
+
+"rdoc":rdoc/classes/OpenWFE/AtomParticipant.html
+
+この participant は OpenWFEru の"examples/":/examples/ フォルダにあるサンプルの中の "最初の例":/examples/quotereporter.rb で使われています。
+
+
+h3. <a name="BlockParticipant"></a>BlockParticipant
+
+この participant  はRubyっぽいですね。
+
+このアイデアはRubyの block をparticipant  としてワークフローに直接マッピングすることです。
+
+#:code#ruby#
+    engine.register_participant(:vat) do |workitem|
+        price = Integer(workitem.price)
+        price = price + price * $vat
+        workitem.net_price = price
+    end
+#:code#
+
+エンジンへの返答は明白で、Block 中の状態ではありません。
+
+この participant は OpenWFEru の"examples/":/examples/ フォルダにあるサンプルの中の "最初の例":/examples/quotereporter.rb で使われています。この例では、単に入ってきた workitem のダンプを標準出力に表示します。
+
+引数のないblock・ workitem を引数にする block 、flow expression と workitem を引数にする block  を participant に渡すようにもできます。
+
+OpenWFEru 0.9.8 からは、 block の最後の値(その戻り値) が 通過する workitemの '__result__' フィールドに設定するようになりました。注意! : ここにシリアライズできない値(複雑なオブジェクトへのリファレンスとかそういうもの)をセットしないでください。
+
+#:code#ruby#
+    engine.register_participant(:my_participant) do |flow_expression, workitem|
+        workitem.attributes["parent"] = flow_expression.parent_id.to_s
+            #
+            # just storing the parent expression of the participant expression
+            # that sent the workitem, as a string in the workitem
+            #
+            # you could do more complicated and dangerous things with
+            # handle on the flow expression (but that's an advanced topic)
+    end
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/BlockParticipant.html
+
+
+h3. <a name="CsvParticipant"></a>CsvParticipant
+
+Java OpenWFE では CsvParticipants は "デシジョンテーブル" または "decision participant" と呼ばれています。
+
+これが decision participant に隠れた"CSV tables":http://jmettraux.wordpress.com/2007/02/11/ruby-decision-tables/に関する blog のエントリです。
+
+"rdoc":rdoc/classes/OpenWFE/CsvParticipant.html
+
+"rdoc":rdoc/classes/OpenWFE/CsvTable.html (CSV table)
+
+
+h3. <a name="EmailNotificationParticipant"></a>EmailNotificationParticipant
+
+この participant は メール単位で notification を送ります。メールのテキストは workitem 本体にあるデータをテンプレートとして生成されます。
+
+"rdoc":rdoc/classes/OpenWFE/EmailNotificationParticipant.html
+
+
+h3. <a name="FileParticipant"></a>FileParticipant
+
+この participant  は workitem をファイルにダンプ出力します。デフォルトでは workitem を YAML 文字列で出力しますが、encode_workitem() メソッドをオーバーライドさせることもできます。
+
+#:code#ruby#
+    require 'openwfe/participants/participants'
+
+    engine.register_participant("Fedor", OpenWFE::FileParticipant)
+#:code#
+
+この例では、 'Fedor' participant の workitems は /work/out/ ディレクトリにディスパッチ(ダンプ出力) されます。
+
+"rdoc":rdoc/classes/OpenWFE/FileParticipant.html
+
+FileParticipant には相棒がいます。 "FileListener":rdoc/classes/OpenWFE/FileListener.html です。これは入ってくる 'file' workitems の ディレクトリを監視します。
+
+
+h3. <a name="HashParticipant"></a>HashParticipant
+
+OpenWFEja では worklist コンポーネント機能があります。OpenWFEru (0.9.3) ではまだですが、この 'HashParticipant' は worklist への最初のステップになります。
+
+その扱いを待つ workitem の格納のためのハッシュとparticipant を直接マッピングします。
+
+この participant は OpenWFEru の"examples/":/examples/ フォルダにあるサンプルの中の "最初の例":/examples/quotereporter.rb で使われています。
+
+"rdoc":rdoc/classes/OpenWFE/HashParticipant.html
+
+しかし、 HashParticipant を実装したモジュールの一つ "StoreParticipantMixin":rdoc/classes/OpenWFE/StoreParticipantMixin.html を見たほうがいいかもしれません。
+
+
+h3. <a name="NoOperationParticipant"></a>NoOperationParticipant
+
+エンジンに直接返答し、 workitem (オペレーションなし) には触りません。.
+
+"rdoc":rdoc/classes/OpenWFE/NoOperationParticipant.html
+
+
+h3. <a name="NullParticipant"></a>NullParticipant
+
+workitem を廃棄し(オペレーションなし)、エンジンには返答しません。いわばBPM における /dev/null のようなものですね。
+
+"rdoc":rdoc/classes/OpenWFE/NullParticipant.html
+
+
+h3. <a name="SoapParticipant"></a>SoapParticipant
+
+participant 内でのwebサービスの call のwrapperです。workitem にある '__result__' フィールドに call の結果が設定されます。
+
+これは最低限の実装ですが、これは Ruby で書かれているので拡張性はばっちりです。
+
+"rdoc":rdoc/classes/OpenWFE/SoapParticipant.html
+
+この participant は OpenWFEru の"examples/":/examples/ フォルダにあるサンプルの中の "最初の例":/examples/quotereporter.rb で使われています。
+
+
+h3. <a name="SocketParticipant"></a>SocketParticipant
+
+本当に素直な participant です。TCP コネクション経由で workitem をダンプ出力します。
+
+#:code#ruby#
+    require 'openwfe/participants/socketparticipants'
+
+    sp = OpenWFE::SocketParticipant.new("localhost", 7007)
+
+    engine.register_participant(:stuart, sp)
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/SocketParticipant.html
+
+拡張 : "XmlSocketParticipant":rdoc/classes/OpenWFE/SocketParticipant.html はエンコードされた workitem を XML として (OpenWFEja が理解できるように) ディスパッチします。
+
+もちろん、"SocketListener":rdoc/classes/OpenWFE/SocketListener.html もあります。
+
+
+h3. <a name="SqsParticipant"></a>SqsParticipant
+
+SQS は Amazon の web サービスです。'Amazon Simple Queue Service (Amazon SQS) は信頼性・スケーラビリティに優れたコンピュータ間を行き来するメッセージを格納するキューをホスティングします。詳しくは "http://aws.amazon.com":http://aws.amazon.com を。
+
+SqsParticipant は 他アプリケーションで読めるSQS キューに workitem を預けます。
+
+#:code#ruby#
+    require 'openwfe/participants/sqsparticipants'
+
+    engine.register_participant(:queue, OpenWFE::SqsParticipant.new("workqueue0"))
+#:code#
+
+デフォルトでは、この participant はキューに置かれる前に、そのハッシュのバージョンでYAML でダンプ出力し、Base64でエンコードされます。encode_workitem() に オーバーライドするだけで簡単に変更できます。例えば…。 :
+
+#:code#ruby#
+    require 'openwfe/participants/sqsparticipants'
+
+    sp = OpenWFE::SqsParticipant.new("workqueue0")
+    class << sp
+        #
+        # instead of extending SqsParticipant, we simply modify the 
+        # method implementation just for that sp instance
+        #
+        def encode_workitem (wi)
+            msg = ""
+            msg << wi.fei.to_s
+            msg << "\n"
+            msg << wi.attributes["task_description"]
+            msg << "\n"
+            msg
+        end
+    end
+
+    engine.register_participant(:queue, OpenWFE::SqsParticipant.new("workqueue0"))
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/SqsParticipant.html
+
+SqsParticipant  には相棒がいます。:  "SqsListener":rdoc/classes/OpenWFE/SqsListener.html です。
+
+#:code#ruby#
+    require 'openwfe/listeners/sqslisteners'
+
+    engine.add_workitem_listener(
+        OpenWFE::SqsListener.new(:wiqueue3, engine.application_context),
+        "2m15s")
+            #
+            # will poll our SQS queue named "wiqueue3" for workitems
+            # every 2 minutes and 15 seconds
+#:code#
+
+listener は InFlowWorkItems に元々のプロセスインスタンスに戻って再開させるのを許可します。 (許されれば)それはまた LaunchItem を受け取り、そこにある情報によって新しいプロセスインスタンスを立ち上げます。
+
+SqsListener はデフォルトでは workitems (InFlowWorkItem ・ LaunchItem インスタンス) がハッシュでエンコードされていることを予想して、 YAML でダンプ出力し、Base64 (SqsParticipant がやるように) でエンコードされます。
+
+
+h3. <a name="YamlParticipant"></a>YamlParticipant
+
+この participant は HashParticipant の拡張で、YAML ファイル persistence の最上位に位置します。
+
+デフォルトでは、 workitems は "./work/participants/name_of_the_participant/" に格納されます。
+
+この participant  は サンプルコード "ManoTracker":/examples/mano_tracker.rb で使われています。
+
+"rdoc":rdoc/classes/OpenWFE/YamlParticipant.html
+
+HashParticipant と同様、 it's interesting to browse the rdoc of the この participant が実装されているモジュール "StoreParticipantMixin":rdoc/classes/OpenWFE/StoreParticipantMixin.html のrdocを見ると面白いですよ。
+

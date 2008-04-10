@@ -1,0 +1,32 @@
+h2. OpenWFEru
+
+OpenWFEru は オープンソースの Ruby ワークフロー/BPM エンジンです。
+
+現在のバージョンは "0.9.15":http://rubyforge.org/frs/?group_id=2609 です。
+
+OpenWFEru は デベロッパーの間では Rufus と呼ばれていました。オリジナルの Java OpenWFE も随時開発を続けています。
+
+まずは、こちらの "ワークフロー":http://en.wikipedia.org/wiki/Workflow ・ "bpm":http://en.wikipedia.org/wiki/Business_Process_Management を見てください。ビジネスプロセス定義やそのインスタンスをソフトウェアに組み込むのではなく、より身近に持たせたいというのがこのアイデアです。
+
+OpenWFEru ではプロセス定義は XML (OpenWFE プロセス定義言語を使って) または "Ruby クラス":http://jmettraux.wordpress.com/2007/01/14/ruby-process-definitions/ で定義できます。
+
+h2. まず把握するためには…。
+
+"クイックスタート":quickstart.html.
+
+OpenWFEru ・OpenWFE は "tech blog":http://jmettraux.openwfe.org でフォローしています。常に更新しています。
+
+h2. 入手するには…。
+
+"こちら":/download.html で gem を入手するか、最新ソースを svn で check out できます。
+
+h2. 使うためには…。
+
+OpenWFEru の使い方に関する幾つかの "例":/examples/  があります。
+
+"最初の例":/examples/quotereporter.rb では quote の値を収集して atom でfeedします。
+
+"二番目の例":/examples/mano_tracker.rb デザイナー・アナリストを含んだタスクトラッカーの実装です。
+
+他のサンプルもあります。
+

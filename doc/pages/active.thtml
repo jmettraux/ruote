@@ -1,0 +1,203 @@
+h2. ActiveRecord enabled OpenWFEru items
+
+"ActiveRecord":http://ar.rubyonrails.org/ is the excellent ORM mapping framework within "RubyOnRails":http://rubyonrails.org.
+
+Since OpenWFEru 0.9.16, thanks to Tomaso Tosolini, there is an ActiveRecord based persistence for the engine itself.
+
+The code relying on ActiveRecord in OpenWFEru is located in the "openwferu-extras" gem, which you can install via
+
+<pre>
+    $ sudo gem install openwferu-extras
+</pre>
+
+&nbsp;
+
+There are two persistence aspects to OpenWFEru : the engine (the running process instances) and the worklist (storing workitems for consumption by external applications / users).
+
+Usually persistence of the process instances (engine persistence) is not required because only the engine messes with the data and for that, the classical file based persistence is sufficient. But some admins may prefer having everything in a database.
+
+&nbsp;
+
+* <a href="#engine">DbPersistedEngine</a> - persistence of the process instances themselves via ActiveRecord
+* <a href="#participant">ActiveParticipant</a> - a participant implementation that stores its workitems via ActiveRecord
+
+&nbsp;
+
+<hr>
+
+h3. <a name="engine"></a>DbPersistedEngine
+
+Currently, Densha, the demo Ruby on Rails (tm) application wrapping an OpenWFEru engine uses file persistence for its engine, not database persistence, but uses <a href="#participant">it</a> for its workitems.
+
+
+h4. Preparing the database
+
+#:code#ruby#
+require 'rubygems'
+gem 'activerecord'
+require 'active_record'
+require 'openwfe/extras/expool/dbexpstorage'
+require 'openwfe/extras/expool/dberrorjournal'
+
+ActiveRecord::Base.establish_connection(
+    :adapter => "mysql",
+    :database => "test")
+
+OpenWFE::Extras::ExpressionTables.up
+OpenWFE::Extras::ProcessErrorTables.up
+#:code#
+
+
+h4. Configuring the engine
+
+It's actually rather "starting the engine"
+
+#:code#ruby#
+    require 'openwfe/extras/engine/db_persisted_engine'
+
+    engine = OpenWFE::Extras::CachedDbPersistedEngine.new
+        #
+        # that's it.
+#:code#
+
+
+h3. <a name="participant"></a>ActiveParticipant
+
+The ActiveParticipant is a process participant which, upon receiving workitems, will store them in a database via ActiveRecord.
+
+
+h4. Preparing the database
+
+#:code#ruby#
+require 'rubygems'
+gem 'activerecord'
+require 'active_record'
+require 'openwfe/extras/participants/activeparticipants'
+
+ActiveRecord::Base.establish_connection(
+    :adapter => "mysql",
+    :database => "test")
+
+OpenWFE::Extras::WorkitemTables.up
+#:code#
+
+
+h4. Registering the participants
+
+#:code#ruby#
+require 'rubygems'
+gem 'activerecord'
+require 'active_record'
+require 'openwfe/engine/file_persisted_engine'
+require 'openwfe/extras/participants/activeparticipants'
+
+engine = OpenWFE::CachedFilePersistedEngine.new
+
+engine.register_participant :alpha, OpenWFE::Extras::ActiveParticipant
+    #
+    # registers the participant named "alpha" as an ActiveParticipant instance
+
+engine.register_participant "^active_.*", OpenWFE::Extras::ActiveParticipant
+    #
+    # makes sure that all the workitems for participants whose name begins
+    # with "active_" are stored via an ActiveParticipant
+#:code#
+
+
+h4. Browsing and manipulating the workitems
+
+The ActiveRecord magic comes in very hand when looking for workitems :
+
+#:code#ruby#
+    workitem = OpenWFE::Extras::Workitem.find_by_participant_name("active0")
+        #
+        # returns the first workitem for the participant named "active0"
+
+    worklist = OpenWFE::Extras::Workitem.find_all_by_participant_name("fred")
+        #
+        # returns a list of all the workitems for the participant named 'fred'
+#:code#
+
+Note that the workitems returned are instances of OpenWFE::Extras::WorkItem, not of OpenWFE::InFlowWorkItem. But it's not a big problem :
+
+#:code#ruby#
+    wi = workitem.as_owfe_workitem
+        # and
+    workitem = OpenWFE::Extras::WorkItem.from_owfe_workitem(wi)
+#:code#
+
+But it's usually not necessary to translate to OpenWFEru classic workitems, one can directly manipulate the workitems as obtained via ActiveRecord :
+
+#:code#ruby#
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name("accounting")
+
+    wi.fields << Field.new_field("toto", "a")
+    wi.fields << Field.new_field("list", [ 1, 2, "trois" ])
+
+    wi.save
+        #
+        # save for now, will play with it later
+
+    # later
+
+    wl = OpenWFE::Extras::Workitem.find_all_by_participant_name("accounting")
+
+    wi = wl[0]
+
+    raise "no workitem found for participant 'accounting'" unless wi
+
+    require 'pp'
+
+    puts "there's a workitem for customer '#{wi.field('customer').value}' :"
+    pp wi.fields_hash
+#:code#
+
+
+h4. Letting the workitem resume in the [business] process
+
+(or simply replying to the engine)
+
+If the participant is at hand, reinjecting the workitem in its business process is simply a matter of :
+
+#:code#ruby#
+    participant.reply_to_engine(workitem)
+#:code#
+
+If there is no ActiveParticipant instance at hand (maybe you browsed directly via OpenWFE::Extras::WorkItem or OpenWFE::Extras::Field) but just the engine instance, that will do :
+
+#:code#ruby#
+    engine.reply workitem
+#:code#
+
+
+h4. Searching for workitems
+
+The OpenWFE::Extras::Workitem sports a 'search' class method.
+
+#:code#ruby#
+    workitems = Workitem.search "Caldera"
+        # searches for workitems whose participant name or fields contain
+        # the string 'Caldera'
+
+    workitems = Workitem.search "Caldera", [ 'inbox', 'user-alpha' ]
+        # same search, but only workitems in the stores 'inbox' and 'user-alpha'
+        # will show up
+#:code#
+
+
+h4. ActiveParticipant and compacting workitems
+
+By default, the ActiveParticipant stores workitems in a workitems table and their attributes in a fields table.
+
+Tomaso Tosolini implemented a 'compact_workitems' feature for the ActiveParticipant. When set to 'true', the attributes are stores in the 'yattributes' column of the workitems table (no hit against the fields table).
+
+It provides an appreciated performance boost, the only issue is that the 'search' method of the Workitem activerecord enabled class cannot be used against the content of the workitems.
+
+#:code#ruby#
+    p = engine.register_participant :alpha, OpenWFE::Extras::ActiveParticipant
+    p.compact_workitems = true
+#:code#
+
+
+The discussion about this feature can be seen "here":http://groups.google.com/group/openwferu-dev/browse_thread/thread/21e7db848e47c85a
+

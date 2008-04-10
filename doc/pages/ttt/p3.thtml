@@ -1,0 +1,58 @@
+
+h2. The "Tea Testing Team" example (<%= extract_index(__FILE__) + 1 %> / <%= TITLES.size %>)
+
+<%= render_ttt_menu(__FILE__) %>
+
+<%= description(__FILE__) %>
+
+
+h3. back to the first draft
+
+<img src="../images/ttt/initial_process.png" align="right" />This is what our process looks like as a pseudo UML diagram :
+
+It's time to translate that into something the OpenWFEru workflow engine directly understands. 
+
+The first version of the process definition will be XML based :
+
+#:code#xml#
+<process-definition name="TeaTesting" revision="0.1">
+    <sequence>
+        <participant ref="Reception" />
+        <participant ref="Ted" />
+        <participant ref="Tang" />
+        <participant ref="Takeshi" />
+        <participant ref="PlanningTeam" />
+    </sequence>
+</process-definition>
+#:code#
+
+This looks very simplistic. But it carries the essence of the process as currently carried out in [our imaginary] organization.
+
+<img src="../images/ttt/conc_process.png" align="right" />Since each participant of that business process currently takes 2 days for each sample (with 5 or 6 samples in parallel), why not try to make the process more efficient by at least removing two days -&gt;
+
+Your first impulse drew you to make the 3 wisemen tests run concurrently, but the Manager decided to place Takeshi-san test last.
+
+#:code#xml#
+<process-definition name="TeaTesting" revision="0.2">
+    <sequence>
+        <participant ref="reception" />
+        <concurrence>
+            <participant ref="ted" />
+            <participant ref="tang" />
+        </concurrence>
+        <participant ref="takeshi" />
+        <participant ref="planning" />
+    </sequence>
+</process-definition>
+#:code#
+
+From 10 days down to 8 days. "We're in no hurry, at least for that one".
+
+Let's <b>save</b> that process definition in a file named "teatesting_0.2.xml":../defs/ttt/teatesting_0.2.xml
+
+We now have <b>1 process definition</b> with <b>5 participants</b>, can we run that process definition ?
+
+
+<%= render_next_page(__FILE__) %>
+<%= render_questions %>
+

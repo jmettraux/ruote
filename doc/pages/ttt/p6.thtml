@@ -1,0 +1,91 @@
+
+h2. The "Tea Testing Team" example (<%= extract_index(__FILE__) + 1 %> / <%= TITLES.size %>)
+
+<%= render_ttt_menu(__FILE__) %>
+
+<%= description(__FILE__) %>
+
+
+h3. document or program ?
+
+Until now, the business process was defined in an XML document. Maybe you'd like to switch away from XML and have less brackets. You can use the interchangeable notation in Ruby for the process definitions.
+
+The process thus becomes :
+
+#:code#ruby#
+class TeaTesting03 < OpenWFE::ProcessDefinition
+    description "TeaTestingTeam version 0.3"
+    sequence do
+        reception
+        concurrence do
+            ted
+            tang
+            sequence do
+                tim
+                tang :activity => "check Tim's work"
+            end
+        end
+        takeshi
+        _cancel_process :if => "${f:takeshi_appreciation} == bad"
+        planning
+    end
+end
+#:code#
+
+Note that the participant "tim" got integrated. We also not only got rid of the brackets but also of the "participant" keyword, simply stating sequences like :
+
+#:code#ruby#
+    sequence do
+        tim
+        tang :activity => "check Tim's work"
+    end
+#:code#
+
+very lightweight.
+
+As Mister Tang is coaching Tim, we have placed a check activity after him. More work for Mister Tang, but hopefully after a while Tim should be able to work on his own (there's that fire in the manager's eyes, he's probably thinking about finding a way to automate those tests).
+
+Feels more like a program than a document.
+
+
+h3. fill in the blanks
+
+So the first runs of the business process lead to users complaining (among other things) of having to painfully add fields to the workitems, with potential typo (in keys and in values).
+
+OpenWFEru provides the concept of "launch items":../glossary.html#launch_item, unfortunately Densha doesn't yet provide launchitem manipulation. You can resort to a trick, setting the initial values in the process definition itself.
+
+#:code#ruby#
+class TeaTesting03 < OpenWFE::ProcessDefinition
+
+    description "TeaTestingTeam version 0.3"
+
+    set_fields :value => {
+        "scout" => "",
+        "country" => "",
+        "type" => "",
+        "sample_id" => ""
+    }
+
+    sequence do
+        reception
+        concurrence do
+            ted
+            tang
+            sequence do
+                tim
+                tang :activity => "check Tim's work"
+            end
+        end
+        takeshi
+        _cancel_process :if => "${f:takeshi_appreciation} == bad"
+        planning
+    end
+end
+#:code#
+
+
+(to be continued)
+
+<%= render_next_page(__FILE__) %>
+<%= render_questions %>
+

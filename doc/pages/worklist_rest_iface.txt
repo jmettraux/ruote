@@ -1,0 +1,690 @@
+WorkList WorkSession REST
+=========================
+
+
+$Id$
+
+
+This document details the REST interface to OpenWFE worklist implementation.
+
+The java methods come from burningbox.org.openwfe.worklist.WorkSession except for the two first methods which are used for session set up. The session id then given is used throughout all other methods in order to let the server distinguish between different sessions.
+
+GET methods are usually queries. POST methods are used to upload a workitem (maybe later, POST methods will appear to upload other complex pieces of information).
+
+
+--------------------------------------------------------------------------------
+
+Common error replies
+--------------------
+
+| HTTP 404 No store named 'storeName'
+
+| HTTP 404 No such session
+
+| HTTP 403 Forbidden (Access violation)
+
+| HTTP 500 Internal Server Error
+| Content-type: text/plain
+| 
+| stack trace ...
+
+
+--------------------------------------------------------------------------------
+
+
+startWorkSession
+----------------
+
+This method is used by the client when it wants to start working with the worklist. The http basic authentication is used...
+
+
+** request :
+
+| GET /worklist HTTP/1.x
+| Authorization: basic asdfzt23hklf
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <session id="1234" />
+
+
+** error replies :
+
+| HTTP 401 Triggering basic authentication
+| WWW-Authenticate: basic realm=worklist
+
+
+--------------------------------------------------------------------------------
+
+
+endWorkSession
+--------------
+
+Will reply 'bye' even if the specified session doesn't exist.
+
+
+** request :
+
+| GET /worklist?session=1234&action=endWorkSession HTTP/1.x
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <bye/>
+
+
+--------------------------------------------------------------------------------
+
+
+getStoreNames
+-------------
+
+Lists the name of the stores available in the worklist.
+
+
+** java method :
+
+java.util.List getStoreNames ()
+
+
+** request :
+
+| GET /worklist?session=1234&action=getStoreNames HTTP/1.x
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <stores>
+|     <store name="default" workitem-count="5" permissions="rwd" />
+|     <store name="other" workitem-count="0" permissions="rw" />
+| </stores>
+
+
+** error replies :
+
+
+--------------------------------------------------------------------------------
+
+
+getHeaders
+----------
+
+Retrieves just the workitem headers. When limit is set to -1, all the headers are fetched.
+
+Headers are returned with the youngest first. Younger headers have bigger lastModified values.
+
+
+** java method :
+
+java.util.List getHeaders (String storeName, int limit);
+
+
+** request :
+
+| GET /worklist/storename?session=1234&action=getHeaders&limit=30 HTTP/1.x
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <headers>
+|   <header
+|     last-modified="1234"
+|     locked="false"
+|   >
+|     <flow-expression-id
+|       engine-id="main"
+|       workflow-definition-name="orders"
+|       workflow-definition-revision="1.0"
+|       workflow-instance-id="1233"
+|       expression-name="participant"
+|       expression-id="7"
+|     />
+|     <attributes>
+|       <smap>
+|         <entry>
+|           <key>
+|             <string>__wfi_id__</string>
+|           </key>
+|           <value>
+|             <string>abc1234</string>
+|           </value>
+|         </entry>
+|         <entry>
+|           <key>
+|             <string>__dispatch_time__</string>
+|           </key>
+|           <value>
+|             <long>1234</long>
+|           </value>
+|         </entry>
+|       </smap>
+|     </attributes>
+|   </header>
+| </headers>
+
+
+** error replies :
+
+
+--------------------------------------------------------------------------------
+
+
+findFlowInstance
+----------------
+
+Retrieves the flowExpressionIds of workitems of a given workflow instance id.
+This id is the id given as return of the launch method.
+
+(a launch method will never return the workflow instance id of the subprocess
+its workflow generated...)
+
+
+** java method :
+
+java.util.List findFlowInstance (String storeName, long workflowInstanceId);
+
+
+** request :
+
+| GET /worklist/storename?session=1234&action=findflowinstance&id=1233 HTTP/1.x
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+|
+| <flow-expression-ids>
+|     <flow-expression-id
+|       engine-id="main"
+|       workflow-definition-name="orders"
+|       workflow-definition-revision="1.0"
+|       workflow-instance-id="1233"
+|       expression-name="participant"
+|       expression-id="7"
+|     />
+|     <flow-expression-id
+|       engine-id="main"
+|       workflow-definition-name="orders"
+|       workflow-definition-revision="1.0"
+|       workflow-instance-id="1233"
+|       expression-name="participant"
+|       expression-id="8"
+|     />
+| </flow-expression-ids>
+
+
+** error replies :
+
+
+--------------------------------------------------------------------------------
+
+getWorkItem
+-----------
+
+
+** java method :
+
+public InFlowWorkItem get (String storeName, WorkItemId id);
+
+
+** request :
+
+| POST /worklist/storename?session=1234&action=getWorkItem HTTP/1.0
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <flow-expression-id
+|   engine-id="main"
+|   workflow-definition-name="orders"
+|   workflow-definition-revision="1.0"
+|   workflow-instance-id="1054924212255"
+|   expression-name="participant"
+|   expression-id="1"
+| />
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <workitem 
+|   workflow-definition-url="http://localhost:7079/orders__1.0.xml" 
+|   last-modified="1054924215756" 
+|   workflow-instance-id="1054924212255" 
+|   participant-name="fred" 
+|   dispatch-time="1054924221859"
+| >
+|   <last-expression-id>
+|     <flow-expression-id 
+|       engine-id="mainEngine" 
+|       workflow-definition-name="orders" 
+|       workflow-definition-revision="1.0" 
+|       workflow-instance-id="1054924212255" 
+|       expression-name="participant" 
+|       expression-id="1" 
+|     />
+|   </last-expression-id>
+|   <attributes>
+|     <smap>
+|       <entry>
+|         <key>
+|           <string>supplier</string>
+|         </key>
+|         <value>
+|           <string>gamma company</string>
+|         </value>
+|       </entry>
+|       <entry>
+|         <key>
+|           <string>price</string>
+|         </key>
+|         <value>
+|           <double>3.35</double>
+|         </value>
+|       </entry>
+|     </smap>
+|   </attributes>
+| </workitem>
+
+
+** error replies :
+
+| HTTP 404 WorkItem not found
+
+
+--------------------------------------------------------------------------------
+
+
+getAndLockWorkItem
+------------------
+
+
+** java method :
+
+public InFlowWorkItem getAndLock (String storeName, WorkItemId id);
+
+
+** request :
+
+| POST /worklist/storename?session=1234&action=getAndLockWorkItem HTTP/1.0
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <flow-expression-id
+|   engine-id="main"
+|   workflow-definition-name="orders"
+|   workflow-definition-revision="1.0"
+|   workflow-instance-id="1233"
+|   expression-name="participant"
+|   expression-id="7"
+| />
+
+
+** reply :
+
+as for getWorkItem()
+
+
+** error replies :
+
+| HTTP 404 WorkItem not found
+
+| HTTP 403 WorkItem already locked
+
+
+--------------------------------------------------------------------------------
+
+
+releaseWorkitem
+---------------
+
+
+** java method :
+
+public void release (String storeName, InFlowWorkItem item);
+
+
+** request :
+
+| POST /worklist/storename?session=1234&action=releaseWorkitem HTTP/1.0
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <workitem 
+|   workflow-definition-url="http://localhost:7079/orders__1.0.xml" 
+|   last-modified="1054924215756" 
+|   workflow-instance-id="1054924212255" 
+|   participant-name="fred" 
+|   dispatch-time="1054924221859"
+| >
+|   <last-expression-id>
+|     <flow-expression-id 
+|       engine-id="mainEngine" 
+|       workflow-definition-name="orders" 
+|       workflow-definition-revision="1.0" 
+|       workflow-instance-id="1054924212255" 
+|       expression-name="participant" 
+|       expression-id="1" 
+|     />
+|   </last-expression-id>
+|   <attributes>
+|     <smap>
+|       <entry>
+|         <key>
+|           <string>supplier</string>
+|         </key>
+|         <value>
+|           <string>gamma company</string>
+|         </value>
+|       </entry>
+|       <entry>
+|         <key>
+|           <string>price</string>
+|         </key>
+|         <value>
+|           <double>3.50</double>
+|         </value>
+|       </entry>
+|     </smap>
+|   </attributes>
+| </workitem>
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <ok />
+
+
+** error replies :
+
+| HTTP 404 WorkItem not found
+
+| HTTP 403 WorkItem not locked
+
+
+--------------------------------------------------------------------------------
+
+
+saveWorkitem
+------------
+
+
+** java method :
+
+public void save (String storeName, InFlowWorkItem item);
+
+
+** request :
+
+| POST /worklist/storename?session=1234&action=saveWorkitem HTTP/1.0
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <workitem 
+|   workflow-definition-url="http://localhost:7079/orders__1.0.xml" 
+|   last-modified="1054924215756" 
+|   workflow-instance-id="1054924212255" 
+|   participant-name="fred" 
+|   dispatch-time="1054924221859"
+| >
+| ...
+| </workitem>
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <ok />
+
+
+** error replies :
+
+| HTTP 404 WorkItem not found
+
+| HTTP 403 No lock on WorkItem
+
+
+--------------------------------------------------------------------------------
+
+
+forwardWorkitem
+---------------
+
+
+** java method :
+
+public void forward (String storeName, InFlowWorkItem item);
+
+
+** request :
+
+| POST /worklist/storename?session=1234&action=forwardWorkitem HTTP/1.0
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <workitem 
+|   workflow-definition-url="http://localhost:7079/orders__1.0.xml" 
+|   last-modified="1054924215756" 
+|   workflow-instance-id="1054924212255" 
+|   participant-name="fred" 
+|   dispatch-time="1054924221859"
+| >
+| ...
+| </workitem>
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <ok />
+
+
+** error replies :
+
+| HTTP 404 WorkItem not found
+
+| HTTP 403 No lock on WorkItem
+
+
+--------------------------------------------------------------------------------
+
+
+listLaunchables
+---------------
+
+
+** java method :
+
+public java.util.List getLaunchables ();
+
+
+** request :
+
+| GET /worklist?session=1234&action=listLaunchables HTTP/1.x
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <launchables>
+|    <launchable engine-id="mainEngine" url="http://localhost:7079/flow__1.0.xml" />
+|    <launchable engine-id="mainEngine" url="http://localhost:7079/flow__1.1.xml" />
+|    <launchable engine-id="secondaryEngine" url="http://192.168.1.3/flow__1.2.xml" />
+| </launchables>
+
+
+--------------------------------------------------------------------------------
+
+
+launchFlow
+----------
+
+
+** java method :
+
+public void launch (String engineId, InFlowWorkItem item);
+
+
+** request :
+
+| POST /worklist?session=1234&engineid=main&action=launchflow HTTP/1.0
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <launchitem 
+|    workflow-definition-url="http://localhost:7079/orders__1.0.xml"
+| >
+|   <attributes>
+|     <smap>
+|       <entry>
+|         <key>
+|           <string>supplier</string>
+|         </key>
+|         <value>
+|           <string>world company</string>
+|         </value>
+|       </entry>
+|     </smap>
+|   <description-map />
+| </launchitem>
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <ok flow-id="123453" />
+
+The consumer-result attribute holds the workflow-instance id of the newly started flow. It's a String.
+
+
+** error replies :
+
+| HTTP 404 WorkItem not found
+
+
+--------------------------------------------------------------------------------
+
+
+delegate
+--------
+
+
+** java method :
+
+public void delegate 
+    (String storeName, InFlowWorkItem item, String targetStoreName);
+
+
+** request :
+
+| POST /worklist/storename?session=1234&action=delegate&targetstore=otherstore HTTP/1.0
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <workitem 
+|   workflow-definition-url="http://localhost:7079/orders__1.0.xml" 
+|   last-modified="1054924215756" 
+|   workflow-instance-id="1054924212255" 
+|   participant-name="fred" 
+|   dispatch-time="1054924221859"
+| >
+| ...
+| </workitem>
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <ok />
+
+
+** error replies :
+
+| HTTP 404 WorkItem not found
+
+| HTTP 404 No such store name 'otherstore'
+
+
+--------------------------------------------------------------------------------
+
+
+delegate to participant (direct delegation)
+-----------------------
+
+
+** java method :
+
+public void delegateToParticipant
+    (String storeName, InFlowWorkItem item, String participantName);
+
+
+** request :
+
+| POST /worklist/storename?session=1234&action=delegate&targetparticipant=otherparticipant HTTP/1.0
+| Content-type: text/xml
+| 
+| <?xml version="1.0" encoding="ISO-8859-1"?>
+| <workitem 
+|   workflow-definition-url="http://localhost:7079/orders__1.0.xml" 
+|   last-modified="1054924215756" 
+|   workflow-instance-id="1054924212255" 
+|   participant-name="fred" 
+|   dispatch-time="1054924221859"
+| >
+| ...
+| </workitem>
+
+
+** reply :
+
+| HTTP 200 OK
+| Content-type: text/xml
+| 
+| <ok />
+
+
+** error replies :
+
+| HTTP 404 WorkItem not found
+
+| HTTP 404 No such participant name 'otherparticipant'
+
+
+--------------------------------------------------------------------------------
+

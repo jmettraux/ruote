@@ -1,0 +1,55 @@
+h2. License
+
+<pre>
+
+Copyright (c) 2001-2006, John Mettraux, OpenWFE.org
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+. Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+. Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+. Neither the name of the "OpenWFE" nor the names of its contributors may be
+  used to endorse or promote products derived from this software without
+  specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+</pre>
+
+This is a "BSD license":http://www.opensource.org/licenses/bsd-license.php , one of the most business friendly licenses.
+  
+
+Here is an excerpt from an "article":http://www.onlamp.com/pub/a/onlamp/2004/11/18/licenses.html written by Stephen Fishman :
+
+<pre>
+   (...) the Berkeley Software Distribution (BSD) License. One of the
+   earliest nonproprietary licenses, it permits users to do virtually
+   anything they want with BSD-licensed code: they may distribute the
+   software - either for free or commercially - without providing the
+   source code; they also may modify it and distribute the changes
+   without providing the source code. Anyone can turn software
+   distributed under no-copyleft licenses into proprietary software (and
+   then relicense it for a fee) as long as they credit the developers of
+   the original open source software.
+</pre>
+
+OpenWFE is not licensed under the GPL or the LGPL. It's licensed under
+the BSD license, which is way more business-friendly than the GPL or
+the LGPL. And it's BSD licensed since the day 0.
+

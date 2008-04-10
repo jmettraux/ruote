@@ -1,0 +1,22 @@
+/*
+pre.ruby {border: 0.5px solid #333; }
+.ruby .punct     { color: #333; font-weight: bold; }
+*/
+pre.ruby { margin: 5px; padding: 7px; border: 0.1px solid #999; }
+.ruby .normal    {}
+.ruby .comment   { color: #777; background-color: #fff; font-style: italic; }
+.ruby .keyword   { color: darkblue; }
+.ruby .method    { color: #333; }
+.ruby .class     { color: #333; }
+.ruby .module    { color: #333; }
+.ruby .symbol    { color: #333; }
+.ruby .string    { color: red; }
+.ruby .char      { color: #999; }
+.ruby .ident     { color: #333; }
+.ruby .punct     { color: #333; }
+.ruby .constant  { color: blue; }
+.ruby .regex     { color: #333; }
+.ruby .number    { color: #333; }
+.ruby .attribute { color: #333; }
+.ruby .global    { color: #333; }
+.ruby .expr      { color: #333; }

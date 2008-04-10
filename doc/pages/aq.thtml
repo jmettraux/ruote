@@ -1,0 +1,67 @@
+
+h2. Asked Questions (AQ)
+
+Questions that were asked indirectly, ie via a Google search. Their authors did not ask directly on the mailing lists.
+
+(open source project rule : whatever amount of documentation you write, people will not find it. They will say 'documentation is lacking')
+
+So here are those questions :
+
+
+* <a href="#q_participants_and_database">Can OpenWFEru read participants from database ?</a>
+* <a href="#q_jruby">Does OpenWFEru run on JRuby ?</a>
+
+<hr>
+
+
+h4. <a name="q_participants_and_database"></a>Can OpenWFEru read participants from database ?
+
+Yes.
+
+"Densha":http://difference.openwfe.org:3000 does it somehow for its 'store participants', this makes for a good example :
+
+#:code#ruby#
+#
+# register a participant per workitem store
+
+class << $openwferu_engine
+
+  #
+  # Reloads the store participants as participants to the engine.
+  # Returns how many store participants were [re]registered.
+  #
+  def reload_store_participants
+
+    stores = []
+    begin
+      stores = WiStore.find(:all)
+    rescue Exception => e
+    end
+
+    stores.each do |store|
+      register_participant( 
+        store.regex, 
+        OpenWFE::Extras::ActiveStoreParticipant.new(store.name))
+    end
+
+    stores.size
+  end
+end
+#:code#
+
+(taken from "densha/config/openwferu_engine.rb":http://openwferu.rubyforge.org/svn/trunk/densha/config/openwferu_engine.rb)
+
+There are many variations on the theme "draw information from the database to list participants".
+
+
+The "users mailing list":http://groups.google.com/group/openwferu-users is open for questions.
+
+
+h4. <a name="q_jruby"></a>Does OpenWFEru run on JRuby ?
+
+Yes, thanks to the work of <a href="http://hellohellonico.wordpress.com">Nicolas Modrzyk</a>.
+
+Some IO bound listeners were not working last time we checked but they are not very important.
+
+The core of OpenWFEru works on JRuby.
+

@@ -1,0 +1,34 @@
+h2. OpenWFEru
+
+OpenWFEru is an open source Ruby workflow and BPM engine.
+
+Current version is "0.9.17":http://rubyforge.org/frs/?group_id=2609
+
+OpenWFEru is nicknamed _Rufus_ among its developers. The original Java OpenWFE is also designated as _OpenWFEja_ from time to time.
+
+It's about "workflow":http://en.wikipedia.org/wiki/Workflow and "bpm":http://en.wikipedia.org/wiki/Business_Process_Management. The idea is to have business process definitions and instances directly at hand, not embedded within the software.
+
+There is an online demo of "densha", a Ruby on Rails&trade; web application wrapping an OpenWFEru engine, at "http://difference.openwfe.org:3000":http://difference.openwfe.org:3000
+
+In OpenWFEru you can define processes in XML (using OpenWFE process definition language) or as "Ruby classes":rprocdef.html
+
+h2. Grasping it
+
+To "quickly get started":quickstart.html.
+
+OpenWFEru and OpenWFE are covered in a "tech blog":http://jmettraux.openwfe.org updated regularly.
+
+h2. Getting it
+
+You can "get":/download.html it as a gem or check out the source to build a fresh gem or use it directly.
+
+h2. Using it
+
+There are a few "examples":/examples/ on how to use OpenWFEru.
+
+The "first one":/examples/quotereporter.rb gathers quote values and update an atom feed with them.
+
+The "second example":/examples/mano_tracker.rb implements an task tracker involving designers and analysts.
+
+More examples are being written.
+

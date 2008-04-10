@@ -1,0 +1,160 @@
+h2. openwferu-sqs
+
+"openwferu-sqs" is an open source (BSD) library for accessing "Amazon SQS":http://aws.amazon.com/sqs/ via its REST API (thus messages up to 256 KB can be exchanged).
+
+OpenWFEru, as a workflow engine may be configured to "use Amazon SQS":http://jmettraux.wordpress.com/2007/03/13/openwferu-over-amazon-sqs/ as an online worklist system (queue for storing / transmitting workitems). That's the why behind this library.
+
+This web page explains how to use openwferu-sqs outside of the OpenWFEru context.
+
+h3. getting openwferu-sqs
+
+It's available in its own gem :
+
+<pre>
+$ sudo gem install openwferu-sqs
+</pre>
+
+The gem can also be downloaded "from RubyForge":http://rubyforge.org/frs/?group_id=2609.
+
+You can directly "view the source":http://viewvc.rubyforge.mmmultiworks.com/cgi/viewvc.cgi/trunk/openwfe-ruby/lib/openwfe/util/sqs.rb?root=openwferu&view=markup.
+
+
+h3. using openwferu-sqs (as a command line client)
+
+openwferu-sqs expects that your Amazon Acces Key Id and your Amazon Secret Access Key Id to be available in the environment variables $AMAZON_ACCESS_KEY_ID and $AMAZON_SECRET_ACCESS_KEY respectively.
+
+You can trigger a simple command line client via :
+
+<pre>
+$ ruby sqs.rb
+</pre>
+
+or maybe
+
+<pre>
+$ ruby path/to/your/unpacked/sqs.rb
+</pre>
+
+and it should spit
+
+<pre>
+env variables $AMAZON_ACCESS_KEY_ID and $AMAZON_SECRET_ACCESS_KEY are not set
+</pre>
+
+if you haven't set the two environment variables. Else it will output
+
+<pre>
+
+Usage: sqs.rb [options] {action} [queue_name] [message_id]
+
+   known actions are :
+
+      - 'cq'  (create_queue)
+      - 'create_queue'  (create_queue)
+      - 'delete_message'  (delete_message)
+      - 'delete_queue'  (delete_queue)
+      - 'dm'  (delete_message)
+      - 'dq'  (delete_queue)
+      - 'flush_queue'  (flush_queue)
+      - 'fq'  (flush_queue)
+      - 'get_message'  (get_message)
+      - 'gm'  (get_message)
+      - 'list_queues'  (list_queues)
+      - 'lq'  (list_queues)
+      - 'pm'  (put_message)
+      - 'puts_message'  (put_message)
+
+   options are :
+
+    -H, --host                       AWS queue host
+    -h, --help                       displays this help / usage
+    -b, --base64                     encode/decode messages with base64
+
+</pre>
+
+Such operations are then possible :
+
+<pre>
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/extras/util/sqs.rb cq totoqueue
+create_queue...
+"http://queue.amazonaws.com/A2Y5DYCG8CQLUR/totoqueue"
+
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/extras/util/sqs.rb pm totoqueue
+put_message...
+welcome to SQS via OpenWFERU
+"0R2Y01B0DTE4WW9MPX48|C9345G3K6XDQVZ7R7FH1|RFZ53J3DZ6KQ18B66T50"
+
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/extras/util/sqs.rb lq          
+list_queues...
+[#<SQS::Queue:0x6ec058
+  @host="queue.amazonaws.com",
+  @name="johntest0",
+  @path="/A225DYCG8CQLUR/johntest0",
+  @queue_service=
+   #<SQS::QueueService:0x6f093c @queue_host="queue.amazonaws.com">>,
+ #<SQS::Queue:0x6ead70
+  @host="queue.amazonaws.com",
+  @name="totoqueue",
+  @path="/A225DYCG8CQLUR/totoqueue",
+  @queue_service=
+   #<SQS::QueueService:0x6f093c @queue_host="queue.amazonaws.com">>]
+
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/extras/util/sqs.rb gm totoqueue
+get_message...
+[#<SQS::Message:0x6e670c
+  @message_body="welcome to SQS via OpenWFERU",
+  @message_id="0R2Y01B0DTEWW3SMPX48|C9445G3K2XDCVZ7R7FH1|RFZ5TJ3DZWKQ18B66T50",
+  @queue=
+   #<SQS::Queue:0x6ec4b8
+    @host="queue.amazonaws.com",
+    @name="totoqueue",
+    @path="/A225DYCG8CQLUR/totoqueue",
+    @queue_service=
+     #<SQS::QueueService:0x6f0900 @queue_host="queue.amazonaws.com">>>]
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/extras/util/sqs.rb fq totoqueue
+flush_queue...
+1
+
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/extras/util/sqs.rb dq totoqueue
+delete_queue...
+true
+</pre>
+
+
+h3. using openwferu-sqs (as a library)
+
+The "rdoc of openwferu-sqs":http://openwferu.rubyforge.org/rdoc/classes/SQS.html is available online, the method names and their parameters should make the usage obvious, but here is a short example :
+
+#:code#ruby#
+
+require 'rubygems'
+require 'openwfe/extras/util/sqs'
+
+qs = SQS::QueueService.new
+    #
+    # as for the command line client, openwferu-sqs expects the environment
+    # variables $AMAZON_ACCESS_KEY_ID and $AMAZON_SECRET_ACCESS_KEY to be set
+    # else an error will be raised
+
+qs.create_queue(:myqueue)
+
+msg_id = qs.put_message(:myqueue, "my message")
+
+msg = qs.get_message(:yamltest, msg_id)
+
+#:code#
+
+
+h3. feedback
+
+Please use the OpenWFEru "user mailing list":http://groups.google.com/group/openwferu-users and the OpenWFEru "trackers":http://rubyforge.org/tracker/?group_id=2609 for feedback on openwferu-sqs.
+
+
+h3. (uninstalling openwferu-sqs)
+
+If you don't need it :
+
+<pre>
+    $ sudo gem uninstall openwferu-sqs
+</pre>
+

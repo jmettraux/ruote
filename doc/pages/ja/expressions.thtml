@@ -1,0 +1,559 @@
+h2. OpenWFEru の expression(式表現)
+
+OpenWFEru.にある各 expression についての説明と例です。
+
+それぞれの expression について, その "rdoc" をリンクしておきますね(多くが空白かもしれませんが)。
+
+使用例はXMLと(または)Ruby のプロセス定義で示します。
+
+Ruby プロセス定義での expression 名は  '_' (アンダースコア)で始まります。これは実際のRubyのキーワードおよび項目名と区別するためです。
+
+そして、OpenWFEru で実装された "ワークフロー制御パターン":patterns.html のそれぞれを見るととても勉強になりますよ。
+
+
+h3. <a name="exp_cancel-process"></a>cancel-process(プロセスのキャンセル)
+
+アルファベット順の最初の expression がこれ…。ワークフローエンジンがこの expression に出会ったら、これが含まれているプロセスを完全にキャンセルします。
+
+#:code#xml#
+    <sequence>
+        <participant ref="before" />
+        <cancel-process />
+        <participant ref="after" />
+    </sequence>
+#:code#
+
+この例では、"after"という participant には決して到着しません。
+
+大体において、"cancel-process" は "if" expressionまたは自身の'if' attribute(属性)の結果として使われます。例えば…。
+
+#:code#ruby#
+    require 'openwfe/def'
+
+    class TestDefinition1 < OpenWFE::ProcessDefinition
+        def make
+            process_definition :name => "25_cancel", :revision => "1" do
+                sequence do
+                    participant "customer"
+                    _cancel_process :if => "${f:no_thanks} == true"
+                    concurrence do
+                        participant "accounting"
+                        participant "logistics"
+                    end
+                end
+            end
+        end
+    end
+#:code#
+
+もし、participant "customer" がフィールド "no_thanks" に "true" をセットしたら、フローは決して concurrence(条件一致時の処理) を実行しないでしょう。
+
+"rdoc":rdoc/classes/OpenWFE/CancelProcessExpression.html
+
+
+h3. <a name="exp_case"></a>case
+
+"rdoc":rdoc/classes/OpenWFE/CaseExpression.html
+
+
+h3. <a name="exp_concurrence"></a>concurrence(条件一致)
+
+プロセスフローで2つ以上の条件分岐をさせます。
+
+#:code#xml#
+    <process-definition name="exp_mydef" revision="0.1">
+        <concurrence>
+            <participant ref="alice" />
+            <participant ref="bob" />
+            <sequence>
+                <participant ref="charlie" />
+                <participant ref="doug" />
+            </sequence>
+        </concurrence>
+    </process-definition>
+#:code#
+
+OpenWFEru ならこう書くこともできます。
+
+#:code#ruby#
+    require 'openwfe/def'
+
+    class MyProcessDefinition01 < OpenWFE::ProcessDefinition
+        _concurrence do
+            _participant :ref => "alice"
+            _participant "bob"
+            _sequence do
+                charlie
+                doug
+            end
+        end
+    end
+#:code#
+
+例で注意してほしいのは、participant が表示した 'invoking'  には3つの異なる方法があることです。単独で使用する場合、participant 名はアンダースコアで始めてはいけません。
+
+
+"rdoc":rdoc/classes/OpenWFE/ConcurrenceExpression.html
+
+
+h3. <a name="exp_concurrent_iterator"></a>concurrent-iterator
+
+これは"concurrence":#exp_concurrence(条件分岐) と "iterator":#exp_iteratorの合いの子です。
+
+ iterator が子プロセスの並列コピーを発生させるのと同様、同じような属性を持ち同じような行動をすると理解してください。.
+
+"rdoc":rdoc/classes/OpenWFE/ConcurrentIteratorExpression.html
+
+
+h3. <a name="exp_cron"></a>cron
+
+#:code#xml#
+    <cron tab="0 9-17 * * mon-fri" name="exp_//reminder">
+        <send-reminder />
+    </cron>
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/CronExpression.html
+
+
+h3. <a name="exp_cursor"></a>cursor
+
+'cursor' expression は拡張機能を持つ sequence(シーケンス)です。
+
+以下のコマンドが使えます。
+
+* back : 'steps'  に指定された数のsequence(順)だけ戻ります。
+* break : cursor はすぐに終了します。
+* cancel : 'break'  の alias(別名)です。
+* continue : cursor の残りをスキップして終了します (もし cursor がループならその最初に戻ります)。
+* jump :  cursor を決められた位置(ステップ)に位置づけます。
+* rewind : 'continue' の alias(別名)です。
+* skip : 'steps'  に指定された数だけスキップします。
+
+"loop":#exp_loop expression は cursor をループさせます(ループから出るために "break" か "cancel" を指定してください)。
+
+"cursor rdoc":rdoc/classes/OpenWFE/CursorExpression.html
+
+'cursor' expression はワークフロー制御パターン 10(Arbitrary Cycles) の例で使われています。
+
+"pattern":patterns.html#pat_10_arbitrary_cycles
+
+
+h3. <a name="exp_defined"></a>defined
+
+"rdoc":rdoc/classes/OpenWFE/DefinedExpression.html
+
+
+h3. <a name="exp_equals"></a>equals
+
+"rdoc":rdoc/classes/OpenWFE/EqualsExpression.html
+
+
+h3. <a name="exp_f"></a>f
+
+これは "field" の短縮形です。
+
+
+h3. <a name="exp_field"></a>field
+
+"rdoc":rdoc/classes/OpenWFE/FqvExpression.html
+
+
+h3. <a name="exp_filter"></a>filter
+
+"participant":#exp_participant expression には workitem 本体の入り口出口でフィルタリングするための 'filter' attribute(属性) があります。
+
+またプロセスのsegment(セグメント)の入出力のデータをフィルタリングする'filter' expression もあります。
+
+#:code#ruby#
+    class MyProcessDefinition001 < ProcessDefinition
+        sequence do
+
+            set :field => "readable", :value => "bible"
+            set :field => "writable", :value => "sand"
+            set :field => "randw", :value => "notebook"
+            set :field => "hidden", :value => "playboy"
+
+            alice
+
+            filter :name => "filter0" do
+                sequence
+                    bob
+                    charly
+                end
+            end
+        end
+
+        filter_definition :name => "filter0" do
+            field :regex => "readable", :permissions => "r"
+            field :regex => "writable", :permissions => "w"
+            field :regex => "randw", :permissions => "rw"
+            field :regex => "hidden", :permissions => ""
+        end
+    end
+#:code#
+
+上記例では, participant 'alice' は workitem の全てのフィールドを参照・更新できます。そのため participant 'bob' ・'charly' では'readable' ・ 'randw' フィールドの参照や  'sand' ・ 'randw' フィールドの更新が制限されます。
+
+"rdoc":rdoc/classes/OpenWFE/FilterExpression.html
+
+
+h3. <a name="exp_filter_definition"></a>filter-definition(フィルター定義)
+
+既に "filter":#exp_filter expression のところの記述にフィルター定義の例があります。
+
+フィルター定義は ビルドされた後OpenWFE の変数にバインドされます。なのでフィルターはローカルにも(プレフィックスなし)、プロセスレベル(プレフィックスは "/" )・エンジンレベル(プレフィックスは "//" )にもバインドできます。
+
+フィルター定義はプロセス定義内で行なわれます。プロセスの本体で直接設定しても、その外(そのプロセス定義内であれば)で設定してもかまいません。
+
+#:code#ruby#
+    filter_definition :name => "filter0" do
+        field :regex => "readable", :permissions => "r"
+        field :regex => "writable", :permissions => "w"
+        field :regex => "randw", :permissions => "rw"
+        field :regex => "hidden", :permissions => ""
+    end
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/FilterDefinitionExpression.html
+
+
+h3. <a name="exp_forget"></a>forget
+
+"rdoc":rdoc/classes/OpenWFE/ForgetExpression.html
+
+
+h3. <a name="exp_if"></a>if
+
+"rdoc":rdoc/classes/OpenWFE/IfExpression.html
+
+
+h3. <a name="exp_iterator"></a>iterator
+
+"rdoc":rdoc/classes/OpenWFE/IteratorExpression.html
+
+
+h3. <a name="exp_loop"></a>loop
+
+see "cursor":#exp_cursor.
+
+"rdoc":rdoc/classes/OpenWFE/LoopExpression.html
+
+
+h3. <a name="exp_lose"></a>lose
+
+"rdoc":rdoc/classes/OpenWFE/LoseExpression.html
+
+h3. <a name="exp_parameter"></a>parameter
+
+'parameter'  は実質、フローの expression ではありません。これが使われるのは workitem/launchitem のフィールドを提示したり、ある時点やフロー起動時にそれをチェックしたり検証したりするときです。
+
+#:code#xml#
+<process-definition name="exp_x" revision="0">
+
+    <!-- required workitem fields -->
+
+    <parameter field="customer" />
+    <parameter field="address" default="" />
+    <parameter field="zip" type="integer" />
+    <parameter field="town" />
+    <parameter field="phone" match="^[0-9]{3}-[0-9]{7}$" />
+    <parameter field="customer_type" default="2" type="int"/>
+
+    <!-- the body of the process definition -->
+
+    <sequence>
+        <participant ref="service0" />
+        <participant ref="service1" />
+        <play-the-music/>
+    </sequence>
+
+    <!-- subprocesses -->
+
+    <process-definition name="exp_play-the-music">
+        <participant ref="musician" />
+    </process-definition>
+
+</process-definition>
+#:code#
+
+パラメータ ('param' でも同意です) はプロセス定義本体の外側に置かれなくてはいけません ('process-definition' タグの直接の子のように)。.
+
+この例では、もし launchitem に 'customer'・ 'zip'・ 'town' ・'phone' フィールド(属性)がなかったら、プロセスの起動はすぐに失敗します (起動が非同期だとしても)。もし 'zip' フィールドに integer に変換できないものがセットされていたらプロセスの起動は失敗します。'phone' フィールドの値が与えられた正規表現にマッチしなかったらプロセスの起動は失敗します。'address' フィールドになにも設定されてなければ、空白文字列(フィールドのデフォルトの値)に置き換えられます。'customer_type' フィールドに明白に設定されていなければ、その値は integer の '2' になります。
+
+Ruby プロセス定義ではこんな感じです…。
+
+#:code#ruby#
+    require 'openwfe/def'
+
+    class MyProcessDefinition_01 < OpenWFE::ProcessDefinition
+
+        #
+        # required fields in the launchitem
+
+        param :field => "customer"
+        param :field => "address", default => ""
+        param :field => "zip", type => "integer"
+        param :field => "town"
+        param :field => "phone", match => "^[0-9]{3}-[0-9]{7}$"
+        param :field => "customer_type", default => 2, type => :int
+
+        #
+        # process definition body
+
+        sequence do
+            service0
+            service1
+            play_the_music
+        end
+
+        #
+        # subprocesses
+
+        process_definition :name => "play_the_music"
+            musician
+        end
+    end
+#:code#
+
+
+h3. <a name="exp_participant"></a>participant
+
+"rdoc":rdoc/classes/OpenWFE/ParticipantExpression.html
+
+
+h3. <a name="exp_process-definition"></a>process-definition
+
+"rdoc":rdoc/classes/OpenWFE/DefineExpression.html
+
+h3. <a name="exp_print"></a>print
+
+"rdoc":rdoc/classes/OpenWFE/PrintExpression.html
+
+h3. <a name="exp_q"></a>q
+
+これは "quote" の短縮形です。
+
+h3. <a name="exp_quote"></a>quote
+
+"rdoc":rdoc/classes/OpenWFE/FqvExpression.html
+
+
+h3. <a name="exp_redo"></a>redo
+
+全ての expression は暗黙に 'tag' attribute を受け入れます。これは評価前の expression のコピーの名前を定義するもので、 (タグで示された expression で受け取るように)適用する workitem 内に保持されます。
+
+この名前 (タグ) はa 'redo' や '<a href="#exp_undo">undo</a>' expression に使われます。
+
+#:code#ruby#
+    sequence do
+        sequence :tag => "core_job" do
+            participant "alice"
+            participant "bob"
+        end
+        participant "charly"
+        _if :test => "${f:charly_not_happy} == true" do
+            _redo :ref => "core_job"
+        end
+    end
+#:code#
+
+たぶんこの例は以下のように実装されるでしょう。 
+
+"rdoc":rdoc/classes/OpenWFE/RedoExpression.html
+
+
+h3. <a name="exp_reserve"></a>reserve
+
+この expression でプロセスインスタンスのセグメントを同時に実行しないようにさせます。
+
+これは mutex な変数として使います。この変数はエンジンレベル (プレフィックスが "//") でバインドされ、まったく違う複数プロセスのセグメントが同時に実行されるのを防ぐために使います。
+
+"rdoc":rdoc/classes/OpenWFE/ReserveExpression.html
+
+
+h3. <a name="exp_restore"></a>restore
+
+これは workitem 本体の最上位の値同様、(サブ)フィールドの値をコピーしたり、前もって"save":#exp_save したworkitem の本体をリストアしたりするのに使います。
+
+この expression にはたくさんのオプションがあります。詳細な説明は以下の rdoc を参照してください。
+
+"rdoc":rdoc/classes/OpenWFE/RestoreWorkItemExpression.html
+
+
+h3. <a name="exp_reval"></a>reval
+
+この expression はネストされた Ruby のコードを評価します。
+
+#:code#xml#
+    <sequence>
+        <reval>$i = 0</reval>
+        <loop>
+            <participant ref="toto" />
+            <reval>$i = $i + 1</reval>
+            <break if="${r:$i == 10}" />
+            <!-- a variant :
+            <break rif="$i == 10" />
+            -->
+        </loop>
+    </sequence>
+#:code#
+
+'reval' されたコード中において、エンジン内部で hook される2つのprincipalは、RawExpression インスタンス自身と<tt>workitem</tt> を指す<tt>self</tt> です。
+
+#:code#ruby#
+    class Reval4 < OpenWFE::ProcessDefinition
+        sequence do
+            reval """
+                engine = self.application_context['__tracer']
+
+                workitem.currently_active_processes =
+                    engine.list_processes.join('\n')
+
+                'done' # will be placed in the workitem field '__result__'
+            """
+            participant :toto
+        end
+    end
+#:code#
+
+'reval' の結果は <pre>__result__</pre> というフィールドに String でセットされます。
+
+コードは SAFE level 3 ( "http://www.rubycentral.com/book/taint.html":http://www.rubycentral.com/book/taint.html  にこの level に関する詳しい情報があります) で評価されます。
+
+エンジンの application context で <tt>:ruby_eval_allowed</tt> パラメータに "true" を設定しなければなりません。さもないと 'reval' expression は例外を発生させます。
+
+#:code#ruby#
+    engine.application_context[:ruby_eval_allowed] = true
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/RevalExpression.html
+
+
+h3. <a name="exp_save"></a>save
+
+この expression は workitem に変数を保存したり、同一workitem の フィールドにある attribute を保存するのに使います。 
+
+"restore":#exp_restore と共同で使われます。
+
+"rdoc":rdoc/classes/OpenWFE/SaveWorkItemExpression.html
+
+
+h3. <a name="exp_sequence"></a>sequence
+
+単純に他のフローの expression と繋げるために使います。
+
+#:code#xml#
+    <process-definition name="exp_my_definition" revision="0">
+        <sequence>
+            <participant ref="alpha" />
+            <participant ref="bravo" />
+            <participant ref="charly" />
+        </sequence>
+    </process-definition>
+#:code#
+
+#:code#ruby#
+    require 'openwfe/def'
+
+    class MyDefinition0 < OpenWFE::ProcessDefinition
+        sequence do
+            participant "alpha"
+            participant "bravo"
+            participant "charly"
+        end
+    end
+#:code#
+
+"pattern":patterns.html#pat_1_sequence
+"rdoc":rdoc/classes/OpenWFE/SequenceExpression.html
+
+
+h3. <a name="exp_set"></a>set
+
+これは変数に値をセットしたり、 workitem のフィールド(attribute) に値をセットするのに使います。
+
+これはプロセス定義本体の外側に置かれ、本体が適用(実行)される前に評価されます。
+
+#:code#ruby#
+    require 'openwfe/def'
+
+    class MyDefinition0 < OpenWFE::ProcessDefinition
+        sequence do
+            participant "alpha"
+        end
+
+        set :field => "city", :value => "Kyoto"
+        set :field => "country", :value => "Japan"
+    end
+#:code#
+
+participant である 'alpha' は 'city' ・ 'country' フィールドにそれぞれ 'Kyoto' ・ 'Japan'  とセットされた  workitem を受け取ります。このテクニックはプロセスのロジック自体と関係ない長期の設定に便利です。
+
+"unset":#exp_unset はプロセス本体の外側には置けません。"Filter definitions":#exp_filter_definition は置けます。
+
+"rdoc":rdoc/classes/OpenWFE/SetValueExpression.html
+
+
+h3. <a name="exp_sleep"></a>sleep
+
+"rdoc":rdoc/classes/OpenWFE/SleepExpression.html
+
+h3. <a name="exp_subprocess"></a>subprocess
+
+"rdoc":rdoc/classes/OpenWFE/SubProcessRefExpression.html
+
+
+h3. <a name="exp_undefined"></a>undefined
+
+"rdoc":rdoc/classes/OpenWFE/DefinedExpression.html
+
+
+h3. <a name="exp_undo"></a>undo
+
+全ての expression は暗黙に 'tag' attribute を受け入れます。これは評価前の expression のコピーの名前を定義するもので、 (タグで示された expression で受け取るように)適用する workitem 内に保持されます。
+
+この名前 (タグ) はa 'redo' や '<a href="#exp_undo">undo</a>' expression に使われます。
+
+#:code#ruby#
+    concurrence do
+        sequence :tag => "side_job" do
+            participant "alice"
+            participant "bob"
+        end
+        sequence do
+            participant "charly"
+            _undo :ref => "side_job"
+        end
+    end
+#:code#
+
+この例で、participant の 'charly' が自分の仕事をした後で、最初の sequence ('side_job' というタグ) はキャンセルされます (そして親に当たる 'concurrence' にトリガーとなるよう返します)。
+
+"rdoc":rdoc/classes/OpenWFE/UndoExpression.html
+
+
+h3. <a name="exp_unset"></a>unset
+
+"rdoc":rdoc/classes/OpenWFE/UnsetValueExpression.html
+
+
+h3. <a name="exp_v"></a>v
+
+"variable" の短縮形です。
+
+
+h3. <a name="exp_variable"></a>variable
+
+"rdoc":rdoc/classes/OpenWFE/FqvExpression.html
+
+
+h3. <a name="exp_when"></a>when
+
+"rdoc":rdoc/classes/OpenWFE/WhenExpression.html
+
+
+h3. <a name="exp_wait"></a>wait
+
+"rdoc":rdoc/classes/OpenWFE/WaitExpression.html
+

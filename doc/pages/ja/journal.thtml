@@ -1,0 +1,97 @@
+h2. business process journaling(ビジネス プロセス ジャーナリング)
+
+デフォルトでは、OpenWFEru は起動しているビジネスプロセスの形式的なジャーナル(ログ)を保持しません。もしプロセスが壊れた場合、再度ビジネスプロセスを確立させるのは可能ですが、 expression pool (./work/expool/) 中のファイルを修復するあるレベルの専門性なしでは難しいことと言えます。
+
+Journaling(ジャーナリング) は ビジネスプロセスを構成する全てのイベントの記録を保持する技術で、完全にもしくはある時点までの再実行を可能にするものです。
+
+また、 journal(ジャーナル) は システム移行時(一つの動いているエンジン上のビジネスプロセスを他システムに)にも使えます。
+
+
+h3. activating journaling(ジャーナリングの活性化)
+
+#:code#ruby#
+    engine.init_service("journal", Journal)
+#:code#
+
+デフォルトでは、Journal は <tt>work/journal/</tt> ディレクトリに置かれます。
+
+プロセスが終了した時点で、その journal は削除されます。
+
+journals は イベントをシリアライズされた順番のYAML で、人間の読める形式となっていますが J.K.Rowlingじゃありません.。 
+
+
+h3. keeping all the journals(全てのジャーナルの保存)
+
+デフォルトでは、正式な OpenWFEru での journaling の実装では終了したビジネスプロセスの journal は廃棄します。 
+
+ただし、エンジンに指定した古い journal を保持するように指示できます。
+
+#:code#ruby#
+    engine.application_context[:keep_journals] = true
+#:code#
+
+終了した journals はデフォルトで <tt>work/journal/done/</tt> に置かれます。
+
+(サジェスチョン : 古い終了した journal を圧縮するcron job)
+
+
+h3. browsing journals(ジャーナルの閲覧) 
+
+ journal はこんな感じです。 :
+
+<pre>
+
+--- 
+- :update
+- 2007-03-26 17:40:16.054666 +09:00
+- &id001 !ruby/OpenWFE::FlowExpressionId 
+  s: (fei 0.9.8 engine/engine field:__definition Test 0 20070326-gobadayopa environment 0)
+- !ruby/object:OpenWFE::Environment 
+  apply_time: 
+  attributes: 
+  environment_id: 
+  fei: *id001
+  parent_id: 
+  variables: {}
+
+--- 
+- :update
+- 2007-03-26 17:40:16.057057 +09:00
+- &id001 !ruby/OpenWFE::FlowExpressionId 
+  s: (fei 0.9.8 engine/engine field:__definition Test 0 20070326-gobadayopa environment 0)
+- !ruby/object:OpenWFE::Environment 
+  apply_time: 
+  attributes: 
+  environment_id: 
+  fei: *id001
+  parent_id: 
+  variables: {}
+
+--- 
+- :reply
+- 2007-03-26 17:40:16.058434 +09:00
+- &id001 !ruby/OpenWFE::FlowExpressionId 
+  s: (fei 0.9.8 engine/engine field:__definition Test 0 20070326-gobadayopa participant 0.0.0)
+- !ruby/object:OpenWFE::InFlowWorkItem 
+  attributes: 
+    ___map_type: smap
+    __result__: |
+      alpha
+
+  flow_expression_id: *id001
+  last_modified: 
+  participant_name: alpha
+
+</pre>
+
+退屈だし、要約するのも大変だし…。
+
+もっと簡単に journal を閲覧する (そして指定した journal を 'replay' する)ツールがあります。
+
+
+h3. replaying journals(ジャーナルのリプレイ)
+
+...
+
+__( page under construction )__
+

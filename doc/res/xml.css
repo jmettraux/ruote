@@ -1,0 +1,11 @@
+/*
+pre.ruby {border: 0.5px solid #333; }
+.ruby .punct     { color: #333; font-weight: bold; }
+*/
+pre.xml { margin: 5px; padding: 7px; border: 0.1px solid #999; }
+.xml .normal    {}
+.xml .comment   { color: #777; background-color: #fff; font-style: italic; }
+.xml .tag   { color: darkblue; }
+.xml .punct    { color: #333; }
+.xml .attribute     { color: #333; }
+.xml .string    { color: red; }

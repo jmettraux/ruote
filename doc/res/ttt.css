@@ -1,0 +1,21 @@
+
+/*
+ * ttt.css
+ */
+
+.ttt_menu {
+    padding-top: 3px;
+    font-size: 80%;
+    margin-bottom: 11px;
+}
+.ttt_questions {
+    margin-top: 14px;
+    padding-top: 3px;
+    border-top: 1px dotted #999;
+    font-size: 80%;
+}
+
+.thumbnail {
+    border-left: 7px solid #eeeeee;
+    margin-left: 4px;
+}

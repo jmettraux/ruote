@@ -1,0 +1,221 @@
+h2. OpenWFEru glossary
+
+An attempt at defining or explaining terms involved in OpenWFEru (Rufus).
+
+
+h4. <a name="engine"></a>Engine
+
+is (a workflow engine) is a Ruby instance with all the necessary methods for you to play with workflows. In general, you don't want to touch to any other things (except maybe some participants).
+
+"OpenWFE::Engine rdoc":rdoc/classes/OpenWFE/Engine.html
+
+
+h4. <a name="error_journal"></a>Error Journal
+
+The OpenWFEru engine, being a workflow engine works asynchronously. When things go wrong in a process, the failure is reported in an error journal (file or database backed, depending on the engine chosen).
+
+Errors in the error journal can then be examined, their root cause fixed and broken processes can get resumed (replayed).
+
+see also "business process administration":padmin.html
+
+
+h4. <a name="expression"></a>Expression
+
+An Expression is an atomic piece of business process instance.
+
+For example,
+
+#:code#ruby#
+    class MyProcessDefinition < OpenWFE::ProcessDefinition
+        sequence do
+            participant :ref => "alpha"
+            participant :ref => "bravo"
+        end
+    end
+#:code#
+
+The <a href="#expression_pool">expression pool</a> will hold 5 expressions for a process instance of this process definition. 1 instance of DefineExpression, 1 instance of SequenceExpression and 2 instances of ParticipantExpression plus 1 instance of Environment (holding variables and so for the whole process instance).
+
+There are 3 classes of expressions, plain expressions (like SequenceExpression and ParticipantExpression), raw expressions (segment of processes not yet evaluated) and environments.
+
+
+h4. <a name="expression_map"></a>Expression Map
+
+is a small services that maps expression names like 'sequence', 'concurrence' or 'participant' to actual implementation classes like SequenceExpression, ConcurrenceExpression or ParticipantExpression respectively.
+
+You usually don't need to tinker with that element.
+
+
+h4. <a name="expression_pool"></a>Expression Pool
+
+is the central pump of the workflow engine. 
+
+
+h4. <a name="expression_storage"></a>Expression Storage
+
+does the persistence job for the expression pool. Currently two main implementations are available : "in memory" and "yaml files".
+
+The expression storage implementations do "observe" the expression pool for write operations, and are queried by the expression pool for read operations.
+
+
+h4. <a name="fei"></a>fei
+
+A short form for <a href="#flow_expression_id">Flow Expression Id</a>
+
+
+h4. <a name="flow_expression_id"></a>Flow Expression Id
+
+A process definition (be it an XML document or a Ruby class), when launched, is turned into a process instance, one different, unique, process instance per launch. A <a href="#process_instance">Process instance</a> being a set of expressions, each of them bears a label uniquely identifying it. This label is called the "FlowExpressionId" (for short "fei").
+
+The OpenWFEru engine work is about applying expressions with a workitem, each time an expression receives a workitem, it tags it with its own FlowExpressionId. Thus in the case of a ParticipantExpression dispatching the workitem outside of the engine, the workitem still bears the label (fei) given by the expression. This fei is then used there to uniquely identify the workitem.
+
+"OpenWFE::FlowExpressionId rdoc":rdoc/classes/OpenWFE/FlowExpressionId.html
+
+
+h4. <a name="launch_item"></a>LaunchItem
+
+The term 'workitem' is often used for the tokens passing from one expression to the other during a business process lifetime. A Launchitem is an equivalent token but it's only used to request the launch of a process instance to the engine.
+
+The launchitem has a 'workflow_definition_url' that indicates to the engine where it can find the process definition to launch. If the URL starts with "field:" it means that the definition is embedded within the launchitem (the name of the field comes after the "field:" prefix).
+
+A launchitem, like a workitem features a payload (attributes). Unlike a workitem it has no <a href="#flow_expression_id">flow expression id</a>.
+
+The payload (the attributes) become the attributes of the initial workitem travelling through the process instance.
+
+Some examples :
+
+#:code#ruby#
+    require 'openwfe/engine'
+    require 'openwfe/def'
+
+    engine = OpenWFE::Engine.new
+
+    # ...
+
+    class TeaEvaluation1 < OpenWFE::ProcessDefinition
+        sequence do
+            reception
+            evaluation
+            planning
+        end
+    end
+
+    # ...
+
+    #
+    # example 1, launching a business process without a launchitem
+    #
+
+    engine.launch TeaEvaluation1
+        #
+        # launching the [local] process definition
+
+    engine.launch "http://our.process.server/definitions/def0.xml"
+        #
+        # launching a remote process definition
+
+    #
+    # example 2, using a launch item
+    #
+
+    li = OpenWFE::LaunchItem.new TeaEvaluation1
+
+    li.type = "Daarjeling"
+    li.country = "India"
+    li.scout = "Tom Bler"
+    li.sample_id = [ 1, 45, :blue ]
+        #
+        # initial data
+
+    engine.launch li
+
+    # or
+
+    li = OpenWFE::LaunchItem.new "http://our.process.serv/definitions/def0.xml"
+    li.type = "Blue Pearl"
+    engine.launch li
+
+    # or
+
+    DEF = <-EOS
+        <process-definition name="teaEval" revision="2">
+            <sequence>
+                <participant ref="reception" />
+                <participant ref="tester" />
+            </sequence>
+        </process-definition>
+    EOS
+
+    li = OpenWFE::LaunchItem.new DEF
+    li.city = "Shizuoka"
+    engine.launch li
+
+    # ...
+#:code#
+
+"OpenWFE::LaunchItem rdoc":rdoc/classes/OpenWFE/LaunchItem.html
+
+
+h4. <a name="listener"></a>Listener
+
+todo
+
+
+h4. <a name="participant"></a>Participant
+
+Participants are triggered by the "participant expression":http://openwferu.rubyforge.org/expressions.html#exp_participant, they are usually linked to a "participant implementation":http://openwferu.rubyforge.org/participants.html
+
+The goal of the process engine is to orchestrate work among participants. This is done by sending and receiving workitems, asynchronously, from those participants.
+
+
+h4. <a name="participant_map"></a>Participant Map
+
+is a directory of participant to business processes / workflows. Regular expressions can be used as 'keys' in this directory.
+The participant map is used by participant expressions to lookup the actual participant to invoke (to dispatch a workitem to it).
+
+An OpenWFEru integrator generally uses the <a href="#engine">engine</a> methods register_participant and unregister_participant to interact (indirectly) with the participant map.
+
+
+h4. <a name="process_definition"></a>Process Definition
+
+A document describing a business process.
+
+Currently OpenWFEru (Rufus) understands two type of definitions, XML ones and Ruby ones.
+
+
+h4. <a name="process_instance"></a>Process Instance
+
+For each launch of a process definition, a process instance is created. For example, in an organization with a process [definition] named "customer registration" and there are currently two customers in the process, there are two distinct process intances of the the "customer registration" process definition.
+
+
+h4. <a name="scheduler"></a>Scheduler
+
+is used by time expressions like 'sleep', 'cron', 'when' to execute at later points in time (at) or at various frequences (cron).
+The scheduler can also be "used 'stand alone'":scheduler.html outside of the OpenWFEru business process engine.
+
+"OpenWFE::Scheduler":rdoc/classes/OpenWFE/Scheduler.html
+
+"Scheduler documentation":scheduler.html
+
+
+h4. Store
+
+see <a href="workitem_store">Workitem Store</a>.
+
+
+h4. <a name="variable"></a>Workflow Variable
+
+todo
+
+
+h4. <a name="workitem"></a>Workitem
+
+A token passing from one step of a process instance to the next. A workitem has a payload (a Map of whose entries are named 'fields' or 'attributes').
+
+For a simple sequential process instance, there is one workitem, a process with concurrences has one workitem per active concurrence branch.
+
+
+h4. <a name="workitem_store"></a>Workitem Store
+
+todo
+

@@ -1,0 +1,114 @@
+h2. OpenWFEru クイックスタート
+
+Ruby 1.8.5 以上を使うので確認してください。
+
+<pre>
+   $ sudo gem install -y openwferu
+</pre>
+
+(Windows システムでは、もし gem インストール時に "libxml-ruby" をいっしょにインストールするか訊かれるときに "no" と応えることができます。そうするととてもスムーズにインストールできます。)
+
+
+h3. 最初の OpenWFEru を使ったプログラム
+
+'"openwferu.rb":/examples/openwferu.rb' という名のファイルを編集してください。
+
+    
+#:code#ruby#
+require 'rubygems'
+require 'openwfe/def'
+require 'openwfe/workitem'
+require 'openwfe/engine/engine'
+
+#
+# instantiating an engine
+
+engine = OpenWFE::Engine.new
+
+#
+# adding some participants
+
+engine.register_participant :alice do |workitem|
+    puts "alice got a workitem..."
+    workitem.alice_comment = "this thing looks interesting"
+end
+
+engine.register_participant :bob do |workitem|
+    puts "bob got a workitem..."
+    workitem.bob_comment = "not for me, I prefer VB"
+    workitem.bob_comment2 = "Bob rules"
+end
+
+engine.register_participant :summarize do |workitem|
+    puts 
+    puts "summary of process #{workitem.fei.workflow_instance_id}"
+    workitem.attributes.each do |k, v|
+        next unless k.match ".*_comment$"
+        puts " - #{k} : '#{v}'"
+    end
+end
+
+#
+# a process definition
+
+class TheProcessDefinition0 < OpenWFE::ProcessDefinition
+    sequence do
+        concurrence do
+            participant :alice
+            participant :bob
+        end
+        participant :summarize
+    end
+end
+
+#
+# launching the process
+
+li = OpenWFE::LaunchItem.new(TheProcessDefinition0)
+
+li.initial_comment = "please give your impressions about http://ruby-lang.org"
+
+fei = engine.launch li
+    #
+    # 'fei' means FlowExpressionId, the fei returned here is the
+    # identifier for the root expression of the newly launched process
+
+puts "started process '#{fei.workflow_instance_id}'"
+
+engine.wait_for fei
+    #
+    # blocks until the process terminates
+
+#:code#
+
+
+これを実行してください。
+
+<pre>
+    $ ruby openwferu.rb
+</pre>
+
+
+こんな感じで出力が表示されるでしょう。 :
+
+
+<pre>
+    alice got a workitem...
+    bob got a workitem...
+    
+    summary of process 1173232330251
+     - bob_comment : 'not for me, I prefer VB'
+     - alice_comment : 'this thing looks interesting'
+     - initial_comment : 'please give your impressions about http://ruby-lang.org'
+
+</pre>
+
+
+h3. (openwferu のアンインストール)
+
+OpenWFEru はあなたのためにはならなかったかも… :
+
+<pre>
+    $ sudo gem uninstall openwferu
+</pre>
+

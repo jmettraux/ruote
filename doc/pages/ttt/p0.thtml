@@ -1,0 +1,45 @@
+
+h2. The "Tea Testing Team" example (<%= extract_index(__FILE__) + 1 %> / <%= TITLES.size %>)
+
+<%= render_ttt_menu(__FILE__) %>
+
+This is meant to be read sequentially. It's the story of the implementation of a business process. 
+
+Disclaimer : I have no idea of the business of tea, this example is completely made up. I simply hope it will feel less boring than a "holiday request" or "expense sheet" example.
+
+(you might also be interested by this blog post about implementing a "trouble ticket":http://jmettraux.wordpress.com/2008/01/04/the-trouble-ticket-process/ business process)
+
+
+h3. before commencing
+
+This is meant to be a step by step implementation of an example business process on top of OpenWFEru (and its demo Ruby on Rails integration, Densha).
+
+OpenWFEru ('Rufus' for short) is a an open source <b>workflow engine</b> written, if you don't need such a tool please go look elsewhere. And if you simply need to bind a state that takes values like "approved", "unpublished", "revised" to a simple ActiveRecord model, you're probably better off with a tool like "act_as_a_statemachine":http://elitists.textdriven.com/svn/plugins/acts_as_state_machine/trunk/
+
+If you need a <b>workflow engine</b> where business processes are a first-class concept that you can define, launch, pause, cancel, ... then maybe you should read on and Rufus may be a tool for you.
+
+This example uses Densha, a Ruby on Rails integration of Rufus (OpenWFEru), but please remember that you can use Rufus outside of a Rails application (these days, I use it at work inside Tomcat thanks to "JRuby":http://jruby.org)
+
+If you feel that some part of this guide should be enhanced/clarified/extended or if you simply have a question, please seek for help on the "OpenWFEru users mailing list":http://groups.google.com/group/openwferu-users
+
+
+h3. the 'tea testing team' example
+
+This example is based on a presentation I gave in February 2007. At this point, Rufus was only 4 months old and there was no Rails integration.
+
+Please remember that Rufus is the workflow engine and that Densha is an integration example of it within a Ruby on Rails application.
+
+
+h3. how the example is divided
+
+<ul>
+<% TITLES.each_with_index do |(title, description), index| 
+    description = "this page" if index == 0
+%>
+<li>"<%= title %>":p<%= index %>.html : <%= description %></li>
+<% end %>
+</ul>
+
+<%= render_next_page(__FILE__) %>
+<%= render_questions %>
+

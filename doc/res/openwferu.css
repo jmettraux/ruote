@@ -1,0 +1,500 @@
+/* 
+ *
+ * site.css for www.OpenWFE.org
+ *
+ */
+
+:link,:visited,:hover,:active
+{
+    text-decoration: none;
+}
+
+/*
+ul,ol,dd,dt
+*/
+dd,dt
+{
+    list-style: none;
+}
+
+dd
+{
+    padding: 0px;
+    margin-left: 0px;
+}
+
+h1,h2,h3,h4,h5,h6,code
+{
+    font-size: 1em;
+}
+pre
+{
+    font-size: 1em;
+    margin: 5px; 
+    padding: 7px;
+    border: 0.1px solid #999;
+}
+
+/*
+ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,body,html,p,blockquote,fieldset,input,table,thead,tbody,tfoot,caption,th,tr,td,a,textarea,#breadcrumbs
+*/
+h1,h2,h3,h4,h5,h6,form,body,html,p,blockquote,fieldset,input,table,thead,tbody,tfoot,caption,th,tr,td,a,textarea,#breadcrumbs
+{
+    margin:0;
+    padding:0;
+    background: transparent;
+}
+
+ul, ol, li
+{
+    list-style-type: circle;
+}
+
+a img,:link img,:visited img
+{
+    border:none
+}
+
+/*  ------------------------------------------------------------------------*/
+
+body
+{
+    background-color: #fff;
+    margin: 0 0 0 0;
+    padding: 30px 0 0 10%;
+}
+
+body, td, select, input, li
+{
+    background-color: #;
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-size: small;
+}
+
+.composite
+{
+}
+
+#banner
+{
+    border: 0px solid #000000;
+    background-color: #ffffff;
+    width: 90%;
+}
+
+#breadcrumbs
+{
+    clear: both;
+    /*
+    position: absolute;
+    border-bottom: 1px solid #999;
+    font-size: x-small;
+    */
+    font-size: xx-small;
+    padding: 2px 7px 2px 7px;
+    width: 90%;
+
+    border-top: 1px solid #999;
+}
+
+#poweredBy
+{
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+#hostedOn
+{
+    font-size: x-small;
+    padding: 10px 0 0 10px;
+}
+
+#fisheye
+{
+    font-size: x-small;
+    padding: 10px 0 0 10px;
+}
+
+#googleReferral
+{
+    /*
+    display: block;
+    vertical-align: middle;
+    */
+    padding-top: 140px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#leftColumn
+{
+    /*
+    margin: 20px 0 0 -6px;
+    padding: 0 0 0 0;
+    border: 0px solid #999;
+    width: 15%;
+    width: 10em;
+    */
+    background-color: #ffffff;
+    border: 0px solid #090909;
+    float: left;
+}
+
+#coreBox
+{
+    clear: both;
+    width: 90%;
+}
+
+#bodyColumn
+{
+    /*
+    margin: 3px 0 0 18%;
+    padding: 3px 0 0 0;
+    border: 0px solid #999;
+    background: transparent;
+    width: 58.5%;
+    */
+    margin: 0 10em;
+    padding: 3px 0 0 0;
+}
+
+#rightColumn
+{
+    /*
+    margin: 20px 0 0 -6px;
+    padding: 0 0 0 0;
+    border: 0px solid #999;
+    background-color: #ffffff;
+    width: 15%;
+    width: 10em;
+    */
+    margin: 0 0 0 0;
+    padding: 21px 0 0 0;
+    float: right;
+}
+
+#footer
+{
+    clear: right;
+
+    float: right;
+
+    border-top: 1px solid #999;
+    /*
+    width: 73.5%;
+    margin: 20px 0 30px 18%;
+    */
+    margin: 30px 0px 20px 0px;
+    font-size: x-small;
+    width: 100%;
+}
+
+img
+{
+    border:none;
+}
+
+
+a:link
+{
+    color:#0080CA;
+}
+
+a:visited
+{
+    color: #0083C0;
+}
+
+a:active, a:hover
+{
+    color:#ffffff;
+    background-color: #0083CA;
+}
+
+a.externalLink, a.externalLink:link, a.externalLink:visited, a.externalLink:active, a.externalLink:hover
+{
+    background: url(../images/external.png) right no-repeat;
+    padding-right: 18px;
+}
+
+a.newWindow, a.newWindow:link, a.newWindow:visited, a.newWindow:active, a.newWindow:hover
+{
+    background: url(../images/newwindow.png) right center no-repeat;
+    padding-right: 18px;
+}
+
+a.externalLink:hover
+{
+    color:#ffffff;
+    background-color: #0083CA;
+}
+
+div.clear
+{
+    visibility: hidden;
+}
+
+/*------- BANNER and LOGOS ---------------------------------------------------*/
+
+#banner img
+{
+    margin: 0px 0px 0px 0px;
+}
+
+#bannerLeft
+{
+    float: left;
+}
+#siteSearch
+{
+    float: right;
+}
+#siteSearch table, #siteSearch tr, #siteSearch td
+{
+    background-color: white;
+}
+#sbb
+{
+    font-size: 90%;
+}
+
+#bannerLeft, #bannerRight 
+{
+    font-size: xx-large;
+    font-weight: bold;
+}
+
+#bannerLeft img, #bannerRight img 
+{
+    text-shadow: #7CFC00;
+    border: 0px;
+    margin: 0px;
+}
+
+.xleft
+{
+    float: left;
+    text-shadow: #7CFC00;
+}
+.xright
+{
+    float: right;
+    text-shadow: #7CFC00;
+}
+
+/*---- LEFTCOLUMN / NAVCOLUMN ------------------------------------------------*/
+
+#navColumn
+{
+    padding: 0 0 0 0;
+}
+
+#navColumn h5, #navColumn ul
+{
+    margin: 0;
+    padding: 0;
+    font-size: small;
+}
+
+#navColumn h5
+{
+    font-size: smaller;
+    border-bottom: 0px dotted #999;
+    padding: 10px 0 0 10px;
+    margin-bottom: 3px;
+}
+
+#navColumn li
+{
+    list-style-type: none;
+    background-repeat: no-repeat;
+    background-position: 0 4px;
+    padding-left: 10px;
+    list-style-position: outside;
+    line-height: 1.2em;
+    font-size: smaller;
+    margin-bottom: 3px;
+}
+
+#navColumn ul
+{
+    margin-top: 3px;
+}
+
+#navColumn li.expanded
+{
+    /*
+    background-image: url(../images/expanded.gif);
+    */
+    color: #000000;
+    padding-bottom: 3px;
+}
+
+#navColumn li.collapsed
+{
+    /*
+    background-image: url(../images/collapsed.gif);
+    */
+    margin-bottom: 3px;
+}
+
+#navColumn img
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 0;
+}
+
+#poweredBy img
+{
+    display:block;
+    margin: 10px 0 0 11px;
+    border: 0;
+    width: auto;
+    height: auto;
+}
+
+#navColumn a
+{
+    text-decoration: none;
+}
+
+#navColumn a:link
+{
+    color:#0080CA;
+}
+
+#navColumn a:visited
+{
+    color: #0080CA;
+}
+
+#navColumn a:active, #navColumn a:hover
+{
+    color:#ffffff;
+    background-color: #0083CA;
+}
+
+#poweredBy
+{
+    text-align: left;
+}
+
+/*------ TEXT ----------------------------------------------------------------*/
+
+h2, h3
+{
+    padding: 20px 4px 4px 0px;
+    border: 0px solid #999;
+    border-bottom: 1px dotted #999;
+    color: #0083CA;
+    /*font-weight:900;*/
+    font-weight: 500;
+    font-size: large;
+}
+
+h3
+{
+    font-size: medium;
+}
+
+h4
+{
+    padding: 15px 4px 4px 0px;
+    color: #0183CA;
+    font-size: medium;
+    font-style: italic;
+    font-weight: 200;
+}
+
+#bodyColumn p
+{
+    line-height: 1.3em;
+    font-size: small;
+    margin: 10px 0 5px 0;
+}
+
+#bodyColumn li, ol
+{
+    line-height: 1.3em;
+    font-size: small;
+    margin: 0 0 5px 0;
+}
+
+#bodyColumn table li
+{
+    line-height: 1.3em;
+    font-size: x-small;
+    margin: 0 0 1.3em 0;
+    vertical-align: top;
+}
+
+#bodyColumn table
+{
+    margin: 10px 0 10px 0;
+    width: 100%;
+}
+
+#bodyColumn dt
+{
+    font-weight: bold;
+    margin: 25px 0 0 0;
+}
+
+table,.bodyTable, tr, tr.b
+{
+    font-size: x-small;
+    background: #ccc;
+    vertical-align: top;
+}
+
+th, thead, td
+{
+    padding: 5px;
+}
+
+td
+{
+    background: #F5F9EF;
+}
+
+th, thead, tr, td, ul, li
+{
+    font-size: x-small;
+}
+
+table.bodyTable th
+{
+    color: #fff;
+    background-color: #0083CA;
+    text-align: left;
+    font-weight: bold;
+    font-size: x-small;
+}
+
+subsection
+{
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+}
+
+#bodyColumn a
+{
+    text-decoration: underline;
+}
+
+#bodyColumn a:hover
+{
+    text-decoration: none;
+}
+
+.thumbnail
+{
+    margin: 2px 2px 2px 2px;
+    padding: 2px 2px 2px 2px;
+    border: 1px dotted black;
+}

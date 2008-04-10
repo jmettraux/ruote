@@ -1,0 +1,77 @@
+
+CREDITS
+=======
+
+OpenWFEru is an open source Ruby workflow / BPM engine made in Japan.
+
+
+The main project team
+---------------------
+
+John Mettraux ( project lead ( john >at< openwfe.org ) )
+Tomaso Tosolini - database persisted engine implementation and patches
+Alain Hoang ( configuration managaer )
+Matt Zukowski (senior developer)
+Nicolas Modrzyk ( senior developer )
+David Lee ( senior developer )
+
+
+Contributors
+------------
+
+Maarten Oelering - bug reports and test cases
+Nick Petrella - socket listener issues and Python interactivity, dollar patch
+Sakaguchi Masa - japanese website and articles in Japanese magazines
+Patrice Cappelaere - lots of feedback and ideas
+
+
+Sponsors
+--------
+
+(none)
+
+
+Donators
+--------
+
+(none)
+
+
+Feedback
+--------
+
+Scott Sproule - missing read() method in rufus-verbs fopen()
+Aye Thu - missing 'atom-tools' dependency
+Machiel Groeneveld - missing 'rufus-mnemo' dependency
+Harshal Hayat - :on_field => :executions idea
+Ralf KaoticEntity - concurrence mix feedback
+Graeme Lockley - every jobs {re/un}scheduling
+JimJin - various feedback and bug reports
+Andreas Baumann - bug reports and test cases
+Fu Zhang - csv tables 'accumulate' and 'range' ideas
+Lee Fyock - suggested the Scheduler 'tag' feature.
+Art Schumer - cron scheduler bug
+ara.t.howard on the ruby talk ml pointed out a weakness in scheduler.
+Tomek "Tomash" Stachewicz - scheduler feedback
+Jon "Compensator" - first report of the "yamlextras" issue
+Leo Venegas - file.include "extras" issue
+
+(see the mailing list at : http://groups.google.com/group/openwferu-users )
+
+
+Misc
+----
+
+The OpenWFE logo was designed by Phosphore (http://phosphore.ch)
+The 'ru' was added by Jamandru Reynolds (http://geometron.net)
+
+Thanks to Tom Copeland for the great RubyForge platform !
+
+
+Tools
+-----
+
+- saikuro     http://rubyforge.org/projects/saikuro/
+- rcov        http://eigenclass.org/hiki.rb?rcov
+- atom-tools  http://code.necronomicorp.com/atom-tools
+

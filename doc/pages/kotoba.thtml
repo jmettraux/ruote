@@ -1,0 +1,134 @@
+h2. openwferu-kotoba
+
+"kotoba" (言葉) means 'word' in Japanese.
+
+openwferu-kotoba turns (large) integer numbers into japanese-sounding words and vice-versa (but it's not meant to turn any japanese word into an integer).
+
+For more information, see my "initial blog post":http://jmettraux.wordpress.com/2007/03/18/kotoba/ on it.
+
+OpenWFEru "uses kotoba":http://jmettraux.wordpress.com/2007/03/22/workflow-instance-id/ for generating (slightly) more human-friendly workflow instance identifiers.
+
+
+h3. getting openwferu-kotoba
+
+It's available in its own gem :
+
+<pre>
+$ sudo gem install openwferu-kotoba
+</pre>
+
+The gem can also be downloaded "from RubyForge":http://rubyforge.org/frs/?group_id=2609.
+
+You can directly "view the source":http://viewvc.rubyforge.mmmultiworks.com/cgi/viewvc.cgi/trunk/openwfe-ruby/lib/openwfe/util/kotoba.rb?root=openwferu&view=markup.
+
+
+h3. using openwferu-kotoba (from the command line)
+
+Suppose you're in the same directory as 'kotoba.rb', you could do :
+
+<pre>
+
+$ ruby kotoba.rb
+
+ruby kotoba.rb {arg}
+
+  If the arg is a 'Kotoba' word, will turn it into the equivalent
+  integer.
+  Else, it will consider the arg as an integer and attempt at
+  turning it into a Kotoba [word].
+
+  Kotoba uses 70 syllables.
+
+$ ruby kotoba.rb tsunashima
+20412170
+$ ruby kotoba.rb 20412170  
+tsunashima
+$ ruby kotoba.rb 20412171
+tsunashime
+$ ruby kotoba.rb matsu   
+2159
+$ ruby kotoba.rb machi
+2157
+$ ruby kotoba.rb 2157 
+machi
+$ ruby kotoba.rb sushi
+3832
+$ ruby kotoba.rb sashimi
+248672
+$ ruby kotoba.rb yokohama
+23462280
+$ ruby kotoba.rb 23433534234
+gowayujozusu
+$ ruby kotoba.rb 234335342  
+dusogonishi
+$ ruby kotoba.rb 1      
+be
+$ ruby kotoba.rb 1973
+kogo
+$ ruby kotoba.rb kogo
+1973
+
+</pre>
+
+
+h3. using openwferu-kotoba (as a library)
+
+The "rdoc of openwferu-kotoba":http://openwferu.rubyforge.org/rdoc/classes/Kotoba.html is available online.
+
+Here is a small program that uses openwferu-kotoba :
+
+#:code#ruby#
+require 'pp'
+require 'rubygems'
+require 'openwfe/util/kotoba'
+
+3.times do
+
+    i = (rand * 1000000).to_i
+    s = Kotoba::from_integer i
+
+    puts "#{i} => #{s}"
+    puts "#{s} => #{Kotoba::to_integer(s)}"
+        # forth and back
+
+    a = Kotoba::split s
+
+    print "#{s} => "; pp a
+        # showing how the 'word' is split
+
+    puts "."
+end
+#:code#
+
+An example of its output :
+
+<pre>
+sonanda:~/openwfe-ruby mettraux$ ruby -I lib examples/kotoba.rb 
+201371 => pedese
+pedese => 201371
+pedese => ["pe", "de", "se"]
+.
+687109 => bibahatsu
+bibahatsu => 687109
+bibahatsu => ["bi", "ba", "ha", "tsu"]
+.
+948993 => bisoribo
+bisoribo => 948993
+bisoribo => ["bi", "so", "ri", "bo"]
+.
+</pre>
+
+
+h3. feedback
+
+Please use the OpenWFEru "user mailing list":http://groups.google.com/group/openwferu-users and the OpenWFEru "trackers":http://rubyforge.org/tracker/?group_id=2609 for feedback on openwferu-kotoba.
+
+
+h3. (uninstalling openwferu-kotoba)
+
+If you don't need it and/or don't like it :
+
+<pre>
+    $ sudo gem uninstall openwferu-kotoba
+</pre>
+

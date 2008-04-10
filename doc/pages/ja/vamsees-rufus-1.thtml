@@ -1,0 +1,95 @@
+h2. Vamsee's Newbie Guide Part 1(Vamsee の初心者ガイド Part1)
+
+h3. ようこそ!
+
+こんにちは。OpenWFEru へようこそ。このドキュメントは  OpenWFE の _Vamsee's Newbie Guide_ の _translation_ です。OpenWFEru がメインの目標になって、Javaである従兄弟(OpenWFEJa)とは異なるところもでてきました。
+このドキュメントにはオリジナルガイドのチュートリアルの本質を保ちながらもその差異を反映しようと思います。
+このドキュメントに間違いや誤りがあればお気軽にご指摘ください。
+
+h3. 出発
+
+もしあなたが初心者なら、"OpenWFE book":http://www.openwfe.org/manual に飛び込まないようお奨めします。その理由は、ワークフローシステムは未だとても新しい物なのでその用語があなたにはわからないだろうということからです。私の意見では、最初は"Technical Presentation":http://web.archive.org/web/20060213054749/http://www.openwfe.org/openwfe.pdf からスタートして、OpenWFEのいろいろな部分やそれらがお互いどのように影響しあっているかを理解するのが
+よろしいかと。
+
+で、"OpenWFE book":http://www.openwfe.org/manual  にざっと目を通すのがよろしいかと。全てを理解しようなんて固執しないでくださいね。その後でも一度
+"Technical Presentation":http://web.archive.org/web/20060213054749/http://www.openwfe.org/openwfe.pdf に戻ってこれを眺めてください。
+ちょっとはクリアになったと思います (ま、少なくとも私はそうでした)。さて、"ここ":http://sourceforge.net/forum/forum.php?thread_id=1229863&forum_id=181920 で議論されたサンプルプログラムを動かしてみてください。 このプログラムにある workitem に変数をセットする前に "alice" でログインして workitem を起動しなければならないことに注意してください。
+
+h3. 例題(example) をやりましょう!
+
+思うに、OpenWFEru 内部を知る一番の方法はいくつかのプロセスフローやソースコードを書いてそれを実行させることでしょう。ワークフローシステムとその可能性を理解するために、想像上の企業で計画された文書ワークフロー('Documentation
+Work Flow' ) を考えて見ましょう。
+
+このユースケースはいたってシンプルです。自分のチームの異なるプロジェクトのテクニカルドキュメントのフローをトレースしてみましょう。まず participant を定義しましょう。:
+
+*Participants*
+# Documentation Head (DH)
+# Project Leader (PL)
+# Developer
+# Technical Writer (TW)
+
+それぞれの participant の詳細についてはちょっと後でまた議論することとしますね。最初のポイントは…:
+* DH(Documentation Head) はプロジェクトのマニュアル・ドキュメント作業の前準備にOKを出す人です。* PL(Project Leader) は プロジェクトの責任者です。
+* Developer はチームのメンバーです。* TW(Technical Writer) は作られたソフトウェアに関するマニュアル・ユーザガイドを書く人です。
+
+h3. Documentation Process(文書化のプロセス)
+
+このフローは簡単に言うとこうです…:
+* すべてのプロセスの始まりは developer または PL からのリクエストによります。
+  .  リクエストによってはいくつものドキュメントが必要かもしれませんが、この例ではそれは無視することとします。
+  .
+* 次に、 _DH_ と _TW_  の *両方* がそのリクエストとドキュメントを得て、
+  .    _DH_ がそれらをレビューして先に進めます。
+  (もしくはルールの明確化のためにリクエストを戻します。) で、そこから _TW_ は
+  選んでユーザマニュアルを準備します。* 次に、 _TW_ はレビューのリクエストを _DH_ ・ _PL_ と
+  developer に準備したドキュメントとともに送ります。そして、 _DH_ は編集に関するレビューを
+  _PL_ と developer が技術的なレビューをそれぞれ同時に行います。
+  .
+*  _DH_ と _PL_ は変更を依頼でき、その変更が修正されます。  そして最後に、これが正しいユーザマニュアルとして承認されます。
+
+以下が  _DH_ によって与えられたワークフローのイメージです。
+
+*INSERT IMAGE HERE*
+
+h3. ざっと手書きしてみよう!
+
+えーと、始めるのに必要な物はそろったようですね。上のプロセスフローはちょっとばかり複雑かもしれませんが、一歩一歩行きましょう。最初は一番シンプルなことから… プロセスフロー定義の一部を書いてみましょう。完全ではありませんが、このステップではあなたに全てのセットアップ方法に関するアイデアを与えてくれます。よって、あなたはそれを段階的に改善していけばよいのです。じゃ、いきましょう:
+<pre>
+<code>
+<?xml version="1.0" encoding="UTF-8"?> 
+<process-definition 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.openwfe.org/flowdef_r1.5.0.xsd"
+    name="docflow" 
+    revision="1.0">
+	
+	<description language="default">
+		This just the complete flow definition of docflow process.
+	</description>
+	
+	<sequence>
+		<participant ref="developer"/>
+		<participant ref="project-leader"/>				
+	</sequence>
+	
+</process-definition>
+</code>
+</pre>
+
+上のワークフロー定義はとてもシンプルです。私たちが定義したのは developer から PL へのフローのイベントの"順番" です。
+これを OPENWFERU_HOME に docflow__1.0.xml のファイル名でセーブして、以下を入力してください。:
+<pre>
+<code>
+bin/validate-workflow.rb docflow__1.0.xml
+</code>
+</pre>
+以下のような表示が得られるはずです。:
+<pre>
+<code>
+Trying to validate docflow__1.0.xml...  PASSED
+</code>
+</pre>
+validation にパスしたら…、おめでとうございます!あなたは最初のワークフローを書きました。バリデーションするスクリプトは、http://www.openwfe.org/flowdef.xsd で定義されているXMLスキーマでワークフロー定義をバリデーションします。つまり、ワークフロー定義をバリデーションするにはネットワークが必要だということですね。
+
+じゃ、次のステップに行きましょう。ご覧の通り、上記プロセス定義には2つの "role" が定義されています。一つは _developer_ で、もうひとつは _project-leader_ ですね。さて、OpenWFEru での "role" について話す時が来ました。思い出してほしいのですが、これらは *user* (ユーザー) ではなく *role* (ロール…役割) だということです。ユーザ管理を後々単純にするために複数のユーザを一つのロールにアサインできます。ユーザをロールにアサインさせる方法は後ほど…。So, for now let's add these lines at the bottom of
+

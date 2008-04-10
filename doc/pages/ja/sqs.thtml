@@ -1,0 +1,160 @@
+h2. openwferu-sqs
+
+"openwferu-sqs" は、"Amazon SQS":http://aws.amazon.com/sqs/ に REST API (256 KB 以上のメッセージをやり取りします) でアクセスするオープンソースライブラリ (BSD) です。
+
+ワークフローである OpenWFEru は "Amazon SQS を使う":http://jmettraux.wordpress.com/2007/03/13/openwferu-over-amazon-sqs/ ために、オンライン worklist システム (queue for storing / transmitting workitemを保存したり交信するキュー)として設定することができます。それがこのライブラリの背景です。
+
+ここではTOpenWFEru のコンテキストの外側での openwferu-sqs の使用方法を説明します。
+
+h3. openwferu-sqs の入手方法
+
+gem があります。 :
+
+<pre>
+$ sudo gem install openwferu-sqs
+</pre>
+
+この gem は "RubyForge":http://rubyforge.org/frs/?group_id=2609 からもダウンロードできます。
+
+直接ソースを見るなら "こちら":http://viewvc.rubyforge.mmmultiworks.com/cgi/viewvc.cgi/trunk/openwfe-ruby/lib/openwfe/util/sqs.rb?root=openwferu&view=markup を参照してください。
+
+
+h3. openwferu-sqs の使用方法(コマンドラインクライアントとして)
+
+openwferu-sqs を使うには Amazon Acces Key Id と Amazon Secret Access Key Id がそれぞれ環境変数 $AMAZON_ACCESS_KEY_ID と $AMAZON_SECRET_ACCESS_KEY に設定ください。
+
+シンプルなコマンドラインクライアントを実行するには以下のように…。
+
+<pre>
+$ ruby sqs.rb
+</pre>
+
+または…。
+
+<pre>
+$ ruby path/to/your/unpacked/sqs.rb
+</pre>
+
+もしこんなメッセージが出るとしたら…。
+
+<pre>
+env variables $AMAZON_ACCESS_KEY_ID and $AMAZON_SECRET_ACCESS_KEY are not set
+</pre>
+
+上記2つの環境変数が設定していないからです。さもなければ以下のようなメッセージが表示されます。
+
+<pre>
+
+Usage: sqs.rb [options] {action} [queue_name] [message_id]
+
+   known actions are :
+
+      - 'cq'  (create_queue)
+      - 'create_queue'  (create_queue)
+      - 'delete_message'  (delete_message)
+      - 'delete_queue'  (delete_queue)
+      - 'dm'  (delete_message)
+      - 'dq'  (delete_queue)
+      - 'flush_queue'  (flush_queue)
+      - 'fq'  (flush_queue)
+      - 'get_message'  (get_message)
+      - 'gm'  (get_message)
+      - 'list_queues'  (list_queues)
+      - 'lq'  (list_queues)
+      - 'pm'  (put_message)
+      - 'puts_message'  (put_message)
+
+   options are :
+
+    -H, --host                       AWS queue host
+    -h, --help                       displays this help / usage
+    -b, --base64                     encode/decode messages with base64
+
+</pre>
+
+表示どおり、上記のオペレーションが可能です。 :
+
+<pre>
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/util/sqs.rb cq totoqueue
+create_queue...
+"http://queue.amazonaws.com/A2Y5DYCG8CQLUR/totoqueue"
+
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/util/sqs.rb pm totoqueue
+put_message...
+welcome to SQS via OpenWFERU
+"0R2Y01B0DTE4WW9MPX48|C9345G3K6XDQVZ7R7FH1|RFZ53J3DZ6KQ18B66T50"
+
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/util/sqs.rb lq          
+list_queues...
+[#<SQS::Queue:0x6ec058
+  @host="queue.amazonaws.com",
+  @name="johntest0",
+  @path="/A225DYCG8CQLUR/johntest0",
+  @queue_service=
+   #<SQS::QueueService:0x6f093c @queue_host="queue.amazonaws.com">>,
+ #<SQS::Queue:0x6ead70
+  @host="queue.amazonaws.com",
+  @name="totoqueue",
+  @path="/A225DYCG8CQLUR/totoqueue",
+  @queue_service=
+   #<SQS::QueueService:0x6f093c @queue_host="queue.amazonaws.com">>]
+
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/util/sqs.rb gm totoqueue
+get_message...
+[#<SQS::Message:0x6e670c
+  @message_body="welcome to SQS via OpenWFERU",
+  @message_id="0R2Y01B0DTEWW3SMPX48|C9445G3K2XDCVZ7R7FH1|RFZ5TJ3DZWKQ18B66T50",
+  @queue=
+   #<SQS::Queue:0x6ec4b8
+    @host="queue.amazonaws.com",
+    @name="totoqueue",
+    @path="/A225DYCG8CQLUR/totoqueue",
+    @queue_service=
+     #<SQS::QueueService:0x6f0900 @queue_host="queue.amazonaws.com">>>]
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/util/sqs.rb fq totoqueue
+flush_queue...
+1
+
+sonanda:~/openwfe-ruby mettraux$ ruby lib/openwfe/util/sqs.rb dq totoqueue
+delete_queue...
+true
+</pre>
+
+
+h3. openwferu-sqs の使用方法 (ライブラリとして)
+
+ openwferu-sqs の "rdoc":http://openwferu.rubyforge.org/rdoc/classes/SQS.html がオンラインで見られます。そのメソッド名とパラメータはそこでわかるでしょう。以下は短いサンプルコードです。 :
+
+#:code#ruby#
+
+require 'rubygems'
+require 'openwfe/util/sqs'
+
+qs = SQS::QueueService.new
+    #
+    # as for the command line client, openwferu-sqs expects the environment
+    # variables $AMAZON_ACCESS_KEY_ID and $AMAZON_SECRET_ACCESS_KEY to be set
+    # else an error will be raised
+
+qs.create_queue(:myqueue)
+
+msg_id = qs.put_message(:myqueue, "my message")
+
+msg = qs.get_message(:yamltest, msg_id)
+
+#:code#
+
+
+h3. フィードバック
+
+openwferu-sqs のフィードバックには、OpenWFEru "user mailing list":http://groups.google.com/group/openwferu-users か、OpenWFEru "trackers":http://rubyforge.org/tracker/?group_id=2609 を使ってください。
+
+
+h3. (openwferu-sqs のアンインストール)
+
+もし必要ないならば…。 :
+
+<pre>
+    $ sudo gem uninstall openwferu-sqs
+</pre>
+

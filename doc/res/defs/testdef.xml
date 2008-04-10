@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<process-definition name="test" revision="0.1" >
+
+    <sequence>
+        <print>0</print>
+        <print>1</print>
+        <print>2</print>
+    </sequence>
+
+</process-definition>
+

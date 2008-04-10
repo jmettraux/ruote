@@ -1,0 +1,547 @@
+
+= OpenWFEru CHANGELOG.txt
+
+
+== OpenWFEru - 0.9.18    not yet released
+
+- toto  #19060 : added representation() to the result of engine.process_stack()
+                 - s1652
+- todo  #19339 : fulldup broken for Time and Date[Time] as reported by
+                 Maarten. Fixed - s1648
+- todo  #19104 : reformed the template system ( see http://tinyurl.com/2y6z9r )
+                 - s1644
+- bug   #19095 : namespace problem for db enabled engine. Fix by Tomaso - s1640
+- todo  #19072 : 'cron' now leaves his template in the expool - s1638
+- todo  #19061 : lib/openwfe/engine/ cleanup (more later) - s1630
+- todo  #18995 : made 'cron' aware of process pause - s1628
+- todo  #18518 : changed 'cron', broke the // exception - s1627
+- patch #18953 : smart dsub for expression args by Nick Petrella - s1625
+
+
+== OpenWFEru - 0.9.17    2008/03/17
+
+- todo  #18861 : aliased 'restore' to 'set-fields' and turned it into
+                 a ValueMixin user - s1617
+- todo  #18806 : removed require "rubygems" from engine, leaving responsability
+                 to customer code - s1610
+- todo  #18769 : now keeping track of raw_representation for all exps - s1604
+- todo  #18773 : implemented engine.update_expression(fexp) - s1601
+- todo  #18771 : deprecated SymbolHash (raw expression representation) - s1600
+- todo  #18747 : allowing "iterator :on => :f" (symbol for designated source
+                 of value) - s1598
+- todo  #18745 : let [concurrent-]iterator accept on-field, on-var, ... - s1597
+- todo  #18701 : implemented engine.update_expression_data(fei, d) - s1583
+- bug   #18700 : FlowExpressionId.from_h not working with jsonified hashes.
+                 Fixed - s1582
+- todo  #18671 : added is_paused?(wfid) to StatusMixin - s1579
+- bug   #18643 : made the workitem search a bit more 'google-like' - s1571
+- bug   #18580 : active participant last_modified not kept. Fixed - s1568
+- bug   #18557 : exp 'participant' not replying with applied item to cancel()
+                 calls. Fixed - s1552
+- todo  #18531 : added 'unapplied' option to engine.process_stack() - s1547
+- bug   #18348 : cron subprocesses subid reset at 0 upon restart. Fixed - s1542
+- bug   #18254 : socketlistener not replying with <ok-reply/>. Fixed - s1530
+- bug   #18218 : intermittent process_status.paused? failure. Fixed - s1520
+- todo  #16635 : allowed recursion for top processes - s1518
+- todo  #18192 : dropped SimpleExpRepresentation for Array - s1514
+- todo  #18152 : simplified raw_xml and raw_prog to only raw.rb - s1513
+- todo  #18110 : switched from open-uri to rufus-verbs for reading [remote]
+                 process definitions - s1512
+- todo  #18145 : moved to no-params constructors for FlowExpression based
+                 classes - s1511
+- todo  #18078 : <break if="${f:f}"/> will now work if field f is set - s1507
+- todo  #15813 : isolated ValueMixin and used it in 'set', 'print', 'eval',
+                 'reval' and 'log' - s1504
+- todo  #17888 : optimized Workitem.search() - s1498
+- bug   #17873 : ActiveParticipant not accepting string fields with length
+                 > 255. Fixed - s1497
+- bug   #17850 : proc definitions whose 1st line is blank were not accepted.
+                 Fixed - s1496
+- todo  #17851 : caching the paused? process info - s1494
+- todo  #17826 : simplified workitem [] and []= impl - s1489
+- todo  #17823 : implemented basecamp participant (extras) - s1486
+- todo  #17744 : extracted sqs.rb and now depending on gem 'rufus-sqs' - s1470
+- patch #17720 : Tomaso's workitem.unset_attribute(). Patched - s1466
+- todo  #17475 : extracted csv stuff and now depending on gem 'rufus-decision'
+                 - s1453
+- todo  #17476 : extracted kotoba.rb and now depending on gem 'rufus-mnemo' 
+                 - s1451
+- todo  #17472 : extracted safe.rb and now depending on gem 'rufus-eval' - s1450
+- todo  #17442 : extracted dollar.rb and now depending on gem 'rufus-dollar'
+                 - s1446
+- todo  #16658 : extracted scheduler and now depending on gem 'rufus-scheduler'
+                 - s1444
+- todo  #17100 : extracted lru and now depending on gem 'rufus-lru' - s1440
+- todo  #17063 : compact workitems - s1438
+- todo  #16976 : allowing compact :var, :v and :f for the '[un]defined' 
+                 expressions - s1434
+- todo  #16831 : allowing compact :var, :v and :f for :variable and :field
+                 (and also :val for :value) (for exp attributes) - s1431
+- todo  #16825 : implemented the 'exp' doppelganger expression - s1429
+- bug   #16833 : not using a monitor anymore in the scheduler, relying on 
+                 queues. Finer granularity, more robust scheduler - s1425
+- bug   #16791 : subprocess ref="sub_proc" was always looking for "sub-proc".
+                 Fixed - s1415
+- todo  #16654 : allow every jobs to unschedule or reschedule self - s1404
+- todo  #16586 : added the '[ is][ not] set' concept to the $ notation - s1397
+- todo  #16588 : set a min frequency of 0.3s for WaitingExpression impls - s1395
+- todo  #16492 : optimized the 'reserve' expression - s1390
+- todo  #16323 : added wfname() and wfrevision() to ProcessStatus - s1360
+- todo  #16254 : relaxed the rules for process name/revision detection
+                 in Ruby defined processes - s1347
+- todo  #16228 : fulldup delegation - s1345
+- todo  #16205 : replaced the expstorage each() system with the
+                 find_expressions() one - s1344
+- todo  #16152 : scheduler : made schedule_every() reschedule even if 
+                 it experienced an exception - s1337
+- todo  #16066 : require 'openwfe/engine' and 'openwfe/participants' now ok
+                 - s1325
+- todo  #16040 : implemented ProcessStatus.tags - s1323
+- todo  #15925 : implemented engine.get_variables(fei_or_wfid) - s1319
+- todo  #15985 : register_participant now has a :position param - s1313
+- todo  #15954 : moved ${r:x} eval to safe level 4 - s1305
+- todo  #15897 : revised expression_pool.cancel's fetch_root - s1298
+- bug   #15830 : cancelling a cursor or a loop did not cancel active child
+                 expression. Fixed - s1293
+- bug   #15814 : loop and cursor and no proper environment. Fixed - s1289
+- bug   #15793 : hide db_id from user forms - s1287
+- todo  #15758 : implemented the 'eval' expression - s1278
+- todo  #15757 : made sure evaluation of process segments is accepted - s1276
+
+
+== OpenWFEru - 0.9.16    release 2007/11/19
+
+- todo  #15083 : added a 'merge' attribute to the 'listen' expression - s1271
+- todo  #15456 : deprecated initial engine id in FlowExpressionId - s1270
+- todo  #15548 : expression 'listen' made 'on' an alias to the 'to' attribute
+                 - s1268
+- todo  #15674 : implemented BlogParticipant - s1266
+- todo  #15153 : added 'scheduler_tags' attribute to 'cron', 'wait' and 
+                 'sleep' - s1265
+- todo  #15642 : added tag 'scheduled_launch' in scheduler - s1265
+- todo  #15152 : sleep, cron, wait, and timeout expressions now sport a
+                 tag with their classname in the scheduler - s1264
+- todo  #15599 : extracted TemplateMixin out of MailParticipant - s1262
+- todo  #15617 : implemented schedule_info() for scheduler Job instances - s1261
+- bug   #15620 : merge 'isolate' broken for concurrent-iterator. Fixed - s1260
+- todo  #15621 : lookup_attribute() now tolerates numbers as hash keys - s1259
+- todo  #15343 : implemented AtomPubParticipant - s1257
+- todo  #15569 : renamed AtomParticipant to AtomFeedParticipant - s1255
+- bug   #15575 : has_attribute? broken, reported by Maarten Oelering. 
+                 Fixed - s1253
+- patch #15552 : unnecessary unset_result removed by Tomaso Tosolini - s1248
+- todo  #15480 : implemented 'format' for ActivityFeedService - s1245
+- bug   #15448 : engine.unregister_participant() broken. Fixed - s1235
+- todo  #15443 : added a 'db_id' attribute to the InFlowWorkItem class
+                 (in the context of the ActiveParticipant) - s1233
+- todo  #15385 : aliased 'listen' to 'intercept' and 'receive' - s1231
+- bug   #15403 : get_jobs() not returning 'every jobs' when they were
+                 rescheduling. Fixed - s1231
+- todo  #15187 : simplified SequenceExpression for better performance - s1227
+- bug   #15278 : replay_error did not remove error. Fixed - s1224
+- todo  #15148 : implemented OpenWFE::Extras::ActivityFeedService - s1215
+- todo  #15221 : allow for Ruby values (not just strings) in Ruby process
+                 definitions (expression attributes) - s1214
+- bug   #15172 : 'stack level too deep' if BlockParticipant returns workitem,
+                 test cases by Maarten Oelering. Fixed - s1213
+- bug   #15220 : ungraceful failure for lookup_attribute. Fixed - s1212
+- bug   #15173 : DateTime duplication issue. Fixed - s1205
+- todo  #15079 : integrated Tomaso Tosolini's contributions : DbErrorJournal,
+                 DbExpressionStorage, CachedDbPersistedEngine - s1204
+- bug   #15122 : escaped > and < in 'if test' broken on Ruby 1.8.6. Fixed 
+                 - s1199
+- todo  #15096 : rename extras' OwfeTables to WorkitemTables - s1192
+- todo  #15018 : allowing workitems with no fei (that doesn't belong to a
+                 process instance) but with a participant name (listen) - s1191
+- todo  #14998 : 'listen' can now be used with a child, and thus be 'blocking'
+                 - s1190
+- todo  #14963 : added 'escape' attribute to 'set' expression - s1187
+- bug   #14976 : print didn't accept arg escape in Ruby def mode - s1184
+- rfe   #14823 : cron schedules at the second level are now ok - s1172
+- todo  #14768 : subprocesses were not cancelled when their parent
+                 process got cancelled. Fixed - s1167
+- todo  #14692 : implemented SimpleExpRepresentation.get_description - s1162
+- todo  #14633 : implemented expmap.get_expression_classes(ances) - s1150
+- todo  #14626 : implemented ranges for CSV tables - s1149
+- todo  #14620 : implemented the 'accumulate' option for CSV tables - s1149
+- todo  #14577 : expstorage.each_of_kind now yielding fei and expression - s1142
+- todo  #14090 : added launch_time to ProcessStatus - s1140
+- todo  #14569 : implemented engine.lookup_processes(varname, val=nil) - s1139
+- todo  #14534 : added a pom.xml for openwferu-xxx-snapshot.jar - s1135
+- todo  #14529 : renamed 'rest' to 'orest' - s1132
+- todo  #14513 : scheduler : implemented Job.unschedule - s1128
+- todo  #14510 : renamed Entry to Job in Scheduler - s1127
+- rfe   #14439 : added 'tags' to the scheduler. Suggested by Lee Fyock - s1126
+- bug   #14471 : process description were stored as XML text instead of String.
+                 Fixed - s1124
+- todo  #14300 : implemented the 'log' expression - s1112
+- bug   #13954 : scheduler's cron was not happy with minute 0. Fixed. - s1110
+- todo  #14218 : implemented Workitem.search(string, stores=nil) - s1108
+- todo  #14179 : added 'rake jar' task for JRuby deployments - s1106
+
+
+== OpenWFEru - 0.9.15    released 2007/09/24    svn1099
+
+- todo  #14167 : renamed yamlextras.rb to yamlcustom.rb - s1099
+- todo  #14129 : moved observe_expool() to own module - s1095
+- todo  #14126 : moved threaded storage queue system into own mixin - s1094
+- todo  #14106 : added the missing indexes (table 'workitems') - s1087
+- todo  #14803 : separated consume() from cancel() in participants - s1081
+- todo  #14507 : replaced 'key' by 'fkey' in active Workitem - s1078
+- todo  #14059 : replaced require_gem by gem - s1077
+
+
+== OpenWFEru - 0.9.14    released 2007/09/18    svn1072
+
+- bug   #14008 : ActiveParticipant : vanishing field (id 0). Fixed - s1069
+- todo  #14025 : renamed OpenWFEru's Observable to OwfeObservable - s1067
+- todo  #14003 : reorganized tests in ltest and test (qtest) - s1056
+- todo  #14000 : implemented FlowExpressionId.to_web_s - s1054
+- bug   #13957 : cron with name were not registered at all. Fixed - s1045
+- todo  #13956 : implemented engine.launch(x, :every => "10s") - s1044
+- todo  #13955 : implemented <cron every="x"> - s1044
+- rfe   #13665 : implemented engine.launch(x, :in => "3s") and co - s1043
+- bug   #13291 : resume_process() broken in some cases. Fixed - s1037
+- todo  #13815 : added engine.lookupVariable(var, wfid) - s1032
+- bug   #13884 : cancel on a missing participant caused an error. Fixed - s1030
+- bug   #13869 : ensuring exp.fei is used instead of exp for determining
+                 ejournal filename - s1024
+- todo  #13841 : made 'participant' and 'subprocess' conditional - s1023
+- todo  #13834 : switched to thread/Queue for the WorkQueue - s1021
+- bug   #12477 : subprocesses bound at engine level did not survive 
+                 their defining instance. Fixed - s1020
+- bug   #13802 : subprocess forget attribute did not work. Fixed - s1018
+- todo  #13522 : engine.launch(string_proc_def) now accepted - s1013
+- todo  #13709 : now accepting variable/var/v and field/fld/f - s996
+- todo  #13681 : implemented AliasParticipant - s995
+- todo  #13614 : threading participant apply() - s973
+- todo  #13510 : added SimpleExpRepresentation.from_s(s) - s956
+- bug   #13520 : double call to unschedule_timeout for ParticipantExpression
+                 while timing out. Fixed - s954
+- bug   #13516 : participants could get unseen by engine.reload(). Fixed - s952
+- todo  #13518 : Matt added 'email_from' param to email notif participant - s944
+- bug   #13498 : utils/fulldup() now handles classes with more than 0 args
+                 constructors - s950
+- bug   #13499 : utils/copy() couldn't handle :symbols. Fixed by Matt - s944
+- todo  #13413 : implement SimpleExpRepresentation.to_a - s941
+- todo  #13479 : active Workitem : added dispatch_time and last_modified - s939
+- todo  #13380 : ActiveParticipant patches the Engine to accept 
+                 'active workitems' - s930
+- todo  #13381 : implement active Workitem.find_in_stores(store_list) - s920
+- bug   #13349 : active participant problem with empty strings. Fixed - s911
+- todo  #13298 : implemented (active) Workitem.replace_fields(h) - s898
+- bug   #13296 : persistence was always going to ./work. Fixed - s897
+- todo  #13245 : removed need for returning class for ruby procdef loaded
+                 via a URL - s883
+- bug   #13238 : broken redefinition of procdef classes. Fixed - s882
+- todo  #12356 : implemented ActiveStoreParticipant - s881
+- todo  #12624 : allowed engine.launch("http://...") - s879
+- todo  #12118 : implemented pause_process() and resume_process() - s877
+- bug   #12904 : missing require in raw.rb - s876
+- todo  #12839 : implemented CsvTable.new(url) - s874
+- todo  #12840 : implemented CsvTable.to_csv() - s874
+- todo  #12831 : implemented engine.process_status(wfid) - s872
+- todo  #12830 : renamed get_process_status() to list_process_status() - s871
+- todo  #12781 : made workitem (and wi) available to 'r' conditions - s867
+
+
+== OpenWFEru - 0.9.13    released 2007/01/08    svn865
+
+- todo  #12588 : added 'cursor' commands to 'iterator' - s854
+- bug   #12608 : custom :work_directory was not taken in account. Fixed - s847
+- todo  #12478 : implemented ProcessParticipant - s839
+- todo  #12492 : now removing wait_for() observers after wakeup - s836
+- todo  #12490 : engine.wait_for() now exits on errors - s835
+- todo  #12443 : implemented TwitterParticipant - s832
+- bug   #12431 : on_jruby? was not a module method. Fixed - s828
+- freq  #12426 : schedule_at() now understand :discard_past param - s826
+- todo  #12390 : made sure scheduler.[re]start is ok - s821
+- bug   #12388 : schedule_at() wasn't accepting dates. Fixed - s820
+- todo  #12357 : implemented ActiveParticipant.cancel(cancelitem) - s819
+- bug   #12352 : (active) unique constraint of field name was too restrictive.
+                 Fixed - s817
+- todo  #12340 : moved 'densha' into extras/activeparticipants - s814
+- todo  #12347 : added :scheduler_precision configuration param to scheduler 
+                 - s811
+- bug   #12181 : console test broken. Fixed - s806
+
+
+== OpenWFEru - 0.9.12    released 2007/07/10    svn804
+
+- todo  #12110 : cancelling an inactive expression now removes it as well
+                 from its parent expression - s799
+- bug   #12106 : cancelling an active process segment did not resume
+                 process instance. Fixed - s798
+- todo  #11897 : implemented engine.process_status(wfid=nil) - s796
+- todo  #12045 : renamed get_flow_position() to get_flow_stack() - s793
+- todo  #12009 : implemented InMemoryErrorJournal and YamlErrorJournal - s789
+- todo  #11627 : FlowExpressionId added from_s (alias to to_fei()) - s755
+- todo  #11626 : engine.get_participant now accepts symbols as well - s754
+- todo  #11490 : perf improvement by relying on Time.now instead of OpenWFE::now
+                 (date.to_s being quite expensive) - s747
+- todo  #11425 : implemented engine.join_until_idle - s747
+- todo  #11408 : integrated Sakaguchi Masa japanese documentation :) - s743
+
+
+== OpenWFEru - 0.9.11    released 2007/06/06    svn740
+
+- todo   #8164 : implemented the "attribute / a" expression - s737
+- todo  #11364 : added 'wi' to 'reval' bindings (for 'workitem') - s736
+- todo  #11362 : added :logger app context param to the engine - s734
+- todo  #10490 : implemented old style REST enabled worklist - s733
+- todo  #11345 : logs/engine.log -> logs/openwferu.log - s732
+- todo  #11311 : implemented journal.replay_at_last_error(wfid) - s729
+- todo  #11308 : simplified the EmailNotificationParticipant into
+                 a MailParticipant - s726
+- todo  #11243 : simplified the Scheduler top methods - s724
+- bug   #11232 : nil @workqueue_frequency problem. Fixed - s722
+- todo  #11178 : implemented replay_at_error(err_event) in journal - s721
+- todo  #11197 : implement listen's :upon and :once - s714
+- todo  #11173 : :unless and other 'nots' added to conditional exps - s713
+- todo  #11175 : added :error event to expool (and to journal) - s709
+- bug   #11174 : [concurrent-]iterator hanging with empty lists. Fixed - s707
+- todo  #11156 : implemented the <timeout> expression (on its own) - s704
+- bug   #11157 : participant.cancel() did not contain unschedule_timeout().
+                 Fixed - s703
+- todo  #11010 : implemented listen to=x where=y - s689
+- todo  #11012 : added regexes to Observable - s687
+- todo  #10248 : added remove_observer() to Observable - s686
+- todo  #11011 : implemented NoOperationParticipant and NullParticipant - s684
+- todo  #10962 : made Header an extension of InFlowWorkItem - s683
+- todo  #10961 : made XmlCodec a module - s681
+- todo  #10653 : moved logs to logs/ - s668
+- todo  #10644 : added "require 'rubygems' to all the examples - s663
+- bug   #10398 : gem installation complaining about embedded XML comments.
+                 Fixed - s653
+
+
+== OpenWFEru - 0.9.10    released 2007/04/26    svn651
+
+- todo  #10324 : onotify :reply/:apply, switched from fei to fexp - s650
+- todo  #10326 : made participant map observable - s649
+- todo  #10168 : released new gem openwferu-kotoba - s644
+- todo  #10302 : added workitem to :launch and :launch_template - s643
+- todo  #10299 : added workitem to :terminate notification in expool - s642
+- bug   #10217 : Stack potentially too deep. Redesigned and Fixed - s639
+- patch #10216 : Pat's patch : expool : onotify(:launch, fei, url) - s636
+- bug   #10169 : strenghtened xml doc and elt duplication - s633
+- bug   #10150 : xml documents as att broke the xmlcodec - by Pat - s633
+- patch #10157 : refinements in xmlcodec.rb by Pat Cappelaere - s632
+
+
+== OpenWFEru - 0.9.9    released 2007/04/16    svn628
+
+- todo #10123 : now releasing a source zip as well - s622
+- bug  #10095 : fulldup of XML documents was broken. Fixed - s621
+- todo #10050 : 'set' expressions are now accepted outside of their
+                process definition body - s619
+- todo #10052 : implemented the 'filter' expression itself - s617
+- todo #10046 : implemented participant 'params' (workitem auto field) - s616
+- todo  #6849 : implemented filters and added them to 'participant' - s615
+- todo #10051 : made DefineExpression a child of SequenceExpression - s614
+- bug #10017 : fulldup() not happy with REXML::Document - reported by Pat - s611
+- todo #9986 : implemented the expression 'concurrent-iterator' - s608
+- todo #9978 : implemented 'merge_lead' into the 'restore' expression - s607
+- bug  #9990 : scheduled crons did not survive the 'clock' - bug reported 
+               by Art Schumer. Fixed - s606
+- todo #9981 : "skip 2" or "jump 0" are now ok as cursor commands - s603
+- todo #8401 : implemented the 'save' and 'restore' expressions - s600
+- todo #9975 : implemented FlowExpressionId.child_id - s599
+- todo #9233 : implemented merge_type="isolate" for concurrence - s598
+- bug  #9905 : prog pdef not happy with "implicit process name". Fixed - s597
+- bug  #9911 : workitem without history breaks XmlCodec.encode.
+               Patch by Pat Cappelaere - s596
+- todo #9903 : implemented the "jump" instruction for "cursor" - s595
+- todo #9853 : granted their own env to forgotten expressions - s591
+- bug  #9851 : fixed concurrence remaining="forget" - s590
+- bug  #9849 : fixed <if test="3 > 2"> quoting problem - s588
+
+
+== OpenWFEru - 0.9.8    released 2007/04/04    svn587
+
+- todo #9749 : allowing <equals field="f" value="v"/> - s585
+- todo #9755 : implemented FileHistory - s582
+- todo #9747 : allowing for 'if' without children (simply setting __result__) 
+               - s579
+- todo #9744 : implemented the 'case' expression - s578
+- todo #9745 : implemented 'defined' and 'undefined' expressions - s577
+- todo #9675 : implemented the 'reserve' expression for Interleaved
+               Parallel Routing (IPR) - s575
+- todo #9718 : implemented StoreParticipantMixin.delegate() - s566
+- todo #7701 : implemented 'tag' and 'redo'/'undo' - s565
+- todo #9655 : implemented 'wait' expression - s561
+- todo #9687 : implemented scheduler.exit_when_no_more_jobs - s560
+- bug  #9660 : replace @server.shutdown() by close() for cygwin - s554
+- todo #9656 : implemented engine.enable_irb_console - s538
+- bug  #9638 : participant name regexp problem. Fixed - s537
+- todo #9543 : implemented simple trap for irb console - s531
+- todo #9539 : spinned SimpleExpRepresentation out of raw_prog.rb - s528
+- todo #9532 : eliminated redundant launch_template logic from fe_raw - s526
+- todo #9533 : merged fe_utils into flowexpression - s524
+- bug  #9531 : potential collision in sub proc ids within a concurrence. Fixed
+               - s523
+- bug  #9529 : 'when' with child condition was broken. Fixed - s521
+- todo #9507 : the return value of a BlockParticipant is now stored in the
+               '__result__' field of the outgoing workitem - s518
+- todo #9512 : implemented FieldWfidGenerator - s517
+
+
+== OpenWFEru - 0.9.7    released 2007/03/23    svn514
+
+- todo #9186 : added security switches : :ruby_eval_allowed and
+               :remote_definitions_allowed - s508
+- todo #9351 : added the 'language' (lang) attribute to 'description' - s507
+- todo #9449 : implemented Pat process definition parameter concept :
+               <require field="f" [default="d"] [type="t"] [match="m"] /> - s504
+- todo #9452 : removed dependency on libxml-ruby - s503
+- todo #9396 : simplified expression map with meta flow expression info - s500
+- todo #9324 : implemented KotobaWfidGenerator - s496
+- todo #9372 : implemented UuidWfidGenerator - s495
+- todo #9371 : moved wfid generation out of expression pool - s493
+- todo #9364 : implemented list_processes() method - s492
+- todo #9363 : allow for wfid as cancel_process() arg - s492
+- todo #9362 : made control methods available from the engine - s492
+- bug  #9331 : ported the <description> tag from OpenWFEja - s487
+- todo #9292 : lighter yaml version of FlowExpressionId - s484
+- todo #9305 : now ok to have "static" prog process definition - s483
+- todo #9301 : turned the expression map into a simple instance (not a service
+               anymore) - s482
+- bug  #9275 : missing participants at reschedule broke processes, fixed
+               by introducing an engine.reload() method - s472
+- todo #9269 : rehydrated sleep schedule cancel problem. Fixed - s471
+- todo #9266 : cron restart problem, missing env. Fixed - s468
+- todo #9243 : using engine's scheduler in threaded expstorage - s467
+- bug  #9247 : ${sub_id} bug. Fixed - s466
+- todo #9244 : ensured that schedule_every() always retains the same id - s465
+- todo #9239 : running eval tasks in ConditionMixin at $SAFE level 3 - s463
+- todo #9187 : added > >= < and <= to CsvTable - s462
+
+
+== OpenWFEru - 0.9.6    released 2007/03/12    svn459
+
+- todo #9194 : implemented SocketParticipant (and XmlSocketParticipant) - s455
+- todo #9140 : remote process defs are evaluated at $SAFE level 2 - s450
+- todo #9172 : <reval/> now done at $SAFE level 3 - s448
+- todo #9173 : ${ruby:...} now done at $SAFE level 3 - s447
+- todo #9144 : sub x, y, z notation is now accepted - s445
+- todo #8054 : implemented openwfe/lib/listeners/SocketListener - s437
+- todo #9103 : implemented engine.unregister_participant() - s434
+- todo #9078 : ok to have URLs as subprocess refs - s431
+- todo #9076 : ok to have remote Ruby process definitions - s425
+- todo #9040 : implemented SqsListener - s424
+- todo #9049 : implemented FileListener and FileParticipant - s422
+- todo #8425 : provided SoapParticipant.handle_call_result() for easy
+               override - s416
+- todo #9047 : implemented Engine.join() - s415
+- todo #9044 : implemented Scheduler.schedule_every() - s414
+- todo #7870 : implemented SQS participant - s412
+- todo #9024 : implemented wi and fei.to_h for portable representations - s410
+- todo #9035 : simplified prog proc def (implicit 'process-definition') - s408
+- todo #8983 : implemented expool.get_flow_position(wfid) - s394
+
+
+== OpenWFEru - 0.9.5    released 2007/03/01    svn391
+
+- todo #8938 : simpler fileexpstorage directory tree (two levels) - s387
+- todo #8830 : better sub wfid for 'cursor' and 'loop' - s384
+- bug  #8877 : new_workflow_instance_id() not returning unique ids under
+               stress. Fixed - s380
+- todo #8873 : templates for email and atom participants can be instances
+               of File - s377
+- todo #8426 : added block templates to email notification participant
+               - s374
+- todo #8851 : implement CachedFilePersistedEngine - s373
+- bug  #8842 : scheduler now dedicating a thread when triggering a job 
+               - s372
+- bug  #8778 : expool reschedule occurs even if expool stopped. Fixed - s365
+- bug  #8247 : intermittent to_iso8601() failure. Fixed - s364
+- todo #8764 : differentiated 'rake ptest' and 'rake ctest' - s362
+- todo #8757 : implemented CachedExpressionStorage - s360
+- todo #8650 : implemented the "cancel-process" expression - s357
+- todo #8717 : now expstorages 'observe' the expool - s356
+- todo #8418 : "__timed_out__" field set at timeout - s351
+- bug  #8741 : participant names alone with underscore were not ok. 
+               Fixed - s350
+- bug  #8740 : quotereporter.rb broken. Fixed - s349
+- todo #7861 : implemented YamlParticipant - s348
+- todo #8688 : implemented 'merge' and 'merge-type' for 'concurrence' - s344
+- todo #8721 : removed need for expmap in prog proc definitions - s342
+- todo #8718 : made available "workitem", "fexp" and "wi" within
+               ${ruby:...} notations - s341
+- bug  #8581 : test="nada" yielded 'true'. Fixed - s338
+- todo #8348 : implemented 'concurrence over-if" - s337
+
+
+== OpenWFEru - 0.9.4    released 2007/02/15    svn336
+
+- todo #8653 : added short "require 'openwfe/def'"
+- bug  #8583 : 'concurrence' was broken in certain cases of persisted
+               mode. Fixed - s332
+- todo #8394 : implemented the 'when' expression - s328
+- todo #8522 : implemented InMemoryHistory - s318
+- todo #7770 : made Expool observable - s316
+- todo #8431 : extended BlockParticipant, now accepting blocks with one 
+               (workitem) or two (flowexpression and workitem) parameters
+               - s311
+- todo #8446 : implemented workitem.lookup_attribute() for nested
+               values lookup - s307
+- todo #8404 : implemented the csv participant - s301
+- todo #8122 : implemented <iterator>
+
+
+== OpenWFEru - 0.9.3    released 2007/02/05   svn295
+
+- todo #8416 : implemented participant timeout - s293
+- todo #8106 : participant names as expression names - s288
+- todo #6929 : implemented <cron> - s285
+- todo #7860 : implement bare worklist : HashParticipant - s272
+- todo #7660 : implemented <break if="x == y"/> - s267
+- todo #6928 : implemented <if test="x == y"> - s266
+- todo #8211 : scheduler methods are now callable with blocks - s257
+- todo #8243 : revised logging, now using $OWFE_LOG - s250
+
+
+OpenWFEru - 0.9.2    released 2007/01/26
+
+- todo #7968 : implemented EmailNotificationParticipant
+- todo #7966 : added support for blocks to 
+               ParticipantMap.register_participant() - s192
+- todo #7752 : implemented 'programmatic process definitions' - s182
+- todo #7438 : implemented the 'cursor' and the 'loop' expressions - s102
+- todo #7440 : implemented 'forget' - s95
+- todo #7439 : implemented 'lose' - s93
+- todo #7427 : added get_flow_position() to control_client - s63
+- todo #6974 : ruby like names for rest operations - s54
+- todo #6902 : implemented 'sleep' - s23
+- todo #6887 : implemented ${ruby:xxx} - s16
+- todo #6854 : implemented 'reval' - s15
+- todo #6851 : implemented 'equals' - s10
+- todo #6845 : implemented participant map - s8
+- moved to http://rubyforge.org/projects/openwferu
+
+
+== openwfe-ruby - 1.7.2    released 2006/11/02   svn3529
+
+- adapted to OpenWFE 1.7.2 and especially added OpenWFEru alpha
+
+
+== openwfe-ruby - 1.7.1    released 2006/07/17   svn2950
+
+- bug #1511368 : ListAttribute decoding broken. Fixed.
+- todo #1449079 and 1449078 : implement Base64 and XML attribute 
+  {en|de}coding
+- todo #1499480 : implemented History {en|de}coding.
+- todo #1390898 : implemented SockListener / SocketDispatcher pair.
+
+
+== openwfe-ruby - 1.7.0    released 2006-05-08
+
+- bug #1483055 : state information was missing from expressions. Fixed.
+- todo #1483044 : implemented queryAndLockWorkitem().
+- todo #1471365 : added 'owfe-version' to FlowExpressionId.
+
+
+== openwfe-ruby - 1.6.2 
+
+- initial release
+
