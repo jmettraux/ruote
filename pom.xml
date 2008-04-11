@@ -1,0 +1,118 @@
+<project 
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+
+<!--
+
+    This Maven2 POM is used when generating OpenWFEru jars for
+    using OpenWFEru in JRuby environments.
+
+-->
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.openwfe</groupId>
+  <artifactId>openwferu</artifactId>
+  <packaging>jar</packaging>
+  <name>openwferu</name>
+  <version>0.9.16-SNAPSHOT</version>
+
+  <description>
+OpenWFEru is an open source Ruby workflow and BPM engine.
+  </description>
+
+  <url>http://openwferu.rubyforge.org</url>
+
+  <licenses>
+    <license>
+      <name>Revised BSD</name>
+      <url>http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/LICENSE.txt</url>
+    </license>
+  </licenses>
+
+  <inceptionYear>2001</inceptionYear>
+
+  <mailingLists>
+    <mailingList>
+      <name>OpenWFEru developer List</name>
+      <archive>http://groups.google.com/group/openwferu-dev</archive>
+    </mailingList>
+    <mailingList>
+      <name>OpenWFEru user List</name>
+      <archive>http://groups.google.com/group/openwferu-users</archive>
+    </mailingList>
+  </mailingLists>
+
+  <developers>
+    <developer>
+      <id>jmettraux</id>
+      <name>John Mettraux</name>
+      <email>john.mettraux(at)openwfe.org</email>
+      <organization>OpenWFE</organization>
+      <timezone>+9</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <url>http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/</url>
+  </scm>
+
+  <organization>
+    <name>OpenWFE</name>
+    <url>http://openwferu.rubyforge.org</url>
+  </organization>
+
+  <build>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <!--
+          leaving this exclude out is not a problem for maven (resources will be overridden with filtered ones in the
+          next definition) and makes eclipse working. Eclipse configuration will not work with a resource dir defined
+          twice with opposite excludes/includes.
+          <excludes>
+          <exclude>META-INF/magnolia/*</exclude>
+          </excludes>
+        -->
+      </resource>
+    </resources>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <version>1.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <distributionManagement>
+    <!--
+    <repository>
+      <id>magnolia</id>
+      <url>scp://svn.magnolia.info/usr/local/apache/htdocs/maven/m2</url>
+    </repository>
+    -->
+    <snapshotRepository>
+      <id>maven.openwfe.org.snapshots</id>
+      <name>OpenWFE repository</name>
+      <url>scpexe://maven.openwfe.org:722/var/www/www_maven/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>maven.openwfe.org.snapshots</id>
+      <url>http://maven.openwfe.org/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+</project>
