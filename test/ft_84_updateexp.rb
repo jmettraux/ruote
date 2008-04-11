@@ -26,7 +26,7 @@ class FlowTest84 < Test::Unit::TestCase
     #
     # TEST 0
 
-    class TestDefinition0 < ProcessDefinition
+    class TestDefinition0 < OpenWFE::ProcessDefinition
        sequence do
            set :var => "v0", :val => "val0"
            store_p
@@ -78,7 +78,7 @@ class FlowTest84 < Test::Unit::TestCase
     #
     # TEST 1
 
-    class TestDefinition1 < ProcessDefinition
+    class TestDefinition1 < OpenWFE::ProcessDefinition
        sequence do
            participant "alpha"
            participant "bravo"
@@ -119,6 +119,56 @@ class FlowTest84 < Test::Unit::TestCase
         @engine.cancel_process fei.wfid
 
         sleep 0.350
+    end
+
+    #
+    # TEST 2
+
+    class TestDefinition2 < OpenWFE::ProcessDefinition
+       sequence do
+           participant "alpha"
+           participant "alpha"
+           participant "charly"
+       end
+    end
+
+    def test_2
+
+        %w{ alpha bravo charly }.each do |pname|
+            @engine.register_participant pname, OpenWFE::HashParticipant
+        end
+
+        fei = @engine.launch TestDefinition2
+
+        sleep 0.350
+
+        ps = @engine.process_stack fei.wfid, true
+
+        s3fei = ps.find { |fexp| fexp.fei.expid == "0.0.1" }.fei
+
+        @engine.update_raw_expression s3fei, ["bravo", {}, []]
+
+        ps = @engine.process_stack fei.wfid, true
+
+        #p ps.representation
+
+        assert_equal(
+            ["process-definition", {"name"=>"Test", "revision"=>"2"}, [["sequence", {}, [["participant", {}, ["alpha"]], ["bravo", {}, []], ["participant", {}, ["charly"]]]]]],
+            ps.representation)
+
+        wi = @engine.get_participant("alpha").first_workitem
+        @engine.get_participant("alpha").forward(wi)
+
+        sleep 0.350
+
+        wi = @engine.get_participant("bravo").first_workitem
+        @engine.get_participant("bravo").forward(wi)
+
+        ps = @engine.process_stack fei.wfid, true
+
+        assert_equal(
+            ["process-definition", {"name"=>"Test", "revision"=>"2"}, [["sequence", {}, [["participant", {}, ["alpha"]], ["bravo", {"ref"=>"bravo"}, []], ["participant", {}, ["charly"]]]]]],
+            ps.representation)
     end
 
 end

@@ -67,4 +67,7 @@ class PsRepresentationTest < Test::Unit::TestCase
             ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
             ps.representation)
     end
+
+    # see also test/ft_84_updateexp.rb
+
 end

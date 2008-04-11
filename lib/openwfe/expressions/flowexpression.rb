@@ -118,6 +118,16 @@ module OpenWFE
         #
         attr_accessor :raw_representation
 
+        #
+        # Meant to contain a boolean value. If set to 'true' it means that
+        # this expression raw_representation has been modified after
+        # the expression instantiation.
+        #
+        # It's used to keep track effectively of in-flight modifications
+        # of process instances.
+        #
+        attr_accessor :raw_rep_updated
+
 
         #
         # The classical no-params constructors.

@@ -4,7 +4,12 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
-- toto  #19060 : added representation() to the result of engine.process_stack()
+- todo  #19026 : keeping track of raw_representation in-flight changes 
+                 in [replying] children
+
+--- switched source to http://github.com/jmettraux/ruote ---
+
+- todo  #19060 : added representation() to the result of engine.process_stack()
                  - s1652
 - todo  #19339 : fulldup broken for Time and Date[Time] as reported by
                  Maarten. Fixed - s1648

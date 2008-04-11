@@ -482,6 +482,11 @@ module OpenWFE
             exp.delete_variable(tagname) if tagname
 
             #
+            # has raw_expression been updated ?
+
+            track_child_raw_representation exp
+
+            #
             # flow terminated ?
 
             #if not exp.parent_id
@@ -1054,6 +1059,25 @@ module OpenWFE
 
                 RawExpression.new_raw(
                     fei, nil, nil, @application_context, procdef)
+            end
+
+            #
+            # Given a [replying] child flow expression, will update its parent
+            # raw expression if the child raw_expression changed.
+            #
+            # This is used to keep track of in-flight modification to running
+            # process instances.
+            #
+            def track_child_raw_representation (fexp)
+
+                return unless fexp.raw_rep_updated == true
+                
+                parent = fetch_expression fexp.parent_id
+
+                return if parent.uses_template?
+
+                parent.raw_children[fexp.fei.child_id] = fexp.raw_representation
+                parent.store_itself
             end
     end
 

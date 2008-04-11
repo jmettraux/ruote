@@ -87,6 +87,7 @@ module OpenWFE
                 unless fexp.is_a?(RawExpression)
 
             fexp.raw_representation = representation
+            fexp.raw_rep_updated = true
 
             get_expression_pool.update fexp
         end
@@ -99,6 +100,8 @@ module OpenWFE
         def update_expression (fexp)
 
             fexp.application_context = application_context
+
+            fexp.raw_rep_updated = true
 
             get_expression_pool.update fexp
         end
