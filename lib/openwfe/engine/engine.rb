@@ -55,6 +55,7 @@ require 'openwfe/expool/errorjournal'
 require 'openwfe/engine/expool_methods'
 require 'openwfe/engine/status_methods'
 require 'openwfe/engine/participant_methods'
+require 'openwfe/engine/update_exp_methods'
 require 'openwfe/expressions/environment'
 require 'openwfe/expressions/expressionmap'
 require 'openwfe/participants/participantmap'
@@ -74,6 +75,7 @@ module OpenWFE
         include ExpoolMethods
         include StatusMethods
         include ParticipantMethods
+        include UpdateExpMethods
 
         #
         # Builds an OpenWFEru engine.
@@ -590,64 +592,6 @@ module OpenWFE
             #end
                 #
                 # seems slower...
-        end
-
-        #
-        # Use only when doing "process gardening".
-        #
-        # This method updates an expression, the 'data' parameter is expected 
-        # to be a hash. If the expression is an Environment, the variables
-        # will be merged with the ones found in the data param.
-        # If the expression is not an Environment, the data will be merged
-        # into the 'applied_workitem' if any.
-        #
-        # If the merge is not possible, an exception will be raised.
-        #
-        def update_expression_data (fei, data)
-
-            fexp = fetch_exp fei
-
-            original = if fexp.is_a?(Environment)
-
-                fexp.variables
-            else
-
-                fexp.applied_workitem.attributes
-            end
-
-            original.merge! data
-
-            get_expression_pool.update fexp
-        end
-
-        #
-        # A variant of update_expression() that directly replaces
-        # the raw representation stored within a RawExpression.
-        #
-        # Useful for modifying [not yet reached] segments of processes.
-        #
-        def update_raw_expression (fei, representation)
-
-            fexp = fetch_exp fei
-
-            raise "cannot update already applied expression" \
-                unless fexp.is_a?(RawExpression)
-
-            fexp.raw_representation = representation
-
-            get_expression_pool.update fexp
-        end
-
-        #
-        # Replaces an expression in the pool with a newer version of it.
-        #
-        # (useful when fixing processes on the fly)
-        #
-        def update_expression (fexp)
-
-            fexp.application_context = application_context
-
-            get_expression_pool.update fexp
         end
 
         protected
