@@ -67,8 +67,14 @@ module OpenWFE::Extras
                 t.column :wfid, :string, :null => false
                 #t.column :wfname, :string, :null => false
                 t.column :exp_class, :string, :null => false
-                t.column :svalue, :text, :null => false
+
+                #t.column :svalue, :text, :null => false
+                t.column :svalue, :text, :null => false, :limit => 1024 * 1024
+                    #
                     # 'value' could be reserved, using 'svalue' instead
+                    #
+                    # :limit patch by Maarten Oelering (a greater value
+                    # could be required in some cases)
             end
             add_index :expressions, :fei
             add_index :expressions, :wfid
