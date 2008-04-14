@@ -285,7 +285,14 @@ module OpenWFE
 
         attr_accessor :dispatch_time
         attr_accessor :filter
-        #attr_accessor :history
+
+        #
+        # In OpenWFEja, workitem history was stored, OpenWFEru doesn't do
+        # it (no need to copy history over and over).
+        #
+        # (deprecated)
+        #
+        attr_accessor :history
 
         attr_accessor :store
             #

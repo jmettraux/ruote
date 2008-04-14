@@ -29,6 +29,7 @@ class UtilXmlTest < Test::Unit::TestCase
     def test_0
 
         li = OpenWFE::LaunchItem.new
+        li.attributes.delete "___map_type"
         xml = OpenWFE::Xml.launchitem_to_xml li
 
         assert_equal(
@@ -69,6 +70,20 @@ class UtilXmlTest < Test::Unit::TestCase
         assert_equal wi.fei, wi1.fei
 
         #p wi1.fei
+    end
+
+    def test_3
+
+        li = OpenWFE::LaunchItem.new
+        li.wfdurl = "http://toto"
+        li.customer_name = "toto"
+
+        xml = OpenWFE::Xml.launchitem_to_xml li, 2
+
+        li1 = OpenWFE::Xml.launchitem_from_xml xml
+
+        assert_equal li.wfdurl, li1.wfdurl
+        assert_equal li.customer_name, li1.customer_name
     end
 
 end

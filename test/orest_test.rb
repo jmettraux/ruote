@@ -5,6 +5,8 @@
 # John Mettraux at openwfe.org
 #
 
+require 'rubygems'
+
 require 'test/unit'
 require 'fileutils'
 require 'webrick'
@@ -24,7 +26,7 @@ class OldRestTest < Test::Unit::TestCase
 
         #$DEBUG = true
 
-        @engine = Engine.new
+        @engine = OpenWFE::Engine.new
 
         FileUtils.mkdir "logs" unless File.exist?("logs")
 
@@ -138,7 +140,7 @@ class OldRestTest < Test::Unit::TestCase
         #
         # launching a new process...
 
-        li = LaunchItem.new('''
+        li = OpenWFE::LaunchItem.new('''
 <process-definition name="orest" revision="1">
     <sequence>
         <participant ref="alpha" />

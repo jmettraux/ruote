@@ -45,19 +45,6 @@ require 'open-uri'
 module OpenWFE
 
     #
-    # Returns the first subelt of xmlElt that matches the given xpath.
-    # If xpath is null, the first elt will be returned.
-    #
-    def OpenWFE.first_element (xmlElt, elementName=nil)
-
-        return nil if not xmlElt
-
-        return xmlElt.elements[1] if not elementName
-
-        xmlElt.elements.detect { |elt| elt.name == elementName }
-    end
-
-    #
     # see 
     # http://wiki.rubygarden.org/Ruby/page/show/Make_A_Deep_Copy_Of_An_Object
     #

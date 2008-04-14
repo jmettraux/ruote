@@ -55,6 +55,22 @@ module OpenWFE
     module XmlCodec
 
         #
+        # Returns the first subelt of xmlElt that matches the given elt_name.
+        # If the name is null, the first elt will be returned.
+        #
+        def self.first_element (xml_elt, elt_name=nil)
+
+            return nil if not xml_elt
+
+            return xml_elt.elements.find { |e| e.is_a?(REXML::Element) } \
+                unless elt_name
+
+            xml_elt.elements.find do |e| 
+                e.is_a?(REXML::Element) and e.name == elt_name
+            end
+        end
+
+        #
         # Takes as input some XML element and returns is decoded 
         # (as an instance)
         #
@@ -175,8 +191,7 @@ module OpenWFE
 
                 exp = Expression.new()
                 
-                #exp.id = decode(OpenWFE.first_element(xmlElt, "//"+FLOW_EXPRESSION_ID))
-                exp.id = decode(OpenWFE.first_element(xmlElt))
+                exp.id = decode(first_element(xmlElt))
 
                 exp.apply_time = xmlElt.attributes[APPLY_TIME]
                 exp.state = xmlElt.attributes[STATE]
@@ -205,8 +220,8 @@ module OpenWFE
 
                 header.last_modified = xmlElt.attributes[A_LAST_MODIFIED]
                 header.locked = parse_boolean(xmlElt.attributes[A_LOCKED])
-                header.flow_expression_id = decode(OpenWFE.first_element(xmlElt, FLOW_EXPRESSION_ID))
-                header.attributes = decode(OpenWFE.first_element(xmlElt, ATTRIBUTES))
+                header.flow_expression_id = decode(first_element(xmlElt, FLOW_EXPRESSION_ID))
+                header.attributes = decode(first_element(xmlElt, ATTRIBUTES))
 
                 header
             end
@@ -359,16 +374,16 @@ module OpenWFE
                 wi = InFlowWorkItem.new()
 
                 wi.last_modified = xmlElt.attributes[A_LAST_MODIFIED]
-                wi.attributes = decode(OpenWFE.first_element(xmlElt, ATTRIBUTES))
+                wi.attributes = decode(first_element(xmlElt, ATTRIBUTES))
 
                 wi.participant_name = xmlElt.attributes[A_PARTICIPANT_NAME]
-                wi.flow_expression_id = decode(OpenWFE.first_element(OpenWFE.first_element(xmlElt, E_LAST_EXPRESSION_ID), FLOW_EXPRESSION_ID))
+                wi.flow_expression_id = decode(first_element(first_element(xmlElt, E_LAST_EXPRESSION_ID), FLOW_EXPRESSION_ID))
 
                 wi.dispatch_time = xmlElt.attributes[A_DISPATCH_TIME]
 
                 # TODO : decode filter
 
-                wi.history = decode(OpenWFE.first_element(xmlElt, HISTORY))
+                wi.history = decode(first_element(xmlElt, HISTORY))
 
                 wi
             end
@@ -381,7 +396,7 @@ module OpenWFE
                     xmlElt.attributes[WORKFLOW_DEFINITION_URL]
 
                 li.attributes = 
-                    decode(OpenWFE.first_element(xmlElt, ATTRIBUTES))
+                    decode(first_element(xmlElt, ATTRIBUTES))
 
                 li
             end

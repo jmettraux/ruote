@@ -39,6 +39,35 @@ require 'rexml/document'
 require 'builder'
 
 
+#
+# Reopening REXML::Element to add a few helper methods (prefixed with
+# an 'owfe_').
+# Not too happy with this solution, but the prefix should prevent 
+# collisions
+#
+class REXML::Element
+
+    #
+    # Returns the first child that is a REXML::Element or the first child
+    # that is an element and that has the given name.
+    #
+    def owfe_first_elt_child (name=nil)
+
+        children.find do |c| 
+            c.is_a?(REXML::Element) and (( ! name) or c.name == name)
+        end
+    end
+
+    #
+    # Returns all the children that are instances of REXML::Element
+    #
+    def owfe_elt_children
+
+        children.find_all { |c| c.is_a?(REXML::Element) }
+    end
+end
+
+
 module OpenWFE
 
     #
@@ -54,9 +83,9 @@ module OpenWFE
         #
         # Turns a launchitem into an XML String
         #
-        def self.launchitem_to_xml (li)
+        def self.launchitem_to_xml (li, indent=0)
 
-            b = Builder::XmlMarkup.new #:indent => 2
+            b = Builder::XmlMarkup.new :indent => indent
 
             b.instruct!
 
@@ -83,7 +112,7 @@ module OpenWFE
             li.wfdurl = text root, 'workflow_definition_url'
 
             li.attributes = object_from_xml(
-                root.elements['attributes'].children[0])
+                root.owfe_first_elt_child('attributes').owfe_first_elt_child)
 
             li
         end
@@ -92,9 +121,9 @@ module OpenWFE
         # flow expression id
         #++
 
-        def self.fei_to_xml (fei)
+        def self.fei_to_xml (fei, indent=0)
 
-            b = Builder::XmlMarkup.new #:indent => 2
+            b = Builder::XmlMarkup.new :indent => indent
 
             b.instruct!
 
@@ -123,9 +152,9 @@ module OpenWFE
         #
         # Turns an [InFlow]WorkItem into some XML.
         #
-        def self.workitem_to_xml (wi)
+        def self.workitem_to_xml (wi, indent=0)
 
-            b = Builder::XmlMarkup.new #:indent => 2
+            b = Builder::XmlMarkup.new :indent => indent
 
             b.instruct!
 
@@ -304,12 +333,12 @@ module OpenWFE
 
             def self.hash_from_xml (elt)
 
-                elt.children.inject({}) do |r, e|
+                elt.owfe_elt_children.inject({}) do |r, e|
 
-                    children = e.children
+                    children = e.owfe_elt_children
 
-                    k = object_from_xml e[0]
-                    v = object_from_xml e[1]
+                    k = object_from_xml children[0]
+                    v = object_from_xml children[1]
 
                     r[k] = v
 
