@@ -35,6 +35,8 @@ require 'ruby_procdef_test'
 require 'description_test'
 require 'ps_representation'
 
+require 'util_xml_test'
+
 require 'ft_tests'
     #
     # all the 'ft' tests are required in 'ft_tests.rb'

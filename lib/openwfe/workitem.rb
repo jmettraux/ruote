@@ -85,7 +85,7 @@ module OpenWFE
             h
         end
 
-        def WorkItem.from_h (h)
+        def self.from_h (h)
 
             #wi = eval("#{h[:type]}.new")
             wi = OpenWFE.get_class(h).new
@@ -283,7 +283,9 @@ module OpenWFE
     #
     class InFlowWorkItem < InFlowItem
 
-        attr_accessor :dispatch_time, :filter, :history
+        attr_accessor :dispatch_time
+        attr_accessor :filter
+        #attr_accessor :history
 
         attr_accessor :store
             #
@@ -319,7 +321,7 @@ module OpenWFE
 
             h = super
             h[:dispatch_time] = @dispatch_time
-            h[:history] = @history
+            #h[:history] = @history
             h[:filter] = @filter
             h
         end
@@ -331,7 +333,7 @@ module OpenWFE
 
             wi = super
             wi.dispatch_time = h[:dispatch_time]
-            wi.history = h[:history]
+            #wi.history = h[:history]
             wi.filter = h[:filter]
             wi
         end
@@ -459,7 +461,7 @@ module OpenWFE
             h
         end
 
-        def LaunchItem.from_h (h)
+        def self.from_h (h)
 
             li = super
             li.workflow_definition_url = h[:workflow_definition_url]
