@@ -806,7 +806,7 @@ module OpenWFE
 
                 uri = URI.parse uri.to_s
 
-                raise "loading remote definitions is not allowed" \
+                raise ":remote_definitions_allowed is false" \
                     if (ac[:remote_definitions_allowed] != true and
                         uri.scheme and
                         uri.scheme != 'file')

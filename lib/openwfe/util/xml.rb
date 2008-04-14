@@ -92,16 +92,20 @@ module OpenWFE
         # flow expression id
         #++
 
-        def self.fei_to_xml (xml, fei)
+        def self.fei_to_xml (fei)
 
-            xml.flow_expression_id do
-                FlowExpressionId::FIELDS.each do |f|
-                    xml.tag! f.to_s, fei.send(f)
-                end
-            end
+            b = Builder::XmlMarkup.new #:indent => 2
+
+            b.instruct!
+
+            _fei_to_xml b, fei
+
+            b.target!
         end
 
         def self.fei_from_xml (xml)
+
+            xml = to_element xml, 'flow_expression_id'
 
             fei = FlowExpressionId.new
 
@@ -127,7 +131,7 @@ module OpenWFE
 
             b.workitem do
 
-                fei_to_xml b, wi.fei # flow expression id
+                _fei_to_xml b, wi.fei # flow expression id
 
                 b.last_modified to_httpdate(wi.last_modified)
 
@@ -180,6 +184,24 @@ module OpenWFE
             nil # TODO : implement me
         end
 
+        #
+        # An 'internal' method, turning an object into some XML.
+        #
+        def self.object_to_xml (xml, o)
+
+            return xml.true if o == true
+            return xml.false if o == false
+            return xml.null if o == nil
+            return xml.number(o.to_s) if o.is_a?(Numeric)
+
+            return hash_to_xml(xml, o) if o.is_a?(Hash)
+            return array_to_xml(xml, o) if o.is_a?(Array)
+
+            return xml.string(o.to_s) if o.is_a?(String)
+
+            xml.object o.to_s
+        end
+
         private
 
             def self.to_httpdate (t)
@@ -199,6 +221,18 @@ module OpenWFE
             #--
             # OUT
             #++
+
+            def self._fei_to_xml (xml, fei)
+
+                xml.flow_expression_id do
+                    FlowExpressionId::FIELDS.each do |f|
+                        xml.tag! f.to_s, fei.send(f)
+                    end
+
+                    xml.fei_short fei.to_s
+                        # a short, 1 string version of the fei
+                end
+            end
 
             def self.to_element (xml, root_name)
 
@@ -233,21 +267,6 @@ module OpenWFE
                 xml.array do
                     a.each { |o| object_to_xml xml, o }
                 end
-            end
-
-            def self.object_to_xml (xml, o)
-
-                return xml.true if o == true
-                return xml.false if o == false
-                return xml.null if o == nil
-                return xml.number(o.to_s) if o.is_a?(Numeric)
-
-                return hash_to_xml(xml, o) if o.is_a?(Hash)
-                return array_to_xml(xml, o) if o.is_a?(Array)
-
-                return xml.string(o.to_s) if o.is_a?(String)
-
-                xml.object o.to_s
             end
 
             #--
