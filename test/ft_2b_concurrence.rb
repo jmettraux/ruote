@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'flowtestbase'
 
@@ -85,6 +87,7 @@ class FlowTest2b < Test::Unit::TestCase
                         end
                     end
                     #_reval "puts workitem.to_s"
+                    #_reval "puts '${f:key}|${f:alpha}|${f:bravo}|${f:charly}'"
                     _print "${f:key}\n${f:alpha}\n${f:bravo}\n${f:charly}"
                 end
             end
@@ -93,37 +96,40 @@ class FlowTest2b < Test::Unit::TestCase
 
     def test_con_1
 
-        prepare()
+        #log_level_to_debug
+
+        prepare
 
         dotest(
             TestDefinition1.new("lowest", "mix"), 
-            """charly
-true
-true
-true""", 
-            true)
+            %w{ charly true true true }.join("\n"))
+    end
+
+    def test_con_1b
+
+        prepare
 
         dotest(
             TestDefinition1.new("highest", "mix"), 
-            """alpha
-true
-true
-true""", 
-            true)
+            %w{ alpha true true true }.join("\n"))
+    end
+
+    def test_con_1c
+
+        prepare
 
         dotest(
             TestDefinition1.new("lowest", "override"), 
-            """charly
+            [ 'charly', '', '', 'true' ].join("\n"))
+    end
 
+    def test_con_1d
 
-true""", 
-            true)
+        prepare
 
         dotest(
             TestDefinition1.new("highest", "override"), 
-            """alpha
-true""", 
-            true)
+            %w{ alpha true }.join("\n"))
     end
 
     def test_rawprog
@@ -175,7 +181,7 @@ true""",
 
     def test_2
 
-        dotest Isolate01, "0\n1\n2", true
+        dotest Isolate01, "0\n1\n2"
     end
 
 end

@@ -19,7 +19,6 @@ class FlowTest1 < Test::Unit::TestCase
     #def teardown
     #end
 
-    #def xxxx_unset_0
     def test_unset_0
         dotest(
             '''
@@ -32,13 +31,12 @@ class FlowTest1 < Test::Unit::TestCase
     </sequence>
 </process-definition>
             '''.strip, 
-            "set y y\nunset",
-            true)
+            "set y y\nunset")
+            #true)
     end
 
-    #def xxxx_unset_1
     def test_unset_2
-        dotest(\
+        dotest(
 '''<process-definition name="n" revision="0">
     <sequence>
         <set field="x" value="y" />
@@ -46,13 +44,12 @@ class FlowTest1 < Test::Unit::TestCase
         <unset field="x" />
         <print>unset ${field:x}</print>
     </sequence>
-</process-definition>''', 'set y
-unset')
+</process-definition>''', 
+            "set y\nunset")
     end
 
-    #def xxxx_unset_2
     def test_unset_2
-        dotest(\
+        dotest(
 '''<process-definition name="n" revision="0">
     <sequence>
         <set variable="//x" value="y" />
@@ -60,11 +57,10 @@ unset')
         <unset variable="x" />
         <print>unset ${x}</print>
     </sequence>
-</process-definition>''', 'set y
-unset y')
+</process-definition>''', 
+            "set y\nunset y")
     end
 
-    #def xxxx_unset_3
     def test_unset_3
         dotest(
             '''
@@ -77,11 +73,10 @@ unset y')
     </sequence>
 </process-definition>
             '''.strip, 
-            "set y\nunset",
-            true)
+            "set y\nunset")
+            #true)
     end
 
-    #def xxxx_unset_4
     def test_unset_4
         dotest(
             '''
@@ -94,11 +89,10 @@ unset y')
     </sequence>
 </process-definition>
             '''.strip, 
-            "set y\nunset",
-            true)
+            "set y\nunset")
+            #true)
     end
 
-    #def xxxx_unset_5
     def test_unset_5
         dotest(
 '''<process-definition name="n" revision="0">
@@ -110,24 +104,23 @@ unset y')
     <process-definition name="sub0">
         <unset variable="x" />
     </process-definition>
-</process-definition>''', 'set y
-unset y')
+</process-definition>''', 
+            "set y\nunset y")
     end
 
-    #def xxxx_set_a0
     def test_set_a0
-        dotest(\
+        dotest(
 '''<process-definition name="set_a0" revision="0">
     <sequence>
         <set variable="x">y</set>
         <print>${x}</print>
     </sequence>
-</process-definition>''', 'y')
+</process-definition>''', 
+            'y')
     end
 
-    #def xxxx_set_a1
     def test_set_a1
-        dotest(\
+        dotest(
 '''<process-definition name="set_a1" revision="0">
     <sequence>
         <set variable="x">
@@ -135,12 +128,12 @@ unset y')
         </set>
         <print>${x}</print>
     </sequence>
-</process-definition>''', 'true')
+</process-definition>''', 
+            'true')
     end
 
-    #def xxxx_set_a1f
     def test_set_a1f
-        dotest(\
+        dotest(
 '''<process-definition name="set_a1f" revision="0">
     <sequence>
         <set variable="x">
@@ -148,12 +141,12 @@ unset y')
         </set>
         <print>${x}</print>
     </sequence>
-</process-definition>''', 'false')
+</process-definition>''', 
+            'false')
     end
 
-    #def xxxx_set_with_nested_string_0
     def test_set_with_nested_string_0
-        dotest(\
+        dotest(
 '''<process-definition name="set_a1f" revision="0">
     <sequence>
         <set variable="x">
@@ -161,12 +154,12 @@ unset y')
         </set>
         <print>${x}</print>
     </sequence>
-</process-definition>''', '4321')
+</process-definition>''', 
+            '4321')
     end
 
-    #def xxxx_set_with_nested_string_1
     def test_set_with_nested_string_1
-        dotest(\
+        dotest(
 '''<process-definition name="set_a1f" revision="0">
     <sequence>
         <set field="x">
@@ -174,7 +167,8 @@ unset y')
         </set>
         <print>${f:x}</print>
     </sequence>
-</process-definition>''', '4321')
+</process-definition>''', 
+            '4321')
     end
 
 end

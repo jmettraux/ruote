@@ -7,6 +7,8 @@
 # a clear view on the Fuji this morning
 #
 
+require 'rubygems'
+
 # just the restart tests
 
 require 'restart_sleep_test'

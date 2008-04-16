@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
+- todo  #19532 : removed unnecessary synchronizations
 - todo  #19471 : implemented new, lighter xml codec openwfe/util/xml
 - patch #19500 : size patch for db backed engine by Maarten Oelering
 - todo  #19026 : keeping track of raw_representation in-flight changes 

@@ -11,8 +11,6 @@ require 'flowtestbase'
 #require 'openwfe/def'
 #require 'openwfe/worklist/storeparticipant'
 
-#include OpenWFE
-
 
 class FlowTest82 < Test::Unit::TestCase
     include FlowTestBase
@@ -38,6 +36,8 @@ class FlowTest82 < Test::Unit::TestCase
     end
 
     def test_0
+
+        log_level_to_debug
 
         $i = 0
 

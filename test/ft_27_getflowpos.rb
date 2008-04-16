@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'openwfe/worklist/storeparticipant'
 
@@ -25,7 +27,7 @@ class FlowTest27 < Test::Unit::TestCase
     #
     # TEST 0
 
-    class TestDefinition0 < ProcessDefinition
+    class TestDefinition0 < OpenWFE::ProcessDefinition
         def make
             _process_definition :name => "27_gfp", :revision => "0" do
                 _sequence do
@@ -57,7 +59,7 @@ class FlowTest27 < Test::Unit::TestCase
 
         assert_equal 0, ps[fei.parent_wfid].errors.size
         assert_equal 1, ps[fei.parent_wfid].expressions.size
-        assert_kind_of ParticipantExpression, ps[fei.parent_wfid].expressions[0]
+        assert_kind_of OpenWFE::ParticipantExpression, ps[fei.parent_wfid].expressions[0]
 
         assert_not_nil ps[fei.parent_wfid].launch_time
 
@@ -65,7 +67,7 @@ class FlowTest27 < Test::Unit::TestCase
 
         assert_equal 0, ps[fei.parent_wfid].errors.size
         assert_equal 1, ps[fei.parent_wfid].expressions.size
-        assert_kind_of ParticipantExpression, ps[fei.parent_wfid].expressions[0]
+        assert_kind_of OpenWFE::ParticipantExpression, ps[fei.parent_wfid].expressions[0]
 
         #
         # resume process
@@ -74,7 +76,8 @@ class FlowTest27 < Test::Unit::TestCase
 
         sp.forward(wi)
 
-        @engine.wait_for fei
+        #@engine.wait_for fei
+        wait_for fei
 
         assert_equal 0, sp.size
     end
@@ -83,7 +86,7 @@ class FlowTest27 < Test::Unit::TestCase
     #
     # TEST 0b
 
-    class Gfp27b < ProcessDefinition
+    class Gfp27b < OpenWFE::ProcessDefinition
         sequence do
             store_p
             _print "pass"
@@ -134,7 +137,8 @@ class FlowTest27 < Test::Unit::TestCase
 
         sp.forward wi
 
-        @engine.wait_for fei
+        #@engine.wait_for fei
+        wait_for fei
 
         assert_equal 0, sp.size
     end

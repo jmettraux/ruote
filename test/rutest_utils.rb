@@ -7,7 +7,6 @@
 #
 
 require 'openwfe/version'
-#require 'openwfe/rudefinitions'
 
 
 class Tracer

@@ -112,24 +112,24 @@ module OpenWFE
             #    "'#{key}' => '#{value}' (#{value.class.name})"
             #end
 
-            synchronize do
+            #synchronize do
 
-                @variables[key] = value
-                store_itself
-            end
+            @variables[key] = value
+            store_itself
+            #end
         end
 
         #
         # Removes a variable from this environment.
         #
         def delete (key)
-            synchronize do
+            #synchronize do
 
-                ldebug { "#{fei.to_debug_s} delete() '#{key}'" }
+            ldebug { "#{fei.to_debug_s} delete() '#{key}'" }
 
-                @variables.delete key
-                store_itself
-            end
+            @variables.delete key
+            store_itself
+            #end
         end
 
         #

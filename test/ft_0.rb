@@ -32,7 +32,8 @@ class FlowTest0 < Test::Unit::TestCase
 </process-definition>''', '')
     end
 
-    def test_dollar_notation_0
+    def test_2
+        #log_level_to_debug
         dotest(
 '''<process-definition name="n" revision="0">
     <sequence>
@@ -42,7 +43,8 @@ class FlowTest0 < Test::Unit::TestCase
 </process-definition>''', 'y y')
     end
 
-    def test_dollar_notation_1
+    def test_3
+        #log_level_to_debug
         dotest(
 '''<process-definition name="n" revision="0">
     <sequence>

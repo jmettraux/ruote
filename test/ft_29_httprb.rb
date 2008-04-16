@@ -99,7 +99,7 @@ class FlowTest29 < Test::Unit::TestCase
         #puts e
 
         assert_not_nil e
-        assert_equal e.to_s, "loading remote definitions is not allowed"
+        assert_equal e.to_s, ":remote_definitions_allowed is set to false"
     end
 
 end

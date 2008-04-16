@@ -51,15 +51,13 @@ class FlowTest49 < Test::Unit::TestCase
 
         dotest(
             TestCondition49a0,
-            """
-0 false
-1 false
-2 true
-3 true
-4 true
-5 false
-6 false
-            """.strip)
+            [ "0 false",
+              "1 false",
+              "2 true",
+              "3 true",
+              "4 true",
+              "5 false",
+              "6 false" ].join("\n"))
     end
 
 
@@ -82,11 +80,7 @@ class FlowTest49 < Test::Unit::TestCase
 
         dotest(
             TestCondition49a1,
-            """
-0 false
-1 true
-2 true
-            """.strip)
+            [ "0 false", "1 true", "2 true" ].join("\n"))
     end
 
 
@@ -120,14 +114,12 @@ class FlowTest49 < Test::Unit::TestCase
 
         dotest(
             TestCondition49a2,
-            """
-0 true
-1 true
-2 true
-3 false
-4 false
-5 true
-            """.strip)
+            [ "0 true",
+              "1 true",
+              "2 true",
+              "3 false",
+              "4 false",
+              "5 true" ].join("\n"))
     end
 
 end

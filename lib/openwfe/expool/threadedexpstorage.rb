@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without 
@@ -37,7 +37,7 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'openwfe/flowexpressionid'
+require 'thread'
 
 
 module OpenWFE
@@ -83,6 +83,8 @@ module OpenWFE
             #
             def start_processing_thread
 
+                @mutex = Mutex.new
+
                 @events = {}
                 @op_count = 0
 
@@ -95,7 +97,7 @@ module OpenWFE
             # queues an event for later (well within a second) persistence
             #
             def queue (event, fei, fe=nil)
-                synchronize do
+                @mutex.synchronize do
 
                     old_size = @events.size
                     @op_count += 1
@@ -122,7 +124,7 @@ module OpenWFE
                     "process_queue() #{@events.size} events #{@op_count} ops"
                 end
 
-                synchronize do
+                @mutex.synchronize do
                     @events.each_value do |v|
                         event = v[0]
                         begin

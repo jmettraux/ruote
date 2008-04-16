@@ -45,6 +45,8 @@ class FlowTest11 < Test::Unit::TestCase
 
     def test_ppd_0
 
+        #log_level_to_debug
+
         dotest TestDefinition0, "a\nb\nc"
     end
 
@@ -103,8 +105,8 @@ ftoto:_nada__321
 
         dotest(
             TestDefinition2,
-            "toto:nada",
-            true)
+            "toto:nada")
+            #true)
     end
 
 
@@ -133,10 +135,7 @@ ftoto:_nada__321
         #puts
         #puts TestDefinition3.do_make(ExpressionMap.new(nil, nil)).to_s
 
-        dotest(
-            TestDefinition3,
-            """var0 is 'a'
-var0 is 'b'""")
+        dotest TestDefinition3, "var0 is 'a'\nvar0 is 'b'"
     end
 
 
@@ -352,9 +351,7 @@ end
             @tracer << "toto\n"
         end
 
-        dotest(
-            TestDefinition10,
-            ([ 'toto' ] * 3).join("\n"))
+        dotest TestDefinition10, ([ 'toto' ] * 3).join("\n")
     end
 
 
@@ -379,9 +376,7 @@ end
             @tracer << "b\n"
         end
 
-        dotest(
-            TestDefinition11,
-            ([ 'b' ] * 4).join("\n"))
+        dotest TestDefinition11, ([ 'b' ] * 4).join("\n")
     end
 
     #

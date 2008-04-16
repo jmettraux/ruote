@@ -66,10 +66,14 @@ class FlowTest63 < Test::Unit::TestCase
 
         @engine.resume_process fei.workflow_instance_id
 
-        ps = @engine.process_status fei.wfid
-        #puts ps
-        assert_equal ps.errors.size, 0
-        assert ! ps.paused?
+        unless @engine.get_expression_storage.is_a?(
+            OpenWFE::InMemoryExpressionStorage)
+
+            ps = @engine.process_status fei.wfid
+            #puts ps
+            assert_equal ps.errors.size, 0
+            assert ! ps.paused?
+        end
 
         sleep 0.350
 

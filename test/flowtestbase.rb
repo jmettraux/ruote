@@ -67,7 +67,12 @@ module FlowTestBase
         #@terminated_processes = []
         #@engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|
         #    @terminated_processes << fe.fei.wfid
+        #    #p [ :terminated, @terminated_processes ]
         #end
+        @terminated = false
+        @engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|
+            @terminated = true
+        end
 
         @engine.application_context[:ruby_eval_allowed] = true
 
@@ -129,11 +134,10 @@ module FlowTestBase
         end
 
         def name_of_test
+
             s = caller(1)[0]
             i = s.index('`')
-            #s = s[i+1..s.length-2]
-            s = s[i+6..s.length-2]
-            s
+            s[i+6..s.length-2]
         end
 
         #
@@ -143,22 +147,32 @@ module FlowTestBase
         #
         def wait_for (fei)
 
-            #return if @terminated_processes.include?(fei.wfid)
-            @engine.wait_for(fei)  
+            Thread.pass
+            return if @terminated
+
+            for i in (0..7)
+                Thread.pass; sleep 0.014
+                return if @terminated
+            end
+
+            @engine.wait_for fei  
         end
 
         #
         # dotest()
         #
         def dotest (
-            flowDef, expectedTrace, join=false, allowRemainingExpressions=false)
+            flowDef, 
+            expected_trace, 
+            join=false, 
+            allow_remaining_expressions=false)
 
             @tracer.clear
 
-            li = if flowDef.kind_of? OpenWFE::LaunchItem
+            li = if flowDef.kind_of?(OpenWFE::LaunchItem)
                 flowDef
             else
-                OpenWFE::LaunchItem.new(flowDef)
+                OpenWFE::LaunchItem.new flowDef
             end
 
             #start = Time.now.to_f
@@ -170,7 +184,6 @@ module FlowTestBase
             if join.is_a?(Numeric)
                 sleep join
             else
-                #@engine.wait_for fei
                 wait_for fei
             end
 
@@ -178,11 +191,23 @@ module FlowTestBase
 
             trace = @tracer.to_s
 
-            #puts "...'#{trace}' ?= '#{expectedTrace}'"
+            if trace == ''
+                Thread.pass; sleep 0.350
+                trace = @tracer.to_s
+            end
+            #if trace == ''
+            #    Thread.pass; sleep 0.210
+            #    trace = @tracer.to_s
+            #end
+                #
+                # occurs when the tracing is done from a participant
+                # (participant dispatching occurs in a thread)
 
-            if expectedTrace.kind_of?(Array)
+            #puts "...'#{trace}' ?= '#{expected_trace}'"
 
-                result = expectedTrace.find do |etrace|
+            if expected_trace.is_a?(Array)
+
+                result = expected_trace.find do |etrace|
                     trace == etrace
                 end
                 assert(
@@ -196,13 +221,13 @@ module FlowTestBase
 '#{trace}'
 
 """)
-            elsif expectedTrace.kind_of?(Regexp)
+            elsif expected_trace.kind_of?(Regexp)
 
-                assert trace.match(expectedTrace)
+                assert trace.match(expected_trace)
             else
 
                 assert(
-                    trace == expectedTrace,
+                    trace == expected_trace,
                     """flow failed : 
 
   traced :
@@ -211,20 +236,29 @@ module FlowTestBase
 
   but was expecting :
 
-'#{expectedTrace}'
+'#{expected_trace}'
 """)
             end
 
-            if allowRemainingExpressions
+            if allow_remaining_expressions
 
                 purge_engine
 
                 return fei
             end
 
+            Thread.pass; sleep 0.003; Thread.pass
+
             exp_storage = engine.get_expression_storage
+
             view = exp_storage.to_s
             size = exp_storage.size
+
+            if size != 1
+                sleep 0.350
+                view = exp_storage.to_s
+                size = exp_storage.size
+            end
 
             if size != 1
                 puts

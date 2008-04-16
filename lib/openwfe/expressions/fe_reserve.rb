@@ -37,7 +37,7 @@
 # John Mettraux at openwfe.org
 #
 
-require 'thread'
+#require 'thread'
 
 
 module OpenWFE
@@ -100,13 +100,12 @@ module OpenWFE
 
             @mutex_name = lookup_string_attribute :mutex, workitem
 
-            FlowMutex.synchronize do
+            #FlowMutex.synchronize do
 
-                mutex = 
-                    lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
+            mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
 
-                mutex.register self, workitem
-            end
+            mutex.register self, workitem
+            #end
         end
 
         def reply (workitem)
@@ -131,17 +130,20 @@ module OpenWFE
     # track of the expressions in a critical section (1!) or waiting for
     # entering it.
     #
+    #--
     # The current syncrhonization scheme is 1 thread mutex for all the
     # FlowMutex. Shouldn't be too costly and the operations under sync are
     # quite tiny.
+    #++
     #
     class FlowMutex
 
-        #
+        #--
         # Granularity level ? "big rock". Only one FlowMutex operation
         # a a time for the whole business process engine...
         #
-        @@class_mutex = Mutex.new
+        #@@class_mutex = Mutex.new
+        #++
 
         attr_accessor :mutex_name
         attr_accessor :feis
@@ -177,34 +179,33 @@ module OpenWFE
 
             next_fei = nil
 
-            @@class_mutex.synchronize do
+            #@@class_mutex.synchronize do
 
-                current_fei = @feis.delete_at 0
+            current_fei = @feis.delete_at 0
 
-                releaser.set_variable @mutex_name, self
+            releaser.set_variable @mutex_name, self
 
-                log.warn "release() BAD! c:#{current_fei} r:#{releaser.fei}" \
-                    if releaser.fei != current_fei
+            log.warn "release() BAD! c:#{current_fei} r:#{releaser.fei}" \
+                if releaser.fei != current_fei
 
-                next_fei = @feis.first
-            end
+            next_fei = @feis.first
+            #end
 
             return unless next_fei
 
             releaser.get_expression_pool.fetch_expression(next_fei).enter
         end
 
-        #
+        #--
         # Used by the ReserveExpression when looking up for a FlowMutex
         # and registering into it.
         #
-        def self.synchronize (&block)
-
-            @@class_mutex.synchronize do
-
-                block.call
-            end
-        end
+        #def self.synchronize (&block)
+        #    @@class_mutex.synchronize do
+        #        block.call
+        #    end
+        #end
+        #++
     end
 
 end

@@ -255,87 +255,87 @@ module OpenWFE
         # This is the method called when a 'listenable' workitem comes in
         #
         def call (channel, *args)
-            synchronize do
+            #synchronize do
 
-                upon = args[0]
+            upon = args[0]
 
-                ldebug { "call() channel : '#{channel}' upon '#{upon}'" }
+            ldebug { "call() channel : '#{channel}' upon '#{upon}'" }
 
-                return if upon != @upon
+            return if upon != @upon
 
-                workitem = args[1].dup
+            workitem = args[1].dup
 
-                conditional = eval_condition :where, workitem
-                    #
-                    # note that the values if the incoming workitem (not the
-                    # workitem at apply time) are used for the evaluation
-                    # of the condition (if necessary).
-
-                return if conditional == false
-
-                return if @once and @call_count > 0
-
+            conditional = eval_condition :where, workitem
                 #
-                # workitem does match...
+                # note that the values if the incoming workitem (not the
+                # workitem at apply time) are used for the evaluation
+                # of the condition (if necessary).
 
-                ldebug do 
-                    "call() "+
-                    "through for fei #{workitem.fei} / "+
-                    "'#{workitem.participant_name}'"
-                end
+            return if conditional == false
 
-                @call_count += 1
+            return if @once and @call_count > 0
 
-                #ldebug { "call() @call_count is #{@call_count}" }
+            #
+            # workitem does match...
 
-                #
-                # eventual merge
-                
-                workitem = merge_workitems @applied_workitem.dup, workitem \
-                    if @applied_workitem
-
-                #
-                # reply or launch nested child expression
-
-                return reply_to_parent(workitem) \
-                    if raw_children.size < 1
-                        #
-                        # was just a "blocking listen"
-
-                #parent = @once ? self : nil
-                #get_expression_pool.launch_template(
-                #    parent, 
-                #    nil, 
-                #    @call_count - 1, 
-                #    @children[0], 
-                #    workitem, 
-                #    nil)
-
-                if @once
-
-                    # triggering just once
-
-                    get_expression_pool.tlaunch_child(
-                        self,
-                        raw_children.first,
-                        @call_count - 1,
-                        workitem,
-                        true) # registering child
-
-                else
-
-                    # triggering multiple times
-
-                    get_expression_pool.tlaunch_orphan(
-                        self,
-                        raw_children.first,
-                        @call_count - 1,
-                        workitem,
-                        true) # registering child (in case of cancel)
-                end
-
-                store_itself
+            ldebug do 
+                "call() "+
+                "through for fei #{workitem.fei} / "+
+                "'#{workitem.participant_name}'"
             end
+
+            @call_count += 1
+
+            #ldebug { "call() @call_count is #{@call_count}" }
+
+            #
+            # eventual merge
+            
+            workitem = merge_workitems @applied_workitem.dup, workitem \
+                if @applied_workitem
+
+            #
+            # reply or launch nested child expression
+
+            return reply_to_parent(workitem) \
+                if raw_children.size < 1
+                    #
+                    # was just a "blocking listen"
+
+            #parent = @once ? self : nil
+            #get_expression_pool.launch_template(
+            #    parent, 
+            #    nil, 
+            #    @call_count - 1, 
+            #    @children[0], 
+            #    workitem, 
+            #    nil)
+
+            if @once
+
+                # triggering just once
+
+                get_expression_pool.tlaunch_child(
+                    self,
+                    raw_children.first,
+                    @call_count - 1,
+                    workitem,
+                    true) # registering child
+
+            else
+
+                # triggering multiple times
+
+                get_expression_pool.tlaunch_orphan(
+                    self,
+                    raw_children.first,
+                    @call_count - 1,
+                    workitem,
+                    true) # registering child (in case of cancel)
+            end
+
+            store_itself
+            #end
         end
 
         #

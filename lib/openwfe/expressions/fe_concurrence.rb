@@ -152,45 +152,49 @@ module OpenWFE
                 @sync_expression.add_child child 
             end
 
-            store_itself()
+            store_itself
 
-            concurrence = self
+            #concurrence = self
 
             @children.each_with_index do |child, index|
-                Thread.new do
-                    begin
-                        #ldebug { "apply() child : #{child.to_debug_s}" }
-                        concurrence.synchronize do
 
-                            get_expression_pool().apply(
-                                child, 
-                                #workitem.dup)
-                                get_workitem(workitem, index))
-                        end
-                    rescue Exception => e
-                        lwarn do 
-                            "apply() " +
-                            "caught exception in concurrent child  " + 
-                            child.to_debug_s + "\n" + 
-                            OpenWFE::exception_to_s(e)
-                        end
-                    end
-                end
+                get_expression_pool.apply(
+                    child, 
+                    get_workitem(workitem, index))
+
+                #Thread.new do
+                #    begin
+                #        #ldebug { "apply() child : #{child.to_debug_s}" }
+                #        concurrence.synchronize do
+                #            get_expression_pool().apply(
+                #                child, 
+                #                #workitem.dup)
+                #                get_workitem(workitem, index))
+                #        end
+                #    rescue Exception => e
+                #        lwarn do 
+                #            "apply() " +
+                #            "caught exception in concurrent child  " + 
+                #            child.to_debug_s + "\n" + 
+                #            OpenWFE::exception_to_s(e)
+                #        end
+                #    end
+                #end
             end
 
             #@sync_expression.ready(self)
                 #
                 # this is insufficient, have to do that :
 
-            synchronize do
-                #
-                # Making sure the freshest version of the concurrence
-                # expression is used.
-                # This is especially important when using pure persistence.
-                #
-                reloaded_self, _fei = get_expression_pool.fetch(@fei)
-                reloaded_self.sync_expression.ready(reloaded_self)
-            end
+            #synchronize do
+            #
+            # Making sure the freshest version of the concurrence
+            # expression is used.
+            # This is especially important when using pure persistence.
+            #
+            reloaded_self, _fei = get_expression_pool.fetch @fei
+            reloaded_self.sync_expression.ready reloaded_self
+            #end
         end
 
         def reply (workitem)
@@ -343,25 +347,25 @@ module OpenWFE
         # can be processed
         #
         def ready (synchable)
-            synchable.synchronize do
+            #synchable.synchronize do
 
-                synchable.ldebug do 
-                    "ready() called by  #{synchable.fei.to_debug_s}  " +
-                    "#{@unready_queue.length} wi waiting"
-                end
-
-                queue = @unready_queue
-                @unready_queue = nil
-                synchable.store_itself()
-
-                queue.each do |workitem|
-                    break if do_reply(synchable, workitem)
-                        #
-                        # do_reply() will return 'true' as soon as the 
-                        # concurrence is over, if this is the case, the
-                        # queue should not be treated anymore
-                end
+            synchable.ldebug do 
+                "ready() called by  #{synchable.fei.to_debug_s}  " +
+                "#{@unready_queue.length} wi waiting"
             end
+
+            queue = @unready_queue
+            @unready_queue = nil
+            synchable.store_itself
+
+            queue.each do |workitem|
+                break if do_reply(synchable, workitem)
+                    #
+                    # do_reply() will return 'true' as soon as the 
+                    # concurrence is over, if this is the case, the
+                    # queue should not be treated anymore
+            end
+            #end
         end
 
         def add_child (child)
@@ -369,23 +373,23 @@ module OpenWFE
         end
 
         def reply (synchable, workitem)
-            synchable.synchronize do
+            #synchable.synchronize do
 
-                if @unready_queue
+            if @unready_queue
 
-                    @unready_queue << workitem
+                @unready_queue << workitem
 
-                    synchable.store_itself()
+                synchable.store_itself
 
-                    synchable.ldebug do 
-                        "#{self.class}.reply() "+
-                        "#{@unready_queue.length} wi waiting..."
-                    end
-
-                else
-                    do_reply(synchable, workitem)
+                synchable.ldebug do 
+                    "#{self.class}.reply() "+
+                    "#{@unready_queue.length} wi waiting..."
                 end
+
+            else
+                do_reply synchable, workitem
             end
+            #end
         end
 
         protected

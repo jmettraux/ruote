@@ -40,6 +40,8 @@ class FlowTest38b < Test::Unit::TestCase
 
     def test_tag_4
 
+        #log_level_to_debug
+
         @engine.register_participant :peekin do |fexp, wi|
 
             fei = fexp.fei
@@ -67,7 +69,8 @@ class FlowTest38b < Test::Unit::TestCase
 
         fei = @engine.launch TestTag4
 
-        @engine.wait_for fei
+        #@engine.wait_for fei
+        wait_for fei
 
         dotest TestTag4, "peekin\npeekout"
     end
@@ -155,6 +158,8 @@ class FlowTest38b < Test::Unit::TestCase
         assert_equal 1, ps[3].size
 
         @engine.cancel_process fei.wfid
+
+        sleep 0.500
     end
 
 end

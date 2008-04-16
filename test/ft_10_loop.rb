@@ -108,7 +108,7 @@ class FlowTest10 < Test::Unit::TestCase
 
     def test_loop_5
 
-        #log_level_to_debug
+        log_level_to_debug
 
         dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">

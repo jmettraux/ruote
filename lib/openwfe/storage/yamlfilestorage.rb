@@ -40,7 +40,7 @@
 
 require 'find'
 require 'yaml'
-require 'monitor'
+#require 'monitor'
 require 'fileutils'
 
 require 'openwfe/utils'
@@ -61,8 +61,12 @@ module OpenWFE
     # This storage is meant to look and feel like a Hash.
     #
     class YamlFileStorage  
-        include MonitorMixin, ServiceMixin
+        include ServiceMixin
+        #include MonitorMixin
         
+        #
+        # The root path for this file persistence mecha.
+        #
         attr_accessor :basepath
         
         def initialize (service_name, application_context, path)
@@ -81,30 +85,30 @@ module OpenWFE
         # Stores an object with its FlowExpressionId instance as its key.
         #
         def []= (fei, object)
-            synchronize do
+            #synchronize do
 
-                #linfo { "[]= #{fei}" }
+            #linfo { "[]= #{fei}" }
 
-                fei_path = compute_file_path(fei)
+            fei_path = compute_file_path(fei)
 
-                fei_parent_path = File.dirname(fei_path)
-                
-                FileUtils.makedirs(fei_parent_path) \
-                    unless File.exist?(fei_parent_path)
+            fei_parent_path = File.dirname(fei_path)
+            
+            FileUtils.makedirs(fei_parent_path) \
+                unless File.exist?(fei_parent_path)
 
-                File.open(fei_path, "w") do |file|
-                    YAML.dump(object, file)
-                end
+            File.open(fei_path, "w") do |file|
+                YAML.dump(object, file)
             end
+            #end
         end
             
         #
         # Deletes the whole storage directory... beware...
         #
         def purge
-            synchronize do
-                FileUtils.remove_dir @basepath
-            end
+            #synchronize do
+            FileUtils.remove_dir @basepath
+            #end
         end 
         
         #
@@ -112,6 +116,7 @@ module OpenWFE
         # for the given FlowExpressionId instance.
         #
         def has_key? (fei)
+
             File.exist?(compute_file_path(fei))
         end
         
@@ -120,16 +125,16 @@ module OpenWFE
         # instance.
         #
         def delete (fei)
-            synchronize do
+            #synchronize do
             
-                fei_path = compute_file_path(fei)
+            fei_path = compute_file_path(fei)
 
-                ldebug do 
-                    "delete()\n   for #{fei.to_debug_s}\n   at #{fei_path}"
-                end
-                
-                File.delete(fei_path)
+            ldebug do 
+                "delete()\n   for #{fei.to_debug_s}\n   at #{fei_path}"
             end
+            
+            File.delete(fei_path)
+            #end
         end
         
         #
@@ -198,17 +203,17 @@ module OpenWFE
 
                 #return unless block
 
-                synchronize do
-                    Find.find(path) do |p|
+                #synchronize do
+                Find.find(path) do |p|
 
-                        next unless File.exist?(p)
-                        next if File.stat(p).directory?
-                        next unless OpenWFE::ends_with(p, ".yaml")
+                    next unless File.exist?(p)
+                    next if File.stat(p).directory?
+                    next unless OpenWFE::ends_with(p, ".yaml")
 
-                        ldebug { "each_object_path() considering #{p}" }
-                        block.call p
-                    end
+                    ldebug { "each_object_path() considering #{p}" }
+                    block.call p
                 end
+                #end
             end
 
             #

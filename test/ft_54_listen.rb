@@ -78,9 +78,11 @@ class FlowTest54 < Test::Unit::TestCase
 
     def test_1
 
+        log_level_to_debug
+
         @engine.register_participant :channel_z, OpenWFE::NoOperationParticipant
 
-        dotest(Test1, "alpha")
+        dotest Test1, "alpha"
     end
 
 
@@ -148,11 +150,13 @@ class FlowTest54 < Test::Unit::TestCase
 
     def test_4
 
+        log_level_to_debug
+
         @engine.register_participant :channel_z do
             @tracer << "z\n"
         end
 
-        dotest(Test4, "z\nok")
+        dotest Test4, "z\nok"
     end
 
 
@@ -227,6 +231,8 @@ class FlowTest54 < Test::Unit::TestCase
 
     def test_6
 
+        log_level_to_debug
+
         @engine.register_participant :channel_z, OpenWFE::NoOperationParticipant
 
         dotest Test6, "v_truck_1\nv_ferryboat_1"
@@ -270,6 +276,8 @@ class FlowTest54 < Test::Unit::TestCase
     end
 
     def test_6b
+
+        log_level_to_debug
 
         @engine.register_participant :channel_z, OpenWFE::NoOperationParticipant
 

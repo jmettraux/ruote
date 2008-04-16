@@ -72,16 +72,16 @@ module OpenWFE
         # expression
         #
         def cancel
-            synchronize do
+            #synchronize do
 
-                ldebug { "cancel()..." }
+            ldebug { "cancel()..." }
 
-                unschedule()
+            unschedule
 
-                super()
+            super()
 
-                @applied_workitem
-            end
+            @applied_workitem
+            #end
         end
 
         #

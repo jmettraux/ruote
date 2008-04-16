@@ -47,7 +47,12 @@ class FlowTest54c < Test::Unit::TestCase
 
         #log_level_to_debug
 
-        dotest Test0, %w{ z apply z apply }.join("\n"), 0.850, true
+        outputs = [
+            %w{ z apply z apply }.join("\n"),
+            %w{ z z apply apply }.join("\n")
+        ]
+
+        dotest Test0, outputs, 0.850, true
     end
 
     #

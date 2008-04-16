@@ -48,20 +48,8 @@ class FlowTest39b < Test::Unit::TestCase
 
         dotest(
             TestReserve39b0, 
-            [
-"""
-test-charly
-test-delta
-test-alpha
-test-bravo
-""".strip, 
-"""
-test-alpha
-test-bravo
-test-charly
-test-delta
-""".strip 
-            ])
+            [ %w{ test-charly test-delta test-alpha test-bravo }.join("\n"),
+              %w{ test-alpha test-bravo test-charly test-delta }.join("\n") ])
     end
 
     #

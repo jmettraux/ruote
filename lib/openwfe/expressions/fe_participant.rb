@@ -151,11 +151,11 @@ module OpenWFE
 
             @applied_workitem = workitem.dup
 
-            schedule_timeout()
+            schedule_timeout
 
             filter_in workitem
 
-            store_itself()
+            store_itself
             
             workitem.params = lookup_attributes workitem
 

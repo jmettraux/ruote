@@ -434,6 +434,9 @@ module OpenWFE
             te = get_expression_pool.add_observer(:error) do |c, fei, m, i, e|
                 t.wakeup if (fei.parent_wfid == wfid and t.alive?)
             end
+
+            t.join
+
             #tc = get_expression_pool.add_observer(:cancel) do |c, fe|
             #    if (fe.fei.wfid == wfid and fe.fei.expid == "0" and t.alive?)
             #        sleep 0.500
@@ -443,11 +446,9 @@ module OpenWFE
 
             linfo { "wait_for() #{wfid}" }
 
-            t.join
-
-            get_expression_pool.remove_observer(to, :terminate)
-            get_expression_pool.remove_observer(te, :error)
-            #get_expression_pool.remove_observer(tc, :cancel)
+            get_expression_pool.remove_observer to, :terminate
+            get_expression_pool.remove_observer te, :error
+            #get_expression_pool.remove_observer tc, :cancel
                 #
                 # it would work as well without specifying the channel,
                 # but it's thus a little bit faster

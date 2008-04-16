@@ -61,7 +61,7 @@ module OpenWFE
 
             @workstopped = false
 
-            OpenWFE::call_in_thread "workqueue", self do
+            OpenWFE::call_in_thread "ruote workqueue", self do
                 loop do
                     do_process_workelement @workqueue.pop
                     break if @workstopped and @workqueue.empty?
@@ -76,6 +76,14 @@ module OpenWFE
         def is_workqueue_busy?
             
             @workqueue.size > 0
+        end
+
+        #
+        # Returns the current count of jobs on the workqueue
+        #
+        def workqueue_size
+
+            @workqueue.size
         end
 
         #

@@ -61,13 +61,7 @@ class FlowTest41 < Test::Unit::TestCase
 
         dotest(
             TestCase41a0, 
-            """
-ok 0
-ok 1
-ok 2
-ok 2b
-ok 3
-            """.strip)
+            [ 'ok 0', 'ok 1', 'ok 2', 'ok 2b', 'ok 3' ].join("\n"))
     end
 
 

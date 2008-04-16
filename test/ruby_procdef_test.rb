@@ -7,6 +7,8 @@
 # Tue Aug 21 10:22:18 JST 2007
 #
 
+require 'rubygems'
+
 require 'test/unit'
 
 require 'find'
@@ -81,10 +83,9 @@ end
         fei1 = launch TEST1
         sleep 0.200
 
-        #assert_equal ProcessDefinition.extract_class(TEST1), Test1
         assert_equal(
             OpenWFE::ProcessDefinition::Test1,
-            ProcessDefinition.extract_class(TEST1))
+            OpenWFE::ProcessDefinition.extract_class(TEST1))
 
         stack0 = @engine.process_stack fei0.wfid
         #puts stack0

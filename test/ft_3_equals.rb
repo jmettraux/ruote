@@ -26,7 +26,8 @@ class FlowTest3 < Test::Unit::TestCase
         <equals value="a" other-value="a" />
         <print>${field:__result__}</print>
     </sequence>
-</process-definition>''', "true")
+</process-definition>''', 
+            "true")
     end
 
     def test_equals_1
@@ -36,7 +37,8 @@ class FlowTest3 < Test::Unit::TestCase
         <equals value="a" other-value="b" />
         <print>${field:__result__}</print>
     </sequence>
-</process-definition>''', "false")
+</process-definition>''', 
+            "false")
     end
 
     def test_if_0
@@ -46,7 +48,8 @@ class FlowTest3 < Test::Unit::TestCase
         <equals value="a" other-value="a" />
         <print>ok</print>
     </if>
-</process-definition>''', "ok")
+</process-definition>''', 
+            "ok")
     end
 
     def test_if_1
@@ -57,7 +60,8 @@ class FlowTest3 < Test::Unit::TestCase
         <print>ok</print>
         <print>nok</print>
     </if>
-</process-definition>''', "ok")
+</process-definition>''', 
+            "ok")
     end
 
     def test_if_2
@@ -67,7 +71,8 @@ class FlowTest3 < Test::Unit::TestCase
         <equals value="a" other-value="b" />
         <print>nok</print>
     </if>
-</process-definition>''', "")
+</process-definition>''', 
+            "")
     end
 
     def test_if_3
@@ -111,8 +116,7 @@ true""")
         </if>
     </sequence>
 </process-definition>''', 
-"""true
-true""")
+            "true\ntrue")
     end
 
     def test_equals_2
@@ -128,10 +132,7 @@ true""")
         <print>${f:__result__}</print>
     </sequence>
 </process-definition>''', 
-            """
-true
-true
-            """.strip)
+            "true\ntrue")
     end
 
     def test_equals_3

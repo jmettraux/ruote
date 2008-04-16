@@ -38,7 +38,7 @@
 #
 
 require 'uri'
-require 'monitor'
+#require 'monitor'
 
 require 'openwfe/utils'
 require 'openwfe/service'
@@ -71,7 +71,7 @@ module OpenWFE
         include OwfeObservable
         include WorkqueueMixin
         include FeiMixin
-        include MonitorMixin 
+        #include MonitorMixin 
 
 
         #
@@ -91,7 +91,7 @@ module OpenWFE
 
             @paused_instances = {}
 
-            @monitors = MonitorProvider.new(application_context)
+            #@monitors = MonitorProvider.new(application_context)
 
             @observers = {}
 
@@ -117,15 +117,15 @@ module OpenWFE
             onotify :stop
         end
 
-        #
+        #--
         # Obtains a unique monitor for an expression.
         # It avoids the need for the FlowExpression instances to include
         # the monitor mixin by themselves
         #
-        def get_monitor (fei)
-
-            @monitors[fei]
-        end
+        #def get_monitor (fei)
+        #    @monitors[fei]
+        #end
+        #++
 
         #
         # This method is called by the launch method. It's actually the first 
@@ -464,11 +464,11 @@ module OpenWFE
 
             if remove
 
-                remove(exp)
+                remove exp
                     #
                     # remove the expression itself
 
-                exp.clean_children()
+                exp.clean_children
                     #
                     # remove all the children of the expression
             end
@@ -550,29 +550,29 @@ module OpenWFE
         # has to be reloaded.
         # 
         def fetch (exp)
-            synchronize do
+            #synchronize do
 
-                #ldebug { "fetch() exp is of kind #{exp.class}" }
+            #ldebug { "fetch() exp is of kind #{exp.class}" }
 
-                fei = if exp.is_a?(FlowExpression)
+            fei = if exp.is_a?(FlowExpression)
 
-                    exp.fei 
+                exp.fei 
 
-                elsif not exp.is_a?(FlowExpressionId)
+            elsif not exp.is_a?(FlowExpressionId)
 
-                    raise \
-                        "Cannot fetch expression with key : "+
-                        "'#{fei}' (#{fei.class})"
+                raise \
+                    "Cannot fetch expression with key : "+
+                    "'#{fei}' (#{fei.class})"
 
-                else
+            else
 
-                    exp
-                end
-
-                #ldebug { "fetch() for  #{fei.to_debug_s}" }
-
-                [ get_expression_storage[fei], fei ]
+                exp
             end
+
+            #ldebug { "fetch() for  #{fei.to_debug_s}" }
+
+            [ get_expression_storage[fei], fei ]
+            #end
         end
 
         #
@@ -591,22 +591,22 @@ module OpenWFE
         # Returns the engine environment (the top level environment)
         #
         def fetch_engine_environment
-            synchronize do
+            #synchronize do
                 #
                 # synchronize to ensure that there's 1! engine env
 
-                eei = engine_environment_id
-                ee, fei = fetch eei
+            eei = engine_environment_id
+            ee, fei = fetch eei
 
-                return ee if ee
+            return ee if ee
 
-                ee = Environment.new_env(
-                    eei, nil, nil, @application_context, nil)
+            ee = Environment.new_env(
+                eei, nil, nil, @application_context, nil)
 
-                ee.store_itself
+            ee.store_itself
 
-                ee
-            end
+            ee
+            #end
         end
 
         #
@@ -632,13 +632,12 @@ module OpenWFE
 
             onotify :remove, exp.fei
 
-            synchronize do
+            #synchronize do
+            #@monitors.delete(exp.fei)
 
-                @monitors.delete(exp.fei)
-
-                remove_environment(exp.environment_id) \
-                    if exp.owns_its_environment?
-            end
+            remove_environment(exp.environment_id) \
+                if exp.owns_its_environment?
+            #end
         end
 
         #
@@ -650,25 +649,25 @@ module OpenWFE
 
             return if @stopped
 
-            synchronize do
+            #synchronize do
 
-                t = OpenWFE::Timer.new
+            t = OpenWFE::Timer.new
 
-                linfo { "reschedule() initiating..." }
+            linfo { "reschedule() initiating..." }
 
-                options = { :include_classes => Rufus::Schedulable }
+            options = { :include_classes => Rufus::Schedulable }
 
-                get_expression_storage.find_expressions(options).each do |fexp|
+            get_expression_storage.find_expressions(options).each do |fexp|
 
-                    linfo { "reschedule() for  #{fexp.fei.to_s}..." }
+                linfo { "reschedule() for  #{fexp.fei.to_s}..." }
 
-                    onotify :reschedule, fexp.fei
+                onotify :reschedule, fexp.fei
 
-                    fexp.reschedule get_scheduler
-                end
-
-                linfo { "reschedule() done. (took #{t.duration} ms)" }
+                fexp.reschedule get_scheduler
             end
+
+            linfo { "reschedule() done. (took #{t.duration} ms)" }
+            #end
         end
 
         #
@@ -806,7 +805,7 @@ module OpenWFE
 
                 uri = URI.parse uri.to_s
 
-                raise ":remote_definitions_allowed is false" \
+                raise ":remote_definitions_allowed is set to false" \
                     if (ac[:remote_definitions_allowed] != true and
                         uri.scheme and
                         uri.scheme != 'file')
@@ -1116,35 +1115,31 @@ module OpenWFE
         end
     end
 
-    #
+    #--
     # a small help class for storing monitors provided on demand 
     # to expressions that need them
     #
-    class MonitorProvider
-        include MonitorMixin, Logging
-
-        MAX_MONITORS = 10000
-
-        def initialize (application_context=nil)
-            super()
-            @application_context = application_context
-            @monitors = LruHash.new(MAX_MONITORS)
-        end
-
-        def [] (key)
-            synchronize do
-
-                (@monitors[key] ||= Monitor.new)
-            end
-        end
-
-        def delete (key)
-            synchronize do
-                #ldebug { "delete() removing Monitor for  #{key}" }
-                @monitors.delete(key)
-            end
-        end
-    end
+    #class MonitorProvider
+    #    include MonitorMixin, Logging
+    #    MAX_MONITORS = 10000
+    #    def initialize (application_context=nil)
+    #        super()
+    #        @application_context = application_context
+    #        @monitors = LruHash.new(MAX_MONITORS)
+    #    end
+    #    def [] (key)
+    #        synchronize do
+    #            (@monitors[key] ||= Monitor.new)
+    #        end
+    #    end
+    #    def delete (key)
+    #        synchronize do
+    #            #ldebug { "delete() removing Monitor for  #{key}" }
+    #            @monitors.delete(key)
+    #        end
+    #    end
+    #end
+    #++
 
 end
 

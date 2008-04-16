@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'flowtestbase'
 
@@ -44,6 +46,8 @@ class FlowTest2 < Test::Unit::TestCase
 
     def test_con_2
 
+        #log_level_to_debug
+
         dotest(
 '''<process-definition name="ft_2_concurrence" revision="2">
     <concurrence over-if="true">
@@ -60,6 +64,8 @@ class FlowTest2 < Test::Unit::TestCase
 
     def test_con_3
 
+        #log_level_to_debug
+
         dotest(
 '''<process-definition name="ft_2_concurrence" revision="3">
     <concurrence over-if="${over}">
@@ -73,6 +79,8 @@ class FlowTest2 < Test::Unit::TestCase
 
     def test_con_4
 
+        #log_level_to_debug
+
         dotest(
 '''<process-definition name="ft_2_concurrence" revision="4">
     <concurrence over-if="${nada}">
@@ -83,12 +91,13 @@ class FlowTest2 < Test::Unit::TestCase
         <print>b</print>
     </concurrence>
 </process-definition>''', 
-            """b
-a""", 
+            "b\na",
             true)
     end
 
     def test_con_5
+
+        #log_level_to_debug
 
         dotest(
 '''<process-definition name="ft_2_concurrence" revision="5">
@@ -100,8 +109,7 @@ a""",
         <print>b</print>
     </concurrence>
 </process-definition>''', 
-            """b
-a""", 
+            "b\na",
             true)
     end
 

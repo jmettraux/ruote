@@ -72,7 +72,8 @@ class FlowTest60 < Test::Unit::TestCase
         fei.expression_name = "print"
         @engine.cancel_expression fei
 
-        @engine.wait_for(fei.wfid)
+        #@engine.wait_for(fei.wfid)
+        wait_for fei
 
         assert_equal "a\nb.0\nc", @tracer.to_s
 
@@ -113,7 +114,9 @@ class FlowTest60 < Test::Unit::TestCase
         fei.expression_name = "sequence"
         @engine.cancel_expression fei
 
-        @engine.wait_for(fei.wfid)
+        #@engine.wait_for(fei.wfid)
+        wait_for fei
+
         #sleep 0.350
         #puts @engine.get_error_journal.get_error_log(fei.wfid).to_s
 

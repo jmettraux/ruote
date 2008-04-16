@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 
 require 'flowtestbase'
@@ -37,19 +39,32 @@ class FlowTest37 < Test::Unit::TestCase
         end
     end
 
-    def test_pnames
+    def test_0
 
-        @engine.register_participant("sps") do |fexp, wi|
-            @tracer << "sps\n"
-        end
-        @engine.register_participant("sps_1") do |fexp, wi|
-            @tracer << "sps_1\n"
-        end
+        prepare
 
-        dotest(DEF0, "sps\nsps_1")
-
-        dotest(TestPnames1, "sps\nsps_1", true)
+        dotest DEF0, "sps\nsps_1"
     end
+
+    def test_1
+
+        prepare
+
+        #dotest TestPnames1, "sps\nsps_1", true
+        dotest TestPnames1, "sps\nsps_1"
+    end
+
+    protected
+
+        def prepare
+
+            @engine.register_participant("sps") do |fexp, wi|
+                @tracer << "sps\n"
+            end
+            @engine.register_participant("sps_1") do |fexp, wi|
+                @tracer << "sps_1\n"
+            end
+        end
 
 end
 

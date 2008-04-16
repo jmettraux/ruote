@@ -614,22 +614,20 @@ module OpenWFE
             binding()
         end
 
-        #
+        #--
         # Used like the classical Ruby synchronize, but as the OpenWFE 
         # expression pool manages its own set of monitors, it's one of those 
         # monitors that is used. But the synchronize code looks like the class 
         # just included the MonitorMixin. No hassle.
         #
-        def synchronize
-
-            #ldebug { "synchronize() ---in--- for  #{@fei.to_debug_s}" }
-
-            get_expression_pool.get_monitor(@fei).synchronize do
-                yield
-            end
-
-            #ldebug { "synchronize() --out--  for  #{@fei.to_debug_s}" }
-        end
+        #def synchronize
+        #    #ldebug { "synchronize() ---in--- for  #{@fei.to_debug_s}" }
+        #    get_expression_pool.get_monitor(@fei).synchronize do
+        #        yield
+        #    end
+        #    #ldebug { "synchronize() --out--  for  #{@fei.to_debug_s}" }
+        #end
+        #++
 
         #
         # Returns the text stored as the children of the given expression
@@ -733,6 +731,8 @@ module OpenWFE
             @raw_representation[2]
         end
 
+        SUBIDMUTEX = Mutex.new
+
         #
         # Returns the next sub process id available (this counter
         # is stored in the process environment under the key :next_sub_id)
@@ -744,18 +744,18 @@ module OpenWFE
 
             c = nil
 
-            env.synchronize do
+            #env.synchronize do
 
-                c = env.variables[:next_sub_id]
-                n = if c
-                    c + 1
-                else
-                    c = 0
-                    1
-                end
-                env.variables[:next_sub_id] = n
-                env.store_itself
+            c = env.variables[:next_sub_id]
+            n = if c
+                c + 1
+            else
+                c = 0
+                1
             end
+            env.variables[:next_sub_id] = n
+            env.store_itself
+            #end
 
             c
         end
