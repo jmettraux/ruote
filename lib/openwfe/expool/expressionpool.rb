@@ -38,7 +38,6 @@
 #
 
 require 'uri'
-#require 'monitor'
 
 require 'openwfe/utils'
 require 'openwfe/service'
@@ -46,7 +45,6 @@ require 'openwfe/logging'
 require 'openwfe/omixins'
 require 'openwfe/rudefinitions'
 require 'openwfe/flowexpressionid'
-require 'openwfe/util/workqueue'
 require 'openwfe/util/observable'
 require 'openwfe/expool/parser'
 require 'openwfe/expool/representation'
@@ -69,10 +67,7 @@ module OpenWFE
         include ServiceMixin
         include OwfeServiceLocator 
         include OwfeObservable
-        include WorkqueueMixin
         include FeiMixin
-        #include MonitorMixin 
-
 
         #
         # The hash containing the wfid of the process instances currently
@@ -87,7 +82,7 @@ module OpenWFE
 
             super()
             
-            service_init(service_name, application_context)
+            service_init service_name, application_context
 
             @paused_instances = {}
 
@@ -99,8 +94,6 @@ module OpenWFE
 
             engine_environment_id
                 # makes sure it's called now
-
-            start_workqueue
         end
 
         #
@@ -109,10 +102,6 @@ module OpenWFE
         def stop
 
             @stopped = true
-
-            stop_workqueue
-                #
-                # flushes the work queue
 
             onotify :stop
         end
@@ -349,19 +338,19 @@ module OpenWFE
         #
         # Applies a given expression (id or expression)
         #
-        def apply (exp, workitem)
+        def apply (exp_or_fei, workitem)
 
-            queue_work :do_apply, exp, workitem
-            #do_apply exp, workitem
+            get_workqueue.push(
+                self, :do_apply_reply, :apply, exp_or_fei, workitem)
         end
 
         #
         # Replies to a given expression
         #
-        def reply (exp, workitem)
+        def reply (exp_or_fei, workitem)
 
-            queue_work :do_reply, exp, workitem
-            #do_reply exp, workitem
+            get_workqueue.push(
+                self, :do_apply_reply, :reply, exp_or_fei, workitem)
         end
 
         #
@@ -820,77 +809,48 @@ module OpenWFE
             end
 
             #
-            # This method is called by the workqueue when processing
-            # the atomic work operations.
+            # This is the method called [asynchronously] by the WorkQueue
+            # upon apply/reply.
             #
-            def do_process_workelement elt
+            def do_apply_reply (direction, exp_or_fei, workitem)
 
-                message, fei, workitem = elt
+                fei = nil
 
                 begin
 
-                    send message, fei, workitem
+                    exp, fei = if exp_or_fei.is_a?(FlowExpressionId)
+                        fetch exp_or_fei
+                    else
+                        [ exp_or_fei, exp_or_fei.fei ]
+                    end
+
+                    ldebug {
+                        ":#{direction} "+
+                        "target #{fei.to_debug_s}" }
+
+                    if not exp
+
+                        #raise "apply() cannot apply missing #{_fei.to_debug_s}"
+                            # not very helpful anyway
+
+                        lwarn { 
+                            "do_apply_reply() cannot find >#{fei}" }
+
+                        return
+                    end
+
+                    check_if_paused exp
+
+                    workitem.fei = exp.fei if direction == :apply
+
+                    onotify direction, exp, workitem
+
+                    exp.send direction, workitem
 
                 rescue Exception => e
 
-                    notify_error e, fei, message, workitem
+                    notify_error e, fei, direction, workitem
                 end
-            end
-
-            #
-            # The real apply work.
-            #
-            def do_apply (exp, workitem)
-
-                exp, _fei = fetch(exp) if exp.is_a?(FlowExpressionId)
-
-                #ldebug { "apply()  '#{_fei}'" }
-
-                if not exp
-
-                    #raise "apply() cannot apply missing  #{_fei.to_debug_s}"
-                        # not very helpful anyway
-
-                    lwarn do 
-                        "do_apply() cannot apply missing  #{_fei.to_debug_s}"
-                    end
-                    return
-                end
-
-                check_if_paused exp
-
-                workitem.fei = exp.fei
-
-                onotify :apply, exp, workitem
-
-                exp.apply workitem
-            end
-
-            #
-            # The real reply work is done here
-            #
-            def do_reply (exp, workitem)
-
-                exp, fei = fetch exp
-
-                ldebug { "reply() to   #{fei.to_debug_s}" }
-                ldebug { "reply() from #{workitem.last_expression_id.to_debug_s}" }
-
-                if not exp
-
-                    #raise "cannot reply to missing  #{fei.to_debug_s}"
-
-                    lwarn do 
-                        "reply() cannot reply to missing  #{fei.to_debug_s}"
-                    end
-                    return
-                end
-
-                check_if_paused exp
-
-                onotify :reply, exp, workitem
-
-                exp.reply workitem 
             end
 
             #

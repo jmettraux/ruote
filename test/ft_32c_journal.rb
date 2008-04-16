@@ -7,12 +7,12 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
-
-require 'flowtestbase'
-
 require 'openwfe/expool/journal'
 
+require 'flowtestbase'
 
 
 class FlowTest32c < Test::Unit::TestCase
@@ -29,7 +29,7 @@ class FlowTest32c < Test::Unit::TestCase
     #
     # TEST 0
 
-    class Test0 < ProcessDefinition
+    class Test0 < OpenWFE::ProcessDefinition
         sequence do
             participant :alpha
             participant :nada
@@ -37,12 +37,11 @@ class FlowTest32c < Test::Unit::TestCase
         end
     end
 
-    #def xxxx_0
     def test_0
 
         @engine.application_context[:keep_journals] = true
 
-        @engine.init_service("journal", Journal)
+        @engine.init_service "journal", OpenWFE::Journal
 
         @engine.register_participant(:alpha) do |wi|
             @tracer << "alpha\n"
@@ -53,7 +52,7 @@ class FlowTest32c < Test::Unit::TestCase
         end
 
         #fei = dotest(Test0, "alpha", 0.500, true)
-        li = LaunchItem.new Test0
+        li = OpenWFE::LaunchItem.new Test0
         fei = @engine.launch li
 
         sleep 0.500
@@ -68,7 +67,7 @@ class FlowTest32c < Test::Unit::TestCase
 
         assert_equal error_event[0], :error
         assert_equal error_event[2].wfid, fei.wfid
-        assert_equal error_event[3], :do_apply
+        assert_equal error_event[3], :apply
 
         #
         # replaying the error (should occur a second time)

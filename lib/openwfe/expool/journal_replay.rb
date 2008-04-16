@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without 
@@ -159,10 +159,12 @@ module OpenWFE
         #
         def replay_at_error (error_source_event)
 
-            get_expression_pool.queue_work \
-                error_source_event[3], # message (:do_apply for example)
+            get_workqueue.push(
+                get_expression_pool,
+                :do_apply_reply,
+                error_source_event[3], # message (:apply for example)
                 error_source_event[2], # fei or exp
-                error_source_event[4]  # workitem
+                error_source_event[4]) # workitem
 
             # 0 is :error and 1 is the date and time of the error
 

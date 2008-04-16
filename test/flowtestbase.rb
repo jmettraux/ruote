@@ -147,11 +147,8 @@ module FlowTestBase
         #
         def wait_for (fei)
 
-            Thread.pass
-            return if @terminated
-
-            for i in (0..7)
-                Thread.pass; sleep 0.014
+            for i in (0..14)
+                Thread.pass
                 return if @terminated
             end
 
@@ -189,19 +186,23 @@ module FlowTestBase
 
             #puts "// took #{Time.now.to_f - start} s"
 
+
             trace = @tracer.to_s
 
-            if trace == ''
-                Thread.pass; sleep 0.350
-                trace = @tracer.to_s
-            end
             #if trace == ''
-            #    Thread.pass; sleep 0.210
+            #    Thread.pass; sleep 0.350
             #    trace = @tracer.to_s
             #end
                 #
                 # occurs when the tracing is done from a participant
                 # (participant dispatching occurs in a thread)
+
+            #for i in  0..70
+            #    Thread.pass; sleep 0.140
+            #    trace = @trace.to_s
+            #    p [ :trace, trace ]
+            #    break if trace != ''
+            #end if trace == ''
 
             #puts "...'#{trace}' ?= '#{expected_trace}'"
 
@@ -247,18 +248,18 @@ module FlowTestBase
                 return fei
             end
 
-            Thread.pass; sleep 0.003; Thread.pass
+            #Thread.pass; sleep 0.003; Thread.pass
 
             exp_storage = engine.get_expression_storage
 
             view = exp_storage.to_s
             size = exp_storage.size
 
-            if size != 1
-                sleep 0.350
-                view = exp_storage.to_s
-                size = exp_storage.size
-            end
+            #if size != 1
+            #    sleep 0.350
+            #    view = exp_storage.to_s
+            #    size = exp_storage.size
+            #end
 
             if size != 1
                 puts
@@ -313,10 +314,7 @@ module JournalTestBase
 
         events = get_journal.load_events(fn)
 
-        error_count = 0
-        events.each { |evt| error_count += 1 if evt[0] == :error }
-
-        error_count
+        events.inject(0) { |r, evt| r += 1 if evt[0] == :error; r }
     end
 end
 

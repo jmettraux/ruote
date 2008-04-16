@@ -51,6 +51,7 @@ module OpenWFE
     S_ENGINE = 'engine'
     S_EXPRESSION_MAP = 'expressionMap'
     S_WFID_GENERATOR = 'wfidGenerator'
+    S_WORKQUEUE = 'workQueue'
     S_EXPRESSION_POOL = 'expressionPool'
     S_EXPRESSION_STORAGE = 'expressionStorage'
     S_PARTICIPANT_MAP = 'participantMap'
@@ -84,6 +85,9 @@ module OpenWFE
         end
         def get_wfid_generator
             @application_context[S_WFID_GENERATOR]
+        end
+        def get_workqueue
+            @application_context[S_WORKQUEUE]
         end
         def get_expool
             @application_context[S_EXPRESSION_POOL]

@@ -75,7 +75,7 @@ module OpenWFE
     #
     class ExpressionMap
 
-        def initialize ()
+        def initialize
 
             super
 

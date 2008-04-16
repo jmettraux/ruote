@@ -56,16 +56,16 @@ module OpenWFE
             #
             def extract_fei (object)
 
-                if object.kind_of?(FlowExpressionId)
+                if object.is_a?(FlowExpressionId)
 
                     object
 
-                elsif object.kind_of?(FlowExpression) or 
-                    object.kind_of?(InFlowItem)
+                elsif object.is_a?(FlowExpression) or 
+                    object.is_a?(InFlowItem)
 
                     object.fei
 
-                elsif object.kind_of?(String)
+                elsif object.is_a?(String)
 
                     FlowExpressionId.to_fei object
 

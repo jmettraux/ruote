@@ -43,28 +43,27 @@ require 'openwfe/utils'
 
 module OpenWFE
 
-    #
-    # This mixin provides a workqueue and a thread for executing tasks
-    # pushed onto it. It uses the thread.rb Queue class.
-    #
-    # It is currently only used by the ExpressionPool (maybe it'll get
-    # merged back into it later).
-    #
-    module WorkqueueMixin
+    class WorkQueue < Service
 
         #
-        # Creates and starts the workqueue.
+        # Inits the WorkQueue
         #
-        def start_workqueue
+        def service_init (service_name, application_context)
 
-            @workqueue = Queue.new
+            super
 
-            @workstopped = false
+            @queue = Queue.new
 
-            OpenWFE::call_in_thread "ruote workqueue", self do
+            @stopped = false
+
+            OpenWFE::call_in_thread service_name, self do
+
                 loop do
-                    do_process_workelement @workqueue.pop
-                    break if @workstopped and @workqueue.empty?
+
+                    target, method_name, args = @queue.pop
+                    target.send method_name, *args
+
+                    break if @stopped and @queue.empty?
                 end
             end
         end
@@ -73,54 +72,45 @@ module OpenWFE
         # Returns true if there is or there just was activity for the
         # work queue.
         #
-        def is_workqueue_busy?
+        def busy?
             
-            @workqueue.size > 0
+            @queue.size > 0
         end
 
         #
         # Returns the current count of jobs on the workqueue
         #
-        def workqueue_size
+        def size
 
-            @workqueue.size
+            @queue.size
         end
 
         #
         # Stops the workqueue.
         #
-        def stop_workqueue
+        def stop
 
-            @workstopped = true
+            @stopped = true
         end
 
         #
         # the method called by the mixer to actually queue the work.
         #
-        def queue_work (*args)
+        def push (target, method_name, *args)
 
-            if @workqueue_stopped
+            if @stopped
 
-                do_process_workelement args
+                target.send method_name, *args
                     #
                     # degraded mode : as if there were no workqueue
             else
 
-                @workqueue.push args
+                @queue.push [ target, method_name, args ]
                     #
                     # work will be done later (millisec order)
                     # by the work thread
             end
         end
-
-        #--
-        # Returns the current workqueue size
-        #
-        #def workqueue_size
-        #    return 0 unless @workqueue
-        #    @workqueue.size
-        #end
-        #++
     end
 end
 

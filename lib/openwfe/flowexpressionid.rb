@@ -75,6 +75,14 @@ module OpenWFE
         alias :wfname :workflow_definition_name
         alias :wfrevision :workflow_definition_revision
 
+        #--
+        # a trick : returns self...
+        #
+        #def fei
+        #    self
+        #end
+        #++
+
         #
         # This method return @workflow_instance_id. If parent is set to
         # true, if will return the same result as 

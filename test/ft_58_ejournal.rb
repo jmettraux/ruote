@@ -7,6 +7,8 @@
 # Fri Jun 29 23:12:53 JST 2007
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 
 require 'flowtestbase'
@@ -29,7 +31,7 @@ class FlowTest58 < Test::Unit::TestCase
     #
     # TEST 0
 
-    class Test0 < ProcessDefinition
+    class Test0 < OpenWFE::ProcessDefinition
         sequence do
             participant :alpha
             participant :nada
@@ -46,13 +48,13 @@ class FlowTest58 < Test::Unit::TestCase
         end
 
         #fei = dotest(Test0, "alpha", 0.500, true)
-        li = LaunchItem.new Test0
+        li = OpenWFE::LaunchItem.new Test0
         fei = @engine.launch li
 
         sleep 0.300
 
         assert File.exist?("work/ejournal/#{fei.parent_wfid}.ejournal") \
-            if @engine.is_a?(FilePersistedEngine)
+            if @engine.is_a?(OpenWFE::FilePersistedEngine)
 
         errors = ejournal.get_error_log fei
 

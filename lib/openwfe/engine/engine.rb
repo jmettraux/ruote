@@ -48,6 +48,7 @@ require 'openwfe/rudefinitions'
 require 'openwfe/service'
 require 'openwfe/workitem'
 require 'openwfe/util/irb'
+require 'openwfe/util/workqueue'
 require 'openwfe/expool/wfidgen'
 require 'openwfe/expool/expressionpool'
 require 'openwfe/expool/expstorage'
@@ -120,6 +121,11 @@ module OpenWFE
                 #
                 # the workflow instance (process instance) id generator
                 # making sure each process instance has a unique identifier
+
+            build_workqueue
+                #
+                # where apply/reply get queued and processed asynchronously
+                # by a single thread
 
             build_expression_pool
                 #
@@ -512,7 +518,9 @@ module OpenWFE
                 error.fei.parent_wfid, 
                 error)
 
-            get_expression_pool.queue_work(
+            get_workqueue.push(
+                get_expression_pool,
+                :do_apply_reply,
                 error.message,
                 error.fei,
                 error.workitem)
@@ -633,6 +641,15 @@ module OpenWFE
                     # showing how to initialize a FieldWfidGenerator that
                     # will take as workflow instance id the value found in
                     # the field "wfid" of the LaunchItem.
+            end
+
+            #
+            # Builds the workqueue where apply/reply work is queued
+            # and processed.
+            #
+            def build_workqueue
+
+                init_service S_WORKQUEUE, WorkQueue
             end
 
             #

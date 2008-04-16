@@ -19,14 +19,15 @@ class FlowTest0 < Test::Unit::TestCase
     #def teardown
     #end
 
-    def test_print
+    def test_0
+        #log_level_to_debug
         dotest(
 '''<process-definition name="n" revision="0">
     <print>ok</print>
 </process-definition>''', "ok")
     end
 
-    def test_empty
+    def test_1
         dotest(
 '''<process-definition name="n" revision="0">
 </process-definition>''', '')

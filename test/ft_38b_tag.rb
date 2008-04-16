@@ -67,10 +67,8 @@ class FlowTest38b < Test::Unit::TestCase
             @tracer << "peekout\n"
         end
 
-        fei = @engine.launch TestTag4
-
-        #@engine.wait_for fei
-        wait_for fei
+        #fei = @engine.launch TestTag4
+        #wait_for fei
 
         dotest TestTag4, "peekin\npeekout"
     end
