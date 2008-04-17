@@ -91,5 +91,61 @@ class FlowTest58 < Test::Unit::TestCase
         assert ( ! ejournal.has_errors?(fei))
     end
 
+    #
+    # TEST 1
+
+    # Testing that the changes to the workitem are taken into account
+
+    class Test1 < OpenWFE::ProcessDefinition
+        sequence do
+            participant :nada
+            _print "it's ${f:weather}"
+        end
+    end
+
+    def test_1
+
+        ejournal = @engine.get_error_journal
+
+        li = OpenWFE::LaunchItem.new Test1
+        li.weather = "sunny"
+
+        fei = launch li
+
+        sleep 0.300
+
+        errors = ejournal.get_error_log fei
+
+        #require 'pp'; pp ejournal
+        #puts "/// error journal of class #{ejournal.class.name}"
+
+        assert_equal 1, errors.length
+
+        assert ejournal.has_errors?(fei)
+        assert ejournal.has_errors?(fei.wfid)
+
+        #
+        # fix
+
+        @engine.register_participant :nada do
+            # do nothing
+        end
+
+        #
+        # replay
+
+        error = errors.first
+
+        assert_equal "sunny", error.workitem.weather
+
+        error.workitem.weather = "rainy"
+
+        @engine.replay_at_error error
+
+        sleep 0.300
+
+        assert_trace "it's rainy"
+    end
+
 end
 
