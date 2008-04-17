@@ -64,15 +64,15 @@ module FlowTestBase
 
         @engine = $WORKFLOW_ENGINE_CLASS.new
 
-        #@terminated_processes = []
-        #@engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|
-        #    @terminated_processes << fe.fei.wfid
-        #    #p [ :terminated, @terminated_processes ]
-        #end
-        @terminated = false
+        @terminated_processes = []
         @engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|
-            @terminated = true
+            @terminated_processes << fe.fei.wfid
+            #p [ :terminated, @terminated_processes ]
         end
+        #@terminated = false
+        #@engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|
+        #    @terminated = true
+        #end
 
         @engine.application_context[:ruby_eval_allowed] = true
 
@@ -149,7 +149,8 @@ module FlowTestBase
 
             for i in (0..14)
                 Thread.pass
-                return if @terminated
+                return if @terminated_processes.include?(fei.wfid)
+                #return if @terminated
             end
 
             @engine.wait_for fei  

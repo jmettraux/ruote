@@ -215,6 +215,8 @@ module OpenWFE
 
             fei = get_expression_pool.launch launchitem, options
 
+            #linfo { "launch() #{fei.wfid} : #{fei.wfname} #{fei.wfrevision}" }
+
             fei.dup
                 #
                 # so that users of this launch() method can play with their
