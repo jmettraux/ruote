@@ -67,9 +67,6 @@ class FlowTest38b < Test::Unit::TestCase
             @tracer << "peekout\n"
         end
 
-        #fei = @engine.launch TestTag4
-        #wait_for fei
-
         dotest TestTag4, "peekin\npeekout"
     end
 
@@ -97,7 +94,7 @@ class FlowTest38b < Test::Unit::TestCase
             @tracer << @engine.process_status(wfid).tags.to_s
         end
 
-        dotest TestTag6, [ 'AAB', 'BAB' ]
+        dotest TestTag6, [ 'AAB', 'BAB', 'ABAB' ]
     end
 
     #
@@ -137,7 +134,7 @@ class FlowTest38b < Test::Unit::TestCase
                 "participant#{i}", OpenWFE::HashParticipant)
         end
 
-        fei = @engine.launch TestTag7
+        fei = launch TestTag7
 
         sleep 0.350
 
@@ -148,7 +145,7 @@ class FlowTest38b < Test::Unit::TestCase
 
         ps[0].proceed_first
 
-        sleep 0.500
+        sleep 0.700 # why so much ? persistence...
 
         assert_equal 0, ps[0].size
         assert_equal 1, ps[1].size

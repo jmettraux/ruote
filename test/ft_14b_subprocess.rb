@@ -143,7 +143,7 @@ class FlowTest14b < Test::Unit::TestCase
 
         @engine.register_participant "toto", OpenWFE::NullParticipant
 
-        fei = @engine.launch Test4
+        fei = launch Test4
 
         sleep 0.350
 
@@ -173,7 +173,7 @@ class FlowTest14b < Test::Unit::TestCase
 
         @engine.register_participant "toto", OpenWFE::NullParticipant
 
-        fei = @engine.launch Test5
+        fei = launch Test5
 
         sleep 0.350
 

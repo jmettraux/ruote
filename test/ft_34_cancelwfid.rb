@@ -37,7 +37,7 @@ class FlowTest34 < Test::Unit::TestCase
         sp = @engine.register_participant(
             "store_participant", OpenWFE::HashParticipant)
 
-        fei = @engine.launch(TestCancelWfid0)
+        fei = launch TestCancelWfid0
 
         sleep 0.300
 
@@ -60,7 +60,7 @@ class FlowTest34 < Test::Unit::TestCase
         sp = @engine.register_participant(
             "store_participant", OpenWFE::YamlParticipant)
 
-        fei = @engine.launch(TestCancelWfid0)
+        fei = launch TestCancelWfid0
 
         sleep 0.350
 

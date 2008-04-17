@@ -171,7 +171,7 @@ class FlowTest79 < Test::Unit::TestCase
         @engine.register_participant :qa, p
         @engine.register_participant :dev, p
 
-        fei = @engine.launch TroubleTicket01
+        fei = launch TroubleTicket01
 
         @engine.wait_for fei
 

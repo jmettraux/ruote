@@ -19,11 +19,14 @@ require 'openwfe/worklist/storeparticipant'
 class HParticipantTest < Test::Unit::TestCase
 
     def setup
-        @engine = Engine.new()
+
+        @engine = Engine.new
     end
 
-    #def teardown
-    #end
+    def teardown
+
+        @engine.stop if @engine
+    end
 
     class HpDefinition0 < OpenWFE::ProcessDefinition
         sequence do
@@ -61,7 +64,7 @@ class HParticipantTest < Test::Unit::TestCase
 
     def do_test
 
-        id = @engine.launch(HpDefinition0)
+        id = @engine.launch HpDefinition0
 
         assert \
             id.kind_of?(FlowExpressionId),

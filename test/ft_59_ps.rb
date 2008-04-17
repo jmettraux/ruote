@@ -37,7 +37,7 @@ class FlowTest59 < Test::Unit::TestCase
         sa = @engine.register_participant("store_a", OpenWFE::HashParticipant)
         sb = @engine.register_participant("store_b", OpenWFE::HashParticipant)
 
-        fei = @engine.launch Def59
+        fei = launch Def59
 
         sleep 0.350
 
@@ -65,7 +65,7 @@ class FlowTest59 < Test::Unit::TestCase
         a = @engine.register_participant :alpha, OpenWFE::HashParticipant
         b = @engine.register_participant :bravo, OpenWFE::HashParticipant
 
-        fei = @engine.launch Def59b
+        fei = launch Def59b
 
         sleep 0.350
 
@@ -94,7 +94,7 @@ class FlowTest59 < Test::Unit::TestCase
             # nothing
         end
 
-        fei = @engine.launch Def59_1
+        fei = launch Def59_1
 
         sleep 0.350
 
@@ -128,9 +128,9 @@ class FlowTest59 < Test::Unit::TestCase
         b = @engine.register_participant :bravo, OpenWFE::HashParticipant
 
         feis = []
-        feis << @engine.launch(Def59b)
-        feis << @engine.launch(Def59b)
-        feis << @engine.launch(Def59c)
+        feis << launch(Def59b)
+        feis << launch(Def59b)
+        feis << launch(Def59c)
 
         sleep 0.350
 

@@ -157,6 +157,28 @@ module FlowTestBase
         end
 
         #
+        # calling 
+        #
+        #     launch li 
+        #
+        # instead of
+        #
+        #     @engine.launch li
+        #
+        # ensures that the logs will contain a mention of the wfid of the
+        # flow just started along with the test method (and it's location
+        # in its source file).
+        #
+        def launch (li)
+
+            fei = @engine.launch li
+
+            $OWFE_LOG.info "dotest() launched #{fei.to_short_s} @ #{caller[0]}"
+
+            fei
+        end
+
+        #
         # dotest()
         #
         def dotest (
@@ -175,9 +197,7 @@ module FlowTestBase
 
             #start = Time.now.to_f
 
-            fei = @engine.launch li
-
-            $OWFE_LOG.info { "dotest() launched #{fei.to_s}" }
+            fei = launch li
 
             if join.is_a?(Numeric)
                 sleep join
@@ -283,6 +303,9 @@ module FlowTestBase
             fei
         end
 
+        #
+        # makes sure to purge the engine's expression storage
+        #
         def purge_engine
 
             @engine.get_expression_storages.each do |storage|

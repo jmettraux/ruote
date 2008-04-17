@@ -54,7 +54,7 @@ class FlowTest15b < Test::Unit::TestCase
 
         @engine.register_participant ".", OpenWFE::NullParticipant
 
-        fei = @engine.launch Test0
+        fei = launch Test0
 
         sleep 0.350
 

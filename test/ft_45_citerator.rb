@@ -196,7 +196,7 @@ done.
 
         @engine.register_participant ".", OpenWFE::NullParticipant
 
-        fei = @engine.launch Test6
+        fei = launch Test6
 
         sleep 0.350
 

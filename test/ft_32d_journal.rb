@@ -52,9 +52,8 @@ class FlowTest32d < Test::Unit::TestCase
             public :flush_buckets
         end
 
-        #fei = dotest(Test0, "alpha", 0.500, true)
         li = LaunchItem.new Test0
-        fei = @engine.launch li
+        fei = launch li
 
         sleep 0.500
 

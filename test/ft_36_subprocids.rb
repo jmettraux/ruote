@@ -59,8 +59,8 @@ class FlowTest36 < Test::Unit::TestCase
             feis[fexp.fei] = true
         end
 
-        @engine.launch TestSubProcId0
-        @engine.launch TestSubProcId1
+        launch TestSubProcId0
+        launch TestSubProcId1
 
         sleep 2
 
@@ -86,7 +86,7 @@ class FlowTest36 < Test::Unit::TestCase
             feis[fexp.fei] = true
         end
 
-        @engine.launch(TestIteratorSubId0)
+        launch TestIteratorSubId0
 
         sleep 0.350
 

@@ -38,7 +38,7 @@ class FlowTest70 < Test::Unit::TestCase
 
         @engine.register_participant "toto", NullParticipant
 
-        fei = @engine.launch(Test0)
+        fei = launch Test0
 
         sleep 0.350
 

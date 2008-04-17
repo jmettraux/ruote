@@ -86,7 +86,7 @@ class FlowTest9b < Test::Unit::TestCase
 
         @engine.register_participant :my_participant, MyParticipant.new(@tracer)
 
-        fei = @engine.launch Test2
+        fei = launch Test2
 
         sleep 0.350
 

@@ -31,7 +31,7 @@ class FlowTest65 < Test::Unit::TestCase
 
     def test_0
 
-        @engine.launch TEST0
+        launch TEST0
         sleep 0.350
         assert_equal "ok.", @tracer.to_s
     end
@@ -49,7 +49,7 @@ class FlowTest65 < Test::Unit::TestCase
 
     def test_1
 
-        @engine.launch TEST1
+        launch TEST1
 
         sleep 0.350
         assert_equal "ok.", @tracer.to_s

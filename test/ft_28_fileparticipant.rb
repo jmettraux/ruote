@@ -45,7 +45,7 @@ class FlowTest28 < Test::Unit::TestCase
         @engine.register_participant("fp", OpenWFE::FileParticipant)
         @engine.add_workitem_listener(OpenWFE::FileListener, "500")
 
-        fei = @engine.launch(TestDefinition0)
+        fei = launch TestDefinition0
 
         sleep 0.350
 

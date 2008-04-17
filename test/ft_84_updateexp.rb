@@ -38,7 +38,7 @@ class FlowTest84 < Test::Unit::TestCase
         #sp = @engine.register_participant("store_p", OpenWFE::YamlParticipant)
         sp = @engine.register_participant("store_p", OpenWFE::HashParticipant)
 
-        fei = @engine.launch TestDefinition0
+        fei = launch TestDefinition0
 
         sleep 0.350
 
@@ -91,7 +91,7 @@ class FlowTest84 < Test::Unit::TestCase
             @engine.register_participant pname, OpenWFE::HashParticipant
         end
 
-        fei = @engine.launch TestDefinition1
+        fei = launch TestDefinition1
 
         sleep 0.350
 
@@ -140,7 +140,7 @@ class FlowTest84 < Test::Unit::TestCase
             @engine.register_participant pname, OpenWFE::HashParticipant
         end
 
-        fei = @engine.launch TestDefinition2
+        fei = launch TestDefinition2
 
         sleep 0.350
 
@@ -187,6 +187,11 @@ class FlowTest84 < Test::Unit::TestCase
 
         assert_equal 0, ps.find_all { |fexp| fexp.fei.expid == '0.0.1' }.size
             # making sure the 2nd participant is over
+
+        #@engine.cancel_process fei
+        #sleep 0.350
+
+        purge_engine
     end
 
 end

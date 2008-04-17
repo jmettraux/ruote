@@ -40,9 +40,9 @@ class FlowTest27 < Test::Unit::TestCase
     def test_gfp_0
 
         #sp = @engine.register_participant("store_p", OpenWFE::YamlParticipant)
-        sp = @engine.register_participant("store_p", OpenWFE::HashParticipant)
+        sp = @engine.register_participant "store_p", OpenWFE::HashParticipant
 
-        fei = @engine.launch(TestDefinition0)
+        fei = launch TestDefinition0
 
         sleep 0.350
 
@@ -100,7 +100,7 @@ class FlowTest27 < Test::Unit::TestCase
         sp = @engine.register_participant "store_p", OpenWFE::YamlParticipant
 
         #fei = @engine.launch TestDefinition0
-        fei = @engine.launch Gfp27b
+        fei = launch Gfp27b
 
         sleep 0.350
 

@@ -39,11 +39,11 @@ class FlowTest72 < Test::Unit::TestCase
 
         li = LaunchItem.new Test0
         li.toto = 'toto_zero'
-        fei0 = @engine.launch li
+        fei0 = launch li
 
         li = LaunchItem.new Test0
         li.toto = 'toto_one'
-        fei1 = @engine.launch li
+        fei1 = launch li
 
         sleep 0.350
 

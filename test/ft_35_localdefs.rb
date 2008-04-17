@@ -66,7 +66,7 @@ c""")
 
     def test_local_2
 
-        @engine.launch("file:doc/res/defs/testdef.rb")
+        launch "file:doc/res/defs/testdef.rb"
         sleep 0.300
         assert_equal @tracer.to_s, "a\nb\nc"
     end

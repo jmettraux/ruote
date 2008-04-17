@@ -79,7 +79,7 @@ alpha""",
 
     def test_sleep_4
 
-        fei = @engine.launch Test4
+        fei = launch Test4
 
         sleep 0.250
         
@@ -102,7 +102,7 @@ alpha""",
 
     def test_sleep_5
 
-        fei = @engine.launch Test5
+        fei = launch Test5
 
         sleep 0.250
 

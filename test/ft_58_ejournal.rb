@@ -47,9 +47,8 @@ class FlowTest58 < Test::Unit::TestCase
             @tracer << "alpha\n"
         end
 
-        #fei = dotest(Test0, "alpha", 0.500, true)
         li = OpenWFE::LaunchItem.new Test0
-        fei = @engine.launch li
+        fei = launch li
 
         sleep 0.300
 

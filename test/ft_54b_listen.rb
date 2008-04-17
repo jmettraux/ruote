@@ -35,7 +35,7 @@ class FlowTest54b < Test::Unit::TestCase
 
         #log_level_to_debug
 
-        @engine.launch Test0
+        launch Test0
 
         sleep 0.350
 

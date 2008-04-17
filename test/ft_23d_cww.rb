@@ -40,7 +40,7 @@ class FlowTest23d < Test::Unit::TestCase
 
         #log_level_to_debug
 
-        fei = @engine.launch Test0
+        fei = launch Test0
 
         sleep 0.350
 

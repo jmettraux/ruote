@@ -78,7 +78,7 @@ class FlowTest54c < Test::Unit::TestCase
         @engine.register_participant "channel9", OpenWFE::NullParticipant
         @engine.register_participant "listen9", OpenWFE::NullParticipant
 
-        fei = @engine.launch Test1
+        fei = launch Test1
 
         sleep 0.700
 

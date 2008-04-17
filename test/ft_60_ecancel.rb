@@ -40,7 +40,7 @@ class FlowTest60 < Test::Unit::TestCase
 
         #$OWFE_LOG.level = Logger::DEBUG
 
-        fei = @engine.launch TestDefinition0
+        fei = launch TestDefinition0
 
         sleep 0.350
 
@@ -64,7 +64,7 @@ class FlowTest60 < Test::Unit::TestCase
 
         #$OWFE_LOG.level = Logger::DEBUG
 
-        fei = @engine.launch TestDefinition0
+        fei = launch TestDefinition0
 
         sleep 0.350
 
@@ -85,7 +85,7 @@ class FlowTest60 < Test::Unit::TestCase
 
         #$OWFE_LOG.level = Logger::DEBUG
 
-        fei = @engine.launch TestDefinition0
+        fei = launch TestDefinition0
 
         sleep 0.350
 
@@ -106,7 +106,7 @@ class FlowTest60 < Test::Unit::TestCase
 
         #$OWFE_LOG.level = Logger::DEBUG
 
-        fei = @engine.launch TestDefinition0
+        fei = launch TestDefinition0
 
         sleep 0.350
 

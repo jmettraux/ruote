@@ -44,7 +44,7 @@ class FlowTest83 < Test::Unit::TestCase
             sleep 0.002
         end
 
-        fei = @engine.launch Test0
+        fei = launch Test0
 
         sleep 0.350
 

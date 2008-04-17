@@ -47,7 +47,7 @@ class FlowTest21b < Test::Unit::TestCase
         #puts "start at #{Time.now.to_s}"
         #dotest TestDefinition0, "", 62
 
-        fei = @engine.launch TestDefinition0
+        fei = launch TestDefinition0
 
         sleep 0.350
 

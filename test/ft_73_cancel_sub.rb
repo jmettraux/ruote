@@ -39,8 +39,7 @@ class FlowTest73 < Test::Unit::TestCase
 
         p0 = @engine.register_participant :p0, OpenWFE::HashParticipant
 
-        fei = @engine.launch Test0
-        #puts "launched : " + fei.to_s
+        fei = launch Test0
 
         sleep 0.350
 
@@ -78,9 +77,7 @@ class FlowTest73 < Test::Unit::TestCase
 
         p1 = @engine.register_participant :p1, OpenWFE::HashParticipant
 
-        fei = @engine.launch Test1
-        #puts
-        #puts "launched : " + fei.to_s
+        fei = launch Test1
 
         sleep 0.350
 
@@ -125,7 +122,7 @@ class FlowTest73 < Test::Unit::TestCase
         p2 = @engine.register_participant :p2, OpenWFE::HashParticipant
         p20 = @engine.register_participant :p20, OpenWFE::HashParticipant
 
-        fei = @engine.launch Test2
+        fei = launch Test2
 
         sleep 0.400
 

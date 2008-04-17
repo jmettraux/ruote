@@ -42,7 +42,7 @@ class FlowTest61 < Test::Unit::TestCase
 
         #log_level_to_debug
 
-        @engine.launch EngineLevelProcessDefinition
+        launch EngineLevelProcessDefinition
         sleep 0.700
         dotest TestDefinition0, "nada", false, true
     end

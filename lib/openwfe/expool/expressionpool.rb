@@ -1026,19 +1026,19 @@ module OpenWFE
             # This is used to keep track of in-flight modification to running
             # process instances.
             #
-             def track_child_raw_representation (fexp)
+            def track_child_raw_representation (fexp)
 
-                 return unless fexp.raw_rep_updated == true
+                return unless fexp.raw_rep_updated == true
 
-                 parent = fetch_expression fexp.parent_id
+                parent = fetch_expression fexp.parent_id
 
-                 return if parent.class.uses_template?
+                return if parent.class.uses_template?
 
-                 parent.raw_children[fexp.fei.child_id.to_i] = 
-                    fexp.raw_representation
+                parent.raw_children[fexp.fei.child_id.to_i] = 
+                   fexp.raw_representation
 
-                 parent.store_itself
-             end
+                parent.store_itself
+            end
     end
 
     #
