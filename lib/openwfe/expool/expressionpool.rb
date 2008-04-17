@@ -833,8 +833,7 @@ module OpenWFE
                         #raise "apply() cannot apply missing #{_fei.to_debug_s}"
                             # not very helpful anyway
 
-                        lwarn { 
-                            "do_apply_reply() cannot find >#{fei}" }
+                        lwarn { "do_apply_reply() cannot find >#{fei}" }
 
                         return
                     end
@@ -1027,17 +1026,19 @@ module OpenWFE
             # This is used to keep track of in-flight modification to running
             # process instances.
             #
-            def track_child_raw_representation (fexp)
+             def track_child_raw_representation (fexp)
 
-                return unless fexp.raw_rep_updated == true
-                
-                parent = fetch_expression fexp.parent_id
+                 return unless fexp.raw_rep_updated == true
 
-                return if parent.uses_template?
+                 parent = fetch_expression fexp.parent_id
 
-                parent.raw_children[fexp.fei.child_id] = fexp.raw_representation
-                parent.store_itself
-            end
+                 return if parent.class.uses_template?
+
+                 parent.raw_children[fexp.fei.child_id.to_i] = 
+                    fexp.raw_representation
+
+                 parent.store_itself
+             end
     end
 
     #

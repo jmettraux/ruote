@@ -58,10 +58,6 @@ module OpenWFE
 
         def apply (workitem)
 
-            #store_itself
-                #
-                # remove that !
-
             reply workitem
         end
 

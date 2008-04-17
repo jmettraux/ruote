@@ -40,7 +40,7 @@ class FlowTest61 < Test::Unit::TestCase
 
     def test_0
 
-        log_level_to_debug
+        #log_level_to_debug
 
         @engine.launch EngineLevelProcessDefinition
         sleep 0.700

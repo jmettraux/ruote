@@ -156,7 +156,7 @@ module OpenWFE
             filter_in workitem
 
             store_itself
-            
+
             workitem.params = lookup_attributes workitem
 
             #

@@ -134,6 +134,8 @@ class FlowTest84 < Test::Unit::TestCase
 
     def test_2
 
+        #log_level_to_debug
+
         %w{ alpha bravo charly }.each do |pname|
             @engine.register_participant pname, OpenWFE::HashParticipant
         end
@@ -145,6 +147,8 @@ class FlowTest84 < Test::Unit::TestCase
         ps = @engine.process_stack fei.wfid, true
 
         s3fei = ps.find { |fexp| fexp.fei.expid == "0.0.1" }.fei
+
+        # update happens here
 
         @engine.update_raw_expression s3fei, ["bravo", {}, []]
 
@@ -164,11 +168,25 @@ class FlowTest84 < Test::Unit::TestCase
         wi = @engine.get_participant("bravo").first_workitem
         @engine.get_participant("bravo").forward(wi)
 
+        sleep 0.350 
+
         ps = @engine.process_stack fei.wfid, true
+
+        #puts
+        #ps.each do |fexp|
+        #    puts "== #{fexp.fei.to_short_s}"
+        #    p [ fexp.raw_representation, fexp.raw_rep_updated ]
+        #end
+        #puts
 
         assert_equal(
             ["process-definition", {"name"=>"Test", "revision"=>"2"}, [["sequence", {}, [["participant", {}, ["alpha"]], ["bravo", {"ref"=>"bravo"}, []], ["participant", {}, ["charly"]]]]]],
             ps.representation)
+
+        # just to be sure
+
+        assert_equal 0, ps.find_all { |fexp| fexp.fei.expid == '0.0.1' }.size
+            # making sure the 2nd participant is over
     end
 
 end

@@ -51,7 +51,9 @@ module OpenWFE
     #
     class RawExpression < FlowExpression
 
-
+        #
+        # A [static] method for creating new RawExpression instances.
+        #
         def self.new_raw (
             fei, parent_id, env_id, app_context, raw_representation)
 
@@ -70,7 +72,7 @@ module OpenWFE
         end
 
         #--
-        # a duplication method that duplicates everything, except
+        # A duplication method that duplicates everything, except
         # the application context
         #
         #def dup
@@ -107,6 +109,7 @@ module OpenWFE
             exp.attributes = attributes
 
             exp.raw_representation = raw_representation
+            exp.raw_rep_updated = raw_rep_updated
                 #
                 # keeping track of how the expression look at apply / 
                 # instantiation time

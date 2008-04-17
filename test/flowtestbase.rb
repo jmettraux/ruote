@@ -147,7 +147,7 @@ module FlowTestBase
         #
         def wait_for (fei)
 
-            for i in (0..14)
+            for i in (0..28)
                 Thread.pass
                 return if @terminated_processes.include?(fei.wfid)
                 #return if @terminated
@@ -256,11 +256,11 @@ module FlowTestBase
             view = exp_storage.to_s
             size = exp_storage.size
 
-            #if size != 1
-            #    sleep 0.350
-            #    view = exp_storage.to_s
-            #    size = exp_storage.size
-            #end
+            if size != 1
+                sleep 0.350
+                view = exp_storage.to_s
+                size = exp_storage.size
+            end
 
             if size != 1
                 puts

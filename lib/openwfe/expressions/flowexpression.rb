@@ -204,7 +204,7 @@ module OpenWFE
 
             @children.each do |child|
 
-                next if child.kind_of?(String)
+                next if child.is_a?(String)
 
                 i = get_expression_pool.cancel child
                 inflowitem ||= i
@@ -222,8 +222,6 @@ module OpenWFE
         #
         def get_parent
 
-            #parent, parent_fei = get_expression_pool.fetch @parent_id
-            #parent
             get_expression_pool.fetch_expression @parent_id
         end
 
@@ -263,14 +261,6 @@ module OpenWFE
 
             fetch_environment.get_root_environment
         end
-
-        #--
-        # A shortcut for fetch_environment.get_process_environment
-        #
-        #def get_subprocess_environment
-        #    fetch_environment.get_subprocess_environment
-        #end
-        #++
 
         #
         # Just fetches the environment for this expression.
@@ -386,8 +376,6 @@ module OpenWFE
         # It's ok to pass a Symbol for the attribute name.
         #
         def lookup_attribute (attname, workitem, options={})
-
-            #p attname
 
             default = options[:default]
             escape = options[:escape]
