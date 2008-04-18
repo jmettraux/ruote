@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without 
@@ -114,12 +114,12 @@ module OpenWFE
                 # since OpenWFEru 0.9.16 previous __result__ values
                 # are not erased before an 'if'.
 
-            test = eval_condition(:test, workitem, :not)
+            test = eval_condition :test, workitem, :not
 
             if @children.length < 1
                 #workitem.set_result test if test
                 workitem.set_result((test != nil and test != false))
-                reply_to_parent(workitem) 
+                reply_to_parent workitem
                 return
             end
 
@@ -127,12 +127,28 @@ module OpenWFE
                 #
                 # if the "test" attribute is not used, test will be null
 
-            store_itself()
+            store_itself
+
+            # a warning
+
+            maxchildren = (test == nil) ? 3 : 2
+
+            lwarn { 
+                "apply() 'if' with more than #{maxchildren} children"
+            } if @children.size > maxchildren
+
+            # apply next step
 
             if test != nil
-                apply_consequence(test, workitem, 0)
+                #
+                # apply then or else (condition result known)
+                #
+                apply_consequence test, workitem, 0
             else
-                get_expression_pool.apply(@children[0], workitem)
+                #
+                # apply condition
+                #
+                get_expression_pool.apply @children.first, workitem
             end
         end
 
@@ -145,7 +161,7 @@ module OpenWFE
 
             @condition_replied = true
 
-            store_itself()
+            store_itself
 
             apply_consequence result, workitem
         end
@@ -156,9 +172,9 @@ module OpenWFE
         # because only the 'then' or the 'else' child got evaluated, the 
         # remaining one has to be cleaned out here.
         #
-        def reply_to_parent(workitem)
+        def reply_to_parent (workitem)
 
-            clean_children()
+            clean_children
             super workitem
         end
 
