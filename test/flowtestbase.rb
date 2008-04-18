@@ -64,6 +64,9 @@ module FlowTestBase
 
         @engine = $WORKFLOW_ENGINE_CLASS.new
 
+        $OWFE_LOG.info(
+            "setup() started engine #{@engine.object_id} @ #{caller[-1]}")
+
         @terminated_processes = []
         @engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|
             @terminated_processes << fe.fei.wfid
@@ -173,7 +176,9 @@ module FlowTestBase
 
             fei = @engine.launch li
 
-            $OWFE_LOG.info "dotest() launched #{fei.to_short_s} @ #{caller[0]}"
+            $OWFE_LOG.info(
+                "dotest() launched #{fei.to_short_s} "+
+                "@ #{caller[0]} on engine #{@engine.object_id}")
 
             fei
         end

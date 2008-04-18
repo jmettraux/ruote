@@ -693,11 +693,13 @@ module OpenWFE
             #
             def build_scheduler
 
-                scheduler = Rufus::Scheduler.new
+                s = Rufus::Scheduler.new(
+                    :thread_name => 
+                    "rufus scheduler for Ruote (engine #{self.object_id})")
 
-                @application_context[S_SCHEDULER] = scheduler
+                @application_context[S_SCHEDULER] = s
 
-                scheduler.start
+                s.start
             end
 
             #

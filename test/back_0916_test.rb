@@ -66,6 +66,10 @@ class Back0916Test < Test::Unit::TestCase
         #puts ps.collect { |e| e.fei.to_s }.join("\n")
 
         assert_nil ps
+
+        @engine.stop
+
+        sleep 0.300
     end
 
     def test_1
@@ -99,5 +103,9 @@ class Back0916Test < Test::Unit::TestCase
         assert_equal [ :user_bob, :user_bob ], trace
 
         assert_nil @engine.process_status("20080213-depejetzube")
+
+        @engine.stop
+
+        sleep 0.300
     end
 end

@@ -259,12 +259,13 @@ module OpenWFE
     # a ruby thread, the java thread name if we're in JRuby)
     #
     def OpenWFE.set_current_thread_name (name)
+
        if defined?(JRUBY_VERSION)
            require 'java'
            java.lang.Thread.current_thread.name = "#{name} (Ruby Thread)"
-       else
-           Thread.current[:name] = name
        end
+
+       Thread.current[:name] = name
     end
 
     #
@@ -286,7 +287,7 @@ module OpenWFE
 
         Thread.new do
 
-            #set_current_thread_name "call_in_thread() for '#{caller_name}'"
+            #Thread.current[:name] = caller_name
             set_current_thread_name caller_name
 
             begin

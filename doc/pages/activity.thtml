@@ -2,5 +2,11 @@ h2. activity level
 
 Since April 2008, the OpenWFEru source code moved to "http://github.com/jmettraux/ruote":http://github.com/jmettraux/ruote
 
+"Ruote" is the nickname of the OpenWFEru workflow engine.
+
+"commit log":http://github.com/jmettraux/ruote/commits
+
+"change log":http://github.com/jmettraux/ruote/tree/master/CHANGELOG.txt
+
 View the "Ohloh Profile":http://www.ohloh.net/projects/4749 for OpenWFEru. (<SCRIPT type='text/javascript' language='JavaScript' src='http://www.ohloh.net/projects/4749/badge_js'></SCRIPT>)
 

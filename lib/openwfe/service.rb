@@ -49,7 +49,8 @@ module OpenWFE
     # ServiceMixin, to compose an OpenWFEru service class.
     #
     module ServiceMixin
-        include Contextual, Logging
+        include Contextual
+        include Logging
 
         #
         # The name of the service

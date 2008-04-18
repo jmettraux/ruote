@@ -45,6 +45,8 @@ module OpenWFE
 
     class WorkQueue < Service
 
+        include OwfeServiceLocator
+
         #
         # Inits the WorkQueue
         #
@@ -56,7 +58,9 @@ module OpenWFE
 
             @stopped = false
 
-            OpenWFE::call_in_thread service_name, self do
+            thread_name = "#{service_name} (engine #{get_engine.object_id})"
+
+            OpenWFE::call_in_thread thread_name, self do
 
                 loop do
 

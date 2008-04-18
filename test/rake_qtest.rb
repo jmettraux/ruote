@@ -8,6 +8,8 @@
 
 require 'rubygems'
 
+#require 'rutest_utils'
+
 
 require 'fei_test'
 require 'wfid_test'
@@ -51,4 +53,16 @@ require 'slock_test'
 require 'orest_test.rb'
 
 #require 'extras/atomfeedp_test.rb'
+
+
+#Signal.trap "SIGINT" do |signo|
+#    puts
+#    puts "Interrupt"
+#    puts
+#    puts caller[1..-1]
+#    puts
+#    exit 0
+#end if on_jruby?
+    #
+    # useless
 
