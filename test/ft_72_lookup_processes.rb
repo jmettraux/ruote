@@ -37,11 +37,11 @@ class FlowTest72 < Test::Unit::TestCase
 
         sa = @engine.register_participant :alpha, OpenWFE::HashParticipant
 
-        li = LaunchItem.new Test0
+        li = OpenWFE::LaunchItem.new Test0
         li.toto = 'toto_zero'
         fei0 = launch li
 
-        li = LaunchItem.new Test0
+        li = OpenWFE::LaunchItem.new Test0
         li.toto = 'toto_one'
         fei1 = launch li
 

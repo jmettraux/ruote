@@ -7,6 +7,8 @@
 # Mon Jul  9 10:25:18 JST 2007
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'flowtestbase'
 
@@ -24,7 +26,7 @@ class FlowTest60 < Test::Unit::TestCase
     #
     # TEST 0
 
-    class TestDefinition0 < ProcessDefinition
+    class TestDefinition0 < OpenWFE::ProcessDefinition
         sequence do
             _print "a"
             sequence do

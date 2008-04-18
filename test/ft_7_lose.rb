@@ -7,6 +7,8 @@
 # Mon Dec 25 14:27:48 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'flowtestbase'
 
@@ -20,7 +22,6 @@ class FlowTest7 < Test::Unit::TestCase
     #def teardown
     #end
 
-    #def xxxx_lose_0
     def test_lose_0
         dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
@@ -95,8 +96,7 @@ ok 3
 ok 5
 v1 : 
 done.""", 
-            #1.8,
-            2.700,
+            3.000,
             true)
     end
 

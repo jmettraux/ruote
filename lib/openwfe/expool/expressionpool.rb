@@ -363,7 +363,7 @@ module OpenWFE
             exp, fei = fetch exp
 
             unless exp
-                ldebug { "cancel() cannot cancel missing  #{fei.to_debug_s}" }
+                linfo { "cancel() cannot cancel missing  #{fei.to_debug_s}" }
                 return nil
             end
 
@@ -371,10 +371,11 @@ module OpenWFE
 
             onotify :cancel, exp
 
-            inflowitem = exp.cancel()
+            wi = exp.cancel
+
             remove exp
 
-            inflowitem
+            wi
         end
 
         #

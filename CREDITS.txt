@@ -2,7 +2,7 @@
 CREDITS
 =======
 
-OpenWFEru is an open source Ruby workflow / BPM engine made in Japan.
+OpenWFEru is an open source Ruby workflow and BPM engine.
 
 
 The main project team

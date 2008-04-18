@@ -60,10 +60,13 @@ module OpenWFE
 
                 loop do
 
-                    target, method_name, args = @queue.pop
-                    target.send method_name, *args
+                    work = @queue.pop
 
-                    break if @stopped and @queue.empty?
+                    break if work == :stop
+
+                    target, method_name, args = work
+
+                    target.send method_name, *args
                 end
             end
         end
@@ -91,6 +94,7 @@ module OpenWFE
         def stop
 
             @stopped = true
+            @queue.push :stop
         end
 
         #
