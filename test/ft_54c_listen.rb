@@ -89,8 +89,7 @@ class FlowTest54c < Test::Unit::TestCase
 
         @engine.cancel_process fei
 
-        sleep 0.350
-        sleep 0.350 if @engine.is_a?(OpenWFE::Extras::DbPersistedEngine)
+        sleep 0.700
 
         #puts @engine.get_expression_storage
         assert_equal 1, @engine.get_expression_storage.size

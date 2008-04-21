@@ -177,8 +177,7 @@ class FlowTest79 < Test::Unit::TestCase
 
         assert_equal expected_trace, p.trace
 
-        sleep 0.350 # c tests reply too fast, have to wait a bit
-        sleep 0.350 if @engine.is_a?(OpenWFE::Extras::DbPersistedEngine)
+        sleep 0.700 # c tests reply too fast, have to wait a bit
 
         assert(
             (@engine.process_status(fei) == nil), 

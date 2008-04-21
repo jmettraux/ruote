@@ -392,9 +392,14 @@ module OpenWFE
 
             wi = cancel exp
 
+            # ( remember that in case of error, no wi could get returned...)
+
             if wi
+
                 reply_to_parent exp, wi, false
-            else
+
+            elsif exp.parent_id
+
                 parent_exp = fetch_expression exp.parent_id
                 parent_exp.remove_child(exp.fei) if parent_exp
             end

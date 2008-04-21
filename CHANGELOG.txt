@@ -4,6 +4,8 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
+- bug   #19607 : preventing cancel root expression bug (in case of error
+                 in process)
 - todo  #19559 : using Queue instead of schedule_every for threaded
                  expression storage
 - todo  #19624 : 'if' now logs a warning message if more than 2 or 3 children

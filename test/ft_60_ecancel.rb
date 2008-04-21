@@ -104,6 +104,35 @@ class FlowTest60 < Test::Unit::TestCase
         assert_equal 1, @engine.get_expression_storage.size
     end
 
+    def test_2b
+
+        #$OWFE_LOG.level = Logger::DEBUG
+
+        fei = launch <<-EOS
+            class Test2b < OpenWFE::ProcessDefinition
+                nada
+            end
+        EOS
+
+        # will result in an error
+        # testing against bug 
+        # http://rubyforge.org/tracker/index.php?func=detail&aid=19607&group_id=2609&atid=10023
+
+        sleep 0.350
+
+        fei.expression_id = "0"
+        fei.expression_name = "process-definition"
+        @engine.cancel_expression fei
+
+        sleep 0.350
+        #puts @engine.get_error_journal.get_error_log(fei.wfid).to_s
+
+        assert_equal "", @tracer.to_s
+
+        assert_equal 0, @engine.process_stack(fei.wfid).size
+        assert_equal 1, @engine.get_expression_storage.size
+    end
+
     def test_3
 
         #$OWFE_LOG.level = Logger::DEBUG
