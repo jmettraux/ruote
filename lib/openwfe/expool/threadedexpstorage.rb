@@ -50,30 +50,26 @@ module OpenWFE
     #
     module ThreadedStorageMixin
 
-        THREADED_FREQ = "427" # milliseconds
-            #
-            # the frequency at which the event queue should be processed
-
         #
         # Will take care of stopping the 'queue processing' thread.
         #
         def stop
 
-            get_scheduler.unschedule(@thread_id) if @thread_id
-
-            process_queue
-                #
-                # flush every remaining events (especially the :delete ones)
+            @stopped = true
+            @queue.push :stop
         end
 
         #
-        # calls process_queue() before the call the super class each()
-        # method.
+        # makes sure that the queue isn't actually preparing a batch
+        # before returning a result.
         #
         def find_expressions (options)
 
-            process_queue
-            super
+            Thread.pass
+
+            @mutex.synchronize do
+                super
+            end
         end
 
         protected
@@ -81,67 +77,79 @@ module OpenWFE
             #
             # starts the thread that does the actual persistence.
             #
-            def start_processing_thread
+            def start_queue
 
                 @mutex = Mutex.new
+                @queue = Queue.new
 
-                @events = {}
-                @op_count = 0
+                Thread.new do
 
-                @thread_id = get_scheduler.schedule_every THREADED_FREQ do
-                    process_queue
+                    loop do
+
+                        events = [ @queue.pop ]
+
+                        @mutex.synchronize do
+
+                            14.times { Thread.pass } # gather some steam
+
+                            @queue.size.times do
+                                events << @queue.pop
+                            end
+
+                            process_events events
+                        end
+
+                        break if events.include?(:stop)
+                    end
                 end
             end
 
             #
             # queues an event for later (well within a second) persistence
             #
-            def queue (event, fei, fe=nil)
-                @mutex.synchronize do
+            def queue (event, fei, fexp=nil)
 
-                    old_size = @events.size
-                    @op_count += 1
-
-                    @events[fei] = [ event, fei, fe ]
-
-                    ldebug do 
-                        "queue() ops #{@op_count} "+
-                        "size #{old_size} -> #{@events.size}"
-                    end
+                if @stopped
+                    process_event event, fei, fexp
+                else
+                    @queue.push [ event, fei, fexp ]
                 end
             end
 
-            #
-            # the actual "do persist" order
-            #
-            def process_queue
+            def process_events (events)
 
-                return unless @events.size > 0
-                    #
-                    # trying to exit as quickly as possible
+                ldebug { "process_events() #{events.size} events" }
 
-                ldebug do 
-                    "process_queue() #{@events.size} events #{@op_count} ops"
+                # reducing the operation count
+
+                events = events.inject({}) do |r, event|
+                    r[event[1]] = event if event != :stop
+                    r
                 end
 
-                @mutex.synchronize do
-                    @events.each_value do |v|
-                        event = v[0]
-                        begin
-                            if event == :update
-                                self[v[1]] = v[2]
-                            else
-                                safe_delete(v[1])
-                            end
-                        rescue Exception => e
-                            lwarn do
-                                "process_queue() ':#{event}' exception\n" + 
-                                OpenWFE::exception_to_s(e)
-                            end
-                        end
+                ldebug { "process_events() #{events.size} events remaining" }
+
+                # perform the remaining operations
+
+                events.each_value do |event, fei, fexp|
+
+                    process_event event, fei, fexp
+                end
+            end
+
+            def process_event (event, fei, fexp)
+
+                begin
+                    if event == :update
+                        self[fei] = fexp
+                    else
+                        safe_delete fei
                     end
-                    @op_count = 0
-                    @events.clear
+                rescue Exception => e
+                    lwarn do
+                        "process_event() ':#{event}' exception\n" + 
+                        OpenWFE::exception_to_s(e)
+                    end
                 end
             end
 
@@ -150,7 +158,7 @@ module OpenWFE
             #
             def safe_delete (fei)
                 begin
-                    self.delete(fei)
+                    self.delete fei
                 rescue Exception => e
                 #    lwarn do
                 #        "safe_delete() exception\n" + 

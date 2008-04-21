@@ -73,7 +73,7 @@ class FlowTest54c < Test::Unit::TestCase
 
     def test_1
 
-        log_level_to_debug
+        #log_level_to_debug
 
         @engine.register_participant "channel9", OpenWFE::NullParticipant
         @engine.register_participant "listen9", OpenWFE::NullParticipant
@@ -90,6 +90,7 @@ class FlowTest54c < Test::Unit::TestCase
         @engine.cancel_process fei
 
         sleep 0.350
+        sleep 0.350 if @engine.is_a?(OpenWFE::Extras::DbPersistedEngine)
 
         #puts @engine.get_expression_storage
         assert_equal 1, @engine.get_expression_storage.size

@@ -150,7 +150,8 @@ module FlowTestBase
         #
         def wait_for (fei)
 
-            for i in (0..42)
+            #for i in (0..42)
+            for i in (0..217)
                 Thread.pass
                 return if @terminated_processes.include?(fei.wfid)
                 #return if @terminated

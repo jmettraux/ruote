@@ -54,7 +54,8 @@ module OpenWFE
     # Keeping a replayable track of the events in an OpenWFEru engine
     #
     class Journal < Service
-        include MonitorMixin, OwfeServiceLocator
+        include MonitorMixin
+        include OwfeServiceLocator
         include JournalReplay
         include FeiMixin
 

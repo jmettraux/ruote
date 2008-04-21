@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'openwfe/worklist/storeparticipant'
 
@@ -25,7 +27,7 @@ class FlowTest34 < Test::Unit::TestCase
     #
     # TEST 0
 
-    class TestCancelWfid0 < ProcessDefinition
+    class TestCancelWfid0 < OpenWFE::ProcessDefinition
         #
         # so tiny a definition...
         #

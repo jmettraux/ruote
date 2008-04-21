@@ -7,10 +7,10 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
-require 'openwfe/def'
 
 require 'flowtestbase'
 
+require 'openwfe/def'
 require 'openwfe/expool/journal'
 
 
@@ -27,7 +27,7 @@ class FlowTest32 < Test::Unit::TestCase
     #
     # TEST 0
 
-    class TestDefinition0 < ProcessDefinition
+    class TestDefinition0 < OpenWFE::ProcessDefinition
         #concurrence do
         sequence do
             #set :variable => "//toto", :value => "nada"
@@ -36,12 +36,11 @@ class FlowTest32 < Test::Unit::TestCase
         end
     end
 
-    #def xxxx_journal_0
     def test_journal_0
 
         @engine.application_context[:keep_journals] = true
 
-        @engine.init_service("journal", Journal)
+        @engine.init_service "journal", OpenWFE::Journal
 
         @engine.register_participant(:alpha) do |wi|
             @tracer << "alpha\n"
@@ -69,7 +68,7 @@ class FlowTest32 < Test::Unit::TestCase
             #
             # flow waits
 
-        sleep 0.250
+        sleep 0.350
 
         #puts
         #puts @engine.get_expression_storage.to_s
@@ -83,7 +82,7 @@ class FlowTest32 < Test::Unit::TestCase
             #
             # flow resumes
 
-        sleep 0.250
+        sleep 0.350
 
         assert_equal @engine.get_expression_storage.size, 1
     end

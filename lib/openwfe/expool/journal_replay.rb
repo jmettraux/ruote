@@ -88,14 +88,19 @@ module OpenWFE
             state.dynamic.each do |ply|
 
                 message = ply[0]
-                fei = extract_fei(ply[2])
+                #fei = extract_fei(ply[2])
+                fei_or_fexp = ply[2]
                 wi = ply[3]
+
+                fei_or_fexp.application_context = @application_context \
+                    if fei_or_fexp.is_a?(FlowExpression)
 
                 if wi
                     #
                     # apply, reply, reply_to_parent
                     #
-                    get_expression_pool.send message, fei, wi
+                    #get_expression_pool.send message, fei, wi
+                    get_expression_pool.send message, fei_or_fexp, wi
                 else
                     #
                     # cancel

@@ -218,9 +218,7 @@ module OpenWFE
 
             super
 
-            start_processing_thread
-                #
-                # which sets @thread_id
+            start_queue
         end
     end
 end

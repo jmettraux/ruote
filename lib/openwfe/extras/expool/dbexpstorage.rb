@@ -226,7 +226,9 @@ module OpenWFE::Extras
             params = {}
 
             params[:conditions] = [ 
-                "wfid = ? AND exp_class = ?", wfid, DefineExpression.to_s
+                "wfid = ? AND exp_class = ?", 
+                wfid, 
+                OpenWFE::DefineExpression.to_s
             ]
 
             exps = Expression.find(:all, params)
@@ -342,7 +344,7 @@ module OpenWFE::Extras
 
             super
 
-            start_processing_thread()
+            start_queue
                 #
                 # which sets @thread_id
         end

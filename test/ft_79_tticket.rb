@@ -139,7 +139,7 @@ class FlowTest79 < Test::Unit::TestCase
     end
 
     class TestParticipant 
-        include LocalParticipant
+        include OpenWFE::LocalParticipant
 
         attr_reader :trace
 
@@ -176,6 +176,9 @@ class FlowTest79 < Test::Unit::TestCase
         @engine.wait_for fei
 
         assert_equal expected_trace, p.trace
+
+        sleep 0.350 # c tests reply too fast, have to wait a bit
+        sleep 0.350 if @engine.is_a?(OpenWFE::Extras::DbPersistedEngine)
 
         assert(
             (@engine.process_status(fei) == nil), 
