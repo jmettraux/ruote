@@ -135,6 +135,11 @@ module OpenWFE
 
             definition = if wfdurl.match "^field:"
 
+                raise(
+                    ":definition_in_launchitem_allowed not set to true, "+
+                    "cannot launch"
+                ) if ac[:definition_in_launchitem_allowed] != true
+
                 wfdfield = wfdurl[6..-1]
                 launchitem.attributes.delete wfdfield
             else

@@ -54,6 +54,12 @@ require 'openwfe/participants/participants'
     #
     # don't set that unless you're sure you'll need this 'eval' expression.
 
+#application_context[:definition_in_launchitem_allowed] = true
+    #
+    # by default (since 0.9.18), it's not allowed to launch processes whose
+    # definitions is embedded in the launchitem. You have to explicitely
+    # set this parameter to true
+
 
 #engine = OpenWFE::Engine.new
 #engine = OpenWFE::Engine.new(application_context)

@@ -8,7 +8,6 @@
 
 require 'test/unit'
 
-#require 'openwfe/workitem'
 require 'openwfe/engine/engine'
 require 'openwfe/def'
 require 'openwfe/worklist/storeparticipant'
@@ -37,7 +36,7 @@ class TimeoutTest < Test::Unit::TestCase
 
         albert = OpenWFE::HashParticipant.new
 
-        engine = OpenWFE::Engine.new
+        engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
 
         engine.application_context["__tracer"] = Tracer.new
 
@@ -64,7 +63,7 @@ class TimeoutTest < Test::Unit::TestCase
 
         albert = OpenWFE::HashParticipant.new
 
-        engine = OpenWFE::Engine.new
+        engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
 
         engine.application_context["__tracer"] = Tracer.new
 
@@ -77,7 +76,7 @@ class TimeoutTest < Test::Unit::TestCase
 
         li = OpenWFE::LaunchItem.new TimeoutDefinition0
 
-        engine.launch(li)
+        engine.launch li
 
         sleep 0.300
 

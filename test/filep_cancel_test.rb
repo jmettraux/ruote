@@ -53,7 +53,10 @@ XML
 
     def test_0
 
-        ac = { :work_directory => "work_filep" }
+        ac = { 
+            :work_directory => "work_filep", 
+            :definition_in_launchitem_allowed => true
+        }
 
         @engine = OpenWFE::FilePersistedEngine.new ac
 
@@ -78,7 +81,10 @@ XML
 
     def test_1
 
-        ac = { :work_directory => "work_filep" }
+        ac = { 
+            :work_directory => "work_filep", 
+            :definition_in_launchitem_allowed => true
+        }
 
         @engine = OpenWFE::CachedFilePersistedEngine.new ac
 

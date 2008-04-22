@@ -20,7 +20,7 @@ class HParticipantTest < Test::Unit::TestCase
 
     def setup
 
-        @engine = Engine.new
+        @engine = Engine.new({ :definition_in_launchitem_allowed => true })
     end
 
     def teardown

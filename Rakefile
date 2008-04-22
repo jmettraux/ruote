@@ -109,34 +109,34 @@ Rake::RDocTask.new do |rd|
 end
 
 if RAKEVERSION != "0.8.1"
-#
-# Create a task to build the static docs (html)
-#
-ws = Rote::DocTask.new(:doc) do |site| 
+    #
+    # Create a task to build the static docs (html)
+    #
+    ws = Rote::DocTask.new(:doc) do |site| 
 
-    site.output_dir = 'html'
-    site.layout_dir = 'doc/layouts'
-    site.pages.dir = 'doc/pages'
-    site.pages.include('**/*.thtml')  
-  
-    site.ext_mapping(/thtml|textile/, 'html') do |page|
-        page.extend Format::HTML
-        page.page_filter Filters::RedCloth.new
-        page.page_filter Filters::Syntax.new
+        site.output_dir = 'html'
+        site.layout_dir = 'doc/layouts'
+        site.pages.dir = 'doc/pages'
+        site.pages.include('**/*.thtml')  
+      
+        site.ext_mapping(/thtml|textile/, 'html') do |page|
+            page.extend Format::HTML
+            page.page_filter Filters::RedCloth.new
+            page.page_filter Filters::Syntax.new
+        end
+
+        site.res.dir = 'doc/res'
+        site.res.include('**/*.png')
+        site.res.include('**/*.gif')
+        site.res.include('**/*.jpg')
+        site.res.include('**/*.css')
+        site.res.include('**/*.xml')
     end
 
-    site.res.dir = 'doc/res'
-    site.res.include('**/*.png')
-    site.res.include('**/*.gif')
-    site.res.include('**/*.jpg')
-    site.res.include('**/*.css')
-    site.res.include('**/*.xml')
-end
-
-#
-# Add rdoc deps to doc task
-#
-task :doc => [:rdoc]
+    #
+    # Add rdoc deps to doc task
+    #
+    task :doc => [:rdoc]
 end
 
 

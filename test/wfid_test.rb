@@ -130,6 +130,13 @@ class WfidTest < Test::Unit::TestCase
 
     class MyEngine < OpenWFE::Engine
 
+        def initialize
+
+            super
+
+            self.ac[:definition_in_launchitem_allowed] = true
+        end
+
         def build_wfid_generator
 
             g = FieldWfidGenerator.new(
@@ -147,7 +154,7 @@ class WfidTest < Test::Unit::TestCase
 
         eng = MyEngine.new
 
-        li = OpenWFE::LaunchItem.new(MyProcDef)
+        li = OpenWFE::LaunchItem.new MyProcDef
         li.wfid = "toto"
         fei = eng.launch(li)
 

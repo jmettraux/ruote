@@ -26,6 +26,7 @@ class SecTest < Test::Unit::TestCase
         engine = OpenWFE::Engine.new
 
         engine.ac[:ruby_eval_allowed] = true
+        engine.ac[:definition_in_launchitem_allowed] = true
 
         def0 = \
 '''<process-definition name="" revision="0">
@@ -86,6 +87,7 @@ class SecTest < Test::Unit::TestCase
         engine = OpenWFE::Engine.new
 
         engine.ac[:ruby_eval_allowed] = true
+        engine.ac[:definition_in_launchitem_allowed] = true
 
         def1 =
 '''<process-definition name="" revision="0">
@@ -129,7 +131,7 @@ class SecTest < Test::Unit::TestCase
 
         value = nil
 
-        engine = OpenWFE::Engine.new
+        engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
 
         engine.register_participant(:toto) do |workitem|
 
@@ -167,6 +169,7 @@ class SecTest < Test::Unit::TestCase
         end
 
         engine.ac[:ruby_eval_allowed] = true
+        engine.ac[:definition_in_launchitem_allowed] = true
 
         engine.launch XMLDEF
 

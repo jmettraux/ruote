@@ -78,6 +78,7 @@ module FlowTestBase
         #end
 
         @engine.application_context[:ruby_eval_allowed] = true
+        @engine.application_context[:definition_in_launchitem_allowed] = true
 
         @tracer = Tracer.new
         @engine.application_context["__tracer"] = @tracer

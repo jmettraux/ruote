@@ -95,7 +95,7 @@ class RestartWhenTest < Test::Unit::TestCase
 
         def new_engine (engine_class)
 
-            engine = engine_class.new
+            engine = engine_class.new :definition_in_launchitem_allowed => true
 
             #$OWFE_LOG.level = Logger::DEBUG
 

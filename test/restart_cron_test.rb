@@ -124,7 +124,9 @@ class RestartCronTest < Test::Unit::TestCase
 
         def new_engine
 
-            @engine = OpenWFE::FilePersistedEngine.new
+            @engine = OpenWFE::FilePersistedEngine.new(
+                :definition_in_launchitem_allowed => true)
+
             #engine = OpenWFE::CachedFilePersistedEngine.new
 
             #$OWFE_LOG.level = Logger::DEBUG

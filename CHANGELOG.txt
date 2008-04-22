@@ -4,6 +4,8 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
+- todo  #19704 : introduced parameter :definition_in_launchitem_allowed
+                 (defaults to false)
 - bug   #19607 : preventing cancel root expression bug (in case of error
                  in process)
 - todo  #19559 : using Queue instead of schedule_every for threaded
@@ -19,9 +21,7 @@
 - patch #19500 : size patch for db backed engine by Maarten Oelering
 - todo  #19026 : keeping track of raw_representation in-flight changes 
                  in [replying] children
-
---- switched source to http://github.com/jmettraux/ruote ---
-
+-              : switched source to http://github.com/jmettraux/ruote
 - todo  #19060 : added representation() to the result of engine.process_stack()
                  - s1652
 - todo  #19339 : fulldup broken for Time and Date[Time] as reported by

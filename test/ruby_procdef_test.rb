@@ -26,7 +26,8 @@ class RubyProcDefTest < Test::Unit::TestCase
 
     def setup
 
-        @engine = OpenWFE::CachedFilePersistedEngine.new
+        @engine = OpenWFE::CachedFilePersistedEngine.new(
+            :definition_in_launchitem_allowed => true)
 
         @engine.register_participant :alpha, OpenWFE::HashParticipant
     end

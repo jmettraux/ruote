@@ -26,7 +26,8 @@ class OldRestTest < Test::Unit::TestCase
 
         #$DEBUG = true
 
-        @engine = OpenWFE::Engine.new
+        @engine = OpenWFE::Engine.new(
+            { :definition_in_launchitem_allowed => true })
 
         FileUtils.mkdir "logs" unless File.exist?("logs")
 

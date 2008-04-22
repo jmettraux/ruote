@@ -18,7 +18,7 @@ class PsRepresentationTest < Test::Unit::TestCase
 
     def setup
 
-        @engine = OpenWFE::Engine.new
+        @engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
     end
 
     def teardown
