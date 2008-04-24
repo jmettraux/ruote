@@ -1,88 +1,20 @@
 h2. OpenWFEru on Rails quickstart
 
-This is a quickstart document about "densha", the OpenWFEru on "Ruby on Rails&trade;":http://rubyonrails.org example web application.
-
-"densha" requires at least Ruby on Rails 1.2.6.
-
-"Getting Rails":http://rubyonrails.org/down.
-
-The goal of this page is to set up a running densha [development] environment.
+"ruote-web" (sometimes called "densha"), is a Ruby on Rails web application wrapping an OpenWFEru workflow and BPM engine.
 
 
-h3. Getting Densha
+h3. getting it and getting it to run
 
-There are two ways to get "densha", the first one is via RubyForge's subversion.
+The source of "ruote-web" is available at "http://github.com/jmettraux/ruote-web":http://github.com/jmettraux/ruote-web
 
-From the command line :
-<pre>
-   svn checkout http://openwferu.rubyforge.org/svn/trunk/densha
-   cd densha/
-   rake install_workflow_engine
-</pre>
-
-(The last command, the 'rake' one will install OpenWFEru and all its dependencies under the rails vendor/ directory)
-
-Or you can download a prepackaged version of OpenWFEru densha :
-
-"openwferu-densha-0.9.17.zip":http://rubyforge.org/frs/download.php/34003/openwferu-densha-0.9.17.zip
-
-(It contains Densha, OpenWFEru and all the required compnonents, except Rails (1.2.6) and the 'json' gem)
-
-...
-
-Don't forget to install the "json_pure":http://json.rubyforge.org/ gem, as well as the "atom_tools":http://code.necronomicorp.com/atom-tools gem that Densha needs by doing :
-
-<pre>
-    sudo gem install json_pure atom-tools
-</pre>
-
-
-h3. Preparing the database
-
-(assuming a running install of MySQL, please refer to RubyOnRails and database documentation for other databases)
-
-<pre>
-    $ mysql -u root -p
-    enter password:
-
-    Welcome to the MySQL monitor.  Commands end with ; or \g.
-    Your MySQL connection id is 4
-    Server version: 5.0.41 MySQL Community Server (GPL)
-
-    Type 'help;' or '\h' for help. Type '\c' to clear the buffer.
-
-    mysql> grant select,insert,update,delete,create,drop,index on densha_development.* to 'densha'@'localhost' 
-    identified by 'densha';
-    Query OK, 0 rows affected (0.45 sec)
-
-    mysql> create database densha_development CHARACTER SET utf8 COLLATE utf8_general_ci;
-</pre>
-
-Then, do
-
-<pre>
-    cd densha
-    rake db:migrate
-</pre>
-
-
-h3. Starting the application
-
-To start the development version of Densha, do
-
-<pre>
-    cd densha
-    ruby script/server
-</pre>
-
-You can then login using the admin/admin, alice/alice, bob/bob account / password combination available by default.
+The page there contains the complete (and up-to-date) instructions on how to get and get to run "ruote-web".
 
 
 h3. Adding your own business process definitions
 
-The process definitions are located under <tt>densha/public/process_definitions/</tt> or anywhere accessible via a URL (like for example "http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/examples/bigflow.rb":http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/examples/bigflow.rb)
+The process definitions are located under <tt>ruote-web/public/process_definitions/</tt> or anywhere accessible via a URL (like for example "http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/examples/bigflow.rb":http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/examples/bigflow.rb)
 
-Densha comes with a few "example process definitions":http://openwferu.rubyforge.org/svn/trunk/densha/public/process_definitions/ there, it's easy to copy one and change it.
+Ruote-web comes with a few "example process definitions":http://github.com/jmettraux/ruote-web/tree/master/public/process_definitions there, it's easy to copy one and change it.
 
 For instance, you could write :
 
@@ -104,20 +36,9 @@ and store that in a <tt>definition0.rb</tt> file.
 You then head to the Densha 'worklist admin' page to add the <tt>/process_definitions/definition0.rb</tt> URL to the 'launch permissions'. And that's it, you can now launch you new process (it will maybe break).
 
 
-h3. Adding more participants to Densha
+h3. Adding more participants
 
-Out of the box, Densha sets up one participant per workitem store (the default ones being "alpha", "bravo" and "user_.*").
+Out of the box, ruote-web sets up one participant per workitem store (the default ones being "alpha", "bravo" and "user_.*").
 
-You can add more participants via the "densha/config/openwferu_participants.rb":http://openwferu.rubyforge.org/svn/trunk/densha/config/openwferu_participants.rb file (you have to restart Densha in order to have those participants registered into the engine; adding stores via the 'worklist admin' screen will make sure to immediately register the new store participants).
+You can add more participants via the "ruote-web/config/openwferu_participants.rb":http://github.com/jmettraux/ruote-web/tree/master/config/openwferu_participants.rb file (you have to restart ruote-web in order to have those participants registered into the engine; adding stores via the 'worklist admin' screen will make sure to immediately register the new store participants).
 
-
-h3. <a name="upgrading"></a>Upgrading OpenWFEru and Densha
-
-If you installed Densha and OpenWFEru via subversion you can upgrade them with
-
-<pre>
-cd densha && svn update
-cd densha/vendor/openwfe && svn update
-</pre>
-
-There should not be much changes to the backend of Densha (OpenWFEru and ActiveParticipant), so this is generally a "safe operation", but have a look at the changelogs (<a href="http://openwferu.rubyforge.org/svn/trunk/densha/CHANGELOG.txt">Densha</a> / <a href="http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/CHANGELOG.txt">OpenWFEru</a>) first.

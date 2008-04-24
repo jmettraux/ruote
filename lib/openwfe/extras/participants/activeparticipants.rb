@@ -503,7 +503,7 @@ module Extras
         def value
 
             return YAML.load(self.svalue) \
-                if SPECIAL_FIELD_CLASSES.include?(self.vclass.to_s)
+                if SPECIAL_FIELD_CLASSES.include?(self.vclass)
 
             self.svalue || self.yvalue
         end
