@@ -158,7 +158,7 @@ class Active0Test < Test::Unit::TestCase
         assert_equal 0, OpenWFE::Extras::Workitem.search("pet").size
     end
 
-    def _test_6
+    def test_6
 
         require 'date'
 
@@ -166,13 +166,32 @@ class Active0Test < Test::Unit::TestCase
         wi.fei = new_fei
 
         wi.name = "Maarten"
-        wi.birthdate = Date.new
+        wi.start_date = Date.today
 
         awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
         awi.save!
 
         awi = OpenWFE::Extras::Workitem.find awi.id
         wi2 = awi.as_owfe_workitem
+
+        assert_equal wi.fields, wi2.fields
+    end
+
+    def test_6b
+
+        require 'time'
+
+        wi = OpenWFE::InFlowWorkItem.new
+        wi.fei = new_fei
+        wi.start_time = Time.now
+
+        awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
+        awi.save!
+
+        awi = OpenWFE::Extras::Workitem.find awi.id
+        wi2 = awi.as_owfe_workitem
+
+        #p awi
 
         assert_equal wi.fields, wi2.fields
     end

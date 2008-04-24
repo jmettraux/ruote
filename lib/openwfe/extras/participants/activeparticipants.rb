@@ -447,6 +447,12 @@ module Extras
     end
 
     #
+    # A workaround is in place for some classes when then have to get 
+    # serialized. The names of thoses classes are listed in this array.
+    #
+    SPECIAL_FIELD_CLASSES = [ 'Time', 'Date', 'DateTime' ]
+
+    #
     # A Field (Attribute) of a Workitem.
     #
     class Field < ActiveRecord::Base
@@ -481,13 +487,23 @@ module Extras
             limit = connection.native_database_types[:string][:limit]
 
             if v.is_a?(String) and v.length <= limit
+
                 self.svalue = v 
+
+            elsif SPECIAL_FIELD_CLASSES.include?(v.class.to_s)
+
+                self.svalue = v.to_yaml
+
             else
+
                 self.yvalue = v
             end
         end
 
         def value
+
+            return YAML.load(self.svalue) \
+                if SPECIAL_FIELD_CLASSES.include?(self.vclass.to_s)
 
             self.svalue || self.yvalue
         end

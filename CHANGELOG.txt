@@ -4,6 +4,8 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
+- bug   #19739 : made sure that ActiveParticipant didn't flatten Date and Time
+                 instances found in workitem fields
 - todo  #19704 : introduced parameter :definition_in_launchitem_allowed
                  (defaults to false)
 - bug   #19607 : preventing cancel root expression bug (in case of error

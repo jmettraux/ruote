@@ -25,7 +25,7 @@ class WithEngineTest < Test::Unit::TestCase
         OpenWFE::Extras::Workitem.delete_all
         OpenWFE::Extras::Field.delete_all
 
-        @engine = OpenWFE::Engine.new
+        @engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
         #require 'openwfe/engine/file_persisted_engine'
         #@engine = OpenWFE::FilePersistedEngine.new
 
