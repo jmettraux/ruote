@@ -8,17 +8,17 @@ h2. The "Tea Testing Team" example (<%= extract_index(__FILE__) + 1 %> / <%= TIT
 
 h3. out of the box
 
-Out of the box, Densha comes with a bunch of pre-defined users, groups, stores and launch permissions.
+Out of the box, ruote-web (ex "Densha") comes with a bunch of pre-defined users, groups, stores and launch permissions.
 
-* users : they are Densha users, ie they can log in into the Densha web application, modify workitems proceed them and eventually launch new processes
+* users : they are ruote-web users, ie they can log in into the ruote-web web application, modify workitems proceed them and eventually launch new processes
 * groups : a way of grouping users. They may used to gather them in roles, teams, units, whatever
 * stores : they are sets of workitems. When arriving from the workflow engine to the worklist, regular expression matching is used to determine in which store a workitem should be placed.
 * store permissions : are used to grant read/write/delegate rights to groups of users on stores.
 * launch permissions : each user group can be granted launch rights, "launching" is about creating a new instance of a business process based on a given process definition. A launch permission maps a user group to a process definition URL.
 
-Still out of the box, Densha features a store "users" with special rules.
+Still out of the box, ruote-web features a store "users" with special rules.
 
-All these concepts are Densha concepts, not OpenWFEru concepts.
+All these concepts are ruote-web concepts, not OpenWFEru concepts.
 
 
 h3. what we need
@@ -33,7 +33,7 @@ Launch permissions are connected to user groups, the only user[s] that has to la
 
 Then add a launch permission to the local URL '/process_definitions/teatesting_0.2.xml' for this 'reception' group.
 
-(you can use the upload process definition functionality in the worklist screen of Densha to upload the process definition and have its launch permission added on the fly)
+(you can use the upload process definition functionality in the worklist screen of ruote-web to upload the process definition and have its launch permission added on the fly)
 
 (click on the image on the right to see the resulting settings)
 

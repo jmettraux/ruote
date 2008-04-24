@@ -52,7 +52,7 @@ h3. fill in the blanks
 
 So the first runs of the business process lead to users complaining (among other things) of having to painfully add fields to the workitems, with potential typo (in keys and in values).
 
-OpenWFEru provides the concept of "launch items":../glossary.html#launch_item, unfortunately Densha doesn't yet provide launchitem manipulation. You can resort to a trick, setting the initial values in the process definition itself.
+OpenWFEru provides the concept of "launch items":../glossary.html#launch_item, unfortunately ruote-web doesn't yet provide launchitem manipulation. You can resort to a trick, setting the initial values in the process definition itself.
 
 #:code#ruby#
 class TeaTesting03 < OpenWFE::ProcessDefinition

@@ -3,32 +3,27 @@ h2. The "Tea Testing Team" example (<%= extract_index(__FILE__) + 1 %> / <%= TIT
 
 <%= render_ttt_menu(__FILE__) %>
 
-This example shows how to implement a business process on top of OpenWFEru and Densha. OpenWFEru depends on Ruby, while Densha depends on Ruby on Rails.
+This example shows how to implement a business process on top of OpenWFEru and ruote-web (ex "Densha"). OpenWFEru depends on Ruby, while ruote-web depends on Ruby on Rails.
 
 
 h3. getting Ruby and Ruby on Rails
 
 There are extensive instructions on how to get Ruby and Ruby on Rails on the website of the later : "Get Ruby on Rails in no time":http://rubyonrails.org/down
 
-The latest Rails 2.0.x or Rails 1.2.6 should be OK for running Densha (and OpenWFEru).
+The latest Rails 2.0.x should be OK for running "ruote-web".
 
 
-h3. getting Densha
+h3. getting "ruote-web"
 
-Once you've made sure you have a decent Ruby and Ruby on Rails setting, it's time to get a copy of Densha (with OpenWFEru included).
+There is a pre-packaged version of "ruote-web" (ex "densha") : "ruote-web-0.9.18pre0.zip":http://rubyforge.org/frs/download.php/36031/ruote-web-0.9.18pre0.zip
 
-"openwferu-densha-0.9.16.zip":http://rubyforge.org/frs/download.php/28147/openwferu-densha-0.9.16.zip
-
-
-h3. preparing Densha
-
-When unzipped, rename the top directory 'densha' to 'ttt' :
+When unzipped, rename the top directory 'ruote-web' to 'ttt' :
 
 <pre>
-mv densha ttt
+mv ruote-web ttt
 </pre>
 
-(these instructions are already detailed at the "Densha quickstart":../rquickstart.html, they are reproduced here but the application is renamed 'ttt'). 
+(these instructions are already detailed at the "ruote-web quickstart":../rquickstart.html, they are reproduced here but the application is renamed 'ttt'). 
 
 
 h3. preparing the database

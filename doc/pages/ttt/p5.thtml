@@ -14,20 +14,20 @@ Click on the link "launch process", you should be greeted by a list of process d
 
 <%= thumbnail("../images/ttt/ttesting02.png", 40, :right) %>If you click view, the process definition (XML) and it's graphical representation will be displayed.
 
-Note that Densha produces automatically a graphical representation for the process definitions, it's done via a javascript library usable outside of Densha.
+Note that ruote-web (ex "Densha") produces automatically a graphical representation for the process definitions, it's done via a "javascript library":http://github.com/jmettraux/ruote-fluo usable outside of ruote-web.
 
 Hit "launch" for the teatesting_0.2.xml business process.
 
 <%= thumbnail("../images/ttt/run_stores.png", 40, :left) %>
 Head to the "stores" screen and there should be a workitem waiting in the "users" store for the "reception" user / participant.
 
-The "stores" page is the entry point for Densha, it details the tasks waiting for the user.
+The "stores" page is the entry point for ruote-web, it details the tasks waiting for the user.
 
-This first workitem is issued for the "reception" user (who launched it). If you launched the business process as the "reception" user, Densha would have immediately brought you to the workitem edition screen to fill the initial entries.
+This first workitem is issued for the "reception" user (who launched it). If you launched the business process as the "reception" user, ruote-web would have immediately brought you to the workitem edition screen to fill the initial entries.
 
 <%= thumbnail("../images/ttt/wi_edition.png", 40, :right) %>
 Editing the payload of workitems amounts to editing a dictionary (hash) structure. Keys are mapped to values. The top level keys are String and the keys can be strings or hashes.
-This is quite primitive, but further versions of Densha shall enhance that and later in this example, you'll see how to use custom forms.
+This is quite primitive, but further versions of ruote-web shall enhance that and later in this example, you'll see how to use custom forms.
 
 The image on the right shows the workitem being edited, with some initial data filled by the people at the reception.
 They can hit "save" to pause this activity or "proceed" if the data is sufficient and the workitem should resume in the business process instance (on its way to Ted and Tang).
