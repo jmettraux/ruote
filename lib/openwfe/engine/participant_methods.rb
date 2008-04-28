@@ -123,7 +123,9 @@ module OpenWFE
         #
         def list_participants
 
-            get_participant_map.participants
+            get_participant_map.participants.collect do |regex, part|
+                part
+            end
         end
     end
 
