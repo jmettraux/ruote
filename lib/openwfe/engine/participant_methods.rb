@@ -121,11 +121,11 @@ module OpenWFE
         # Returns the list of participants registered in the engine.
         # In the resolution order.
         #
+        # Returns a list of [ regex, participant ] pairs.
+        #
         def list_participants
 
-            get_participant_map.participants.collect do |regex, part|
-                part
-            end
+            get_participant_map.participants
         end
     end
 
