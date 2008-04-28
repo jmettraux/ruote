@@ -173,7 +173,13 @@ module OpenWFE
         #
         # Deletes the first participant matching the given name.
         #
+        # If 'participant_name' is an integer, will remove the participant
+        # at that position in the participant list.
+        #
         def unregister_participant (participant_name)
+
+            return (@participants.delete_at(participant_name) != nil) \
+                if participant_name.is_a?(Integer)
 
             participant_name = participant_name.to_s
 

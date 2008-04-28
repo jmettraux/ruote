@@ -109,6 +109,9 @@ module OpenWFE
         # Removes the first participant matching the given name from the
         # participant map kept by the engine.
         #
+        # If 'participant_name' is an integer, will remove the participant
+        # at that position in the participant list.
+        #
         def unregister_participant (participant_name)
 
             get_participant_map.unregister_participant participant_name
