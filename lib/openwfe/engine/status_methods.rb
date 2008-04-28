@@ -192,7 +192,7 @@ module OpenWFE
                     return
                 end
 
-                set_wfid fexp.fei.parent_wfid
+                @wfid ||= fexp.fei.parent_wfid
 
                 @launch_time = fexp.apply_time if fexp.fei.expid == '0'
 
@@ -221,12 +221,6 @@ module OpenWFE
             def add_error (error)
 
                 @errors[error.fei] = error
-            end
-
-            def set_wfid (wfid)
-
-                return if @wfid
-                @wfid = wfid
             end
     end
 

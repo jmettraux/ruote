@@ -113,6 +113,15 @@ module OpenWFE
 
             get_participant_map.unregister_participant participant_name
         end
+
+        #
+        # Returns the list of participants registered in the engine.
+        # In the resolution order.
+        #
+        def list_participants
+
+            get_participant_map.participants
+        end
     end
 
 end
