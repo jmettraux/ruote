@@ -34,5 +34,5 @@
 # just for nicer looking examples
 
 #require 'openwfe/participants/participants'
-require 'openwfe/worklist/storeparticipant'
+require 'openwfe/participants/storeparticipants'
 

@@ -7,7 +7,7 @@
 
 require 'flowtestbase'
 require 'openwfe/def'
-require 'openwfe/worklist/storeparticipant'
+require 'openwfe/participants/storeparticipants'
 
 
 class FlowTest72 < Test::Unit::TestCase

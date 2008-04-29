@@ -16,7 +16,7 @@ require 'openwfe/orest/worklistclient'
 require 'openwfe/engine/engine'
 require 'openwfe/worklist/oldrest'
 require 'openwfe/worklist/storelocks'
-require 'openwfe/worklist/storeparticipant'
+require 'openwfe/participants/storeparticipants'
 require 'openwfe/worklist/worklist'
 
 

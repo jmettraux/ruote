@@ -7,7 +7,7 @@
 
 require 'test/unit'
 require 'openwfe/worklist/storelocks'
-require 'openwfe/worklist/storeparticipant'
+require 'openwfe/participants/storeparticipants'
 
 
 class MockItem

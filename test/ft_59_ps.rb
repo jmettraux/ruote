@@ -8,7 +8,7 @@
 #
 
 require 'openwfe/def'
-require 'openwfe/worklist/storeparticipant'
+require 'openwfe/participants/storeparticipants'
 
 require 'flowtestbase'
 

@@ -10,7 +10,7 @@ require 'test/unit'
 
 require 'openwfe/engine/engine'
 require 'openwfe/def'
-require 'openwfe/worklist/storeparticipant'
+require 'openwfe/participants/storeparticipants'
 
 require 'rutest_utils'
 

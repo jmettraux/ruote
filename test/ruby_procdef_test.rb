@@ -14,7 +14,7 @@ require 'test/unit'
 require 'find'
 
 require 'openwfe/engine/file_persisted_engine'
-require 'openwfe/worklist/storeparticipant'
+require 'openwfe/participants/storeparticipants'
 
 
 #

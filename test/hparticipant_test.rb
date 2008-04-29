@@ -13,7 +13,7 @@ require 'test/unit'
 require 'openwfe/flowexpressionid'
 require 'openwfe/engine/engine'
 require 'openwfe/def'
-require 'openwfe/worklist/storeparticipant'
+require 'openwfe/participants/storeparticipants'
 
 
 class HParticipantTest < Test::Unit::TestCase

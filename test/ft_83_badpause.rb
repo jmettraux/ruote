@@ -8,10 +8,6 @@
 #
 
 require 'flowtestbase'
-#require 'openwfe/def'
-#require 'openwfe/worklist/storeparticipant'
-
-#include OpenWFE
 
 
 class FlowTest83 < Test::Unit::TestCase

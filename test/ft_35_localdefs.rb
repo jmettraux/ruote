@@ -9,7 +9,7 @@
 
 require 'openwfe/def'
 require 'openwfe/workitem'
-require 'openwfe/worklist/storeparticipant'
+require 'openwfe/participants/storeparticipants'
 
 require 'flowtestbase'
 

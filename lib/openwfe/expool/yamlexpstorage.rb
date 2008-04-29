@@ -59,7 +59,7 @@ module OpenWFE
     # YAML expression storage. Expressions (atomic pieces of process instances)
     # are stored in a hierarchy of YAML files.
     #
-    class YamlFileExpressionStorage  < YamlFileStorage
+    class YamlFileExpressionStorage < YamlFileStorage
         include OwfeServiceLocator
         include ExpressionStorageBase
         

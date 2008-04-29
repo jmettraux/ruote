@@ -11,10 +11,6 @@
 #
 
 require 'flowtestbase'
-#require 'openwfe/def'
-#require 'openwfe/worklist/storeparticipant'
-
-#include OpenWFE
 
 
 class FlowTest80 < Test::Unit::TestCase
