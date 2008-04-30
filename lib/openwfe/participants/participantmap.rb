@@ -42,8 +42,6 @@ require 'openwfe/service'
 require 'openwfe/util/observable'
 require 'openwfe/participants/participants'
 
-#include OpenWFE
-
 
 module OpenWFE
 

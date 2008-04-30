@@ -35,6 +35,7 @@
 # "made in Japan"
 #
 # John Mettraux at openwfe.org
+# Tomaso Tosolini
 # 
 
 #require 'rubygems'
@@ -226,7 +227,9 @@ module Extras
             wi.fei = full_fei
             wi.participant_name = participant_name
             wi.attributes = fields_hash
-            # don't care about dispatch_time and last_modified
+
+            wi.dispatch_time = dispatch_time
+            wi.last_modified = last_modified
 
             wi.db_id = self.id
 

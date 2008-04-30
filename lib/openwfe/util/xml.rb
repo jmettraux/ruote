@@ -158,24 +158,32 @@ module OpenWFE
 
             b.instruct!
 
-            b.workitem do
-
-                _fei_to_xml b, wi.fei # flow expression id
-
-                b.last_modified to_httpdate(wi.last_modified)
-
-                b.participant_name wi.participant_name
-
-                b.dispatch_time to_httpdate(wi.dispatch_time)
-                #b.filter ...
-                b.store wi.store
-
-                b.attributes do
-                    hash_to_xml b, wi.attributes
-                end
-            end
+            _workitem_to_xml b, wi
 
             b.target!
+        end
+
+        #
+        # Pipes a workitem into a XML builder
+        #
+        def self._workitem_to_xml (builder, wi)
+
+            builder.workitem do
+
+                _fei_to_xml builder, wi.fei # flow expression id
+
+                builder.last_modified to_httpdate(wi.last_modified)
+
+                builder.participant_name wi.participant_name
+
+                builder.dispatch_time to_httpdate(wi.dispatch_time)
+                #builder.filter ...
+                builder.store wi.store
+
+                builder.attributes do
+                    hash_to_xml builder, wi.attributes
+                end
+            end
         end
 
         #
@@ -194,9 +202,21 @@ module OpenWFE
             wi.dispatch_time = from_httpdate(text(root, 'dispatch_time'))
 
             wi.attributes = object_from_xml(
-                root.elements['attributes'].children[0])
+                root.owfe_first_elt_child('attributes').owfe_first_elt_child)
 
             wi
+        end
+
+        #
+        # Extracts a list of workitems from some XML.
+        #
+        def self.workitems_from_xml (xml)
+
+            root = to_element xml, 'workitems'
+
+            root.owfe_elt_children.collect do |elt|
+                workitem_from_xml elt
+            end
         end
 
         #--
