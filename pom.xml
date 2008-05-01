@@ -17,7 +17,7 @@
   <artifactId>openwferu</artifactId>
   <packaging>jar</packaging>
   <name>openwferu</name>
-  <version>0.9.16-SNAPSHOT</version>
+  <version>0.9.18-SNAPSHOT</version>
 
   <description>
 OpenWFEru is an open source Ruby workflow and BPM engine.
@@ -71,14 +71,49 @@ OpenWFEru is an open source Ruby workflow and BPM engine.
         <includes>
           <include>**/*</include>
         </includes>
-        <!--
-          leaving this exclude out is not a problem for maven (resources will be overridden with filtered ones in the
-          next definition) and makes eclipse working. Eclipse configuration will not work with a resource dir defined
-          twice with opposite excludes/includes.
-          <excludes>
-          <exclude>META-INF/magnolia/*</exclude>
-          </excludes>
-        -->
+      </resource>
+
+      <resource>
+        <filtering>false</filtering>
+        <directory>../rufus/rufus-lru/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>../rufus/rufus-scheduler/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>../rufus/rufus-dollar/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>../rufus/rufus-eval/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>../rufus/rufus-mnemo/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>../rufus/rufus-verbs/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
       </resource>
     </resources>
   </build>
@@ -87,7 +122,7 @@ OpenWFEru is an open source Ruby workflow and BPM engine.
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
     </dependency>
   </dependencies>
 
@@ -106,6 +141,7 @@ OpenWFEru is an open source Ruby workflow and BPM engine.
   </distributionManagement>
 
   <repositories>
+    <!--
     <repository>
       <id>maven.openwfe.org.snapshots</id>
       <url>http://maven.openwfe.org/snapshots</url>
@@ -113,6 +149,7 @@ OpenWFEru is an open source Ruby workflow and BPM engine.
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    -->
   </repositories>
 
 </project>
