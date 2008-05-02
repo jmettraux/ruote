@@ -3,7 +3,7 @@ h2. OpenWFEru source code
 
 Since April 2008, the source code of OpenWFEru is hosted at "http://github.com/jmettraux/ruote":http://github.com/jmettraux/ruote
 
-If the "git":http://git.or.cz/ tools is available on your system, you can check out (clone) the source of OpenWFEru by doing :
+If the "git":http://git.or.cz/ tools are available on your system, you can check out (clone) the source of OpenWFEru by doing :
 
 <pre>
     git clone git://github.com/jmettraux/ruote.git
@@ -11,7 +11,17 @@ If the "git":http://git.or.cz/ tools is available on your system, you can check 
 
 That will check out OpenWFEru's source under a <tt>ruote/</tt> directory.
 
-If you're a github user, it's pretty easy for you to fork OpenWFEru there and to play with it.
+If you're a github user, it's easy for you to fork OpenWFEru there and play with your version.
 
 The developer mailing list for OpenWFE is at "http://groups.google.com/group/openwferu-dev":http://groups.google.com/group/openwferu-dev
 
+
+h3. other OpenWFEru components
+
+They are all at "http://github.com/jmettraux":http://github.com/jmettraux
+
+The highlights are :
+
+* "Ruote-web":http://github.com/jmettraux/ruote-web (ex-"Densha") : a Ruby on Rails web application wrapping the OpenWFEru ruote engine. ("online demo":http://difference.openwfe.org:3000)
+
+* "Ruote-rest":http://github.com/jmettraux/ruote-rest : A "Sinatra":http://sinatrarb.com based RESTful BPM / workflow service
