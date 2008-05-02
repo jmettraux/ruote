@@ -90,7 +90,9 @@ module OpenWFE
         #
         def initialize (application_context={})
 
-            super S_ENGINE, application_context
+            engine_name = application_context[:engine_name] || S_ENGINE
+
+            super engine_name, application_context
 
             $OWFE_LOG = application_context[:logger]
 

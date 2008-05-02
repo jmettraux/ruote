@@ -17,6 +17,15 @@ require 'openwfe/participants/participants'
 
 #application_context = {}
 
+#application_context[:engine_name] = "my_engine"
+    #
+    # the default value for the name of an engine is 'engine'
+    # this parameter is important when multiple engines do share some
+    # communication channel (message queue for example)
+    #
+    # This value appears in the FlowExpressionId of all the expressions
+    # and workitems of the engine.
+
 #application_context[:work_directory] = "work"
     #
     # OpenWFEru engines take one optional argument : application_context
