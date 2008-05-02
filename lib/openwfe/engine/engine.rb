@@ -78,6 +78,13 @@ module OpenWFE
         include ParticipantMethods
         include UpdateExpMethods
 
+
+        #
+        # The name of the engine, will be used to 'stamp' each expression
+        # active in the engine (and thus indirectrly, each workitem)
+        #
+        attr_reader :engine_name
+
         #
         # Builds an OpenWFEru engine.
         #
@@ -90,9 +97,9 @@ module OpenWFE
         #
         def initialize (application_context={})
 
-            engine_name = application_context[:engine_name] || S_ENGINE
+            super S_ENGINE, application_context
 
-            super engine_name, application_context
+            @engine_name = application_context[:engine_name] || 'engine'
 
             $OWFE_LOG = application_context[:logger]
 

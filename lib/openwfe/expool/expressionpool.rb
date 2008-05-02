@@ -683,7 +683,7 @@ module OpenWFE
 
             @eei = FlowExpressionId.new
             @eei.owfe_version = OPENWFERU_VERSION
-            @eei.engine_id = get_engine.service_name
+            @eei.engine_id = get_engine.engine_name
             @eei.initial_engine_id = @eei.engine_id
             @eei.workflow_definition_url = 'ee'
             @eei.workflow_definition_name = 'ee'
