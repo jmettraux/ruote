@@ -7,6 +7,8 @@
 # Sun Oct 29 16:18:25 JST 2006
 #
 
+require 'rubygems'
+
 require 'test/unit'
 
 require 'openwfe/engine/engine'
@@ -28,13 +30,13 @@ class ParticipantTest < Test::Unit::TestCase
 
     def test_lookup_participant
 
-        @engine.register_participant :toto, NullParticipant
+        @engine.register_participant :toto, OpenWFE::NullParticipant
 
         p = @engine.get_participant "toto"
-        assert_kind_of NullParticipant, p
+        assert_kind_of OpenWFE::NullParticipant, p
 
         p = @engine.get_participant :toto
-        assert_kind_of NullParticipant, p
+        assert_kind_of OpenWFE::NullParticipant, p
 
         assert_equal 1, @engine.get_participant_map.size
     end
@@ -43,7 +45,7 @@ class ParticipantTest < Test::Unit::TestCase
 
         assert ( ! @engine.unregister_participant(:nada))
 
-        @engine.register_participant :toto, NullParticipant
+        @engine.register_participant :toto, OpenWFE::NullParticipant
 
         assert_equal 1, @engine.get_participant_map.size
 
@@ -51,7 +53,7 @@ class ParticipantTest < Test::Unit::TestCase
 
         assert_equal 0, @engine.get_participant_map.size
 
-        @engine.register_participant "user_.*", NullParticipant
+        @engine.register_participant "user_.*", OpenWFE::NullParticipant
 
         assert_equal 1, @engine.get_participant_map.size
 
