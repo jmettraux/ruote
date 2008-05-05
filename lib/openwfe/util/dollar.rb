@@ -37,7 +37,6 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'rubygems'
 require 'rufus/dollar' # gem 'rufus-dollar'
 require 'rufus/eval' # gem 'rufus-eval'
 
@@ -103,28 +102,24 @@ module OpenWFE
 
         def [] (key)
 
-            p, k = extract_prefix(key)
+            pr, k = extract_prefix key
 
-            #puts "### p, k is '#{p}', '#{k}'"
+            # stage 0
 
-            return '' if k == ''
+            v = lookup(pr[0, 1], k)
+            return v if v != nil
 
-            return @workitem.lookup_attribute(k) if p == 'f'
+            # stage 1
 
-            if p == 'v'
-                return '' unless @flow_expression
-                return @flow_expression.lookup_variable(k)
-            end
+            return "" if pr.size < 2
 
-            #return call_function(k) if p == 'c'
-            return call_ruby(k) if p == 'r'
-
-            @workitem.lookup_attribute key
+            lookup(pr[1, 1], k)
         end
 
         def []= (key, value)
 
-            pr, k = extract_prefix(key)
+            pr, k = extract_prefix key
+            pr = pr[0, 1]
 
             if pr == 'f'
 
@@ -138,29 +133,37 @@ module OpenWFE
 
         def has_key? (key)
 
-            p, k = extract_prefix(key)
+            pr, k = extract_prefix key
 
-            return false if k == ''
+            return true if pr == 'r'
 
-            return @workitem.has_attribute?(k) if p == 'f'
-
-            if p == 'v'
-                return false unless @flow_expression
-                return (@flow_expression.lookup_variable(k) != nil)
-            end
-
-            #return true if p == 'c'
-            return true if p == 'r'
-
-            @workitem.has_attribute?(key)
+            (self[key] != nil)
         end
 
         protected
 
+            def lookup (pr, key)
+
+                case pr
+                    when 'v' then @flow_expression.lookup_variable(key)
+                    when 'f' then @workitem.lookup_attribute(key)
+                    when 'r' then call_ruby(key)
+                    else nil
+                end
+            end
+
             def extract_prefix (key)
+
                 i = key.index(':')
-                return @default_prefix, key if not i
-                [ key[0..0], key[i+1..-1] ]
+
+                return [ @default_prefix, key ] if not i
+
+                pr = key[0..i-1] # until ':'
+                pr = pr[0, 2] # the first two chars
+
+                pr = pr[0, 1] unless (pr == 'vf') or (pr == 'fv')
+
+                [ pr, key[i+1..-1] ]
             end
 
             #--
@@ -172,6 +175,9 @@ module OpenWFE
             #end
             #++
 
+            #
+            # The ${r:1+2} stuff. ("3").
+            #
             def call_ruby (ruby_code)
 
                 if @flow_expression

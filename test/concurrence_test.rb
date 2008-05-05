@@ -8,6 +8,8 @@
 # Kita Yokohama
 #
 
+require 'rubygems'
+
 require 'test/unit'
 
 require 'openwfe/engine/engine'
@@ -18,7 +20,8 @@ require 'openwfe/participants/storeparticipants'
 class ConcurrenceAndParticipantTest < Test::Unit::TestCase
 
     def setup
-        @engine = Engine.new
+        @engine = OpenWFE::Engine.new({ 
+            :definition_in_launchitem_allowed => true })
     end
 
     #def teardown

@@ -117,4 +117,5 @@ require 'back_0916_test'
 require 'ft_82_trecu'
 require 'ft_84_updateexp'
 require 'ft_85_dolhash'
+require 'ft_86_dollar_fv'
 
