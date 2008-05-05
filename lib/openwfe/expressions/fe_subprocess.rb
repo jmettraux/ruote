@@ -64,13 +64,15 @@ module OpenWFE
     #     require 'openwfe/def'
     #
     #     class AnotherDefinition0 < OpenWFE::ProcessDefinition
-    #         def make
-    #             sequence do
-    #                 participant ref => "toto"
-    #                 subprocess ref => "http://company.process.server/def0.rb"
-    #             end
-    #         end
+    #        sequence do
+    #            participant :ref => "toto"
+    #            subprocess :ref => "http://company.process.server/def0.rb"
+    #        end
     #     end
+    #
+    # (but the engine parameter :remove_definitions_allowed must be set to true,
+    # as it's dangerous to fetch process definitions from other [untrusted]
+    # hosts)
     #
     # The 'subprocess' expression accepts a 'forget' attribute :
     #

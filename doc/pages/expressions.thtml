@@ -1091,6 +1091,16 @@ Note how the variable 'type' was set to 'white' and then 'colors' and used withi
 
 Note how the subprocess name (and the participant names) can be used as expression names for a shorter syntax. Of course names with white spaces and other niceties won't work for this shorter syntax.
 
+If the engine <tt>:remote_definition_allowed</tt> parameter has been set to true, it's
+OK to reference process definitions via their URL :
+
+#:code#ruby#
+    sequence do
+        participant "al"
+        subprocess :ref => "http://company.process.server/defs/defXYZ.xml"
+    end
+#:code#
+
 "rdoc":rdoc/classes/OpenWFE/SubProcessRefExpression.html
 
 
