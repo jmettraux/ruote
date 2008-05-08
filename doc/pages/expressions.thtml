@@ -710,10 +710,56 @@ A classic participant may be a workitem store, queried by a web application for 
 
 h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="exp_process-definition"></a>process-definition
 
+Usually the "process_definition" name is used for this expression, but "define" and "workflow_definition" are usable as well.
+
+#:code#ruby#
+    process_definition :name => "my_process", :revision => "y"
+        sequence do
+            participant "alpha"
+            participant "bravo"
+        end
+    end
+#:code#
+
+The same definition, in XML :
+
+#:code#xml#
+    <process-definition name="my_process" revision="y">
+        <sequence>
+            <participant ref="alpha" />
+            <participant ref="bravo" />
+        </sequence>
+    </process-definition>
+#:code#
+
+In a Ruby process definition, this is also OK :
+
+#:code#ruby#
+    class MyDef0 < OpenWFE::ProcessDefinition
+        sequence do
+            sub0
+            sub1
+        end
+
+        process_definition :name => "sub0" do
+            participant "cold"
+        end
+        
+        definition "sub1" do
+            #
+            # ':name => ' not used
+
+            participant "not cold"
+        end
+    end
+#:code#
+
 "rdoc":rdoc/classes/OpenWFE/DefineExpression.html
 
 
 h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="exp_print"></a>print
+
+(only used for testing and debugging purposes)
 
 "rdoc":rdoc/classes/OpenWFE/PrintExpression.html
 

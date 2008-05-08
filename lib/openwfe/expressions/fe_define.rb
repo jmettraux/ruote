@@ -46,6 +46,44 @@ module OpenWFE
     #
     # The <process-definition> expression.
     #
+    #     <process-definition name="myprocess" revision="2">
+    #         <sequence>
+    #             <participant ref="alpha" />
+    #             <subprocess ref="sub0" />
+    #         </sequence>
+    #         <process-definition name="sub0">
+    #             <participant ref="bravo" />
+    #         </process-definition>
+    #     </process-definition>
+    #
+    # In a Ruby process definition :
+    #
+    #     class Test0 < OpenWFE::ProcessDefinition
+    #
+    #         sequence do
+    #             sub0
+    #             sub1
+    #             sub2
+    #             sub3
+    #         end
+    #
+    #         process_definition :name => "sub0" do
+    #             _print "sub0"
+    #         end
+    #         define :name => "sub1" do
+    #             _print "sub1"
+    #         end
+    #         process_definition "sub2" do
+    #             _print "sub2"
+    #         end
+    #         define "sub3" do
+    #             _print "sub3"
+    #         end
+    #     end
+    #
+    # It is most often used with its "process-definition" name, but "define"
+    # and "workflow-definition" are accepted as well.
+    #
     class DefineExpression < SequenceExpression
 
         is_definition

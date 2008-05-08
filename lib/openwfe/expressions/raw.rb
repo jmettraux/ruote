@@ -172,7 +172,7 @@ module OpenWFE
 
         def definition_name
 
-            raw_representation[1]['name'].to_s
+            (raw_representation[1]['name'] || raw_children.first).to_s
         end
 
         def expression_name

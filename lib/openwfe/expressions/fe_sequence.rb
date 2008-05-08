@@ -87,7 +87,7 @@ module OpenWFE
                 next_id = if (current_fei == self.fei)
                     0
                 else
-                    current_fei.child_id.to_i + 1
+                    @children.index(current_fei) + 1
                 end
 
                 loop do
@@ -95,6 +95,7 @@ module OpenWFE
                     break if next_id >= @children.length
 
                     child = @children[next_id]
+
                     return child if child.is_a?(FlowExpressionId)
 
                     next_id += 1

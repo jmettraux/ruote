@@ -577,7 +577,7 @@ module OpenWFE
 
             @children.each do |child_fei|
                 get_expression_pool.remove(child_fei) \
-                    if child_fei.kind_of? FlowExpressionId
+                    if child_fei.kind_of?(FlowExpressionId)
             end
         end
 

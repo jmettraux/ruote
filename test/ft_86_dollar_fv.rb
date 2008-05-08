@@ -13,7 +13,7 @@ require 'flowtestbase'
 require 'openwfe/def'
 
 
-class DollarFvTest < Test::Unit::TestCase
+class FlowTest86 < Test::Unit::TestCase
     include FlowTestBase
 
     #def setup
