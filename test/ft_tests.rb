@@ -109,6 +109,7 @@ require 'ft_76_merge_isolate'
 require 'ft_77_segments'
 require 'ft_78_eval'
 require 'ft_79_tticket'
+require 'ft_79b_tticket'
 require 'ft_80_spname'
 require 'ft_81_exp'
 

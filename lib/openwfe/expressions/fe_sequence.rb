@@ -40,16 +40,24 @@
 require 'openwfe/expressions/flowexpression'
 
 
-#
-# The 'sequence' expression implementation
-#
-
 module OpenWFE
 
     #
     # This expression sequentially executes each of its children expression.
     # For a more sophisticated version of it, see the 'cursor' expression
     # (fe_cursor.rb).
+    #
+    #     <sequence>
+    #         <participant ref="alice" />
+    #         <participant ref="service_b" />
+    #     </sequence>
+    #
+    # In a Ruby process definition, it looks like :
+    #
+    #     sequence do
+    #         participant "alice"
+    #         participant "service_b"
+    #     end
     #
     class SequenceExpression < FlowExpression
 

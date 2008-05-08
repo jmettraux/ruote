@@ -291,7 +291,7 @@ module OpenWFE
             #
             def expression_name
 
-                n = lookup_attribute(:name, @applied_workitem)
+                n = lookup_attribute :name, @applied_workitem
 
                 return lookup_attribute(:default, @applied_workitem) \
                     if (not n) or (n.strip == '')
