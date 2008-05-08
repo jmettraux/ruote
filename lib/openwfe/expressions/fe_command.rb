@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without 
@@ -131,7 +131,7 @@ module OpenWFE
             #
             def lookup_disallow (workitem)
 
-                lookup_comma_list_attribute(A_DISALLOW, workitem)
+                lookup_array_attribute A_DISALLOW, workitem
             end
     end
 

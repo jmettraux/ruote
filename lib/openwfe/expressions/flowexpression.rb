@@ -447,11 +447,11 @@ module OpenWFE
         # (probably a string) will split it (comma) and return it
         # (each element trimmed).
         #
-        def lookup_array_attribute (attname, workitem, default=nil)
+        def lookup_array_attribute (attname, workitem, options={})
 
-            v = lookup_attribute attname, workitem
+            v = lookup_attribute attname, workitem, options
 
-            return default unless v
+            return nil unless v
 
             return v if v.is_a?(Array)
 
@@ -497,36 +497,6 @@ module OpenWFE
                 #ldebug do 
                 #    "lookup_attributes() added '#{k}' -> '#{result[k]}'"
                 #end
-            end
-
-            result
-        end
-
-        #
-        # For an expression like
-        #
-        #     iterator :on_value => "a, b, c", to-variable => "v0" do
-        #         # ...
-        #     end
-        #
-        # this call
-        #
-        #     lookup_comma_list_attribute(:on_value, wi)
-        #
-        # will return
-        #
-        #     [ 'a', 'b', 'c' ]
-        #
-        def lookup_comma_list_attribute (attname, workitem, options={})
-
-            a = lookup_attribute(attname, workitem, options)
-
-            return nil if not a
-
-            result = []
-            a.split(',').each do |elt|
-                elt = elt.strip
-                result << elt if elt.length > 0
             end
 
             result

@@ -109,13 +109,9 @@ module OpenWFE
             #
             def determine_scheduler_tags
 
-                st = lookup_attribute :scheduler_tags, @applied_workitem
+                @scheduler_tags = lookup_array_attribute(
+                    :scheduler_tags, @applied_workitem) || []
 
-                @scheduler_tags = if st 
-                    st.split(",").collect { |s| s.strip }
-                else
-                    []
-                end
                 @scheduler_tags << self.class.name
             end
     end
