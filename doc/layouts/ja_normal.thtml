@@ -21,7 +21,7 @@ $JA_MENU = [
     :space,
     [ 'tech blog', 'http://jmettraux.wordpress.com' ],
     :space,
-    [ 'credits', 'http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/CREDITS.txt' ],
+    [ 'credits', 'http://github.com/jmettraux/ruote/tree/master/CREDITS.txt' ],
     [ 'on rubyforge', 'http://rubyforge.org/projects/openwferu' ],
     :space,
     [ 'the scheduler', '/ja/scheduler.html' ],
