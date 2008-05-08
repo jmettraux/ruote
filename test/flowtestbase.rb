@@ -180,7 +180,7 @@ module FlowTestBase
 
             $OWFE_LOG.info(
                 "dotest() launched #{fei.to_short_s} "+
-                "@ #{caller[0]} on engine #{@engine.object_id}")
+                "@ #{caller[1]} on engine #{@engine.object_id}")
 
             fei
         end

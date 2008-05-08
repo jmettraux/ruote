@@ -76,7 +76,7 @@ module OpenWFE
 
             text.inject({}) do |r, (k, v)|
 
-                r[dosub(k, flow_express, workitem)] = 
+                r[dosub(k, flow_expression, workitem)] = 
                     dosub(v, flow_expression, workitem)
                 r
             end

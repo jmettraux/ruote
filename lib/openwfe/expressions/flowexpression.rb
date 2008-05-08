@@ -388,7 +388,8 @@ module OpenWFE
             text = @attributes[attname]
 
             return default if text == nil
-            return text unless text.is_a?(String)
+
+            #return text unless text.is_a?(String)
 
             return text if escape == true
                 # returns text if escape is set and is set to true
@@ -439,6 +440,22 @@ module OpenWFE
             return default if result == nil
 
             (result == 'true')
+        end
+
+        #
+        # looks up an attribute, if it's an array, returns it. Else
+        # (probably a string) will split it (comma) and return it
+        # (each element trimmed).
+        #
+        def lookup_array_attribute (attname, workitem, default=nil)
+
+            v = lookup_attribute attname, workitem
+
+            return default unless v
+
+            return v if v.is_a?(Array)
+
+            v.to_s.split(",").collect { |e| e.strip }
         end
 
         #
