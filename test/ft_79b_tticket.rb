@@ -162,7 +162,7 @@ class FlowTest79b < Test::Unit::TestCase
 
     def dotest (path, expected_trace)
 
-        log_level_to_debug
+        #log_level_to_debug
 
         p = TestParticipant.new path
 
@@ -176,7 +176,7 @@ class FlowTest79b < Test::Unit::TestCase
 
         assert_equal expected_trace, p.trace
 
-        #sleep 0.700 # c tests reply too fast, have to wait a bit
+        sleep 0.350 # c tests reply too fast, have to wait a bit
 
         assert(
             (@engine.process_status(fei) == nil), 

@@ -66,6 +66,8 @@ module OpenWFE
                 #
                 # keeping track of outcomes and default as found at apply time
 
+            store_itself
+
             template = [ 
                 step, # expression name
                 { :outcomes => @outcomes, :default => @default }, # attributes
@@ -86,7 +88,7 @@ module OpenWFE
 
             return reply_to_parent(workitem) unless outcome
 
-            #store_itself
+            store_itself
 
             template = [
                 outcome, # expression name
