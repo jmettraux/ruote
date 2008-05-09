@@ -86,7 +86,11 @@ module OpenWFE
 
             outcome = workitem.fields['outcome'] || @default
 
-            return reply_to_parent(workitem) unless outcome
+            return reply_to_parent(workitem) \
+                unless outcome
+
+            return reply_to_parent(workitem) \
+                if @outcomes and ( ! @outcomes.include?(outcome))
 
             store_itself
 
