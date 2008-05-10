@@ -7,6 +7,8 @@
 # Mon Oct 15 08:42:08 JST 2007
 #
 
+require 'rubygems'
+
 require 'test/unit'
 
 require 'openwfe/expool/parser'
@@ -57,6 +59,29 @@ end
         assert_equal(
             "just a tiny process",
             OpenWFE::ExpressionTree.get_description(rep))
+    end
+
+    class Test2 < OpenWFE::ProcessDefinition
+        # no description
+        sequence do
+        end
+    end
+    class Test2b < OpenWFE::ProcessDefinition
+        # no description
+        sequence do
+        end
+        define "sub0" do
+        end
+    end
+
+    def test_2
+
+        tree = OpenWFE::DefParser.parse Test2
+        assert_nil OpenWFE::ExpressionTree.get_description(tree)
+
+        tree = OpenWFE::DefParser.parse Test2b
+        #p tree
+        assert_nil OpenWFE::ExpressionTree.get_description(tree)
     end
 end
 

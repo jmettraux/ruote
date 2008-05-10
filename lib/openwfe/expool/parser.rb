@@ -150,11 +150,16 @@ module OpenWFE
         #
         def self.get_description (tree)
 
-            return tree.last.first.to_s if tree.first == 'description'
+            #return tree.last.first.to_s if tree.first == 'description'
+            #tree.last.each do |child|
+            #    d = get_description(child)
+            #    return d if d
+            #end
+            #nil
 
             tree.last.each do |child|
-                d = get_description(child)
-                return d if d
+                next unless child.is_a?(Array)
+                return child.last.first if child.first == 'description'
             end
 
             nil
