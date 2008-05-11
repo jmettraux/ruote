@@ -32,20 +32,6 @@ class TroubleTicket02 < OpenWFE::ProcessDefinition
   end
 
   #
-  # At the core of the process,
-  # the 'step' subprocess
-  #
-  #process_definition :name => "step" do
-  #  sequence do
-  #    # participant performs activity
-  #    participant(
-  #      :ref => "${part}", :activity => "${desc}")
-  #    # then, call next step (via a subprocess)
-  #    subprocess :ref => "${f:next}"
-  #  end
-  #end
-
-  #
   # The 'outputs' of the activities
   #
 

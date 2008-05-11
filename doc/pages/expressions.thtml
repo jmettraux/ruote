@@ -56,6 +56,7 @@ Expressions are enumerated in the alphabetical order, but here is some kind of '
 * <a href="#exp_log">log</a>  - logs a message to the application log
 * <a href="#exp_eval">eval</a>  - evaluates snippets of process definitions foudn in fields or variables on the fly
 * <a href="#exp_exp">exp</a>  - a limited version of 'eval', dynamically decide which expression (or participant or subprocess) should get used, at apply time
+* <a href="#exp_step">step</a>  - an expression for state-transition oriented processes
 
 <hr>
 
@@ -1056,6 +1057,8 @@ Makes a process segment sleep for a while.
     </sequence>
 #:code#
 
+In a Ruby process definition :
+
 #:code#ruby#
     sequence do
 
@@ -1071,6 +1074,107 @@ Makes a process segment sleep for a while.
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/SleepExpression.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="exp_step"></a>step
+
+This expression was first implemented as a subprocess in the "trouble ticket":http://jmettraux.wordpress.com/2008/01/04/the-trouble-ticket-process/ blog post.
+
+It's now part of Ruote and accept participant and subprocesses as "state" as well as for "transitions".
+
+Note that all the attributes to the "step" expression itself will be passed as atribute for the state participant or subprocess.
+
+The "transition" after the "state" is determined by the [string] value found in the workitem field named "outcome". The participant or the subprocess in the "state" is meant to set this field to a meaningful value (see :outcomes and :default after the code example).
+
+Here is the "trouble ticket" example implemented with the "step" expression (note that the "define" alias to "process-definition" was used) :
+
+#:code#ruby#
+  class TroubleTicket02 < OpenWFE::ProcessDefinition
+  
+    # The root of the process
+    #
+    sequence do
+  
+      # the first activity, customer support
+      #
+      cs :activity => "enter details"
+  
+      # initiating the first step
+      #
+      step "qa", :desc => "reproduce problem"
+    end
+  
+    #
+    # The 'outputs' of the activities
+    #
+  
+    # QA 'reproduce problem' outputs
+  
+    define "out:cannot_reproduce" do
+      step "cs", :desc => "correct report"
+    end
+    define "out:known_solution" do
+      finalsteps
+    end
+    define "out:duplicate" do
+      step "qa", :desc => "verify"
+    end
+    define "out:reproduced" do
+      step "dev", :desc => "resolution"
+    end
+  
+    # Customer Support 'correct report' outputs
+  
+    define "out:submit" do
+      step "qa", :desc => "reproduce problem"
+    end
+    define "out:give_up" do
+      finalsteps
+    end
+  
+    # QA 'verify' outputs
+  
+    define "out:qa_fixed" do
+      finalsteps
+    end
+    define "out:not_fixed" do
+      step "dev", :desc => "resolution"
+    end
+  
+    # dev 'resolution' outputs
+  
+    define "out:dev_fixed" do
+      step "qa", :desc => "verify"
+    end
+  
+    set :var => "out:not_a_bug", :variable_value => "out:dev_fixed"
+       # "not_a_bug" is an alias to "dev_fixed"
+  
+    # the final steps
+  
+    define "finalsteps" do
+      concurrence do
+        cs :activity => "communicate results"
+        qa :activity => "audit"
+      end
+    end
+  
+  end
+#:code#
+
+The "step" expression also accepts two attributes : "outcomes" and "default". "outcomes" accepts a list of transition names, while "default" names one default transition to use.
+
+#:code#xml#
+    <step step="one" outcomes="two, three" default="two" />
+#:code#
+
+In Ruby :
+
+#:code#xml#
+    step :one, :outcomes => [ :two, :three ], :default => :two
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/StepExpression.html
 
 
 h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="exp_subprocess"></a>subprocess
