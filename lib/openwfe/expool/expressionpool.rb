@@ -835,6 +835,11 @@ module OpenWFE
                         [ exp_or_fei, exp_or_fei.fei ]
                     end
 
+                    #p [ direction, fei.wfid, fei.expid, fei.expname ]
+                        #
+                        # I uncomment that sometimes to see how the stack
+                        # grows (wfids and expids)
+
                     ldebug {
                         ":#{direction} "+
                         "target #{fei.to_debug_s}" }

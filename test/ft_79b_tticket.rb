@@ -13,7 +13,7 @@ require 'flowtestbase'
 #
 # The process definition under test
 #
-class TroubleTicket01 < OpenWFE::ProcessDefinition
+class TroubleTicket02 < OpenWFE::ProcessDefinition
 
   #
   # The root of the process
@@ -28,25 +28,22 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
     #
     # initiating the first step
     #
-    step :part => "qa", :desc => "reproduce problem"
+    step "qa", :desc => "reproduce problem"
   end
 
   #
   # At the core of the process,
   # the 'step' subprocess
   #
-  process_definition :name => "step" do
-    sequence do
-
-      # participant performs activity
-      participant(
-        :ref => "${part}", :activity => "${desc}")
-
-      # then, call next step (via a subprocess)
-      subprocess :ref => "${f:next}"
-
-    end
-  end
+  #process_definition :name => "step" do
+  #  sequence do
+  #    # participant performs activity
+  #    participant(
+  #      :ref => "${part}", :activity => "${desc}")
+  #    # then, call next step (via a subprocess)
+  #    subprocess :ref => "${f:next}"
+  #  end
+  #end
 
   #
   # The 'outputs' of the activities
@@ -55,22 +52,22 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
   # QA 'reproduce problem' outputs
 
   process_definition :name => "out:cannot_reproduce" do
-    step :part => "cs", :desc => "correct report"
+    step "cs", :desc => "correct report"
   end
   process_definition :name => "out:known_solution" do
     finalsteps
   end
   process_definition :name => "out:duplicate" do
-    step :part => "qa", :desc => "verify"
+    step "qa", :desc => "verify"
   end
   process_definition :name => "out:reproduced" do
-    step :part => "dev", :desc => "resolution"
+    step "dev", :desc => "resolution"
   end
 
   # Customer Support 'correct report' outputs
 
   process_definition :name => "out:submit" do
-    step :part => "qa", :desc => "reproduce problem"
+    step "qa", :desc => "reproduce problem"
   end
   process_definition :name => "out:give_up" do
     finalsteps
@@ -82,13 +79,13 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
     finalsteps
   end
   process_definition :name => "out:not_fixed" do
-    step :part => "dev", :desc => "resolution"
+    step "dev", :desc => "resolution"
   end
 
   # dev 'resolution' outputs
 
   process_definition :name => "out:dev_fixed" do
-    step :part => "qa", :desc => "verify"
+    step "qa", :desc => "verify"
   end
 
   set :var => "out:not_a_bug", :variable_value => "out:dev_fixed"
@@ -107,7 +104,7 @@ end
 
 
 
-class FlowTest79 < Test::Unit::TestCase
+class FlowTest79b < Test::Unit::TestCase
     include FlowTestBase
 
     def test_0
@@ -154,7 +151,7 @@ class FlowTest79 < Test::Unit::TestCase
             @trace << workitem.participant_name
                 # Kilroy was here
 
-            workitem.next = "out:#{@path.delete_at(0)}" if @path.size > 0
+            workitem.outcome = "out:#{@path.delete_at(0)}" if @path.size > 0
                 # stating what should happen next (activity conclusion)
 
             reply_to_engine workitem
@@ -165,19 +162,21 @@ class FlowTest79 < Test::Unit::TestCase
 
     def dotest (path, expected_trace)
 
+        #log_level_to_debug
+
         p = TestParticipant.new path
 
         @engine.register_participant :cs, p
         @engine.register_participant :qa, p
         @engine.register_participant :dev, p
 
-        fei = launch TroubleTicket01
+        fei = launch TroubleTicket02
 
         @engine.wait_for fei
 
         assert_equal expected_trace, p.trace
 
-        sleep 0.350 # c tests reply too fast, have to wait a bit
+        sleep 0.400 # c tests reply too fast, have to wait a bit
 
         assert(
             (@engine.process_status(fei) == nil), 
