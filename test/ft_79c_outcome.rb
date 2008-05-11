@@ -16,22 +16,41 @@ class FlowTest79c < Test::Unit::TestCase
     class Test0 < OpenWFE::ProcessDefinition
 
         sequence do
-            step :alpha
+            step :a0, :outcomes => [ :a1, :a2 ], :default => :a2
+            _print "-"
+            step :a1, :outcomes => [ :a1, :a2 ], :default => :whatever
+            _print "-"
+            step :a2, :outcomes => [ :a1, :a2 ]
         end
 
-        define "ichi" do
+        define "a0" do
+            sequence do
+                _print "a0"
+                #set :f => "outcome", :val => "a1"
+                set :f => "outcome", :val => "whatever"
+            end
         end
-        define "ni" do
+        define "a1" do
+            sequence do
+                _print "a1"
+                set :f => "outcome", :val => "a2"
+            end
+        end
+        define "a2" do
+            sequence do
+                _print "a2"
+            end
         end
     end
 
     def test_0
 
-        @engine.register_participant :alpha do |wi|
-            @tracer << "alpha"
-        end
+        #log_level_to_debug
 
-        dotest Test0, ""
+        #@engine.register_participant :alpha do |wi|
+        #end
+
+        dotest Test0, %w{ a0 a2 - a1 a2 - a2 }.join("\n")
     end
 end
 

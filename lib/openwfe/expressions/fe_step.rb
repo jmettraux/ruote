@@ -43,7 +43,48 @@ require 'openwfe/expressions/flowexpression'
 module OpenWFE
 
     #
-    # TODO : document me
+    # This expression takes its root in this "trouble ticket blog post" :
+    #
+    #     http://jmettraux.wordpress.com/2008/01/04/the-trouble-ticket-process/
+    #
+    # In this post, the "step" was implemented directly in the OpenWFEru
+    # process definition language.
+    #
+    # It's been turned into an expression and it's not limited anymore to
+    # the concept "state is a participant, transition points to a subprocess",
+    # state can now point to a subprocess as well as to a participant, idem
+    # for a transition.
+    #
+    # In other words, this "step" expression allows you to write 
+    # state-transition process definitions in OpenWFEru (the Ruote workflow
+    # engine). But don't abuse it. Classical OpenWFEru constructs can
+    # do most of the job.
+    #
+    # An interesting aspect of the "step" expression is that it can remove
+    # the need for some "if" expression constructs (well the fact 
+    #
+    #     class ProcDef0 < OpenWFE::ProcessDefinition
+    #
+    #       sequence do
+    #
+    #         step "Alfred", :outcomes => [ 'blue_pen', 'red_pen' ]
+    #           # Alfred gets to choose between a blue pen and a red pen
+    #
+    #         participant "Bob"
+    #           # flow resumes with Bob in a classical way (sequence)
+    #       end
+    #
+    #       define "blue_pen" do
+    #         # ... Alfred buying a blue pen
+    #       end
+    #       define "red_pen" do
+    #         # ... Alfred buying a red pen
+    #       end
+    #     end
+    #
+    # For some more discussions about Ruote and state-transition see
+    #
+    #     http://groups.google.com/group/openwferu-dev/t/16e713c1313cb2fa 
     #
     class StepExpression < FlowExpression
 
@@ -61,16 +102,21 @@ module OpenWFE
 
             @out = false
 
-            @outcomes = lookup_array_attribute :outcomes, workitem
-            @default = lookup_attribute :default, workitem
-                #
-                # keeping track of outcomes and default as found at apply time
+            # keeping track of outcomes and default as found at apply time
+
+            @outcomes = lookup_array_attribute(
+                :outcomes, workitem, :to_s => true)
+
+            @default = lookup_attribute(
+                :default, workitem, :to_s => true)
 
             store_itself
 
+            # launching the 'step' itself
+
             template = [ 
-                step, # expression name
-                { :outcomes => @outcomes, :default => @default }, # attributes
+                step.to_s, # expression name
+                lookup_attributes(workitem), # attributes
                 [], # children
             ]
 
@@ -84,18 +130,21 @@ module OpenWFE
 
             @out = true
 
-            outcome = workitem.fields['outcome'] || @default
+            outcome = workitem.fields.delete 'outcome'
+            outcome = outcome.to_s if outcome
+
+            #p [ outcome, @outcomes, @default ]
+
+            outcome = @default \
+                if @outcomes and (not @outcomes.include?(outcome))
 
             return reply_to_parent(workitem) \
                 unless outcome
 
-            return reply_to_parent(workitem) \
-                if @outcomes and ( ! @outcomes.include?(outcome))
-
             store_itself
 
             template = [
-                outcome, # expression name
+                outcome.to_s, # expression name
                 {}, # attributes
                 [], # children
             ]

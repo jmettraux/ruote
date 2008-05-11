@@ -379,6 +379,7 @@ module OpenWFE
 
             default = options[:default]
             escape = options[:escape]
+            tostring = options[:to_s]
 
             attname = OpenWFE::symbol_to_name(attname) \
                 if attname.kind_of?(Symbol)
@@ -387,14 +388,22 @@ module OpenWFE
 
             text = @attributes[attname]
 
-            return default if text == nil
+            text = if text == nil
 
-            #return text unless text.is_a?(String)
+                default
 
-            return text if escape == true
-                # returns text if escape is set and is set to true
+            elsif escape == true
 
-            OpenWFE::dosub text, self, workitem
+                text
+
+            else
+
+                OpenWFE::dosub text, self, workitem
+            end
+
+            text = text.to_s if text and tostring
+
+            text
         end
 
         #
@@ -449,13 +458,19 @@ module OpenWFE
         #
         def lookup_array_attribute (attname, workitem, options={})
 
+            tostring = options.delete :to_s
+
             v = lookup_attribute attname, workitem, options
 
             return nil unless v
 
-            return v if v.is_a?(Array)
+            v = v.to_s.split(",").collect { |e| e.strip } \
+                unless v.is_a?(Array)
 
-            v.to_s.split(",").collect { |e| e.strip }
+            v = v.collect { |e| e.to_s } \
+                if tostring
+
+            v
         end
 
         #
@@ -473,7 +488,7 @@ module OpenWFE
         #
         # Returns a hash of all the FlowExpression attributes with their
         # values having undergone dollar variable substitution.
-        # If the attributes parameter is set (to an Array instance) then
+        # If the _attributes parameter is set (to an Array instance) then
         # only the attributes named in that list will be looked up.
         #
         # It's ok to pass an array of Symbol instances for the attributes
@@ -481,25 +496,17 @@ module OpenWFE
         #
         def lookup_attributes (workitem, _attributes=nil)
 
-            result = {}
+            return {} unless @attributes
 
-            return result if not @attributes
-
-            _attributes = @attributes.keys if not _attributes
-
-            _attributes.each do |k|
+            (_attributes || @attributes.keys).inject({}) do |r, k|
 
                 k = k.to_s
                 v = @attributes[k]
 
-                result[k] = OpenWFE::dosub v, self, workitem
+                r[k] = OpenWFE::dosub v, self, workitem
 
-                #ldebug do 
-                #    "lookup_attributes() added '#{k}' -> '#{result[k]}'"
-                #end
+                r
             end
-
-            result
         end
 
         #

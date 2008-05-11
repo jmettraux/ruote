@@ -176,7 +176,7 @@ class FlowTest79b < Test::Unit::TestCase
 
         assert_equal expected_trace, p.trace
 
-        sleep 0.350 # c tests reply too fast, have to wait a bit
+        sleep 0.400 # c tests reply too fast, have to wait a bit
 
         assert(
             (@engine.process_status(fei) == nil), 
