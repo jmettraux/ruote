@@ -349,9 +349,7 @@ module OpenWFE
         #
         def self.to_parent_wfid (wfid)
 
-            i = wfid.index(".")
-            return wfid unless i
-            wfid[0..i-1]
+            wfid.split(".").first
         end
     end
 

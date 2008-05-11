@@ -328,8 +328,10 @@ module OpenWFE
             end
 
             #raw_exp.fei.wfid = get_wfid_generator.generate
+            #raw_exp.fei.wfid = 
+            #    "#{firing_exp.fei.wfid}.#{firing_exp.get_next_sub_id}"
             raw_exp.fei.wfid = 
-                "#{firing_exp.fei.wfid}.#{firing_exp.get_next_sub_id}"
+                "#{firing_exp.fei.parent_wfid}.#{firing_exp.get_next_sub_id}"
 
             raw_exp.new_environment params
 
