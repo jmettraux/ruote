@@ -224,9 +224,13 @@ module OpenWFE
         #
         def self.eval_ruby_process_definition (code, safety_level=2)
 
-            TreeChecker.check code
-
             #puts "\nin:\n#{code}\n"
+
+            TreeChecker.check code
+                #
+                # checks for 'illicit' ruby code before the eval
+                #
+                # uses the "ParseTree" gem for that
 
             code, is_wrapped = wrap_code code
 

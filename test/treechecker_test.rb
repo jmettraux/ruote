@@ -25,7 +25,7 @@ class TreeCheckerTest < Test::Unit::TestCase
     #def teardown
     #end
 
-    def _test_0
+    def test_0
 
         assert_safe "1+1"
         assert_unsafe "exit"
@@ -35,8 +35,11 @@ class TreeCheckerTest < Test::Unit::TestCase
 
     def test_1
 
-        #assert_unsafe "abort"
-        #assert_unsafe "abort; puts 'ok'"
+        assert_unsafe "abort"
+        assert_unsafe "abort; puts 'ok'"
+    end
+
+    def test_2
 
         assert_unsafe "puts 'ok'; abort"
             # this one is weird, it does a stack level too deep
