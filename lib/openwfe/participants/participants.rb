@@ -122,7 +122,7 @@ module OpenWFE
             # (of course you can override this method).
             #
             def encode_workitem (wi)
-                YAML.dump(wi)
+                YAML.dump wi
             end
     end
         

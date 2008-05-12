@@ -39,6 +39,7 @@
 
 require 'rufus/eval' # gem 'rufus-eval'
 
+require 'openwfe/util/treechecker'
 require 'openwfe/utils'
 require 'openwfe/expressions/raw'
 
@@ -223,7 +224,7 @@ module OpenWFE
         #
         def self.eval_ruby_process_definition (code, safety_level=2)
 
-            # TODO : insert tree check
+            TreeChecker.check code
 
             #puts "\nin:\n#{code}\n"
 
