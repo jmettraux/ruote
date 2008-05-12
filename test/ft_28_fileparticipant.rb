@@ -10,6 +10,8 @@
 require 'find'
 require 'fileutils'
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'openwfe/listeners/listeners'
 require 'openwfe/participants/participants'
@@ -29,21 +31,19 @@ class FlowTest28 < Test::Unit::TestCase
     #
     # TEST 0
 
-    class TestDefinition0 < ProcessDefinition
-        def make
-            _sequence do
-                _participant :fp
-                _print "done"
-            end
+    class TestDefinition0 < OpenWFE::ProcessDefinition
+        sequence do
+            participant :fp
+            _print "done"
         end
     end
 
-    def test_fp_0
+    def test_0
 
         FileUtils.mkdir("./work/in") unless File.exist? "./work/in"
 
-        @engine.register_participant("fp", OpenWFE::FileParticipant)
-        @engine.add_workitem_listener(OpenWFE::FileListener, "500")
+        @engine.register_participant "fp", OpenWFE::FileParticipant
+        @engine.add_workitem_listener OpenWFE::FileListener, "500"
 
         fei = launch TestDefinition0
 
@@ -51,7 +51,7 @@ class FlowTest28 < Test::Unit::TestCase
 
         Find.find("./work/out/") do |path|
             next unless path.match ".*\.yaml$"
-            FileUtils.mv(path, "./work/in/")
+            FileUtils.mv path, "./work/in/"
         end
 
         sleep 2.000
