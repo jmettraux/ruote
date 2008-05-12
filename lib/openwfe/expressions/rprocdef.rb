@@ -223,6 +223,8 @@ module OpenWFE
         #
         def self.eval_ruby_process_definition (code, safety_level=2)
 
+            # TODO : insert tree check
+
             #puts "\nin:\n#{code}\n"
 
             code, is_wrapped = wrap_code code

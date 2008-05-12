@@ -84,15 +84,15 @@ module OpenWFE
         def apply (workitem)
 
             name = @fei.expression_name[0, 1]
-            text = fetch_text_content(workitem)
+            text = fetch_text_content workitem
 
             method = MAP[name]
 
-            result = self.send(method, text, workitem)
+            result = self.send method, text, workitem
 
             workitem.set_result(result) if result != nil
 
-            reply_to_parent(workitem)
+            reply_to_parent workitem
         end
 
         protected
@@ -143,11 +143,13 @@ module OpenWFE
     #
     # Note that it's actually easier to write :
     #
-    #     _set :filed => "list" do
+    #     _set :field => "list" do
     #         reval "[ 'a', 'b', 'c' ]"
     #     end
     #
-    # but it's less secure.
+    # but it's less secure. The best way might be :
+    #
+    #     set :field => "list", :value => [ 'a', 'b', 'c' ]
     #
     class AttributeExpression < FlowExpression
 
