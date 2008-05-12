@@ -41,6 +41,8 @@ require 'find'
 require 'yaml'
 require 'fileutils'
 
+require 'rufus/scheduler'
+
 require 'openwfe/service'
 require 'openwfe/rudefinitions'
 require 'openwfe/listeners/listener'
@@ -125,11 +127,11 @@ module OpenWFE
 
                 return nil unless path.match ".*\.yaml$"
 
-                object = YAML.load_file(path)
+                object = YAML.load_file path
 
-                File.delete(path)
+                File.delete path
 
-                return object
+                object
             end
     end
 
