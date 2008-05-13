@@ -343,6 +343,26 @@ module OpenWFE
         end
 
         #
+        # Replaces the flow expression with a raw expression that has
+        # the same fei, same parent and points to the same env.
+        # The raw_representation will be the template.
+        # Stores and then apply the "cuckoo" expression.
+        #
+        def substitute_and_apply (fexp, template, workitem)
+
+            re = RawExpression.new_raw(
+                fexp.fei, 
+                fexp.parent_id, 
+                fexp.environment_id, 
+                application_context, 
+                template)
+
+            update re
+
+            apply re, workitem
+        end
+
+        #
         # Applies a given expression (id or expression)
         #
         def apply (exp_or_fei, workitem)

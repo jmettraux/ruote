@@ -27,7 +27,25 @@ class FlowTestRecursion < Test::Unit::TestCase
     # test 0
     #
 
-    N = 500
+    #N = 500
+    N = 100
+
+    #
+    # Test0, N=100
+    #
+    # Tue May 13 17:24:53 JST 2008
+    #
+    # without substitution :
+    # q : 2.72s
+    # p : 752s
+    #
+    # with substitution :
+    # q : 2.67s
+    # p : 715s
+    # (c : 10s)
+    #
+    # => :(
+    #
 
     #
     # chaining N steps
