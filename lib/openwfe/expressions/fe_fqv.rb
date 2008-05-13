@@ -37,6 +37,8 @@
 # John Mettraux at openwfe.org
 #
 
+require 'json' # gem 'json_pure'
+
 require 'openwfe/util/xml'
 require 'openwfe/expressions/flowexpression'
 
@@ -122,11 +124,15 @@ module OpenWFE
     #
     #     _set :field => "list" do
     #         _a """
-    #             <list>
+    #             <array>
     #                 <string>a</string>
     #                 <string>b</string>
-    #                 <string>c</string>
-    #             </list>
+    #                 <number>3</number>
+    #                 <string>d</string>
+    #                 <null/>
+    #                 <false/>
+    #                 <string>it's over</string>
+    #             </array>
     #         """
     #     end
     #
@@ -151,20 +157,21 @@ module OpenWFE
     #
     #     set :field => "list", :value => [ 'a', 'b', 'c' ]
     #
+    # Yet another way, as this <a> expression accepts JSON :
+    #
+    #     set :field => 'list' do
+    #         a '[1,2,false,"my name"]'
+    #     end
+    #
+    #
     class AttributeExpression < FlowExpression
 
         names :a, :attribute
 
-        def apply workitem
+        XML_REGEX = /<.*>/
 
-            #text = fetch_text_content workitem
-            #text = text.strip
-            #result = if text[0, 3] == "---"
-            #    YAML.load text
-            #else
-            #    d = REXML::Document.new text
-            #    XmlCodec::decode_attribute d.root
-            #end
+
+        def apply (workitem)
 
             child = @children.first
 
@@ -185,17 +192,58 @@ module OpenWFE
             text = text.strip
 
             result = if text[0, 3] == '---'
-                YAML.load text
-            else
-                #d = REXML::Document.new text
-                #XmlCodec::decode_attribute d.root
-                OpenWFE::Xml.from_xml text
+
+                from_yaml text
+
+            elsif text.match(XML_REGEX)
+
+                from_xml text
             end
+
+            result = from_json(text) if result == nil
 
             workitem.set_result(result) if result != nil
 
             reply_to_parent workitem
         end
+
+        protected
+
+            def from_yaml (text)
+
+                begin
+
+                    return YAML.load text
+
+                rescue Exception => e
+                    linfo { "from_yaml() failed : #{e}" }
+                    nil
+                end
+            end
+
+            def from_xml (text)
+
+                begin
+
+                    OpenWFE::Xml.from_xml text
+
+                rescue Exception => e
+                    linfo { "from_xml() failed : #{e}" }
+                    nil
+                end
+            end
+
+            def from_json (text)
+
+                begin
+
+                    JSON.parse text
+
+                rescue Exception => e
+                    linfo { "from_json() failed : #{e}" }
+                    nil
+                end
+            end
     end
 
 end

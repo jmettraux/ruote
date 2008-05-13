@@ -123,5 +123,23 @@ a|b|3
 
         dotest Test3, "77"
     end
+
+    #
+    # Test 4
+    #
+
+    class Test4 < OpenWFE::ProcessDefinition
+        sequence do
+            set :field => "other" do
+                a '[1,2,3,false,"toto"]'
+            end
+            _print "${f:other}"
+        end
+    end
+
+    def test_4
+
+        dotest Test4, "123falsetoto"
+    end
 end
 
