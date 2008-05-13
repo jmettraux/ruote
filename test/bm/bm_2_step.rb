@@ -46,6 +46,9 @@ class FlowTestRecursion < Test::Unit::TestCase
     #
     # => :(
     #
+    # with substitution : stack grows to 515 exps
+    # without : stack grows to 615 exps
+    #
 
     #
     # chaining N steps
@@ -61,6 +64,7 @@ class FlowTestRecursion < Test::Unit::TestCase
                 sequence do
                     _print "stage#{i}"
                     set :f => 'outcome', :val => "step#{i+1}"
+                    #_print "${r:fexp.get_expression_storage.size}" if i == N
                 end
             end
             define "step#{i}" do
