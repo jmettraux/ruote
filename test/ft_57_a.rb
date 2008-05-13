@@ -28,11 +28,13 @@ class FlowTest57 < Test::Unit::TestCase
         sequence do
             _set :field => "list" do
                 _a """
-                    <list>
+                    <array>
                         <string>a</string>
                         <string>b</string>
                         <string>c</string>
-                    </list>
+                        <null/>
+                        <true/>
+                    </array>
                 """
             end
             _print "${r:wi.list.join('|')}"
@@ -54,7 +56,7 @@ class FlowTest57 < Test::Unit::TestCase
         dotest(
             Test0, 
             """
-a|b|c
+a|b|c||true
 -
 a|b|3
             """.strip)
@@ -89,18 +91,19 @@ a|b|3
     <sequence>
         <set field='list'>
             <a>
-            <list>
+            <array>
                 <string>a</string>
-                <string>2</string>
+                <number>2</number>
                 <string>c</string>
-            </list>
+                <false/>
+            </array>
             </a>
         </set>
         <print>${r:wi.list.join('|').strip}</print>
     </sequence>
 </process-definition>
             """,
-            "a|2|c")
+            "a|2|c|false")
     end
 
     #

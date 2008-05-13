@@ -74,6 +74,9 @@ module OpenWFE
     # Simple methods for converting launchitems and workitems from and to
     # XML.
     #
+    # There are also the from_xml(xml) and the to_xml(object) methods
+    # that are interesting (though limited).
+    #
     module Xml
 
         #--
@@ -251,6 +254,44 @@ module OpenWFE
             xml.object o.to_s
         end
 
+        #
+        # Turns XML into an object (quite basic though).
+        #
+        # For example :
+        #
+        #      <array>
+        #          <string>alpha</string>
+        #          <number>2</number>
+        #          <number>2.3</number>
+        #          <false/>
+        #          <null/>
+        #      </array>
+        #
+        # =>
+        #
+        #     [ 'alpha', 2, 2.3, false, nil ]
+        #
+        def self.from_xml (xml)
+
+            xml = to_element xml
+
+            object_from_xml xml
+        end
+
+        #
+        # from_xml, the other way
+        #
+        def self.to_xml (o, indent=0, instruct = false)
+
+            b = Builder::XmlMarkup.new :indent => indent
+
+            b.instruct! if instruct
+
+            object_to_xml b, o
+
+            b.target!
+        end
+
         private
 
             def self.to_httpdate (t)
@@ -283,7 +324,7 @@ module OpenWFE
                 end
             end
 
-            def self.to_element (xml, root_name)
+            def self.to_element (xml, root_name=nil)
 
                 xml = if xml.is_a?(REXML::Element)
                     xml
@@ -294,7 +335,7 @@ module OpenWFE
                 end
 
                 raise "not the XML of a #{root_name} ('#{xml.name}')" \
-                    unless xml.name == root_name
+                    if root_name and (xml.name != root_name)
 
                 xml
             end
@@ -368,7 +409,9 @@ module OpenWFE
 
             def self.array_from_xml (elt)
 
-                elt.children.inject([]) { |r, e| r << object_from_xml(e) }
+                elt.owfe_elt_children.inject([]) do |r, e| 
+                    r << object_from_xml(e)
+                end
             end
     end
 end

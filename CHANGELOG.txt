@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
+- todo  #20108 : upgraded the <a> expression to OpenWFE::Xml
 - bug   #20059 : wfid growing .0.1.2.3 instead of .3 in some cases. Fixed.
 - todo  #18935 : implemented "step" expression (test/ft_79b)
 - bug   #20061 : get_description broken with Ruby pdef with no desc. Fixed.

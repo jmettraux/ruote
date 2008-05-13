@@ -86,5 +86,27 @@ class UtilXmlTest < Test::Unit::TestCase
         assert_equal li.customer_name, li1.customer_name
     end
 
+    def test_4
+
+        a = <<-EOS
+<array>
+    <string>alpha</string>
+    <number>2</number>
+    <number>2.3</number>
+    <false/>
+    <null/>
+</array>
+        EOS
+        a = a.strip
+
+        o = OpenWFE::Xml.from_xml a
+
+        assert_equal [ 'alpha', 2, 2.3, false, nil ], o
+
+        a1 = OpenWFE::Xml.to_xml(o, 4).strip
+
+        assert_equal a, a1
+    end
+
 end
 

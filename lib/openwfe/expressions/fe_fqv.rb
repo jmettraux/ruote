@@ -37,7 +37,7 @@
 # John Mettraux at openwfe.org
 #
 
-require 'openwfe/orest/xmlcodec'
+require 'openwfe/util/xml'
 require 'openwfe/expressions/flowexpression'
 
 
@@ -187,8 +187,9 @@ module OpenWFE
             result = if text[0, 3] == '---'
                 YAML.load text
             else
-                d = REXML::Document.new text
-                XmlCodec::decode_attribute d.root
+                #d = REXML::Document.new text
+                #XmlCodec::decode_attribute d.root
+                OpenWFE::Xml.from_xml text
             end
 
             workitem.set_result(result) if result != nil
