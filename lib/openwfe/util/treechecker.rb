@@ -37,13 +37,13 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'ruby_parser'
-    #
-    # For now, ruby_parser plays with StringIO, that breaks lots of things,
-    # so no. 
-    # (http://www.zenspider.com/pipermail/parsetree/2008-April/000026.html)
+require 'ruby_parser'
 
-require 'parse_tree'
+#begin
+#    require 'parse_tree'
+#rescue LoadError => le
+#    puts "...couldn't find or load the gem 'ParseTree'"
+#end
 
 
 module OpenWFE
@@ -69,6 +69,23 @@ module OpenWFE
 
             sexp = parse sruby
             #p sexp
+            do_check sexp
+        end
+
+        #
+        # Checks whether only single statement got passed (avoiding
+        # "1 == 2; puts 'doing evil stuff'"
+        #
+        def self.check_conditional (sruby)
+
+            sexp = parse sruby
+
+            raise SecurityError.new("more than 1 statement") \
+                if sexp.first == :block
+
+            raise SecurityError.new("assignment found") \
+                if sexp.first == :lasgn
+
             do_check sexp
         end
 
@@ -105,8 +122,10 @@ module OpenWFE
 
                 return sruby if sruby.is_a?(Array)
 
-                #RubyParser.new.parse(sruby).to_a
-                ParseTree.translate sruby
+                RubyParser.new.parse(sruby).to_a
+
+                #return [] unless defined?(ParseTree)
+                #ParseTree.translate sruby
             end
     end
 

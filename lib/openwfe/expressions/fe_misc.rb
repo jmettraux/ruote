@@ -155,6 +155,8 @@ module OpenWFE
             wi = workitem 
                 # so that the ruby code being evaluated sees 'wi' and 'workitem'
 
+            # TODO : insert tree check
+
             result = Rufus::eval_safely code, SAFETY_LEVEL, binding()
 
             workitem.set_result(result) \

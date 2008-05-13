@@ -39,6 +39,8 @@
 
 require 'rufus/eval' # gem 'rufus-eval'
 
+require 'openwfe/util/treechecker'
+
 
 module OpenWFE
 
@@ -229,6 +231,8 @@ module OpenWFE
             # level of 4.
             #
             def do_eval (s, workitem)
+
+                TreeChecker.check_conditional s
 
                 wi = workitem
                 fe = self

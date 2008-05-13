@@ -27,41 +27,40 @@ class TreeCheckerTest < Test::Unit::TestCase
 
     def test_0
 
-        assert_safe "1+1"
-        assert_unsafe "exit"
-        assert_unsafe "puts $BATEAU"
-        assert_unsafe "def surf }"
+        assert_safe :check, "1+1"
+        assert_unsafe :check, "exit"
+        assert_unsafe :check, "puts $BATEAU"
+        assert_unsafe :check, "def surf }"
+        assert_unsafe :check, "abort"
+        assert_unsafe :check, "abort; puts 'ok'"
+        assert_unsafe :check, "puts 'ok'; abort"
     end
 
     def test_1
 
-        assert_unsafe "abort"
-        assert_unsafe "abort; puts 'ok'"
-    end
-
-    def test_2
-
-        assert_unsafe "puts 'ok'; abort"
-            # this one is weird, it does a stack level too deep
+        assert_safe :check_conditional, "1 == 1"
+        assert_unsafe :check_conditional, "puts 'ok'; 1 == 1"
+        assert_unsafe :check_conditional, "exit"
+        assert_unsafe :check_conditional, "a = 2"
     end
 
     protected
 
-        def assert_safe (code)
+        def assert_safe (check_method, code)
 
-            assert check(code)
+            assert check(check_method, code)
         end
 
-        def assert_unsafe (code)
+        def assert_unsafe (check_method, code)
 
-            assert (not check(code))
+            assert (not check(check_method, code))
         end
 
-        def check (code)
+        def check (check_method, code)
 
             begin
 
-                OpenWFE::TreeChecker.check code
+                OpenWFE::TreeChecker.send check_method, code
 
             rescue Exception => e
                 #puts e

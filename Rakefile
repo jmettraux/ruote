@@ -45,7 +45,7 @@ spec = Gem::Specification.new do |s|
     s.extra_rdoc_files  = [ 'README.txt' ]
 
     [ 'builder',
-      'ParseTree',
+      'rogue_parser',
       'rufus-lru', 
       'rufus-scheduler', 
       'rufus-dollar',
