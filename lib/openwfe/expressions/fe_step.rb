@@ -90,8 +90,6 @@ module OpenWFE
 
         names :step
 
-
-        #attr_accessor :out
         attr_accessor :outcomes
         attr_accessor :default
 
@@ -99,8 +97,6 @@ module OpenWFE
         def apply (workitem)
 
             step = lookup_attribute(:step, workitem) || @children.first
-
-            #@out = false
 
             # keeping track of outcomes and default as found at apply time
 
@@ -126,9 +122,6 @@ module OpenWFE
 
         def reply (workitem)
 
-            #return reply_to_parent(workitem) if @out
-            #@out = true
-
             outcome = workitem.fields.delete 'outcome'
             outcome = outcome.to_s if outcome
 
@@ -140,16 +133,12 @@ module OpenWFE
             return reply_to_parent(workitem) \
                 unless outcome
 
-            #store_itself
-
             template = [
                 outcome.to_s, # expression name
                 {}, # attributes
                 [], # children
             ]
 
-            #get_expression_pool.tlaunch_child(
-            #    self, template, 1, workitem, true) #, vars=nil
             get_expression_pool.substitute_and_apply self, template, workitem
         end
     end
