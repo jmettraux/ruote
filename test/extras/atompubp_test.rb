@@ -11,6 +11,8 @@
 
 require 'test/unit'
 
+require 'rubygems'
+
 require 'openwfe/flowexpressionid'
 require 'openwfe/workitem'
 

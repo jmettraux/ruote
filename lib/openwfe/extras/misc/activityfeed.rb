@@ -132,6 +132,7 @@ module OpenWFE::Extras
             e.participant_name = channel
             e.upon = args[0]
             e.workitem = args[1].dup
+            e.updated = Time.now
 
             e.id = \
                 "#{e.workitem.participant_name} - #{e.upon} " +
@@ -170,7 +171,7 @@ module OpenWFE::Extras
             feed_uri = options[:feed_uri] || "http://localhost/feed"
             title = options[:feed_title] || "OpenWFEru engine activity feed"
 
-            feed = Atom::Collection.new feed_uri
+            feed = Atom::Feed.new feed_uri
             feed.title = title
 
             format = options[:format]

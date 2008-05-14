@@ -101,8 +101,8 @@ module OpenWFE::Extras
     #
     class AtomFeedParticipant
         include MonitorMixin
-        include LocalParticipant
-        include TemplateMixin
+        include OpenWFE::LocalParticipant
+        include OpenWFE::TemplateMixin
 
         #
         # Made accessible so that blocks may set it.
@@ -117,7 +117,7 @@ module OpenWFE::Extras
             @max_item_count = max_item_count
             @block_template = block
 
-            @feed = Atom::Collection.new("http://localhost")
+            @feed = Atom::Feed.new("http://localhost")
             @content_type = "xhtml"
         end
 
@@ -137,7 +137,7 @@ module OpenWFE::Extras
             @feed << e
 
             @feed = @feed[0, @max_item_count] \
-                if @feed.length > @max_item_count
+                if @feed.entries.size > @max_item_count
 
             publish workitem
 

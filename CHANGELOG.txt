@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
+- bug   #20128 : upgraded to atom-tools 2.0.1
 - todo  #20111 : step_tail optimization of the "step" expression
 - todo  #18222 : the <a> expression now accepts JSON
 - todo  #20108 : upgraded the <a> expression to OpenWFE::Xml

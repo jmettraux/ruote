@@ -10,21 +10,22 @@
 
 require 'test/unit'
 
+require 'rubygems'
+
 require 'openwfe/workitem'
 require 'openwfe/engine/engine'
 require 'openwfe/def'
 
 require 'openwfe/extras/participants/atomfeed_participants'
 
-include OpenWFE
-include OpenWFE::Extras
+require 'test/flowtestbase'
 
 
 class AtomFeedParticipantTest < Test::Unit::TestCase
+    include FlowTestBase
 
-    def setup
-        @engine = Engine.new()
-    end
+    #def setup
+    #end
 
     #def teardown
     #end
@@ -32,7 +33,7 @@ class AtomFeedParticipantTest < Test::Unit::TestCase
     #
     # test atom 0
     
-    class AtomDefinition0 < ProcessDefinition
+    class AtomDefinition0 < OpenWFE::ProcessDefinition
         sequence do
 
             set \
@@ -55,7 +56,8 @@ class AtomFeedParticipantTest < Test::Unit::TestCase
 
     def test_atom_0
 
-        feed0 = AtomFeedParticipant.new(7,
+        feed0 = OpenWFE::Extras::AtomFeedParticipant.new(
+            7,
 """
 <p>
     <h1>${f:colour}</h1>
@@ -63,7 +65,7 @@ class AtomFeedParticipantTest < Test::Unit::TestCase
 """)
 
 
-        feed1 = AtomFeedParticipant.new(7) do |fe, participant, workitem|
+        feed1 = OpenWFE::Extras::AtomFeedParticipant.new(7) do |fe, participant, workitem|
 
             t = Time.now.to_s
 """
@@ -80,17 +82,17 @@ class AtomFeedParticipantTest < Test::Unit::TestCase
 """
         end
 
-        @engine.register_participant("feed0-.*", feed0)
-        @engine.register_participant("feed1-.*", feed1)
+        @engine.register_participant "feed0-.*", feed0
+        @engine.register_participant "feed1-.*", feed1
 
         $run_index = "first run"
-        @engine.launch(LaunchItem.new(AtomDefinition0))
+        @engine.launch(OpenWFE::LaunchItem.new(AtomDefinition0))
 
         $run_index = "second run"
-        @engine.launch(LaunchItem.new(AtomDefinition0))
+        @engine.launch(OpenWFE::LaunchItem.new(AtomDefinition0))
 
         $run_index = "third and last run"
-        @engine.launch(LaunchItem.new(AtomDefinition0))
+        @engine.launch(OpenWFE::LaunchItem.new(AtomDefinition0))
 
         @engine.join_until_idle
 

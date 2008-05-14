@@ -10,14 +10,13 @@ require 'test/unit'
 
 require 'yaml'
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'openwfe/workitem'
 require 'openwfe/engine/engine'
 
 require 'openwfe/extras/misc/activityfeed'
-
-include OpenWFE
-include OpenWFE::Extras
 
 
 class ActivityFeedTest < Test::Unit::TestCase
@@ -30,7 +29,7 @@ class ActivityFeedTest < Test::Unit::TestCase
     #
     # test 0
     
-    class Test0 < ProcessDefinition
+    class Test0 < OpenWFE::ProcessDefinition
         sequence do
             step_one
             step_two
@@ -40,8 +39,11 @@ class ActivityFeedTest < Test::Unit::TestCase
 
     def test_0
 
-        engine = Engine.new
-        feedservice = engine.init_service 'activityFeed', ActivityFeedService
+        engine = OpenWFE::Engine.new({ 
+            :definition_in_launchitem_allowed => true })
+
+        feedservice = engine.init_service(
+            'activityFeed', OpenWFE::Extras::ActivityFeedService)
 
         steps = []
 
@@ -49,7 +51,7 @@ class ActivityFeedTest < Test::Unit::TestCase
             steps << workitem.participant_name
         end
 
-        li = LaunchItem.new Test0
+        li = OpenWFE::LaunchItem.new Test0
         li.message = "2 > 1 < 3"
 
         fei = engine.launch li
