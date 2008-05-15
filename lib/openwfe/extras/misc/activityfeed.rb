@@ -125,7 +125,7 @@ module OpenWFE::Extras
         #
         def call (channel, *args)
 
-            ldebug "call() c '#{channel}' entries count : #{@entries.size}"
+            #ldebug "call() c '#{channel}' entries count : #{@entries.size}"
 
             e = Entry.new
 
@@ -141,8 +141,9 @@ module OpenWFE::Extras
 
             @entries << e
 
-            @entries = @entries[0, @max_item_count] \
-                if @entries.length > @max_item_count
+            while @entries.length > @max_item_count
+                @entries.delete_at 0
+            end
         end
 
         #
