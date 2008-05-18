@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -55,13 +55,13 @@ module OpenWFE
     # state can now point to a subprocess as well as to a participant, idem
     # for a transition.
     #
-    # In other words, this "step" expression allows you to write 
+    # In other words, this "step" expression allows you to write
     # state-transition process definitions in OpenWFEru (the Ruote workflow
     # engine). But don't abuse it. Classical OpenWFEru constructs can
     # do most of the job.
     #
     # An interesting aspect of the "step" expression is that it can remove
-    # the need for some "if" expression constructs (well the fact 
+    # the need for some "if" expression constructs (well the fact
     #
     #     class ProcDef0 < OpenWFE::ProcessDefinition
     #
@@ -82,9 +82,21 @@ module OpenWFE
     #       end
     #     end
     #
+    # in XML it would look like :
+    #
+    #     <sequence>
+    #        <step ref="Alfred" outcomes="blue_pen, red_pen" />
+    #        <participant ref="Bob" />
+    #     </sequence>
+    #
+    # You can specify a default outcome (else if the outcome doesn't correspond
+    # to a participant or a subprocess, the flow will cease) :
+    #
+    #     <step ref="toto" outcomes="left, right" default="right" />
+    #
     # For some more discussions about Ruote and state-transition see
     #
-    #     http://groups.google.com/group/openwferu-dev/t/16e713c1313cb2fa 
+    #     http://groups.google.com/group/openwferu-dev/t/16e713c1313cb2fa
     #
     class StepExpression < FlowExpression
 
@@ -96,7 +108,7 @@ module OpenWFE
 
         def apply (workitem)
 
-            step = lookup_attribute(:step, workitem) || @children.first
+            step = lookup_attribute(:ref, workitem) || @children.first
 
             # keeping track of outcomes and default as found at apply time
 
@@ -110,7 +122,7 @@ module OpenWFE
 
             # launching the 'step' itself
 
-            template = [ 
+            template = [
                 step.to_s, # expression name
                 lookup_attributes(workitem), # attributes
                 [], # children

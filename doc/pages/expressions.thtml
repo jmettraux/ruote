@@ -1165,7 +1165,7 @@ Here is the "trouble ticket" example implemented with the "step" expression (not
 The "step" expression also accepts two attributes : "outcomes" and "default". "outcomes" accepts a list of transition names, while "default" names one default transition to use.
 
 #:code#xml#
-    <step step="one" outcomes="two, three" default="two" />
+    <step ref="one" outcomes="two, three" default="two" />
 #:code#
 
 In Ruby :

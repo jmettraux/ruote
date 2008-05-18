@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
+- todo  #20202 : using 'ref' as the main 'step' attribute
 - bug   #18954 : activity feed service stuck after 100 entries. Fixed.
 - bug   #20128 : upgraded to atom-tools 2.0.1
 - todo  #20111 : step_tail optimization of the "step" expression
