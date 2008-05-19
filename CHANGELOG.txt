@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
+- bug   #20225 : 'description' problem in process_stack.representation. Fixed.
 - todo  #20202 : using 'ref' as the main 'step' attribute
 - bug   #18954 : activity feed service stuck after 100 entries. Fixed.
 - bug   #20128 : upgraded to atom-tools 2.0.1
@@ -38,17 +39,14 @@
                  in [replying] children
 -              : switched source to http://github.com/jmettraux/ruote
 - todo  #19060 : added representation() to the result of engine.process_stack()
-                 - s1652
-- todo  #19339 : fulldup broken for Time and Date[Time] as reported by
-                 Maarten. Fixed - s1648
+- todo  #19339 : fixed fulldup for Time and Date[Time] as reported by Maarten
 - todo  #19104 : reformed the template system ( see http://tinyurl.com/2y6z9r )
-                 - s1644
-- bug   #19095 : namespace problem for db enabled engine. Fix by Tomaso - s1640
-- todo  #19072 : 'cron' now leaves his template in the expool - s1638
-- todo  #19061 : lib/openwfe/engine/ cleanup (more later) - s1630
-- todo  #18995 : made 'cron' aware of process pause - s1628
-- todo  #18518 : changed 'cron', broke the // exception - s1627
-- patch #18953 : smart dsub for expression args by Nick Petrella - s1625
+- bug   #19095 : namespace problem for db enabled engine. Fix by Tomaso.
+- todo  #19072 : 'cron' now leaves his template in the expool
+- todo  #19061 : lib/openwfe/engine/ cleanup (more later)
+- todo  #18995 : made 'cron' aware of process pause
+- todo  #18518 : changed 'cron', broke the // exception
+- patch #18953 : smart dsub for expression args by Nick Petrella
 
 
 == OpenWFEru - 0.9.17    2008/03/17

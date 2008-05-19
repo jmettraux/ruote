@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -65,7 +65,7 @@ module OpenWFE
     #
     class ExpressionPool
         include ServiceMixin
-        include OwfeServiceLocator 
+        include OwfeServiceLocator
         include OwfeObservable
         include FeiMixin
 
@@ -81,7 +81,7 @@ module OpenWFE
         def initialize (service_name, application_context)
 
             super()
-            
+
             service_init service_name, application_context
 
             @paused_instances = {}
@@ -117,10 +117,10 @@ module OpenWFE
         #++
 
         #
-        # This method is called by the launch method. It's actually the first 
+        # This method is called by the launch method. It's actually the first
         # stage of that method.
         # It may be interessant to use to 'validate' a launchitem and its
-        # process definition, as it will raise an exception in case 
+        # process definition, as it will raise an exception in case
         # of 'parameter' mismatch.
         #
         # There is a 'pre_launch_check' alias for this method in the
@@ -185,7 +185,7 @@ module OpenWFE
             raw_expression.new_environment
                 #
                 # as this expression is the root of a new process instance,
-                # it has to have an environment for all the variables of 
+                # it has to have an environment for all the variables of
                 # the process instance
 
             fei = raw_expression.fei
@@ -205,7 +205,7 @@ module OpenWFE
         #
         # This is the first stage of the tlaunch_child() method.
         #
-        # (it's used by the concurrent iterator when preparing all its 
+        # (it's used by the concurrent iterator when preparing all its
         # iteration children)
         #
         def tprepare_child (
@@ -328,9 +328,9 @@ module OpenWFE
             end
 
             #raw_exp.fei.wfid = get_wfid_generator.generate
-            #raw_exp.fei.wfid = 
+            #raw_exp.fei.wfid =
             #    "#{firing_exp.fei.wfid}.#{firing_exp.get_next_sub_id}"
-            raw_exp.fei.wfid = 
+            raw_exp.fei.wfid =
                 "#{firing_exp.fei.parent_wfid}.#{firing_exp.get_next_sub_id}"
 
             raw_exp.new_environment params
@@ -351,10 +351,10 @@ module OpenWFE
         def substitute_and_apply (fexp, template, workitem)
 
             re = RawExpression.new_raw(
-                fexp.fei, 
-                fexp.parent_id, 
-                fexp.environment_id, 
-                application_context, 
+                fexp.fei,
+                fexp.parent_id,
+                fexp.environment_id,
+                application_context,
                 template)
 
             update re
@@ -382,7 +382,7 @@ module OpenWFE
 
         #
         # Cancels the given expression.
-        # The param might be an expression instance or a FlowExpressionId 
+        # The param might be an expression instance or a FlowExpressionId
         # instance.
         #
         def cancel (exp)
@@ -514,7 +514,7 @@ module OpenWFE
             #if not exp.parent_id
             if (not exp.parent_id) and (exp.fei.expid == '0')
 
-                ldebug do 
+                ldebug do
                     "reply_to_parent() process " +
                     "#{exp.fei.workflow_instance_id} terminated"
                 end
@@ -556,7 +556,7 @@ module OpenWFE
 
             onotify :update, flow_expression.fei, flow_expression
 
-            #ldebug do 
+            #ldebug do
             #    "update() took #{t.duration} ms  " +
             #    "#{flow_expression.fei.to_debug_s}"
             #end
@@ -570,7 +570,7 @@ module OpenWFE
         #
         # The param 'exp' may be a FlowExpressionId or a FlowExpression that
         # has to be reloaded.
-        # 
+        #
         def fetch (exp)
             #synchronize do
 
@@ -578,7 +578,7 @@ module OpenWFE
 
             fei = if exp.is_a?(FlowExpression)
 
-                exp.fei 
+                exp.fei
 
             elsif not exp.is_a?(FlowExpressionId)
 
@@ -694,11 +694,11 @@ module OpenWFE
 
         #
         # Returns the unique engine_environment FlowExpressionId instance.
-        # There is only one such environment in an engine, hence this 
+        # There is only one such environment in an engine, hence this
         # 'singleton' method.
         #
         def engine_environment_id
-            #synchronize do 
+            #synchronize do
                 # no need, it's been already called at initialization
 
             return @eei if @eei
@@ -903,7 +903,7 @@ module OpenWFE
 
             #
             # if the launch method is called with a schedule option
-            # (like :at, :in, :cron and :every), this method takes care of 
+            # (like :at, :in, :cron and :every), this method takes care of
             # wrapping the process with a sleep or a cron.
             #
             def wrap_in_schedule (raw_expression, options)
@@ -916,7 +916,7 @@ module OpenWFE
                 fei = new_fei nil, "schedlaunch", "0", "sequence"
 
                 # not very happy with this code, it builds custom
-                # wrapping processes manually, maybe there is 
+                # wrapping processes manually, maybe there is
                 # a more elegant way, but for now, it's ok.
 
                 template = if oat or oin
@@ -931,7 +931,7 @@ module OpenWFE
                     raw_expression.new_environment
                     raw_expression.store_itself
 
-                    [ 
+                    [
                         "sequence", {}, [
                             [ "sleep", sleep_atts, [] ],
                             raw_expression.fei
@@ -964,14 +964,14 @@ module OpenWFE
 
                     raw_exp = RawExpression.new_raw(
                         fei, nil, nil, @application_context, template)
-                    
+
                     raw_exp.store_itself
 
                     raw_exp
                 else
 
                     raw_expression
-                end  
+                end
             end
 
             #
@@ -1072,7 +1072,7 @@ module OpenWFE
 
                 return if parent.class.uses_template?
 
-                parent.raw_children[fexp.fei.child_id.to_i] = 
+                parent.raw_children[fexp.fei.child_id.to_i] =
                    fexp.raw_representation
 
                 parent.store_itself
@@ -1115,7 +1115,7 @@ module OpenWFE
     end
 
     #--
-    # a small help class for storing monitors provided on demand 
+    # a small help class for storing monitors provided on demand
     # to expressions that need them
     #
     #class MonitorProvider

@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -35,14 +35,14 @@
 # "made in Japan"
 #
 # John Mettraux at openwfe.org
-# 
+#
 
 module OpenWFE
 
     #
     # ExpressionPool methods available via the engine.
     #
-    module ExpoolMethods 
+    module ExpoolMethods
 
         #--
         # METHODS FROM THE EXPRESSION POOL
@@ -78,24 +78,24 @@ module OpenWFE
         # element of a flow).
         #
         # :wfid ::
-        #     will list only one process, 
+        #     will list only one process,
         #     <tt>:wfid => '20071208-gipijiwozo'</tt>
         # :parent_wfid ::
         #     will list only one process, and its subprocesses,
         #     <tt>:parent_wfid => '20071208-gipijiwozo'</tt>
-        # :consider_subprocesses :: 
+        # :consider_subprocesses ::
         #     if true, "process-definition" expressions
         #     of subprocesses will be returned as well.
-        # :wfid_prefix :: 
+        # :wfid_prefix ::
         #     allows your to query for specific workflow instance
-        #     id prefixes. for example : 
+        #     id prefixes. for example :
         #     <tt>:wfid_prefix => "200712"</tt>
         #     for the processes started in December.
         # :wfname ::
         #     will return only the process instances who belongs to the given
         #     workflow [name].
         # :wfrevision ::
-        #     usued in conjuction with :wfname, returns only the process 
+        #     usued in conjuction with :wfname, returns only the process
         #     instances of a given workflow revision.
         #
         def list_processes (options={})
@@ -119,7 +119,7 @@ module OpenWFE
         # Cancels the given expression (and its children if any)
         # (warning : advanced method)
         #
-        # Cancelling the root expression of a process is equivalent to 
+        # Cancelling the root expression of a process is equivalent to
         # cancelling the process.
         #
         def cancel_expression (exp_or_fei)
@@ -133,13 +133,13 @@ module OpenWFE
         #
         def forget_expression (exp_or_fei)
 
-            get_expression_pool.forget exp_or_fei 
+            get_expression_pool.forget exp_or_fei
         end
 
         protected
 
             #
-            # In case of wfid, returns the root expression of the process, 
+            # In case of wfid, returns the root expression of the process,
             # in case of fei, returns the expression itself.
             #
             def fetch_exp (fei_or_wfid)

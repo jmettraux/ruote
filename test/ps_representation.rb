@@ -27,7 +27,7 @@ class PsRepresentationTest < Test::Unit::TestCase
     end
 
     #
-    # TESTS
+    # TEST 0
 
     class Test0 < OpenWFE::ProcessDefinition
         sequence do
@@ -65,6 +65,47 @@ class PsRepresentationTest < Test::Unit::TestCase
 
         assert_equal(
             ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
+            ps.representation)
+    end
+
+    #
+    # TEST 1
+
+    class Test1 < OpenWFE::ProcessDefinition
+        description "interference of the description"
+        sequence do
+            alpha
+            bravo
+        end
+    end
+
+    def test_1
+
+        @engine.register_participant "alpha", OpenWFE::NullParticipant
+
+        fei = @engine.launch Test1
+
+        sleep 0.350
+
+        ps = @engine.process_stack fei, true
+
+        #p ps.representation
+
+        assert_equal(
+            ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
+            ps.representation)
+
+        #
+        # change process instance (charly instead of bravo)
+
+        bravo_fei = ps.find { |fexp| fexp.fei.expid == "0.0.1" }.fei
+
+        @engine.update_raw_expression bravo_fei, ["charly", {}, []]
+
+        ps = @engine.process_stack fei, true
+
+        assert_equal(
+            ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
             ps.representation)
     end
 
