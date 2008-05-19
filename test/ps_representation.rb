@@ -89,8 +89,6 @@ class PsRepresentationTest < Test::Unit::TestCase
 
         ps = @engine.process_stack fei, true
 
-        #p ps.representation
-
         assert_equal(
             ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
             ps.representation)
@@ -106,6 +104,21 @@ class PsRepresentationTest < Test::Unit::TestCase
 
         assert_equal(
             ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
+            ps.representation)
+
+        #
+        # nuke participant charly
+
+        @engine.cancel_expression bravo_fei
+
+        sleep 0.350
+
+        ps = @engine.process_stack fei, true
+
+        #p ps.representation
+
+        assert_equal(
+            ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
             ps.representation)
     end
 

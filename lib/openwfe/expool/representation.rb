@@ -73,20 +73,28 @@ module OpenWFE
                 rep = flow_expression.raw_representation.dup
                 children = flow_expression.children
 
-                offset = 0
+                index = 0
 
-                rep.last.each_with_index { |c, i|
+                rep[2] = rep.last.inject([]) { |r, c|
 
-                    if c.is_a?(Array) and c.first == 'description'
-                        offset += 1
-                        next
+                    if c.is_a?(Array)
+
+                        if c.first == 'description'
+                            index -= 1
+                            r << c
+                        else
+                            child_fei = flow_expression.children[index]
+                            child_exp = find_expression child_fei
+                            r << update_rep(child_exp) if child_exp
+                        end
+                    else
+
+                        r << c
                     end
 
-                    child_fei = flow_expression.children[i - offset]
-                    child_exp = find_expression child_fei
-                    next unless child_exp
+                    index += 1
 
-                    rep.last[i] = update_rep(child_exp)
+                    r
 
                 } if children and children.size > 0
 
