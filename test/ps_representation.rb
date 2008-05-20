@@ -72,7 +72,9 @@ class PsRepresentationTest < Test::Unit::TestCase
     # TEST 1
 
     class Test1 < OpenWFE::ProcessDefinition
+
         description "interference of the description"
+
         sequence do
             alpha
             bravo
@@ -96,7 +98,7 @@ class PsRepresentationTest < Test::Unit::TestCase
         #
         # change process instance (charly instead of bravo)
 
-        bravo_fei = ps.find { |fexp| fexp.fei.expid == "0.0.1" }.fei
+        bravo_fei = ps.find { |fexp| fexp.fei.expid == "0.1.1" }.fei
 
         @engine.update_raw_expression bravo_fei, ["charly", {}, []]
 

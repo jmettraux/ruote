@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.18    not yet released
 
+- todo  #20244 : 'description' is now an expression like any other
 - todo  #20228 : made sure removed expressions did not appear in 
                  process_stack.representation()
 - bug   #20225 : 'description' problem in process_stack.representation. Fixed.

@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -109,7 +109,7 @@ module OpenWFE
         # When the FlowExpression instance is applied, this time stamp is set
         # to the current date.
         #
-        attr_accessor :apply_time 
+        attr_accessor :apply_time
 
         #
         # Used by raw expressions to store the not yet interpreted branches
@@ -198,7 +198,7 @@ module OpenWFE
         #
         def cancel
 
-            return nil if not @children
+            return nil unless @children
 
             inflowitem = nil
 
@@ -227,9 +227,9 @@ module OpenWFE
 
         #
         # Stores itself in the expression pool.
-        # It's very important for expressions in persisted context to save 
+        # It's very important for expressions in persisted context to save
         # themselves as soon as their state changed.
-        # Else this information would be lost at engine restart or 
+        # Else this information would be lost at engine restart or
         # simply if the expression got swapped out of memory and reloaded later.
         #
         def store_itself
@@ -276,7 +276,7 @@ module OpenWFE
         #
         def owns_its_environment?
 
-            #ldebug do 
+            #ldebug do
             #    "owns_its_environment?()\n" +
             #    "    #{@fei.to_debug_s}\n" +
             #    "    #{@environment_id.to_debug_s}"
@@ -319,7 +319,7 @@ module OpenWFE
 
             env, var = lookup_environment(varname)
 
-            ldebug do 
+            ldebug do
                 "set_variable() '#{varname}' to '#{value}' " +
                 "in  #{env.fei.to_debug_s}"
             end
@@ -361,16 +361,16 @@ module OpenWFE
         #
         # Looks up the value for an attribute of this expression.
         #
-        # if the expression is 
+        # if the expression is
         #
         #     <participant ref="toto" />
         #
         # then
-        # 
+        #
         #     participant_expression.lookup_attribute("toto", wi)
         #
         # will yield "toto"
-        # 
+        #
         # The various methods for looking up attributes do perform dollar
         # variable substitution.
         # It's ok to pass a Symbol for the attribute name.
@@ -529,7 +529,7 @@ module OpenWFE
 
             env = Environment.new_env(
                 @environment_id, parent_fei, nil, @application_context, nil)
-            
+
             env.variables.merge! initial_vars if initial_vars
 
             env[@fei.wfname] = self.raw_representation \
@@ -580,11 +580,18 @@ module OpenWFE
         #
         def remove_child (child_fei)
 
-            fei = @children.delete child_fei
+            #fei = @children.delete child_fei
+            #store_itself if fei
 
-            store_itself if fei
-                #
-                # store_itself if the child was really removed.
+            i = @children.index child_fei
+
+            return unless i
+
+            @children.delete_at i
+            raw_children.delete_at i
+            @raw_rep_updated = true
+
+            store_itself
         end
 
         #
@@ -597,9 +604,9 @@ module OpenWFE
         end
 
         #--
-        # Used like the classical Ruby synchronize, but as the OpenWFE 
-        # expression pool manages its own set of monitors, it's one of those 
-        # monitors that is used. But the synchronize code looks like the class 
+        # Used like the classical Ruby synchronize, but as the OpenWFE
+        # expression pool manages its own set of monitors, it's one of those
+        # monitors that is used. But the synchronize code looks like the class
         # just included the MonitorMixin. No hassle.
         #
         #def synchronize
@@ -613,7 +620,7 @@ module OpenWFE
 
         #
         # Returns the text stored as the children of the given expression
-        # 
+        #
         def fetch_text_content (workitem, escape=false)
 
             text = ""
@@ -772,7 +779,7 @@ module OpenWFE
         #
         # a nice 'names' tag/method for registering the names of the
         # Expression classes.
-        # 
+        #
         def self.names (*exp_names)
 
             exp_names = exp_names.collect do |n|
@@ -807,7 +814,7 @@ module OpenWFE
                 true
             end
         end
-        
+
         protected
 
             #

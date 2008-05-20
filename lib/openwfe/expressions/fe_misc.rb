@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -43,6 +43,49 @@ require 'openwfe/expressions/value'
 
 
 module OpenWFE
+
+    #
+    # The 'description' expression, simply binds the given text in
+    # the 'description' variable in the current process.
+    #
+    #     class TestDefinition2 < OpenWFE::ProcessDefinition
+    #
+    #         description :lang => "fr" do "rien de rien" end
+    #
+    #         sequence do
+    #             _print "${description}"
+    #             _print "${description__fr}"
+    #         end
+    #     end
+    #
+    class DescriptionExpression < FlowExpression
+        include ValueMixin
+
+        is_definition
+
+        names :description
+
+        DESC = 'description'
+
+
+        def reply (workitem)
+
+            lang =
+                lookup_attribute(:lang, workitem) ||
+                lookup_attribute(:language, workitem)
+
+            vname = DESC
+            vname += "__#{lang}" if lang
+
+            text = lookup_attribute('text', workitem) || workitem.get_result
+
+            set_variable(vname, text)
+            set_variable(DESC, text) unless lookup_variable(DESC)
+                # set default if not set
+
+            reply_to_parent workitem
+        end
+    end
 
     #
     # A debug/test expression (it's mostly used in the test suite
@@ -62,7 +105,7 @@ module OpenWFE
     #
     # If there is an object bound in the application context under the
     # name '__tracer', this expression will append its message to this
-    # instance instead of emitting to the STDOUT. (this is how the 
+    # instance instead of emitting to the STDOUT. (this is how the
     # OpenWFEru test suite uses this expression).
     #
     class PrintExpression < FlowExpression
@@ -88,12 +131,12 @@ module OpenWFE
     end
 
     #
-    # Evals some Ruby code contained within the process definition 
+    # Evals some Ruby code contained within the process definition
     # or within the workitem.
-    # 
+    #
     # The code is evaluated at a SAFE level of 3.
     #
-    # If the :ruby_eval_allowed isn't set to true 
+    # If the :ruby_eval_allowed isn't set to true
     # (<tt>engine.application_context[:ruby_eval_allowed] = true</tt>), this
     # expression will throw an exception at apply.
     #
@@ -101,7 +144,7 @@ module OpenWFE
     #
     #     <reval>
     #         workitem.customer_name = "doug"
-    #         # or for short 
+    #         # or for short
     #         wi.customer_address = "midtown 21_21 design"
     #     </reval>
     #
@@ -123,7 +166,7 @@ module OpenWFE
     # Don't embed too much Ruby into your process definitions, it might
     # hurt...
     #
-    # Reval can also be used with the 'code' attribute (or 'field-code' or 
+    # Reval can also be used with the 'code' attribute (or 'field-code' or
     # 'variable-code') :
     #
     #     <reval field-code="f0" />
@@ -152,7 +195,7 @@ module OpenWFE
             code = lookup_vf_attribute(workitem, 'code') || workitem.get_result
             code = code.to_s
 
-            wi = workitem 
+            wi = workitem
                 # so that the ruby code being evaluated sees 'wi' and 'workitem'
 
             result = Rufus::eval_safely code, SAFETY_LEVEL, binding()
@@ -313,9 +356,11 @@ module OpenWFE
                 att || @attributes
             end
 
-            def extract_descriptions
-                []
-            end
+            #--
+            #def extract_descriptions
+            #    []
+            #end
+            #++
 
             def extract_children
                 @children

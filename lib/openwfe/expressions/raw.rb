@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -95,14 +95,14 @@ module OpenWFE
             raise "unknown expression '#{exp_name}'" \
                 unless exp_class
 
-            #ldebug do 
+            #ldebug do
             #    "instantiate_real_expression() exp_class is #{exp_class}"
             #end
 
             attributes ||= raw_representation[1]
 
             exp = exp_class.new
-            exp.fei = @fei 
+            exp.fei = @fei
             exp.parent_id = @parent_id
             exp.environment_id = @environment_id
             exp.application_context = @application_context
@@ -111,15 +111,13 @@ module OpenWFE
             exp.raw_representation = raw_representation
             exp.raw_rep_updated = raw_rep_updated
                 #
-                # keeping track of how the expression look at apply / 
+                # keeping track of how the expression look at apply /
                 # instantiation time
 
             consider_tag workitem, exp
-            
-            handle_descriptions
 
             exp.children = extract_children \
-                unless exp_class.uses_template? 
+                unless exp_class.uses_template?
 
             exp
         end
@@ -191,7 +189,7 @@ module OpenWFE
         end
 
         #
-        # This method has been made public in order to have quick look 
+        # This method has been made public in order to have quick look
         # at the attributes of an expression before it's really
         # 'instantiated'.
         #
@@ -199,7 +197,7 @@ module OpenWFE
 
             raw_representation[1]
         end
-        
+
         protected
 
             #
@@ -222,7 +220,7 @@ module OpenWFE
             end
 
             #
-            # Determines if this raw expression points to a classical 
+            # Determines if this raw expression points to a classical
             # expression, a participant or a subprocess, or nothing at all...
             #
             def determine_real_expression
@@ -266,60 +264,12 @@ module OpenWFE
                 [ exp_name, exp_class, attributes ]
             end
 
-            #
-            # Takes care of extracting the process definition descriptions
-            # if any and to set the description variables accordingly.
-            #
-            def handle_descriptions
-
-                default = false
-
-                ds = extract_descriptions
-
-                ds.each do |k, description|
-                    vname = if k == "default"
-                        default = true
-                        "description"
-                    else
-                        "description__#{k}"
-                    end
-                    set_variable vname, description.to_s
-                end
-
-                return if ds.length < 1
-
-                set_variable "description", ds[0][1].to_s \
-                    unless default
-            end
-
-            def extract_descriptions
-
-                result = []
-                raw_representation.last.each do |child|
-
-                    #next unless child.is_a?(SimpleExpRepresentation)
-                    next if is_not_a_node?(child)
-                    next if child.first.intern != :description
-
-                    attributes = child[1]
-
-                    lang = attributes[:language]
-                    lang = attributes[:lang] unless lang
-                    lang = "default" unless lang
-
-                    result << [ lang, child.last.first ]
-                end
-                result
-            end
-
             def extract_children
 
                 i = 0
                 result = []
                 raw_representation.last.each do |child|
 
-                    #if child.kind_of?(SimpleExpRepresentation)
-                    #if child.kind_of?(Array)
                     if is_not_a_node?(child)
 
                         result << child
@@ -329,7 +279,7 @@ module OpenWFE
 
                         next if cname == :param
                         next if cname == :parameter
-                        next if cname == :description
+                        #next if cname == :description
 
                         cfei = @fei.dup
                         cfei.expression_name = child.first
@@ -375,7 +325,7 @@ module OpenWFE
 
             def is_not_a_node? (child)
 
-                (( ! child.is_a?(Array)) || 
+                (( ! child.is_a?(Array)) ||
                  child.size != 3 ||
                  ( ! child.first.is_a?(String)))
             end
@@ -424,7 +374,7 @@ module OpenWFE
             end
 
             #
-            # Encapsulating 
+            # Encapsulating
             #     <parameter field="x" default="y" type="z" match="m" />
             #
             # Somehow I have that : OpenWFEru is not a strongly typed language
@@ -457,7 +407,7 @@ module OpenWFE
 
                     unless field_value
                         raise \
-                            OpenWFE::ParameterException, 
+                            OpenWFE::ParameterException,
                             "field '#{@field}' is missing" \
                     end
 
@@ -491,7 +441,7 @@ module OpenWFE
                         elsif @type == "float"
                             Float(value)
                         else
-                            raise 
+                            raise
                                 "unknown type '#{@type}' for field '#{@field}'"
                         end
 

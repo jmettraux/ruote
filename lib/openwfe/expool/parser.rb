@@ -124,11 +124,6 @@ module OpenWFE
 
             xml.children.each do |c|
 
-                #r = if c.is_a?(REXML::Element) and c.prefix != xml.prefix
-                #    c
-                #else
-                #    parse_xml c
-                #end
                 r = parse_xml c
 
                 rep.last << r if r

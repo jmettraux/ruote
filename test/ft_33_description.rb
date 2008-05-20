@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'flowtestbase'
 
@@ -23,14 +25,14 @@ class FlowTest33 < Test::Unit::TestCase
     #
     # TEST 0
 
-    class TestDefinition0 < ProcessDefinition
+    class TestDefinition0 < OpenWFE::ProcessDefinition
         description "nada"
         _print "${description}"
     end
 
-    #def xxxx_0
     def test_0
-        dotest(TestDefinition0, "nada")
+
+        dotest TestDefinition0, "nada"
     end
 
     #
@@ -47,7 +49,7 @@ class FlowTest33 < Test::Unit::TestCase
     #
     # TEST 2
 
-    class TestDefinition2 < ProcessDefinition
+    class TestDefinition2 < OpenWFE::ProcessDefinition
         description :lang => "fr" do "nada" end
         sequence do
             _print "${description}"
@@ -55,15 +57,15 @@ class FlowTest33 < Test::Unit::TestCase
         end
     end
 
-    #def xxxx_2
     def test_2
-        dotest(TestDefinition2, "nada\nnada")
+
+        dotest TestDefinition2, "nada\nnada"
     end
 
     #
     # TEST 3
 
-    class TestDefinition3 < ProcessDefinition
+    class TestDefinition3 < OpenWFE::ProcessDefinition
         description "nothing"
         description :lang => "es" do "nada" end
         sequence do
@@ -72,9 +74,9 @@ class FlowTest33 < Test::Unit::TestCase
         end
     end
 
-    #def xxxx_3
     def test_3
-        dotest(TestDefinition3, "nothing\nnada")
+
+        dotest TestDefinition3, "nothing\nnada"
     end
 
     #
@@ -97,7 +99,7 @@ class FlowTest33 < Test::Unit::TestCase
         <print>${description__en}</print>
         <print>${description__es}</print>
     </sequence>
-</process-definition>""", 
+</process-definition>""",
             "String\nnothing\nnothing\nnada")
     end
 

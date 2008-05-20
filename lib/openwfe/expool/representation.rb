@@ -73,28 +73,31 @@ module OpenWFE
                 rep = flow_expression.raw_representation.dup
                 children = flow_expression.children
 
-                index = 0
+                index = -1
 
                 rep[2] = rep.last.inject([]) { |r, c|
 
-                    if c.is_a?(Array)
+                    index += 1
 
-                        if c.first == 'description'
-                            index -= 1
-                            r << c
+                    r << if c.is_a?(Array)
+
+                        child_fei = flow_expression.children[index]
+                        child_exp = find_expression child_fei
+
+                        if child_exp
+                            update_rep(child_exp)
                         else
-                            child_fei = flow_expression.children[index]
-                            child_exp = find_expression child_fei
-                            r << update_rep(child_exp) if child_exp
+                            #c[1]['__gone__'] = true
+                                #
+                                # not a good idea
+                                # have to differentiate between 'replied'
+                                # expressions and removed expressions
+                            c
                         end
                     else
 
-                        r << c
+                        c
                     end
-
-                    index += 1
-
-                    r
 
                 } if children and children.size > 0
 
