@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2007-2008, John Mettraux, Tomaso Tosolini OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -36,7 +36,7 @@
 #
 # John Mettraux at openwfe.org
 # Tomaso Tosolini
-# 
+#
 
 #require 'rubygems'
 
@@ -84,7 +84,6 @@ module Extras
 
                 t.column :yattributes, :text
                     # when using compact_workitems, attributes are stored here
-
             end
             add_index :workitems, :fei, :unique => true
             add_index :workitems, :wfid
@@ -129,19 +128,19 @@ module Extras
     #     wl = OpenWFE::Extras::Workitem.find_all_by_participant_name("toto")
     #     puts "found #{wl.size} workitems for participant 'toto'"
     #
-    # These workitems are not OpenWFEru workitems directly. But the conversion 
+    # These workitems are not OpenWFEru workitems directly. But the conversion
     # is pretty easy.
-    # Note that you probaly won't need to do the conversion by yourself, 
+    # Note that you probaly won't need to do the conversion by yourself,
     # except for certain advanced scenarii.
     #
     #     awi = OpenWFE::Extras::Workitem.find_by_participant_name("toto")
-    #         # 
+    #         #
     #         # returns the first workitem in the database whose participant
     #         # name is 'toto'.
     #
     #     owi = awi.as_owfe_workitem
-    #         # 
-    #         # Now we have a copy of the reference as a OpenWFEru 
+    #         #
+    #         # Now we have a copy of the reference as a OpenWFEru
     #         # InFlowWorkItem instance.
     #
     #     awi = OpenWFE::Extras::Workitem.from_owfe_workitem(owi)
@@ -192,11 +191,11 @@ module Extras
 
                 i.store_name = store_name
 
-    
-                # This is a field set by the active participant immediately 
+
+                # This is a field set by the active participant immediately
                 # before calling this method.
                 # the default behavior is "use field method"
-                    
+
                 if wi.attributes["compact_workitems"]
 
                     wi.attributes.delete("compact_workitems")
@@ -245,7 +244,7 @@ module Extras
 
             return self.yattributes if self.yattributes
 
-            fields.inject({}) do |r, f| 
+            fields.inject({}) do |r, f|
                 r[f.fkey] = f.value
                 r
             end
@@ -258,7 +257,7 @@ module Extras
         #
         def replace_fields (fhash)
 
-            if self.yattributes 
+            if self.yattributes
 
                 self.yattributes = fhash
 
@@ -287,7 +286,7 @@ module Extras
         #     wi.field :customer_name
         #
         def field (key)
-    
+
             if self.yattributes
                 return self.yattributes[key.to_s]
             end
@@ -326,7 +325,7 @@ module Extras
         #
         class OpenWFE::Engine
 
-            alias :oldreply :reply 
+            alias :oldreply :reply
 
             def reply (workitem)
 
@@ -369,7 +368,7 @@ module Extras
         # == Note
         #
         # when this is used on compact_workitems, it will not be able to search
-        # info within the fields, because they aren't used by this kind of 
+        # info within the fields, because they aren't used by this kind of
         # workitems. In this case the search will be limited to participant_name
         #
         def self.search (search_string, storename_list=nil)
@@ -381,7 +380,7 @@ module Extras
             # participant_name
 
             result = find(
-                :all, 
+                :all,
                 :conditions => conditions(
                     "participant_name", search_string, storename_list),
                 :order => "participant_name")
@@ -404,16 +403,16 @@ module Extras
         #
         # Not really about 'just launched', but rather about finding the first
         # workitem for a given process instance (wfid) and a participant.
-        # It deserves its own method because the workitem could be in a 
+        # It deserves its own method because the workitem could be in a
         # subprocess, thus escaping the vanilla find_by_wfid_and_participant()
         #
         def self.find_just_launched (wfid, participant_name)
 
             find(
-                :first, 
-                :conditions => [ 
-                    "wfid LIKE ? AND participant_name = ?", 
-                    "#{wfid}%", 
+                :first,
+                :conditions => [
+                    "wfid LIKE ? AND participant_name = ?",
+                    "#{wfid}%",
                     participant_name ])
         end
 
@@ -450,7 +449,7 @@ module Extras
     end
 
     #
-    # A workaround is in place for some classes when then have to get 
+    # A workaround is in place for some classes when then have to get
     # serialized. The names of thoses classes are listed in this array.
     #
     SPECIAL_FIELD_CLASSES = [ 'Time', 'Date', 'DateTime' ]
@@ -491,7 +490,7 @@ module Extras
 
             if v.is_a?(String) and v.length <= limit
 
-                self.svalue = v 
+                self.svalue = v
 
             elsif SPECIAL_FIELD_CLASSES.include?(v.class.to_s)
 
@@ -607,23 +606,23 @@ module Extras
     #             # give some slack to the engine, it's asynchronous after all
     #
     #         wi = OpenWFE::Extras::Workitem.find_by_participant_name("active0")
-    #         
+    #
     #         # ...
     #    end
     #
     # == Compact workitems
     #
-    # It is possible to save all the workitem data into a single table, 
+    # It is possible to save all the workitem data into a single table,
     # the workitems table, without
-    # splitting info between workitems and fields tables.  
+    # splitting info between workitems and fields tables.
     #
-    # You can configure the "compact_workitems" behavior by adding to the 
+    # You can configure the "compact_workitems" behavior by adding to the
     # previous lines:
-    #     
+    #
     #     active0 = engine.register_participant(
     #         :active0, OpenWFE::Extras::ActiveParticipant)
-    #     
-    #     active0.compact_workitems = true  
+    #
+    #     active0.compact_workitems = true
     #
     # This behaviour is determined participant per participant, it's ok to
     # have a participant instance that compacts will there is another that
@@ -641,7 +640,7 @@ module Extras
         attr :compact_workitems, true
 
         #
-        # This is the method called by the OpenWFEru engine to hand a 
+        # This is the method called by the OpenWFEru engine to hand a
         # workitem to this participant.
         #
         def consume (workitem)
@@ -700,7 +699,7 @@ module Extras
         end
 
         #
-        # This is the method called by the OpenWFEru engine to hand a 
+        # This is the method called by the OpenWFEru engine to hand a
         # workitem to this participant.
         #
         def consume (workitem)

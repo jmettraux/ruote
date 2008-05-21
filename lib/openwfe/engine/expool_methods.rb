@@ -71,6 +71,18 @@ module OpenWFE
         alias :get_flow_stack :process_stack
 
         #
+        # A shortcut for process_stack(wfid, true).representation
+        #
+        # Returns the representation (tree) for the actual version of the
+        # given process instance (returns the tree as running, modifications
+        # included).
+        #
+        def process_representation (workflow_instance_id)
+
+          process_stack(workflow_instance_id, true).representation
+        end
+
+        #
         # Lists all workflow (process) instances currently in the expool (in
         # the engine).
         # This method will return a list of "process-definition" expressions

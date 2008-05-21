@@ -122,6 +122,10 @@ class PsRepresentationTest < Test::Unit::TestCase
         assert_equal(
             ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
             ps.representation)
+
+        assert_equal(
+            ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
+            @engine.process_representation(fei.wfid))
     end
 
     # see also test/ft_84_updateexp.rb
