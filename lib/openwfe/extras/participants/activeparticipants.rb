@@ -53,7 +53,7 @@ require 'openwfe/participants/participant'
 module OpenWFE
 module Extras
 
-    MUTEX = Mutex.new
+    #MUTEX = Mutex.new
 
     #
     # The migration for ActiveParticipant and associated classes.
@@ -178,40 +178,44 @@ module Extras
 
             i = nil
 
-            MUTEX.synchronize do
+            #MUTEX.synchronize do
 
-                i = Workitem.new
-                i.fei = wi.fei.to_s
-                i.wfid = wi.fei.wfid
-                i.wf_name = wi.fei.workflow_definition_name
-                i.wf_revision = wi.fei.workflow_definition_revision
-                i.participant_name = wi.participant_name
-                i.dispatch_time = wi.dispatch_time
-                i.last_modified = nil
+            i = Workitem.new
+            i.fei = wi.fei.to_s
+            i.wfid = wi.fei.wfid
+            i.wf_name = wi.fei.workflow_definition_name
+            i.wf_revision = wi.fei.workflow_definition_revision
+            i.participant_name = wi.participant_name
+            i.dispatch_time = wi.dispatch_time
+            i.last_modified = nil
 
-                i.store_name = store_name
+            i.store_name = store_name
+
+            i.save!
+              # save workitem before adding any field
+              # making sure it has an id...
 
 
-                # This is a field set by the active participant immediately
-                # before calling this method.
-                # the default behavior is "use field method"
+            # This is a field set by the active participant immediately
+            # before calling this method.
+            # the default behavior is "use field method"
 
-                if wi.attributes["compact_workitems"]
+            if wi.attributes["compact_workitems"]
 
-                    wi.attributes.delete("compact_workitems")
-                    i.yattributes = wi.attributes
-                else
+                wi.attributes.delete("compact_workitems")
+                i.yattributes = wi.attributes
+            else
 
-                    i.yattributes = nil
+                i.yattributes = nil
 
-                    wi.attributes.each do |k, v|
-                        i.fields << Field.new_field(k, v)
-                    end
+                wi.attributes.each do |k, v|
+                    i.fields << Field.new_field(k, v)
                 end
-
-                i.save!
-                    # making sure to throw an exception in case of trouble
             end
+
+            i.save!
+                # making sure to throw an exception in case of trouble
+            #end
 
             i
         end
