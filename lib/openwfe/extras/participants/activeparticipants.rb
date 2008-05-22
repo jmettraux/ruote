@@ -204,6 +204,7 @@ module Extras
 
                 wi.attributes.delete("compact_workitems")
                 i.yattributes = wi.attributes
+
             else
 
                 i.yattributes = nil
@@ -215,6 +216,9 @@ module Extras
 
             i.save!
                 # making sure to throw an exception in case of trouble
+                #
+                # damn, insert then update :(
+
             #end
 
             i

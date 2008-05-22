@@ -30,7 +30,7 @@ CLEAN.include("pkg", "html", "rdoc", "work", "logs")
 
 spec = Gem::Specification.new do |s|
 
-    s.name              = "openwferu"
+    s.name              = "ruote"
     s.version           = OpenWFE::OPENWFERU_VERSION
     s.authors           = [ "John Mettraux", "Alain Hoang" ]
     s.email             = "john at openwfe dot org"
@@ -39,15 +39,16 @@ spec = Gem::Specification.new do |s|
     s.summary           = "an open source ruby workflow and bpm engine"
 
     s.require_path      = "lib"
-    s.autorequire       = "openwferu"
+    s.rubyforge_project = "openwferu"
+    #s.autorequire       = "ruote"
     s.test_file         = "test/rake_qtest.rb"
     s.has_rdoc          = true
     s.extra_rdoc_files  = [ 'README.txt' ]
 
     [ 'builder',
       'json_pure',
-      'rufus-lru', 
-      'rufus-scheduler', 
+      'rufus-lru',
+      'rufus-scheduler',
       'rufus-dollar',
       'rufus-eval',
       'rufus-mnemo',
@@ -58,14 +59,14 @@ spec = Gem::Specification.new do |s|
     end
 
     files = FileList[ "{bin,docs,lib,test,examples}/**/*" ]
-    files.exclude "rdoc" 
-    files.exclude "extras" 
+    files.exclude "rdoc"
+    files.exclude "extras"
     s.files = files.to_a
 end
 
 extras_spec = Gem::Specification.new do |s|
 
-    s.name              = "openwferu-extras"
+    s.name              = "ruote-extras"
     s.version           = OpenWFE::OPENWFERU_VERSION
     s.authors           = [ "John Mettraux" ]
     s.email             = "john at openwfe dot org"
@@ -73,7 +74,8 @@ extras_spec = Gem::Specification.new do |s|
     s.platform          = Gem::Platform::RUBY
     s.summary           = "OpenWFEru extras (sqs, csv, ...)"
     s.require_path      = "lib"
-    s.autorequire       = "openwferu-extras"
+    s.rubyforge_project = "openwferu"
+    #s.autorequire       = "ruote-extras"
     s.has_rdoc          = false
 
     #[ 'rufus-decision', 'rufus-sqs' ].each do |d|
@@ -113,13 +115,13 @@ if RAKEVERSION != "0.8.1"
     #
     # Create a task to build the static docs (html)
     #
-    ws = Rote::DocTask.new(:doc) do |site| 
+    ws = Rote::DocTask.new(:doc) do |site|
 
         site.output_dir = 'html'
         site.layout_dir = 'doc/layouts'
         site.pages.dir = 'doc/pages'
-        site.pages.include('**/*.thtml')  
-      
+        site.pages.include('**/*.thtml')
+
         site.ext_mapping(/thtml|textile/, 'html') do |page|
             page.extend Format::HTML
             page.page_filter Filters::RedCloth.new

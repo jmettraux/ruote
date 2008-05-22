@@ -1,133 +1,101 @@
 
-= OpenWFE-ru 0.9.17 released
+= OpenWFEru (Ruote) 0.9.18 released
 
 OpenWFEru is an open source workflow / BPM engine implemented in Ruby.
+
+download :  http://rubyforge.org/frs/?group_id=2609
 
 
 == What's new
 
-This release mainly focuses on separating OpenWFEru from its Rufus components [1], lots of code pieces reusable elsewhere have been extracted out of OpenWFEru as Ruby gems.
+The gems have been renamed "ruote" and "ruote-extras". The require paths have not changed.
 
-There has been a lot of work put in simplifying the internals of the engine, nothing changed on the surface though.
+This name is shorter, easier to spell and serves as a handy prefix for subprojects like "ruote-web" and "ruote-rest".
 
-The engine.register_participant method now sports a :position optional argument (can be set to :first to insert a participant in the first position).
+The source of all the Ruote projects (and the Rufus ones) has moved from RubyForge subversion to GitHub [1], feel free to fork.
 
-Process 'tags' have been made more visible via the process status (see [2]).
+This new "ruote" uses threads in a more economic way. This adaptation was driven by deployments on JRuby 1.1.1 which exposed flaws in the way threads were used by OpenWFEru. Ruote now runs happily on Ruby 1.8.6 and JRuby 1.1.1.
 
-Tomaso provided us with a more compact variant of the ActiveRecord based workitems, requiring less space (but less searchable).
+There is a new "step" expression [2], spaghetti processes are now easier to script (it's OK as "ruote" is the name of a pasta variety).
 
-Many changes in OpenWFEru are visible via its demo web application, Densha [3], there is also a new example / tutorial, heavily leveraging Densha, it's available at [4].
+This "step" expression is heavily involved in a new sub-project named "ruote-transition" [3][4]. It's a kind of translator that turns XPDL and YAWL process definitions to the Ruote process definition language.
 
-The nicest new feature visible through Densha is probably "process gardening" where a 'business process administrator' can modify running process instances on the fly (see [5]).
-
-
-Feedback is welcome at : http://groups.google.com/group/openwferu-users
+Another addition to the "ruote" family is "ruote-rest" [5], a RESTful workflow / BPM system based on OpenWFEru and the Sinatra [6].
 
 
-[1] http://rufus.rubyforge.org/
-[2] http://jmettraux.wordpress.com/2007/12/03/state-machine/
-[3] http://difference.openwfe.org:3000/
-[4] http://openwferu.rubyforge.org/ttt/p0.html
-[5] http://jmettraux.wordpress.com/2008/03/10/process-gardening/
+[1] http://github.com/jmettraux
+[2] http://openwferu.rubyforge.org/expressions.html#exp_step
+[3] http://github.com/jmettraux/ruote-transition
+[4] http://jmettraux.wordpress.com/2008/05/18/xpdl-for-fun/
+[5] http://jmettraux.wordpress.com/2008/05/07/restful-workflow-engine-on-sinatra/
+[6] http://sinatrarb.com
+
+
+Many thanks to all that have contributed patches, suggested ideas and provided feedback.
+
+
+== Feedback / help
+
+user mailing list :  http://groups.google.com/group/openwferu-users
+dev mailing list :   http://groups.google.com/group/openwferu-dev
 
 
 == What's next
 
-- 1.0 (instead of 0.9.18) ?
-- integration of rufus-verbs
+- 1.0 (instead of 0.9.19) ?
 - write mode for fluo
-- simplification for engine level crons
 - more expressions display support for Densha process definition graphical rendering
+- http verbs in the process definition language
 - more vapor
 
 
 == CHANGELOG
 
-- todo  #18861 : aliased 'restore' to 'set-fields' and turned it into
-                 a ValueMixin user - s1617
-- todo  #18806 : removed require "rubygems" from engine, leaving responsability
-                 to customer code - s1610
-- todo  #18769 : now keeping track of raw_representation for all exps - s1604
-- todo  #18773 : implemented engine.update_expression(fexp) - s1601
-- todo  #18771 : deprecated SymbolHash (raw expression representation) - s1600
-- todo  #18747 : allowing "iterator :on => :f" (symbol for designated source
-                 of value) - s1598
-- todo  #18745 : let [concurrent-]iterator accept on-field, on-var, ... - s1597
-- todo  #18701 : implemented engine.update_expression_data(fei, d) - s1583
-- bug   #18700 : FlowExpressionId.from_h not working with jsonified hashes.
-                 Fixed - s1582
-- todo  #18671 : added is_paused?(wfid) to StatusMixin - s1579
-- bug   #18643 : made the workitem search a bit more 'google-like' - s1571
-- bug   #18580 : active participant last_modified not kept. Fixed - s1568
-- bug   #18557 : exp 'participant' not replying with applied item to cancel()
-                 calls. Fixed - s1552
-- todo  #18531 : added 'unapplied' option to engine.process_stack() - s1547
-- bug   #18348 : cron subprocesses subid reset at 0 upon restart. Fixed - s1542
-- bug   #18254 : socketlistener not replying with <ok-reply/>. Fixed - s1530
-- bug   #18218 : intermittent process_status.paused? failure. Fixed - s1520
-- todo  #16635 : allowed recursion for top processes - s1518
-- todo  #18192 : dropped SimpleExpRepresentation for Array - s1514
-- todo  #18152 : simplified raw_xml and raw_prog to only raw.rb - s1513
-- todo  #18110 : switched from open-uri to rufus-verbs for reading [remote]
-                 process definitions - s1512
-- todo  #18145 : moved to no-params constructors for FlowExpression based
-                 classes - s1511
-- todo  #18078 : <break if="${f:f}"/> will now work if field f is set - s1507
-- todo  #15813 : isolated ValueMixin and used it in 'set', 'print', 'eval',
-                 'reval' and 'log' - s1504
-- todo  #17888 : optimized Workitem.search() - s1498
-- bug   #17873 : ActiveParticipant not accepting string fields with length
-                 > 255. Fixed - s1497
-- bug   #17850 : proc definitions whose 1st line is blank were not accepted.
-                 Fixed - s1496
-- todo  #17851 : caching the paused? process info - s1494
-- todo  #17826 : simplified workitem [] and []= impl - s1489
-- todo  #17823 : implemented basecamp participant (extras) - s1486
-- todo  #17744 : extracted sqs.rb and now depending on gem 'rufus-sqs' - s1470
-- patch #17720 : Tomaso's workitem.unset_attribute(). Patched - s1466
-- todo  #17475 : extracted csv stuff and now depending on gem 'rufus-decision'
-                 - s1453
-- todo  #17476 : extracted kotoba.rb and now depending on gem 'rufus-mnemo' 
-                 - s1451
-- todo  #17472 : extracted safe.rb and now depending on gem 'rufus-eval' - s1450
-- todo  #17442 : extracted dollar.rb and now depending on gem 'rufus-dollar'
-                 - s1446
-- todo  #16658 : extracted scheduler and now depending on gem 'rufus-scheduler'
-                 - s1444
-- todo  #17100 : extracted lru and now depending on gem 'rufus-lru' - s1440
-- todo  #17063 : compact workitems - s1438
-- todo  #16976 : allowing compact :var, :v and :f for the '[un]defined' 
-                 expressions - s1434
-- todo  #16831 : allowing compact :var, :v and :f for :variable and :field
-                 (and also :val for :value) (for exp attributes) - s1431
-- todo  #16825 : implemented the 'exp' doppelganger expression - s1429
-- bug   #16833 : not using a monitor anymore in the scheduler, relying on 
-                 queues. Finer granularity, more robust scheduler - s1425
-- bug   #16791 : subprocess ref="sub_proc" was always looking for "sub-proc".
-                 Fixed - s1415
-- todo  #16654 : allow every jobs to unschedule or reschedule self - s1404
-- todo  #16586 : added the '[ is][ not] set' concept to the $ notation - s1397
-- todo  #16588 : set a min frequency of 0.3s for WaitingExpression impls - s1395
-- todo  #16492 : optimized the 'reserve' expression - s1390
-- todo  #16323 : added wfname() and wfrevision() to ProcessStatus - s1360
-- todo  #16254 : relaxed the rules for process name/revision detection
-                 in Ruby defined processes - s1347
-- todo  #16228 : fulldup delegation - s1345
-- todo  #16205 : replaced the expstorage each() system with the
-                 find_expressions() one - s1344
-- todo  #16152 : scheduler : made schedule_every() reschedule even if 
-                 it experienced an exception - s1337
-- todo  #16066 : require 'openwfe/engine' and 'openwfe/participants' now ok
-                 - s1325
-- todo  #16040 : implemented ProcessStatus.tags - s1323
-- todo  #15925 : implemented engine.get_variables(fei_or_wfid) - s1319
-- todo  #15985 : register_participant now has a :position param - s1313
-- todo  #15954 : moved ${r:x} eval to safe level 4 - s1305
-- todo  #15897 : revised expression_pool.cancel's fetch_root - s1298
-- bug   #15830 : cancelling a cursor or a loop did not cancel active child
-                 expression. Fixed - s1293
-- bug   #15814 : loop and cursor and no proper environment. Fixed - s1289
-- bug   #15793 : hide db_id from user forms - s1287
-- todo  #15758 : implemented the 'eval' expression - s1278
-- todo  #15757 : made sure evaluation of process segments is accepted - s1276
+- todo  #20221 : added engine.process_representation(wfid) method
+- todo  #20244 : 'description' is now an expression like any other
+- todo  #20228 : made sure removed expressions did not appear in 
+                 process_stack.representation()
+- bug   #20225 : 'description' problem in process_stack.representation. Fixed.
+- todo  #20202 : using 'ref' as the main 'step' attribute
+- bug   #18954 : activity feed service stuck after 100 entries. Fixed.
+- bug   #20128 : upgraded to atom-tools 2.0.1
+- todo  #20111 : step_tail optimization of the "step" expression
+- todo  #18222 : the <a> expression now accepts JSON
+- todo  #20108 : upgraded the <a> expression to OpenWFE::Xml
+- bug   #20059 : wfid growing .0.1.2.3 instead of .3 in some cases. Fixed.
+- todo  #18935 : implemented "step" expression (test/ft_79b)
+- bug   #20061 : get_description broken with Ruby pdef with no desc. Fixed.
+- todo  #20016 : allowing "define 'process_def_name' do ... end"
+- todo  #19933 : reintroduced ${vf:x} and ${fv:y}
+- todo  #19536 : added :engine_name application context parameter
+- todo  #19839 : moved storeparticipants out of worklist/
+- bug   #19739 : made sure that ActiveParticipant didn't flatten Date and Time
+                 instances found in workitem fields
+- todo  #19704 : introduced parameter :definition_in_launchitem_allowed
+                 (defaults to false)
+- bug   #19607 : preventing cancel root expression bug (in case of error
+                 in process)
+- todo  #19559 : using Queue instead of schedule_every for threaded
+                 expression storage
+- todo  #19624 : 'if' now logs a warning message if more than 2 or 3 children
+- todo  #19620 : making sure that the custom thread names are displayed
+                 when ctrl-\ing JRuby
+- todo  #19615 : making sure WorkQueue is freed when stopped.
+- bug   #19576 : update_raw_expression() broken. Fixed.
+- todo  #19575 : turned WorkQueueMixin into the WorkQueue service
+- todo  #19532 : removed unnecessary synchronizations
+- todo  #19471 : implemented new, lighter xml codec openwfe/util/xml
+- patch #19500 : size patch for db backed engine by Maarten Oelering
+- todo  #19026 : keeping track of raw_representation in-flight changes 
+                 in [replying] children
+-              : switched source to http://github.com/jmettraux/ruote
+- todo  #19060 : added representation() to the result of engine.process_stack()
+- todo  #19339 : fixed fulldup for Time and Date[Time] as reported by Maarten
+- todo  #19104 : reformed the template system ( see http://tinyurl.com/2y6z9r )
+- bug   #19095 : namespace problem for db enabled engine. Fix by Tomaso.
+- todo  #19072 : 'cron' now leaves his template in the expool
+- todo  #19061 : lib/openwfe/engine/ cleanup (more later)
+- todo  #18995 : made 'cron' aware of process pause
+- todo  #18518 : changed 'cron', broke the // exception
+- patch #18953 : smart dsub for expression args by Nick Petrella
 

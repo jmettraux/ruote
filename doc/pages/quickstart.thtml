@@ -1,15 +1,15 @@
 h2. OpenWFEru quickstart
 
-make sure you are using Ruby 1.8.5 at least
+make sure you are using Ruby 1.8.6 at least
 
 <pre>
-   $ sudo gem install -y rufus-mnemo openwferu
+   $ sudo gem install -y ruote
 </pre>
 
 
 h3. your first OpenWFEru powered program
 
-edit a file named '"openwferu.rb":/examples/openwferu.rb'
+edit a file named '"openwferu.rb":/examples/workflow.rb'
 
     
 #:code#ruby#
@@ -83,7 +83,7 @@ engine.wait_for fei
 run that file
 
 <pre>
-    $ ruby openwferu.rb
+    $ ruby workflow.rb
 </pre>
 
 
@@ -123,8 +123,8 @@ h3. (uninstalling openwferu)
 Maybe OpenWFEru isn't for you :
 
 <pre>
-    $ sudo gem uninstall openwferu
+    $ sudo gem uninstall ruote
 </pre>
 
-(the openwferu gem depends on the gems 'rufus-lru', 'rufus-scheduler', 'rufus-eval' and 'rufus-dollar'. You might want to remove them as well)
+(the "ruote" gem depends on the gems 'rufus-lru', 'rufus-mnemo', 'rufus-scheduler', 'rufus-eval' and 'rufus-dollar'. You might want to remove them as well)
 
