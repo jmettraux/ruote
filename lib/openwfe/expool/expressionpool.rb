@@ -511,7 +511,6 @@ module OpenWFE
             #
             # flow terminated ?
 
-            #if not exp.parent_id
             if (not exp.parent_id) and (exp.fei.expid == '0')
 
                 ldebug do
@@ -527,7 +526,6 @@ module OpenWFE
             #
             # else, gone parent ?
 
-            #if exp.parent_id == GONE_PARENT_ID
             if (not exp.parent_id) or (exp.parent_id.expname == 'gone')
                 # this 'gone' is kept for some level of 'backward compatibility'
 

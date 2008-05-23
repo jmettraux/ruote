@@ -85,7 +85,7 @@ done.
     class TestCase45a2 < OpenWFE::ProcessDefinition
         sequence do
             concurrent_iterator \
-                :on_value => "1, 2", 
+                :on_value => "1, 2",
                 :to_field => "f",
                 :over_if => "${f:__ip__} == 0" do
 
