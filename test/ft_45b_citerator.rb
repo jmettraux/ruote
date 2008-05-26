@@ -38,9 +38,11 @@ class FlowTest45b < Test::Unit::TestCase
     def test_0
 
         @engine.register_participant :alpha do |wi|
+            #p [ :alpha, wi.fei.to_short_s ]
             @tracer << "alpha\n"
         end
         @engine.register_participant :bravo do |wi|
+            #p [ :bravo, wi.fei.to_short_s ]
             @tracer << "bravo\n"
         end
 

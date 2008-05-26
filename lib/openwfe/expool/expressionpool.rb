@@ -439,6 +439,7 @@ module OpenWFE
         def cancel_process (exp_or_wfid)
 
             wfid = extract_wfid exp_or_wfid, false
+                # 'true' would have made sure that the parent wfid is used...
 
             ldebug { "cancel_process() '#{wfid}'" }
 

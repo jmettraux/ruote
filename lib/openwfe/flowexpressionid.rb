@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2005-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -44,18 +44,18 @@ module OpenWFE
     #
     # A FlowExpressionId is a unique identifier for a FlowExpression (an atomic
     # piece of a process instance).
-    # 
+    #
     # As workitems move through a workflow among the expressions and are emitted
-    # outside of the business process engine via 'participant expressions', 
+    # outside of the business process engine via 'participant expressions',
     # these workitems are identified by the FlowExpressionId of the participant
-    # expression that pushed them out (and is usually waiting for them 
+    # expression that pushed them out (and is usually waiting for them
     # to come back).
     #
     class FlowExpressionId
 
-        FIELDS = [ 
-            :owfe_version, 
-            :engine_id, 
+        FIELDS = [
+            :owfe_version,
+            :engine_id,
             #:initial_engine_id,
             :workflow_definition_url,
             :workflow_definition_name,
@@ -85,7 +85,7 @@ module OpenWFE
 
         #
         # This method return @workflow_instance_id. If parent is set to
-        # true, if will return the same result as 
+        # true, if will return the same result as
         # parent_workflow_instance_id().
         #
         def wfid (parent=false)
@@ -131,7 +131,7 @@ module OpenWFE
         #
         def FlowExpressionId.from_h (h)
 
-            FIELDS.inject FlowExpressionId.new do |fei, f| 
+            FIELDS.inject FlowExpressionId.new do |fei, f|
                 fei.instance_variable_set("@#{f}", h[f] || h[f.to_s])
                 fei
             end
@@ -155,7 +155,7 @@ module OpenWFE
             @workflow_definition_revision == other.workflow_definition_revision and
             @workflow_definition_name == other.workflow_definition_name and
             @expression_name == other.expression_name and
-            @owfe_version == other.owfe_version and 
+            @owfe_version == other.owfe_version and
             @engine_id == other.engine_id
             #@initial_engine_id == other.initial_engine_id
                 #
@@ -170,7 +170,7 @@ module OpenWFE
         # For example (fei TestTag 3 20070331-goyunodabu 0.0.0 sequence)
         # is an ancestor of (fei TestTag 3 20070331-goyunodabu 0.0.0.1 redo)
         #
-        # This current implementation doesn't cross the subprocesses 
+        # This current implementation doesn't cross the subprocesses
         # boundaries.
         #
         def ancestor_of? (other_fei)
@@ -264,7 +264,7 @@ module OpenWFE
         end
 
         #
-        # If this flow expression id belongs to a sub instance, a call to 
+        # If this flow expression id belongs to a sub instance, a call to
         # this method will return the last number of the sub instanceid.
         #
         # For example, in the case of the instance "20071114-dukikomino.1", "1"
