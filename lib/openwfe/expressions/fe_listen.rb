@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -62,7 +62,7 @@ module OpenWFE
     #         <subprocess ref="notify_bob" />
     #     </listen>
     #
-    # Whenever a workitem is dispatched (applied) to the participant 
+    # Whenever a workitem is dispatched (applied) to the participant
     # named "alice", the subprocess named "notify_bob" is triggered (once).
     #
     #     listen :to => "^channel_.*", :upon => "reply" do
@@ -72,7 +72,7 @@ module OpenWFE
     #         end
     #     end
     #
-    # After the listen has been applied, the first workitem coming back from 
+    # After the listen has been applied, the first workitem coming back from
     # a participant whose named starts with "channel_" will trigger a sequence
     # with the participants 'delta' and 'echo'.
     #
@@ -80,7 +80,7 @@ module OpenWFE
     #         participant :ref => "echo"
     #     end
     #
-    # Will send a copy of the first workitem meant for participant "alpha" to 
+    # Will send a copy of the first workitem meant for participant "alpha" to
     # participant "echo" if this workitem's color field is set to 'red'.
     #
     #     listen :to => "alpha", :once => "false" do
@@ -88,7 +88,7 @@ module OpenWFE
     #     end
     #
     # This is some kind of a server : each time a workitem is dispatched to
-    # participant "alpha", the subprocess (or participant) named 
+    # participant "alpha", the subprocess (or participant) named
     # 'send_email_to_stakeholders') will receive a copy of that workitem.
     # Use with care.
     #
@@ -101,7 +101,7 @@ module OpenWFE
     # after one month and two weeks).
     #
     # The listen expression can be used without a
-    # child expression. It blocks until a valid messages comes in the 
+    # child expression. It blocks until a valid messages comes in the
     # channel, at which point it resumes the process, with workitem that came
     # as the message (not with the workitem at apply time).
     # (no merge implemented for now).
@@ -114,7 +114,7 @@ module OpenWFE
     # In this example, the process will block until a workitem comes for
     # a participant named 'channel_z'.
     #
-    # The engine accept (in its reply() 
+    # The engine accept (in its reply()
     # method) workitems that don't belong to a process intance (ie workitems
     # that have a nil flow_expression_id). So it's entirely feasible to
     # send 'notifications only' workitems to the OpenWFEru engine.
@@ -124,7 +124,7 @@ module OpenWFE
     # and 'receive'. It also accepts the 'on' parameter as an alias parameter
     # to the 'to' parameter. Think "listen to" and "receive on".
     #
-    # A 'merge' attribute can be set to true (the 
+    # A 'merge' attribute can be set to true (the
     # default value being false), the incoming workitem will then be merged
     # with a copy of the workitem that 'applied' (activated) the listen
     # expression.
@@ -278,7 +278,7 @@ module OpenWFE
             #
             # workitem does match...
 
-            ldebug do 
+            ldebug do
                 "call() "+
                 "through for fei #{workitem.fei} / "+
                 "'#{workitem.participant_name}'"
@@ -290,7 +290,7 @@ module OpenWFE
 
             #
             # eventual merge
-            
+
             workitem = merge_workitems @applied_workitem.dup, workitem \
                 if @applied_workitem
 
@@ -304,11 +304,11 @@ module OpenWFE
 
             #parent = @once ? self : nil
             #get_expression_pool.launch_template(
-            #    parent, 
-            #    nil, 
-            #    @call_count - 1, 
-            #    @children[0], 
-            #    workitem, 
+            #    parent,
+            #    nil,
+            #    @call_count - 1,
+            #    @children[0],
+            #    workitem,
             #    nil)
 
             if @once

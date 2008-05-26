@@ -43,45 +43,91 @@ require 'openwfe/expressions/flowexpression'
 
 module OpenWFE
 
+    #
+    # The HTTP verbs as OpenWFEru (Ruote) expressions.
+    #
+    # Useful for basic RESTful BPM.
+    #
+    # This expression uses the rufus-verbs gem and accepts the exact
+    # sames parameters (attributes) as this gem.
+    #
+    # see http://rufus.rubyforge.org/rufus-verbs
+    #
+    # some examples (in a ruby process definition) :
+    #
+    #     sequence do
+    #
+    #         get "http://server.example.com/res0.xml"
+    #             # stores the XML content in the field 'rbody'
+    #     end
+    #
     class HttpExpression < FlowExpression
 
-        names :post, :get, :put, :delete
+        names :hpost, :hget, :hput, :hdelete
 
 
         def apply (workitem)
 
-            verb = @fei.expression_name
+            verb = @fei.expression_name[1..-1]
 
             uri =
                 lookup_attribute(:uri, workitem) ||
                 fetch_text_content(workitem)
 
-            headers =
-                lookup_attribute(:headers, workitem) ||
-                workitem.attributes['headers'] ||
-                {}
+            data = workitem.attributes['hdata']
+            opts = workitem.attributes['hoptions'] || {}
 
-            body = workitem.attributes['body']
+            params = lookup_attributes workitem
+            params = params.merge opts
 
-            #authentication = TODO
-            #timeout = TODO
-            #noredir = ..
+            params = params.inject({}) { |r, (k, v)| r[k.intern] = v; r }
+                # 'symbolize' keys
+
+            params[:uri] = uri
+            params[:data] = data if data
 
             # do it
 
-            res = Rufus::Verbs.send verb, uri, :headers => headers
+            Thread.new do
+                #
+                # move execution out of process engine main thread
+                # else would block other processes execution
 
-            workitem.rheaders = res.to_hash
-            workitem.rcode = res.code
-            workitem.rbody = res.body
+                begin
 
-            # over
+                    res = Rufus::Verbs.send verb, params
 
-            reply_to_parent workitem
+                    workitem.rcode = res.code
+                    workitem.rheaders = res.to_hash
+                    workitem.rbody = res.body
+
+                #rescue Timeout::Error => te
+                #
+                #    workitem.rerror = te.to_s
+                #    workitem.rcode = -1
+
+                rescue Exception => e
+
+                    linfo { "apply() failed : #{e.to_s}" }
+
+                    workitem.rerror = e.to_s
+                    workitem.rcode = -1
+                end
+
+                # over
+
+                reply_to_parent workitem
+            end
         end
 
         #def reply (workitem)
         #end
+
+        #def cancel
+        #   # kill thread ...
+        #   nil
+        #end
+
     end
 
 end

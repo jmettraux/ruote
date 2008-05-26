@@ -19,19 +19,16 @@ class FlowTest88 < Test::Unit::TestCase
     include FlowTestBase
 
     def setup
-
         super
-
         @server = ItemServer.new
         @server.start
     end
-
     def teardown
-
         super
-
         @server.shutdown
     end
+        #
+        # using the rufus-verbs 'items' restful server for testing
 
     #
     # TEST 0
@@ -39,18 +36,18 @@ class FlowTest88 < Test::Unit::TestCase
     class Test0 < OpenWFE::ProcessDefinition
         sequence do
 
-            get "http://localhost:7777/items"
+            hget "http://localhost:7777/items"
             _print "${f:rcode}"
             _print "${f:rbody}"
 
-            set :f => :body, :val => "nada"
-            post "http://localhost:7777/items"
+            set :f => :hdata, :val => "nada"
+            hpost "http://localhost:7777/items"
             _print "${f:rcode}"
             _print "${f:rheaders.location}"
 
-            get "${f:rheaders.location}"
+            hget "${f:rheaders.location}"
             _print "${f:rcode}"
-            #_print "${f:rbody}"
+            _print "${f:rbody}"
         end
     end
 
@@ -59,8 +56,25 @@ class FlowTest88 < Test::Unit::TestCase
         dotest(
             Test0,
             [
-                200, "{}\n", 201, "http://localhost:7777/items/0", 200
+                200, "{}\n",
+                201, "http://localhost:7777/items/0",
+                200, '"nada"'
             ].collect { |e| e.to_s }.join("\n"))
+    end
+
+    #
+    # TEST 1
+
+    class Test1 < OpenWFE::ProcessDefinition
+        sequence do
+            hget "http://localhost:7777/lost", :timeout => 1
+            _print "${f:rcode}"
+        end
+    end
+
+    def test_1
+
+        dotest Test1, "-1"
     end
 
 end

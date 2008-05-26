@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -59,20 +59,20 @@ module OpenWFE
     #
     #     <participant ref="alpha" />
     #
-    #  the name of the participant is the value found in 
+    #  the name of the participant is the value found in
     #  the field 'target' :
     #
     #     <participant field-ref="target" />
     #     <participant ref="${f:target}" />
     #
-    #  the name of the participant is the value found in 
+    #  the name of the participant is the value found in
     #  the variable 'target' :
     #
     #     <participant variable-ref="target" />
     #     <participant ref="${target}" />
     #
     #  direct reference to participant 'alpha'
-    #  if a subprocess named 'alpha' has been defined, the 
+    #  if a subprocess named 'alpha' has been defined, the
     #  subprocess will be called instead :
     #
     #     <alpha />
@@ -87,10 +87,10 @@ module OpenWFE
     #     <participant ref="toto" task="play golf" location="Minami Center" />
     #
     # participant 'toto' will receive a workitem with a field named 'params'
-    # containing the hash 
+    # containing the hash
     # { "ref"=>"toto", "task"=>"play golf", "location"=>"Minami Center" }.
-    # 
-    # When the workitem gets back from the participant, the field 'params' is 
+    #
+    # When the workitem gets back from the participant, the field 'params' is
     # deleted.
     #
     # The participant expressions include the TimeoutMixin, it means that
@@ -99,12 +99,12 @@ module OpenWFE
     #     <participant ref="toto" timeout="2w1d" />
     #
     # If after 2 weeks and 1 day (15 days), participant "toto" hasn't replied,
-    # the workitem will get cancelled and the flow will resume (behind the 
+    # the workitem will get cancelled and the flow will resume (behind the
     # scene, participant "toto", will receive a CancelItem instance bearing
     # the same FlowExpressionId as the initial workitem and the participant
     # implementation is responsible for the cancel application).
     #
-    # The participant expression accepts an optional 'if' (or 'unless') 
+    # The participant expression accepts an optional 'if' (or 'unless')
     # attribute. It's used for conditional execution of the participant :
     #
     #     participant :ref => "toto", :if => "${weather} == raining"
@@ -133,7 +133,7 @@ module OpenWFE
             return super_reply_to_parent(workitem) \
                 if conditional == false
                     #
-                    # skip expression 
+                    # skip expression
                     # <participant ref="x" if="y" /> (where y evals to false)
 
             @participant_name = lookup_ref workitem
@@ -226,7 +226,7 @@ module OpenWFE
 
                 #@scheduler_job_id = nil
                     #
-                    # so that cancel won't unschedule without need 
+                    # so that cancel won't unschedule without need
 
                 cancel_participant
 
