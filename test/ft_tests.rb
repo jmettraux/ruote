@@ -123,3 +123,5 @@ require 'ft_85_dolhash'
 require 'ft_86_dollar_fv'
 require 'ft_87_define'
 
+#require 'ft_88_http' # this test requires rufus/verbs
+

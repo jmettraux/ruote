@@ -66,6 +66,7 @@ require 'openwfe/expressions/fe_filter'
 require 'openwfe/expressions/fe_listen'
 require 'openwfe/expressions/fe_timeout'
 require 'openwfe/expressions/fe_step'
+require 'openwfe/expressions/fe_http'
 
 
 module OpenWFE
@@ -150,6 +151,8 @@ module OpenWFE
             register ExpExpression
 
             register StepExpression
+
+            register HttpExpression
 
             register Environment
                 #

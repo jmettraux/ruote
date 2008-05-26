@@ -2,6 +2,9 @@
 = OpenWFEru CHANGELOG.txt
 
 
+== OpenWFEru - 0.9.19    not yet released
+
+
 == OpenWFEru - 0.9.18    2008/05/22
 
 - todo  #20221 : added engine.process_representation(wfid) method

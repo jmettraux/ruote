@@ -46,7 +46,7 @@ elsif persistence == "cached-db-persistence"
     require 'openwfe/extras/engine/db_persisted_engine'
     $WORKFLOW_ENGINE_CLASS = OpenWFE::Extras::CachedDbPersistedEngine
 end
-    
+
 
 puts
 puts "testing with engine of class " + $WORKFLOW_ENGINE_CLASS.to_s
@@ -119,7 +119,7 @@ module FlowTestBase
 
         if @engine
             $OWFE_LOG.level = Logger::INFO
-            @engine.stop 
+            @engine.stop
         end
     end
 
@@ -158,13 +158,13 @@ module FlowTestBase
                 #return if @terminated
             end
 
-            @engine.wait_for fei  
+            @engine.wait_for fei
         end
 
         #
-        # calling 
+        # calling
         #
-        #     launch li 
+        #     launch li
         #
         # instead of
         #
@@ -189,9 +189,9 @@ module FlowTestBase
         # dotest()
         #
         def dotest (
-            flowDef, 
-            expected_trace, 
-            join=false, 
+            flowDef,
+            expected_trace,
+            join=false,
             allow_remaining_expressions=false)
 
             @tracer.clear
@@ -241,12 +241,12 @@ module FlowTestBase
                 end
                 assert(
                     (result != nil),
-                    """flow failed : 
-                   
+                    """flow failed :
+
   trace doesn't correspond to any of the expected traces...
 
   traced :
-                    
+
 '#{trace}'
 
 """)
@@ -257,10 +257,10 @@ module FlowTestBase
 
                 assert(
                     trace == expected_trace,
-                    """flow failed : 
+                    """flow failed :
 
   traced :
-                    
+
 '#{trace}'
 
   but was expecting :

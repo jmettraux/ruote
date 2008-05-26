@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -67,7 +67,7 @@ module OpenWFE
 
     #
     # A mixin shared by 'iterator' and 'cursor' ('loop'), simply
-    # provides the methods for looking up the "command" (break, skip, 
+    # provides the methods for looking up the "command" (break, skip,
     # rewind, ...) from the workitem and the process.
     #
     module CommandMixin
@@ -139,7 +139,7 @@ module OpenWFE
     # This class implements the following expressions :  back, break,
     # cancel, continue, jump, rewind, skip.
     #
-    # They are generally used inside of a 'cursor' (CursorExpression) or 
+    # They are generally used inside of a 'cursor' (CursorExpression) or
     # a 'loop' (LoopExpression), they can be used outside, but their result
     # (the value of the field '\_\_cursor_command__' will be used as soon as the
     # flow enters a cursor or a loop).
@@ -148,10 +148,10 @@ module OpenWFE
     # value of the field "\_\_cursor_command__" to its name ('back' for example)
     # plus to the 'step' attribute value.
     #
-    # For example <skip step="3"/> simply sets the value of the field 
+    # For example <skip step="3"/> simply sets the value of the field
     # '\_\_cursor_command__' to 'skip 3'.
     #
-    # (The field \_\_cursor_command__ is, by default, read and 
+    # (The field \_\_cursor_command__ is, by default, read and
     # obeyed by the 'cursor' expression).
     #
     # With Ruby process definitions, you can directly write :
@@ -159,7 +159,7 @@ module OpenWFE
     #     skip 2
     #     jump "0"
     #
-    # instead of 
+    # instead of
     #
     #     skip :step => "2"
     #     jump :step => "0"
@@ -201,7 +201,7 @@ module OpenWFE
     #         #
     #         # skips if the nb of customers is pair
     #
-    # Note that the 'rif' attribute will work only if the 
+    # Note that the 'rif' attribute will work only if the
     # <tt>:ruby_eval_allowed</tt> parameter is set to true in the engine's
     # application context.
     #
