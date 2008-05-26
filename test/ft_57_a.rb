@@ -130,8 +130,9 @@ a|b|3
 
     class Test4 < OpenWFE::ProcessDefinition
         sequence do
+            set :v => "v0", :val => "ToTo"
             set :field => "other" do
-                a '[1,2,3,false,"toto"]'
+                a '[1,2,3,false,"toto","${v0}"]'
             end
             _print "${f:other}"
         end
@@ -139,7 +140,7 @@ a|b|3
 
     def test_4
 
-        dotest Test4, "123falsetoto"
+        dotest Test4, "123falsetotoToTo"
     end
 end
 

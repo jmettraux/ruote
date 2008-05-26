@@ -26,7 +26,7 @@ class FlowTest16 < Test::Unit::TestCase
         <set variable="x"><q>y</q></set>
         <print>x is "${x}"</print>
     </sequence>
-</process-definition>''', 
+</process-definition>''',
 'x is "y"')
     end
 
@@ -38,7 +38,7 @@ class FlowTest16 < Test::Unit::TestCase
         <set variable="x1"><v>x0</v></set>
         <print>x1 is "${x1}"</print>
     </sequence>
-</process-definition>''', 
+</process-definition>''',
 'x1 is "y0"')
     end
 
@@ -50,7 +50,7 @@ class FlowTest16 < Test::Unit::TestCase
         <set variable="x1"><f>x0</f></set>
         <print>x1 is "${x1}"</print>
     </sequence>
-</process-definition>''', 
+</process-definition>''',
 'x1 is "y0"')
     end
 

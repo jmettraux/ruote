@@ -623,22 +623,20 @@ module OpenWFE
         #
         def fetch_text_content (workitem, escape=false)
 
-            text = ""
-
-            children.each do |child|
+            text = children.inject("") do |r, child|
 
                 if child.is_a?(RawExpression)
 
-                    text << child.fei.to_s
+                    r << child.fei.to_s
 
                 elsif child.is_a?(FlowExpressionId)
 
-                    text << get_expression_pool\
+                    r << get_expression_pool\
                         .fetch_expression(child).raw_representation.to_s
 
                 else
 
-                    text << child.to_s
+                    r << child.to_s
                 end
             end
 

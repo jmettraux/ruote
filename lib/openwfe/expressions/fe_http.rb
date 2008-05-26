@@ -52,7 +52,9 @@ module OpenWFE
 
             verb = @fei.expression_name
 
-            uri = lookup_attribute(:uri, workitem) || @children.first
+            uri =
+                lookup_attribute(:uri, workitem) ||
+                fetch_text_content(workitem)
 
             headers =
                 lookup_attribute(:headers, workitem) ||

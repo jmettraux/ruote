@@ -48,7 +48,7 @@ class FlowTest88 < Test::Unit::TestCase
             _print "${f:rcode}"
             _print "${f:rheaders.location}"
 
-            get :uri => "${f:rheaders.location}"
+            get "${f:rheaders.location}"
             _print "${f:rcode}"
             #_print "${f:rbody}"
         end

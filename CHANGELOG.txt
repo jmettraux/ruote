@@ -4,6 +4,9 @@
 
 == OpenWFEru - 0.9.19    not yet released
 
+- bug   #20364 : 'a' and 'step' were not using $ substitution for their
+                 first child param. Fixed.
+
 
 == OpenWFEru - 0.9.18    2008/05/22
 

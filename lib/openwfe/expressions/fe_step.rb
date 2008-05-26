@@ -108,7 +108,9 @@ module OpenWFE
 
         def apply (workitem)
 
-            step = lookup_attribute(:ref, workitem) || @children.first
+            step =
+                lookup_attribute(:ref, workitem) ||
+                fetch_text_content(workitem)
 
             # keeping track of outcomes and default as found at apply time
 
