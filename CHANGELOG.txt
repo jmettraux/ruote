@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.19    not yet released
 
+- todo  #20360 : implemented hpost/hget/hput/hdelete and hpoll expressions
 - bug   #20378 : workitem.att throws exception if attribute holds the boolean
                  #false value. Fixed.
 - bug   #20364 : 'a' and 'step' were not using $ substitution for their

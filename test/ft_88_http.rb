@@ -77,5 +77,22 @@ class FlowTest88 < Test::Unit::TestCase
         dotest Test1, "-1"
     end
 
+    #
+    # TEST 2
+
+    class Test2 < OpenWFE::ProcessDefinition
+        sequence do
+            hpoll "http://localhost:7777/items", :until => "${f:hcode} == 200"
+            _print "${f:hcode}"
+        end
+    end
+
+    def test_2
+
+        log_level_to_debug
+
+        dotest Test2, "200"
+    end
+
 end
 

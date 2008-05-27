@@ -39,6 +39,7 @@
 
 require 'rufus/verbs'
 require 'openwfe/expressions/flowexpression'
+require 'openwfe/expressions/time'
 
 
 module OpenWFE
@@ -129,6 +130,73 @@ module OpenWFE
         #   nil
         #end
 
+    end
+
+    #
+    # Polls repeatedly a web resource until a condition realizes.
+    #
+    # If there is no condition given, will be equivalent to 'hget'.
+    #
+    class HpollExpression < WaitingExpression
+
+        names :hpoll
+        conditions :until
+
+        attr_accessor :hparams
+
+
+        def apply (workitem)
+
+            uri =
+                lookup_attribute(:uri, workitem) ||
+                fetch_text_content(workitem)
+
+            @hparams = lookup_attributes workitem
+
+            @hparams['timeout'] = @hparams['htimeout'] || @hparams['hto']
+                # the :timeout param is reserved for the poll timeout
+                # not the http timeout
+
+            opts = workitem.attributes['hoptions'] || {}
+
+            @hparams = @hparams.merge opts
+
+            @hparams = @hparams.inject({}) { |r, (k, v)| r[k.intern] = v; r }
+                # 'symbolize' keys
+
+            @hparams[:uri] = uri
+
+            super
+        end
+
+        def trigger (params={})
+
+            do_get unless params[:do_timeout!]
+
+            super
+        end
+
+        protected
+
+            def do_get
+
+                ldebug { "do_get() #{@hparams.inspect}" }
+
+                res = Rufus::Verbs.get @hparams
+
+                @applied_workitem.hcode = res.code
+                @applied_workitem.hheaders = res.to_hash
+                @applied_workitem.hdata = res.body
+
+            rescue Exception => e
+
+                linfo do
+                    "do_get() #{verb.upcase} #{uri} failed : #{e.to_s}"
+                end
+
+                @applied_workitem.hcode = -1
+                @applied_workitem.herror = e.to_s
+            end
     end
 
 end

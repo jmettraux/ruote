@@ -153,6 +153,7 @@ module OpenWFE
             register StepExpression
 
             register HttpExpression
+            register HpollExpression
 
             register Environment
                 #

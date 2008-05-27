@@ -619,11 +619,13 @@ module OpenWFE
         #++
 
         #
-        # Returns the text stored as the children of the given expression
+        # Returns the text stored among the children
         #
         def fetch_text_content (workitem, escape=false)
 
-            text = children.inject("") do |r, child|
+            cs = children || raw_children
+
+            text = cs.inject("") do |r, child|
 
                 if child.is_a?(RawExpression)
 

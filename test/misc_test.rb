@@ -7,8 +7,11 @@
 # Sun Oct 29 16:18:25 JST 2006
 #
 
+require 'rubygems'
+
 require 'test/unit'
 
+require 'rufus/dollar'
 require 'openwfe/utils'
 require 'openwfe/expressions/raw'
 #require 'openwfe/def'
@@ -73,8 +76,7 @@ class MiscTest < Test::Unit::TestCase
 
         em = OpenWFE::ExpressionMap.new
 
-        assert_equal \
-            em.get_expression_classes(Rufus::Schedulable),
+        assert_equal(
             [
                 OpenWFE::ParticipantExpression,
                 OpenWFE::SleepExpression,
@@ -84,7 +86,9 @@ class MiscTest < Test::Unit::TestCase
                 #OpenWFE::ReserveExpression,
                 OpenWFE::ListenExpression,
                 OpenWFE::TimeoutExpression,
+                OpenWFE::HpollExpression,
                 OpenWFE::Environment
-            ]
+            ],
+            em.get_expression_classes(Rufus::Schedulable))
     end
 end
