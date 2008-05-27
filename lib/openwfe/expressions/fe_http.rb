@@ -75,6 +75,7 @@ module OpenWFE
                 fetch_text_content(workitem)
 
             data = workitem.attributes['hdata']
+
             opts = workitem.attributes['hoptions'] || {}
 
             params = lookup_attributes workitem
@@ -97,9 +98,9 @@ module OpenWFE
 
                     res = Rufus::Verbs.send verb, params
 
-                    workitem.rcode = res.code
-                    workitem.rheaders = res.to_hash
-                    workitem.rbody = res.body
+                    workitem.hcode = res.code
+                    workitem.hheaders = res.to_hash
+                    workitem.hdata = res.body
 
                 #rescue Timeout::Error => te
                 #
@@ -108,10 +109,10 @@ module OpenWFE
 
                 rescue Exception => e
 
-                    linfo { "apply() failed : #{e.to_s}" }
+                    linfo { "apply() #{verb.upcase} #{uri} failed : #{e.to_s}" }
 
-                    workitem.rerror = e.to_s
-                    workitem.rcode = -1
+                    workitem.hcode = -1
+                    workitem.herror = e.to_s
                 end
 
                 # over

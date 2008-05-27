@@ -263,7 +263,7 @@ It understands the following commands :
 * back : gets back in the sequence for a certain number of 'steps'
 * break : exits the cursor immediately
 * cancel : an alias for 'break'
-* continue : skips the rest of the cursor and exits (if the cursor is a loop, will continue at the beginning)
+* continue : skips the rest of the cursor and restarts at the beginning
 * jump : positions the cursor to an absolute position (step)
 * rewind : an alias for 'continue'
 * skip : skips a certain number of steps

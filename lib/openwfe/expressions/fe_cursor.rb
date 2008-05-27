@@ -103,8 +103,6 @@ module OpenWFE
 
             @current_child_id = -1
 
-            #clean_children_list
-
             reply workitem
         end
 
@@ -157,13 +155,6 @@ module OpenWFE
             #
             # launch the next child as a template
 
-            #get_expression_pool.launch_template(
-            #    self,
-            #    @environment_id,
-            #    @loop_id,
-            #    template_fei,
-            #    workitem,
-            #    nil)
             @current_child_fei = get_expression_pool.tlaunch_child(
                 self,
                 template,
@@ -196,31 +187,6 @@ module OpenWFE
             false
         end
 
-        protected
-
-            #
-            # Determines the fei of the child being currently executed.
-            # This method is used by cancel().
-            #
-            #def current_child_fei
-            #    cfei = @children[@current_child_id].dup
-            #    return nil unless cfei
-            #    cfei.wfid = cfei.wfid + '.' + @loop_id.to_s
-            #    cfei
-            #end
-
-            #
-            # Makes sure that only flow expression are left in the cursor
-            # children list (text and comment nodes get discarded).
-            #
-            #def clean_children_list
-            #    c = @children
-            #    @children = []
-            #    c.each do |child|
-            #        @children << child \
-            #            if child.kind_of?(OpenWFE::FlowExpressionId)
-            #    end
-            #end
     end
 
     #

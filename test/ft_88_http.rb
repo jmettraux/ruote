@@ -37,17 +37,17 @@ class FlowTest88 < Test::Unit::TestCase
         sequence do
 
             hget "http://localhost:7777/items"
-            _print "${f:rcode}"
-            _print "${f:rbody}"
+            _print "${f:hcode}"
+            _print "${f:hdata}"
 
             set :f => :hdata, :val => "nada"
             hpost "http://localhost:7777/items"
-            _print "${f:rcode}"
-            _print "${f:rheaders.location}"
+            _print "${f:hcode}"
+            _print "${f:hheaders.location}"
 
-            hget "${f:rheaders.location}"
-            _print "${f:rcode}"
-            _print "${f:rbody}"
+            hget "${f:hheaders.location}"
+            _print "${f:hcode}"
+            _print "${f:hdata}"
         end
     end
 
@@ -68,7 +68,7 @@ class FlowTest88 < Test::Unit::TestCase
     class Test1 < OpenWFE::ProcessDefinition
         sequence do
             hget "http://localhost:7777/lost", :timeout => 1
-            _print "${f:rcode}"
+            _print "${f:hcode}"
         end
     end
 
