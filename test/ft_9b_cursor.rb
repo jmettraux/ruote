@@ -95,7 +95,7 @@ class FlowTest9b < Test::Unit::TestCase
         sleep 0.350
 
         assert(
-            [ "consume\ncancel", 
+            [ "consume\ncancel",
               "consume\ncancel\ncancel" ].include?(@tracer.to_s))
 
         assert_equal 1, @engine.get_expression_storage.size

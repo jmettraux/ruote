@@ -7,6 +7,8 @@
 # Tue Jan  2 13:14:37 JST 2007
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'flowtestbase'
 
@@ -27,9 +29,7 @@ class FlowTest9 < Test::Unit::TestCase
         <print>a</print>
         <print>b</print>
     </cursor>
-</process-definition>''', 
-"""a
-b""")
+</process-definition>''', "a\nb")
     end
 
     def test_cursor_1
@@ -41,9 +41,7 @@ b""")
         <cancel />
         <print>c</print>
     </cursor>
-</process-definition>''', 
-"""a
-b""")
+</process-definition>''', "a\nb")
     end
 
     def test_cursor_2
@@ -55,9 +53,7 @@ b""")
         <skip step="2" />
         <print>c</print>
     </cursor>
-</process-definition>''', 
-"""a
-b""")
+</process-definition>''', "a\nb")
     end
 
     def test_cursor_2b
@@ -74,10 +70,7 @@ b""")
         <back step="2"/>
         <print>c</print>
     </cursor>
-</process-definition>''', 
-"""a
-b
-c""")
+</process-definition>''', "a\nb\nc")
     end
 
     def test_cursor_3
@@ -89,9 +82,7 @@ c""")
         <print>b</print>
         <print>c</print>
     </cursor>
-</process-definition>''', 
-"""a
-c""")
+</process-definition>''', "a\nc")
     end
 
     def test_cursor_4
@@ -106,10 +97,7 @@ c""")
         </cursor>
         <print>d</print>
     </sequence>
-</process-definition>''', 
-"""a
-c
-d""")
+</process-definition>''', "a\nc\nd")
     end
 
     def test_cursor_5
@@ -121,9 +109,7 @@ d""")
         <print>b</print>
         <print>c</print>
     </cursor>
-</process-definition>''', 
-"""a
-c""")
+</process-definition>''', "a\nc")
     end
 
     class TestCursor6 < OpenWFE::ProcessDefinition
@@ -137,8 +123,31 @@ c""")
         end
     end
 
-    def test_cursor_6
-        dotest(TestCursor6, "a\nc")
+    def test_6
+        dotest TestCursor6, "a\nc"
+    end
+
+    class Test7 < OpenWFE::ProcessDefinition
+        cursor do
+            alpha
+            rewind :if => "${f:rewind} == true"
+        end
+    end
+
+    def test_7
+
+        @engine.register_participant :alpha do |wi|
+
+            wi.rewind = if wi.attributes['rewind'] == nil
+                true
+            else
+                ! wi.rewind
+            end
+
+            @tracer << wi.rewind.to_s
+        end
+
+        dotest Test7, "truefalse"
     end
 
 end

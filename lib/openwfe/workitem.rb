@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2005-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -95,7 +95,7 @@ module OpenWFE
         end
 
         #
-        # A shortcut for 
+        # A shortcut for
         #
         #     workitem.attributes['key']
         #
@@ -115,7 +115,7 @@ module OpenWFE
         end
 
         #
-        # A shortcut for 
+        # A shortcut for
         #
         #     workitem.attributes['key'] = value
         #
@@ -138,12 +138,12 @@ module OpenWFE
         #    value = workitem.xyz
         #
         # or
-        # 
+        #
         #    value = workitem['xyz']
         #
         # we overrode method_missing.
         #
-        #    workitem.xyz = "my new value" 
+        #    workitem.xyz = "my new value"
         #
         # is also possible
         #
@@ -153,7 +153,7 @@ module OpenWFE
 
             if args.length == 0
                 value = @attributes[methodname]
-                return value if value
+                return value if value != nil
                 raise "Missing attribute '#{methodname}' in workitem"
             end
 
@@ -192,8 +192,8 @@ module OpenWFE
         #         "field0" => "value0",
         #         "field1" => [ 0, 1, 2, 3, [ "a", "b", "c" ]],
         #         "field2" => {
-        #             "a" => "AA", 
-        #             "b" => "BB", 
+        #             "a" => "AA",
+        #             "b" => "BB",
         #             "c" => [ "C0", "C1", "C3" ]
         #         },
         #         "field3" => 3,
@@ -399,7 +399,7 @@ module OpenWFE
 
     #
     # LaunchItem instances are used to instantiate and launch processes.
-    # They contain attributes that are used as the initial payload of the 
+    # They contain attributes that are used as the initial payload of the
     # workitem circulating in the process instances.
     #
     class LaunchItem < WorkItem
@@ -441,7 +441,7 @@ module OpenWFE
         #   require 'uri'
         #   LaunchItem.new(URI.parse("file:///tmp/my_process_definition.xml"))
         #
-        #   # If you initialized your engine with 
+        #   # If you initialized your engine with
         #   # {:remote_definitions_allowed => true}, then you can also load an
         #   # XML process definition from a remote url
         #   require 'uri'
