@@ -67,12 +67,14 @@ class FlowTest88 < Test::Unit::TestCase
 
     class Test1 < OpenWFE::ProcessDefinition
         sequence do
-            hget "http://localhost:7777/lost", :timeout => 1
+            hget "http://localhost:7777/lost", :htimeout => 1
             _print "${f:hcode}"
         end
     end
 
     def test_1
+
+        #log_level_to_debug
 
         dotest Test1, "-1"
     end
@@ -89,7 +91,7 @@ class FlowTest88 < Test::Unit::TestCase
 
     def test_2
 
-        log_level_to_debug
+        #log_level_to_debug
 
         dotest Test2, "200"
     end
