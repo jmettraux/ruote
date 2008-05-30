@@ -426,10 +426,11 @@ module OpenWFE
             result = {}
 
             Find.find(@workdir) do |path|
+
                 next unless path.match(/\.ejournal$/)
-                wfid = path[0..-9]
+
                 log = read_error_log_from path
-                result[wfid] = log
+                result[log.first.fei.wfid] = log
             end
 
             result

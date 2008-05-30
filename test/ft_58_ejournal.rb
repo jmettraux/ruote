@@ -66,6 +66,7 @@ class FlowTest58 < Test::Unit::TestCase
         assert ejournal.has_errors?(fei.wfid)
 
         assert_equal 1, ejournal.get_error_logs.size
+        assert_equal fei.wfid, ejournal.get_error_logs.keys.first
 
         # OK, let's fix the root and replay
 
