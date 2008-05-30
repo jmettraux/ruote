@@ -161,6 +161,7 @@ module OpenWFE
                     record_error(ProcessError.new(*args))
 
                 rescue Exception => e
+                    lwarn { "(failed to record error : #{e})" }
                     lwarn { "*** process error : \n" + args.join("\n") }
                 end
             end
@@ -446,7 +447,7 @@ module OpenWFE
 
                 path = get_path error.fei
 
-                File.open(path, "a+") do |f|
+                File.open path, "a+" do |f|
                     f.puts error.to_yaml
                 end
             end
