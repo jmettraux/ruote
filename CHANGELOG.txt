@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.19    not yet released
 
+- bug   #20444 : yaml error journal get_error_logs() broken. Fixed.
 - todo  #20360 : implemented hpost/hget/hput/hdelete and hpoll expressions
 - bug   #20378 : workitem.att throws exception if attribute holds the boolean
                  #false value. Fixed.

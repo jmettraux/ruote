@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -63,18 +63,18 @@ module OpenWFE
         # The FlowExpressionId instance uniquely pointing at the expression
         # which 'failed'.
         #
-        attr_reader :fei 
+        attr_reader :fei
 
         #
         # Generally something like :apply or :reply
         #
-        attr_reader :message 
+        attr_reader :message
 
         #
-        # The workitem accompanying the message (apply(workitem) / 
+        # The workitem accompanying the message (apply(workitem) /
         # reply (workitem)).
         #
-        attr_reader :workitem 
+        attr_reader :workitem
 
         #
         # The String stack trace of the error.
@@ -155,7 +155,7 @@ module OpenWFE
             get_expression_pool.add_observer :error do |event, *args|
                 #
                 # logs each error occurring in the expression pool
-                
+
                 begin
 
                     record_error(ProcessError.new(*args))
@@ -194,7 +194,7 @@ module OpenWFE
         #
         # There is an optional 'offset' parameter. Its default value is '0'.
         # Which means that the replay will occur at the last error.
-        # 
+        #
         #     ejournal.replay_at_last_error('20070630-hiwakuzara', 1)
         #
         # Will replay a given process instance at its 1 to last error.
@@ -210,23 +210,9 @@ module OpenWFE
         #end
         #++
 
-        #--
         #
-        # Moved to the engine itself.
-        #
-        # Replays at a specific error (fetched with read_error_log()).
-        #
-        #def replay_at_error (error)
-        #    get_expression_pool.queue_work(
-        #        error.message,
-        #        error.fei,
-        #        error.workitem)
-        #end
-        #++
-
-        #
-        # A utility method : given a list of errors, will make sure that for 
-        # each flow expression only one expression (the most recent) will get 
+        # A utility method : given a list of errors, will make sure that for
+        # each flow expression only one expression (the most recent) will get
         # listed.
         # Returns a list of errors, from the oldest to the most recent.
         #
@@ -318,7 +304,7 @@ module OpenWFE
                     # not that unreadable after all...
             end
     end
-    
+
     #
     # A Journal that only keep track of error in process execution.
     #
@@ -440,9 +426,9 @@ module OpenWFE
             result = {}
 
             Find.find(@workdir) do |path|
-                next unless path.endswith(".ejournal")
+                next unless path.match(/\.ejournal$/)
                 wfid = path[0..-9]
-                log = read_error_log wfid
+                log = read_error_log_from path
                 result[wfid] = log
             end
 

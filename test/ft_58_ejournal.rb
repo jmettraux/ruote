@@ -65,6 +65,8 @@ class FlowTest58 < Test::Unit::TestCase
         assert ejournal.has_errors?(fei)
         assert ejournal.has_errors?(fei.wfid)
 
+        assert_equal 1, ejournal.get_error_logs.size
+
         # OK, let's fix the root and replay
 
         @engine.register_participant(:nada) do |wi|
