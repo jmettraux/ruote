@@ -323,6 +323,7 @@ module OpenWFE
             super
 
             @workdir = get_work_directory + "/ejournal"
+            #@workdir = File.expand_path @workdir
 
             FileUtils.makedirs(@workdir) unless File.exist?(@workdir)
         end
@@ -446,6 +447,10 @@ module OpenWFE
             def record_error (error)
 
                 path = get_path error.fei
+
+                dirpath = File.dirname path
+
+                FileUtils.mkdir_p(dirpath) unless File.exist?(dirpath)
 
                 File.open path, "a+" do |f|
                     f.puts error.to_yaml
