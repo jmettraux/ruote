@@ -115,6 +115,24 @@ OpenWFEru is an open source Ruby workflow and BPM engine.
           <include>**/*</include>
         </includes>
       </resource>
+      
+      <!-- json -->
+      <resource>
+        <filtering>false</filtering>
+        <directory>/Library/Ruby/Gems/1.8/gems/json_pure-1.1.2/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+
+      <!-- builder -->
+      <resource>
+        <filtering>false</filtering>
+        <directory>/Library/Ruby/Gems/1.8/gems/builder-2.1.2/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
     </resources>
   </build>
 

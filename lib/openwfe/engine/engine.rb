@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2006-2008, John Mettraux, Nicolas Modrzyk OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -36,7 +36,7 @@
 #
 # John Mettraux at openwfe.org
 # Nicolas Modrzyk at openwfe.org
-# 
+#
 
 require 'logger'
 require 'fileutils'
@@ -122,7 +122,7 @@ module OpenWFE
 
             build_expression_map
                 #
-                # mapping expression names ('sequence', 'if', 'concurrence', 
+                # mapping expression names ('sequence', 'if', 'concurrence',
                 # 'when'...) to their implementations (SequenceExpression,
                 # IfExpression, ConcurrenceExpression, ...)
 
@@ -147,7 +147,7 @@ module OpenWFE
 
             build_participant_map
                 #
-                # building the services that maps participant names to 
+                # building the services that maps participant names to
                 # participant implementations / instances.
 
             build_error_journal
@@ -163,7 +163,7 @@ module OpenWFE
         # Call this method once the participants for a persisted engine
         # have been [re]added.
         #
-        # If this method is called too soon, missing participants will 
+        # If this method is called too soon, missing participants will
         # cause trouble... Call this method after all the participants
         # have been added.
         #
@@ -190,7 +190,7 @@ module OpenWFE
 
         #
         # Launches a [business] process.
-        # The 'launch_object' param may contain either a LaunchItem instance, 
+        # The 'launch_object' param may contain either a LaunchItem instance,
         # either a String containing the URL of the process definition
         # to launch (with an empty LaunchItem created on the fly).
         #
@@ -357,7 +357,7 @@ module OpenWFE
         end
 
         #
-        # Calling this method makes the control flow block until the 
+        # Calling this method makes the control flow block until the
         # workflow engine is inactive.
         #
         # TODO : implement idle_for
@@ -413,7 +413,7 @@ module OpenWFE
 
                     service.stop
 
-                    linfo do 
+                    linfo do
                         "stop() stopped service '#{sname}' (#{service.class})"
                     end
                 end
@@ -430,7 +430,7 @@ module OpenWFE
         # the process already terminated, the method will never exit.
         #
         # The parameter can be a FlowExpressionId instance, for example the
-        # one given back by a launch(), or directly a workflow instance id 
+        # one given back by a launch(), or directly a workflow instance id
         # (String).
         #
         # This method is mainly used in utests.
@@ -457,7 +457,7 @@ module OpenWFE
             #tc = get_expression_pool.add_observer(:cancel) do |c, fe|
             #    if (fe.fei.wfid == wfid and fe.fei.expid == "0" and t.alive?)
             #        sleep 0.500
-            #        t.wakeup 
+            #        t.wakeup
             #    end
             #end
 
@@ -499,7 +499,7 @@ module OpenWFE
             # remove 'paused' flag
 
             get_expression_pool.paused_instances.delete wfid
-            root_expression.unset_variable VAR_PAUSED 
+            root_expression.unset_variable VAR_PAUSED
 
             #
             # replay
@@ -526,7 +526,7 @@ module OpenWFE
         def replay_at_error (error)
 
             get_error_journal.remove_errors(
-                error.fei.parent_wfid, 
+                error.fei.parent_wfid,
                 error)
 
             get_workqueue.push(
@@ -539,7 +539,7 @@ module OpenWFE
 
         #
         # Looks up a process variable in a process.
-        # If fei_or_wfid is not given, will simply look in the 
+        # If fei_or_wfid is not given, will simply look in the
         # 'engine environment' (where the top level variables '//' do reside).
         #
         def lookup_variable (var_name, fei_or_wfid=nil)
@@ -553,7 +553,7 @@ module OpenWFE
         #
         # Returns the variables set for a process or an expression.
         #
-        # If a process (wfid) is given, variables of the process environment 
+        # If a process (wfid) is given, variables of the process environment
         # will be returned, else variables in the environment valid for the
         # expression (fei) will be returned.
         #
@@ -570,7 +570,7 @@ module OpenWFE
 
         #
         # Returns an array of wfid (workflow instance ids) whose root
-        # environment containes the given variable 
+        # environment containes the given variable
         #
         # If there are no matches, an empty array will be returned.
         #
@@ -678,7 +678,7 @@ module OpenWFE
             # The implementation here builds an InMemoryExpressionStorage
             # instance.
             #
-            # See FilePersistedEngine or CachedFilePersistedEngine for 
+            # See FilePersistedEngine or CachedFilePersistedEngine for
             # overrides of this method.
             #
             def build_expression_storage
@@ -687,7 +687,7 @@ module OpenWFE
             end
 
             #
-            # The ParticipantMap is a mapping between participant names 
+            # The ParticipantMap is a mapping between participant names
             # (well rather regular expressions) and participant implementations
             # (see http://openwferu.rubyforge.org/participants.html)
             #
@@ -695,7 +695,7 @@ module OpenWFE
 
                 init_service S_PARTICIPANT_MAP, ParticipantMap
             end
-            
+
             #
             # There is only one Scheduler implementation, that's the one
             # built and bound here.
@@ -703,7 +703,7 @@ module OpenWFE
             def build_scheduler
 
                 s = Rufus::Scheduler.new(
-                    :thread_name => 
+                    :thread_name =>
                     "rufus scheduler for Ruote (engine #{self.object_id})")
 
                 @application_context[S_SCHEDULER] = s
@@ -712,7 +712,7 @@ module OpenWFE
             end
 
             #
-            # The default implementation of this method uses an 
+            # The default implementation of this method uses an
             # InMemoryErrorJournal (do not use in production).
             #
             def build_error_journal
