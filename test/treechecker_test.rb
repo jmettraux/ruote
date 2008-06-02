@@ -67,7 +67,7 @@ class TreeCheckerTest < Test::Unit::TestCase
                 #puts e.backtrace
                 return false
             end
-            
+
             true
         end
 end
