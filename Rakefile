@@ -47,10 +47,12 @@ spec = Gem::Specification.new do |s|
 
     [ 'builder',
       'json_pure',
+      #'ruby_parser',
+      'rogue_parser',
       'rufus-lru',
       'rufus-scheduler',
       'rufus-dollar',
-      'rufus-eval',
+      #'rufus-eval',
       'rufus-mnemo',
       'rufus-verbs' ].each do |d|
 

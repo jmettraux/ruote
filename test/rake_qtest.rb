@@ -26,6 +26,7 @@ require 'obs_test'
 require 'clone_test'
 require 'lookup_vf_test'
 require 'fe_lookup_att_test'
+require 'treechecker_test'
 
 require 'sec_test'
 require 'param_test'

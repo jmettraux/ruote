@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -37,8 +37,9 @@
 # John Mettraux at openwfe.org
 #
 
-require 'rufus/eval' # gem 'rufus-eval'
+#require 'rufus/eval' # gem 'rufus-eval'
 
+require 'openwfe/util/treechecker'
 require 'openwfe/utils'
 require 'openwfe/expressions/raw'
 
@@ -49,7 +50,7 @@ module OpenWFE
     # Extend this class to create a programmatic process definition.
     #
     # A short example :
-    # 
+    #
     #   class MyProcessDefinition < OpenWFE::ProcessDefinition
     #       def make
     #           process_definition :name => "test1", :revision => "0" do
@@ -63,7 +64,7 @@ module OpenWFE
     #
     #   li = OpenWFE::LaunchItem.new(MyProcessDefinition)
     #   engine.launch(li)
-    # 
+    #
     #
     class ProcessDefinition
 
@@ -82,9 +83,9 @@ module OpenWFE
             #puts "__i_method_missing >>>#{m}<<<<"
 
             ProcessDefinition.make_expression(
-                @context, 
+                @context,
                 OpenWFE::to_expression_name(m),
-                ProcessDefinition.pack_args(args), 
+                ProcessDefinition.pack_args(args),
                 &block)
         end
 
@@ -94,9 +95,9 @@ module OpenWFE
                 if (not @ccontext) or @ccontext.discarded?
 
             ProcessDefinition.make_expression(
-                @ccontext, 
+                @ccontext,
                 OpenWFE::to_expression_name(m),
-                ProcessDefinition.pack_args(args), 
+                ProcessDefinition.pack_args(args),
                 &block)
         end
 
@@ -166,7 +167,7 @@ module OpenWFE
         end
 
         #
-        # A class method for actually "making" the process 
+        # A class method for actually "making" the process
         # segment raw representation
         #
         def self.do_make (instance=nil)
@@ -181,7 +182,7 @@ module OpenWFE
 
                 instance.make
                 instance.context
-            else    
+            else
 
                 pdef = self.new
                 pdef.make
@@ -190,13 +191,13 @@ module OpenWFE
 
             return context.top_expression if context.top_expression
 
-            name, revision = 
+            name, revision =
                 extract_name_and_revision(self.metaclass.to_s[8..-2])
 
-            top_expression = [ 
-                "process-definition", 
-                { "name" => name, "revision" => revision }, 
-                context.top_expressions 
+            top_expression = [
+                "process-definition",
+                { "name" => name, "revision" => revision },
+                context.top_expressions
             ]
 
             top_expression
@@ -221,15 +222,19 @@ module OpenWFE
         #
         # Turns a String containing a ProcessDefinition ...
         #
-        def self.eval_ruby_process_definition (code, safety_level=2)
-
-            # TODO : insert tree check
+        def self.eval_ruby_process_definition (code)
+        #def self.eval_ruby_process_definition (code, safety_level=2)
 
             #puts "\nin:\n#{code}\n"
 
+            TreeChecker.check code
+                #
+                # checks for 'illicit' ruby code before the eval
+
             code, is_wrapped = wrap_code code
 
-            o = Rufus::eval_safely code, safety_level, binding()
+            #o = Rufus::eval_safely code, safety_level, binding()
+            o = eval code, binding()
 
             o = extract_class(code) \
                 if (o == nil) or o.is_a?(Array)
@@ -356,7 +361,7 @@ module OpenWFE
                 end
 
                 #
-                # This method returns the top expression among the 
+                # This method returns the top expression among the
                 # top expressions...
                 #
                 def top_expression

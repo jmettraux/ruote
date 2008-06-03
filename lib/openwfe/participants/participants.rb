@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -53,7 +53,7 @@ module OpenWFE
     # Just dumps the incoming workitem in a file as a YAML String.
     #
     # By default, this participant will not reply to the engine once
-    # the workitem got dumped to its file, but you can set its 
+    # the workitem got dumped to its file, but you can set its
     # reply_anyway field to true to make it reply anyway...
     #
     class FileParticipant
@@ -62,7 +62,7 @@ module OpenWFE
         attr_accessor :reply_anyway, :workdir
 
         #
-        # The constructor expects as a unique optional param either the 
+        # The constructor expects as a unique optional param either the
         # application_context either the 'output' dir for the participant.
         #
         def initialize (context_or_dir=nil)
@@ -122,10 +122,10 @@ module OpenWFE
             # (of course you can override this method).
             #
             def encode_workitem (wi)
-                YAML.dump(wi)
+                YAML.dump wi
             end
     end
-        
+
     #
     # This participant is used by the register_participant() method of
     # Engine class.
@@ -153,7 +153,7 @@ module OpenWFE
     #         puts "Alice received a workitem"
     #     end
     #
-    class BlockParticipant 
+    class BlockParticipant
         include LocalParticipant
 
         def initialize (block0=nil, &block1)
@@ -189,7 +189,7 @@ module OpenWFE
     #
     # Workitems for participant whose name starts with 'user_' will be handled
     # by participant 'toto'.
-    # Note that you can't use use a regex as the aliased name ("toto" in the 
+    # Note that you can't use use a regex as the aliased name ("toto" in the
     # example).
     #
     class AliasParticipant
@@ -224,7 +224,7 @@ module OpenWFE
     end
 
     #
-    # The NoOperationParticipant immediately replies to the engine upon 
+    # The NoOperationParticipant immediately replies to the engine upon
     # receiving a workitem.
     #
     # Is used in testing. Could also be useful during the 'development'
@@ -247,7 +247,7 @@ module OpenWFE
     # test tracer if any or to the stdout else.
     # Used by some unit tests.
     #
-    class PrintParticipant 
+    class PrintParticipant
         include LocalParticipant
 
         def consume (workitem)
@@ -275,7 +275,7 @@ module OpenWFE
     #     require 'engine/participants/participants'
     #
     #     engine.register_participant(
-    #         "transmit_to_accounting", 
+    #         "transmit_to_accounting",
     #         "http://company.process.server.ie/processes/acc0.xml")
     #
     #     engine.register_participant(
@@ -292,7 +292,7 @@ module OpenWFE
     #     end
     #
     #     # later in the code ...
-    #    
+    #
     #     engine.register_participant("registration", RegistrationProcess)
     #
     # Or directly with some XML string :
@@ -352,8 +352,8 @@ module OpenWFE
             #    get_flow_expression(workitem),
             #    nil, # new environment
             #    0, # sub_id
-            #    @template, 
-            #    workitem) 
+            #    @template,
+            #    workitem)
             #    #params)
             get_expression_pool.launch_subprocess(
                 get_flow_expression(workitem),

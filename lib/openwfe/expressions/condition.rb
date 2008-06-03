@@ -37,7 +37,9 @@
 # John Mettraux at openwfe.org
 #
 
-require 'rufus/eval' # gem 'rufus-eval'
+#require 'rufus/eval' # gem 'rufus-eval'
+
+require 'openwfe/util/treechecker'
 
 
 module OpenWFE
@@ -173,11 +175,13 @@ module OpenWFE
             #
             def to_boolean (o)
 
-                ldebug { "to_boolean() o is _#{o}_" }
-
                 #(o == "true" or o == true)
                 o = o.strip if o.is_a?(String)
-                not (o == nil || o == false || o == 'false' || o == '')
+                r = ! (o == nil || o == false || o == 'false' || o == '')
+
+                ldebug { "to_boolean() o is _#{o}_ => #{r}" }
+
+                r
             end
 
             #
@@ -225,10 +229,13 @@ module OpenWFE
             end
 
             #
-            # Runs the given given within an instance_eval() at a $SAFE
-            # level of 4.
+            # Evalutates the given code (after security checks)
             #
             def do_eval (s, workitem)
+
+                TreeChecker.check_conditional s
+
+                # ok, green for eval
 
                 wi = workitem
                 fe = self
@@ -236,7 +243,8 @@ module OpenWFE
                     # wi and fe are thus available as well
                     # (as self and workitem)
 
-                Rufus::eval_safely(s, 4, binding())
+                #Rufus::eval_safely(s, 4, binding())
+                eval s, binding()
             end
     end
 

@@ -7,6 +7,8 @@
 # Sun Oct 29 16:18:25 JST 2006
 #
 
+require 'rubygems'
+
 require 'test/unit'
 
 require 'rutest_utils'
@@ -95,7 +97,7 @@ class ConditionTest < Test::Unit::TestCase
         assert_equal target, $my_owferu_var
 
         #assert_F "fe.reply('a')"
-        assert_t "fe.reply('a')"
+        #assert_t "fe.reply('a')"
     end
 
     protected
@@ -104,6 +106,7 @@ class ConditionTest < Test::Unit::TestCase
         # just for test_2
         #
         def reply (m)
+
             @fei = nil
         end
 

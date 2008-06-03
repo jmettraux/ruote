@@ -94,13 +94,13 @@ OpenWFEru is an open source Ruby workflow and BPM engine.
           <include>**/*</include>
         </includes>
       </resource>
-      <resource>
+      <!--resource>
         <filtering>false</filtering>
         <directory>../rufus/rufus-eval/lib</directory>
         <includes>
           <include>**/*</include>
         </includes>
-      </resource>
+      </resource-->
       <resource>
         <filtering>false</filtering>
         <directory>../rufus/rufus-mnemo/lib</directory>
@@ -129,6 +129,22 @@ OpenWFEru is an open source Ruby workflow and BPM engine.
       <resource>
         <filtering>false</filtering>
         <directory>/Library/Ruby/Gems/1.8/gems/builder-2.1.2/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+
+      <!-- ruby_parser / rogue_parser -->
+      <resource>
+        <filtering>false</filtering>
+        <directory>/Library/Ruby/Gems/1.8/gems/rogue_parser-1.0.1/lib</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>/Library/Ruby/Gems/1.8/gems/ParseTree-2.1.1/lib</directory>
         <includes>
           <include>**/*</include>
         </includes>

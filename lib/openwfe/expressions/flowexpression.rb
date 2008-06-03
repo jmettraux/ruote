@@ -327,6 +327,8 @@ module OpenWFE
             env[var] = value
         end
 
+        alias :sv :set_variable
+
         #
         # Looks up the value of a variable in the current environment.
         # If not found locally will lookup at the process level and even
@@ -340,9 +342,11 @@ module OpenWFE
             #puts "lv : #{varname}"
             #puts OpenWFE.caller_to_s(0, 5)
 
-            env, var = lookup_environment(varname)
+            env, var = lookup_environment varname
             env[var]
         end
+
+        alias :lv :lookup_variable
 
         #
         # Unsets a variable in the current environment.
@@ -352,7 +356,7 @@ module OpenWFE
         #
         def delete_variable (varname)
 
-            env, var = lookup_environment(varname)
+            env, var = lookup_environment varname
             env.delete var
         end
 

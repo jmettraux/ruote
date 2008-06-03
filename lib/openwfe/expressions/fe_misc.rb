@@ -37,9 +37,11 @@
 # John Mettraux at openwfe.org
 #
 
-require 'rufus/eval'
+#require 'rufus/eval'
+
 require 'openwfe/expressions/flowexpression'
 require 'openwfe/expressions/value'
+require 'openwfe/util/treechecker'
 
 
 module OpenWFE
@@ -178,13 +180,14 @@ module OpenWFE
 
         names :reval
 
-        #
+        #--
         # See for an explanation on Ruby safety levels :
         # http://www.rubycentral.com/book/taint.html
         #
         # 'reval' is entitled a safe level of 3.
         #
-        SAFETY_LEVEL = 3
+        #SAFETY_LEVEL = 3
+        #++
 
 
         def reply (workitem)
@@ -198,7 +201,10 @@ module OpenWFE
             wi = workitem
                 # so that the ruby code being evaluated sees 'wi' and 'workitem'
 
-            result = Rufus::eval_safely code, SAFETY_LEVEL, binding()
+            TreeChecker.check_reval code
+
+            #result = Rufus::eval_safely code, SAFETY_LEVEL, binding()
+            result = eval code, binding()
 
             workitem.set_result(result) \
                 if result != nil  # 'false' is a valid result

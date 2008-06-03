@@ -203,6 +203,8 @@ module OpenWFE
 
             result = from_json(text) if result == nil
 
+            #p [ :result, result, text ]
+
             workitem.set_result(result) if result != nil
 
             reply_to_parent workitem

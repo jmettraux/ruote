@@ -89,34 +89,31 @@ class FlowTest4 < Test::Unit::TestCase
     </sequence>
 </process-definition>''', "false")
     end
-    
-    class Reval4 < OpenWFE::ProcessDefinition
-        reval """
-            tracer = self.application_context['__tracer']
 
-            tracer << 'hello\n'
+    #class Reval4 < OpenWFE::ProcessDefinition
+    #    reval """
+    #        tracer = self.application_context['__tracer']
+    #        tracer << 'hello\n'
+    #        tracer << workitem.attributes.length.to_s
+    #    """
+    #end
+    #def test_reval_4
+    #    dotest Reval4, [ "hello\n2", "hello\n1" ]
+    #end
 
-            tracer << workitem.attributes.length.to_s
-        """
-    end
-    def test_reval_4
-        dotest Reval4, [ "hello\n2", "hello\n1" ]
-    end
-
-    class Reval5 < OpenWFE::ProcessDefinition
-        sequence do
-            reval """
-                wi.customer_name = 'dubious'
-                'surf'
-            """
-            _print "${f:__result__}"
-            _print "${f:customer_name}"
-        end
-    end
-
-    def test_reval_5
-        dotest Reval5, "surf\ndubious"
-    end
+    #class Reval5 < OpenWFE::ProcessDefinition
+    #    sequence do
+    #        reval """
+    #            wi.customer_name = 'dubious'
+    #            'surf'
+    #        """
+    #        _print "${f:__result__}"
+    #        _print "${f:customer_name}"
+    #    end
+    #end
+    #def test_reval_5
+    #    dotest Reval5, "surf\ndubious"
+    #end
 
     class Reval6 < OpenWFE::ProcessDefinition
         sequence do
@@ -164,8 +161,8 @@ class FlowTest4 < Test::Unit::TestCase
         dotest(
 '''<process-definition name="dru_2" revision="0">
     <sequence>
-        <set 
-            variable="v" 
+        <set
+            variable="v"
             value="${r:5*2}"
         />
         <print>${v}</print>
@@ -229,7 +226,7 @@ dru_4""")
             @tracer << "\n"
         end
         dotest(
-            TestSetEscape0, 
+            TestSetEscape0,
             "This is \nThis is ${my template}\nThis is ${my template}")
     end
 

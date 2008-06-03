@@ -7,6 +7,8 @@
 # Tue Jan  2 13:14:37 JST 2007
 #
 
+require 'rubygems'
+
 require 'test/unit'
 
 require 'openwfe/workitem'
@@ -39,13 +41,13 @@ class SecTest < Test::Unit::TestCase
         -->
         <reval>File.open("nada.txt") do |f| f.write("nada"); end</reval>
     </sequence>
-</process-definition>''' 
+</process-definition>'''
 
         dotest engine, def0
 
         assert(
             OpenWFE::grep(
-                "Insecure operation - initialize", 
+                "exception : cannot call method on 'File'",
                 "logs/openwferu.log").size > 0)
 
         def2 =
@@ -62,7 +64,7 @@ class SecTest < Test::Unit::TestCase
             ]]>
         </reval>
     </sequence>
-</process-definition>''' 
+</process-definition>'''
 
         dotest(engine, def2)
 
@@ -72,7 +74,7 @@ class SecTest < Test::Unit::TestCase
         <reval>self.ac[:ruby_eval_allowed] = false</reval>
         <reval>puts self.ac[:ruby_eval_allowed]</reval>
     </sequence>
-</process-definition>''' 
+</process-definition>'''
 
         dotest(engine, def3)
 
@@ -101,17 +103,17 @@ class SecTest < Test::Unit::TestCase
             "stringobject".my_name
         </reval>
     </sequence>
-</process-definition>''' 
+</process-definition>'''
 
         dotest engine, def1
 
         assert_equal(
-            1, 
+            2, # now and previously
             OpenWFE::grep(
-                "undefined method `my_name' for \"stringobject\":String", 
+                "exception : reopening or definition of class or module not allowed",
                 "logs/openwferu.log").size)
         #assert_equal(
-        #    1, 
+        #    1,
         #    OpenWFE::grep(
         #        "Insecure: can't set constant",
         #        "logs/openwferu.log").size)
@@ -125,7 +127,7 @@ class SecTest < Test::Unit::TestCase
         <set field="f" value="${ruby:5*7}" />
         <toto/>
     </sequence>
-</process-definition>''' 
+</process-definition>'''
 
     def test_sec_1
 
@@ -151,7 +153,7 @@ class SecTest < Test::Unit::TestCase
 
         engine.stop
     end
-    
+
     def test_sec_1b
 
         value = nil
@@ -182,8 +184,9 @@ class SecTest < Test::Unit::TestCase
 
     def test_sec_2
 
-        assert_equal 35, Rufus::eval_safely("5*7", 4)
-        assert_equal 35, Rufus::eval_safely("5*7", 4, binding())
+        #assert_equal 35, Rufus::eval_safely("5*7", 4)
+        #assert_equal 35, Rufus::eval_safely("5*7", 4, binding())
+        assert_not_nil OpenWFE::TreeChecker::check("5*7")
     end
 
     protected
@@ -195,7 +198,7 @@ class SecTest < Test::Unit::TestCase
             else
                 OpenWFE::LaunchItem.new(def_or_li)
             end
-            
+
             engine.launch(li)
 
             sleep 0.350

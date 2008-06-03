@@ -25,15 +25,20 @@ class FlowTest49 < Test::Unit::TestCase
 
     class TestCondition49a0 < OpenWFE::ProcessDefinition
         sequence do
+
             _if :test => "false"
             _print "0 ${f:__result__}"
+
             _if :test => "true; false"
             _print "1 ${f:__result__}"
+
             _if :test => "false; true"
             _print "2 ${f:__result__}"
+
             #_if :test => "print ''; true"
             _if :test => "''; true"
             _print "3 ${f:__result__}"
+
             #_if :test => "begin print ''; end; true"
             _if :test => "begin ''; end; true"
             _print "4 ${f:__result__}"
@@ -49,10 +54,12 @@ class FlowTest49 < Test::Unit::TestCase
 
     def test_0
 
+        log_level_to_debug
+
         dotest(
             TestCondition49a0,
             [ "0 false",
-              "1 false",
+              "1 true",
               "2 true",
               "3 true",
               "4 true",
