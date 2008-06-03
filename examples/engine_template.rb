@@ -29,7 +29,7 @@ require 'openwfe/participants/participants'
 #application_context[:work_directory] = "work"
     #
     # OpenWFEru engines take one optional argument : application_context
-    # 
+    #
     # the following engine constructions do not use this argument,
     # but you can make them use it
     #
@@ -42,13 +42,13 @@ require 'openwfe/participants/participants'
     #
     # unless this parameter is set to true, the engine will not accept
     # to launch processes whose definition is given by a URL, only
-    # local process definitions (file:) or direct process definitions 
+    # local process definitions (file:) or direct process definitions
     # will be allowed.
 
 #application_context[:ruby_eval_allowed] = true
     #
     # if this parameter is set to true, evaluation of ruby code in process
-    # definition strings will be allowed as well as the ruby version of 
+    # definition strings will be allowed as well as the ruby version of
     # certain expression attributes like :
     #
     #     <participant name="${ruby:LDAP::lookup(customer_id)" />
@@ -173,10 +173,10 @@ end
 #require 'openwfe/listeners/sqslisteners'
 #
 #engine.add_workitem_listener(
-#    OpenWFE::SqsListener.new(:wiqueue, engine.application_context), 
+#    OpenWFE::SqsListener.new(:wiqueue, engine.application_context),
 #    "2s")
     #
-    # adds a listener polling an Amazon Simple Queue Service (SQS) 
+    # adds a listener polling an Amazon Simple Queue Service (SQS)
     # named 'wiqueue' every 2 seconds
     #
     # http://jmettraux.wordpress.com/2007/03/13/openwferu-over-amazon-sqs/
@@ -186,24 +186,24 @@ end
 #
 # === the PARTICIPANTS
 #
-# to learn more about participants : 
+# to learn more about participants :
 # http://openwferu.rubyforge.org/participants.html
 #
 
 # you can use indifferently symbols or strings for participant names
 
 # It's perhaps better to separate the participant registration and put
-# it in its own .rb file, but anyway, here are some participant registration 
+# it in its own .rb file, but anyway, here are some participant registration
 # examples :
 
 engine.register_participant(:toto) do |workitem|
     puts "toto received a workitem..."
-    puts "lots of work..." if workitem.attributes.size > 3 
+    puts "lots of work..." if workitem.attributes.size > 3
     sleep 4
     puts "done."
 end
     #
-    # an example of a "block participant", binding Ruby code to a 
+    # an example of a "block participant", binding Ruby code to a
     # participant in a business process
 
 #require 'openwfe/participants/sqsparticipants'
@@ -226,7 +226,7 @@ end
 engine.reschedule
     #
     # this method has to be called after all the participants have been
-    # added, it looks for temporal expressions (sleep, cron, ...) to 
+    # added, it looks for temporal expressions (sleep, cron, ...) to
     # reschedule.
 
 
