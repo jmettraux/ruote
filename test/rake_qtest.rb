@@ -51,7 +51,6 @@ require 'hparticipant_test'
 require 'timeout_test'
 
 require 'slock_test'
-require 'orest_test.rb'
 
 #require 'extras/atomfeedp_test.rb'
 

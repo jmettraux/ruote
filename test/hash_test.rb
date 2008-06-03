@@ -69,7 +69,7 @@ class HashTest < Test::Unit::TestCase
 
         assert_kind_of OpenWFE::LaunchItem, li1
         assert_equal "USD 12", li1.price
-        assert_equal 3, li1.attributes.size
+        assert_equal 2, li1.attributes.size
     end
 
 end

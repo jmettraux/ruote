@@ -60,13 +60,13 @@ END
 
         doc0 = nil
         doc1 = nil
-    
+
         @engine.register_participant :geo_0 do |fei, workitem|
             doc0 = REXML::Document.new(PAT_XML)
             workitem.attributes['xml'] = doc0
             @tracer << "0\n"
         end
-    
+
         @engine.register_participant :geo_1 do |fei, workitem|
             doc1 = workitem.attributes['xml']
             @tracer << "1\n"
@@ -134,13 +134,13 @@ END
 
         doc0 = nil
         doc1 = nil
-    
+
         @engine.register_participant :geo_0 do |fei, workitem|
             doc0 = REXML::Document.new(PAT_XML).root
             workitem.attributes['xml'] = doc0
             @tracer << "0\n"
         end
-    
+
         @engine.register_participant :geo_1 do |fei, workitem|
             doc1 = workitem.attributes['xml']
             @tracer << "1\n"
@@ -150,6 +150,6 @@ END
 
         assert_equal doc0.to_s, doc1.to_s
    end
-   
+
 end
 
