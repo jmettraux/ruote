@@ -90,16 +90,14 @@ class FlowTest4 < Test::Unit::TestCase
 </process-definition>''', "false")
     end
 
-    #class Reval4 < OpenWFE::ProcessDefinition
-    #    reval """
-    #        tracer = self.application_context['__tracer']
-    #        tracer << 'hello\n'
-    #        tracer << workitem.attributes.length.to_s
-    #    """
-    #end
-    #def test_reval_4
-    #    dotest Reval4, [ "hello\n2", "hello\n1" ]
-    #end
+     class Reval4 < OpenWFE::ProcessDefinition
+         _print do
+             reval "sv('i', 0); 1"
+         end
+     end
+     def test_reval_4
+         dotest Reval4, '1'
+     end
 
     #class Reval5 < OpenWFE::ProcessDefinition
     #    sequence do
