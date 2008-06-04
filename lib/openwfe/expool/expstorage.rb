@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2006-2008, Nicolas Modryzk and John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -84,7 +84,7 @@ module OpenWFE
 
                 s << "\n"
                 if fexp.kind_of?(RawExpression)
-                    s << "*raw" 
+                    s << "*raw"
                 else
                     s << "  "
                 end
@@ -96,7 +96,7 @@ module OpenWFE
         end
 
         #
-        # This method is used by the various implementations of 
+        # This method is used by the various implementations of
         # find_expressions()
         #
         def does_match? (options, fexp_or_fei)
@@ -180,7 +180,7 @@ module OpenWFE
         include ExpressionStorageBase
 
         #
-        # under 20 stored expressions, the unit tests for the 
+        # under 20 stored expressions, the unit tests for the
         # CachedFilePersistedEngine do fail because the persistent storage
         # behind the cache hasn't the time to flush its work queue.
         # a min size limit has been set to 77.
@@ -221,7 +221,7 @@ module OpenWFE
 
             unless fe
                 #ldebug { "[] (reload) miss for #{fei.to_debug_s}" }
-                return nil 
+                return nil
             end
 
             @cache[fei.hash] = fe
@@ -291,14 +291,14 @@ module OpenWFE
             def get_real_storage
 
                 #return @real_storage if @real_storage
-                #@real_storage = 
+                #@real_storage =
                 #    @application_context[S_EXPRESSION_STORAGE + ".1"]
                 #@real_storage
 
                 @application_context["expressionStorage.1"]
             end
     end
-        
+
     #
     # Memory consuming in-memory storage.
     # No memory limit, puts everything in a Hash
@@ -307,7 +307,7 @@ module OpenWFE
         include ServiceMixin
         include OwfeServiceLocator
         include ExpressionStorageBase
-        
+
         def initialize (service_name, application_context)
 
             service_init service_name, application_context
@@ -350,17 +350,17 @@ module OpenWFE
         # just focus on the methods provided by the Engine).
         #
         # :wfid ::
-        #     will list only one process, 
+        #     will list only one process,
         #     <tt>:wfid => '20071208-gipijiwozo'</tt>
         # :parent_wfid ::
         #     will list only one process, and its subprocesses,
         #     <tt>:parent_wfid => '20071208-gipijiwozo'</tt>
-        # :consider_subprocesses :: 
+        # :consider_subprocesses ::
         #     if true, "process-definition" expressions
         #     of subprocesses will be returned as well.
-        # :wfid_prefix :: 
+        # :wfid_prefix ::
         #     allows your to query for specific workflow instance
-        #     id prefixes. for example : 
+        #     id prefixes. for example :
         #     <tt>:wfid_prefix => "200712"</tt>
         #     for the processes started in December.
         # :include_classes ::
@@ -394,7 +394,7 @@ module OpenWFE
         def fetch_root (wfid)
 
             find_expressions(
-                :wfid => wfid, 
+                :wfid => wfid,
                 :include_classes => DefineExpression)[0]
         end
 

@@ -337,7 +337,7 @@ module OpenWFE
 
             wfid = extract_wfid wfid, true
 
-            process_statuses(:wfid => wfid).values[0]
+            process_statuses(:wfid => wfid).values.first
         end
 
         #

@@ -37,8 +37,7 @@
 # John Mettraux at openwfe.org
 #
 
-gem "rogue_parser"
-require 'ruby_parser'
+require 'ruby_parser' #gem "rogue_parser"
 
 #begin
 #    require 'parse_tree'
