@@ -63,6 +63,11 @@ module OpenWFE
         attr_reader :expressions
 
         #
+        # The list of all the expressions in the process (active or not).
+        #
+        attr_reader :all_expressions
+
+        #
         # A hash whose values are ProcessError instances, the keys
         # are FlowExpressionId instances (fei) (identifying the expressions
         # that are concerned with the error)
@@ -91,10 +96,12 @@ module OpenWFE
         def initialize
 
             @wfid = nil
-            @expressions = []
+            @expressions = nil
+            @all_expressions = []
             @errors = {}
             @launch_time = nil
             @variables = nil
+            @paused = false
         end
 
         #
@@ -155,111 +162,88 @@ module OpenWFE
         def << (item)
 
             if item.kind_of?(FlowExpression)
-                add_expression item
+
+                @wfid ||= item.fei.parent_wfid
+
+                @variables = item.variables \
+                    if item.is_a?(Environment) and item.fei.expid == "0"
+
+                @launch_time ||= item.apply_time \
+                    if item.fei.expid == '0' and item.fei.is_in_parent_process?
+
+                @all_expressions << item
+
             else
-                add_error item
+
+                @errors[item.fei] = item
             end
-        end
-
-        #
-        # A String representation, handy for debugging, quick viewing.
-        #
-        def to_s
-
-            s = []
-
-            s << "-- #{self.class.name} --"
-            s << "      wfid :        #{@wfid}"
-            s << "      launch_time : #{launch_time}"
-            s << "      tags :        #{tags.join(", ")}"
-            s << "      errors :      #{@errors.size}"
-            s << "      paused :      #{paused?}"
-
-            s << "      expressions :"
-            @expressions.each do |fexp|
-                s << "         #{fexp.fei.to_s}"
-            end
-
-            s.join "\n"
         end
 
         protected
 
-            def add_expression (fexp)
+            #
+            # Prepares the @expressions instance variable. This method
+            # is only called by the process_status method of the Engine.
+            #
+            def pack_expressions
 
-                if fexp.is_a?(Environment)
-                    @variables = fexp.variables if fexp.fei.expid == "0"
-                    return
-                end
-
-                @wfid ||= fexp.fei.parent_wfid
-
-                @launch_time = fexp.apply_time if fexp.fei.expid == '0'
-
-                exps = @expressions
                 @expressions = []
 
-                added = false
-                @expressions = exps.collect do |fe|
-                    if added or fe.fei.wfid != fexp.fei.wfid
-                        fe
-                    else
-                        if OpenWFE::starts_with(fexp.fei.expid, fe.fei.expid)
-                            added = true
-                            fexp
-                        elsif OpenWFE::starts_with(fe.fei.expid, fexp.fei.expid)
-                            added = true
-                            fe
-                        else
-                            fe
-                        end
-                    end
+                @all_expressions.sort_by { |fe| fe.fei.expid }.each do |fe|
+
+                    next unless fe.apply_time
+                        # no Environment or RawExpression instances
+
+                    @expressions.delete_if { |e| e.fei == fe.parent_id }
+
+                    @expressions << fe
                 end
-                @expressions << fexp unless added
-            end
-
-            def add_error (error)
-
-                @errors[error.fei] = error
             end
     end
 
     #
-    # Renders a nice, terminal oriented, representation of an
-    # Engine.get_process_status() result.
+    # an extension of Hash for holding the process statuses.
     #
-    # You usually directly benefit from this when doing
-    #
-    #     puts engine.get_process_status.to_s
-    #
-    def OpenWFE.pretty_print_process_status (ps)
+    class ProcessStatuses < Hash
 
-        # TODO : include launch_time and why is process_id so long ?
+        #
+        # Renders a nice, terminal oriented, representation of an
+        # Engine.get_process_status() result.
+        #
+        # You usually directly benefit from this when doing
+        #
+        #     puts engine.get_process_status.to_s
+        #
+        def to_s
 
-        s = ""
-        s << "process_id          | name              | rev     | brn | err | paused? \n"
-        s << "--------------------+-------------------+---------+-----+-----+---------\n"
+            # TODO : include launch_time and why is process_id so long ?
 
-        ps.keys.sort.each do |wfid|
+            s = ""
+            s << "process_id          | name              | rev     | brn | err | paused? \n"
+            s << "--------------------+-------------------+---------+-----+-----+---------\n"
 
-            status = ps[wfid]
-            fexp = status.expressions.first
-            ffei = fexp.fei
+            self.keys.sort.each do |wfid|
 
-            s << "%-19s" % wfid[0, 19]
-            s << " | "
-            s << "%-17s" % ffei.workflow_definition_name[0, 17]
-            s << " | "
-            s << "%-7s" % ffei.workflow_definition_revision[0, 7]
-            s << " | "
-            s << "%3s" % status.expressions.size.to_s[0, 3]
-            s << " | "
-            s << "%3s" % status.errors.size.to_s[0, 3]
-            s << " | "
-            s << "%5s" % status.paused?.to_s
-            s << "\n"
+                status = self[wfid]
+                fexp = status.expressions.first
+                ffei = fexp.fei
+
+                s << "%-19s" % wfid[0, 19]
+                s << " | "
+                s << "%-17s" % ffei.workflow_definition_name[0, 17]
+                s << " | "
+                s << "%-7s" % ffei.workflow_definition_revision[0, 7]
+                s << " | "
+                s << "%3s" % status.expressions.size.to_s[0, 3]
+                s << " | "
+                s << "%3s" % status.errors.size.to_s[0, 3]
+                s << " | "
+                s << "%5s" % status.paused?.to_s
+                s << "\n"
+            end
+
+            s
         end
-        s
     end
 
     #
@@ -281,45 +265,28 @@ module OpenWFE
 
             options = { :wfid_prefix => options } if options.is_a?(String)
 
-            result = {}
+            result = ProcessStatuses.new
 
             expressions = get_expression_storage.find_expressions options
 
-            expressions.each do |fexp|
+            expressions.each do |fe|
 
-                next unless (fexp.apply_time or fexp.is_a?(Environment))
+                #next unless (fe.apply_time or fe.is_a?(Environment))
+                #next if fe.fei.wfid == '0' # skip the engine env
 
-                next if fexp.fei.wfid == "0" # skip the engine env
-
-                #(result[fexp.fei.parent_wfid] ||= ProcessStatus.new) << fexp
-
-                parent_wfid = fexp.fei.parent_wfid
-
-                ps = result[parent_wfid]
-
-                if not ps
-
-                    ps = ProcessStatus.new
-
-                    ps.paused =
-                        (get_expool.paused_instances[parent_wfid] != nil)
-
-                    result[parent_wfid] = ps
-                end
-
-                ps << fexp
+                (result[fe.fei.parent_wfid] ||= ProcessStatus.new) << fe
             end
 
             result.values.each do |ps|
-                get_error_journal.get_error_log(ps.wfid).each do |error|
-                    ps << error
-                end
-            end
 
-            class << result
-                def to_s
-                    OpenWFE::pretty_print_process_status(self)
-                end
+                ps.paused = (get_expool.paused_instances[ps.wfid] != nil)
+
+                get_error_journal.get_error_log(ps.wfid).each { |er| ps << er }
+
+                ps.send :pack_expressions # letting it protected
+
+                result.delete(ps.wfid) if ps.expressions.size == 0
+                    # drop result if there are no expressions
             end
 
             result
@@ -337,7 +304,7 @@ module OpenWFE
 
             wfid = extract_wfid wfid, true
 
-            process_statuses(:wfid => wfid).values.first
+            process_statuses(:wfid_prefix => wfid).values.first
         end
 
         #

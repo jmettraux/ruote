@@ -2,31 +2,31 @@
 #--
 # Copyright (c) 2005-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.  
-# 
-# . Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+#   list of conditions and the following disclaimer.
+#
+# . Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
-# 
+#
 # . Neither the name of the "OpenWFE" nor the names of its contributors may be
 #   used to endorse or promote products derived from this software without
 #   specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
@@ -45,7 +45,7 @@ require 'open-uri'
 module OpenWFE
 
     #
-    # see 
+    # see
     # http://wiki.rubygarden.org/Ruby/page/show/Make_A_Deep_Copy_Of_An_Object
     #
     # It's not perfect (that's why fulldup() uses it only in certain cases).
@@ -67,7 +67,7 @@ module OpenWFE
     def OpenWFE.fulldup (object)
 
         return nil if object == nil
-    
+
         return object.fulldup if object.respond_to?("fulldup")
             # trusting client objects providing a fulldup() implementation
             # Tomaso Tosolini 2007.12.11
@@ -81,7 +81,7 @@ module OpenWFE
         return object.dup if object.kind_of?(String)
 
         #return deep_clone(object) if object.kind_of?(REXML::Document)
-        
+
         #return REXML::Document.new(object.to_s) \
         #    if object.kind_of? REXML::Document
 
@@ -94,7 +94,7 @@ module OpenWFE
         return deep_clone(object) if object.is_a?(Date)
 
         return Time.at(object) if object.is_a?(Time)
-            # patch by Maarten Oelering 
+            # patch by Maarten Oelering
 
         return Rational(object.denominator, object.numerator) \
             if object.kind_of?(Rational)
@@ -214,7 +214,7 @@ module OpenWFE
     #
     def OpenWFE.starts_with (string, start)
         #
-        # my favourite way of doing that would be by adding this 
+        # my favourite way of doing that would be by adding this
         # method to the String class, but that could be intrusive
         # (as OpenWFE is meant at first as an embeddable workflow engine).
         #
@@ -490,7 +490,7 @@ module OpenWFE
     end
 
     #
-    # Returns true if this host is currently online (has access to the web / 
+    # Returns true if this host is currently online (has access to the web /
     # internet).
     #
     def online?
@@ -549,6 +549,6 @@ module OpenWFE
 
             value
         end
-    
+
 end
 

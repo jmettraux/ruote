@@ -151,10 +151,12 @@ module OpenWFE::Extras
         #
         def [] (fei)
 
+            #synchronize do
             e = Expression.find_by_fei fei.to_s
             return nil unless e
 
             as_owfe_expression e
+            #end
         end
 
         #

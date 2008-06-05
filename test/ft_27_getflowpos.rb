@@ -28,12 +28,8 @@ class FlowTest27 < Test::Unit::TestCase
     # TEST 0
 
     class TestDefinition0 < OpenWFE::ProcessDefinition
-        def make
-            _process_definition :name => "27_gfp", :revision => "0" do
-                _sequence do
-                    store_p
-                end
-            end
+        sequence do
+            store_p
         end
     end
 

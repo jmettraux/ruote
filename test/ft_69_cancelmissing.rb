@@ -7,6 +7,8 @@
 # Thu Sep 13 09:50:29 JST 2007
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 
 require 'flowtestbase'
@@ -24,7 +26,7 @@ class FlowTest69 < Test::Unit::TestCase
     #
     # TEST 0
 
-    class Test0 < ProcessDefinition
+    class Test0 < OpenWFE::ProcessDefinition
         #__bravo
         participant :ref => "__bravo"
     end
@@ -37,7 +39,7 @@ class FlowTest69 < Test::Unit::TestCase
 
         sleep 0.350
 
-        assert @engine.process_status(fei.wfid).errors.size > 0
+        assert @engine.process_status(fei.wfid).errors.size == 1
 
         @engine.cancel_process fei
 
