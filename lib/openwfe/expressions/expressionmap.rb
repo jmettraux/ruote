@@ -71,192 +71,192 @@ require 'openwfe/expressions/fe_http'
 
 module OpenWFE
 
-    #
-    # The mapping between expression names like 'sequence', 'participant', etc
-    # and classes like 'ParticipantExpression', 'SequenceExpression', etc.
-    #
-    class ExpressionMap
+  #
+  # The mapping between expression names like 'sequence', 'participant', etc
+  # and classes like 'ParticipantExpression', 'SequenceExpression', etc.
+  #
+  class ExpressionMap
 
-        def initialize
+    def initialize
 
-            super
+      super
 
-            @expressions = {}
-            @ancestors = {}
+      @expressions = {}
+      @ancestors = {}
 
-            register DefineExpression
+      register DefineExpression
 
-            register DescriptionExpression
+      register DescriptionExpression
 
-            register SequenceExpression
-            register ParticipantExpression
+      register SequenceExpression
+      register ParticipantExpression
 
-            register ConcurrenceExpression
-            register GenericSyncExpression
+      register ConcurrenceExpression
+      register GenericSyncExpression
 
-            register ConcurrentIteratorExpression
+      register ConcurrentIteratorExpression
 
-            register SubProcessRefExpression
+      register SubProcessRefExpression
 
-            register SetValueExpression
-            register UnsetValueExpression
+      register SetValueExpression
+      register UnsetValueExpression
 
-            register DefinedExpression
+      register DefinedExpression
 
-            register IfExpression
-            register CaseExpression
+      register IfExpression
+      register CaseExpression
 
-            register EqualsExpression
+      register EqualsExpression
 
-            register SleepExpression
-            register CronExpression
-            register WhenExpression
-            register WaitExpression
+      register SleepExpression
+      register CronExpression
+      register WhenExpression
+      register WaitExpression
 
-            register ReserveExpression
+      register ReserveExpression
 
-            register RevalExpression
-            register PrintExpression
-            register LogExpression
+      register RevalExpression
+      register PrintExpression
+      register LogExpression
 
-            register LoseExpression
-            register ForgetExpression
+      register LoseExpression
+      register ForgetExpression
 
-            register CursorExpression
-            register LoopExpression
+      register CursorExpression
+      register LoopExpression
 
-            register CursorCommandExpression
+      register CursorCommandExpression
 
-            register IteratorExpression
+      register IteratorExpression
 
-            register FqvExpression
-            register AttributeExpression
+      register FqvExpression
+      register AttributeExpression
 
-            register CancelProcessExpression
+      register CancelProcessExpression
 
-            register UndoExpression
-            register RedoExpression
+      register UndoExpression
+      register RedoExpression
 
-            register SaveWorkItemExpression
-            register RestoreWorkItemExpression
+      register SaveWorkItemExpression
+      register RestoreWorkItemExpression
 
-            register FilterDefinitionExpression
-            register FilterExpression
+      register FilterDefinitionExpression
+      register FilterExpression
 
-            register ListenExpression
+      register ListenExpression
 
-            register TimeoutExpression
+      register TimeoutExpression
 
-            register EvalExpression
-            register ExpExpression
+      register EvalExpression
+      register ExpExpression
 
-            register StepExpression
+      register StepExpression
 
-            register HttpExpression
-            register HpollExpression
+      register HttpExpression
+      register HpollExpression
 
-            register Environment
-                #
-                # only used by get_expression_names()
-
-            register_ancestors RawExpression
-            #register_ancestors XmlRawExpression
-            #register_ancestors ProgRawExpression
-                #
-                # just register the ancestors for those two
-        end
-
+      register Environment
         #
-        # Returns the expression class corresponding to the given
-        # expression name
+        # only used by get_expression_names()
+
+      register_ancestors RawExpression
+      #register_ancestors XmlRawExpression
+      #register_ancestors ProgRawExpression
         #
-        def get_class (expression_name)
-
-            expression_name = expression_name.expression_name \
-                if expression_name.kind_of?(RawExpression)
-
-            expression_name = OpenWFE::symbol_to_name(expression_name)
-
-            @expressions[expression_name]
-        end
-
-        def get_sync_class (expression_name)
-
-            get_class(expression_name)
-        end
-
-        #
-        # Returns true if the given expression name ('sequence',
-        # 'process-definition', ...) is a DefineExpression.
-        #
-        def is_definition? (expression_name)
-
-            c = get_class(expression_name)
-
-            #c == DefineExpression
-            (c and c.is_definition?)
-        end
-
-        #
-        # Returns an array of expression names whose class are assignable
-        # from the given expression_class.
-        #
-        def get_expression_names (expression_class)
-
-            return expression_class.expression_names \
-                if expression_class.method_defined?(:expression_names)
-
-            names = []
-            @expressions.each do |k, v|
-                names << k if v.ancestors.include? expression_class
-            end
-            names
-        end
-
-        #
-        # Returns an array of expression classes that have the given
-        # class/module among their ancestors.
-        #
-        def get_expression_classes (ancestor)
-
-            @ancestors[ancestor]
-        end
-
-        def to_s
-            s = ""
-            @expressions.keys.sort.each do |name|
-                s << "- '#{name}' -> '#{@expressions[name].to_s}'\n"
-            end
-            s
-        end
-
-        #
-        # Registers an Expression class within this expression map.
-        # This method is usually never called from out of the ExpressionMap
-        # class, but, who knows, it could prove useful one day as a 'public'
-        # method.
-        #
-        def register (expression_class)
-
-            expression_class.expression_names.each do |name|
-                name = OpenWFE::to_dash(name)
-                @expressions[name] = expression_class
-            end
-            register_ancestors expression_class
-        end
-
-        protected
-
-            #
-            # registers all the ancestors of an expression class
-            #
-            def register_ancestors (expression_class)
-
-                expression_class.ancestors.each do |ancestor|
-                    (@ancestors[ancestor] ||= []) << expression_class
-                end
-            end
+        # just register the ancestors for those two
     end
+
+    #
+    # Returns the expression class corresponding to the given
+    # expression name
+    #
+    def get_class (expression_name)
+
+      expression_name = expression_name.expression_name \
+        if expression_name.kind_of?(RawExpression)
+
+      expression_name = OpenWFE::symbol_to_name(expression_name)
+
+      @expressions[expression_name]
+    end
+
+    def get_sync_class (expression_name)
+
+      get_class(expression_name)
+    end
+
+    #
+    # Returns true if the given expression name ('sequence',
+    # 'process-definition', ...) is a DefineExpression.
+    #
+    def is_definition? (expression_name)
+
+      c = get_class(expression_name)
+
+      #c == DefineExpression
+      (c and c.is_definition?)
+    end
+
+    #
+    # Returns an array of expression names whose class are assignable
+    # from the given expression_class.
+    #
+    def get_expression_names (expression_class)
+
+      return expression_class.expression_names \
+        if expression_class.method_defined?(:expression_names)
+
+      names = []
+      @expressions.each do |k, v|
+        names << k if v.ancestors.include? expression_class
+      end
+      names
+    end
+
+    #
+    # Returns an array of expression classes that have the given
+    # class/module among their ancestors.
+    #
+    def get_expression_classes (ancestor)
+
+      @ancestors[ancestor]
+    end
+
+    def to_s
+      s = ""
+      @expressions.keys.sort.each do |name|
+        s << "- '#{name}' -> '#{@expressions[name].to_s}'\n"
+      end
+      s
+    end
+
+    #
+    # Registers an Expression class within this expression map.
+    # This method is usually never called from out of the ExpressionMap
+    # class, but, who knows, it could prove useful one day as a 'public'
+    # method.
+    #
+    def register (expression_class)
+
+      expression_class.expression_names.each do |name|
+        name = OpenWFE::to_dash(name)
+        @expressions[name] = expression_class
+      end
+      register_ancestors expression_class
+    end
+
+    protected
+
+      #
+      # registers all the ancestors of an expression class
+      #
+      def register_ancestors (expression_class)
+
+        expression_class.ancestors.each do |ancestor|
+          (@ancestors[ancestor] ||= []) << expression_class
+        end
+      end
+  end
 
 end
 

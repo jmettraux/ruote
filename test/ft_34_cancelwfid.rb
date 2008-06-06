@@ -16,65 +16,65 @@ require 'flowtestbase'
 
 
 class FlowTest34 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
+  #
+  # TEST 0
+
+  class TestCancelWfid0 < OpenWFE::ProcessDefinition
     #
-    # TEST 0
+    # so tiny a definition...
+    #
+    store_participant
+  end
 
-    class TestCancelWfid0 < OpenWFE::ProcessDefinition
-        #
-        # so tiny a definition...
-        #
-        store_participant
-    end
+  def test_cancelwfid_0
 
-    def test_cancelwfid_0
+    sp = @engine.register_participant(
+      "store_participant", OpenWFE::HashParticipant)
 
-        sp = @engine.register_participant(
-            "store_participant", OpenWFE::HashParticipant)
+    fei = launch TestCancelWfid0
 
-        fei = launch TestCancelWfid0
+    sleep 0.300
 
-        sleep 0.300
+    @engine.cancel_process(fei.wfid)
 
-        @engine.cancel_process(fei.wfid)
+    sleep 0.350
 
-        sleep 0.350
+    l = @engine.list_processes
 
-        l = @engine.list_processes
+    assert_equal 0, l.size
 
-        assert_equal 0, l.size
+    assert_equal 0, sp.size
+      # check that participant got cancelled as well
+  end
 
-        assert_equal 0, sp.size
-            # check that participant got cancelled as well
-    end
+  def test_cancelwfid_1
 
-    def test_cancelwfid_1
+    #log_level_to_debug
 
-        #log_level_to_debug
+    sp = @engine.register_participant(
+      "store_participant", OpenWFE::YamlParticipant)
 
-        sp = @engine.register_participant(
-            "store_participant", OpenWFE::YamlParticipant)
+    fei = launch TestCancelWfid0
 
-        fei = launch TestCancelWfid0
+    sleep 0.350
 
-        sleep 0.350
+    @engine.cancel_process(fei.wfid)
 
-        @engine.cancel_process(fei.wfid)
+    sleep 0.350
 
-        sleep 0.350
+    assert_equal 0, @engine.get_process_stack(fei.wfid).size
 
-        assert_equal 0, @engine.get_process_stack(fei.wfid).size
-
-        assert_equal 0, sp.size
-            # check that participant got cancelled as well
-    end
+    assert_equal 0, sp.size
+      # check that participant got cancelled as well
+  end
 
 end
 

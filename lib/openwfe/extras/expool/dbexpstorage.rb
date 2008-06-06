@@ -53,303 +53,303 @@ require 'openwfe/expool/threadedexpstorage'
 
 module OpenWFE::Extras
 
+  #
+  # A migration for creating/dropping the "expressions" table.
+  # 'expressions' are atomic pieces of running process instances.
+  #
+  class ExpressionTables < ActiveRecord::Migration
+
+    def self.up
+
+      create_table :expressions do |t|
+
+        t.column :fei, :string, :null => false
+        t.column :wfid, :string, :null => false
+        #t.column :wfname, :string, :null => false
+        t.column :exp_class, :string, :null => false
+
+        #t.column :svalue, :text, :null => false
+        t.column :svalue, :text, :null => false, :limit => 1024 * 1024
+          #
+          # 'value' could be reserved, using 'svalue' instead
+          #
+          # :limit patch by Maarten Oelering (a greater value
+          # could be required in some cases)
+      end
+      add_index :expressions, :fei
+      add_index :expressions, :wfid
+      #add_index :expressions, :wfname
+      add_index :expressions, :exp_class
+    end
+
+    def self.down
+
+      drop_table :expressions
+    end
+  end
+
+  #
+  # The ActiveRecord wrapper for an OpenWFEru FlowExpression instance.
+  #
+  class Expression < ActiveRecord::Base
+
+    serialize :svalue
+  end
+
+  #
+  # Storing OpenWFE flow expressions in a database.
+  #
+  class DbExpressionStorage
+    include MonitorMixin
+    include OpenWFE::ServiceMixin
+    include OpenWFE::OwfeServiceLocator
+    include OpenWFE::ExpressionStorageBase
+
     #
-    # A migration for creating/dropping the "expressions" table.
-    # 'expressions' are atomic pieces of running process instances.
+    # Constructor.
     #
-    class ExpressionTables < ActiveRecord::Migration
+    def initialize (service_name, application_context)
 
-        def self.up
+      require 'openwfe/storage/yamlcustom'
+        # making sure this file has been required at this point
+        # this yamlcustom thing prevents the whole OpenWFE ecosystem
+        # to get serialized :)
 
-            create_table :expressions do |t|
+      super() # absolutely necessary as we include MonitorMixin
+      service_init service_name, application_context
 
-                t.column :fei, :string, :null => false
-                t.column :wfid, :string, :null => false
-                #t.column :wfname, :string, :null => false
-                t.column :exp_class, :string, :null => false
-
-                #t.column :svalue, :text, :null => false
-                t.column :svalue, :text, :null => false, :limit => 1024 * 1024
-                    #
-                    # 'value' could be reserved, using 'svalue' instead
-                    #
-                    # :limit patch by Maarten Oelering (a greater value
-                    # could be required in some cases)
-            end
-            add_index :expressions, :fei
-            add_index :expressions, :wfid
-            #add_index :expressions, :wfname
-            add_index :expressions, :exp_class
-        end
-
-        def self.down
-
-            drop_table :expressions
-        end
+      observe_expool
     end
 
     #
-    # The ActiveRecord wrapper for an OpenWFEru FlowExpression instance.
+    # Stores an expression.
     #
-    class Expression < ActiveRecord::Base
+    def []= (fei, flow_expression)
 
-        serialize :svalue
+      ldebug { "[]= storing #{fei.to_s}" }
+
+      synchronize do
+
+        e = Expression.find_by_fei fei.to_s
+
+        unless e
+          e = Expression.new
+          e.fei = fei.to_s
+          e.wfid = fei.wfid
+          #e.wfname = fei.wfname
+        end
+
+        e.exp_class = flow_expression.class.name
+        e.svalue = flow_expression
+
+        e.save!
+      end
     end
 
     #
-    # Storing OpenWFE flow expressions in a database.
+    # Retrieves a flow expression.
     #
-    class DbExpressionStorage
-        include MonitorMixin
-        include OpenWFE::ServiceMixin
-        include OpenWFE::OwfeServiceLocator
-        include OpenWFE::ExpressionStorageBase
+    def [] (fei)
 
-        #
-        # Constructor.
-        #
-        def initialize (service_name, application_context)
+      #synchronize do
+      e = Expression.find_by_fei fei.to_s
+      return nil unless e
 
-            require 'openwfe/storage/yamlcustom'
-                # making sure this file has been required at this point
-                # this yamlcustom thing prevents the whole OpenWFE ecosystem
-                # to get serialized :)
-
-            super() # absolutely necessary as we include MonitorMixin
-            service_init service_name, application_context
-
-            observe_expool
-        end
-
-        #
-        # Stores an expression.
-        #
-        def []= (fei, flow_expression)
-
-            ldebug { "[]= storing #{fei.to_s}" }
-
-            synchronize do
-
-                e = Expression.find_by_fei fei.to_s
-
-                unless e
-                    e = Expression.new
-                    e.fei = fei.to_s
-                    e.wfid = fei.wfid
-                    #e.wfname = fei.wfname
-                end
-
-                e.exp_class = flow_expression.class.name
-                e.svalue = flow_expression
-
-                e.save!
-            end
-        end
-
-        #
-        # Retrieves a flow expression.
-        #
-        def [] (fei)
-
-            #synchronize do
-            e = Expression.find_by_fei fei.to_s
-            return nil unless e
-
-            as_owfe_expression e
-            #end
-        end
-
-        #
-        # Returns true if there is a FlowExpression stored with the given id.
-        #
-        def has_key? (fei)
-
-            (Expression.find_by_fei(fei.to_s) != nil)
-        end
-
-        #
-        # Deletes a flow expression.
-        #
-        def delete (fei)
-
-            synchronize do
-                Expression.delete_all ["fei = ?", fei.to_s]
-            end
-        end
-
-        #
-        # Returns the count of expressions currently stored.
-        #
-        def size
-
-            Expression.count
-        end
-
-        alias :length :size
-
-        #
-        # Danger ! Will remove all the expressions in the database.
-        #
-        def purge
-
-            Expression.delete_all
-        end
-
-        #
-        # Gather expressions matching certain parameters.
-        #
-        def find_expressions (options={})
-
-            conditions = determine_conditions options
-                # note : this call modifies the options hash...
-
-            #
-            # maximize usage of SQL querying
-
-            exps = Expression.find :all, :conditions => conditions
-
-            #
-            # do the rest of the filtering
-
-            exps = exps.collect do |exp|
-                as_owfe_expression exp
-            end
-
-            exps.find_all do |fexp|
-                does_match? options, fexp
-            end
-        end
-
-        #
-        # Fetches the root of a process instance.
-        #
-        def fetch_root (wfid)
-
-            params = {}
-
-            params[:conditions] = [
-                "wfid = ? AND exp_class = ?",
-                wfid,
-                OpenWFE::DefineExpression.to_s
-            ]
-
-            exps = Expression.find(:all, params)
-
-            e = exps.sort { |fe1, fe2| fe1.fei.expid <=> fe2.fei.expid }[0]
-                #
-                # find the one with the smallest expid
-
-            as_owfe_expression e
-        end
-
-        protected
-
-            #
-            # Grabs the options to build a conditions array for use by
-            # find().
-            #
-            # Note : this method, modifies the options hash (it removes
-            # the args it needs).
-            #
-            def determine_conditions (options)
-
-                wfid = options.delete :wfid
-                wfid_prefix = options.delete :wfid_prefix
-                #parent_wfid = options.delete :parent_wfid
-
-                query = []
-                conditions = []
-
-                if wfid
-                    query << "wfid = ?"
-                    conditions << wfid
-                elsif wfid_prefix
-                    query << "wfid LIKE ?"
-                    conditions << "#{wfid_prefix}%"
-                end
-
-                add_class_conditions options, query, conditions
-
-                conditions = conditions.flatten
-
-                if conditions.size < 1
-                    nil
-                else
-                    conditions.insert 0, query.join(" AND ")
-                end
-            end
-
-            #
-            # Used by determine_conditions().
-            #
-            def add_class_conditions (options, query, conditions)
-
-                ic = options.delete :include_classes
-                ic = Array(ic)
-
-                ec = options.delete :exclude_classes
-                ec = Array(ec)
-
-                acc ic, query, conditions, "OR"
-                acc ec, query, conditions, "AND"
-            end
-
-            def acc (classes, query, conditions, join)
-
-                return if classes.size < 1
-
-                classes = classes.collect do |kind|
-                    get_expression_map.get_expression_classes kind
-                end
-                classes = classes.flatten
-
-                quer = []
-                cond = []
-                classes.each do |cl|
-
-                    quer << if join == "AND"
-                        "exp_class != ?"
-                    else
-                        "exp_class = ?"
-                    end
-
-                    cond << cl.to_s
-                end
-                quer = quer.join " #{join} "
-
-                query << "(#{quer})"
-                conditions << cond
-            end
-
-            #
-            # Extracts the OpenWFE FlowExpression instance from the
-            # active record and makes sure its application_context is set.
-            #
-            def as_owfe_expression (record)
-
-                return nil unless record
-
-                fe = record.svalue
-                fe.application_context = @application_context
-                fe
-            end
+      as_owfe_expression e
+      #end
     end
 
     #
-    # A DbExpressionStorage that does less work, for more performance,
-    # thanks to the ThreadedStorageMixin.
+    # Returns true if there is a FlowExpression stored with the given id.
     #
-    class ThreadedDbExpressionStorage < DbExpressionStorage
-        include OpenWFE::ThreadedStorageMixin
+    def has_key? (fei)
 
-        def initialize (service_name, application_context)
-
-            super
-
-            start_queue
-                #
-                # which sets @thread_id
-        end
+      (Expression.find_by_fei(fei.to_s) != nil)
     end
+
+    #
+    # Deletes a flow expression.
+    #
+    def delete (fei)
+
+      synchronize do
+        Expression.delete_all ["fei = ?", fei.to_s]
+      end
+    end
+
+    #
+    # Returns the count of expressions currently stored.
+    #
+    def size
+
+      Expression.count
+    end
+
+    alias :length :size
+
+    #
+    # Danger ! Will remove all the expressions in the database.
+    #
+    def purge
+
+      Expression.delete_all
+    end
+
+    #
+    # Gather expressions matching certain parameters.
+    #
+    def find_expressions (options={})
+
+      conditions = determine_conditions options
+        # note : this call modifies the options hash...
+
+      #
+      # maximize usage of SQL querying
+
+      exps = Expression.find :all, :conditions => conditions
+
+      #
+      # do the rest of the filtering
+
+      exps = exps.collect do |exp|
+        as_owfe_expression exp
+      end
+
+      exps.find_all do |fexp|
+        does_match? options, fexp
+      end
+    end
+
+    #
+    # Fetches the root of a process instance.
+    #
+    def fetch_root (wfid)
+
+      params = {}
+
+      params[:conditions] = [
+        "wfid = ? AND exp_class = ?",
+        wfid,
+        OpenWFE::DefineExpression.to_s
+      ]
+
+      exps = Expression.find(:all, params)
+
+      e = exps.sort { |fe1, fe2| fe1.fei.expid <=> fe2.fei.expid }[0]
+        #
+        # find the one with the smallest expid
+
+      as_owfe_expression e
+    end
+
+    protected
+
+      #
+      # Grabs the options to build a conditions array for use by
+      # find().
+      #
+      # Note : this method, modifies the options hash (it removes
+      # the args it needs).
+      #
+      def determine_conditions (options)
+
+        wfid = options.delete :wfid
+        wfid_prefix = options.delete :wfid_prefix
+        #parent_wfid = options.delete :parent_wfid
+
+        query = []
+        conditions = []
+
+        if wfid
+          query << "wfid = ?"
+          conditions << wfid
+        elsif wfid_prefix
+          query << "wfid LIKE ?"
+          conditions << "#{wfid_prefix}%"
+        end
+
+        add_class_conditions options, query, conditions
+
+        conditions = conditions.flatten
+
+        if conditions.size < 1
+          nil
+        else
+          conditions.insert 0, query.join(" AND ")
+        end
+      end
+
+      #
+      # Used by determine_conditions().
+      #
+      def add_class_conditions (options, query, conditions)
+
+        ic = options.delete :include_classes
+        ic = Array(ic)
+
+        ec = options.delete :exclude_classes
+        ec = Array(ec)
+
+        acc ic, query, conditions, "OR"
+        acc ec, query, conditions, "AND"
+      end
+
+      def acc (classes, query, conditions, join)
+
+        return if classes.size < 1
+
+        classes = classes.collect do |kind|
+          get_expression_map.get_expression_classes kind
+        end
+        classes = classes.flatten
+
+        quer = []
+        cond = []
+        classes.each do |cl|
+
+          quer << if join == "AND"
+            "exp_class != ?"
+          else
+            "exp_class = ?"
+          end
+
+          cond << cl.to_s
+        end
+        quer = quer.join " #{join} "
+
+        query << "(#{quer})"
+        conditions << cond
+      end
+
+      #
+      # Extracts the OpenWFE FlowExpression instance from the
+      # active record and makes sure its application_context is set.
+      #
+      def as_owfe_expression (record)
+
+        return nil unless record
+
+        fe = record.svalue
+        fe.application_context = @application_context
+        fe
+      end
+  end
+
+  #
+  # A DbExpressionStorage that does less work, for more performance,
+  # thanks to the ThreadedStorageMixin.
+  #
+  class ThreadedDbExpressionStorage < DbExpressionStorage
+    include OpenWFE::ThreadedStorageMixin
+
+    def initialize (service_name, application_context)
+
+      super
+
+      start_queue
+        #
+        # which sets @thread_id
+    end
+  end
 end
 

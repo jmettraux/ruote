@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.19    not yet released
 
+- todo  #20539 : indent = 2
 - bug   #20505 : fixed issues with branch count in ProcessStatus.
 - todo  #11856 : got rid of old rest interface (but kept xmlcodec for a while)
 - todo  #20083 : integrated treechecker and got rid of rufus-eval.

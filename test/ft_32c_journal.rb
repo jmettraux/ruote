@@ -16,87 +16,87 @@ require 'flowtestbase'
 
 
 class FlowTest32c < Test::Unit::TestCase
-    include FlowTestBase
-    include JournalTestBase
+  include FlowTestBase
+  include JournalTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
+
+  #
+  # TEST 0
+
+  class Test0 < OpenWFE::ProcessDefinition
+    sequence do
+      participant :alpha
+      participant :nada
+      participant :bravo
+    end
+  end
+
+  def test_0
+
+    @engine.application_context[:keep_journals] = true
+
+    @engine.init_service "journal", OpenWFE::Journal
+
+    @engine.register_participant(:alpha) do |wi|
+      @tracer << "alpha\n"
+    end
+
+    class << get_journal
+      public :flush_buckets
+    end
+
+    #fei = dotest(Test0, "alpha", 0.500, true)
+    li = OpenWFE::LaunchItem.new Test0
+    fei = launch li
+
+    sleep 0.500
+
+    get_journal.flush_buckets
+
+    fn = get_journal.workdir + "/" + fei.wfid + ".journal"
+
+    #require 'pp'; pp get_journal.load_events(fn)[-1]
+
+    error_event = get_journal.load_events(fn)[-1]
+
+    assert_equal error_event[0], :error
+    assert_equal error_event[2].wfid, fei.wfid
+    assert_equal error_event[3], :apply
 
     #
-    # TEST 0
+    # replaying the error (should occur a second time)
 
-    class Test0 < OpenWFE::ProcessDefinition
-        sequence do
-            participant :alpha
-            participant :nada
-            participant :bravo
-        end
+    get_journal.replay_at_error error_event
+
+    sleep 0.500
+
+    assert_equal 2, get_error_count(fei.wfid)
+
+    #
+    # fixing the cause of the error and then replaying the error
+    # (should not occur)
+
+    @engine.register_participant(:nada) do |wi|
+      @tracer << "nada\n"
+    end
+    @engine.register_participant(:bravo) do |wi|
+      @tracer << "bravo\n"
     end
 
-    def test_0
+    assert_equal @tracer.to_s, "alpha"
 
-        @engine.application_context[:keep_journals] = true
+    get_journal.replay_at_error error_event
 
-        @engine.init_service "journal", OpenWFE::Journal
+    sleep 1.0
 
-        @engine.register_participant(:alpha) do |wi|
-            @tracer << "alpha\n"
-        end
-
-        class << get_journal
-            public :flush_buckets
-        end
-
-        #fei = dotest(Test0, "alpha", 0.500, true)
-        li = OpenWFE::LaunchItem.new Test0
-        fei = launch li
-
-        sleep 0.500
-
-        get_journal.flush_buckets
-
-        fn = get_journal.workdir + "/" + fei.wfid + ".journal"
-
-        #require 'pp'; pp get_journal.load_events(fn)[-1]
-
-        error_event = get_journal.load_events(fn)[-1]
-
-        assert_equal error_event[0], :error
-        assert_equal error_event[2].wfid, fei.wfid
-        assert_equal error_event[3], :apply
-
-        #
-        # replaying the error (should occur a second time)
-
-        get_journal.replay_at_error error_event
-
-        sleep 0.500
-
-        assert_equal 2, get_error_count(fei.wfid)
-
-        #
-        # fixing the cause of the error and then replaying the error
-        # (should not occur)
-
-        @engine.register_participant(:nada) do |wi|
-            @tracer << "nada\n"
-        end
-        @engine.register_participant(:bravo) do |wi|
-            @tracer << "bravo\n"
-        end
-
-        assert_equal @tracer.to_s, "alpha"
-
-        get_journal.replay_at_error error_event
-
-        sleep 1.0
-
-        assert_equal @tracer.to_s, "alpha\nnada\nbravo"
-    end
+    assert_equal @tracer.to_s, "alpha\nnada\nbravo"
+  end
 
 end
 

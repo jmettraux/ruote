@@ -45,95 +45,95 @@ require 'openwfe/expressions/value'
 
 module OpenWFE
 
-    #
-    # The 'set' expression is used to set the value of a (process) variable or
-    # a (workitem) field.
-    #
-    #     <set field="price" value="CHF 12.00" />
-    #     <set variable="/stage" value="3" />
-    #     <set variable="/stage" field-value="f_stage" />
-    #     <set field="stamp" value="${r:Time.now.to_i}" />
-    #
-    # (Notice the usage of the dollar notation in the last exemple).
-    #
-    # 'set' expressions may be placed outside of a process-definition body,
-    # they will be evaluated sequentially before the body gets applied
-    # (executed).
-    #
-    # Shorter attributes are OK :
-    #
-    #     <set f="price" val="CHF 12.00" />
-    #     <set v="/stage" val="3" />
-    #     <set v="/stage" field-val="f_stage" />
-    #     <set f="stamp" val="${r:Time.now.to_i}" />
-    #
-    #     set :f => "price", :val => "USD 12.50"
-    #     set :v => "toto", :val => "elvis"
-    #
-    # In case you need the value not to be evaluated if it contains
-    # dollar expressions, you can do
-    #
-    #     set :v => "v0", :val => "my ${template} thing", :escape => true
-    #
-    # to prevent evaluation (i.e. to escape).
-    #
-    class SetValueExpression < FlowExpression
-        include ValueMixin
+  #
+  # The 'set' expression is used to set the value of a (process) variable or
+  # a (workitem) field.
+  #
+  #   <set field="price" value="CHF 12.00" />
+  #   <set variable="/stage" value="3" />
+  #   <set variable="/stage" field-value="f_stage" />
+  #   <set field="stamp" value="${r:Time.now.to_i}" />
+  #
+  # (Notice the usage of the dollar notation in the last exemple).
+  #
+  # 'set' expressions may be placed outside of a process-definition body,
+  # they will be evaluated sequentially before the body gets applied
+  # (executed).
+  #
+  # Shorter attributes are OK :
+  #
+  #   <set f="price" val="CHF 12.00" />
+  #   <set v="/stage" val="3" />
+  #   <set v="/stage" field-val="f_stage" />
+  #   <set f="stamp" val="${r:Time.now.to_i}" />
+  #
+  #   set :f => "price", :val => "USD 12.50"
+  #   set :v => "toto", :val => "elvis"
+  #
+  # In case you need the value not to be evaluated if it contains
+  # dollar expressions, you can do
+  #
+  #   set :v => "v0", :val => "my ${template} thing", :escape => true
+  #
+  # to prevent evaluation (i.e. to escape).
+  #
+  class SetValueExpression < FlowExpression
+    include ValueMixin
 
-        is_definition
+    is_definition
 
-        names :set
+    names :set
 
 
-        def reply (workitem)
+    def reply (workitem)
 
-            vkey = lookup_variable_attribute(workitem)
-            fkey = lookup_field_attribute(workitem)
+      vkey = lookup_variable_attribute(workitem)
+      fkey = lookup_field_attribute(workitem)
 
-            value = workitem.attributes[FIELD_RESULT]
+      value = workitem.attributes[FIELD_RESULT]
 
-            #puts "value is '#{value}'"
+      #puts "value is '#{value}'"
 
-            if vkey
-                set_variable vkey, value
-            elsif fkey
-                workitem.set_attribute fkey, value
-            else
-                raise "'variable' or 'field' attribute missing from 'set' expression"
-            end
+      if vkey
+        set_variable vkey, value
+      elsif fkey
+        workitem.set_attribute fkey, value
+      else
+        raise "'variable' or 'field' attribute missing from 'set' expression"
+      end
 
-            reply_to_parent(workitem)
-        end
+      reply_to_parent(workitem)
     end
+  end
 
-    #
-    # 'unset' removes a field or a variable.
-    #
-    #     unset :field => "price"
-    #     unset :variable => "eval_result"
-    #
-    class UnsetValueExpression < FlowExpression
-        include ValueMixin
+  #
+  # 'unset' removes a field or a variable.
+  #
+  #   unset :field => "price"
+  #   unset :variable => "eval_result"
+  #
+  class UnsetValueExpression < FlowExpression
+    include ValueMixin
 
-        names :unset
+    names :unset
 
 
-        def apply (workitem)
+    def apply (workitem)
 
-            vkey = lookup_variable_attribute(workitem)
-            fkey = lookup_field_attribute(workitem)
+      vkey = lookup_variable_attribute(workitem)
+      fkey = lookup_field_attribute(workitem)
 
-            if vkey
-                delete_variable(vkey)
-            elsif fkey
-                workitem.unset_attribute fkey
-            else
-                raise "attribute 'variable' or 'field' is missing for 'unset' expression"
-            end
+      if vkey
+        delete_variable(vkey)
+      elsif fkey
+        workitem.unset_attribute fkey
+      else
+        raise "attribute 'variable' or 'field' is missing for 'unset' expression"
+      end
 
-            reply_to_parent workitem
-        end
+      reply_to_parent workitem
     end
+  end
 
 end
 

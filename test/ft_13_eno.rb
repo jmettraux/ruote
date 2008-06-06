@@ -14,39 +14,39 @@ require 'flowtestbase'
 
 
 class FlowTest13 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #
-    # Test 0
-    #
+  #
+  # Test 0
+  #
 
-    class TestDefinition0 < OpenWFE::ProcessDefinition
-        def make
-            process_definition :name => "test0", :revision => "0" do
-                sequence do
-                    set :field => 'email_target' do
-                        "whatever56x56@gmail.com"
-                    end
-                    set :field => 'customer_name' do
-                        "Monsieur Toto"
-                    end
-                    participant :ref => 'eno'
-                    _print "ok"
-                end
-            end
+  class TestDefinition0 < OpenWFE::ProcessDefinition
+    def make
+      process_definition :name => "test0", :revision => "0" do
+        sequence do
+          set :field => 'email_target' do
+            "whatever56x56@gmail.com"
+          end
+          set :field => 'customer_name' do
+            "Monsieur Toto"
+          end
+          participant :ref => 'eno'
+          _print "ok"
         end
+      end
     end
+  end
 
-    def test_ppd_0
-        dotest(
-            TestDefinition0,
-            "ok")
-    end
+  def test_ppd_0
+    dotest(
+      TestDefinition0,
+      "ok")
+  end
 end
 

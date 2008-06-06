@@ -52,29 +52,29 @@ module OpenWFE
   #
   class Base64Attribute
 
-      attr_accessor :content
+    attr_accessor :content
 
-      def initialize (base64content)
+    def initialize (base64content)
 
-          @content = base64content
-      end
+      @content = base64content
+    end
 
-      #
-      # dewraps (decode) the current content and returns it
-      #
-      def dewrap
+    #
+    # dewraps (decode) the current content and returns it
+    #
+    def dewrap
 
-          Base64.decode64 @content
-      end
+      Base64.decode64 @content
+    end
 
-      #
-      # wraps some binary content and stores it in this attribute
-      # (class method)
-      #
-      def self.wrap (binaryData)
+    #
+    # wraps some binary content and stores it in this attribute
+    # (class method)
+    #
+    def self.wrap (binaryData)
 
-          Base64Attribute.new(Base64.encode64(binaryData))
-      end
+      Base64Attribute.new(Base64.encode64(binaryData))
+    end
   end
 
   #
@@ -84,574 +84,574 @@ module OpenWFE
   #
   module XmlCodec
 
-    #
-    # Returns the first subelt of xmlElt that matches the given elt_name.
-    # If the name is null, the first elt will be returned.
-    #
-    def self.first_element (xml_elt, elt_name=nil)
+  #
+  # Returns the first subelt of xmlElt that matches the given elt_name.
+  # If the name is null, the first elt will be returned.
+  #
+  def self.first_element (xml_elt, elt_name=nil)
 
-      return nil if not xml_elt
+    return nil if not xml_elt
 
-      return xml_elt.elements.find { |e| e.is_a?(REXML::Element) } \
-        unless elt_name
+    return xml_elt.elements.find { |e| e.is_a?(REXML::Element) } \
+    unless elt_name
 
-      xml_elt.elements.find do |e|
-        e.is_a?(REXML::Element) and e.name == elt_name
-      end
+    xml_elt.elements.find do |e|
+    e.is_a?(REXML::Element) and e.name == elt_name
+    end
+  end
+
+  #
+  # Takes as input some XML element and returns is decoded
+  # (as an instance)
+  #
+  def XmlCodec.decode (xmlElt)
+
+    return nil unless xmlElt
+
+    if xmlElt.kind_of? String
+
+    xmlElt = REXML::Document.new(
+      xmlElt,
+      :compress_whitespace => :all,
+      :ignore_whitespace_nodes => :all)
+
+    xmlElt = xmlElt.root
     end
 
+    #puts "decode() xmlElt.name is >#{xmlElt.name}<"
+
+    return decode_session_id(xmlElt) if xmlElt.name == 'session'
+    #return decode_list(xmlElt) if xmlElt.name == STORES
+    #return decode_store(xmlElt) if xmlElt.name == STORE
+    #return decode_list(xmlElt) if xmlElt.name == HEADERS
+    #return decode_header(xmlElt) if xmlElt.name == HEADER
+
+    return decode_launch_ok(xmlElt) if xmlElt.name == OK
+
+    #return decode_list(xmlElt) if xmlElt.name == HISTORY
+    #return decode_historyitem(xmlElt) if xmlElt.name == HISTORY_ITEM
+
+    return decode_list(xmlElt) if xmlElt.name == FLOW_EXPRESSION_IDS
+    return decode_fei(xmlElt) if xmlElt.name == FLOW_EXPRESSION_ID
+
+    return decode_inflowworkitem(xmlElt) \
+    if xmlElt.name == IN_FLOW_WORKITEM
+    return decode_launchitem(xmlElt) \
+    if xmlElt.name == LAUNCHITEM
+
+    #return decode_list(xmlElt) if xmlElt.name == LAUNCHABLES
+    #return decode_launchable(xmlElt) if xmlElt.name == LAUNCHABLE
+
+    #return decode_list(xmlElt) if xmlElt.name == EXPRESSIONS
+    #return decode_expression(xmlElt) if xmlElt.name == EXPRESSION
+
+    return decode_attribute(xmlElt.elements[1]) if xmlElt.name == ATTRIBUTES
+
     #
-    # Takes as input some XML element and returns is decoded
-    # (as an instance)
+    # default
+
+    decode_attribute(xmlElt)
+
+    #raise \
+    #  ArgumentError, \
+    #  "Cannot decode : '"+xmlElt.name+"' "+xmlElt.to_s()
+  end
+
+  #
+  # Takes some OpenWFE Ruby instance and returns it as XML
+  #
+  def XmlCodec.encode (owfeData)
+
+    #puts "encode() #{owfeData.inspect}"
+
+    return encode_launchitem(owfeData) \
+    if owfeData.kind_of? LaunchItem
+
+    return encode_fei(owfeData) \
+    if owfeData.kind_of? FlowExpressionId
+
+    return encode_inflowworkitem(owfeData) \
+    if owfeData.kind_of? InFlowWorkItem
+
+    raise \
+    ArgumentError, \
+    "Cannot encode : "+owfeData.inspect()
+  end
+
+  #--
+  #def XmlCodec.encode_workitem_as_header (in_flow_workitem, locked)
+  #  e = REXML::Element.new HEADER
+  #  e.add_attribute A_LAST_MODIFIED, "#{in_flow_workitem.last_modified}"
+  #  e.add_attribute A_LOCKED, locked
+  #  e << XmlCodec::encode_fei(in_flow_workitem.fei)
+  #  e << XmlCodec::encode_attributes(in_flow_workitem)
+  #  e
+  #end
+  #++
+
+  private
+
     #
-    def XmlCodec.decode (xmlElt)
+    # DECODE
+    #
 
-      return nil unless xmlElt
-
-      if xmlElt.kind_of? String
-
-        xmlElt = REXML::Document.new(
-          xmlElt,
-          :compress_whitespace => :all,
-          :ignore_whitespace_nodes => :all)
-
-        xmlElt = xmlElt.root
-      end
-
-      #puts "decode() xmlElt.name is >#{xmlElt.name}<"
-
-      return decode_session_id(xmlElt) if xmlElt.name == 'session'
-      #return decode_list(xmlElt) if xmlElt.name == STORES
-      #return decode_store(xmlElt) if xmlElt.name == STORE
-      #return decode_list(xmlElt) if xmlElt.name == HEADERS
-      #return decode_header(xmlElt) if xmlElt.name == HEADER
-
-      return decode_launch_ok(xmlElt) if xmlElt.name == OK
-
-      #return decode_list(xmlElt) if xmlElt.name == HISTORY
-      #return decode_historyitem(xmlElt) if xmlElt.name == HISTORY_ITEM
-
-      return decode_list(xmlElt) if xmlElt.name == FLOW_EXPRESSION_IDS
-      return decode_fei(xmlElt) if xmlElt.name == FLOW_EXPRESSION_ID
-
-      return decode_inflowworkitem(xmlElt) \
-        if xmlElt.name == IN_FLOW_WORKITEM
-      return decode_launchitem(xmlElt) \
-        if xmlElt.name == LAUNCHITEM
-
-      #return decode_list(xmlElt) if xmlElt.name == LAUNCHABLES
-      #return decode_launchable(xmlElt) if xmlElt.name == LAUNCHABLE
-
-      #return decode_list(xmlElt) if xmlElt.name == EXPRESSIONS
-      #return decode_expression(xmlElt) if xmlElt.name == EXPRESSION
-
-      return decode_attribute(xmlElt.elements[1]) if xmlElt.name == ATTRIBUTES
-
-      #
-      # default
-
-      decode_attribute(xmlElt)
-
-      #raise \
-      #  ArgumentError, \
-      #  "Cannot decode : '"+xmlElt.name+"' "+xmlElt.to_s()
+    def XmlCodec.decode_session_id (xmlElt)
+    Integer(xmlElt.attributes['id'])
     end
 
-    #
-    # Takes some OpenWFE Ruby instance and returns it as XML
-    #
-    def XmlCodec.encode (owfeData)
+    def XmlCodec.decode_list (xmlElt)
+    xmlElt.elements.collect { |elt| decode(elt) }
+    end
 
-      #puts "encode() #{owfeData.inspect}"
 
-      return encode_launchitem(owfeData) \
-        if owfeData.kind_of? LaunchItem
+    def XmlCodec.decode_launchable (xmlElt)
 
-      return encode_fei(owfeData) \
-        if owfeData.kind_of? FlowExpressionId
+    launchable = Launchable.new()
 
-      return encode_inflowworkitem(owfeData) \
-        if owfeData.kind_of? InFlowWorkItem
+    launchable.url = xmlElt.attributes[URL]
+    launchable.engine_id = xmlElt.attributes[ENGINE_ID]
 
-      raise \
-        ArgumentError, \
-        "Cannot encode : "+owfeData.inspect()
+    launchable
+    end
+
+
+    def XmlCodec.decode_expression (xmlElt)
+
+    exp = Expression.new()
+
+    exp.id = decode(first_element(xmlElt))
+
+    exp.apply_time = xmlElt.attributes[APPLY_TIME]
+    exp.state = xmlElt.attributes[STATE]
+    exp.state_since = xmlElt.attributes[STATE_SINCE]
+
+    exp
     end
 
     #--
-    #def XmlCodec.encode_workitem_as_header (in_flow_workitem, locked)
-    #  e = REXML::Element.new HEADER
-    #  e.add_attribute A_LAST_MODIFIED, "#{in_flow_workitem.last_modified}"
-    #  e.add_attribute A_LOCKED, locked
-    #  e << XmlCodec::encode_fei(in_flow_workitem.fei)
-    #  e << XmlCodec::encode_attributes(in_flow_workitem)
-    #  e
+    #def XmlCodec.decode_store (xmlElt)
+    #  store = Store.new()
+    #  store.name = xmlElt.attributes[NAME]
+    #  store.workitem_count = xmlElt.attributes[WORKITEM_COUNT]
+    #  store.workitem_count = Integer(store.workitem_count)
+    #  store.permissions = xmlElt.attributes[PERMISSIONS]
+    #  store
     #end
     #++
 
-    private
+    #--
+    #def XmlCodec.decode_header (xmlElt)
+    #  header = Header.new()
+    #  header.last_modified = xmlElt.attributes[A_LAST_MODIFIED]
+    #  header.locked = parse_boolean(xmlElt.attributes[A_LOCKED])
+    #  header.flow_expression_id = decode(first_element(xmlElt, FLOW_EXPRESSION_ID))
+    #  header.attributes = decode(first_element(xmlElt, ATTRIBUTES))
+    #  header
+    #end
+    #++
 
-      #
-      # DECODE
-      #
+    def XmlCodec.decode_fei (xmlElt)
 
-      def XmlCodec.decode_session_id (xmlElt)
-        Integer(xmlElt.attributes['id'])
+    fei = FlowExpressionId.new
+
+    fei.owfe_version = xmlElt.attributes[OWFE_VERSION]
+    fei.engine_id = xmlElt.attributes[ENGINE_ID]
+    fei.initial_engine_id = xmlElt.attributes[INITIAL_ENGINE_ID]
+
+    fei.workflow_definition_url = xmlElt.attributes[WORKFLOW_DEFINITION_URL]
+    fei.workflow_definition_name = xmlElt.attributes[WORKFLOW_DEFINITION_NAME]
+    fei.workflow_definition_revision = xmlElt.attributes[WORKFLOW_DEFINITION_REVISION]
+
+    fei.workflow_instance_id = xmlElt.attributes[WORKFLOW_INSTANCE_ID]
+
+    fei.expression_name = xmlElt.attributes[EXPRESSION_NAME]
+    fei.expression_id = xmlElt.attributes[EXPRESSION_ID]
+
+    #puts " ... fei.expressionName is >#{fei.expressionName}<"
+    #puts " ... fei.wfid is >#{fei.workflowInstanceId}<"
+
+    fei
+    end
+
+
+    def XmlCodec.decode_attribute (xmlElt)
+
+    #puts "decodeAttribute() '#{xmlElt.name}' --> '#{xmlElt.text}'"
+
+    #
+    # atomic types
+
+    return xmlElt.text.strip \
+      if xmlElt.name == E_STRING
+    return Integer(xmlElt.text.strip) \
+      if xmlElt.name == E_INTEGER
+    return Integer(xmlElt.text.strip) \
+      if xmlElt.name == E_LONG
+    return Float(xmlElt.text.strip) \
+      if xmlElt.name == E_DOUBLE
+    return parse_boolean(xmlElt.text) \
+      if xmlElt.name == E_BOOLEAN
+
+    return decode_xmldocument(xmlElt) \
+      if xmlElt.name == E_XML_DOCUMENT
+    return xmlElt.children[0] \
+      if xmlElt.name == E_RAW_XML
+
+    return Base64Attribute.new(xmlElt.text) \
+      if xmlElt.name == E_BASE64
+
+    #
+    # composite types
+
+    return decode_list(xmlElt) \
+      if xmlElt.name == E_LIST
+
+    if xmlElt.name == E_SMAP or xmlElt.name == E_MAP
+
+      map = {}
+      map[MAP_TYPE] = xmlElt.name
+
+      #xmlElt.elements.each("//"+M_ENTRY) do |e|
+      xmlElt.elements.each(M_ENTRY) do |e|
+      #puts "decodeAttribute() >#{e}<"
+      decode_entry(e, map)
       end
 
-      def XmlCodec.decode_list (xmlElt)
-        xmlElt.elements.collect { |elt| decode(elt) }
-      end
+      return map
+    end
 
+    #puts OpenWFE.xmldoc_to_string(xmlElt.document())
 
-      def XmlCodec.decode_launchable (xmlElt)
+    raise \
+      ArgumentError, \
+      "Cannot decode <#{xmlElt.name}/> in \n"+\
+      OpenWFE.xmldoc_to_string(xmlElt.document())
+    end
 
-        launchable = Launchable.new()
+    def XmlCodec.decode_xmldocument (xmlElt)
 
-        launchable.url = xmlElt.attributes[URL]
-        launchable.engine_id = xmlElt.attributes[ENGINE_ID]
+    s = Base64::decode64 xmlElt.text.strip
+    REXML::Document.new s
+    end
 
-        launchable
-      end
+    def XmlCodec.decode_entry (xmlElt, map)
 
+    key = xmlElt.elements[1]
+    val = xmlElt.elements[2]
 
-      def XmlCodec.decode_expression (xmlElt)
+    #
+    # this parse method supports the old style and the [new] light
+    # style/schema
+    #
 
-        exp = Expression.new()
+    key = key.elements[1] if key.name == M_KEY
+    val = val.elements[1] if val.name == M_VALUE
 
-        exp.id = decode(first_element(xmlElt))
+    key = decode(key)
+    val = decode(val)
 
-        exp.apply_time = xmlElt.attributes[APPLY_TIME]
-        exp.state = xmlElt.attributes[STATE]
-        exp.state_since = xmlElt.attributes[STATE_SINCE]
+    #puts "decodeEntry() k >#{key}< v >#{val}<"
+    #puts "decodeEntry() subject '#{val}'" if key == '__subject__'
 
-        exp
-      end
+    key = key.strip if key.is_a?(String)
+    val = val.strip if val.is_a?(String)
 
-      #--
-      #def XmlCodec.decode_store (xmlElt)
-      #  store = Store.new()
-      #  store.name = xmlElt.attributes[NAME]
-      #  store.workitem_count = xmlElt.attributes[WORKITEM_COUNT]
-      #  store.workitem_count = Integer(store.workitem_count)
-      #  store.permissions = xmlElt.attributes[PERMISSIONS]
-      #  store
-      #end
-      #++
+    map[key] = val
+    end
 
-      #--
-      #def XmlCodec.decode_header (xmlElt)
-      #  header = Header.new()
-      #  header.last_modified = xmlElt.attributes[A_LAST_MODIFIED]
-      #  header.locked = parse_boolean(xmlElt.attributes[A_LOCKED])
-      #  header.flow_expression_id = decode(first_element(xmlElt, FLOW_EXPRESSION_ID))
-      #  header.attributes = decode(first_element(xmlElt, ATTRIBUTES))
-      #  header
-      #end
-      #++
+    def XmlCodec.parse_boolean (string)
 
-      def XmlCodec.decode_fei (xmlElt)
+    string.strip.downcase == 'true'
+    end
 
-        fei = FlowExpressionId.new
+    #--
+    #def XmlCodec.decode_historyitem (xmlElt)
+    #  hi = HistoryItem.new
+    #  hi.author = xmlElt.attributes[A_AUTHOR]
+    #  hi.date = xmlElt.attributes[A_DATE]
+    #  hi.host = xmlElt.attributes[A_HOST]
+    #  hi.text = xmlElt.text
+    #  hi.wfd_name = xmlElt.attributes[WORKFLOW_DEFINITION_NAME]
+    #  hi.wfd_revision = xmlElt.attributes[WORKFLOW_DEFINITION_REVISION]
+    #  hi.wf_instance_id = xmlElt.attributes[WORKFLOW_INSTANCE_ID]
+    #  hi.expression_id = xmlElt.attributes[EXPRESSION_ID]
+    #  hi
+    #end
+    #++
 
-        fei.owfe_version = xmlElt.attributes[OWFE_VERSION]
-        fei.engine_id = xmlElt.attributes[ENGINE_ID]
-        fei.initial_engine_id = xmlElt.attributes[INITIAL_ENGINE_ID]
+    def XmlCodec.decode_launch_ok (xmlElt)
 
-        fei.workflow_definition_url = xmlElt.attributes[WORKFLOW_DEFINITION_URL]
-        fei.workflow_definition_name = xmlElt.attributes[WORKFLOW_DEFINITION_NAME]
-        fei.workflow_definition_revision = xmlElt.attributes[WORKFLOW_DEFINITION_REVISION]
+    sFei = xmlElt.attributes[A_FLOW_ID]
 
-        fei.workflow_instance_id = xmlElt.attributes[WORKFLOW_INSTANCE_ID]
+    return true unless sFei
 
-        fei.expression_name = xmlElt.attributes[EXPRESSION_NAME]
-        fei.expression_id = xmlElt.attributes[EXPRESSION_ID]
+    FlowExpressionId.to_fei(sFei)
+    end
 
-        #puts " ... fei.expressionName is >#{fei.expressionName}<"
-        #puts " ... fei.wfid is >#{fei.workflowInstanceId}<"
 
-        fei
-      end
+    def XmlCodec.decode_inflowworkitem (xmlElt)
 
+    wi = InFlowWorkItem.new()
 
-      def XmlCodec.decode_attribute (xmlElt)
+    wi.last_modified = xmlElt.attributes[A_LAST_MODIFIED]
+    wi.attributes = decode(first_element(xmlElt, ATTRIBUTES))
 
-        #puts "decodeAttribute() '#{xmlElt.name}' --> '#{xmlElt.text}'"
+    wi.participant_name = xmlElt.attributes[A_PARTICIPANT_NAME]
+    wi.flow_expression_id = decode(first_element(first_element(xmlElt, E_LAST_EXPRESSION_ID), FLOW_EXPRESSION_ID))
 
-        #
-        # atomic types
+    wi.dispatch_time = xmlElt.attributes[A_DISPATCH_TIME]
 
-        return xmlElt.text.strip \
-          if xmlElt.name == E_STRING
-        return Integer(xmlElt.text.strip) \
-          if xmlElt.name == E_INTEGER
-        return Integer(xmlElt.text.strip) \
-          if xmlElt.name == E_LONG
-        return Float(xmlElt.text.strip) \
-          if xmlElt.name == E_DOUBLE
-        return parse_boolean(xmlElt.text) \
-          if xmlElt.name == E_BOOLEAN
+    # TODO : decode filter
 
-        return decode_xmldocument(xmlElt) \
-          if xmlElt.name == E_XML_DOCUMENT
-        return xmlElt.children[0] \
-          if xmlElt.name == E_RAW_XML
+    #wi.history = decode(first_element(xmlElt, HISTORY))
 
-        return Base64Attribute.new(xmlElt.text) \
-          if xmlElt.name == E_BASE64
+    wi
+    end
 
-        #
-        # composite types
+    def XmlCodec.decode_launchitem (xmlElt)
 
-        return decode_list(xmlElt) \
-          if xmlElt.name == E_LIST
+    li = LaunchItem.new
 
-        if xmlElt.name == E_SMAP or xmlElt.name == E_MAP
+    li.workflow_definition_url =
+      xmlElt.attributes[WORKFLOW_DEFINITION_URL]
 
-          map = {}
-          map[MAP_TYPE] = xmlElt.name
+    li.attributes =
+      decode(first_element(xmlElt, ATTRIBUTES))
 
-          #xmlElt.elements.each("//"+M_ENTRY) do |e|
-          xmlElt.elements.each(M_ENTRY) do |e|
-            #puts "decodeAttribute() >#{e}<"
-            decode_entry(e, map)
-          end
+    li
+    end
 
-          return map
-        end
 
-        #puts OpenWFE.xmldoc_to_string(xmlElt.document())
+    #
+    # ENCODE
+    #
 
-        raise \
-          ArgumentError, \
-          "Cannot decode <#{xmlElt.name}/> in \n"+\
-          OpenWFE.xmldoc_to_string(xmlElt.document())
-      end
 
-      def XmlCodec.decode_xmldocument (xmlElt)
+    def XmlCodec.encode_item (item, elt)
 
-        s = Base64::decode64 xmlElt.text.strip
-        REXML::Document.new s
-      end
+    elt.attributes[A_LAST_MODIFIED] = item.last_modified
 
-      def XmlCodec.decode_entry (xmlElt, map)
+    elt << encode_attributes(item)
+    end
 
-        key = xmlElt.elements[1]
-        val = xmlElt.elements[2]
+    def XmlCodec.encode_attributes (item)
 
-        #
-        # this parse method supports the old style and the [new] light
-        # style/schema
-        #
+    eAttributes = REXML::Element.new(ATTRIBUTES)
 
-        key = key.elements[1] if key.name == M_KEY
-        val = val.elements[1] if val.name == M_VALUE
+    eAttributes << encode_attribute(item.attributes)
 
-        key = decode(key)
-        val = decode(val)
+    eAttributes
+    end
 
-        #puts "decodeEntry() k >#{key}< v >#{val}<"
-        #puts "decodeEntry() subject '#{val}'" if key == '__subject__'
 
-        key = key.strip if key.is_a?(String)
-        val = val.strip if val.is_a?(String)
+    def XmlCodec.encode_launchitem (launchitem)
 
-        map[key] = val
-      end
+    doc = REXML::Document.new()
 
-      def XmlCodec.parse_boolean (string)
+    root = REXML::Element.new(LAUNCHITEM)
 
-        string.strip.downcase == 'true'
-      end
+    encode_item(launchitem, root)
 
-      #--
-      #def XmlCodec.decode_historyitem (xmlElt)
-      #  hi = HistoryItem.new
-      #  hi.author = xmlElt.attributes[A_AUTHOR]
-      #  hi.date = xmlElt.attributes[A_DATE]
-      #  hi.host = xmlElt.attributes[A_HOST]
-      #  hi.text = xmlElt.text
-      #  hi.wfd_name = xmlElt.attributes[WORKFLOW_DEFINITION_NAME]
-      #  hi.wfd_revision = xmlElt.attributes[WORKFLOW_DEFINITION_REVISION]
-      #  hi.wf_instance_id = xmlElt.attributes[WORKFLOW_INSTANCE_ID]
-      #  hi.expression_id = xmlElt.attributes[EXPRESSION_ID]
-      #  hi
-      #end
-      #++
+    root.attributes[WORKFLOW_DEFINITION_URL] = \
+      launchitem.workflow_definition_url
 
-      def XmlCodec.decode_launch_ok (xmlElt)
+    # TODO :
+    #
+    # - encode descriptionMap
+    #
+    # - replyTo is not necessary
 
-        sFei = xmlElt.attributes[A_FLOW_ID]
+    doc << root
 
-        return true unless sFei
+    OpenWFE.xmldoc_to_string(doc)
+    end
 
-        FlowExpressionId.to_fei(sFei)
-      end
 
+    def XmlCodec.encode_inflowitem (item, elt)
 
-      def XmlCodec.decode_inflowworkitem (xmlElt)
+    encode_item(item, elt)
 
-        wi = InFlowWorkItem.new()
+    elt.attributes[A_PARTICIPANT_NAME] = item.participant_name
 
-        wi.last_modified = xmlElt.attributes[A_LAST_MODIFIED]
-        wi.attributes = decode(first_element(xmlElt, ATTRIBUTES))
+    eLastExpressionId = REXML::Element.new(E_LAST_EXPRESSION_ID)
 
-        wi.participant_name = xmlElt.attributes[A_PARTICIPANT_NAME]
-        wi.flow_expression_id = decode(first_element(first_element(xmlElt, E_LAST_EXPRESSION_ID), FLOW_EXPRESSION_ID))
+    eLastExpressionId << encode_fei(item.last_expression_id)
 
-        wi.dispatch_time = xmlElt.attributes[A_DISPATCH_TIME]
+    elt << eLastExpressionId
+    end
 
-        # TODO : decode filter
 
-        #wi.history = decode(first_element(xmlElt, HISTORY))
+    def XmlCodec.encode_inflowworkitem (item)
 
-        wi
-      end
+    doc = REXML::Document.new()
 
-      def XmlCodec.decode_launchitem (xmlElt)
+    root = REXML::Element.new(IN_FLOW_WORKITEM)
 
-        li = LaunchItem.new
+    encode_inflowitem(item, root)
 
-        li.workflow_definition_url =
-          xmlElt.attributes[WORKFLOW_DEFINITION_URL]
+    root.attributes[A_DISPATCH_TIME] = item.dispatch_time
 
-        li.attributes =
-          decode(first_element(xmlElt, ATTRIBUTES))
+    # add filter ? no
 
-        li
-      end
+    encode_history(item, root) if item.history
 
+    doc << root
 
-      #
-      # ENCODE
-      #
+    s = OpenWFE.xmldoc_to_string(doc)
+    #puts "encoded :\n#{s}"
+    s
+    end
 
+    #--
+    #def XmlCodec.encode_history (item, elt)
+    #  eHistory = REXML::Element.new(HISTORY)
+    #  item.history.each do |hi|
+    #  ehi = REXML::Element.new(HISTORY_ITEM)
+    #  ehi.attributes[A_AUTHOR] = hi.author
+    #  ehi.attributes[A_DATE] = hi.date
+    #  ehi.attributes[A_HOST] = hi.host
+    #  ehi.attributes[WORKFLOW_DEFINITION_NAME] = hi.wfd_name
+    #  ehi.attributes[WORKFLOW_DEFINITION_REVISION] = hi.wfd_revision
+    #  ehi.attributes[WORKFLOW_INSTANCE_ID] = hi.wf_instance_id
+    #  ehi.attributes[EXPRESSION_ID] = hi.expression_id
+    #  eHistory << ehi
+    #  end
+    #  elt << eHistory
+    #end
+    #++
 
-      def XmlCodec.encode_item (item, elt)
+    def XmlCodec.encode_attribute (att)
 
-        elt.attributes[A_LAST_MODIFIED] = item.last_modified
+    #puts "encodeAttribute() att.class is #{att.class}"
 
-        elt << encode_attributes(item)
-      end
+    return encode_atomicattribute(E_STRING, att) \
+      if att.kind_of?(String)
+    return encode_atomicattribute(E_INTEGER, att) \
+      if att.kind_of?(Fixnum)
+    return encode_atomicattribute(E_DOUBLE, att) \
+      if att.kind_of?(Float)
 
-      def XmlCodec.encode_attributes (item)
+    return encode_xmldocument(att) \
+      if att.kind_of?(REXML::Document)
+    return encode_xmlattribute(att) \
+      if att.kind_of?(REXML::Element)
 
-        eAttributes = REXML::Element.new(ATTRIBUTES)
+    return encode_atomicattribute(E_BOOLEAN, true) \
+      if att.kind_of?(TrueClass)
+    return encode_atomicattribute(E_BOOLEAN, false) \
+      if att.kind_of?(FalseClass)
 
-        eAttributes << encode_attribute(item.attributes)
+    return encode_base64attribute(att) \
+      if att.kind_of?(Base64Attribute)
 
-        eAttributes
-      end
+    return encode_mapattribute(att) if att.kind_of?(Hash)
+    return encode_listattribute(att) if att.kind_of?(Array)
 
+    #
+    # default
 
-      def XmlCodec.encode_launchitem (launchitem)
+    encode_atomicattribute(E_STRING, att)
 
-        doc = REXML::Document.new()
+    #raise \
+    #  ArgumentError, \
+    #  "Cannot encode attribute of class '#{att.class}'"
+    end
 
-        root = REXML::Element.new(LAUNCHITEM)
+    def XmlCodec.encode_xmldocument (elt)
 
-        encode_item(launchitem, root)
+    e = REXML::Element.new(E_XML_DOCUMENT)
+    e.text = Base64::encode64(elt.to_s)
+    e
+    end
 
-        root.attributes[WORKFLOW_DEFINITION_URL] = \
-          launchitem.workflow_definition_url
+    def XmlCodec.encode_xmlattribute (elt)
 
-        # TODO :
-        #
-        # - encode descriptionMap
-        #
-        # - replyTo is not necessary
+    return elt if elt.name == E_RAW_XML
 
-        doc << root
+    #
+    # else, wrap within <raw-xml>...</raw-xml>
 
-        OpenWFE.xmldoc_to_string(doc)
-      end
+    e = REXML::Element.new(E_RAW_XML)
+    e << elt
 
+    e
+    end
 
-      def XmlCodec.encode_inflowitem (item, elt)
 
-        encode_item(item, elt)
+    def XmlCodec.encode_base64attribute (att)
 
-        elt.attributes[A_PARTICIPANT_NAME] = item.participant_name
+    e = REXML::Element.new(E_BASE64)
+    e.text = att.content
 
-        eLastExpressionId = REXML::Element.new(E_LAST_EXPRESSION_ID)
+    e
+    end
 
-        eLastExpressionId << encode_fei(item.last_expression_id)
 
-        elt << eLastExpressionId
-      end
+    def XmlCodec.encode_atomicattribute (name, value)
 
+    elt = REXML::Element.new(name)
+    #elt << REXML::Text.new(value.to_s())
+    elt.add_text(value.to_s())
 
-      def XmlCodec.encode_inflowworkitem (item)
+    elt
+    end
 
-        doc = REXML::Document.new()
 
-        root = REXML::Element.new(IN_FLOW_WORKITEM)
+    def XmlCodec.encode_listattribute (list)
 
-        encode_inflowitem(item, root)
+    elt = REXML::Element.new(E_LIST)
 
-        root.attributes[A_DISPATCH_TIME] = item.dispatch_time
+    list.each do |e|
+      elt << encode_attribute(e)
+    end
 
-        # add filter ? no
+    elt
+    end
 
-        encode_history(item, root) if item.history
 
-        doc << root
+    def XmlCodec.encode_mapattribute (hash)
 
-        s = OpenWFE.xmldoc_to_string(doc)
-        #puts "encoded :\n#{s}"
-        s
-      end
+    name = hash[MAP_TYPE]
+    name = 'map' if name == nil
 
-      #--
-      #def XmlCodec.encode_history (item, elt)
-      #  eHistory = REXML::Element.new(HISTORY)
-      #  item.history.each do |hi|
-      #    ehi = REXML::Element.new(HISTORY_ITEM)
-      #    ehi.attributes[A_AUTHOR] = hi.author
-      #    ehi.attributes[A_DATE] = hi.date
-      #    ehi.attributes[A_HOST] = hi.host
-      #    ehi.attributes[WORKFLOW_DEFINITION_NAME] = hi.wfd_name
-      #    ehi.attributes[WORKFLOW_DEFINITION_REVISION] = hi.wfd_revision
-      #    ehi.attributes[WORKFLOW_INSTANCE_ID] = hi.wf_instance_id
-      #    ehi.attributes[EXPRESSION_ID] = hi.expression_id
-      #    eHistory << ehi
-      #  end
-      #  elt << eHistory
-      #end
-      #++
+    elt = REXML::Element.new(name)
 
-      def XmlCodec.encode_attribute (att)
+    hash.each_key do |key|
 
-        #puts "encodeAttribute() att.class is #{att.class}"
+      next if key == MAP_TYPE
 
-        return encode_atomicattribute(E_STRING, att) \
-          if att.kind_of?(String)
-        return encode_atomicattribute(E_INTEGER, att) \
-          if att.kind_of?(Fixnum)
-        return encode_atomicattribute(E_DOUBLE, att) \
-          if att.kind_of?(Float)
+      eEntry = REXML::Element.new(M_ENTRY)
 
-        return encode_xmldocument(att) \
-          if att.kind_of?(REXML::Document)
-        return encode_xmlattribute(att) \
-          if att.kind_of?(REXML::Element)
+      val = hash[key]
 
-        return encode_atomicattribute(E_BOOLEAN, true) \
-          if att.kind_of?(TrueClass)
-        return encode_atomicattribute(E_BOOLEAN, false) \
-          if att.kind_of?(FalseClass)
+      eEntry << encode_attribute(key)
+      eEntry << encode_attribute(val)
 
-        return encode_base64attribute(att) \
-          if att.kind_of?(Base64Attribute)
+      elt << eEntry
+    end
 
-        return encode_mapattribute(att) if att.kind_of?(Hash)
-        return encode_listattribute(att) if att.kind_of?(Array)
+    elt
+    end
 
-        #
-        # default
 
-        encode_atomicattribute(E_STRING, att)
+    def XmlCodec.encode_fei (fei)
 
-        #raise \
-        #  ArgumentError, \
-        #  "Cannot encode attribute of class '#{att.class}'"
-      end
+    elt = REXML::Element.new(FLOW_EXPRESSION_ID)
 
-      def XmlCodec.encode_xmldocument (elt)
+    elt.attributes[OWFE_VERSION] = fei.owfe_version
+    elt.attributes[ENGINE_ID] = fei.engine_id
+    elt.attributes[INITIAL_ENGINE_ID] = fei.initial_engine_id
 
-        e = REXML::Element.new(E_XML_DOCUMENT)
-        e.text = Base64::encode64(elt.to_s)
-        e
-      end
+    elt.attributes[WORKFLOW_DEFINITION_URL] = fei.workflow_definition_url
+    elt.attributes[WORKFLOW_DEFINITION_NAME] = fei.workflow_definition_name
+    elt.attributes[WORKFLOW_DEFINITION_REVISION] = fei.workflow_definition_revision
+    elt.attributes[WORKFLOW_INSTANCE_ID] = fei.workflow_instance_id
 
-      def XmlCodec.encode_xmlattribute (elt)
+    elt.attributes[EXPRESSION_NAME] = fei.expression_name
+    elt.attributes[EXPRESSION_ID] = fei.expression_id
 
-        return elt if elt.name == E_RAW_XML
-
-        #
-        # else, wrap within <raw-xml>...</raw-xml>
-
-        e = REXML::Element.new(E_RAW_XML)
-        e << elt
-
-        e
-      end
-
-
-      def XmlCodec.encode_base64attribute (att)
-
-        e = REXML::Element.new(E_BASE64)
-        e.text = att.content
-
-        e
-      end
-
-
-      def XmlCodec.encode_atomicattribute (name, value)
-
-        elt = REXML::Element.new(name)
-        #elt << REXML::Text.new(value.to_s())
-        elt.add_text(value.to_s())
-
-        elt
-      end
-
-
-      def XmlCodec.encode_listattribute (list)
-
-        elt = REXML::Element.new(E_LIST)
-
-        list.each do |e|
-          elt << encode_attribute(e)
-        end
-
-        elt
-      end
-
-
-      def XmlCodec.encode_mapattribute (hash)
-
-        name = hash[MAP_TYPE]
-        name = 'map' if name == nil
-
-        elt = REXML::Element.new(name)
-
-        hash.each_key do |key|
-
-          next if key == MAP_TYPE
-
-          eEntry = REXML::Element.new(M_ENTRY)
-
-          val = hash[key]
-
-          eEntry << encode_attribute(key)
-          eEntry << encode_attribute(val)
-
-          elt << eEntry
-        end
-
-        elt
-      end
-
-
-      def XmlCodec.encode_fei (fei)
-
-        elt = REXML::Element.new(FLOW_EXPRESSION_ID)
-
-        elt.attributes[OWFE_VERSION] = fei.owfe_version
-        elt.attributes[ENGINE_ID] = fei.engine_id
-        elt.attributes[INITIAL_ENGINE_ID] = fei.initial_engine_id
-
-        elt.attributes[WORKFLOW_DEFINITION_URL] = fei.workflow_definition_url
-        elt.attributes[WORKFLOW_DEFINITION_NAME] = fei.workflow_definition_name
-        elt.attributes[WORKFLOW_DEFINITION_REVISION] = fei.workflow_definition_revision
-        elt.attributes[WORKFLOW_INSTANCE_ID] = fei.workflow_instance_id
-
-        elt.attributes[EXPRESSION_NAME] = fei.expression_name
-        elt.attributes[EXPRESSION_ID] = fei.expression_id
-
-        elt
-      end
+    elt
+    end
   end
 
   #
@@ -660,15 +660,15 @@ module OpenWFE
   #
   def OpenWFE.xmldoc_to_string (xml, decl=true)
 
-    #return xml if xml.is_a?(String)
+  #return xml if xml.is_a?(String)
 
-    xml << REXML::XMLDecl.new \
-      if decl and (not xml[0].is_a?(REXML::XMLDecl))
+  xml << REXML::XMLDecl.new \
+    if decl and (not xml[0].is_a?(REXML::XMLDecl))
 
-    #s = ""
-    #xml.write(s, 0)
-    #return s
-    xml.to_s
+  #s = ""
+  #xml.write(s, 0)
+  #return s
+  xml.to_s
   end
 
   #
@@ -676,7 +676,7 @@ module OpenWFE
   #
   def OpenWFE.xml_to_s (xml, decl=true)
 
-    OpenWFE::xmldoc_to_string(xml, decl)
+  OpenWFE::xmldoc_to_string(xml, decl)
   end
 
 end

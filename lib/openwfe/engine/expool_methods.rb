@@ -39,134 +39,134 @@
 
 module OpenWFE
 
+  #
+  # ExpressionPool methods available via the engine.
+  #
+  module ExpoolMethods
+
+    #--
+    # METHODS FROM THE EXPRESSION POOL
     #
-    # ExpressionPool methods available via the engine.
+    # These methods are 'proxy' to method found in the expression pool.
+    # They are made available here for a simpler model.
+    #++
+
     #
-    module ExpoolMethods
+    # Returns the list of applied expressions belonging to a given
+    # workflow instance.
+    # May be used to determine where a process instance currently is.
+    #
+    # This method returns all the expressions (the stack) a process
+    # went through to reach its current state.
+    #
+    # If the unapplied optional parameter is set to true, all the
+    # expressions (even those not yet applied) that compose the process
+    # instance will be returned.
+    #
+    def process_stack (workflow_instance_id, unapplied=false)
 
-        #--
-        # METHODS FROM THE EXPRESSION POOL
-        #
-        # These methods are 'proxy' to method found in the expression pool.
-        # They are made available here for a simpler model.
-        #++
-
-        #
-        # Returns the list of applied expressions belonging to a given
-        # workflow instance.
-        # May be used to determine where a process instance currently is.
-        #
-        # This method returns all the expressions (the stack) a process
-        # went through to reach its current state.
-        #
-        # If the unapplied optional parameter is set to true, all the
-        # expressions (even those not yet applied) that compose the process
-        # instance will be returned.
-        #
-        def process_stack (workflow_instance_id, unapplied=false)
-
-            get_expression_pool.process_stack workflow_instance_id, unapplied
-        end
-        alias :get_process_stack :process_stack
-        alias :get_flow_stack :process_stack
-
-        #
-        # A shortcut for process_stack(wfid, true).representation
-        #
-        # Returns the representation (tree) for the actual version of the
-        # given process instance (returns the tree as running, modifications
-        # included).
-        #
-        def process_representation (workflow_instance_id)
-
-          process_stack(workflow_instance_id, true).representation
-        end
-
-        #
-        # Lists all workflow (process) instances currently in the expool (in
-        # the engine).
-        # This method will return a list of "process-definition" expressions
-        # (i.e. OpenWFE::DefineExpression objects -- each representing the root
-        # element of a flow).
-        #
-        # :wfid ::
-        #     will list only one process,
-        #     <tt>:wfid => '20071208-gipijiwozo'</tt>
-        # :parent_wfid ::
-        #     will list only one process, and its subprocesses,
-        #     <tt>:parent_wfid => '20071208-gipijiwozo'</tt>
-        # :consider_subprocesses ::
-        #     if true, "process-definition" expressions
-        #     of subprocesses will be returned as well.
-        # :wfid_prefix ::
-        #     allows your to query for specific workflow instance
-        #     id prefixes. for example :
-        #     <tt>:wfid_prefix => "200712"</tt>
-        #     for the processes started in December.
-        # :wfname ::
-        #     will return only the process instances who belongs to the given
-        #     workflow [name].
-        # :wfrevision ::
-        #     usued in conjuction with :wfname, returns only the process
-        #     instances of a given workflow revision.
-        #
-        def list_processes (options={})
-
-            get_expression_pool.list_processes options
-        end
-        alias :list_workflows :list_processes
-
-        #
-        # Given any expression of a process, cancels the complete process
-        # instance.
-        #
-        def cancel_process (exp_or_wfid)
-
-            get_expression_pool.cancel_process exp_or_wfid
-        end
-        alias :cancel_flow :cancel_process
-        alias :abort_process :cancel_process
-
-        #
-        # Cancels the given expression (and its children if any)
-        # (warning : advanced method)
-        #
-        # Cancelling the root expression of a process is equivalent to
-        # cancelling the process.
-        #
-        def cancel_expression (exp_or_fei)
-
-            get_expression_pool.cancel_expression exp_or_fei
-        end
-
-        #
-        # Forgets the given expression (make it an orphan)
-        # (warning : advanced method)
-        #
-        def forget_expression (exp_or_fei)
-
-            get_expression_pool.forget exp_or_fei
-        end
-
-        protected
-
-            #
-            # In case of wfid, returns the root expression of the process,
-            # in case of fei, returns the expression itself.
-            #
-            def fetch_exp (fei_or_wfid)
-
-                exp = if fei_or_wfid.is_a?(String)
-
-                    get_expression_pool.fetch_root fei_or_wfid
-
-                else
-
-                    get_expression_pool.fetch_expression fei_or_wfid
-                end
-
-                exp or raise "no expression found for '#{fei_or_wfid.to_s}'"
-            end
+      get_expression_pool.process_stack workflow_instance_id, unapplied
     end
+    alias :get_process_stack :process_stack
+    alias :get_flow_stack :process_stack
+
+    #
+    # A shortcut for process_stack(wfid, true).representation
+    #
+    # Returns the representation (tree) for the actual version of the
+    # given process instance (returns the tree as running, modifications
+    # included).
+    #
+    def process_representation (workflow_instance_id)
+
+      process_stack(workflow_instance_id, true).representation
+    end
+
+    #
+    # Lists all workflow (process) instances currently in the expool (in
+    # the engine).
+    # This method will return a list of "process-definition" expressions
+    # (i.e. OpenWFE::DefineExpression objects -- each representing the root
+    # element of a flow).
+    #
+    # :wfid ::
+    #   will list only one process,
+    #   <tt>:wfid => '20071208-gipijiwozo'</tt>
+    # :parent_wfid ::
+    #   will list only one process, and its subprocesses,
+    #   <tt>:parent_wfid => '20071208-gipijiwozo'</tt>
+    # :consider_subprocesses ::
+    #   if true, "process-definition" expressions
+    #   of subprocesses will be returned as well.
+    # :wfid_prefix ::
+    #   allows your to query for specific workflow instance
+    #   id prefixes. for example :
+    #   <tt>:wfid_prefix => "200712"</tt>
+    #   for the processes started in December.
+    # :wfname ::
+    #   will return only the process instances who belongs to the given
+    #   workflow [name].
+    # :wfrevision ::
+    #   usued in conjuction with :wfname, returns only the process
+    #   instances of a given workflow revision.
+    #
+    def list_processes (options={})
+
+      get_expression_pool.list_processes options
+    end
+    alias :list_workflows :list_processes
+
+    #
+    # Given any expression of a process, cancels the complete process
+    # instance.
+    #
+    def cancel_process (exp_or_wfid)
+
+      get_expression_pool.cancel_process exp_or_wfid
+    end
+    alias :cancel_flow :cancel_process
+    alias :abort_process :cancel_process
+
+    #
+    # Cancels the given expression (and its children if any)
+    # (warning : advanced method)
+    #
+    # Cancelling the root expression of a process is equivalent to
+    # cancelling the process.
+    #
+    def cancel_expression (exp_or_fei)
+
+      get_expression_pool.cancel_expression exp_or_fei
+    end
+
+    #
+    # Forgets the given expression (make it an orphan)
+    # (warning : advanced method)
+    #
+    def forget_expression (exp_or_fei)
+
+      get_expression_pool.forget exp_or_fei
+    end
+
+    protected
+
+      #
+      # In case of wfid, returns the root expression of the process,
+      # in case of fei, returns the expression itself.
+      #
+      def fetch_exp (fei_or_wfid)
+
+        exp = if fei_or_wfid.is_a?(String)
+
+          get_expression_pool.fetch_root fei_or_wfid
+
+        else
+
+          get_expression_pool.fetch_expression fei_or_wfid
+        end
+
+        exp or raise "no expression found for '#{fei_or_wfid.to_s}'"
+      end
+  end
 end
 

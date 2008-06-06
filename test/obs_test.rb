@@ -18,125 +18,125 @@ require 'openwfe/util/observable'
 
 class ObsTest < Test::Unit::TestCase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    class Observed
-        include OpenWFE::OwfeObservable
+  class Observed
+    include OpenWFE::OwfeObservable
 
-        attr_reader :observers
+    attr_reader :observers
 
-        def initialize
-            super
-            @observers = {}
-        end
-
-        public :onotify
+    def initialize
+      super
+      @observers = {}
     end
 
-    def test_0
+    public :onotify
+  end
 
-        $s = nil
+  def test_0
 
-        observed = Observed.new
+    $s = nil
 
-        observed.add_observer :channel0 do
-            $s = 0
-        end
+    observed = Observed.new
 
-        observer1 = Object.new
-        class << observer1
-            def call channel, *args
-                $s = 1
-            end
-        end
-        observed.add_observer :channel1, observer1
-
-        observer2 = lambda do |channel, args|
-            $s = 2
-        end
-        observed.add_observer :channel2, observer2
-
-        observed.onotify :channel0, :nothing
-        assert_equal $s, 0
-
-        observed.onotify :channel1, :nothing
-        assert_equal $s, 1
-
-        observed.onotify :channel2, :nothing
-        assert_equal $s, 2
-
-        $s = nil
-
-        observed.remove_observer observer2, :channel99
-
-        observed.onotify :channel2, :nothing
-        assert_equal $s, 2
-
-        $s = nil
-
-        observed.remove_observer observer2
-
-        observed.onotify :channel2, :nothing
-        assert_nil $s
-
-        $s = nil
-
-        observed.remove_observer observer1, :channel1
-
-        observed.onotify :channel1, :nothing
-        assert_nil $s
+    observed.add_observer :channel0 do
+      $s = 0
     end
 
+    observer1 = Object.new
+    class << observer1
+      def call channel, *args
+        $s = 1
+      end
+    end
+    observed.add_observer :channel1, observer1
 
-    def test_1
+    observer2 = lambda do |channel, args|
+      $s = 2
+    end
+    observed.add_observer :channel2, observer2
 
-        $s = nil
+    observed.onotify :channel0, :nothing
+    assert_equal $s, 0
 
-        observed = Observed.new
+    observed.onotify :channel1, :nothing
+    assert_equal $s, 1
 
-        observed.add_observer :channel0 do
-            $s = 0
-        end
-        observed.add_observer "channel[0-9]+" do
-            $s = 9
-        end
+    observed.onotify :channel2, :nothing
+    assert_equal $s, 2
 
-        $s = nil
-        observed.onotify "channel2", :nothing
-        assert_equal $s, 9
+    $s = nil
 
-        $s = nil
-        observed.onotify "channelZ", :nothing
-        assert_nil $s
+    observed.remove_observer observer2, :channel99
+
+    observed.onotify :channel2, :nothing
+    assert_equal $s, 2
+
+    $s = nil
+
+    observed.remove_observer observer2
+
+    observed.onotify :channel2, :nothing
+    assert_nil $s
+
+    $s = nil
+
+    observed.remove_observer observer1, :channel1
+
+    observed.onotify :channel1, :nothing
+    assert_nil $s
+  end
+
+
+  def test_1
+
+    $s = nil
+
+    observed = Observed.new
+
+    observed.add_observer :channel0 do
+      $s = 0
+    end
+    observed.add_observer "channel[0-9]+" do
+      $s = 9
     end
 
-    def test_2
+    $s = nil
+    observed.onotify "channel2", :nothing
+    assert_equal $s, 9
 
-        observed = Observed.new
+    $s = nil
+    observed.onotify "channelZ", :nothing
+    assert_nil $s
+  end
 
-        o1 = observed.add_observer :channel0 do
-            puts "whatever"
-        end
-        o2 = observed.add_observer :channel0 do
-            puts "whatever"
-        end
+  def test_2
 
-        assert_equal observed.observers.size, 1
-        assert_equal observed.observers[:channel0].size, 2
+    observed = Observed.new
 
-        observed.remove_observer o1
-
-        assert_equal observed.observers.size, 1
-        assert_equal observed.observers[:channel0].size, 1
-
-        observed.remove_observer o2
-
-        assert_equal observed.observers.size, 1
-        assert_equal observed.observers[:channel0].size, 0
+    o1 = observed.add_observer :channel0 do
+      puts "whatever"
     end
+    o2 = observed.add_observer :channel0 do
+      puts "whatever"
+    end
+
+    assert_equal observed.observers.size, 1
+    assert_equal observed.observers[:channel0].size, 2
+
+    observed.remove_observer o1
+
+    assert_equal observed.observers.size, 1
+    assert_equal observed.observers[:channel0].size, 1
+
+    observed.remove_observer o2
+
+    assert_equal observed.observers.size, 1
+    assert_equal observed.observers[:channel0].size, 0
+  end
 
 end

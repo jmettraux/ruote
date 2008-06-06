@@ -39,88 +39,88 @@
 
 module OpenWFE
 
+  #
+  # A small mixin providing value for looking up the attributes
+  # variable/var/v and field/fld/f.
+  #
+  module ValueMixin
+
     #
-    # A small mixin providing value for looking up the attributes
-    # variable/var/v and field/fld/f.
+    # Expressions that include the ValueMixin let it gather values and
+    # then, in their reply() methods do the job with the values.
+    # The gathering task is performed by the ValueMixin.
     #
-    module ValueMixin
+    def apply (workitem)
 
-        #
-        # Expressions that include the ValueMixin let it gather values and
-        # then, in their reply() methods do the job with the values.
-        # The gathering task is performed by the ValueMixin.
-        #
-        def apply (workitem)
+      escape = lookup_boolean_attribute('escape', workitem, false)
 
-            escape = lookup_boolean_attribute('escape', workitem, false)
+      if @children.length < 1
 
-            if @children.length < 1
+        workitem.attributes[FIELD_RESULT] =
+          lookup_value workitem, :escape => escape
 
-                workitem.attributes[FIELD_RESULT] =
-                    lookup_value workitem, :escape => escape
+        reply workitem
+        return
+      end
 
-                reply workitem
-                return
-            end
+      child = @children.first
 
-            child = @children.first
+      if child.kind_of?(OpenWFE::FlowExpressionId)
 
-            if child.kind_of?(OpenWFE::FlowExpressionId)
+        handle_child child, workitem
+        return
+      end
 
-                handle_child child, workitem
-                return
-            end
+      workitem.attributes[FIELD_RESULT] =
+        fetch_text_content workitem, escape
 
-            workitem.attributes[FIELD_RESULT] =
-                fetch_text_content workitem, escape
-
-            reply workitem
-        end
-
-        def lookup_variable_attribute (workitem)
-
-            lookup [ "variable", "var", "v" ], workitem
-        end
-
-        def lookup_field_attribute (workitem)
-
-            lookup [ "field", "fld", "f" ], workitem
-        end
-
-        protected
-
-            def handle_child (child, workitem)
-
-                raw_child, _fei = get_expression_pool.fetch(child)
-
-                if raw_child.is_definition?
-
-                    #body_fei = get_expression_pool.evaluate child, workitem
-                    #workitem.attributes[FIELD_RESULT] = body_fei
-
-                    workitem.attributes[FIELD_RESULT] = raw_child
-                        #
-                        # storing the child raw expression
-
-                    reply workitem
-                else
-
-                    get_expression_pool.apply raw_child, workitem
-                end
-            end
-
-        private
-
-            def lookup (name_array, workitem)
-
-                name_array.each do |n|
-                    v = lookup_string_attribute n, workitem
-                    return v if v
-                end
-
-                nil
-            end
+      reply workitem
     end
+
+    def lookup_variable_attribute (workitem)
+
+      lookup [ "variable", "var", "v" ], workitem
+    end
+
+    def lookup_field_attribute (workitem)
+
+      lookup [ "field", "fld", "f" ], workitem
+    end
+
+    protected
+
+      def handle_child (child, workitem)
+
+        raw_child, _fei = get_expression_pool.fetch(child)
+
+        if raw_child.is_definition?
+
+          #body_fei = get_expression_pool.evaluate child, workitem
+          #workitem.attributes[FIELD_RESULT] = body_fei
+
+          workitem.attributes[FIELD_RESULT] = raw_child
+            #
+            # storing the child raw expression
+
+          reply workitem
+        else
+
+          get_expression_pool.apply raw_child, workitem
+        end
+      end
+
+    private
+
+      def lookup (name_array, workitem)
+
+        name_array.each do |n|
+          v = lookup_string_attribute n, workitem
+          return v if v
+        end
+
+        nil
+      end
+  end
 
 end
 

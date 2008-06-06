@@ -49,94 +49,94 @@ require 'openwfe/expressions/condition'
 
 module OpenWFE
 
-    #
-    # The 'when' expression will trigger a consequence when a condition
-    # is met, like in
-    #
-    #     <when test="${variable:over} == true">
-    #         <participant ref="toto" />
-    #     </when>
-    #
-    # where the participant "toto" will receive a workitem when the (local)
-    # variable "over" has the value true.
-    #
-    # This is also possible :
-    #
-    #     <when>
-    #         <equals field-value="done" other-value="true" />
-    #         <participant ref="toto" />
-    #     </when>
-    #
-    # The 'when' expression by defaults, evaluates every 10 seconds its
-    # condition clause.
-    # A different frequency can be stated via the "frequency" attribute :
-    #
-    #     _when :test => "${completion_level} == 4", :frequency => "1s"
-    #         participant "next_stage"
-    #     end
-    #
-    # will check for the completion_level value every second. The scheduler
-    # itself is by default 'waking up' every 250 ms, so setting a frequency to
-    # something smaller than that value might prove useless.
-    # (Note than in the Ruby process definition, the 'when' got escaped to
-    # '_when' not to conflict with the 'when' keyword of the Ruby language).
-    #
-    # The when expression understands the 'timeout' attribute like the
-    # participant expression does. Thus
-    #
-    #     _when :test => "${cows} == 'do fly'", :timeout => "1y"
-    #         participant "me"
-    #     end
-    #
-    # will timeout after one year (participant "me" will not receive a
-    # workitem).
-    #
-    class WhenExpression < WaitingExpression
+  #
+  # The 'when' expression will trigger a consequence when a condition
+  # is met, like in
+  #
+  #   <when test="${variable:over} == true">
+  #     <participant ref="toto" />
+  #   </when>
+  #
+  # where the participant "toto" will receive a workitem when the (local)
+  # variable "over" has the value true.
+  #
+  # This is also possible :
+  #
+  #   <when>
+  #     <equals field-value="done" other-value="true" />
+  #     <participant ref="toto" />
+  #   </when>
+  #
+  # The 'when' expression by defaults, evaluates every 10 seconds its
+  # condition clause.
+  # A different frequency can be stated via the "frequency" attribute :
+  #
+  #   _when :test => "${completion_level} == 4", :frequency => "1s"
+  #     participant "next_stage"
+  #   end
+  #
+  # will check for the completion_level value every second. The scheduler
+  # itself is by default 'waking up' every 250 ms, so setting a frequency to
+  # something smaller than that value might prove useless.
+  # (Note than in the Ruby process definition, the 'when' got escaped to
+  # '_when' not to conflict with the 'when' keyword of the Ruby language).
+  #
+  # The when expression understands the 'timeout' attribute like the
+  # participant expression does. Thus
+  #
+  #   _when :test => "${cows} == 'do fly'", :timeout => "1y"
+  #     participant "me"
+  #   end
+  #
+  # will timeout after one year (participant "me" will not receive a
+  # workitem).
+  #
+  class WhenExpression < WaitingExpression
 
-        names :when
-        conditions :test
+    names :when
+    conditions :test
 
-        attr_accessor \
-            :consequence_triggered,
-            :condition_sub_id
+    attr_accessor \
+      :consequence_triggered,
+      :condition_sub_id
 
-        def apply (workitem)
+    def apply (workitem)
 
-            return reply_to_parent(workitem) \
-                if raw_children.size < 1
+      return reply_to_parent(workitem) \
+        if raw_children.size < 1
 
-            @condition_sub_id = -1
-            @consequence_triggered = false
+      @condition_sub_id = -1
+      @consequence_triggered = false
 
-            super workitem
-        end
-
-        def reply (workitem)
-
-            #ldebug do
-            #    "reply() @consequence_triggered is '#{@consequence_triggered}'"
-            #end
-
-            return reply_to_parent(workitem) \
-                if @consequence_triggered
-
-            super workitem
-        end
-
-        protected
-
-            def apply_consequence (workitem)
-
-                @consequence_triggered = true
-
-                store_itself
-
-                i = 1
-                i = 0 if @children.size == 1
-
-                get_expression_pool.apply @children[i], workitem
-            end
+      super workitem
     end
+
+    def reply (workitem)
+
+      #ldebug do
+      #  "reply() @consequence_triggered is '#{@consequence_triggered}'"
+      #end
+
+      return reply_to_parent(workitem) \
+        if @consequence_triggered
+
+      super workitem
+    end
+
+    protected
+
+      def apply_consequence (workitem)
+
+        @consequence_triggered = true
+
+        store_itself
+
+        i = 1
+        i = 0 if @children.size == 1
+
+        get_expression_pool.apply @children[i], workitem
+      end
+  end
 
 end
 

@@ -15,56 +15,56 @@ require 'flowtestbase'
 
 
 class FlowTest37 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    DEF0 = '''
+  DEF0 = '''
 <process-definition name="pnames" revision="0">
-    <sequence>
-        <participant ref="sps" />
-        <participant ref="sps_1" />
-    </sequence>
+  <sequence>
+    <participant ref="sps" />
+    <participant ref="sps_1" />
+  </sequence>
 </process-definition>
 '''.strip
 
-    class TestPnames1 < OpenWFE::ProcessDefinition
-        sequence do
-            participant :ref => "sps"
-            participant :ref => "sps_1"
-        end
+  class TestPnames1 < OpenWFE::ProcessDefinition
+    sequence do
+      participant :ref => "sps"
+      participant :ref => "sps_1"
     end
+  end
 
-    def test_0
+  def test_0
 
-        prepare
+    prepare
 
-        dotest DEF0, "sps\nsps_1"
+    dotest DEF0, "sps\nsps_1"
+  end
+
+  def test_1
+
+    prepare
+
+    #dotest TestPnames1, "sps\nsps_1", true
+    dotest TestPnames1, "sps\nsps_1"
+  end
+
+  protected
+
+    def prepare
+
+      @engine.register_participant("sps") do |fexp, wi|
+        @tracer << "sps\n"
+      end
+      @engine.register_participant("sps_1") do |fexp, wi|
+        @tracer << "sps_1\n"
+      end
     end
-
-    def test_1
-
-        prepare
-
-        #dotest TestPnames1, "sps\nsps_1", true
-        dotest TestPnames1, "sps\nsps_1"
-    end
-
-    protected
-
-        def prepare
-
-            @engine.register_participant("sps") do |fexp, wi|
-                @tracer << "sps\n"
-            end
-            @engine.register_participant("sps_1") do |fexp, wi|
-                @tracer << "sps_1\n"
-            end
-        end
 
 end
 

@@ -12,78 +12,78 @@ require 'flowtestbase'
 
 
 class FlowTest25 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    def test_cancel_0
+  def test_cancel_0
 
-        #log_level_to_debug
+    #log_level_to_debug
 
-        dotest(
-            '''
+    dotest(
+      '''
 <process-definition name="25_cancel" revision="0">
-    <sequence>
-        <print>before</print>
-        <cancel-process/>
-        <print>after</print>
-    </sequence>
+  <sequence>
+    <print>before</print>
+    <cancel-process/>
+    <print>after</print>
+  </sequence>
 </process-definition>
-            '''.strip, 
-            "before",
-            0.400)
-    end
+      '''.strip,
+      "before",
+      0.400)
+  end
 
 
-    #
-    # TEST 1
+  #
+  # TEST 1
 
-    class TestDefinition1 < ProcessDefinition
-        def make
-            _process_definition :name => "25_cancel", :revision => "1" do
-                _sequence do
-                    _print "before"
-                    _cancel_process
-                    _print "after"
-                end
-            end
+  class TestDefinition1 < ProcessDefinition
+    def make
+      _process_definition :name => "25_cancel", :revision => "1" do
+        _sequence do
+          _print "before"
+          _cancel_process
+          _print "after"
         end
+      end
     end
+  end
 
-    def test_1
+  def test_1
 
-        dotest(
-            TestDefinition1, 
-            "before",
-            0.500)
-    end
+    dotest(
+      TestDefinition1,
+      "before",
+      0.500)
+  end
 
 
-    #
-    # TEST 2
+  #
+  # TEST 2
 
-    class TestDefinition2 < ProcessDefinition
-        def make
-            _process_definition :name => "25_cancel", :revision => "2" do
-                _sequence do
-                    _print "before"
-                    _cancel_process :if => "false"
-                    _print "after"
-                end
-            end
+  class TestDefinition2 < ProcessDefinition
+    def make
+      _process_definition :name => "25_cancel", :revision => "2" do
+        _sequence do
+          _print "before"
+          _cancel_process :if => "false"
+          _print "after"
         end
+      end
     end
+  end
 
-    def test_2
-        dotest TestDefinition2, "before\nafter"
-    end
+  def test_2
+    dotest TestDefinition2, "before\nafter"
+  end
 
 end
 

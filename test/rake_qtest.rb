@@ -41,8 +41,8 @@ require 'ps_representation'
 require 'util_xml_test'
 
 require 'ft_tests'
-    #
-    # all the 'ft' tests are required in 'ft_tests.rb'
+  #
+  # all the 'ft' tests are required in 'ft_tests.rb'
 
 #require 'ft_30_socketlistener'
 
@@ -56,13 +56,13 @@ require 'slock_test'
 
 
 #Signal.trap "SIGINT" do |signo|
-#    puts
-#    puts "Interrupt"
-#    puts
-#    puts caller[1..-1]
-#    puts
-#    exit 0
+#  puts
+#  puts "Interrupt"
+#  puts
+#  puts caller[1..-1]
+#  puts
+#  exit 0
 #end if on_jruby?
-    #
-    # useless
+  #
+  # useless
 

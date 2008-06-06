@@ -43,150 +43,150 @@ require 'openwfe/expressions/fe_sequence'
 
 module OpenWFE
 
+  #
+  # The <process-definition> expression.
+  #
+  #   <process-definition name="myprocess" revision="2">
+  #     <sequence>
+  #       <participant ref="alpha" />
+  #       <subprocess ref="sub0" />
+  #     </sequence>
+  #     <process-definition name="sub0">
+  #       <participant ref="bravo" />
+  #     </process-definition>
+  #   </process-definition>
+  #
+  # In a Ruby process definition :
+  #
+  #   class Test0 < OpenWFE::ProcessDefinition
+  #
+  #     sequence do
+  #       sub0
+  #       sub1
+  #       sub2
+  #       sub3
+  #     end
+  #
+  #     process_definition :name => "sub0" do
+  #       _print "sub0"
+  #     end
+  #     define :name => "sub1" do
+  #       _print "sub1"
+  #     end
+  #     process_definition "sub2" do
+  #       _print "sub2"
+  #     end
+  #     define "sub3" do
+  #       _print "sub3"
+  #     end
+  #   end
+  #
+  # It is most often used with its "process-definition" name, but "define"
+  # and "workflow-definition" are accepted as well.
+  #
+  class DefineExpression < SequenceExpression
+
+    is_definition
+
+    names :define, :process_definition, :workflow_definition
+
     #
-    # The <process-definition> expression.
+    # A pointer to the body expression of this process definition.
     #
-    #     <process-definition name="myprocess" revision="2">
-    #         <sequence>
-    #             <participant ref="alpha" />
-    #             <subprocess ref="sub0" />
-    #         </sequence>
-    #         <process-definition name="sub0">
-    #             <participant ref="bravo" />
-    #         </process-definition>
-    #     </process-definition>
+    attr_accessor :body_fei
+
+    #--
+    # Evaluates the definition, but doesn't apply its body, will
+    # simply return the body fei.
     #
-    # In a Ruby process definition :
+    #def evaluate (workitem)
+    #  @eval_only = true
+    #  apply workitem
+    #  @body_fei
+    #end
+    #++
+
     #
-    #     class Test0 < OpenWFE::ProcessDefinition
+    # Called at the end of the 'evaluation', the 'apply' operation on
+    # the body of the definition is done here.
     #
-    #         sequence do
-    #             sub0
-    #             sub1
-    #             sub2
-    #             sub3
-    #         end
-    #
-    #         process_definition :name => "sub0" do
-    #             _print "sub0"
-    #         end
-    #         define :name => "sub1" do
-    #             _print "sub1"
-    #         end
-    #         process_definition "sub2" do
-    #             _print "sub2"
-    #         end
-    #         define "sub3" do
-    #             _print "sub3"
-    #         end
-    #     end
-    #
-    # It is most often used with its "process-definition" name, but "define"
-    # and "workflow-definition" are accepted as well.
-    #
-    class DefineExpression < SequenceExpression
+    def reply_to_parent (workitem)
 
-        is_definition
+      #return if @eval_only
 
-        names :define, :process_definition, :workflow_definition
+      #puts "/// \n   bf #{@body_fei} \n   wi.fei #{workitem.fei}"
 
-        #
-        # A pointer to the body expression of this process definition.
-        #
-        attr_accessor :body_fei
+      return super(workitem) \
+        if @body_fei == nil or @body_fei == workitem.fei
+        #unless @body_fei
 
-        #--
-        # Evaluates the definition, but doesn't apply its body, will
-        # simply return the body fei.
-        #
-        #def evaluate (workitem)
-        #    @eval_only = true
-        #    apply workitem
-        #    @body_fei
-        #end
-        #++
+      #_fei = @body_fei
+      #@body_fei = nil
+      #store_itself
+      #get_expression_pool.apply _fei, workitem
 
-        #
-        # Called at the end of the 'evaluation', the 'apply' operation on
-        # the body of the definition is done here.
-        #
-        def reply_to_parent (workitem)
-
-            #return if @eval_only
-
-            #puts "/// \n   bf #{@body_fei} \n   wi.fei #{workitem.fei}"
-
-            return super(workitem) \
-                if @body_fei == nil or @body_fei == workitem.fei
-                #unless @body_fei
-
-            #_fei = @body_fei
-            #@body_fei = nil
-            #store_itself
-            #get_expression_pool.apply _fei, workitem
-
-            get_expression_pool.apply @body_fei, workitem
-        end
-
-        #
-        # Overrides the set_variable in FlowExpression to
-        # make sure to intercept requests for binding subprocesses
-        # at the engine level and to store a copy of the raw expression,
-        # not only the flow expression id.
-        #
-        def set_variable (name, fei)
-
-            if name[0, 2] == "//"
-
-                raw_exp = get_expression_pool.fetch_expression(fei).dup
-                raw_exp.parent_id = nil
-                raw_exp.fei = raw_exp.fei.dup
-                fei = raw_exp.fei
-                fei.wfid = get_wfid_generator.generate
-
-                raw_exp.store_itself
-            end
-
-            super name, fei
-        end
-
-        protected
-
-            #
-            # Determines the flowExpressionId of the next child to apply.
-            #
-            def next_child (current_fei)
-
-                next_fei = super
-
-                return nil unless next_fei
-
-                rawchild = get_expression_pool.fetch_expression next_fei
-
-                return next_child(next_fei) unless rawchild
-
-                unless rawchild.is_definition?
-
-                    unless @body_fei
-                        @body_fei = next_fei
-                        store_itself
-                    end
-                    return next_child(next_fei)
-                end
-
-                exp_class = get_expression_map.get_class rawchild
-
-                if exp_class == DefineExpression
-                    set_variable rawchild.definition_name, next_fei
-                    return next_child(next_fei)
-                end
-
-                next_fei
-                    #
-                    # expression is a 'set', a 'filter-definition' or
-                    # something like that, let it get applied
-            end
+      get_expression_pool.apply @body_fei, workitem
     end
+
+    #
+    # Overrides the set_variable in FlowExpression to
+    # make sure to intercept requests for binding subprocesses
+    # at the engine level and to store a copy of the raw expression,
+    # not only the flow expression id.
+    #
+    def set_variable (name, fei)
+
+      if name[0, 2] == "//"
+
+        raw_exp = get_expression_pool.fetch_expression(fei).dup
+        raw_exp.parent_id = nil
+        raw_exp.fei = raw_exp.fei.dup
+        fei = raw_exp.fei
+        fei.wfid = get_wfid_generator.generate
+
+        raw_exp.store_itself
+      end
+
+      super name, fei
+    end
+
+    protected
+
+      #
+      # Determines the flowExpressionId of the next child to apply.
+      #
+      def next_child (current_fei)
+
+        next_fei = super
+
+        return nil unless next_fei
+
+        rawchild = get_expression_pool.fetch_expression next_fei
+
+        return next_child(next_fei) unless rawchild
+
+        unless rawchild.is_definition?
+
+          unless @body_fei
+            @body_fei = next_fei
+            store_itself
+          end
+          return next_child(next_fei)
+        end
+
+        exp_class = get_expression_map.get_class rawchild
+
+        if exp_class == DefineExpression
+          set_variable rawchild.definition_name, next_fei
+          return next_child(next_fei)
+        end
+
+        next_fei
+          #
+          # expression is a 'set', a 'filter-definition' or
+          # something like that, let it get applied
+      end
+  end
 
 end
 

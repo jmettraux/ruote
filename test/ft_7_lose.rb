@@ -14,79 +14,79 @@ require 'flowtestbase'
 
 
 class FlowTest7 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    def test_lose_0
-        dotest(
+  def test_lose_0
+    dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
-    <sequence>
+  <sequence>
 
-        <concurrence count="1">
-            <lose>
-                <sequence>
-                    <sleep for="2s" />
-                    <print>I should not be printed</print>
-                </sequence>
-            </lose>
-            <sequence>
-                <print>ok 0</print>
-            </sequence>
-        </concurrence>
+    <concurrence count="1">
+      <lose>
+        <sequence>
+          <sleep for="2s" />
+          <print>I should not be printed</print>
+        </sequence>
+      </lose>
+      <sequence>
+        <print>ok 0</print>
+      </sequence>
+    </concurrence>
 
-        <print>- - -</print>
+    <print>- - -</print>
 
-        <concurrence count="1">
-            <lose>
-                <sequence>
-                    <print>ok 1</print>
-                    <set variable="v0" value="true" />
-                </sequence>
-            </lose>
-            <sequence>
-                <sleep for="400" />
-                <print>ok 2</print>
-            </sequence>
-        </concurrence>
+    <concurrence count="1">
+      <lose>
+        <sequence>
+          <print>ok 1</print>
+          <set variable="v0" value="true" />
+        </sequence>
+      </lose>
+      <sequence>
+        <sleep for="400" />
+        <print>ok 2</print>
+      </sequence>
+    </concurrence>
 
-        <print>v0 : ${v0}</print>
-        <if>
-            <equals variable-value="v0" other-value="true" />
-            <print>ok 3</print>
-        </if>
+    <print>v0 : ${v0}</print>
+    <if>
+      <equals variable-value="v0" other-value="true" />
+      <print>ok 3</print>
+    </if>
 
-        <print>- - -</print>
+    <print>- - -</print>
 
-        <concurrence count="1">
-            <lose>
-                <sequence>
-                    <sleep for="400" />
-                        <!-- more than the 250 ms precision -->
-                    <print>ok 4</print>
-                    <set variable="v1" value="true" />
-                </sequence>
-            </lose>
-            <sequence>
-                <print>ok 5</print>
-            </sequence>
-        </concurrence>
+    <concurrence count="1">
+      <lose>
+        <sequence>
+          <sleep for="400" />
+            <!-- more than the 250 ms precision -->
+          <print>ok 4</print>
+          <set variable="v1" value="true" />
+        </sequence>
+      </lose>
+      <sequence>
+        <print>ok 5</print>
+      </sequence>
+    </concurrence>
 
-        <print>v1 : ${v1}</print>
-        <if>
-            <equals field-value="v1" other-value="true" />
-            <print>ok 6</print>
-        </if>
+    <print>v1 : ${v1}</print>
+    <if>
+      <equals field-value="v1" other-value="true" />
+      <print>ok 6</print>
+    </if>
 
-        <print>done.</print>
+    <print>done.</print>
 
-    </sequence>
-</process-definition>''', 
-            """ok 0
+  </sequence>
+</process-definition>''',
+      """ok 0
 - - -
 ok 1
 ok 2
@@ -95,10 +95,10 @@ ok 3
 - - -
 ok 5
 v1 : 
-done.""", 
-            3.000,
-            true)
-    end
+done.""",
+      3.000,
+      true)
+  end
 
 end
 

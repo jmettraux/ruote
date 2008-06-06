@@ -13,59 +13,59 @@ require 'flowtestbase'
 
 
 class FlowTestRecursion < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # test 0
-    #
+  #
+  # test 0
+  #
 
-    class Test0 < OpenWFE::ProcessDefinition
-        sequence do
-            #print_i
-            #subprocess :ref => "Test"
-            subprocess :ref => "Testy"
-        end
-        process_definition :name => "Testy" do
-            sequence do
-                print_i
-                subprocess :ref => "Testy"
-            end
-            #_loop do
-            #    print_i
-            #end
-        end
+  class Test0 < OpenWFE::ProcessDefinition
+    sequence do
+      #print_i
+      #subprocess :ref => "Test"
+      subprocess :ref => "Testy"
+    end
+    process_definition :name => "Testy" do
+      sequence do
+        print_i
+        subprocess :ref => "Testy"
+      end
+      #_loop do
+      #  print_i
+      #end
+    end
+  end
+
+  def test_0
+
+    i = 0
+    last = Time.now.to_f
+
+    @engine.register_participant :print_i do
+      now = Time.now.to_f
+      print "#{i}"
+      if i % 10 == 0
+        print "("
+        print "#{now-last}"
+        print " #{@engine.get_expression_storage.size}"
+        print ")"
+      end
+      print " "
+      last = now
+      i += 1
     end
 
-    def test_0
+    #dotest TestTag0, "blah"
+    @engine.launch Test0
 
-        i = 0
-        last = Time.now.to_f
-
-        @engine.register_participant :print_i do
-            now = Time.now.to_f
-            print "#{i}"
-            if i % 10 == 0
-                print "("
-                print "#{now-last}" 
-                print " #{@engine.get_expression_storage.size}"
-                print ")"
-            end
-            print " "
-            last = now
-            i += 1
-        end
-
-        #dotest TestTag0, "blah"
-        @engine.launch Test0
-
-        sleep 360
-    end
+    sleep 360
+  end
 
 end
 

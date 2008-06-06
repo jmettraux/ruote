@@ -44,52 +44,52 @@ require 'openwfe/flowexpressionid'
 
 module OpenWFE
 
-    #
-    # A few methods about FlowExpressionIds
-    #
-    module FeiMixin
+  #
+  # A few methods about FlowExpressionIds
+  #
+  module FeiMixin
 
-        protected
+    protected
 
-            #
-            # Makes sure to return a FlowExpressionId instance.
-            #
-            def extract_fei (object)
+      #
+      # Makes sure to return a FlowExpressionId instance.
+      #
+      def extract_fei (object)
 
-                if object.is_a?(FlowExpressionId)
+        if object.is_a?(FlowExpressionId)
 
-                    object
+          object
 
-                elsif object.is_a?(FlowExpression) or
-                    object.is_a?(InFlowItem)
+        elsif object.is_a?(FlowExpression) or
+          object.is_a?(InFlowItem)
 
-                    object.fei
+          object.fei
 
-                elsif object.is_a?(String)
+        elsif object.is_a?(String)
 
-                    FlowExpressionId.to_fei object
+          FlowExpressionId.to_fei object
 
-                else
+        else
 
-                    raise \
-                        "cannot extract FlowExpressionId "+
-                        "out of #{object.inspect}"
-                end
-            end
+          raise \
+            "cannot extract FlowExpressionId "+
+            "out of #{object.inspect}"
+        end
+      end
 
-            #
-            # A small method for ensuring we have a workflow instance id.
-            #
-            def extract_wfid (o, parent=false)
+      #
+      # A small method for ensuring we have a workflow instance id.
+      #
+      def extract_wfid (o, parent=false)
 
-                case o
-                    #when String then o
-                    when FlowExpressionId then o.wfid(parent)
-                    when FlowExpression then o.fei.wfid(parent)
-                    else o.to_s
-                end
-            end
-    end
+        case o
+          #when String then o
+          when FlowExpressionId then o.wfid(parent)
+          when FlowExpression then o.fei.wfid(parent)
+          else o.to_s
+        end
+      end
+  end
 
 end
 

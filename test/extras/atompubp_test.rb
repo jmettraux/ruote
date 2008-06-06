@@ -23,69 +23,69 @@ require 'rutest_utils'
 
 class AtomPubParticipantTest < Test::Unit::TestCase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    def test_0
+  def test_0
 
-        target_uri = "https://openwferu.wordpress.com/wp-app.php/posts"
+    target_uri = "https://openwferu.wordpress.com/wp-app.php/posts"
 
-        params = {}
-        params[:username] = 'jmettraux'
-        params[:password] = ENV['WORDPRESS_PASSWORD']
-        
-        params[:categories] = 'openwferu, test'
-        
-        app = OpenWFE::Extras::AtomPubParticipant.new target_uri, params
+    params = {}
+    params[:username] = 'jmettraux'
+    params[:password] = ENV['WORDPRESS_PASSWORD']
 
-        workitem = OpenWFE::InFlowWorkItem.new
-        workitem.fei = new_fei
-        workitem.participant_name = "AtomPubParticipant"
-        workitem.message = "hello RFC 5023 world !"
+    params[:categories] = 'openwferu, test'
 
-        uri = app.consume(workitem)
+    app = OpenWFE::Extras::AtomPubParticipant.new target_uri, params
 
-        puts
-        puts uri
-        puts
+    workitem = OpenWFE::InFlowWorkItem.new
+    workitem.fei = new_fei
+    workitem.participant_name = "AtomPubParticipant"
+    workitem.message = "hello RFC 5023 world !"
+
+    uri = app.consume(workitem)
+
+    puts
+    puts uri
+    puts
+  end
+
+  def test_1
+
+    target_uri = "https://openwferu.wordpress.com/wp-app.php/posts"
+
+    params = {}
+    params[:username] = 'jmettraux'
+    params[:password] = ENV['WORDPRESS_PASSWORD']
+
+    params[:categories] = 'openwferu, test'
+
+    #params[:title_field] = "title"
+
+    app = OpenWFE::Extras::BlogParticipant.new target_uri, params do
+      """
+        paragraph 0
+
+        paragraph 1 : ${f:message}
+
+        paragraph 2
+      """
     end
 
-    def test_1
+    workitem = OpenWFE::InFlowWorkItem.new
+    workitem.fei = new_fei
+    workitem.participant_name = "AtomPubParticipant"
+    workitem.message = "hello RFC 5023 world !"
+    workitem.title = "BlogPostParticipant test"
 
-        target_uri = "https://openwferu.wordpress.com/wp-app.php/posts"
+    uri = app.consume(workitem)
 
-        params = {}
-        params[:username] = 'jmettraux'
-        params[:password] = ENV['WORDPRESS_PASSWORD']
-        
-        params[:categories] = 'openwferu, test'
-
-        #params[:title_field] = "title"
-        
-        app = OpenWFE::Extras::BlogParticipant.new target_uri, params do
-            """
-                paragraph 0
-
-                paragraph 1 : ${f:message}
-
-                paragraph 2
-            """
-        end
-
-        workitem = OpenWFE::InFlowWorkItem.new
-        workitem.fei = new_fei
-        workitem.participant_name = "AtomPubParticipant"
-        workitem.message = "hello RFC 5023 world !"
-        workitem.title = "BlogPostParticipant test"
-
-        uri = app.consume(workitem)
-
-        puts
-        puts uri
-        puts
-    end
+    puts
+    puts uri
+    puts
+  end
 end
 

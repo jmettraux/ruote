@@ -11,58 +11,58 @@ require 'flowtestbase'
 
 
 class FlowTest0 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    def test_0
-        #log_level_to_debug
-        dotest(
+  def test_0
+    #log_level_to_debug
+    dotest(
 '''<process-definition name="n" revision="0">
-    <print>ok</print>
+  <print>ok</print>
 </process-definition>''', "ok")
-    end
+  end
 
-    def test_1
-        dotest(
+  def test_1
+    dotest(
 '''<process-definition name="n" revision="0">
 </process-definition>''', '')
-    end
+  end
 
-    def test_2
-        #log_level_to_debug
-        dotest(
+  def test_2
+    #log_level_to_debug
+    dotest(
 '''<process-definition name="n" revision="0">
-    <sequence>
-        <set variable="x" value="y" />
-        <print>${x} ${v:x}</print>
-    </sequence>
+  <sequence>
+    <set variable="x" value="y" />
+    <print>${x} ${v:x}</print>
+  </sequence>
 </process-definition>''', 'y y')
-    end
+  end
 
-    def test_3
-        #log_level_to_debug
-        dotest(
+  def test_3
+    #log_level_to_debug
+    dotest(
 '''<process-definition name="n" revision="0">
-    <sequence>
-        <set field="x" value="y" />
-        <print>${f:x} ${field:x}</print>
-    </sequence>
+  <sequence>
+    <set field="x" value="y" />
+    <print>${f:x} ${field:x}</print>
+  </sequence>
 </process-definition>''', 'y y')
-    end
+  end
 
-    def test_dollar_notation_2
-        dotest(
+  def test_dollar_notation_2
+    dotest(
 '''<process-definition name="n" revision="0">
-    <sequence>
-        <print>${f:x}X${field:x}</print>
-    </sequence>
+  <sequence>
+    <print>${f:x}X${field:x}</print>
+  </sequence>
 </process-definition>''', 'X')
-    end
+  end
 
 end
 

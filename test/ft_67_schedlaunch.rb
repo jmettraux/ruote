@@ -14,103 +14,103 @@ require 'flowtestbase'
 
 
 class FlowTest67 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    class Test0 < OpenWFE::ProcessDefinition
-        _print "hell0"
-    end
+  class Test0 < OpenWFE::ProcessDefinition
+    _print "hell0"
+  end
 
-    def test_0
+  def test_0
 
-        #log_level_to_debug
+    #log_level_to_debug
 
-        @engine.launch Test0, :in => "2s"
+    @engine.launch Test0, :in => "2s"
 
-        sleep 0.400
+    sleep 0.400
 
-        assert_equal(
-            1, 
-            @engine.get_scheduler.find_jobs("scheduled-launch").size)
+    assert_equal(
+      1,
+      @engine.get_scheduler.find_jobs("scheduled-launch").size)
 
-        assert_trace ""
+    assert_trace ""
 
-        sleep 2.500
+    sleep 2.500
 
-        assert_trace "hell0"
-    end
+    assert_trace "hell0"
+  end
 
-    #
-    # TEST 1
+  #
+  # TEST 1
 
-    def test_1
+  def test_1
 
-        #log_level_to_debug
+    #log_level_to_debug
 
-        t = Time.now
+    t = Time.now
 
-        @engine.launch Test0, :at => (t + 2).to_s
+    @engine.launch Test0, :at => (t + 2).to_s
 
-        sleep 0.400
+    sleep 0.400
 
-        assert_equal(
-            1, 
-            @engine.get_scheduler.find_jobs("scheduled-launch").size)
+    assert_equal(
+      1,
+      @engine.get_scheduler.find_jobs("scheduled-launch").size)
 
-        assert_trace ""
+    assert_trace ""
 
-        sleep 2.500
+    sleep 2.500
 
-        assert_trace "hell0"
-    end
+    assert_trace "hell0"
+  end
 
-    #
-    # TEST 2
+  #
+  # TEST 2
 
-    def test_2
+  def test_2
 
-        #log_level_to_debug
+    #log_level_to_debug
 
-        @engine.launch Test0, :cron => "* * * * *"
+    @engine.launch Test0, :cron => "* * * * *"
 
-        assert_trace ""
+    assert_trace ""
 
-        sleep 121
+    sleep 121
 
-        assert_trace "hell0\nhell0"
+    assert_trace "hell0\nhell0"
 
-        assert_equal(
-            1, 
-            @engine.get_scheduler.find_jobs("scheduled-launch").size)
-    end
+    assert_equal(
+      1,
+      @engine.get_scheduler.find_jobs("scheduled-launch").size)
+  end
 
-    #
-    # TEST 3
+  #
+  # TEST 3
 
-    def test_3
+  def test_3
 
-        #log_level_to_debug
+    #log_level_to_debug
 
-        @engine.launch Test0, :every => "2s"
+    @engine.launch Test0, :every => "2s"
 
-        assert_trace ""
+    assert_trace ""
 
-        sleep 5
+    sleep 5
 
-        assert_trace "hell0\nhell0"
+    assert_trace "hell0\nhell0"
 
-        assert_equal(
-            1, 
-            @engine.get_scheduler.find_jobs("scheduled-launch").size)
-    end
+    assert_equal(
+      1,
+      @engine.get_scheduler.find_jobs("scheduled-launch").size)
+  end
 
 end
 

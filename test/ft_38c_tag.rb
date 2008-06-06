@@ -16,85 +16,85 @@ require 'flowtestbase'
 
 
 class FlowTest38c < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
 
-    #
-    # test 5
-    #
+  #
+  # test 5
+  #
 
-    class TestTag5 < OpenWFE::ProcessDefinition
+  class TestTag5 < OpenWFE::ProcessDefinition
 
-        sequence do
-            sub0
-        end
-
-        process_definition :name => "sub0" do
-            sequence :tag => "seq0" do
-                peekin
-            end
-        end
+    sequence do
+      sub0
     end
 
-    def test_tag_5
+    process_definition :name => "sub0" do
+      sequence :tag => "seq0" do
+        peekin
+      end
+    end
+  end
 
-        @engine.register_participant :peekin do |fexp, wi|
+  def test_tag_5
 
-            wfid = fexp.fei.parent_workflow_instance_id
+    @engine.register_participant :peekin do |fexp, wi|
 
-            assert_equal 3, @engine.get_variables(wfid).size
-                # :next_sub_id and one [sub] process definition
+      wfid = fexp.fei.parent_workflow_instance_id
 
-            assert_equal 0, @engine.process_status(wfid).tags.size
-            assert_equal "", @engine.process_status(wfid).tags.to_s
+      assert_equal 3, @engine.get_variables(wfid).size
+        # :next_sub_id and one [sub] process definition
 
-            @tracer << "peekin\n"
-        end
+      assert_equal 0, @engine.process_status(wfid).tags.size
+      assert_equal "", @engine.process_status(wfid).tags.to_s
 
-        dotest TestTag5, "peekin"
+      @tracer << "peekin\n"
     end
 
+    dotest TestTag5, "peekin"
+  end
 
-    #
-    # test 5b
-    #
 
-    class TestTag5b < OpenWFE::ProcessDefinition
+  #
+  # test 5b
+  #
 
-        sequence do
-            sub0
-        end
+  class TestTag5b < OpenWFE::ProcessDefinition
 
-        process_definition :name => "sub0" do
-            sequence :tag => "/seq0" do
-                peekin
-            end
-        end
+    sequence do
+      sub0
     end
 
-    def test_5b
-
-        @engine.register_participant :peekin do |fexp, wi|
-
-            wfid = fexp.fei.parent_workflow_instance_id
-
-            assert_equal 4, @engine.get_variables(wfid).size
-                # :next_sub_id and one [sub] process definition (and the tag)
-
-            assert_equal 1, @engine.process_status(wfid).tags.size
-            assert_equal "seq0", @engine.process_status(wfid).tags.to_s
-
-            @tracer << "peekin\n"
-        end
-
-        dotest TestTag5b, "peekin"
+    process_definition :name => "sub0" do
+      sequence :tag => "/seq0" do
+        peekin
+      end
     end
+  end
+
+  def test_5b
+
+    @engine.register_participant :peekin do |fexp, wi|
+
+      wfid = fexp.fei.parent_workflow_instance_id
+
+      assert_equal 4, @engine.get_variables(wfid).size
+        # :next_sub_id and one [sub] process definition (and the tag)
+
+      assert_equal 1, @engine.process_status(wfid).tags.size
+      assert_equal "seq0", @engine.process_status(wfid).tags.to_s
+
+      @tracer << "peekin\n"
+    end
+
+    dotest TestTag5b, "peekin"
+  end
 
 end
 

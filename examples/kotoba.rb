@@ -5,18 +5,18 @@ require 'openwfe/util/kotoba'
 
 3.times do
 
-    i = (rand * 1000000).to_i
-    s = Kotoba::from_integer i
+  i = (rand * 1000000).to_i
+  s = Kotoba::from_integer i
 
-    puts "#{i} => #{s}"
-    puts "#{s} => #{Kotoba::to_integer(s)}"
-        # forth and back
+  puts "#{i} => #{s}"
+  puts "#{s} => #{Kotoba::to_integer(s)}"
+    # forth and back
 
-    a = Kotoba::split s
+  a = Kotoba::split s
 
-    print "#{s} => "; pp a
-        # showing how the 'word' is split
+  print "#{s} => "; pp a
+    # showing how the 'word' is split
 
-    puts "."
+  puts "."
 end
 

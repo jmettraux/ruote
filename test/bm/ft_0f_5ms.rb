@@ -11,25 +11,25 @@ require 'flowtestbase'
 
 
 class FlowTest0b < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    class Test5ms < OpenWFE::ProcessDefinition
-        concurrence do
-            _print "a"
-            _print "b"
-        end
+  class Test5ms < OpenWFE::ProcessDefinition
+    concurrence do
+      _print "a"
+      _print "b"
     end
+  end
 
-    def test_0
+  def test_0
 
-        dotest Test5ms, "a\nb"
-    end
+    dotest Test5ms, "a\nb"
+  end
 
 end
 

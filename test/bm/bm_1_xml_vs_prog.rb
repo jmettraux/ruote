@@ -13,24 +13,24 @@ require 'openwfe/engine/file_persisted_engine'
 
 
 class ProgDef < OpenWFE::ProcessDefinition
-    sequence do
-        toto
-        toto
-        toto
-        toto
-        toto
-    end
+  sequence do
+    toto
+    toto
+    toto
+    toto
+    toto
+  end
 end
 
 xml = <<END
 <process-definition name="x" revision="y">
-    <sequence>
-        <toto/>
-        <toto/>
-        <toto/>
-        <toto/>
-        <toto/>
-    </sequence>
+  <sequence>
+    <toto/>
+    <toto/>
+    <toto/>
+    <toto/>
+    <toto/>
+  </sequence>
 </process-definition>
 END
 
@@ -38,19 +38,19 @@ END
 $engine = OpenWFE::FilePersistedEngine.new
 
 $engine.register_participant "toto" do |workitem|
-    # do nothing
+  # do nothing
 end
 
 N = 500
 
 def test (proc_def)
-    N.times do 
-        fei = $engine.launch proc_def
-        $engine.wait_for fei
-    end
+  N.times do
+    fei = $engine.launch proc_def
+    $engine.wait_for fei
+  end
 end
 
 Benchmark.bm do |x|
-    x.report("prog :") { test ProgDef }
-    x.report("xml :") { test xml.strip }
+  x.report("prog :") { test ProgDef }
+  x.report("xml :") { test xml.strip }
 end

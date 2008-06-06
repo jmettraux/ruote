@@ -39,83 +39,83 @@
 
 module OpenWFE
 
+  #
+  # This module gets included into the result of the expression pool (and
+  # engine) process_stack method (if the optional parameter 'unapplied' is
+  # set to true).
+  #
+  # It adds a representation() method that returns an up-to-date
+  # representation of the executing process instance.
+  # This representation is suitable for 'fluo' rendering.
+  #
+  module RepresentationMixin
+
     #
-    # This module gets included into the result of the expression pool (and
-    # engine) process_stack method (if the optional parameter 'unapplied' is
-    # set to true).
+    # Computes and returns the up-to-date representation of
+    # the process definition (on the fly changes included)
     #
-    # It adds a representation() method that returns an up-to-date
-    # representation of the executing process instance.
-    # This representation is suitable for 'fluo' rendering.
-    #
-    module RepresentationMixin
+    def representation
 
-        #
-        # Computes and returns the up-to-date representation of
-        # the process definition (on the fly changes included)
-        #
-        def representation
+      root_exp = find_root_expression
 
-            root_exp = find_root_expression
-
-            update_rep root_exp
-        end
-
-        protected
-
-            #
-            # if a child expression is present (in the process stack)
-            # makes sure to take its current representation and include
-            # it in the parent representation.
-            #
-            def update_rep (flow_expression)
-
-                rep = flow_expression.raw_representation.dup
-                children = flow_expression.children
-
-                index = -1
-
-                rep[2] = rep.last.inject([]) { |r, c|
-
-                    index += 1
-
-                    r << if c.is_a?(Array)
-
-                        child_fei = flow_expression.children[index]
-                        child_exp = find_expression child_fei
-
-                        if child_exp
-                            update_rep(child_exp)
-                        else
-                            #c[1]['__gone__'] = true
-                                #
-                                # not a good idea
-                                # have to differentiate between 'replied'
-                                # expressions and removed expressions
-                            c
-                        end
-                    else
-
-                        c
-                    end
-
-                } if children and children.size > 0
-
-                rep
-            end
-
-            def find_root_expression
-
-                self.find do |fexp|
-                    fexp.fei.expid == "0" &&
-                    ( ! fexp.is_a?(OpenWFE::Environment)) &&
-                    fexp.fei.is_in_parent_process?
-                end
-            end
-
-            def find_expression (fei)
-
-                self.find { |fexp| fexp.fei == fei }
-            end
+      update_rep root_exp
     end
+
+    protected
+
+      #
+      # if a child expression is present (in the process stack)
+      # makes sure to take its current representation and include
+      # it in the parent representation.
+      #
+      def update_rep (flow_expression)
+
+        rep = flow_expression.raw_representation.dup
+        children = flow_expression.children
+
+        index = -1
+
+        rep[2] = rep.last.inject([]) { |r, c|
+
+          index += 1
+
+          r << if c.is_a?(Array)
+
+            child_fei = flow_expression.children[index]
+            child_exp = find_expression child_fei
+
+            if child_exp
+              update_rep(child_exp)
+            else
+              #c[1]['__gone__'] = true
+                #
+                # not a good idea
+                # have to differentiate between 'replied'
+                # expressions and removed expressions
+              c
+            end
+          else
+
+            c
+          end
+
+        } if children and children.size > 0
+
+        rep
+      end
+
+      def find_root_expression
+
+        self.find do |fexp|
+          fexp.fei.expid == "0" &&
+          ( ! fexp.is_a?(OpenWFE::Environment)) &&
+          fexp.fei.is_in_parent_process?
+        end
+      end
+
+      def find_expression (fei)
+
+        self.find { |fexp| fexp.fei == fei }
+      end
+  end
 end

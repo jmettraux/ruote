@@ -4,16 +4,16 @@
 
 class BigFlow0 < OpenWFE::ProcessDefinition
 
-    sequence do
+  sequence do
+    alpha
+    concurrence do
+      bravo
+      cursor do
         alpha
-        concurrence do
-            bravo
-            cursor do
-                alpha
-                bravo
-            end
-            alpha :activity => "brush teeth"
-        end
         bravo
+      end
+      alpha :activity => "brush teeth"
     end
+    bravo
+  end
 end

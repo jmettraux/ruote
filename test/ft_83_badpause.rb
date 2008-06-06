@@ -11,48 +11,48 @@ require 'flowtestbase'
 
 
 class FlowTest83 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #
-    # Test 0
-    #
+  #
+  # Test 0
+  #
 
-    class Test0 < OpenWFE::ProcessDefinition
-        concurrence do
-            _loop do
-                alpha
-            end
-            _loop do
-                alpha
-            end
-        end
+  class Test0 < OpenWFE::ProcessDefinition
+    concurrence do
+      _loop do
+        alpha
+      end
+      _loop do
+        alpha
+      end
+    end
+  end
+
+  def test_0
+
+    @engine.register_participant :alpha do
+      sleep 0.002
     end
 
-    def test_0
+    fei = launch Test0
 
-        @engine.register_participant :alpha do
-            sleep 0.002
-        end
+    sleep 0.350
 
-        fei = launch Test0
-
-        sleep 0.350
-
-        1000.times do |i|
-            print "."
-            ps = @engine.process_status fei
-            assert ( ! ps.paused?)
-            #p ps.expressions.size
-        end
-
-        #dotest Test0, "1\n2\n3"
+    1000.times do |i|
+      print "."
+      ps = @engine.process_status fei
+      assert ( ! ps.paused?)
+      #p ps.expressions.size
     end
+
+    #dotest Test0, "1\n2\n3"
+  end
 
 end
 

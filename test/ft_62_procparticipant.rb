@@ -14,58 +14,58 @@ require 'flowtestbase'
 
 
 class FlowTest62 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    class SubDef < OpenWFE::ProcessDefinition
-        _print "subruby"
+  class SubDef < OpenWFE::ProcessDefinition
+    _print "subruby"
+  end
+
+  SUBDEF = '''
+    <process-definition name="sub" revision="0">
+      <print>subxml</print>
+    </process-definition>
+  '''.strip
+
+  class TestDefinition0 < OpenWFE::ProcessDefinition
+    sequence do
+      _print "main0"
+      subruby
+      subxml
+      subfile
+      _print "main1"
     end
+  end
 
-    SUBDEF = '''
-        <process-definition name="sub" revision="0">
-            <print>subxml</print>
-        </process-definition>
-    '''.strip
+  def test_0
 
-    class TestDefinition0 < OpenWFE::ProcessDefinition
-        sequence do
-            _print "main0"
-            subruby
-            subxml
-            subfile
-            _print "main1"
-        end
+    #$OWFE_LOG.level = Logger::DEBUG
+
+    engine.register_participant(
+      "subruby",
+      OpenWFE::ProcessParticipant.new(SubDef))
+    engine.register_participant(
+      "subxml",
+      OpenWFE::ProcessParticipant.new(SUBDEF))
+
+    File.open "work/procdef62.xml", "w+" do |f|
+      f.write SUBDEF
+      f.write "\n"
     end
+    engine.register_participant(
+      "subfile",
+      OpenWFE::ProcessParticipant.new('file:work/procdef62.xml'))
 
-    def test_0
-
-        #$OWFE_LOG.level = Logger::DEBUG
-
-        engine.register_participant(
-            "subruby", 
-            OpenWFE::ProcessParticipant.new(SubDef))
-        engine.register_participant(
-            "subxml", 
-            OpenWFE::ProcessParticipant.new(SUBDEF))
-
-        File.open "work/procdef62.xml", "w+" do |f|
-            f.write SUBDEF
-            f.write "\n"
-        end
-        engine.register_participant(
-            "subfile", 
-            OpenWFE::ProcessParticipant.new('file:work/procdef62.xml'))
-
-        dotest TestDefinition0, "main0\nsubruby\nsubxml\nsubxml\nmain1"
-    end
+    dotest TestDefinition0, "main0\nsubruby\nsubxml\nsubxml\nmain1"
+  end
 
 end
 

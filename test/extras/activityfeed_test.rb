@@ -21,65 +21,65 @@ require 'openwfe/extras/misc/activityfeed'
 
 class ActivityFeedTest < Test::Unit::TestCase
 
-    #def setup
-    #end
-    #def teardown
-    #end
+  #def setup
+  #end
+  #def teardown
+  #end
 
-    #
-    # test 0
-    
-    class Test0 < OpenWFE::ProcessDefinition
-        sequence do
-            step_one
-            step_two
-            step_three
-        end
+  #
+  # test 0
+
+  class Test0 < OpenWFE::ProcessDefinition
+    sequence do
+      step_one
+      step_two
+      step_three
+    end
+  end
+
+  def test_0
+
+    engine = OpenWFE::Engine.new({
+      :definition_in_launchitem_allowed => true })
+
+    feedservice = engine.init_service(
+      'activityFeed', OpenWFE::Extras::ActivityFeedService)
+
+    steps = []
+
+    engine.register_participant "step_.*" do |workitem|
+      steps << workitem.participant_name
     end
 
-    def test_0
+    li = OpenWFE::LaunchItem.new Test0
+    li.message = "2 > 1 < 3"
 
-        engine = OpenWFE::Engine.new({ 
-            :definition_in_launchitem_allowed => true })
+    fei = engine.launch li
+    engine.wait_for fei
 
-        feedservice = engine.init_service(
-            'activityFeed', OpenWFE::Extras::ActivityFeedService)
+    feed = feedservice.get_feed(".*")
+    #puts feed.to_s
 
-        steps = []
+    assert_equal "step_one, step_two, step_three", steps.join(", ")
+    assert_equal "OpenWFEru engine activity feed", feed.title.to_s
 
-        engine.register_participant "step_.*" do |workitem|
-            steps << workitem.participant_name
-        end
+    assert_equal 6, feed.instance_variable_get(:@entries).size
 
-        li = OpenWFE::LaunchItem.new Test0
-        li.message = "2 > 1 < 3"
+    feed = feedservice.get_feed(".*", :upon => :reply)
 
-        fei = engine.launch li
-        engine.wait_for fei
+    assert_equal 3, feed.instance_variable_get(:@entries).size
 
-        feed = feedservice.get_feed(".*")
-        #puts feed.to_s
+    entry = feed.instance_variable_get(:@entries)[0]
 
-        assert_equal "step_one, step_two, step_three", steps.join(", ")
-        assert_equal "OpenWFEru engine activity feed", feed.title.to_s
+    assert entry
 
-        assert_equal 6, feed.instance_variable_get(:@entries).size
+    workitem = YAML.load(entry.content.to_s)
 
-        feed = feedservice.get_feed(".*", :upon => :reply)
+    assert_equal OpenWFE::InFlowWorkItem, workitem.class
+    assert_equal "2 > 1 < 3", workitem.message
 
-        assert_equal 3, feed.instance_variable_get(:@entries).size
-
-        entry = feed.instance_variable_get(:@entries)[0]
-
-        assert entry
-
-        workitem = YAML.load(entry.content.to_s)
-
-        assert_equal OpenWFE::InFlowWorkItem, workitem.class
-        assert_equal "2 > 1 < 3", workitem.message
-
-        #puts workitem.to_s
-    end
+    #puts workitem.to_s
+  end
 
 end
 

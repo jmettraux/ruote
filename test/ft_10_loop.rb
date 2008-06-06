@@ -14,120 +14,120 @@ $s = (0..9).to_a.join("\n").strip
 
 
 class FlowTest10 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    def test_loop_0
+  def test_loop_0
 
-        #log_level_to_debug
+    #log_level_to_debug
 
-        dotest(
+    dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
-    <sequence>
-        <!--reval>$i = 0</reval-->
-        <reval>sv("i", 0)</reval>
-        <loop>
-            <print>${i}</print>
-            <reval>sv("i", lv("i") + 1)</reval>
-            <if>
-                <equals value="${i}" other-value="10" />
-                <break/>
-            </if>
-        </loop>
-    </sequence>
+  <sequence>
+    <!--reval>$i = 0</reval-->
+    <reval>sv("i", 0)</reval>
+    <loop>
+      <print>${i}</print>
+      <reval>sv("i", lv("i") + 1)</reval>
+      <if>
+        <equals value="${i}" other-value="10" />
+        <break/>
+      </if>
+    </loop>
+  </sequence>
 </process-definition>''',
-        $s)
-    end
+    $s)
+  end
 
-    def test_loop_1
-        dotest(
+  def test_loop_1
+    dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
-    <sequence>
-        <!--reval>$i = 0</reval-->
-        <set var="i"><a><number>0</number></a></set>
-        <loop>
-            <print>${i}</print>
-            <reval>sv("i", lv("i") + 1)</reval>
-            <if rtest="${i} == 10">
-                <break/>
-            </if>
-        </loop>
-    </sequence>
+  <sequence>
+    <!--reval>$i = 0</reval-->
+    <set var="i"><a><number>0</number></a></set>
+    <loop>
+      <print>${i}</print>
+      <reval>sv("i", lv("i") + 1)</reval>
+      <if rtest="${i} == 10">
+        <break/>
+      </if>
+    </loop>
+  </sequence>
 </process-definition>''',
-        $s)
-    end
+    $s)
+  end
 
-    def test_loop_2
-        #log_level_to_debug
-        dotest(
+  def test_loop_2
+    #log_level_to_debug
+    dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
-    <sequence>
-        <set var="i"><a><number>0</number></a></set>
-        <loop>
-            <print>${i}</print>
-            <reval>sv("i", lv("i") + 1)</reval>
-            <break if="${i} == 10" />
-        </loop>
-    </sequence>
+  <sequence>
+    <set var="i"><a><number>0</number></a></set>
+    <loop>
+      <print>${i}</print>
+      <reval>sv("i", lv("i") + 1)</reval>
+      <break if="${i} == 10" />
+    </loop>
+  </sequence>
 </process-definition>''',
-        $s)
-    end
+    $s)
+  end
 
-    def _test_loop_3
-        dotest(
+  def _test_loop_3
+    dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
-    <sequence>
-        <set var="i"><a><number>0</number></a></set>
-        <loop>
-            <print>${i}</print>
-            <reval>sv("i", lv("i") + 1)</reval>
-            <break if="${r:lv(\'i\') == 10}" />
-        </loop>
-    </sequence>
+  <sequence>
+    <set var="i"><a><number>0</number></a></set>
+    <loop>
+      <print>${i}</print>
+      <reval>sv("i", lv("i") + 1)</reval>
+      <break if="${r:lv(\'i\') == 10}" />
+    </loop>
+  </sequence>
 </process-definition>''',
-        $s)
-    end
+    $s)
+  end
 
-    def test_loop_4
-        dotest(
+  def test_loop_4
+    dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
-    <sequence>
-        <set var="i"><a><number>0</number></a></set>
-        <loop>
-            <print>${i}</print>
-            <reval>sv("i", lv("i") + 1)</reval>
-            <break rif="${i} == 10" />
-        </loop>
-    </sequence>
+  <sequence>
+    <set var="i"><a><number>0</number></a></set>
+    <loop>
+      <print>${i}</print>
+      <reval>sv("i", lv("i") + 1)</reval>
+      <break rif="${i} == 10" />
+    </loop>
+  </sequence>
 </process-definition>''',
-        $s)
-    end
+    $s)
+  end
 
-    def test_loop_5
+  def test_loop_5
 
-        #log_level_to_debug
-            # causes test to fail (logging X vs $SAFE level 3)
+    #log_level_to_debug
+      # causes test to fail (logging X vs $SAFE level 3)
 
-        dotest(
+    dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
-    <sequence>
-        <set var="i"><a><number>0</number></a></set>
-        <loop>
-            <set field="f">
-                <reval>sv("i", lv("i") + 1)</reval>
-            </set>
-            <print>${i}</print>
-            <break if="${f:f}" />
-        </loop>
-    </sequence>
+  <sequence>
+    <set var="i"><a><number>0</number></a></set>
+    <loop>
+      <set field="f">
+        <reval>sv("i", lv("i") + 1)</reval>
+      </set>
+      <print>${i}</print>
+      <break if="${f:f}" />
+    </loop>
+  </sequence>
 </process-definition>''',
-        '1')
-    end
+    '1')
+  end
 
 end
 

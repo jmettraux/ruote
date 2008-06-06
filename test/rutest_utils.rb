@@ -11,26 +11,26 @@ require 'openwfe/version'
 
 class Tracer
 
-    def initialize
-        super
-        @trace = ""
-    end
+  def initialize
+    super
+    @trace = ""
+  end
 
-    def to_s
-        @trace.to_s.strip
-    end
+  def to_s
+    @trace.to_s.strip
+  end
 
-    def << s
-        @trace << s
-    end
+  def << s
+    @trace << s
+  end
 
-    def clear
-        @trace = ""
-    end
+  def clear
+    @trace = ""
+  end
 
-    def puts s
-        @trace << "#{s}\n"
-    end
+  def puts s
+    @trace << "#{s}\n"
+  end
 end
 
 #
@@ -38,19 +38,19 @@ end
 #
 def new_fei
 
-    fei = OpenWFE::FlowExpressionId.new
+  fei = OpenWFE::FlowExpressionId.new
 
-    fei.owfe_version = OpenWFE::OPENWFERU_VERSION
-    fei.engine_id = 'this'
-    #fei.initial_engine_id = 'that'
-    fei.workflow_definition_url = 'http://test/test.xml'
-    fei.workflow_definition_name = 'test'
-    fei.workflow_definition_revision = '1.0'
-    fei.workflow_instance_id = '123456'
-    fei.expression_name = 'do-test'
-    fei.expression_id = '0.0'
+  fei.owfe_version = OpenWFE::OPENWFERU_VERSION
+  fei.engine_id = 'this'
+  #fei.initial_engine_id = 'that'
+  fei.workflow_definition_url = 'http://test/test.xml'
+  fei.workflow_definition_name = 'test'
+  fei.workflow_definition_revision = '1.0'
+  fei.workflow_instance_id = '123456'
+  fei.expression_name = 'do-test'
+  fei.expression_id = '0.0'
 
-    fei
+  fei
 end
 
 #
@@ -58,6 +58,6 @@ end
 #
 def on_jruby?
 
-    (defined?(JRUBY_VERSION) != nil)
+  (defined?(JRUBY_VERSION) != nil)
 end
 

@@ -45,65 +45,65 @@ require 'openwfe/expressions/flowexpression'
 
 module OpenWFE
 
-    #
-    # This expression cancels the current process instance. Use with care.
-    #
-    #     <sequence>
-    #         <participant ref="before" />
-    #         <cancel-process />
-    #         <participant ref="after" />
-    #     </sequence>
-    #
-    # the message "after" will never get printed.
-    #
-    # Use rather in scenarii like that one :
-    #
-    #     class TestDefinition1 < ProcessDefinition
-    #         def make
-    #             process_definition :name => "25_cancel", :revision => "1" do
-    #                 sequence do
-    #                     participant "customer"
-    #                     _cancel_process :if => "${f:no_thanks} == true"
-    #                     concurrence do
-    #                         participant "accounting"
-    #                         participant "logistics"
-    #                     end
-    #                 end
-    #             end
-    #         end
-    #     end
-    #
-    # Note that the expression accepts an "if" attribute.
-    #
-    class CancelProcessExpression < FlowExpression
-        include ConditionMixin
+  #
+  # This expression cancels the current process instance. Use with care.
+  #
+  #   <sequence>
+  #     <participant ref="before" />
+  #     <cancel-process />
+  #     <participant ref="after" />
+  #   </sequence>
+  #
+  # the message "after" will never get printed.
+  #
+  # Use rather in scenarii like that one :
+  #
+  #   class TestDefinition1 < ProcessDefinition
+  #     def make
+  #       process_definition :name => "25_cancel", :revision => "1" do
+  #         sequence do
+  #           participant "customer"
+  #           _cancel_process :if => "${f:no_thanks} == true"
+  #           concurrence do
+  #             participant "accounting"
+  #             participant "logistics"
+  #           end
+  #         end
+  #       end
+  #     end
+  #   end
+  #
+  # Note that the expression accepts an "if" attribute.
+  #
+  class CancelProcessExpression < FlowExpression
+    include ConditionMixin
 
-        names :cancel_process, :cancel_flow
+    names :cancel_process, :cancel_flow
 
+    #
+    # apply / reply
+
+    def apply (workitem)
+
+      conditional = eval_condition(:if, workitem, :unless)
         #
-        # apply / reply
+        # for example : <cancel-process if="${approved} == false"/>
 
-        def apply (workitem)
+      return reply_to_parent(workitem) \
+        if conditional == false
 
-            conditional = eval_condition(:if, workitem, :unless)
-                #
-                # for example : <cancel-process if="${approved} == false"/>
+      #
+      # else, do cancel the process
 
-            return reply_to_parent(workitem) \
-                if conditional == false
+      get_expression_pool.cancel_process self
 
-            #
-            # else, do cancel the process
-
-            get_expression_pool.cancel_process self
-
-            # no need to reply to parent
-        end
-
-        #def reply (workitem)
-        #end
-
+      # no need to reply to parent
     end
+
+    #def reply (workitem)
+    #end
+
+  end
 
 end
 

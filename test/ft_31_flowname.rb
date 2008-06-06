@@ -13,28 +13,28 @@ require 'flowtestbase'
 
 
 class FlowTest31 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    class TestDefinition0 < ProcessDefinition
-        _process_definition :name => "31 thirty one", :revision => "0 0" do
-            _print "ok"
-        end
+  class TestDefinition0 < ProcessDefinition
+    _process_definition :name => "31 thirty one", :revision => "0 0" do
+      _print "ok"
     end
+  end
 
-    #def xxxx_flowname_0
-    def test_flowname_0
+  #def xxxx_flowname_0
+  def test_flowname_0
 
-        dotest(TestDefinition0, "ok")
-    end
+    dotest(TestDefinition0, "ok")
+  end
 
 end
 

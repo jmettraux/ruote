@@ -42,36 +42,36 @@ require 'openwfe/expressions/fe_when'
 
 module OpenWFE
 
-    #
-    # The 'wait' expression simply blocks/waits until the given condition
-    # evaluates to true.
-    # This expression accepts a timeout (else it will block ad eternam).
-    #
-    #     sequence do
-    #         wait :until => "${done} == true"
-    #         participant :toto
-    #     end
-    #
-    # Participant 'toto' will receive a workitem after the variable 'done' is
-    # set to true (somewhere else in the process definition).
-    #
-    #     sequence do
-    #         wait :runtil => "Time.new.to_i % 7 == 0"
-    #         participant :toto
-    #     end
-    #
-    # Participant 'toto' will receive a workitem after a certain condition
-    # expressed directly in Ruby evaluates to true.
-    #
-    # 'wait' is different than 'when' : when it times out (if a timeout is set,
-    # the wait ceases and the flow resumes. On a timeout, 'when' will not
-    # execute its nested 'consequence' child.
-    #
-    class WaitExpression < WaitingExpression
+  #
+  # The 'wait' expression simply blocks/waits until the given condition
+  # evaluates to true.
+  # This expression accepts a timeout (else it will block ad eternam).
+  #
+  #   sequence do
+  #     wait :until => "${done} == true"
+  #     participant :toto
+  #   end
+  #
+  # Participant 'toto' will receive a workitem after the variable 'done' is
+  # set to true (somewhere else in the process definition).
+  #
+  #   sequence do
+  #     wait :runtil => "Time.new.to_i % 7 == 0"
+  #     participant :toto
+  #   end
+  #
+  # Participant 'toto' will receive a workitem after a certain condition
+  # expressed directly in Ruby evaluates to true.
+  #
+  # 'wait' is different than 'when' : when it times out (if a timeout is set,
+  # the wait ceases and the flow resumes. On a timeout, 'when' will not
+  # execute its nested 'consequence' child.
+  #
+  class WaitExpression < WaitingExpression
 
-        names :wait
-        conditions :until
-    end
+    names :wait
+    conditions :until
+  end
 
 end
 

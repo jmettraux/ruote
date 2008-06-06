@@ -42,76 +42,76 @@ require 'openwfe/expressions/flowexpression'
 
 module OpenWFE
 
-    #
-    # This expression sequentially executes each of its children expression.
-    # For a more sophisticated version of it, see the 'cursor' expression
-    # (fe_cursor.rb).
-    #
-    #     <sequence>
-    #         <participant ref="alice" />
-    #         <participant ref="service_b" />
-    #     </sequence>
-    #
-    # In a Ruby process definition, it looks like :
-    #
-    #     sequence do
-    #         participant "alice"
-    #         participant "service_b"
-    #     end
-    #
-    class SequenceExpression < FlowExpression
+  #
+  # This expression sequentially executes each of its children expression.
+  # For a more sophisticated version of it, see the 'cursor' expression
+  # (fe_cursor.rb).
+  #
+  #   <sequence>
+  #     <participant ref="alice" />
+  #     <participant ref="service_b" />
+  #   </sequence>
+  #
+  # In a Ruby process definition, it looks like :
+  #
+  #   sequence do
+  #     participant "alice"
+  #     participant "service_b"
+  #   end
+  #
+  class SequenceExpression < FlowExpression
 
-        names :sequence
+    names :sequence
 
 
-        def apply (workitem)
+    def apply (workitem)
 
-            reply workitem
-        end
-
-        def reply (workitem)
-
-            cfei = next_child workitem.fei
-
-            return reply_to_parent(workitem) \
-                unless cfei
-
-            #ldebug do
-            #    "reply() self : \n#{self.to_s}\n" +
-            #    "reply() next is #{@current_child_id} : #{cfei.to_debug_s}"
-            #end
-
-            get_expression_pool.apply cfei, workitem
-        end
-
-        protected
-
-            #
-            # Returns the flowExpressionId of the next child to apply, or
-            # nil if the sequence is over.
-            #
-            def next_child (current_fei)
-
-                next_id = if (current_fei == self.fei)
-                    0
-                else
-                    @children.index(current_fei) + 1
-                end
-
-                loop do
-
-                    break if next_id >= @children.length
-
-                    child = @children[next_id]
-
-                    return child if child.is_a?(FlowExpressionId)
-
-                    next_id += 1
-                end
-
-                nil
-            end
+      reply workitem
     end
+
+    def reply (workitem)
+
+      cfei = next_child workitem.fei
+
+      return reply_to_parent(workitem) \
+        unless cfei
+
+      #ldebug do
+      #  "reply() self : \n#{self.to_s}\n" +
+      #  "reply() next is #{@current_child_id} : #{cfei.to_debug_s}"
+      #end
+
+      get_expression_pool.apply cfei, workitem
+    end
+
+    protected
+
+      #
+      # Returns the flowExpressionId of the next child to apply, or
+      # nil if the sequence is over.
+      #
+      def next_child (current_fei)
+
+        next_id = if (current_fei == self.fei)
+          0
+        else
+          @children.index(current_fei) + 1
+        end
+
+        loop do
+
+          break if next_id >= @children.length
+
+          child = @children[next_id]
+
+          return child if child.is_a?(FlowExpressionId)
+
+          next_id += 1
+        end
+
+        nil
+      end
+  end
 
 end
 

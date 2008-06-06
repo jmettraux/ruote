@@ -11,26 +11,26 @@ require 'flowtestbase'
 
 
 class FlowTest0b < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    def test_sequence
-        dotest(
-            '''
+  def test_sequence
+    dotest(
+      '''
 <process-definition name="n" revision="0">
-    <sequence>
-        <print>a</print>
-        <print>b</print>
-    </sequence>
+  <sequence>
+    <print>a</print>
+    <print>b</print>
+  </sequence>
 </process-definition>
-            '''.strip, 
-            "a\nb")
-    end
+      '''.strip,
+      "a\nb")
+  end
 
 end
 

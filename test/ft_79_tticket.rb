@@ -20,15 +20,15 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
   #
   sequence do
 
-    #
-    # the first activity, customer support
-    #
-    cs :activity => "enter details"
+  #
+  # the first activity, customer support
+  #
+  cs :activity => "enter details"
 
-    #
-    # initiating the first step
-    #
-    step :part => "qa", :desc => "reproduce problem"
+  #
+  # initiating the first step
+  #
+  step :part => "qa", :desc => "reproduce problem"
   end
 
   #
@@ -36,16 +36,16 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
   # the 'step' subprocess
   #
   process_definition :name => "step" do
-    sequence do
+  sequence do
 
-      # participant performs activity
-      participant(
-        :ref => "${part}", :activity => "${desc}")
+    # participant performs activity
+    participant(
+    :ref => "${part}", :activity => "${desc}")
 
-      # then, call next step (via a subprocess)
-      subprocess :ref => "${f:next}"
+    # then, call next step (via a subprocess)
+    subprocess :ref => "${f:next}"
 
-    end
+  end
   end
 
   #
@@ -55,52 +55,52 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
   # QA 'reproduce problem' outputs
 
   process_definition :name => "out:cannot_reproduce" do
-    step :part => "cs", :desc => "correct report"
+  step :part => "cs", :desc => "correct report"
   end
   process_definition :name => "out:known_solution" do
-    finalsteps
+  finalsteps
   end
   process_definition :name => "out:duplicate" do
-    step :part => "qa", :desc => "verify"
+  step :part => "qa", :desc => "verify"
   end
   process_definition :name => "out:reproduced" do
-    step :part => "dev", :desc => "resolution"
+  step :part => "dev", :desc => "resolution"
   end
 
   # Customer Support 'correct report' outputs
 
   process_definition :name => "out:submit" do
-    step :part => "qa", :desc => "reproduce problem"
+  step :part => "qa", :desc => "reproduce problem"
   end
   process_definition :name => "out:give_up" do
-    finalsteps
+  finalsteps
   end
 
   # QA 'verify' outputs
 
   process_definition :name => "out:qa_fixed" do
-    finalsteps
+  finalsteps
   end
   process_definition :name => "out:not_fixed" do
-    step :part => "dev", :desc => "resolution"
+  step :part => "dev", :desc => "resolution"
   end
 
   # dev 'resolution' outputs
 
   process_definition :name => "out:dev_fixed" do
-    step :part => "qa", :desc => "verify"
+  step :part => "qa", :desc => "verify"
   end
 
   set :var => "out:not_a_bug", :variable_value => "out:dev_fixed"
-     # "not_a_bug" is an alias to "dev_fixed"
+   # "not_a_bug" is an alias to "dev_fixed"
 
   # the final steps
 
   process_definition :name => "finalsteps" do
-    concurrence do
-      cs :activity => "communicate results"
-      qa :activity => "audit"
-    end
+  concurrence do
+    cs :activity => "communicate results"
+    qa :activity => "audit"
+  end
   end
 
 end
@@ -108,80 +108,80 @@ end
 
 
 class FlowTest79 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    def test_0
+  def test_0
 
-        dotest(
-            [ "", "known_solution" ], # path
-            [ "cs", "qa", "cs", "qa" ]) # expected trace
+    dotest(
+      [ "", "known_solution" ], # path
+      [ "cs", "qa", "cs", "qa" ]) # expected trace
+  end
+
+  def test_1
+
+    dotest(
+      [ "", "cannot_reproduce", "give_up" ], # path
+      [ "cs", "qa", "cs", "cs", "qa" ]) # expected trace
+  end
+
+  def test_2
+
+    dotest(
+      [ "", "reproduced", "dev_fixed", "qa_fixed" ], # path
+      [ "cs", "qa", "dev", "qa", "cs", "qa" ]) # expected trace
+  end
+
+  def test_3
+
+    dotest(
+      [ "", "reproduced", "not_a_bug", "qa_fixed" ], # path
+      [ "cs", "qa", "dev", "qa", "cs", "qa" ]) # expected trace
+  end
+
+  class TestParticipant
+    include OpenWFE::LocalParticipant
+
+    attr_reader :trace
+
+    def initialize (path)
+
+      @path = path
+      @trace = []
     end
 
-    def test_1
+    def consume (workitem)
 
-        dotest(
-            [ "", "cannot_reproduce", "give_up" ], # path
-            [ "cs", "qa", "cs", "cs", "qa" ]) # expected trace
+      @trace << workitem.participant_name
+        # Kilroy was here
+
+      workitem.next = "out:#{@path.delete_at(0)}" if @path.size > 0
+        # stating what should happen next (activity conclusion)
+
+      reply_to_engine workitem
+        # handing back the workitem to the engine
+        # (please resume the process)
     end
+  end
 
-    def test_2
+  def dotest (path, expected_trace)
 
-        dotest(
-            [ "", "reproduced", "dev_fixed", "qa_fixed" ], # path
-            [ "cs", "qa", "dev", "qa", "cs", "qa" ]) # expected trace
-    end
+    p = TestParticipant.new path
 
-    def test_3
+    @engine.register_participant :cs, p
+    @engine.register_participant :qa, p
+    @engine.register_participant :dev, p
 
-        dotest(
-            [ "", "reproduced", "not_a_bug", "qa_fixed" ], # path
-            [ "cs", "qa", "dev", "qa", "cs", "qa" ]) # expected trace
-    end
+    fei = launch TroubleTicket01
 
-    class TestParticipant 
-        include OpenWFE::LocalParticipant
+    @engine.wait_for fei
 
-        attr_reader :trace
+    assert_equal expected_trace, p.trace
 
-        def initialize (path)
+    sleep 0.350 # c tests reply too fast, have to wait a bit
 
-            @path = path
-            @trace = []
-        end
-
-        def consume (workitem)
-
-            @trace << workitem.participant_name
-                # Kilroy was here
-
-            workitem.next = "out:#{@path.delete_at(0)}" if @path.size > 0
-                # stating what should happen next (activity conclusion)
-
-            reply_to_engine workitem
-                # handing back the workitem to the engine
-                # (please resume the process)
-        end
-    end
-
-    def dotest (path, expected_trace)
-
-        p = TestParticipant.new path
-
-        @engine.register_participant :cs, p
-        @engine.register_participant :qa, p
-        @engine.register_participant :dev, p
-
-        fei = launch TroubleTicket01
-
-        @engine.wait_for fei
-
-        assert_equal expected_trace, p.trace
-
-        sleep 0.350 # c tests reply too fast, have to wait a bit
-
-        assert(
-            (@engine.process_status(fei) == nil), 
-            "process not over, check the [error] log")
-    end
+    assert(
+      (@engine.process_status(fei) == nil),
+      "process not over, check the [error] log")
+  end
 end
 

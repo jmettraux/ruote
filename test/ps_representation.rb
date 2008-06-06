@@ -16,118 +16,118 @@ require 'openwfe/engine'
 
 class PsRepresentationTest < Test::Unit::TestCase
 
-    def setup
+  def setup
 
-        @engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
+    @engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
+  end
+
+  def teardown
+
+    @engine.stop if @engine
+  end
+
+  #
+  # TEST 0
+
+  class Test0 < OpenWFE::ProcessDefinition
+    sequence do
+      alpha
+      bravo
     end
+  end
 
-    def teardown
+  def test_0
 
-        @engine.stop if @engine
-    end
+    @engine.register_participant "alpha", OpenWFE::NullParticipant
+
+    fei = @engine.launch Test0
+
+    sleep 0.350
+
+    ps = @engine.process_stack fei, true
+
+    #p ps.representation
+
+    assert_equal(
+      ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
+      ps.representation)
 
     #
-    # TEST 0
+    # change process instance (charly instead of bravo)
 
-    class Test0 < OpenWFE::ProcessDefinition
-        sequence do
-            alpha
-            bravo
-        end
+    #puts ps.collect { |fexp| fexp.fei.to_s }.join("\n")
+
+    bravo_fei = ps.find { |fexp| fexp.fei.expid == "0.0.1" }.fei
+
+    @engine.update_raw_expression bravo_fei, ["charly", {}, []]
+
+    ps = @engine.process_stack fei, true
+
+    assert_equal(
+      ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
+      ps.representation)
+  end
+
+  #
+  # TEST 1
+
+  class Test1 < OpenWFE::ProcessDefinition
+
+    description "interference of the description"
+
+    sequence do
+      alpha
+      bravo
     end
+  end
 
-    def test_0
+  def test_1
 
-        @engine.register_participant "alpha", OpenWFE::NullParticipant
+    @engine.register_participant "alpha", OpenWFE::NullParticipant
 
-        fei = @engine.launch Test0
+    fei = @engine.launch Test1
 
-        sleep 0.350
+    sleep 0.350
 
-        ps = @engine.process_stack fei, true
+    ps = @engine.process_stack fei, true
 
-        #p ps.representation
-
-        assert_equal(
-            ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
-            ps.representation)
-
-        #
-        # change process instance (charly instead of bravo)
-
-        #puts ps.collect { |fexp| fexp.fei.to_s }.join("\n")
-
-        bravo_fei = ps.find { |fexp| fexp.fei.expid == "0.0.1" }.fei
-
-        @engine.update_raw_expression bravo_fei, ["charly", {}, []]
-
-        ps = @engine.process_stack fei, true
-
-        assert_equal(
-            ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
-            ps.representation)
-    end
+    assert_equal(
+      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
+      ps.representation)
 
     #
-    # TEST 1
+    # change process instance (charly instead of bravo)
 
-    class Test1 < OpenWFE::ProcessDefinition
+    bravo_fei = ps.find { |fexp| fexp.fei.expid == "0.1.1" }.fei
 
-        description "interference of the description"
+    @engine.update_raw_expression bravo_fei, ["charly", {}, []]
 
-        sequence do
-            alpha
-            bravo
-        end
-    end
+    ps = @engine.process_stack fei, true
 
-    def test_1
+    assert_equal(
+      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
+      ps.representation)
 
-        @engine.register_participant "alpha", OpenWFE::NullParticipant
+    #
+    # nuke participant charly
 
-        fei = @engine.launch Test1
+    @engine.cancel_expression bravo_fei
 
-        sleep 0.350
+    sleep 0.350
 
-        ps = @engine.process_stack fei, true
+    ps = @engine.process_stack fei, true
 
-        assert_equal(
-            ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
-            ps.representation)
+    #p ps.representation
 
-        #
-        # change process instance (charly instead of bravo)
+    assert_equal(
+      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
+      ps.representation)
 
-        bravo_fei = ps.find { |fexp| fexp.fei.expid == "0.1.1" }.fei
+    assert_equal(
+      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
+      @engine.process_representation(fei.wfid))
+  end
 
-        @engine.update_raw_expression bravo_fei, ["charly", {}, []]
-
-        ps = @engine.process_stack fei, true
-
-        assert_equal(
-            ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
-            ps.representation)
-
-        #
-        # nuke participant charly
-
-        @engine.cancel_expression bravo_fei
-
-        sleep 0.350
-
-        ps = @engine.process_stack fei, true
-
-        #p ps.representation
-
-        assert_equal(
-            ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
-            ps.representation)
-
-        assert_equal(
-            ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
-            @engine.process_representation(fei.wfid))
-    end
-
-    # see also test/ft_84_updateexp.rb
+  # see also test/ft_84_updateexp.rb
 
 end

@@ -13,48 +13,48 @@ require 'flowtestbase'
 
 
 class FlowTest71 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    class Test0 < ProcessDefinition
-        sequence do
-            log "log:0"
-            log do
-                "log:1"
-            end
-            log :message => "log:2"
-            log :message => "log:3", :level => "info"
-        end
+  class Test0 < ProcessDefinition
+    sequence do
+      log "log:0"
+      log do
+        "log:1"
+      end
+      log :message => "log:2"
+      log :message => "log:3", :level => "info"
+    end
+  end
+
+  def test_0
+
+    log_level_to_debug
+      # required for the test ;)
+
+    File.open "logs/openwferu.log", "w" do
+      print ""
     end
 
-    def test_0
+    dotest Test0, ""
 
-        log_level_to_debug
-            # required for the test ;)
+    #assert_equal 1, OpenWFE.grep("DEBUG .*log:0", "logs/openwferu.log").size
+    assert_equal 1, OpenWFE.grep("log:0", "logs/openwferu.log").size
 
-        File.open "logs/openwferu.log", "w" do
-            print ""
-        end
+    assert_equal 1, OpenWFE.grep("log:1", "logs/openwferu.log").size
+    assert_equal 4, OpenWFE.grep("log:.$", "logs/openwferu.log").size
 
-        dotest Test0, ""
-
-        #assert_equal 1, OpenWFE.grep("DEBUG .*log:0", "logs/openwferu.log").size
-        assert_equal 1, OpenWFE.grep("log:0", "logs/openwferu.log").size
-
-        assert_equal 1, OpenWFE.grep("log:1", "logs/openwferu.log").size
-        assert_equal 4, OpenWFE.grep("log:.$", "logs/openwferu.log").size
-
-        #assert_equal 1, OpenWFE.grep("INFO .*log:3", "logs/openwferu.log").size
-        assert_equal 1, OpenWFE.grep("log:3", "logs/openwferu.log").size
-    end
+    #assert_equal 1, OpenWFE.grep("INFO .*log:3", "logs/openwferu.log").size
+    assert_equal 1, OpenWFE.grep("log:3", "logs/openwferu.log").size
+  end
 
 end
 

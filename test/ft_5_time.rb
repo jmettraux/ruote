@@ -11,108 +11,108 @@ require 'flowtestbase'
 
 
 class FlowTest5 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    def test_sleep_0
-        dotest(
+  def test_sleep_0
+    dotest(
 '''<process-definition name="sleep_0" revision="0">
-    <sequence>
-        <sleep for="2s" />
-        <print>alpha</print>
-    </sequence>
-</process-definition>''', 
-            "alpha", 
-            true)
-    end
+  <sequence>
+    <sleep for="2s" />
+    <print>alpha</print>
+  </sequence>
+</process-definition>''',
+      "alpha",
+      true)
+  end
 
-    def test_sleep_1
-        dotest(
+  def test_sleep_1
+    dotest(
 '''<process-definition name="sleep_1" revision="0">
-    <concurrence>
-        <sequence>
-            <sleep for="2s" />
-            <print>alpha</print>
-        </sequence>
-        <print>bravo</print>
-    </concurrence>
-</process-definition>''', 
-            """bravo
-alpha""", 
-            true)
-    end
+  <concurrence>
+    <sequence>
+      <sleep for="2s" />
+      <print>alpha</print>
+    </sequence>
+    <print>bravo</print>
+  </concurrence>
+</process-definition>''',
+      """bravo
+alpha""",
+      true)
+  end
 
-    def test_sleep_2
-        dotest(
+  def test_sleep_2
+    dotest(
 '''<process-definition name="sleep_2" revision="0">
-    <sequence>
-        <sleep until="${ruby:Time.new() + 4}" />
-        <print>alpha</print>
-    </sequence>
-</process-definition>''', 
-            "alpha", 
-            true)
-    end
+  <sequence>
+    <sleep until="${ruby:Time.new() + 4}" />
+    <print>alpha</print>
+  </sequence>
+</process-definition>''',
+      "alpha",
+      true)
+  end
 
-    def test_sleep_3
-        dotest(
+  def test_sleep_3
+    dotest(
 '''<process-definition name="sleep_3" revision="0">
-    <sequence>
-        <sleep for="900" />
-        <print>alpha</print>
-    </sequence>
+  <sequence>
+    <sleep for="900" />
+    <print>alpha</print>
+  </sequence>
 </process-definition>''', "alpha", true)
-    end
+  end
 
-    #
-    # Test 4
-    #
+  #
+  # Test 4
+  #
 
-    class Test4 < OpenWFE::ProcessDefinition
-        _sleep "10s"
-    end
+  class Test4 < OpenWFE::ProcessDefinition
+    _sleep "10s"
+  end
 
-    def test_sleep_4
+  def test_sleep_4
 
-        fei = launch Test4
+    fei = launch Test4
 
-        sleep 0.250
-        
-        jobs = @engine.get_scheduler.find_jobs OpenWFE::SleepExpression.name
+    sleep 0.250
 
-        assert_equal 1, jobs.size
+    jobs = @engine.get_scheduler.find_jobs OpenWFE::SleepExpression.name
 
-        @engine.cancel_process fei
+    assert_equal 1, jobs.size
 
-        sleep 0.300
-    end
+    @engine.cancel_process fei
 
-    #
-    # Test 5
-    #
+    sleep 0.300
+  end
 
-    class Test5 < OpenWFE::ProcessDefinition
-        _sleep "10s", :scheduler_tags => "a, b"
-    end
+  #
+  # Test 5
+  #
 
-    def test_sleep_5
+  class Test5 < OpenWFE::ProcessDefinition
+    _sleep "10s", :scheduler_tags => "a, b"
+  end
 
-        fei = launch Test5
+  def test_sleep_5
 
-        sleep 0.250
+    fei = launch Test5
 
-        assert_equal 1, @engine.get_scheduler.find_jobs("a").size
-        assert_equal 1, @engine.get_scheduler.find_jobs("b").size
+    sleep 0.250
 
-        @engine.cancel_process fei
+    assert_equal 1, @engine.get_scheduler.find_jobs("a").size
+    assert_equal 1, @engine.get_scheduler.find_jobs("b").size
 
-        sleep 0.300
-    end
+    @engine.cancel_process fei
+
+    sleep 0.300
+  end
 
 end
 

@@ -44,169 +44,169 @@ require 'openwfe/expressions/time'
 
 module OpenWFE
 
-    #
-    # A module shared by the expression classes dealing with HTTP (ROA).
-    #
-    module HttpRequestPreparation
+  #
+  # A module shared by the expression classes dealing with HTTP (ROA).
+  #
+  module HttpRequestPreparation
 
-        protected
+    protected
 
-            def prepare_params (verb, workitem)
+      def prepare_params (verb, workitem)
 
-                uri =
-                    lookup_attribute(:uri, workitem) ||
-                    fetch_text_content(workitem)
+        uri =
+          lookup_attribute(:uri, workitem) ||
+          fetch_text_content(workitem)
 
-                data = (verb == 'put' or verb == 'post') ?
-                    workitem.attributes['hdata'] : nil
+        data = (verb == 'put' or verb == 'post') ?
+          workitem.attributes['hdata'] : nil
 
-                opts = workitem.attributes['hoptions'] || {}
+        opts = workitem.attributes['hoptions'] || {}
 
-                params = lookup_attributes workitem
+        params = lookup_attributes workitem
 
-                params['timeout'] = params['htimeout'] || params['hto']
-                    # the :timeout param is reserved for the poll timeout
-                    # not the http timeout
+        params['timeout'] = params['htimeout'] || params['hto']
+          # the :timeout param is reserved for the poll timeout
+          # not the http timeout
 
-                params = params.merge opts
+        params = params.merge opts
 
-                params = params.inject({}) { |r, (k, v)| r[k.intern] = v; r }
-                    # 'symbolize' keys
+        params = params.inject({}) { |r, (k, v)| r[k.intern] = v; r }
+          # 'symbolize' keys
 
-                params[:uri] = uri
-                params[:data] = data if data
+        params[:uri] = uri
+        params[:data] = data if data
 
-                params
-            end
-    end
+        params
+      end
+  end
 
-    #
-    # The HTTP verbs as OpenWFEru (Ruote) expressions.
-    #
-    # Useful for basic RESTful BPM.
-    #
-    # This expression uses the rufus-verbs gem and accepts the exact
-    # sames parameters (attributes) as this gem.
-    #
-    # see http://rufus.rubyforge.org/rufus-verbs
-    #
-    # some examples (in a ruby process definition) :
-    #
-    #     sequence do
-    #
-    #         get "http://server.example.com/res0.xml"
-    #             # stores the XML content in the field 'rbody'
-    #     end
-    #
-    class HttpExpression < FlowExpression
-        include HttpRequestPreparation
+  #
+  # The HTTP verbs as OpenWFEru (Ruote) expressions.
+  #
+  # Useful for basic RESTful BPM.
+  #
+  # This expression uses the rufus-verbs gem and accepts the exact
+  # sames parameters (attributes) as this gem.
+  #
+  # see http://rufus.rubyforge.org/rufus-verbs
+  #
+  # some examples (in a ruby process definition) :
+  #
+  #   sequence do
+  #
+  #     get "http://server.example.com/res0.xml"
+  #       # stores the XML content in the field 'rbody'
+  #   end
+  #
+  class HttpExpression < FlowExpression
+    include HttpRequestPreparation
 
-        names :hpost, :hget, :hput, :hdelete
+    names :hpost, :hget, :hput, :hdelete
 
 
-        def apply (workitem)
+    def apply (workitem)
 
-            verb = @fei.expression_name[1..-1]
+      verb = @fei.expression_name[1..-1]
 
-            params = prepare_params verb, workitem
+      params = prepare_params verb, workitem
 
-            # do it
+      # do it
 
-            Thread.new do
-                #
-                # move execution out of process engine main thread
-                # else would block other processes execution
+      Thread.new do
+        #
+        # move execution out of process engine main thread
+        # else would block other processes execution
 
-                begin
+        begin
 
-                    res = Rufus::Verbs.send verb, params
+          res = Rufus::Verbs.send verb, params
 
-                    workitem.hcode = res.code
-                    workitem.hheaders = res.to_hash
-                    workitem.hdata = res.body
+          workitem.hcode = res.code
+          workitem.hheaders = res.to_hash
+          workitem.hdata = res.body
 
-                #rescue Timeout::Error => te
-                #
-                #    workitem.rerror = te.to_s
-                #    workitem.rcode = -1
+        #rescue Timeout::Error => te
+        #
+        #  workitem.rerror = te.to_s
+        #  workitem.rcode = -1
 
-                rescue Exception => e
+        rescue Exception => e
 
-                    linfo do
-                        "apply() #{verb.upcase} #{params[:uri]} failed : " +
-                        "#{e.to_s}"
-                    end
+          linfo do
+            "apply() #{verb.upcase} #{params[:uri]} failed : " +
+            "#{e.to_s}"
+          end
 
-                    workitem.hcode = -1
-                    workitem.herror = e.to_s
-                end
-
-                # over
-
-                reply_to_parent workitem
-            end
+          workitem.hcode = -1
+          workitem.herror = e.to_s
         end
 
-        #def reply (workitem)
-        #end
+        # over
 
-        #def cancel
-        #   # kill thread ...
-        #   nil
-        #end
-
+        reply_to_parent workitem
+      end
     end
 
-    #
-    # Polls repeatedly a web resource until a condition realizes.
-    #
-    # If there is no condition given, will be equivalent to 'hget'.
-    #
-    class HpollExpression < WaitingExpression
-        include HttpRequestPreparation
+    #def reply (workitem)
+    #end
 
-        names :hpoll
-        conditions :until
+    #def cancel
+    #   # kill thread ...
+    #   nil
+    #end
 
-        attr_accessor :hparams
+  end
+
+  #
+  # Polls repeatedly a web resource until a condition realizes.
+  #
+  # If there is no condition given, will be equivalent to 'hget'.
+  #
+  class HpollExpression < WaitingExpression
+    include HttpRequestPreparation
+
+    names :hpoll
+    conditions :until
+
+    attr_accessor :hparams
 
 
-        def apply (workitem)
+    def apply (workitem)
 
-            @hparams = prepare_params 'get', workitem
+      @hparams = prepare_params 'get', workitem
 
-            super
-        end
-
-        def trigger (params={})
-
-            do_get unless params[:do_timeout!]
-
-            super
-        end
-
-        protected
-
-            def do_get
-
-                ldebug { "do_get() #{@hparams.inspect}" }
-
-                res = Rufus::Verbs.get @hparams
-
-                @applied_workitem.hcode = res.code
-                @applied_workitem.hheaders = res.to_hash
-                @applied_workitem.hdata = res.body
-
-            rescue Exception => e
-
-                linfo do
-                    "do_get() #{verb.upcase} #{uri} failed : #{e.to_s}"
-                end
-
-                @applied_workitem.hcode = -1
-                @applied_workitem.herror = e.to_s
-            end
+      super
     end
+
+    def trigger (params={})
+
+      do_get unless params[:do_timeout!]
+
+      super
+    end
+
+    protected
+
+      def do_get
+
+        ldebug { "do_get() #{@hparams.inspect}" }
+
+        res = Rufus::Verbs.get @hparams
+
+        @applied_workitem.hcode = res.code
+        @applied_workitem.hheaders = res.to_hash
+        @applied_workitem.hdata = res.body
+
+      rescue Exception => e
+
+        linfo do
+          "do_get() #{verb.upcase} #{uri} failed : #{e.to_s}"
+        end
+
+        @applied_workitem.hcode = -1
+        @applied_workitem.herror = e.to_s
+      end
+  end
 
 end
 

@@ -14,38 +14,38 @@ require 'flowtestbase'
 
 
 class FlowTest61 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    class EngineLevelProcessDefinition < OpenWFE::ProcessDefinition
-        sequence do
-        end
-        process_definition :name => "//elsub" do
-            _print "nada"
-        end
+  class EngineLevelProcessDefinition < OpenWFE::ProcessDefinition
+    sequence do
     end
-
-    class TestDefinition0 < OpenWFE::ProcessDefinition
-        elsub
-        #subprocess :ref => "//elsub"
+    process_definition :name => "//elsub" do
+      _print "nada"
     end
+  end
 
-    def test_0
+  class TestDefinition0 < OpenWFE::ProcessDefinition
+    elsub
+    #subprocess :ref => "//elsub"
+  end
 
-        #log_level_to_debug
+  def test_0
 
-        launch EngineLevelProcessDefinition
-        sleep 0.700
-        dotest TestDefinition0, "nada", false, true
-    end
+    #log_level_to_debug
+
+    launch EngineLevelProcessDefinition
+    sleep 0.700
+    dotest TestDefinition0, "nada", false, true
+  end
 
 end
 

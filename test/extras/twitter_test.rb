@@ -10,53 +10,53 @@ require 'openwfe/extras/participants/twitterparticipants'
 
 class TwitterTest < Test::Unit::TestCase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
-    
-    #
-    # tests
+  #def teardown
+  #end
 
-    #def xxxx_0
-    def test_0
+  #
+  # tests
 
-        tp = OpenWFE::Extras::TwitterParticipant.new(
-            "openwferu", ENV['OWFE_TWITTER_PASSWORD'], :no_ssl => true)
-        
-        wi = OpenWFE::InFlowWorkItem.new
-        wi.twitter_message = "from #{self.class.name} #{Time.now.to_s}"
-        tp.consume(wi)
+  #def xxxx_0
+  def test_0
 
-        wi.twitter_message = "from #{self.class.name} #{Time.now.to_s} personal"
-        wi.twitter_target = "jmettraux"
-        tp.consume(wi)
+    tp = OpenWFE::Extras::TwitterParticipant.new(
+      "openwferu", ENV['OWFE_TWITTER_PASSWORD'], :no_ssl => true)
 
-        assert true
-    end
+    wi = OpenWFE::InFlowWorkItem.new
+    wi.twitter_message = "from #{self.class.name} #{Time.now.to_s}"
+    tp.consume(wi)
 
-    class TwitterDef < OpenWFE::ProcessDefinition
-        twitter
-    end
+    wi.twitter_message = "from #{self.class.name} #{Time.now.to_s} personal"
+    wi.twitter_target = "jmettraux"
+    tp.consume(wi)
 
-    def test_1
+    assert true
+  end
 
-        engine = OpenWFE::Engine.new
+  class TwitterDef < OpenWFE::ProcessDefinition
+    twitter
+  end
 
-        tp = OpenWFE::Extras::TwitterParticipant.new(
-            "openwferu", ENV['OWFE_TWITTER_PASSWORD'], :no_ssl => true)
+  def test_1
 
-        engine.register_participant "twitter", tp
+    engine = OpenWFE::Engine.new
 
-        li = OpenWFE::LaunchItem.new TwitterDef
-        # no twitter message
+    tp = OpenWFE::Extras::TwitterParticipant.new(
+      "openwferu", ENV['OWFE_TWITTER_PASSWORD'], :no_ssl => true)
 
-        fei = engine.launch li
+    engine.register_participant "twitter", tp
 
-        engine.wait_for fei
+    li = OpenWFE::LaunchItem.new TwitterDef
+    # no twitter message
 
-        assert true
-    end
+    fei = engine.launch li
+
+    engine.wait_for fei
+
+    assert true
+  end
 end
 

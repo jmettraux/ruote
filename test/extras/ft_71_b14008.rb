@@ -14,72 +14,72 @@ require 'extras/active_connection'
 
 
 class FlowTest71 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    class Travel < OpenWFE::ProcessDefinition
-    
-        set :v => "manager",   :value => "alpha"
-        set :v => "budget",    :value => "bravo"
-        set :v => "todo",      :value => "bravo"
-        
-        set :f => "type",      :value => "travel"
-        set :f => "request_id", :value => "1234"
-        
-        sequence do
-            concurrence do
-                manager
-                budget
-            end
-            todo
-        end
+  class Travel < OpenWFE::ProcessDefinition
+
+    set :v => "manager",   :value => "alpha"
+    set :v => "budget",  :value => "bravo"
+    set :v => "todo",    :value => "bravo"
+
+    set :f => "type",    :value => "travel"
+    set :f => "request_id", :value => "1234"
+
+    sequence do
+      concurrence do
+        manager
+        budget
+      end
+      todo
+    end
+  end
+
+  def test_0
+
+    #log_level_to_debug
+
+    @engine.register_participant ".*" do |wi|
+      assert_equal wi.attributes['type'], 'travel'
+      assert_equal wi.attributes['request_id'], '1234'
     end
 
-    def test_0
-
-        #log_level_to_debug
-
-        @engine.register_participant ".*" do |wi|
-            assert_equal wi.attributes['type'], 'travel'
-            assert_equal wi.attributes['request_id'], '1234'
-        end
-
-        fei = nil
-        30.times do
-            fei = @engine.launch(Travel)
-        end
-
-        sleep 0.500
+    fei = nil
+    30.times do
+      fei = @engine.launch(Travel)
     end
 
-    def test_1
+    sleep 0.500
+  end
 
-        #log_level_to_debug
+  def test_1
 
-        OpenWFE::Extras::Workitem.delete(:all)
+    #log_level_to_debug
 
-        @engine.register_participant ".*", OpenWFE::Extras::ActiveParticipant
+    OpenWFE::Extras::Workitem.delete(:all)
 
-        fei = nil
-        50.times do
-            fei = @engine.launch(Travel)
-            sleep 0.200
+    @engine.register_participant ".*", OpenWFE::Extras::ActiveParticipant
 
-            wi = OpenWFE::Extras::Workitem.find_by_participant_name("alpha")
-            assert_equal wi.field('type').svalue, 'travel'
-            assert_equal wi.field('request_id').svalue, '1234'
+    fei = nil
+    50.times do
+      fei = @engine.launch(Travel)
+      sleep 0.200
 
-            OpenWFE::Extras::Workitem.delete(:all)
-        end
+      wi = OpenWFE::Extras::Workitem.find_by_participant_name("alpha")
+      assert_equal wi.field('type').svalue, 'travel'
+      assert_equal wi.field('request_id').svalue, '1234'
+
+      OpenWFE::Extras::Workitem.delete(:all)
     end
+  end
 
 end
 

@@ -13,32 +13,32 @@ require 'openwfe/def'
 #
 # just testing the
 #
-#     require 'openwfe/def'
+#   require 'openwfe/def'
 #
 # shortcut
 #
 
 class FlowTest24 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #
-    # Test 0
-    #
+  #
+  # Test 0
+  #
 
-    class TestDefinition0 < OpenWFE::ProcessDefinition
-        _print "ok"
-    end
+  class TestDefinition0 < OpenWFE::ProcessDefinition
+    _print "ok"
+  end
 
-    def test_0
+  def test_0
 
-        dotest TestDefinition0, "ok"
-    end
+    dotest TestDefinition0, "ok"
+  end
 
 end
 

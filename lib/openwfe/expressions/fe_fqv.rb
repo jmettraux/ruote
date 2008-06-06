@@ -51,203 +51,203 @@ require 'openwfe/expressions/flowexpression'
 
 module OpenWFE
 
+  #
+  # This expression implementation gathers the 'f', 'q' and 'v' expressions,
+  # along with their fullname 'field', 'variable' and 'quote'.
+  #
+  # These expressions place the value of the corresponding, field, variable
+  # or quoted (direct value) in the 'result' field of the current workitem.
+  #
+  #   sequence do
+  #
+  #     set :field => "f0", :value => "fox"
+  #     set :variable => "v0", :value => "vixen"
+  #
+  #     set :field => "f1" do
+  #       v "v0"
+  #     end
+  #     set :variable => "v1" do
+  #       f "f0"
+  #     end
+  #     set :variable => "v2" do
+  #       f "f0"
+  #     end
+  #   end
+  #
+  # Well, this is perhaps not the best example.
+  #
+  class FqvExpression < FlowExpression
+
+    names :f, :q, :v, :field, :quote, :variable
+
     #
-    # This expression implementation gathers the 'f', 'q' and 'v' expressions,
-    # along with their fullname 'field', 'variable' and 'quote'.
-    #
-    # These expressions place the value of the corresponding, field, variable
-    # or quoted (direct value) in the 'result' field of the current workitem.
-    #
-    #     sequence do
-    #
-    #         set :field => "f0", :value => "fox"
-    #         set :variable => "v0", :value => "vixen"
-    #
-    #         set :field => "f1" do
-    #             v "v0"
-    #         end
-    #         set :variable => "v1" do
-    #             f "f0"
-    #         end
-    #         set :variable => "v2" do
-    #             f "f0"
-    #         end
-    #     end
-    #
-    # Well, this is perhaps not the best example.
-    #
-    class FqvExpression < FlowExpression
+    # apply / reply
 
-        names :f, :q, :v, :field, :quote, :variable
+    def apply (workitem)
 
-        #
-        # apply / reply
+      name = @fei.expression_name[0, 1]
+      text = fetch_text_content workitem
 
-        def apply (workitem)
+      method = MAP[name]
 
-            name = @fei.expression_name[0, 1]
-            text = fetch_text_content workitem
+      result = self.send method, text, workitem
 
-            method = MAP[name]
+      workitem.set_result(result) if result != nil
 
-            result = self.send method, text, workitem
-
-            workitem.set_result(result) if result != nil
-
-            reply_to_parent workitem
-        end
-
-        protected
-
-            MAP = {
-                "f" => :field,
-                "q" => :quote,
-                "v" => :variable
-            }
-
-            def field (text, workitem)
-                workitem.attributes[text]
-            end
-
-            def quote (text, workitem)
-                text
-            end
-
-            def variable (text, workitem)
-                self.lookup_variable(text)
-            end
+      reply_to_parent workitem
     end
 
-    #
-    # The 'a' or 'attribute' expression. Directly describing some
-    # variable or list content in XML or in YAML.
-    #
-    #     _set :field => "list" do
-    #         _a """
-    #             <array>
-    #                 <string>a</string>
-    #                 <string>b</string>
-    #                 <number>3</number>
-    #                 <string>d</string>
-    #                 <null/>
-    #                 <false/>
-    #                 <string>it's over</string>
-    #             </array>
-    #         """
-    #     end
-    #
-    # or
-    #
-    #     _set :field => "list" do
-    #         _attribute """
-    #     ---
-    #     - a
-    #     - b
-    #     - c
-    #         """
-    #      end
-    #
-    # Note that it's actually easier to write :
-    #
-    #     _set :field => "list" do
-    #         reval "[ 'a', 'b', 'c' ]"
-    #     end
-    #
-    # but it's less secure. The best way might be :
-    #
-    #     set :field => "list", :value => [ 'a', 'b', 'c' ]
-    #
-    # Yet another way, as this <a> expression accepts JSON :
-    #
-    #     set :field => 'list' do
-    #         a '[1,2,false,"my name"]'
-    #     end
-    #
-    #
-    class AttributeExpression < FlowExpression
+    protected
 
-        names :a, :attribute
+      MAP = {
+        "f" => :field,
+        "q" => :quote,
+        "v" => :variable
+      }
 
-        XML_REGEX = /<.*>/
+      def field (text, workitem)
+        workitem.attributes[text]
+      end
+
+      def quote (text, workitem)
+        text
+      end
+
+      def variable (text, workitem)
+        self.lookup_variable(text)
+      end
+  end
+
+  #
+  # The 'a' or 'attribute' expression. Directly describing some
+  # variable or list content in XML or in YAML.
+  #
+  #   _set :field => "list" do
+  #     _a """
+  #       <array>
+  #         <string>a</string>
+  #         <string>b</string>
+  #         <number>3</number>
+  #         <string>d</string>
+  #         <null/>
+  #         <false/>
+  #         <string>it's over</string>
+  #       </array>
+  #     """
+  #   end
+  #
+  # or
+  #
+  #   _set :field => "list" do
+  #     _attribute """
+  #   ---
+  #   - a
+  #   - b
+  #   - c
+  #     """
+  #    end
+  #
+  # Note that it's actually easier to write :
+  #
+  #   _set :field => "list" do
+  #     reval "[ 'a', 'b', 'c' ]"
+  #   end
+  #
+  # but it's less secure. The best way might be :
+  #
+  #   set :field => "list", :value => [ 'a', 'b', 'c' ]
+  #
+  # Yet another way, as this <a> expression accepts JSON :
+  #
+  #   set :field => 'list' do
+  #     a '[1,2,false,"my name"]'
+  #   end
+  #
+  #
+  class AttributeExpression < FlowExpression
+
+    names :a, :attribute
+
+    XML_REGEX = /<.*>/
 
 
-        def apply (workitem)
+    def apply (workitem)
 
-            child = @children.first
+      child = @children.first
 
-            text = if child.is_a?(String)
+      text = if child.is_a?(String)
 
-                #child
-                fetch_text_content workitem
+        #child
+        fetch_text_content workitem
 
-            elsif child.is_a?(FlowExpressionId)
+      elsif child.is_a?(FlowExpressionId)
 
-                exp = get_expression_pool.fetch_expression child
-                ExpressionTree.to_s exp.raw_representation
+        exp = get_expression_pool.fetch_expression child
+        ExpressionTree.to_s exp.raw_representation
 
-            else
+      else
 
-                child.to_s
-            end
+        child.to_s
+      end
 
-            text = text.strip
+      text = text.strip
 
-            result = if text[0, 3] == '---'
+      result = if text[0, 3] == '---'
 
-                from_yaml text
+        from_yaml text
 
-            elsif text.match(XML_REGEX)
+      elsif text.match(XML_REGEX)
 
-                from_xml text
-            end
+        from_xml text
+      end
 
-            result = from_json(text) if result == nil
+      result = from_json(text) if result == nil
 
-            #p [ :result, result, text ]
+      #p [ :result, result, text ]
 
-            workitem.set_result(result) if result != nil
+      workitem.set_result(result) if result != nil
 
-            reply_to_parent workitem
-        end
-
-        protected
-
-            def from_yaml (text)
-
-                begin
-
-                    YAML.load text
-
-                rescue Exception => e
-                    linfo { "from_yaml() failed : #{e}" }
-                    nil
-                end
-            end
-
-            def from_xml (text)
-
-                begin
-
-                    OpenWFE::Xml.from_xml text
-
-                rescue Exception => e
-                    linfo { "from_xml() failed : #{e}" }
-                    nil
-                end
-            end
-
-            def from_json (text)
-
-                begin
-
-                    JSON.parse text
-
-                rescue Exception => e
-                    linfo { "from_json() failed : #{e}" }
-                    nil
-                end
-            end
+      reply_to_parent workitem
     end
+
+    protected
+
+      def from_yaml (text)
+
+        begin
+
+          YAML.load text
+
+        rescue Exception => e
+          linfo { "from_yaml() failed : #{e}" }
+          nil
+        end
+      end
+
+      def from_xml (text)
+
+        begin
+
+          OpenWFE::Xml.from_xml text
+
+        rescue Exception => e
+          linfo { "from_xml() failed : #{e}" }
+          nil
+        end
+      end
+
+      def from_json (text)
+
+        begin
+
+          JSON.parse text
+
+        rescue Exception => e
+          linfo { "from_json() failed : #{e}" }
+          nil
+        end
+      end
+  end
 
 end
 

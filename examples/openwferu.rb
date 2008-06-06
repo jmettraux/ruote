@@ -29,8 +29,8 @@ engine.register_participant :summarize do |workitem|
   puts
   puts "summary of process #{workitem.fei.workflow_instance_id}"
   workitem.attributes.each do |k, v|
-    next unless k.match ".*_comment$"
-    puts " - #{k} : '#{v}'"
+  next unless k.match ".*_comment$"
+  puts " - #{k} : '#{v}'"
   end
 end
 
@@ -39,11 +39,11 @@ end
 
 class TheProcessDefinition0 < OpenWFE::ProcessDefinition
   sequence do
-    concurrence do
-      participant :alice
-      participant :bob
-    end
-    participant :summarize
+  concurrence do
+    participant :alice
+    participant :bob
+  end
+  participant :summarize
   end
 end
 

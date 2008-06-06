@@ -11,50 +11,50 @@ require 'flowtestbase'
 
 
 class FlowTest81 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #
-    # Test 0
-    #
+  #
+  # Test 0
+  #
 
-    class Def0 < OpenWFE::ProcessDefinition
+  class Def0 < OpenWFE::ProcessDefinition
 
-        sequence do
+    sequence do
 
-            exp :name => "p0"
-            exp :name => "sub0"
+      exp :name => "p0"
+      exp :name => "sub0"
 
-            exp :name => "sequence" do
-                p0
-                sub0
-            end
+      exp :name => "sequence" do
+        p0
+        sub0
+      end
 
-            set :var => "a", :value => { "ref" => "p0" }
-            exp :name => "participant", :variable_attributes => "a"
+      set :var => "a", :value => { "ref" => "p0" }
+      exp :name => "participant", :variable_attributes => "a"
 
-            exp :default => "p0"
-            exp :name => " ", :default => "p0"
-        end
-
-        process_definition :name => "sub0" do
-            _print "sub0"
-        end
+      exp :default => "p0"
+      exp :name => " ", :default => "p0"
     end
 
-    def test_0
-
-        @engine.register_participant :p0 do
-            @tracer << "p0\n"
-        end
-
-        dotest Def0, %w{ p0 sub0 p0 sub0 p0 p0 p0 }.join("\n")
+    process_definition :name => "sub0" do
+      _print "sub0"
     end
+  end
+
+  def test_0
+
+    @engine.register_participant :p0 do
+      @tracer << "p0\n"
+    end
+
+    dotest Def0, %w{ p0 sub0 p0 sub0 p0 p0 p0 }.join("\n")
+  end
 
 end
 

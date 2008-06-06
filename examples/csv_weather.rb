@@ -8,11 +8,11 @@ $table = CsvTable.new("http://spreadsheets.google.com/pub?key=pCkopoeZwCNsMWOVeD
 
 def decide (hash)
 
-    $table.transform hash
+  $table.transform hash
 
-    puts " weather : #{hash['weather']}, month : #{hash['month']}"
-    puts "     =>  take umbrella ? #{hash['take_umbrella?']}"
-    puts
+  puts " weather : #{hash['weather']}, month : #{hash['month']}"
+  puts "   =>  take umbrella ? #{hash['take_umbrella?']}"
+  puts
 end
 
 puts

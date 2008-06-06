@@ -11,24 +11,24 @@ require 'flowtestbase'
 
 
 class FlowTest0e < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    def test_multi_body
+  def test_multi_body
 
-        #log_level_to_debug
+    #log_level_to_debug
 
-        dotest(
+    dotest(
 '''<process-definition name="n" revision="0">
-    <print>ok</print>
-    <print>nok</print>
+  <print>ok</print>
+  <print>nok</print>
 </process-definition>''', "ok")
-    end
+  end
 
 end
 

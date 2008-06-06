@@ -17,125 +17,125 @@ require 'openwfe/extras/participants/activeparticipants'
 
 class WithEngineTest < Test::Unit::TestCase
 
-    def setup
-        
-        #ExtrasTables.down; exit 0
-        #ExtrasTables.up; exit 0
-        
-        OpenWFE::Extras::Workitem.delete_all
-        OpenWFE::Extras::Field.delete_all
+  def setup
 
-        @engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
-        #require 'openwfe/engine/file_persisted_engine'
-        #@engine = OpenWFE::FilePersistedEngine.new
+    #ExtrasTables.down; exit 0
+    #ExtrasTables.up; exit 0
 
-        @engine.register_participant(
-            :active0, OpenWFE::Extras::ActiveParticipant)
-        @engine.register_participant(
-            :active1, OpenWFE::Extras::ActiveParticipant)
+    OpenWFE::Extras::Workitem.delete_all
+    OpenWFE::Extras::Field.delete_all
+
+    @engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
+    #require 'openwfe/engine/file_persisted_engine'
+    #@engine = OpenWFE::FilePersistedEngine.new
+
+    @engine.register_participant(
+      :active0, OpenWFE::Extras::ActiveParticipant)
+    @engine.register_participant(
+      :active1, OpenWFE::Extras::ActiveParticipant)
+  end
+
+  def teardown
+    $OWFE_LOG.level = Logger::INFO
+  end
+
+  #
+  # tests
+
+  class MyDefinition < OpenWFE::ProcessDefinition
+    sequence do
+      active0
+      active1
     end
+  end
 
-    def teardown
-        $OWFE_LOG.level = Logger::INFO
-    end
-    
-    #
-    # tests
+  def test_0
 
-    class MyDefinition < OpenWFE::ProcessDefinition
-        sequence do
-            active0
-            active1
-        end
-    end
+    $OWFE_LOG.level = Logger::DEBUG
 
-    def test_0
+    li = OpenWFE::LaunchItem.new MyDefinition
+    li.customer_name = 'toto'
+    fei = @engine.launch li
 
-        $OWFE_LOG.level = Logger::DEBUG
+    sleep 1
 
-        li = OpenWFE::LaunchItem.new MyDefinition
-        li.customer_name = 'toto'
-        fei = @engine.launch li
+    #puts @engine.get_expression_storage.to_s
+    #p @engine.get_error_journal.get_error_logs
 
-        sleep 1
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name "active0"
 
-        #puts @engine.get_expression_storage.to_s
-        #p @engine.get_error_journal.get_error_logs
+    assert_not_nil wi
 
-        wi = OpenWFE::Extras::Workitem.find_by_participant_name "active0"
+    wi.fields << OpenWFE::Extras::Field.new_field("active0", "was here")
+    wi.fields << OpenWFE::Extras::Field.new_field("active1", [ 1, 2, 4 ])
 
-        assert_not_nil wi
+    @engine.get_participant(:active0).reply_to_engine(wi)
 
-        wi.fields << OpenWFE::Extras::Field.new_field("active0", "was here")
-        wi.fields << OpenWFE::Extras::Field.new_field("active1", [ 1, 2, 4 ])
+    sleep 1
 
-        @engine.get_participant(:active0).reply_to_engine(wi)
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
 
-        sleep 1
+    assert_not_nil wi
 
-        wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
+    f = OpenWFE::Extras::Field.find_by_svalue "was here"
 
-        assert_not_nil wi
+    assert_not_nil f
+    assert_equal wi, f.workitem
 
-        f = OpenWFE::Extras::Field.find_by_svalue "was here"
+    f = OpenWFE::Extras::Field.find_by_fkey "active1"
 
-        assert_not_nil f
-        assert_equal wi, f.workitem
+    assert_equal f.value, [ 1, 2, 4 ]
 
-        f = OpenWFE::Extras::Field.find_by_fkey "active1"
+    #$OWFE_LOG.level = Logger::DEBUG
 
-        assert_equal f.value, [ 1, 2, 4 ]
+    @engine.cancel_expression wi.as_owfe_workitem.fei
+      #
+      # directly cancelling the *ParticipantExpression*
 
-        #$OWFE_LOG.level = Logger::DEBUG
+    sleep 1
 
-        @engine.cancel_expression wi.as_owfe_workitem.fei
-            #
-            # directly cancelling the *ParticipantExpression*
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
 
-        sleep 1
+    assert_nil wi
 
-        wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
+    #$OWFE_LOG.level = Logger::INFO
+  end
 
-        assert_nil wi
+  #
+  # Testing the Workitem.reply(engine) method.
+  #
+  def test_1
 
-        #$OWFE_LOG.level = Logger::INFO
-    end
+    li = OpenWFE::LaunchItem.new(MyDefinition)
+    li.customer_name = 'toto'
+    @engine.launch li
 
-    #
-    # Testing the Workitem.reply(engine) method.
-    #
-    def test_1
+    sleep 1
 
-        li = OpenWFE::LaunchItem.new(MyDefinition)
-        li.customer_name = 'toto'
-        @engine.launch li
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active0")
 
-        sleep 1
+    assert_not_nil wi.dispatch_time
 
-        wi = OpenWFE::Extras::Workitem.find_by_participant_name("active0")
+    wi.reply @engine
 
-        assert_not_nil wi.dispatch_time
+    sleep 0.5
 
-        wi.reply @engine
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
 
-        sleep 0.5
+    #wi.reply(@engine)
+    @engine.reply(wi)
+      #
+      # loading the 'active participants' now retrofits the engine
+      # to accept 'active workitems'
 
-        wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
+    sleep 0.5
 
-        #wi.reply(@engine)
-        @engine.reply(wi)
-            #
-            # loading the 'active participants' now retrofits the engine
-            # to accept 'active workitems'
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active0")
+    assert_nil wi
 
-        sleep 0.5
-
-        wi = OpenWFE::Extras::Workitem.find_by_participant_name("active0")
-        assert_nil wi
-
-        wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
-        assert_nil wi
-    end
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
+    assert_nil wi
+  end
 
 end
 

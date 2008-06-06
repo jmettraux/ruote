@@ -20,44 +20,44 @@ require 'flowtestbase'
 
 
 class FlowTest28 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    class TestDefinition0 < OpenWFE::ProcessDefinition
-        sequence do
-            participant :fp
-            _print "done"
-        end
+  class TestDefinition0 < OpenWFE::ProcessDefinition
+    sequence do
+      participant :fp
+      _print "done"
+    end
+  end
+
+  def test_0
+
+    FileUtils.mkdir("./work/in") unless File.exist? "./work/in"
+
+    @engine.register_participant "fp", OpenWFE::FileParticipant
+    @engine.add_workitem_listener OpenWFE::FileListener, "500"
+
+    fei = launch TestDefinition0
+
+    sleep 0.350
+
+    Find.find("./work/out/") do |path|
+      next unless path.match ".*\.yaml$"
+      FileUtils.mv path, "./work/in/"
     end
 
-    def test_0
+    sleep 2.000
 
-        FileUtils.mkdir("./work/in") unless File.exist? "./work/in"
-
-        @engine.register_participant "fp", OpenWFE::FileParticipant
-        @engine.add_workitem_listener OpenWFE::FileListener, "500"
-
-        fei = launch TestDefinition0
-
-        sleep 0.350
-
-        Find.find("./work/out/") do |path|
-            next unless path.match ".*\.yaml$"
-            FileUtils.mv path, "./work/in/"
-        end
-
-        sleep 2.000
-
-        assert_equal 1, engine.get_expression_storage.size
-    end
+    assert_equal 1, engine.get_expression_storage.size
+  end
 
 end
 

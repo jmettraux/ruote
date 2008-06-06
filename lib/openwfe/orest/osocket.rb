@@ -44,45 +44,45 @@ module OpenWFE
   #
   class OldSocketListener < TCPServer
 
+  #
+  # starts to listen on a given interface (IP) and port
+  #
+  def initialize (iface, port)
+    super(iface, port)
+  end
+
+  def listen ()
+    while (session = accept())
     #
-    # starts to listen on a given interface (IP) and port
-    #
-    def initialize (iface, port)
-      super(iface, port)
+    # how does it scale ?
+
+    s = session.gets
+
+    if s[0..8] != 'xmlCoder '
+      session.close
+      break
     end
 
-    def listen ()
-      while (session = accept())
-        #
-        # how does it scale ?
+    l = s[9..-1].to_i
 
-        s = session.gets
+    s = session.gets
+      #
+      # skipping the empty line between the
+      # header and the actual workitem
 
-        if s[0..8] != 'xmlCoder '
-          session.close
-          break
-        end
+    sXml = ''
 
-        l = s[9..-1].to_i
-
-        s = session.gets
-          #
-          # skipping the empty line between the
-          # header and the actual workitem
-
-        sXml = ''
-
-        while sXml.length < l
-          s = session.gets
-          sXml = "#{sXml}#{s}"
-        end
-
-        session.print "<ok-reply/>"
-        session.close
-
-        yield OpenWFE.xml_decode(xml.root)
-      end
+    while sXml.length < l
+      s = session.gets
+      sXml = "#{sXml}#{s}"
     end
+
+    session.print "<ok-reply/>"
+    session.close
+
+    yield OpenWFE.xml_decode(xml.root)
+    end
+  end
   end
 
   #
@@ -92,26 +92,26 @@ module OpenWFE
   #
   def OpenWFE.dispatch_workitem (host, port, workitem)
 
-    #sXml = OpenWFE.xml_encode(workitem)
-    sXml = OpenWFE::XmlCodec::encode workitem
+  #sXml = OpenWFE.xml_encode(workitem)
+  sXml = OpenWFE::XmlCodec::encode workitem
 
-    socket = TCPSocket.new(host, port)
-    socket.puts "xmlCoder #{sXml.length}"
-    socket.puts
-    socket.puts sXml
-    socket.puts
-    socket.close_write
+  socket = TCPSocket.new(host, port)
+  socket.puts "xmlCoder #{sXml.length}"
+  socket.puts
+  socket.puts sXml
+  socket.puts
+  socket.close_write
 
-    reply = socket.gets
+  reply = socket.gets
 
-    #reply = reply + socket.gets
-      #
-      # a bit ridiculous, but it works
-      # socket.close_write fixed it
+  #reply = reply + socket.gets
+    #
+    # a bit ridiculous, but it works
+    # socket.close_write fixed it
 
-    socket.close
+  socket.close
 
-    #puts "dispatch() reply is >#{reply}<"
+  #puts "dispatch() reply is >#{reply}<"
   end
 
 end
@@ -134,7 +134,7 @@ end
 #
 #  #puts workitem.history
 #  workitem.history.each do |hi|
-#    puts ".....hi = '#{hi.text}' #{hi.date}"
+#  puts ".....hi = '#{hi.text}' #{hi.date}"
 #  end
 #
 #  #hi = OpenWFE::HistoryItem.new

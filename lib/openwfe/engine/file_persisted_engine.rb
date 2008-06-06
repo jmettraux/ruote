@@ -44,62 +44,62 @@ require 'openwfe/expool/yamlexpstorage'
 
 module OpenWFE
 
-    #
-    # An engine persisted to a tree of yaml files.
-    #
-    # Remember that once you have added the participants to a persisted
-    # engine, you should call its reload method, to reschedule expressions
-    # like 'sleep', 'cron', ... But if you do it before registering the
-    # participants you'll end up with broken processes.
-    #
-    class FilePersistedEngine < Engine
+  #
+  # An engine persisted to a tree of yaml files.
+  #
+  # Remember that once you have added the participants to a persisted
+  # engine, you should call its reload method, to reschedule expressions
+  # like 'sleep', 'cron', ... But if you do it before registering the
+  # participants you'll end up with broken processes.
+  #
+  class FilePersistedEngine < Engine
 
-        protected
+    protected
 
-            #
-            # Overrides the method already found in Engine with a persisted
-            # expression storage
-            #
-            def build_expression_storage ()
+      #
+      # Overrides the method already found in Engine with a persisted
+      # expression storage
+      #
+      def build_expression_storage ()
 
-                init_service S_EXPRESSION_STORAGE, YamlFileExpressionStorage
-            end
+        init_service S_EXPRESSION_STORAGE, YamlFileExpressionStorage
+      end
 
-            #
-            # Uses a file persisted error journal.
-            #
-            def build_error_journal ()
+      #
+      # Uses a file persisted error journal.
+      #
+      def build_error_journal ()
 
-                init_service S_ERROR_JOURNAL, YamlErrorJournal
-            end
-    end
+        init_service S_ERROR_JOURNAL, YamlErrorJournal
+      end
+  end
 
-    #
-    # An engine with a cache in front of its file persisted expression storage.
-    #
-    # Remember that once you have added the participants to a persisted
-    # engine, you should call its reload method, to reschedule expressions
-    # like 'sleep', 'cron', ... But if you do it before registering the
-    # participants you'll end up with broken processes.
-    #
-    class CachedFilePersistedEngine < FilePersistedEngine
+  #
+  # An engine with a cache in front of its file persisted expression storage.
+  #
+  # Remember that once you have added the participants to a persisted
+  # engine, you should call its reload method, to reschedule expressions
+  # like 'sleep', 'cron', ... But if you do it before registering the
+  # participants you'll end up with broken processes.
+  #
+  class CachedFilePersistedEngine < FilePersistedEngine
 
-        protected
+    protected
 
-            def build_expression_storage ()
+      def build_expression_storage ()
 
-                @application_context[:expression_cache_size] ||= 1000
+        @application_context[:expression_cache_size] ||= 1000
 
-                init_service(
-                    S_EXPRESSION_STORAGE,
-                    CacheExpressionStorage)
+        init_service(
+          S_EXPRESSION_STORAGE,
+          CacheExpressionStorage)
 
-                #init_service(
-                #    S_EXPRESSION_STORAGE + ".1",
-                #    YamlFileExpressionStorage)
-                init_service(
-                    S_EXPRESSION_STORAGE + ".1",
-                    ThreadedYamlFileExpressionStorage)
-            end
-    end
+        #init_service(
+        #  S_EXPRESSION_STORAGE + ".1",
+        #  YamlFileExpressionStorage)
+        init_service(
+          S_EXPRESSION_STORAGE + ".1",
+          ThreadedYamlFileExpressionStorage)
+      end
+  end
 end

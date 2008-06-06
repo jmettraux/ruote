@@ -15,48 +15,48 @@ include OpenWFE::Extras
 
 
 class FlowTest19 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    CSV0 = \
+  CSV0 = \
 """
 in:weather, in:month, out:take_umbrella?
 ,,
-raining,    ,         yes
-sunny,      ,         no
-cloudy,     june,     yes
-cloudy,     may,      yes
-cloudy,     ,         no
+raining,  ,     yes
+sunny,    ,     no
+cloudy,   june,   yes
+cloudy,   may,    yes
+cloudy,   ,     no
 """
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #
-    # Test 0
-    #
+  #
+  # Test 0
+  #
 
-    class TestDefinition0 < ProcessDefinition
-        sequence do
-            set :field => "weather", :value => "cloudy"
-            set :field => "month", :value => "may"
-            decision
-            _print "${f:take_umbrella?}"
-        end
+  class TestDefinition0 < ProcessDefinition
+    sequence do
+      set :field => "weather", :value => "cloudy"
+      set :field => "month", :value => "may"
+      decision
+      _print "${f:take_umbrella?}"
     end
+  end
 
-    def test_0
+  def test_0
 
-        csvParticipant = CsvParticipant.new(CSV0)
+    csvParticipant = CsvParticipant.new(CSV0)
 
-        @engine.register_participant("decision", csvParticipant)
+    @engine.register_participant("decision", csvParticipant)
 
-        dotest(
-            TestDefinition0,
-            "yes")
-    end
+    dotest(
+      TestDefinition0,
+      "yes")
+  end
 
 end
 

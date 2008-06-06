@@ -11,89 +11,89 @@ require 'openwfe/participants/participants'
 
 
 class FlowTest54c < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
 
-    #
-    # Test 0
-    #
+  #
+  # Test 0
+  #
 
-    class Test0 < OpenWFE::ProcessDefinition
-        concurrence do
+  class Test0 < OpenWFE::ProcessDefinition
+    concurrence do
 
-            listen :to => "^channel_.$", :once => false do
-                _print "apply"
-            end
+      listen :to => "^channel_.$", :once => false do
+        _print "apply"
+      end
 
-            sequence do
-                _sleep "300"
-                participant :ref => "channel_z"
-                channel_z
-            end
-        end
+      sequence do
+        _sleep "300"
+        participant :ref => "channel_z"
+        channel_z
+      end
+    end
+  end
+
+  def test_0
+
+    @engine.register_participant :channel_z do
+      @tracer << "z\n"
     end
 
-    def test_0
+    #log_level_to_debug
 
-        @engine.register_participant :channel_z do
-            @tracer << "z\n"
-        end
+    outputs = [
+      %w{ z apply z apply }.join("\n"),
+      %w{ z z apply apply }.join("\n")
+    ]
 
-        #log_level_to_debug
+    dotest Test0, outputs, 0.850, true
+  end
 
-        outputs = [
-            %w{ z apply z apply }.join("\n"),
-            %w{ z z apply apply }.join("\n")
-        ]
+  #
+  # Test 1
+  #
 
-        dotest Test0, outputs, 0.850, true
+  class Test1 < OpenWFE::ProcessDefinition
+    concurrence do
+      listen :to => "channel9", :once => false do
+        listen9
+      end
+      sequence do
+        _sleep "300"
+        channel9
+      end
     end
+  end
 
-    #
-    # Test 1
-    #
+  def test_1
 
-    class Test1 < OpenWFE::ProcessDefinition
-        concurrence do
-            listen :to => "channel9", :once => false do
-                listen9
-            end
-            sequence do
-                _sleep "300"
-                channel9
-            end
-        end
-    end
+    #log_level_to_debug
 
-    def test_1
+    @engine.register_participant "channel9", OpenWFE::NullParticipant
+    @engine.register_participant "listen9", OpenWFE::NullParticipant
 
-        #log_level_to_debug
+    fei = launch Test1
 
-        @engine.register_participant "channel9", OpenWFE::NullParticipant
-        @engine.register_participant "listen9", OpenWFE::NullParticipant
+    sleep 0.700
 
-        fei = launch Test1
+    #puts @engine.get_expression_storage
+    assert_equal 8, @engine.get_expression_storage.size
 
-        sleep 0.700
+    #puts @engine.get_expression_storage
 
-        #puts @engine.get_expression_storage
-        assert_equal 8, @engine.get_expression_storage.size
+    @engine.cancel_process fei
 
-        #puts @engine.get_expression_storage
+    sleep 0.700
 
-        @engine.cancel_process fei
-
-        sleep 0.700
-
-        #puts @engine.get_expression_storage
-        assert_equal 1, @engine.get_expression_storage.size
-    end
+    #puts @engine.get_expression_storage
+    assert_equal 1, @engine.get_expression_storage.size
+  end
 
 end
 

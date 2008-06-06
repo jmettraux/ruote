@@ -13,58 +13,58 @@ require 'flowtestbase'
 
 
 class FlowTest68 < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    class Test0 < ProcessDefinition
-        sequence do
-            alpha :id => 0
-            alpha :id => 1, :if => "${r:$count > 1}"
-            alpha :id => 2
-            alpha :id => 3, :if => "${r:$count > 1}"
-        end
+  class Test0 < ProcessDefinition
+    sequence do
+      alpha :id => 0
+      alpha :id => 1, :if => "${r:$count > 1}"
+      alpha :id => 2
+      alpha :id => 3, :if => "${r:$count > 1}"
+    end
+  end
+
+  def test_0
+
+    #log_level_to_debug
+
+    $count = 0
+
+    @engine.register_participant :alpha do |workitem|
+      @tracer << "#{workitem.params["id"]} #{$count}\n"
+      $count += 1
     end
 
-    def test_0
+    dotest(Test0, "0 0\n2 1\n3 2")
+  end
 
-        #log_level_to_debug
+  #
+  # TEST 1
 
-        $count = 0
-
-        @engine.register_participant :alpha do |workitem|
-            @tracer << "#{workitem.params["id"]} #{$count}\n"
-            $count += 1
-        end
-
-        dotest(Test0, "0 0\n2 1\n3 2")
+  class Test1 < ProcessDefinition
+    sequence do
+      subp :id => 0
+      subp :id => 1, :unless => "true"
+      subp :id => 2
     end
-
-    #
-    # TEST 1
-
-    class Test1 < ProcessDefinition
-        sequence do
-            subp :id => 0
-            subp :id => 1, :unless => "true"
-            subp :id => 2
-        end
-        process_definition :name => "subp" do
-            _print "${id}"
-        end
+    process_definition :name => "subp" do
+      _print "${id}"
     end
+  end
 
-    def test_0
+  def test_0
 
-        dotest(Test1, "0\n2")
-    end
+    dotest(Test1, "0\n2")
+  end
 
 end
 

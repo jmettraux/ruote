@@ -11,20 +11,20 @@ require 'flowtestbase'
 
 
 class FlowTest0d < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    def test_participant
-        dotest(\
+  def test_participant
+    dotest(\
 '''<process-definition name="n" revision="0">
-    <participant ref="test-alpha" />
+  <participant ref="test-alpha" />
 </process-definition>''', "test-alpha")
-    end
+  end
 
 end
 

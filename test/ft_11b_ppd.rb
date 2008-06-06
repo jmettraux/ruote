@@ -14,41 +14,41 @@ require 'openwfe/def'
 
 
 class FlowTest11b < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #
-    # Test 0
-    #
-    # bug #9905 : "NPE" was raised...
-    #
+  #
+  # Test 0
+  #
+  # bug #9905 : "NPE" was raised...
+  #
 
-    class TestDefinition0 < OpenWFE::ProcessDefinition
-        def make
-            _print "ok"
-        end
+  class TestDefinition0 < OpenWFE::ProcessDefinition
+    def make
+      _print "ok"
     end
+  end
 
-    def test_0
-        dotest TestDefinition0.new, "ok"
-    end
+  def test_0
+    dotest TestDefinition0.new, "ok"
+  end
 
-    #
-    # Test 1
-    #
+  #
+  # Test 1
+  #
 
-    class TestDefinition1 < OpenWFE::ProcessDefinition
-        _print "ok"
-    end
+  class TestDefinition1 < OpenWFE::ProcessDefinition
+    _print "ok"
+  end
 
-    def test_1
-        dotest TestDefinition1, "ok"
-    end
+  def test_1
+    dotest TestDefinition1, "ok"
+  end
 
 end
 

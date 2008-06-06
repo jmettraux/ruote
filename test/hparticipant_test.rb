@@ -18,147 +18,147 @@ require 'openwfe/participants/storeparticipants'
 
 class HParticipantTest < Test::Unit::TestCase
 
-    def setup
+  def setup
 
-        @engine = Engine.new({ :definition_in_launchitem_allowed => true })
+    @engine = Engine.new({ :definition_in_launchitem_allowed => true })
+  end
+
+  def teardown
+
+    @engine.stop if @engine
+  end
+
+  class HpDefinition0 < OpenWFE::ProcessDefinition
+    sequence do
+      participant :alice
+      participant :bob
     end
+  end
 
-    def teardown
+  def test_hp_0
 
-        @engine.stop if @engine
-    end
+    @hpAlice = HashParticipant.new
+    @hpBob = HashParticipant.new
 
-    class HpDefinition0 < OpenWFE::ProcessDefinition
-        sequence do
-            participant :alice
-            participant :bob
-        end
-    end
+    @engine.register_participant :alice, @hpAlice
+    @engine.register_participant :bob, @hpBob
 
-    def test_hp_0
+    do_test
+  end
 
-        @hpAlice = HashParticipant.new
-        @hpBob = HashParticipant.new
+  def test_hp_1
 
-        @engine.register_participant :alice, @hpAlice
-        @engine.register_participant :bob, @hpBob
+    #FileUtils.remove_dir "./work" if File.exist? "./work"
+    FileUtils.rm_rf "work" if File.exist? "./work"
 
-        do_test
-    end
+    @engine.application_context[:work_directory] = "./work"
+    @hpAlice = YamlParticipant.new("alice", @engine.application_context)
+    #@hpBob = YamlParticipant.new("bob", @engine.application_context)
 
-    def test_hp_1
+    @engine.register_participant(:alice, @hpAlice)
+    #@engine.register_participant(:bob, @hpBob)
+    @hpBob = @engine.register_participant(:bob, YamlParticipant)
 
-        #FileUtils.remove_dir "./work" if File.exist? "./work"
-        FileUtils.rm_rf "work" if File.exist? "./work"
+    do_test
+  end
 
-        @engine.application_context[:work_directory] = "./work"
-        @hpAlice = YamlParticipant.new("alice", @engine.application_context)
-        #@hpBob = YamlParticipant.new("bob", @engine.application_context)
+  def do_test
 
-        @engine.register_participant(:alice, @hpAlice)
-        #@engine.register_participant(:bob, @hpBob)
-        @hpBob = @engine.register_participant(:bob, YamlParticipant)
+    id = @engine.launch HpDefinition0
 
-        do_test
-    end
+    assert \
+      id.kind_of?(FlowExpressionId),
+      "engine.launch() doesn't return an instance of FlowExpressionId "+
+      "but of #{id.class}"
 
-    def do_test
+    #puts id.to_s
 
-        id = @engine.launch HpDefinition0
+    #puts "alice count : #{@hpAlice.size}"
+    #puts "bob count :   #{@hpBob.size}"
 
-        assert \
-            id.kind_of?(FlowExpressionId),
-            "engine.launch() doesn't return an instance of FlowExpressionId "+
-            "but of #{id.class}"
+    sleep 0.350
 
-        #puts id.to_s
+    assert_equal 0, @hpBob.size
+    assert_equal 1, @hpAlice.size
 
-        #puts "alice count : #{@hpAlice.size}"
-        #puts "bob count :   #{@hpBob.size}"
+    wi = @hpAlice.list_workitems(id.workflow_instance_id)[0]
 
-        sleep 0.350
+    assert \
+      wi != nil,
+      "didn't find wi for flow #{id.workflow_instance_id}"
 
-        assert_equal 0, @hpBob.size
-        assert_equal 1, @hpAlice.size
+    wi.message = "Hello bob !"
 
-        wi = @hpAlice.list_workitems(id.workflow_instance_id)[0]
+    @hpAlice.forward(wi)
 
-        assert \
-            wi != nil,
-            "didn't find wi for flow #{id.workflow_instance_id}"
+    sleep 0.350
 
-        wi.message = "Hello bob !"
+    assert_equal 0, @hpAlice.size
+    assert_equal 1, @hpBob.size
 
-        @hpAlice.forward(wi)
+    wi = @hpBob.list_workitems(id.workflow_instance_id)[0]
 
-        sleep 0.350
+    assert_equal wi.message, "Hello bob !"
 
-        assert_equal 0, @hpAlice.size
-        assert_equal 1, @hpBob.size
+    @hpBob.proceed wi
 
-        wi = @hpBob.list_workitems(id.workflow_instance_id)[0]
+    sleep 0.350
 
-        assert_equal wi.message, "Hello bob !"
+    assert_equal 0, @hpAlice.size
+    assert_equal 0, @hpBob.size
 
-        @hpBob.proceed wi
+    assert_equal 1, @engine.get_expression_storage.size
+  end
 
-        sleep 0.350
+  def test_d_0
 
-        assert_equal 0, @hpAlice.size
-        assert_equal 0, @hpBob.size
+    @hpAlice = HashParticipant.new
+    @hpBob = HashParticipant.new
 
-        assert_equal 1, @engine.get_expression_storage.size
-    end
+    @engine.register_participant :alice, @hpAlice
+    @engine.register_participant :bob, @hpBob
 
-    def test_d_0
+    id = @engine.launch HpDefinition0
 
-        @hpAlice = HashParticipant.new
-        @hpBob = HashParticipant.new
+    sleep 0.350
 
-        @engine.register_participant :alice, @hpAlice
-        @engine.register_participant :bob, @hpBob
+    assert_equal 1, @hpAlice.size
+    assert_equal 0, @hpBob.size
 
-        id = @engine.launch HpDefinition0
+    wi = @hpAlice.first_workitem
 
-        sleep 0.350
+    @hpAlice.delegate wi, @hpBob
 
-        assert_equal 1, @hpAlice.size
-        assert_equal 0, @hpBob.size
+    assert_equal 0, @hpAlice.size
+    assert_equal 1, @hpBob.size
 
-        wi = @hpAlice.first_workitem
+    wi = @hpBob.first_workitem
 
-        @hpAlice.delegate wi, @hpBob
+    @hpBob.proceed wi
 
-        assert_equal 0, @hpAlice.size
-        assert_equal 1, @hpBob.size
+    sleep 0.350
 
-        wi = @hpBob.first_workitem
+    assert_equal 0, @hpAlice.size
+    assert_equal 1, @hpBob.size
 
-        @hpBob.proceed wi
+    wi = @hpBob.first_workitem
 
-        sleep 0.350
+    @hpBob.delegate wi.fei, @hpAlice
 
-        assert_equal 0, @hpAlice.size
-        assert_equal 1, @hpBob.size
+    assert_equal 1, @hpAlice.size
+    assert_equal 0, @hpBob.size
 
-        wi = @hpBob.first_workitem
+    wi = @hpAlice.first_workitem
 
-        @hpBob.delegate wi.fei, @hpAlice
+    @hpAlice.forward wi
 
-        assert_equal 1, @hpAlice.size
-        assert_equal 0, @hpBob.size
+    sleep 0.350
 
-        wi = @hpAlice.first_workitem
+    assert_equal 0, @hpAlice.size
+    assert_equal 0, @hpBob.size
 
-        @hpAlice.forward wi
-
-        sleep 0.350
-
-        assert_equal 0, @hpAlice.size
-        assert_equal 0, @hpBob.size
-
-        assert_equal 1, @engine.get_expression_storage.size
-    end
+    assert_equal 1, @engine.get_expression_storage.size
+  end
 
 end
 

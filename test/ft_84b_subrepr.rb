@@ -15,56 +15,56 @@ require 'openwfe/storage/yamlcustom'
 
 
 class FlowTest84b < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #
-    # TEST 0
+  #
+  # TEST 0
 
-    class Test0 < OpenWFE::ProcessDefinition
-       sub0
-       define "sub0" do
-           toto
-       end
-    end
+  class Test0 < OpenWFE::ProcessDefinition
+     sub0
+     define "sub0" do
+       toto
+     end
+  end
 
-    def test_0
+  def test_0
 
-        #log_level_to_debug
+    #log_level_to_debug
 
-        @engine.register_participant :toto, OpenWFE::NullParticipant
+    @engine.register_participant :toto, OpenWFE::NullParticipant
 
-        fei = @engine.launch Test0
+    fei = @engine.launch Test0
 
-        sleep 0.350
+    sleep 0.350
 
-        ps = @engine.process_stack fei.wfid, true
+    ps = @engine.process_stack fei.wfid, true
 
-        #p ps.collect { |fexp| fexp.fei.to_s }
+    #p ps.collect { |fexp| fexp.fei.to_s }
 
-        assert_equal 7, ps.size
+    assert_equal 7, ps.size
 
-        #assert_equal(
-        #    ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sub0", {"ref"=>"sub0"}, []], ["define", {}, ["sub0", ["toto", {"ref"=>"toto"}, []]]]]],
-        #    ps.representation)
+    #assert_equal(
+    #  ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sub0", {"ref"=>"sub0"}, []], ["define", {}, ["sub0", ["toto", {"ref"=>"toto"}, []]]]]],
+    #  ps.representation)
 
-        #assert_equal(
-        #    ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sub0", {"ref"=>"sub0"}, []], ["define", {}, ["sub0", ["toto", {"ref"=>"toto"}, []]]]]],
-        #    @engine.process_representation(fei.wfid))
+    #assert_equal(
+    #  ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sub0", {"ref"=>"sub0"}, []], ["define", {}, ["sub0", ["toto", {"ref"=>"toto"}, []]]]]],
+    #  @engine.process_representation(fei.wfid))
 
-        assert_equal 9, ps.representation.flatten.size
-        assert_equal 9, @engine.process_representation(fei.wfid).flatten.size
-            # kinky assertions
+    assert_equal 9, ps.representation.flatten.size
+    assert_equal 9, @engine.process_representation(fei.wfid).flatten.size
+      # kinky assertions
 
-        #p @engine.process_status(fei.wfid).expressions.collect { |e| e.fei.to_s }
+    #p @engine.process_status(fei.wfid).expressions.collect { |e| e.fei.to_s }
 
-        assert_equal 1, @engine.process_status(fei.wfid).branches
-    end
+    assert_equal 1, @engine.process_status(fei.wfid).branches
+  end
 
 end
 

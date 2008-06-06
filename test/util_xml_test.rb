@@ -20,93 +20,93 @@ require 'rutest_utils'
 
 class UtilXmlTest < Test::Unit::TestCase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    def test_0
+  def test_0
 
-        li = OpenWFE::LaunchItem.new
-        li.attributes.delete "___map_type"
-        xml = OpenWFE::Xml.launchitem_to_xml li
+    li = OpenWFE::LaunchItem.new
+    li.attributes.delete "___map_type"
+    xml = OpenWFE::Xml.launchitem_to_xml li
 
-        assert_equal(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><launchitem><workflow_definition_url></workflow_definition_url><attributes><hash></hash></attributes></launchitem>",
-            xml)
+    assert_equal(
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?><launchitem><workflow_definition_url></workflow_definition_url><attributes><hash></hash></attributes></launchitem>",
+      xml)
 
-        li = OpenWFE::Xml.launchitem_from_xml xml
+    li = OpenWFE::Xml.launchitem_from_xml xml
 
-        assert_nil(li.wfdurl)
-        assert_equal({}, li.attributes)
-    end
+    assert_nil(li.wfdurl)
+    assert_equal({}, li.attributes)
+  end
 
-    def test_1
+  def test_1
 
-        li = OpenWFE::LaunchItem.new
-        li.attributes = { "a" => 1, "b" => 2, "c" => [ 1, 2, 3 ]}
+    li = OpenWFE::LaunchItem.new
+    li.attributes = { "a" => 1, "b" => 2, "c" => [ 1, 2, 3 ]}
 
-        xml = OpenWFE::Xml.launchitem_to_xml li
+    xml = OpenWFE::Xml.launchitem_to_xml li
 
-        assert_equal(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><launchitem><workflow_definition_url></workflow_definition_url><attributes><hash><entry><string>a</string><number>1</number></entry><entry><string>b</string><number>2</number></entry><entry><string>c</string><array><number>1</number><number>2</number><number>3</number></array></entry></hash></attributes></launchitem>",
-            xml)
-        
-        li = OpenWFE::Xml.launchitem_from_xml xml
+    assert_equal(
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?><launchitem><workflow_definition_url></workflow_definition_url><attributes><hash><entry><string>a</string><number>1</number></entry><entry><string>b</string><number>2</number></entry><entry><string>c</string><array><number>1</number><number>2</number><number>3</number></array></entry></hash></attributes></launchitem>",
+      xml)
 
-        assert_equal({ "a" => 1, "b" => 2, "c" => [ 1, 2, 3 ] }, li.attributes)
-    end
+    li = OpenWFE::Xml.launchitem_from_xml xml
 
-    def test_2
+    assert_equal({ "a" => 1, "b" => 2, "c" => [ 1, 2, 3 ] }, li.attributes)
+  end
 
-        wi = OpenWFE::InFlowWorkItem.new
-        wi.fei = new_fei
+  def test_2
 
-        xml = OpenWFE::Xml.workitem_to_xml wi
+    wi = OpenWFE::InFlowWorkItem.new
+    wi.fei = new_fei
 
-        wi1 = OpenWFE::Xml.workitem_from_xml xml
+    xml = OpenWFE::Xml.workitem_to_xml wi
 
-        assert_equal wi.fei, wi1.fei
+    wi1 = OpenWFE::Xml.workitem_from_xml xml
 
-        #p wi1.fei
-    end
+    assert_equal wi.fei, wi1.fei
 
-    def test_3
+    #p wi1.fei
+  end
 
-        li = OpenWFE::LaunchItem.new
-        li.wfdurl = "http://toto"
-        li.customer_name = "toto"
+  def test_3
 
-        xml = OpenWFE::Xml.launchitem_to_xml li, 2
+    li = OpenWFE::LaunchItem.new
+    li.wfdurl = "http://toto"
+    li.customer_name = "toto"
 
-        li1 = OpenWFE::Xml.launchitem_from_xml xml
+    xml = OpenWFE::Xml.launchitem_to_xml li, 2
 
-        assert_equal li.wfdurl, li1.wfdurl
-        assert_equal li.customer_name, li1.customer_name
-    end
+    li1 = OpenWFE::Xml.launchitem_from_xml xml
 
-    def test_4
+    assert_equal li.wfdurl, li1.wfdurl
+    assert_equal li.customer_name, li1.customer_name
+  end
 
-        a = <<-EOS
+  def test_4
+
+    a = <<-EOS
 <array>
-    <string>alpha</string>
-    <number>2</number>
-    <number>2.3</number>
-    <false/>
-    <null/>
+  <string>alpha</string>
+  <number>2</number>
+  <number>2.3</number>
+  <false/>
+  <null/>
 </array>
-        EOS
-        a = a.strip
+    EOS
+    a = a.strip
 
-        o = OpenWFE::Xml.from_xml a
+    o = OpenWFE::Xml.from_xml a
 
-        assert_equal [ 'alpha', 2, 2.3, false, nil ], o
+    assert_equal [ 'alpha', 2, 2.3, false, nil ], o
 
-        a1 = OpenWFE::Xml.to_xml(o, 4).strip
+    a1 = OpenWFE::Xml.to_xml(o, 2).strip
 
-        assert_equal a, a1
-    end
+    assert_equal a, a1
+  end
 
 end
 

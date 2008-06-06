@@ -42,65 +42,65 @@ require 'yaml'
 
 module OpenWFE
 
-    #
-    # reopening some classes in order to facilitate their
-    # yaml serialization
-    #
+  #
+  # reopening some classes in order to facilitate their
+  # yaml serialization
+  #
 
-    #
-    # opening for tuning yaml persistence
-    #
-    class FlowExpression
+  #
+  # opening for tuning yaml persistence
+  #
+  class FlowExpression
 
-        def to_yaml_properties
+    def to_yaml_properties
 
-            l = super
+      l = super
 
-            l.delete("@application_context")
+      l.delete("@application_context")
 
-            #l.delete("@timeout_job_id")
-            #l.delete("@scheduler_job_id")
-                # scheduler ids should not get persisted
+      #l.delete("@timeout_job_id")
+      #l.delete("@scheduler_job_id")
+        # scheduler ids should not get persisted
 
-            l
+      l
+    end
+  end
+
+  #
+  # making sure that the FlowExpressionId is serialized as a unique String
+  #
+  class FlowExpressionId
+
+    yaml_as "tag:ruby.yaml.org,2002:#{self}"
+
+    #--
+    #def to_yaml (opts={})
+    #  @s = to_s
+    #  super
+    #end
+    #def to_yaml_properties
+    #  [ "@s" ]
+    #end
+    #++
+
+    def to_yaml (opts={})
+
+      YAML::quick_emit(self.object_id, opts) do |out|
+        out.map(taguri) do |map|
+          map.add "s", to_s
         end
+      end
     end
 
-    #
-    # making sure that the FlowExpressionId is serialized as a unique String
-    #
-    class FlowExpressionId
+    def FlowExpressionId.yaml_new (klass, tag, val)
 
-        yaml_as "tag:ruby.yaml.org,2002:#{self}"
-
-        #--
-        #def to_yaml (opts={})
-        #    @s = to_s
-        #    super
-        #end
-        #def to_yaml_properties
-        #    [ "@s" ]
-        #end
-        #++
-
-        def to_yaml (opts={})
-
-            YAML::quick_emit(self.object_id, opts) do |out|
-                out.map(taguri) do |map|
-                    map.add "s", to_s
-                end
-            end
-        end
-
-        def FlowExpressionId.yaml_new (klass, tag, val)
-
-            s = val["s"]
-            begin
-                FlowExpressionId.to_fei s
-            rescue Exception => e
-                raise "failed to decode FlowExpressionId out of '#{s}'"
-            end
-        end
+      s = val["s"]
+      begin
+        FlowExpressionId.to_fei s
+      rescue Exception => e
+        raise "failed to decode FlowExpressionId out of '#{s}'"
+      end
     end
+  end
 end
 

@@ -15,60 +15,60 @@ require 'flowtestbase'
 
 
 class FlowTest15b < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #
-    # Test 0
-    #
+  #
+  # Test 0
+  #
 
-    class Test0 < OpenWFE::ProcessDefinition
-        sequence do
-            set :field => "participant_list", :value => "a, b, c"
-            iterator :on_value => "${f:participant_list}", :to_variable => "p" do
-                participant "${p}"
-            end
-            _print "done."
-        end
+  class Test0 < OpenWFE::ProcessDefinition
+    sequence do
+      set :field => "participant_list", :value => "a, b, c"
+      iterator :on_value => "${f:participant_list}", :to_variable => "p" do
+        participant "${p}"
+      end
+      _print "done."
+    end
+  end
+
+  def test_0
+
+    @engine.register_participant "." do |workitem|
+      @tracer << workitem.participant_name
     end
 
-    def test_0
+    dotest Test0, "abcdone."
+  end
 
-        @engine.register_participant "." do |workitem|
-            @tracer << workitem.participant_name
-        end
+  #
+  # Test 1
+  #
 
-        dotest Test0, "abcdone."
-    end
+  def test_1
 
-    #
-    # Test 1
-    #
+    @engine.register_participant ".", OpenWFE::NullParticipant
 
-    def test_1
+    fei = launch Test0
 
-        @engine.register_participant ".", OpenWFE::NullParticipant
+    sleep 0.350
 
-        fei = launch Test0
+    assert_equal 8, @engine.get_expression_storage.size
+    assert_equal "", @tracer.to_s
 
-        sleep 0.350
+    @engine.cancel_process fei
 
-        assert_equal 8, @engine.get_expression_storage.size
-        assert_equal "", @tracer.to_s
+    sleep 0.350
 
-        @engine.cancel_process fei
-
-        sleep 0.350
-
-        #puts @engine.get_expression_storage
-        assert_equal 1, @engine.get_expression_storage.size
-        assert_equal "", @tracer.to_s
-    end
+    #puts @engine.get_expression_storage
+    assert_equal 1, @engine.get_expression_storage.size
+    assert_equal "", @tracer.to_s
+  end
 
 end
 

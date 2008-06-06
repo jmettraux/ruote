@@ -15,17 +15,17 @@ require 'openwfe/expressions/raw_prog'
 
 #
 # the process definition
-# 
+#
 # instead of using the classical OpenWFE XML process definitions, we
 # define the flow as a Ruby class
 
 class ReviewFlow < OpenWFE::ProcessDefinition
-    def make
-        process_definition :name => "homework_review", :revision => "0.1" do
-            sequence do
-            end
-        end
+  def make
+    process_definition :name => "homework_review", :revision => "0.1" do
+      sequence do
+      end
     end
+  end
 end
 
 #
@@ -42,27 +42,27 @@ engine = OpenWFE::Engine.new
 # (a person is usually part of more than one business process in
 # his organization)
 
-# a small debug participant, as you can see, a participant can 
+# a small debug participant, as you can see, a participant can
 # directly be a ruby block (which receives the workitem)
 # (it's commented out at the end of the flow)
 #
 engine.register_participant("puts_workitem") do |workitem|
-    puts
-    puts workitem.to_s
-    puts
+  puts
+  puts workitem.to_s
+  puts
 end
 
 #
 # launching
 
 launchitem = LaunchItem.new(QuoteLookupFlow)
-    #
-    # Passing the process definition class as the unique 
-    # LaunchItem parameter
+  #
+  # Passing the process definition class as the unique
+  # LaunchItem parameter
 
 launchitem.symbols = "aapl, sunw, msft, lnux"
-    #
-    # directly setting the value for the field "symbols"
+  #
+  # directly setting the value for the field "symbols"
 
 engine.launch(launchitem)
 

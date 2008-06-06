@@ -12,71 +12,71 @@ require 'openwfe/def'
 
 
 class FlowTest21b < Test::Unit::TestCase
-    include FlowTestBase
+  include FlowTestBase
 
-    #def setup
-    #end
+  #def setup
+  #end
 
-    #def teardown
-    #end
+  #def teardown
+  #end
 
-    #
-    # Test 0
-    #
+  #
+  # Test 0
+  #
 
-    class TestDefinition0 < OpenWFE::ProcessDefinition
-        cron :tab => "* * * * * *", :name => "cron" do
-            participant :cron_event
-        end
+  class TestDefinition0 < OpenWFE::ProcessDefinition
+    cron :tab => "* * * * * *", :name => "cron" do
+      participant :cron_event
+    end
+  end
+
+  #
+  # this one tests whether a cron event is removed when his process
+  # terminates, as should be.
+  #
+  def test_0
+
+    #log_level_to_debug
+
+    counter = 0
+
+    @engine.register_participant(:cron_event) do
+      counter += 1
     end
 
-    #
-    # this one tests whether a cron event is removed when his process
-    # terminates, as should be.
-    #
-    def test_0
+    #puts "start at #{Time.now.to_s}"
+    #dotest TestDefinition0, "", 62
 
-        #log_level_to_debug
+    fei = launch TestDefinition0
 
-        counter = 0
+    sleep 0.350
 
-        @engine.register_participant(:cron_event) do
-            counter += 1
-        end
+    assert_equal "", @tracer.to_s
+    assert_not_nil @engine.process_status(fei)
 
-        #puts "start at #{Time.now.to_s}"
-        #dotest TestDefinition0, "", 62
+    sleep 3
 
-        fei = launch TestDefinition0
+    @engine.pause_process fei.wfid
 
-        sleep 0.350
+    assert_equal 3, counter
 
-        assert_equal "", @tracer.to_s
-        assert_not_nil @engine.process_status(fei)
+    sleep 3
 
-        sleep 3
+    assert_equal 3, counter
+    assert_equal 0, @engine.process_status(fei).errors.size
 
-        @engine.pause_process fei.wfid
+    @engine.resume_process fei.wfid
 
-        assert_equal 3, counter
+    sleep 3
 
-        sleep 3
+    assert_equal 6, counter
 
-        assert_equal 3, counter
-        assert_equal 0, @engine.process_status(fei).errors.size
+    @engine.cancel_process fei.wfid
 
-        @engine.resume_process fei.wfid
+    sleep 0.350
 
-        sleep 3
-
-        assert_equal 6, counter
-
-        @engine.cancel_process fei.wfid
-
-        sleep 0.350
-
-        assert_nil @engine.process_status(fei)
-    end
+    assert_nil @engine.process_status(fei)
+  end
 
 end
 
