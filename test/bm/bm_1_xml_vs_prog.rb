@@ -7,6 +7,8 @@
 
 require 'benchmark'
 
+require 'rubygems'
+
 require 'openwfe/def'
 #require 'openwfe/engine/engine'
 require 'openwfe/engine/file_persisted_engine'
@@ -35,7 +37,8 @@ xml = <<END
 END
 
 #$engine = OpenWFE::Engine.new
-$engine = OpenWFE::FilePersistedEngine.new
+$engine = OpenWFE::FilePersistedEngine.new(
+  :definition_in_launchitem_allowed => true)
 
 $engine.register_participant "toto" do |workitem|
   # do nothing

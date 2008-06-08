@@ -92,7 +92,11 @@ module OpenWFE
       #
       def next_child (current_fei)
 
-        next_id = if (current_fei == self.fei)
+        # using @current_id as 'memo' of the current position
+
+        @current_id = if @current_id
+          @current_id + 1
+        elsif current_fei == self.fei
           0
         else
           @children.index(current_fei) + 1
@@ -100,13 +104,13 @@ module OpenWFE
 
         loop do
 
-          break if next_id >= @children.length
+          break if @current_id >= @children.length
 
-          child = @children[next_id]
+          child = @children[@current_id]
 
           return child if child.is_a?(FlowExpressionId)
 
-          next_id += 1
+          @current_id += 1
         end
 
         nil

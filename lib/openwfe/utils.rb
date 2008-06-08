@@ -62,21 +62,18 @@ module OpenWFE
   end
 
   #
+  # classes that shouldn't get duplicated.
+  #
+  IMMUTABLES = [ Symbol, Fixnum, TrueClass, FalseClass, Float ]
+
+  #
   # an automatic dup implementation attempt
   #
   def OpenWFE.fulldup (object)
 
     return nil if object == nil
 
-    return object.fulldup if object.respond_to?("fulldup")
-      # trusting client objects providing a fulldup() implementation
-      # Tomaso Tosolini 2007.12.11
-
-    return object if object.kind_of?(Float)
-    return object if object.kind_of?(Fixnum)
-    return object if object.kind_of?(TrueClass)
-    return object if object.kind_of?(FalseClass)
-    return object if object.kind_of?(Symbol)
+    return object if IMMUTABLES.include?(object.class)
 
     return object.dup if object.kind_of?(String)
 
@@ -99,6 +96,10 @@ module OpenWFE
     return Rational(object.denominator, object.numerator) \
       if object.kind_of?(Rational)
 
+    return object.fulldup if object.respond_to?("fulldup")
+      # trusting client objects providing a fulldup() implementation
+      # Tomaso Tosolini 2007.12.11
+
     o = nil
 
     begin
@@ -111,13 +112,9 @@ module OpenWFE
     # some kind of collection ?
 
     if object.kind_of?(Array)
-      object.each do |i|
-        o << fulldup(i)
-      end
+      object.each { |i| o << fulldup(i) }
     elsif object.kind_of?(Hash)
-      object.each do |k, v|
-        o[fulldup(k)] = fulldup(v)
-      end
+      object.each { |k, v| o[fulldup(k)] = fulldup(v) }
     end
 
     #
