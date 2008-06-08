@@ -94,6 +94,12 @@ module OpenWFE
 
         # using @current_id as 'memo' of the current position
 
+        @current_id = nil \
+          if @current_id and (@children[@current_id] != current_fei)
+            #
+            # the list of children changed, forget the current position
+            # will have to redetermine it ...
+
         @current_id = if @current_id
           @current_id + 1
         elsif current_fei == self.fei
