@@ -64,6 +64,8 @@ class FlowTest84b < Test::Unit::TestCase
     #p @engine.process_status(fei.wfid).expressions.collect { |e| e.fei.to_s }
 
     assert_equal 1, @engine.process_status(fei.wfid).branches
+
+    purge_engine
   end
 
 end

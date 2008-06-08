@@ -218,6 +218,9 @@ module OpenWFE
     #     # will launch that same process every day,
     #     # five minutes after midnight (see "man 5 crontab")
     #
+    #   engine.launch(launch_item, :wait_for => true)
+    #     # will launch and return only when the process is over
+    #
     def launch (launch_object, options={})
 
       launchitem = extract_launchitem launch_object
@@ -443,32 +446,7 @@ module OpenWFE
         fei_or_wfid
       end
 
-      t = Thread.new { Thread.stop }
-
-      to = get_expression_pool.add_observer(:terminate) do |c, fe, wi|
-        t.wakeup if (fe.fei.workflow_instance_id == wfid and t.alive?)
-      end
-      te = get_expression_pool.add_observer(:error) do |c, fei, m, i, e|
-        t.wakeup if (fei.parent_wfid == wfid and t.alive?)
-      end
-
-      t.join
-
-      #tc = get_expression_pool.add_observer(:cancel) do |c, fe|
-      #  if (fe.fei.wfid == wfid and fe.fei.expid == "0" and t.alive?)
-      #    sleep 0.500
-      #    t.wakeup
-      #  end
-      #end
-
-      linfo { "wait_for() #{wfid}" }
-
-      get_expression_pool.remove_observer to, :terminate
-      get_expression_pool.remove_observer te, :error
-      #get_expression_pool.remove_observer tc, :cancel
-        #
-        # it would work as well without specifying the channel,
-        # but it's thus a little bit faster
+      get_expression_pool.send :wait_for, wfid
     end
 
     #

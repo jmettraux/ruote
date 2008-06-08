@@ -171,6 +171,8 @@ module OpenWFE
     #
     def launch (launchitem, options={})
 
+      wait_for = (options[:wait_for] == true)
+
       #
       # prepare raw expression
 
@@ -197,7 +199,11 @@ module OpenWFE
 
       onotify :launch, fei, launchitem
 
-      apply raw_expression, wi
+      if wait_for
+        wait_for(fei.wfid) { apply raw_expression, wi }
+      else
+        apply raw_expression, wi
+      end
 
       fei
     end
@@ -816,6 +822,45 @@ module OpenWFE
     end
 
     protected
+
+      #
+      # If the launch option :wait_for is set to true, this method
+      # will be called to apply the raw_expression. It will only return
+      # when the launched process is over, which means it terminated, it
+      # had an error or it got cancelled.
+      #
+      def wait_for (wfid)
+
+        t = Thread.current
+        over = false
+
+        to = get_expression_pool.add_observer(:terminate) do |c, fe, wi|
+          if fe.fei.workflow_instance_id == wfid
+            over = true; t.wakeup
+          end
+        end
+        te = get_expression_pool.add_observer(:error) do |c, fei, m, i, e|
+          if fei.parent_wfid == wfid
+            over = true; t.wakeup
+          end
+        end
+        tc = get_expression_pool.add_observer(:cancel) do |c, fe|
+          if fe.fei.wfid == wfid and fe.fei.expid == '0'
+            over = true; t.wakeup
+          end
+        end
+
+        #apply raw_expression, wi
+        yield if block_given?
+
+        Thread.stop unless over
+
+        linfo { "wait_for() '#{wfid}' is over" }
+
+        get_expression_pool.remove_observer to, :terminate
+        get_expression_pool.remove_observer te, :error
+        get_expression_pool.remove_observer tc, :cancel
+      end
 
       #
       # This is the only point in the expression pool where an URI

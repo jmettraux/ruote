@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'flowtestbase'
 
@@ -45,7 +47,7 @@ class FlowTest25 < Test::Unit::TestCase
   #
   # TEST 1
 
-  class TestDefinition1 < ProcessDefinition
+  class TestDefinition1 < OpenWFE::ProcessDefinition
     def make
       _process_definition :name => "25_cancel", :revision => "1" do
         _sequence do
@@ -69,7 +71,7 @@ class FlowTest25 < Test::Unit::TestCase
   #
   # TEST 2
 
-  class TestDefinition2 < ProcessDefinition
+  class TestDefinition2 < OpenWFE::ProcessDefinition
     def make
       _process_definition :name => "25_cancel", :revision => "2" do
         _sequence do
@@ -82,6 +84,7 @@ class FlowTest25 < Test::Unit::TestCase
   end
 
   def test_2
+
     dotest TestDefinition2, "before\nafter"
   end
 

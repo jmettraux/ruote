@@ -40,6 +40,7 @@ Donators
 Feedback
 --------
 
+Corin Moss - sync launch and ruote-rest balancing
 Scott Sproule - missing read() method in rufus-verbs fopen()
 Aye Thu - missing 'atom-tools' dependency
 Machiel Groeneveld - missing 'rufus-mnemo' dependency

@@ -150,14 +150,12 @@ module FlowTestBase
     # already over...
     #
     def wait_for (fei)
-
       #for i in (0..42)
       for i in (0..217)
         Thread.pass
         return if @terminated_processes.include?(fei.wfid)
         #return if @terminated
       end
-
       @engine.wait_for fei
     end
 
@@ -174,9 +172,9 @@ module FlowTestBase
     # flow just started along with the test method (and it's location
     # in its source file).
     #
-    def launch (li)
+    def launch (li, options={})
 
-      fei = @engine.launch li
+      fei = @engine.launch li, options
 
       $OWFE_LOG.info(
         "dotest() launched #{fei.to_short_s} "+
@@ -202,18 +200,16 @@ module FlowTestBase
         OpenWFE::LaunchItem.new flowDef
       end
 
-      #start = Time.now.to_f
+      options = {}
+      options[:wait_for] = true unless join.is_a?(Numeric)
 
-      fei = launch li
+      fei = launch li, options
 
       if join.is_a?(Numeric)
         sleep join
-      else
-        wait_for fei
+      #else
+      #  wait_for fei
       end
-
-      #puts "// took #{Time.now.to_f - start} s"
-
 
       trace = @tracer.to_s
 

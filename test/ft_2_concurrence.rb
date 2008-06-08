@@ -128,6 +128,8 @@ class FlowTest2 < Test::Unit::TestCase
 
   def test_con_6
 
+    #log_level_to_debug
+
     dotest TestDefinition6, "b\nc"
   end
 
