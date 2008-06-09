@@ -90,7 +90,10 @@ module OpenWFE
 
             @mutex.synchronize do
 
-              14.times { Thread.pass } # gather some steam
+              14.times { Thread.pass }
+                #
+                # gather some steam :
+                # let job accumulate
 
               @queue.size.times do
                 events << @queue.pop
