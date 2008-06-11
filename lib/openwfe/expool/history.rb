@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,8 +37,6 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'date'
-
 require 'openwfe/service'
 require 'openwfe/omixins'
 require 'openwfe/rudefinitions'
@@ -50,7 +48,8 @@ module OpenWFE
   # A Mixin for history modules
   #
   module HistoryMixin
-    include ServiceMixin, OwfeServiceLocator
+    include ServiceMixin
+    include OwfeServiceLocator
 
     def service_init (service_name, application_context)
 
@@ -70,11 +69,10 @@ module OpenWFE
   #
   # A base implementation for InMemoryHistory and FileHistory.
   #
-  class BaseHistory
+  class History
     include HistoryMixin
     include FeiMixin
 
-    attr_reader :entries
 
     def initialize (service_name, application_context)
 
@@ -113,9 +111,10 @@ module OpenWFE
   #
   # Is only used for unit testing purposes.
   #
-  class InMemoryHistory < BaseHistory
+  class InMemoryHistory < History
 
     def initialize (service_name, application_context)
+
       super
 
       @output = []
@@ -132,11 +131,7 @@ module OpenWFE
     # Returns all the entries as a String.
     #
     def to_s
-      s = ""
-      @output.each do |entry|
-        s << entry.to_s
-      end
-      s
+      @output.inject("") { |r, entry| r << entry.to_s }
     end
   end
 
@@ -145,7 +140,7 @@ module OpenWFE
   # "history.log"
   # Warning : no fancy rotation or compression implemented here.
   #
-  class FileHistory < BaseHistory
+  class FileHistory < History
 
     def initialize (service_name, application_context)
 

@@ -39,13 +39,13 @@ class FlowTest22 < Test::Unit::TestCase
 
   def test_history_0
 
-    @engine.init_service("history", InMemoryHistory)
+    @engine.init_service "history", OpenWFE::InMemoryHistory
 
     history = @engine.application_context["history"]
 
     dotest TestDefinition0, %w{ a b c }.join("\n")
 
-    #puts history.to_s
+    puts history.to_s
     #puts history.entries.size()
 
     #f = File.open("history.log", "w")
@@ -57,7 +57,7 @@ class FlowTest22 < Test::Unit::TestCase
 
   def test_history_1
 
-    @engine.init_service("history", FileHistory)
+    @engine.init_service "history", OpenWFE::FileHistory
 
     dotest TestDefinition0, %w{ a b c }.join("\n")
 
