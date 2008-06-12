@@ -89,6 +89,7 @@ require 'ft_32c_journal'
 require 'ft_32d_journal'
 
 require 'ft_58_ejournal'
+require 'ft_58b_ejournal'
 require 'ft_59_ps'
 require 'ft_60_ecancel'
 require 'ft_61_elsub'

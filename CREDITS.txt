@@ -40,6 +40,7 @@ Donators
 Feedback
 --------
 
+Leo Venegas - various bug reports
 Corin Moss - sync launch and ruote-rest balancing
 Scott Sproule - missing read() method in rufus-verbs fopen()
 Aye Thu - missing 'atom-tools' dependency
@@ -55,7 +56,6 @@ Art Schumer - cron scheduler bug
 ara.t.howard on the ruby talk ml pointed out a weakness in scheduler.
 Tomek "Tomash" Stachewicz - scheduler feedback
 Jon "Compensator" - first report of the "yamlextras" issue
-Leo Venegas - file.include "extras" issue
 
 (see the mailing list at : http://groups.google.com/group/openwferu-users )
 

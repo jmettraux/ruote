@@ -178,7 +178,7 @@ module OpenWFE
         rescue Exception => e
 
           get_expression_pool.notify_error(
-            e, fei, :do_apply, workitem)
+            e, fei, :apply, workitem)
         end
       end
     end

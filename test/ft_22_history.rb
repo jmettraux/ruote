@@ -45,7 +45,7 @@ class FlowTest22 < Test::Unit::TestCase
 
     dotest TestDefinition0, %w{ a b c }.join("\n")
 
-    puts history.to_s
+    #puts history.to_s
     #puts history.entries.size()
 
     #f = File.open("history.log", "w")
