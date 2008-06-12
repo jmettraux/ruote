@@ -4,6 +4,8 @@
 
 == OpenWFEru - 0.9.19    not yet released
 
+- todo  #20624 : returning [ :terminate, wi, fei ] or [ :error, e, fei ]if 
+                 launch(li, :wait_for => true) [instead of just fei]
 - bug   #20625 : exception inside of BlockParticipant can't get replayed. Fixed.
 - todo  #20467 : got rid of unnecessary synces in yamlfilestorage
 - todo  #20564 : sequence : caching current position for speed gain

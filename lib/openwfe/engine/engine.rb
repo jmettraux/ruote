@@ -218,8 +218,27 @@ module OpenWFE
     #     # will launch that same process every day,
     #     # five minutes after midnight (see "man 5 crontab")
     #
+    # === :wait_for
+    #
+    # If you really need that, you can launch a process and wait for its
+    # termination (or cancellation or error) as in :
+    #
     #   engine.launch(launch_item, :wait_for => true)
     #     # will launch and return only when the process is over
+    #
+    # Note that if you set the option :wait_for to true, a triplet will
+    # be returned instead of just a FlowExpressionId.
+    #
+    # This triplet is composed of [ message, info, fei ]
+    # where message is :terminate, :error or :cancel and info contains
+    # either the workitem, the error or a wfid, respectively.
+    #
+    # See http://groups.google.com/group/openwferu-users/browse_frm/thread/ffd0589bdc877765 for more about this triplet.
+    #
+    # (Note that the current implementation of this :wait_for will return if
+    # any error was found. Thus, if an error occurs in a concurrent branch
+    # and the other branch goes on, the launch() will return, even if the
+    # rest of the process is continuing).
     #
     def launch (launch_object, options={})
 

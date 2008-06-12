@@ -171,7 +171,7 @@ module OpenWFE
     #
     def launch (launchitem, options={})
 
-      wait_for = (options[:wait_for] == true)
+      wait = (options[:wait_for] == true)
 
       #
       # prepare raw expression
@@ -199,13 +199,12 @@ module OpenWFE
 
       onotify :launch, fei, launchitem
 
-      if wait_for
-        wait_for(fei.wfid) { apply raw_expression, wi }
+      if wait
+        wait_for(fei) { apply raw_expression, wi }
       else
         apply raw_expression, wi
+        fei
       end
-
-      fei
     end
 
     #
@@ -829,37 +828,44 @@ module OpenWFE
       # when the launched process is over, which means it terminated, it
       # had an error or it got cancelled.
       #
-      def wait_for (wfid)
+      def wait_for (fei_or_wfid)
+
+        wfid = extract_wfid fei_or_wfid, false
 
         t = Thread.current
-        over = false
+        result = nil
 
         to = get_expression_pool.add_observer(:terminate) do |c, fe, wi|
           if fe.fei.workflow_instance_id == wfid
-            over = true; t.wakeup
+            result = [ :terminate, wi, fei_or_wfid ]
+            t.wakeup
           end
         end
         te = get_expression_pool.add_observer(:error) do |c, fei, m, i, e|
           if fei.parent_wfid == wfid
-            over = true; t.wakeup
+            result = [ :error, e, fei_or_wfid ]
+            t.wakeup
           end
         end
         tc = get_expression_pool.add_observer(:cancel) do |c, fe|
           if fe.fei.wfid == wfid and fe.fei.expid == '0'
-            over = true; t.wakeup
+            result = [ :cancel, wfid, fei_or_wfid ]
+            t.wakeup
           end
         end
 
         #apply raw_expression, wi
         yield if block_given?
 
-        Thread.stop unless over
+        Thread.stop unless result
 
         linfo { "wait_for() '#{wfid}' is over" }
 
         get_expression_pool.remove_observer to, :terminate
         get_expression_pool.remove_observer te, :error
         get_expression_pool.remove_observer tc, :cancel
+
+        result
       end
 
       #

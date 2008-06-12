@@ -174,13 +174,15 @@ module FlowTestBase
     #
     def launch (li, options={})
 
-      fei = @engine.launch li, options
+      result = @engine.launch li, options
+
+      fei = result.is_a?(Array) ? result[2] : result
 
       $OWFE_LOG.info(
         "dotest() launched #{fei.to_short_s} "+
         "@ #{caller[1]} on engine #{@engine.object_id}")
 
-      fei
+      result
     end
 
     #
@@ -204,12 +206,9 @@ module FlowTestBase
       options[:wait_for] = true unless join.is_a?(Numeric)
 
       fei = launch li, options
+      #p fei
 
-      if join.is_a?(Numeric)
-        sleep join
-      #else
-      #  wait_for fei
-      end
+      sleep join if join.is_a?(Numeric)
 
       trace = @tracer.to_s
 
@@ -220,13 +219,6 @@ module FlowTestBase
         #
         # occurs when the tracing is done from a participant
         # (participant dispatching occurs in a thread)
-
-      #for i in  0..70
-      #  Thread.pass; sleep 0.140
-      #  trace = @trace.to_s
-      #  p [ :trace, trace ]
-      #  break if trace != ''
-      #end if trace == ''
 
       #puts "...'#{trace}' ?= '#{expected_trace}'"
 

@@ -49,12 +49,11 @@ class FlowTest32 < Test::Unit::TestCase
       @tracer << "bravo\n"
     end
 
-    #fei = dotest(TestDefinition0, "alpha\nbravo", 0.250)
-    fei = dotest(TestDefinition0, "alpha\nbravo")
+    result = dotest(TestDefinition0, "alpha\nbravo")
 
     journal_service = @engine.application_context["journal"]
 
-    fn = journal_service.donedir + "/" + fei.wfid + ".journal"
+    fn = journal_service.donedir + "/" + result[2].wfid + ".journal"
 
     #puts journal_service.analyze fn
 
