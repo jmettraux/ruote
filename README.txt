@@ -22,3 +22,5 @@ developers mailing list :  http://groups.google.com/group/openwferu-dev
 
 issue tracker :            http://rubyforge.org/tracker/?atid=10023&group_id=2609&func=browse
 
+irc :                      irc.freenode.net #ruote
+
