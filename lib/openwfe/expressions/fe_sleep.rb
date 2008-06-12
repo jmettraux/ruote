@@ -69,6 +69,13 @@ module OpenWFE
   # If the 'until' attribute points to a time in the past, the sleep
   # expression will simply let the process resume.
   #
+  # === scheduler tags
+  #
+  # Scheduler tags can be set like this :
+  #
+  #   sleep "10y", :scheduler_tags => "la_belle_au_bois_dormant"
+  #
+  # This is an advanced feature that most users won't need.
   #
   class SleepExpression < TimeExpression
 

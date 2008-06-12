@@ -81,6 +81,16 @@ module OpenWFE
   # If the process instance containing a cron is paused, the cron won't get
   # triggered until the process is resumed.
   #
+  # === scheduler tags
+  #
+  # Scheduler tags can be set like this :
+  #
+  #   cron :every => "10s", :scheduler_tags => "pesky_job" do
+  #     participant :ref => "toto"
+  #   end
+  #
+  # This is an advanced feature that most users won't need.
+  #
   class CronExpression < TimeExpression
 
     names :cron
