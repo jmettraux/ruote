@@ -57,13 +57,12 @@ class FlowTest67 < Test::Unit::TestCase
 
     t = Time.now
 
-    @engine.launch Test0, :at => (t + 2).to_s
+    fei = @engine.launch Test0, :at => (t + 2).to_s
 
     sleep 0.400
 
-    assert_equal(
-      1,
-      @engine.get_scheduler.find_jobs("scheduled-launch").size)
+    assert_equal 1, @engine.get_scheduler.find_jobs("scheduled-launch").size
+    assert_equal 1, @engine.get_scheduler.find_jobs(fei.wfid).size
 
     assert_trace ""
 

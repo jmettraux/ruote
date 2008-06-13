@@ -976,7 +976,7 @@ module OpenWFE
           else #oin
             { "for" => oin }
           end
-          sleep_atts["scheduler-tags"] = "scheduled-launch"
+          sleep_atts["scheduler-tags"] = "scheduled-launch, #{fei.wfid}"
 
           raw_expression.new_environment
           raw_expression.store_itself
@@ -998,7 +998,7 @@ module OpenWFE
             { "every" => oevery }
           end
           cron_atts["name"] = "//cron_launch__#{fei.wfid}"
-          cron_atts["scheduler-tags"] = "scheduled-launch"
+          cron_atts["scheduler-tags"] = "scheduled-launch, #{fei.wfid}"
 
           template = raw_expression.raw_representation
           remove raw_expression
