@@ -110,6 +110,7 @@ module OpenWFE
 
         @scheduler_tags << self.class.name
 
+        @scheduler_tags << fei.to_short_s
         @scheduler_tags << fei.parent_wfid
       end
   end
