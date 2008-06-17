@@ -72,16 +72,12 @@ module OpenWFE
     # expression
     #
     def cancel
-      #synchronize do
-
-      ldebug { "cancel()..." }
 
       unschedule
 
       super()
 
       @applied_workitem
-      #end
     end
 
     #
@@ -113,6 +109,8 @@ module OpenWFE
           :scheduler_tags, @applied_workitem) || []
 
         @scheduler_tags << self.class.name
+
+        @scheduler_tags << fei.parent_wfid
       end
   end
 
@@ -188,10 +186,10 @@ module OpenWFE
         0,
         true, # please register child
         nil   # no vars
-       ) if consequence
+      ) if consequence
 
-       #
-       # go east...
+      #
+      # go east...
 
       store_itself
 

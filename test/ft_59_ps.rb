@@ -7,6 +7,8 @@
 # Sat Jul  7 22:44:00 JST 2007 (tanabata)
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'openwfe/participants/storeparticipants'
 
@@ -25,7 +27,7 @@ class FlowTest59 < Test::Unit::TestCase
   #
   # TEST 0
 
-  class Def59 < ProcessDefinition
+  class Def59 < OpenWFE::ProcessDefinition
     concurrence do
       store_a
       store_b
@@ -53,7 +55,7 @@ class FlowTest59 < Test::Unit::TestCase
   #
   # TEST 0b
 
-  class Def59b < ProcessDefinition
+  class Def59b < OpenWFE::ProcessDefinition
     sequence do
       alpha
       bravo
@@ -81,7 +83,7 @@ class FlowTest59 < Test::Unit::TestCase
   #
   # TEST 1
 
-  class Def59_1 < ProcessDefinition
+  class Def59_1 < OpenWFE::ProcessDefinition
     sequence do
       nada59_1
       alpha
@@ -99,7 +101,7 @@ class FlowTest59 < Test::Unit::TestCase
     sleep 0.350
 
     ps = @engine.process_statuses
-    #puts ps
+    #p ps[fei.wfid].scheduled_jobs
     #puts ps[fei.wfid].errors
 
     assert_equal 1, ps[fei.wfid].expressions.size
@@ -115,7 +117,7 @@ class FlowTest59 < Test::Unit::TestCase
   #
   # TEST 2
 
-  class Def59c < ProcessDefinition
+  class Def59c < OpenWFE::ProcessDefinition
     sequence do
       bravo
       alpha
@@ -144,6 +146,30 @@ class FlowTest59 < Test::Unit::TestCase
     end
 
     sleep 0.350
+  end
+
+  #
+  # TEST 3
+
+  class Def59d < OpenWFE::ProcessDefinition
+    _sleep "1h"
+  end
+
+  def test_3
+
+    now = Time.now
+
+    fei = launch Def59d
+
+    sleep 0.350
+
+    ps = @engine.process_status fei.wfid
+
+    delta =  ps.scheduled_jobs.first.next_time - now
+    assert(delta > 3600)
+    assert(delta < 3601)
+
+    purge_engine
   end
 
 end

@@ -97,13 +97,6 @@ module OpenWFE
 
     uses_template
 
-    #++
-    # keeping a copy of the child expression (this copy is used
-    # for spawning a new expression each time cron triggers)
-    #
-    #attr_accessor :raw_child
-    #--
-
     #
     # The cron 'tab', something like "0 9-17 * * mon-fri"
     #
@@ -120,11 +113,6 @@ module OpenWFE
     #
     attr_accessor :counter
 
-    #--
-    #attr_accessor :name
-    #attr_accessor :engine_cron
-    #++
-
 
     def apply (workitem)
 
@@ -140,41 +128,12 @@ module OpenWFE
       @tab = lookup_attribute :tab, workitem
       @every = lookup_attribute :every, workitem
 
-      #@name = lookup_attribute :name, workitem
-      #@name = fei.to_s unless @name
-
-      #if @name[0, 2] == '//'
-      #  @name = @name[1..-1]
-      #  @engine_cron = true
-      #end
-
-      #forget = lookup_boolean_attribute :forget, workitem
-
-      #@raw_child, _fei = get_expression_pool.fetch @children[0]
-      #@raw_child.parent_id = nil
-      #clean_children
-      #@children = nil
-
       determine_scheduler_tags
 
       #
       # schedule self
 
       reschedule get_scheduler
-
-      #
-      # store self as a variable
-      # (have to do it after the reschedule, so that the schedule
-      # info is stored within the variable (within self))
-
-      #set_variable @name, self
-      #set_variable @name, @fei
-
-      #
-      # resume flow (if not a engine level cron)
-
-      #reply_to_parent(workitem) unless @engine_cron
-      #reply_to_parent(workitem) if forget
     end
 
     def reply (workitem)
@@ -201,8 +160,6 @@ module OpenWFE
         #template, _fei = get_expression_pool.fetch @children[0]
         template = raw_children.first
 
-        #get_expression_pool.launch_template(
-        #  @fei.wfid, nil, @counter, template, @applied_workitem.dup)
         child_fei = get_expression_pool.tlaunch_child(
           self, template, @counter, @applied_workitem.dup, false)
             #
@@ -214,11 +171,6 @@ module OpenWFE
 
         @counter += 1
 
-        #if is_engine_cron?
-        #  set_variable @name, self
-        #else
-        #  store_itself
-        #end
         store_itself
 
       rescue
@@ -237,13 +189,6 @@ module OpenWFE
     #
     def reschedule (scheduler)
 
-      #return unless @applied_workitem
-
-      #@scheduler_job_id = if @engine_cron
-      #  "/" + @name
-      #else
-      #  "#{@fei.wfid}__#{@scheduler_job_id}"
-      #end
       @scheduler_job_id = "#{@fei.wfid}__#{@scheduler_job_id}"
 
       method, arg0 = if @tab

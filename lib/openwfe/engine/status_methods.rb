@@ -86,6 +86,12 @@ module OpenWFE
     attr_reader :variables
 
     #
+    # the jobs registered for that process instance in the rufus
+    # scheduler used by the engine.
+    #
+    attr_accessor :scheduled_jobs
+
+    #
     # Is the process currently in pause ?
     #
     attr_accessor :paused
@@ -101,6 +107,7 @@ module OpenWFE
       @errors = {}
       @launch_time = nil
       @variables = nil
+      @scheduled_jobs = nil
       @paused = false
     end
 
@@ -285,9 +292,14 @@ module OpenWFE
 
         ps.send :pack_expressions # letting it protected
 
+        ps.scheduled_jobs = get_scheduler.find_jobs(ps.wfid)
+
         result.delete(ps.wfid) if ps.expressions.size == 0
           # drop result if there are no expressions
       end
+
+      #
+      # done
 
       result
     end

@@ -4,6 +4,7 @@
 
 == OpenWFEru - 0.9.19    not yet released
 
+- todo  #20697 : implemented ProcessStatus.scheduled_jobs
 - todo  #20624 : returning [ :terminate, wi, fei ] or [ :error, e, fei ]if 
                  launch(li, :wait_for => true) [instead of just fei]
 - bug   #20625 : exception inside of BlockParticipant can't get replayed. Fixed.
