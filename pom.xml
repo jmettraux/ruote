@@ -17,7 +17,7 @@
   <artifactId>openwferu</artifactId>
   <packaging>jar</packaging>
   <name>openwferu</name>
-  <version>0.9.18-SNAPSHOT</version>
+  <version>0.9.19-SNAPSHOT</version>
 
   <description>
 OpenWFEru is an open source Ruby workflow and BPM engine.
