@@ -1,9 +1,11 @@
 
-= OpenWFEru CHANGELOG.txt
+= OpenWFEru ruote - CHANGELOG.txt
 
 
-== OpenWFEru - 0.9.19    not yet released
+== ruote - 0.9.19    not yet released
 
+- bug   #20714 : engine.lookup_variable was coaxing target value into a regex. 
+                 Fixed.
 - todo  #20697 : implemented ProcessStatus.scheduled_jobs
 - todo  #20624 : returning [ :terminate, wi, fei ] or [ :error, e, fei ]if 
                  launch(li, :wait_for => true) [instead of just fei]
@@ -24,7 +26,7 @@
                  first child param. Fixed.
 
 
-== OpenWFEru - 0.9.18    2008/05/22
+== ruote - 0.9.18    2008/05/22
 
 - todo  #20221 : added engine.process_representation(wfid) method
 - todo  #20244 : 'description' is now an expression like any other

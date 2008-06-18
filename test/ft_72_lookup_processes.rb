@@ -59,6 +59,9 @@ class FlowTest72 < Test::Unit::TestCase
     assert_equal 0, wfids.size
 
     wfids = @engine.lookup_processes('toto', 'toto_.*')
+    assert_equal 0, wfids.size
+
+    wfids = @engine.lookup_processes('toto', /toto_.*/)
     assert_equal 2, wfids.size
 
     wfids = @engine.lookup_processes('toto', Regexp.compile('toto_one'))

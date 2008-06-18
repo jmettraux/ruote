@@ -567,7 +567,7 @@ module OpenWFE
 
     #
     # Returns an array of wfid (workflow instance ids) whose root
-    # environment containes the given variable
+    # environment contains the given variable
     #
     # If there are no matches, an empty array will be returned.
     #
@@ -580,26 +580,30 @@ module OpenWFE
 
       # TODO : maybe this would be better in the ExpressionPool
 
-      regexp = if value
-        if value.is_a?(Regexp)
-          value
-        else
-          Regexp.compile(value.to_s)
-        end
-      else
-        nil
-      end
+      regexp = value.is_a?(Regexp) ? value : nil
 
       envs = get_expression_storage.find_expressions(
         :include_classes => Environment)
 
       envs = envs.find_all do |env|
+
         val = env.variables[var_name]
-        (val and ((not regexp) or (regexp.match(val))))
+
+        #(val and ((not regexp) or (regexp.match(val))))
+        if val != nil
+          if regexp
+            regexp.match(val)
+          elsif value
+            val == value
+          else
+            true
+          end
+        else
+          false
+        end
       end
-      envs.collect do |env|
-        env.fei.wfid
-      end
+
+      envs.collect { |env| env.fei.wfid }
 
       #envs.inject([]) do |r, env|
       #  val = env.variables[var_name]
