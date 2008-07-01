@@ -328,14 +328,14 @@ module OpenWFE
 
       name = nil
 
-      if listener.kind_of? Class
+      if listener.kind_of?(Class)
 
         listener = init_service nil, listener
 
         name = listener.service_name
       else
 
-        name = listener.name if listener.respond_to? :name
+        name = listener.name if listener.respond_to?(:name)
         name = "#{listener.class}::#{listener.object_id}" unless name
 
         @application_context[name] = listener

@@ -21,7 +21,7 @@ require 'openwfe/engine/engine'
 #
 # instantiating an engine
 
-engine = OpenWFE::Engine.new
+engine = OpenWFE::Engine.new(:definition_in_launchitem_allowed => true)
 
 #
 # adding some participants

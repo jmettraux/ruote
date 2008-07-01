@@ -317,30 +317,6 @@ module OpenWFE
 
     alias :purge :clear
 
-    #--
-    # Allows to pass a block to each expressions of a given kind (type).
-    #
-    #def each_of_kind (kind, &block)
-    #  self.each_value do |fexp|
-    #    block.call(fexp.fei, fexp) if fexp.kind_of?(kind)
-    #  end
-    #end
-    #
-    # An iterator on the expression stored in here.
-    #
-    #def each (wfid_prefix=nil, &block)
-    #  if wfid_prefix
-    #    super() do |fei, fexp|
-    #      next unless fei.wfid.match "^#{wfid_prefix}"
-    #      block.call fei, fexp
-    #    end
-    #  else
-    #    super(&block)
-    #  end
-    #end
-    #alias :real_each :each
-    #++
-
     #
     # Finds expressions matching the given criteria (returns a list
     # of expressions).
