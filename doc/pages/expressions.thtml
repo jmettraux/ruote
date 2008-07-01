@@ -1080,11 +1080,27 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 
 This expression was first implemented as a subprocess in the "trouble ticket":http://jmettraux.wordpress.com/2008/01/04/the-trouble-ticket-process/ blog post.
 
-It's now part of Ruote and accept participant and subprocesses as "state" as well as for "transitions".
+It's now part of Ruote and accept participants and subprocesses as "state" as well as for "transitions".
 
 Note that all the attributes to the "step" expression itself will be passed as atribute for the state participant or subprocess.
 
 The "transition" after the "state" is determined by the [string] value found in the workitem field named "outcome". The participant or the subprocess in the "state" is meant to set this field to a meaningful value (see :outcomes and :default after the code example).
+
+#:code#ruby#
+  # this 'step' expression will first hand the workitem to the "qa" participant
+  # (or subprocess) and then call the participant or subprocess whose name can
+  # be found in the workitem field named "outcome".
+  # Then the flow will resume after the step expression, in this example with
+  # the participant "dev".
+  #
+  # If the outcome field is not set, the 'step' expression will resume 
+  # immediately to participant "dev".
+  #
+  sequence do
+    step 'qa', :desc => 'reproduce problem'
+    participant 'dev'
+  end
+#:code#
 
 Here is the "trouble ticket" example implemented with the "step" expression (note that the "define" alias to "process-definition" was used) :
 
