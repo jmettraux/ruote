@@ -57,5 +57,12 @@ h3. <a name="extras"></a>extras' documentation
 
 * "Active":active.html - detailing and explaining some extra stuff in OpenWFEru that rely on "ActiveRecord":http://ar.rubyonrails.org
 
-* "The Old REST":old_rest.html : OpenWFE's original (2003) REST interface to its worklist and its Ruby (client and server) implementation
+
+h3. <a name="presentations"></a>presentations
+
+Just a bunch of slides, for the archives.
+
+* "at TLUG":http://rubyforge.org/frs/download.php/18900/openwferu_tlug.pdf - Tokyo Linux User Group 2007/03/10 ("http://tlug.jp":http://tlug.jp)
+* "at RubyKaigi2007":http://rubyforge.org/frs/download.php/21597/openwferu_rk2007.pdf - Tokyo 2007/06/10
+* "at BPMinna":http://www.slideshare.net/jmettraux/openwferu-ruote-bpminna-june-2008 - Tokyo BPMinna 2008/06/30 ("http://groups.google.com/group/bpminna":http://groups.google.com/group/bpminna)
 
