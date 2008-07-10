@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -42,10 +42,6 @@
 require 'openwfe/expressions/timeout'
 
 
-#
-# 'timeout' as a simple expression
-#
-
 module OpenWFE
 
   #
@@ -78,7 +74,7 @@ module OpenWFE
 
       @applied_workitem = workitem.dup
 
-      schedule_timeout(:after)
+      schedule_timeout :after
 
       get_expression_pool.apply @children[0], workitem
     end
@@ -89,7 +85,7 @@ module OpenWFE
     #
     def reply (workitem)
 
-      unschedule_timeout()
+      unschedule_timeout
 
       super
     end
@@ -102,7 +98,7 @@ module OpenWFE
 
       get_expression_pool.cancel(@children[0]) if @applied_workitem
 
-      unschedule_timeout()
+      unschedule_timeout
 
       super
     end
@@ -115,9 +111,9 @@ module OpenWFE
 
       ldebug { "trigger() timeout requested for #{@fei.to_debug_s}" }
 
-      set_timedout_flag(@applied_workitem)
+      set_timedout_flag @applied_workitem
 
-      cancel()
+      cancel
 
       reply_to_parent @applied_workitem
     end
