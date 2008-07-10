@@ -41,7 +41,7 @@ h4. Decision table quickstart
 
 ("original blog post":ihttp://jmettraux.wordpress.com/2007/08/06/ruby-decision-table-quickstart/)
 
-Since OpenWFEru 0.9.14, a decision table can be referenced via an URL. This is very handy since Google Spreadsheets allows you to publish "sheets":http://spreadsheets.google.com/pub?key=pCkopoeZwCNsMWOVeDjR1TQ as "CSV":http://spreadsheets.google.com/pub?key=pCkopoeZwCNsMWOVeDjR1TQ&output=csv&gid=0.
+A decision table can be referenced via an URL. This is very handy since Google Spreadsheets allows you to publish "sheets":http://spreadsheets.google.com/pub?key=pCkopoeZwCNsMWOVeDjR1TQ as "CSV":http://spreadsheets.google.com/pub?key=pCkopoeZwCNsMWOVeDjR1TQ&output=csv&gid=0.
 
 The csv looks like :
 
@@ -59,9 +59,9 @@ You can thus directly instantiate a CsvTable with the URL of the CSV view of the
 
 #:code#ruby#
 require 'rubygems'
-require 'openwfe/extras/util/csvtable'
+require 'rufus/decision' # sudo gem install -y "rufus/decision"
 
-table = OpenWFE::Extras::CsvTable.new(
+table = Rufus::DecisionTable.new(
     "http://spreadsheets.google.com/pub?key=pCkopoeZwCNsMWOVeDjR1TQ&output=csv&gid=0")
 
 h = { "weather" => "cloudy", "month" => "may" }
