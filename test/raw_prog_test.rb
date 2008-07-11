@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'test/unit'
 require 'openwfe/def'
 require 'openwfe/expool/parser'
@@ -262,7 +264,7 @@ end""".strip
   CODE_DEF5 = """
 process_definition :name => 'Test', :revision => '5' do
   sequence do
-    participant :ref => 'toto'
+    participant :ref => :toto
     sub0
   end
   process_definition :name => 'sub0' do
@@ -294,7 +296,7 @@ end""".strip
   CODE_DEF6 = """
 process_definition :name => 'Test', :revision => '60' do
   sequence do
-    participant :ref => 'toto'
+    participant :ref => :toto
     nada
   end
 end""".strip
@@ -319,7 +321,7 @@ end""".strip
 
   CODE_DEF7 = """
 process_definition :name => 'TestDefinitionSeven', :revision => '0' do
-  participant :ref => 'toto'
+  participant :ref => :toto
 end""".strip
 
   A_DEF7 = [

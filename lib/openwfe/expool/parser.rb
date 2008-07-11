@@ -175,7 +175,9 @@ module OpenWFE
 
       sa = ""
       tree[1].each do |k, v|
-        sa << ", :#{OpenWFE::to_underscore(k)} => '#{v}'"
+        v = "'#{v}'" if v.is_a?(String)
+        v = ":#{v}" if v.is_a?(Symbol)
+        sa << ", :#{OpenWFE::to_underscore(k)} => #{v}"
       end
       s << sa[1..-1] if sa.length > 0
 
