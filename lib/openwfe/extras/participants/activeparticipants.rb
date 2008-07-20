@@ -86,6 +86,7 @@ module Extras
           # when using compact_workitems, attributes are stored here
       end
       add_index :workitems, :fei, :unique => true
+        # with sqlite3, comment out this :unique => true on :fei :(
       add_index :workitems, :wfid
       add_index :workitems, :wf_name
       add_index :workitems, :wf_revision

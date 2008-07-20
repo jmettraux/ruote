@@ -80,7 +80,7 @@ module OpenWFE
         if pdef[0, 1] == "<"
 
       return YAML.load(s) \
-        if pdef.match /^--- ./
+        if pdef.match(/^--- ./)
 
       #
       # else it's some ruby code to eval
@@ -175,8 +175,9 @@ module OpenWFE
 
       sa = ""
       tree[1].each do |k, v|
-        v = "'#{v}'" if v.is_a?(String)
-        v = ":#{v}" if v.is_a?(Symbol)
+        #v = "'#{v}'" if v.is_a?(String)
+        #v = ":#{v}" if v.is_a?(Symbol)
+        v = v.inspect
         sa << ", :#{OpenWFE::to_underscore(k)} => #{v}"
       end
       s << sa[1..-1] if sa.length > 0

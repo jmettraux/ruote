@@ -48,10 +48,10 @@ module OpenWFE
         self
       end
     end
-    def self.meta_eval &block
-      metaclass.instance_eval &block
+    def self.meta_eval(&block)
+      metaclass.instance_eval(&block)
     end
-    def self.meta_def method_name, &block
+    def self.meta_def(method_name, &block)
       meta_eval { define_method method_name, &block }
     end
     def class_def method_name, &block

@@ -86,6 +86,9 @@ module OpenWFE
   #     end
   #   end
   #
+  # Note that a 'forgotten subprocess' will not have access to the variables
+  # of its parent process.
+  #
   # The 'subprocess' expression accepts an 'if' (or 'unless') attribute :
   #
   #   subprocess :ref => "interview_process", :if => "${f:screened}"
