@@ -179,8 +179,6 @@ module Extras
 
       i = nil
 
-      #MUTEX.synchronize do
-
       i = Workitem.new
       i.fei = wi.fei.to_s
       i.wfid = wi.fei.wfid
@@ -196,6 +194,9 @@ module Extras
         # save workitem before adding any field
         # making sure it has an id...
 
+      i = Workitem.find_by_fei(wi.fei.to_s) if i.id == 0
+        # sometimes, the saved workitem id wasn't updated, was remaining at 0
+        # thus finding if necessary...
 
       # This is a field set by the active participant immediately
       # before calling this method.
@@ -219,8 +220,6 @@ module Extras
         # making sure to throw an exception in case of trouble
         #
         # damn, insert then update :(
-
-      #end
 
       i
     end
