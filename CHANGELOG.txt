@@ -4,6 +4,7 @@
 
 == ruote - 0.9.19    not yet released
 
+- bug   #21305 : replay_at_error was broken for subprocesses. Fixed.
 - bug   #21306 : made sure duplicate insert bug for ActiveParticipant is fixed.
 - todo  #21167 : exptree.to_code_s() now respecting non-string att values.
 - bug   #20714 : engine.lookup_variable was coaxing target value into a regex. 

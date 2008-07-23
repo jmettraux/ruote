@@ -213,9 +213,10 @@ module OpenWFE
     #
     def to_web_s
 
+      wid = wfid.gsub("\.", "_")
       eid = expid.gsub("\.", "_")
 
-      URI.escape "#{wfid}__#{eid}"
+      URI.escape("#{wid}__#{eid}")
     end
 
     #
@@ -226,7 +227,7 @@ module OpenWFE
 
       i = s.rindex("__")
 
-      [ s[0..i-1], s[i+2..-1].gsub("\_", ".") ]
+      [ s[0..i-1].gsub("\_", "."), s[i+2..-1].gsub("\_", ".") ]
     end
 
     #
