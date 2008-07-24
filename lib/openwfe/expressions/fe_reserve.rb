@@ -116,6 +116,17 @@ module OpenWFE
     end
 
     #
+    # takes care of exiting the critical section once the children
+    # have been cancelled
+    #
+    def cancel
+
+      super
+
+      lookup_variable(@mutex_name).release self
+    end
+
+    #
     # Called by the FlowMutex to enter the 'reserved/critical' section.
     #
     def enter (workitem=nil)

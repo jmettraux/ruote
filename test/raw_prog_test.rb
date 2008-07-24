@@ -148,10 +148,10 @@ class RawProgTest < Test::Unit::TestCase
     "</process-definition>"
 
   CODE_DEF3 = """
-process_definition :name => 'test3', :revision => '0' do
+process_definition :name => \"test3\", :revision => \"0\" do
   _if do
-    equals :field_value => 'nada', :other_value => 'surf'
-    participant :ref => 'b'
+    equals :field_value => \"nada\", :other_value => \"surf\"
+    participant :ref => \"b\"
   end
 end""".strip
 
@@ -186,14 +186,14 @@ end""".strip
     end
   end
 
-  CODE_DEF4 = """
-process_definition :name => 'test4', :revision => '0' do
+  CODE_DEF4 = %{
+process_definition :name => "test4", :revision => "0" do
   sequence do
-    participant :ref => 'b'
-    participant :ref => 'b'
-    participant :ref => 'b'
+    participant :ref => "b"
+    participant :ref => "b"
+    participant :ref => "b"
   end
-end""".strip
+end}.strip
 
   def test_prog_4
 
@@ -222,8 +222,8 @@ end""".strip
     end
   end
 
-  CODE_DEF4b = """
-process_definition :name => 'Test', :revision => '4b' do
+  CODE_DEF4b = %{
+process_definition :name => "Test", :revision => "4b" do
   sequence do
     participant do
       'b'
@@ -235,7 +235,7 @@ process_definition :name => 'Test', :revision => '4b' do
       'b'
     end
   end
-end""".strip
+end}.strip
 
   def test_prog_4b
 
@@ -261,16 +261,16 @@ end""".strip
     end
   end
 
-  CODE_DEF5 = """
-process_definition :name => 'Test', :revision => '5' do
+  CODE_DEF5 = %{
+process_definition :name => "Test", :revision => "5" do
   sequence do
     participant :ref => :toto
     sub0
   end
-  process_definition :name => 'sub0' do
+  process_definition :name => "sub0" do
     nada
   end
-end""".strip
+end}.strip
 
   def test_prog_5
 
@@ -293,13 +293,13 @@ end""".strip
     end
   end
 
-  CODE_DEF6 = """
-process_definition :name => 'Test', :revision => '60' do
+  CODE_DEF6 = %{
+process_definition :name => "Test", :revision => "60" do
   sequence do
     participant :ref => :toto
     nada
   end
-end""".strip
+end}.strip
 
   def test_prog_6
 
@@ -319,10 +319,10 @@ end""".strip
     end
   end
 
-  CODE_DEF7 = """
-process_definition :name => 'TestDefinitionSeven', :revision => '0' do
+  CODE_DEF7 = %{
+process_definition :name => "TestDefinitionSeven", :revision => "0" do
   participant :ref => :toto
-end""".strip
+end}.strip
 
   A_DEF7 = [
     "process-definition",

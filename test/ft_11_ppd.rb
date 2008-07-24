@@ -159,7 +159,7 @@ ftoto:_nada__321
   end
 
   CODE4 = """
-process_definition :name => 'test4', :revision => '0' do
+process_definition :name => \"test4\", :revision => \"0\" do
   sequence do
     sequence do
       _print do

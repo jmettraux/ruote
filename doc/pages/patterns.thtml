@@ -621,13 +621,13 @@ h2. <a name="pat_e"></a>State-based Patterns
 h3. <a name="pat_16_deferred_choice"></a>Deferred Choice
 
 #:code#xml#
-    <concurrence
-        count="1"
-        remaining="cancel"
-    >
-        <participant ref="an-activity" />
-        <participant ref="another-activity" />
-    </concurrence>
+  <concurrence
+    count="1"
+    remaining="cancel"
+  >
+    <participant ref="an-activity" />
+    <participant ref="another-activity" />
+  </concurrence>
 #:code#
 
 ('cancel' is the default behaviour for a concurrence with a 'count').
@@ -635,11 +635,11 @@ h3. <a name="pat_16_deferred_choice"></a>Deferred Choice
 As soon as one of the activities is over, the flow resumes (after the concurrence) and the other activity gets cancelled.
 
 #:code#ruby#
-    concurrence :count => 2 do
-        subprocess_0
-        subprocess_1
-        subprocess_2
-    end
+  concurrence :count => 2 do
+    subprocess_0
+    subprocess_1
+    subprocess_2
+  end
 #:code#
 
 In that Ruby process definition example, as soon as two subprocesses do reply to the concurrence, the other gets cancelled and the flow resumes.
