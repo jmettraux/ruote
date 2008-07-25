@@ -126,7 +126,9 @@ module OpenWFE
     def stop
 
       #linfo { "stop() stopping '#{@service_name}'" }
-      @last_f.close if @last_f
+      if @last_f
+        @last_f.close rescue nil
+      end
     end
 
     protected

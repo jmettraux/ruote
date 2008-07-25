@@ -44,7 +44,7 @@ require 'open-uri'
 
 module OpenWFE
 
-  #
+  #--
   # see
   # http://wiki.rubygarden.org/Ruby/page/show/Make_A_Deep_Copy_Of_An_Object
   #
@@ -56,80 +56,56 @@ module OpenWFE
   #     ./lib/openwfe/utils.rb:74:in `dump'
   #     ./lib/openwfe/utils.rb:74:in `deep_clone'
   #
-  def OpenWFE.deep_clone (object)
+  #def OpenWFE.deep_clone (object)
+  #  Marshal.load(Marshal.dump(object))
+  #end
+  #++
 
-    Marshal::load(Marshal.dump(object))
-  end
-
-  #
+  #--
   # classes that shouldn't get duplicated.
   #
-  IMMUTABLES = [ Symbol, Fixnum, TrueClass, FalseClass, Float ]
+  #IMMUTABLES = [ Symbol, Fixnum, TrueClass, FalseClass, Float ]
+  #++
 
   #
   # an automatic dup implementation attempt
   #
   def OpenWFE.fulldup (object)
 
-    return nil if object == nil
+    return object.fulldup if object.respond_to?("fulldup")
+      # trusting client objects providing a fulldup() implementation
+      # Tomaso Tosolini 2007.12.11
 
-    return object if IMMUTABLES.include?(object.class)
-
-    return object.dup if object.kind_of?(String)
-
-    #return deep_clone(object) if object.kind_of?(REXML::Document)
-
-    #return REXML::Document.new(object.to_s) \
-    #  if object.kind_of? REXML::Document
+    begin
+      return Marshal.load(Marshal.dump(object))
+        # as soon as possible try to use that Marshal technique
+        # it's quite fast
+    rescue TypeError => te
+    end
 
     if object.kind_of?(REXML::Element)
       d = REXML::Document.new object.to_s
       return d if object.kind_of?(REXML::Document)
       return d.root
     end
+      # avoiding "TypeError: singleton can't be dumped"
 
-    return deep_clone(object) if object.is_a?(Date)
-
-    return Time.at(object) if object.is_a?(Time)
-      # patch by Maarten Oelering
-
-    return Rational(object.denominator, object.numerator) \
-      if object.kind_of?(Rational)
-
-    return object.fulldup if object.respond_to?("fulldup")
-      # trusting client objects providing a fulldup() implementation
-      # Tomaso Tosolini 2007.12.11
-
-    o = nil
-
-    begin
-      o = object.class.new
-    rescue ArgumentError => ae
-      return deep_clone(object)
-    end
+    o = object.class.new
 
     #
     # some kind of collection ?
-
     if object.kind_of?(Array)
       object.each { |i| o << fulldup(i) }
     elsif object.kind_of?(Hash)
       object.each { |k, v| o[fulldup(k)] = fulldup(v) }
     end
-
     #
     # duplicate the attributes of the object
-
     object.instance_variables.each do |v|
-
       #puts "v is #{v}"
-
       value = object.instance_variable_get(v)
-
       #puts "value is '#{value}'"
-
       value = fulldup(value)
-
       begin
         o.instance_variable_set(v, value)
       rescue

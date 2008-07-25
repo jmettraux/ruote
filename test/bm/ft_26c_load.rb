@@ -29,7 +29,7 @@ class FlowTest26c < Test::Unit::TestCase
   #
 
   N = 10_000
-  #N = 1000
+  #N = 100
 
   class TestDefinition0 < ProcessDefinition
     sequence do
@@ -88,6 +88,16 @@ class FlowTest26c < Test::Unit::TestCase
   # 10_000 in 39.089
   #
   # ?
+  #
+
+  #
+  # Fri Jul 25 09:34:15 JST 2008
+  #
+  # 10_000 in 33.60s
+  #
+  # ruby 1.8.6 (2008-03-03 patchlevel 114) [universal-darwin9.0]
+  #
+  # focusing on Marshal for fulldup...
   #
 
 end

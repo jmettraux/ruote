@@ -4,6 +4,7 @@
 
 == ruote - 0.9.19    not yet released
 
+- todo  #21334 : optimized fulldup() (almost 2 times faster).
 - bug   #21322 : reserve mutex not freed upon cancel. Fixed.
 - bug   #21305 : replay_at_error was broken for subprocesses. Fixed.
 - bug   #21306 : made sure duplicate insert bug for ActiveParticipant is fixed.

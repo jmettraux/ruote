@@ -20,8 +20,7 @@ class FlowTest38d < Test::Unit::TestCase
   #
 
   class Test0 < OpenWFE::ProcessDefinition
-    sequence :tag => 'approve' do
-      bob
+    sequence do
       concurrence do
         reserve :mutex => 'poprocessing' do
           petia
@@ -30,7 +29,9 @@ class FlowTest38d < Test::Unit::TestCase
           alpha
         end
       end
-      _redo :ref => 'approve'
+      reserve :mutex => 'poprocessing' do
+        alpha
+      end
     end
   end
 
@@ -38,21 +39,14 @@ class FlowTest38d < Test::Unit::TestCase
 
     #log_level_to_debug
 
-    @engine.register_participant "bob" do
-      @tracer << "bob"
-    end
     @engine.register_participant "petia" do
-      @tracer << "petia"
+      @tracer << "petia\n"
     end
     @engine.register_participant "alpha" do |workitem|
-      @tracer << "alpha"
+      @tracer << "alpha\n"
     end
 
-    @engine.launch Test0
-
-    sleep 1
-
-    assert (@tracer.to_s.length > 10)
+    dotest Test0, %w{ petia alpha alpha }.join("\n")
   end
 
 end

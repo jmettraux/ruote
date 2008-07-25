@@ -77,15 +77,12 @@ END
     assert_equal doc0.to_s, doc1.to_s
   end
 
-  def test_1
-
-    doc0 = REXML::Document.new PAT_XML
-    doc1 = OpenWFE::fulldup(doc0)
-
-    assert_not_equal doc0.object_id, doc1.object_id
-
-    assert_equal doc0.to_s, doc1.to_s
-  end
+  #def test_1 # moved to test/clone_test.rb
+  #  doc0 = REXML::Document.new PAT_XML
+  #  doc1 = OpenWFE::fulldup(doc0)
+  #  assert_not_equal doc0.object_id, doc1.object_id
+  #  assert_equal doc0.to_s, doc1.to_s
+  #end
 
   #
   # Against bug #10150

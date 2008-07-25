@@ -64,7 +64,7 @@ class FullDupTest < Test::Unit::TestCase
 
   def test_dup_1
     d = REXML::Document.new("<document/>")
-    d1 = OpenWFE::fulldup(d)
+    d1 = OpenWFE.fulldup(d)
     assert d.object_id != d1.object_id
   end
 
@@ -72,6 +72,37 @@ class FullDupTest < Test::Unit::TestCase
     d = REXML::Document.new("<document>text</document>")
     d1 = OpenWFE::fulldup(d)
     assert d.object_id != d1.object_id
+  end
+
+  PAT_XML = <<END
+<?xml version="1.0" encoding="UTF-8"?>
+<sps:GetFeasibilityRequestResponse xmlns:gml="http://www.opengis.net/gml"
+xmlns:sps="http://www.opengis.net/sps" xmlns="">
+  <sps:Feasibility status="feasible" id="106">
+  <DOY>106</DOY>
+  <UTC>2007-04-16 09:20:00</UTC>
+  <SZA>27.41</SZA>
+  <TYPE>NADIR</TYPE>
+  <PATH>52</PATH>
+  <ROW>186</ROW>
+  <COST>2600.85</COST>
+  <![CDATA[
+    <blah/>boum
+  ]]>
+  <sps:LatestResponseTime>
+    <gml:TimeInstant>
+    <gml:timePosition>2007-04-16T09:20:00Z</gml:timePosition>
+    </gml:TimeInstant>
+  </sps:LatestResponseTime>
+  </sps:Feasibility>
+</sps:GetFeasibilityRequestResponse>
+END
+
+  def test_dup_2b
+    d = REXML::Document.new PAT_XML
+    d1 = OpenWFE::fulldup(d)
+    assert_not_equal d.object_id, d1.object_id
+    assert_equal d.to_s, d1.to_s
   end
 
   def test_dup_3
@@ -103,6 +134,21 @@ class FullDupTest < Test::Unit::TestCase
     t1 = OpenWFE::fulldup(t)
     assert_not_equal t.object_id, t1.object_id
     assert_equal t.to_f, t1.to_f
+  end
+
+  def test_dup_7
+    s = :symbol
+    s1 = OpenWFE::fulldup(s)
+    assert_equal s.object_id, s1.object_id
+    assert_equal s, s1
+  end
+
+  def test_dup_8
+    require 'rational'
+    r = Rational(4, 5)
+    r1 = OpenWFE.fulldup(r)
+    assert_not_equal r.object_id, r1.object_id
+    assert_equal r, r1
   end
 
   private
