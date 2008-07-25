@@ -177,8 +177,6 @@ module Extras
     #
     def Workitem.from_owfe_workitem (wi, store_name=nil)
 
-      i = nil
-
       i = Workitem.new
       i.fei = wi.fei.to_s
       i.wfid = wi.fei.wfid
@@ -197,6 +195,9 @@ module Extras
       i = Workitem.find_by_fei(wi.fei.to_s) if i.id == 0
         # sometimes, the saved workitem id wasn't updated, was remaining at 0
         # thus finding if necessary...
+
+      #i.fields.delete_all
+        # why do I need that ??? fields were getting recycled...
 
       # This is a field set by the active participant immediately
       # before calling this method.
@@ -670,7 +671,8 @@ module Extras
     #
     def cancel (cancelitem)
 
-      Workitem.delete_all([ "fei = ?", cancelitem.fei.to_s ])
+      Workitem.destroy_all([ "fei = ?", cancelitem.fei.to_s ])
+        # note that delete_all was not removing workitem fields
     end
 
     #
