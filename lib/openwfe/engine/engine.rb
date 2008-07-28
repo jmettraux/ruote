@@ -703,13 +703,13 @@ module OpenWFE
       #
       def build_scheduler
 
-        s = Rufus::Scheduler.new(
+        @application_context[S_SCHEDULER] = Rufus::Scheduler.start_new(
           :thread_name =>
           "rufus scheduler for Ruote (engine #{self.object_id})")
 
-        @application_context[S_SCHEDULER] = s
+        @application_context[S_SCHEDULER].extend Logging
 
-        s.start
+        linfo { "build_scheduler() version is #{Rufus::Scheduler::VERSION}" }
       end
 
       #

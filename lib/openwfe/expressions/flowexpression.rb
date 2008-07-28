@@ -317,7 +317,7 @@ module OpenWFE
     #
     def set_variable (varname, value)
 
-      env, var = lookup_environment(varname)
+      env, var = lookup_environment varname
 
       ldebug do
         "set_variable() '#{varname}' to '#{value}' " +
@@ -338,9 +338,6 @@ module OpenWFE
     # or by // to indicate engine level (global) scope.
     #
     def lookup_variable (varname)
-
-      #puts "lv : #{varname}"
-      #puts OpenWFE.caller_to_s(0, 5)
 
       env, var = lookup_environment varname
       env[var]

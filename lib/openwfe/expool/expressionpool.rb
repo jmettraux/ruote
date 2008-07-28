@@ -675,8 +675,6 @@ module OpenWFE
 
       return if @stopped
 
-      #synchronize do
-
       t = OpenWFE::Timer.new
 
       linfo { "reschedule() initiating..." }
@@ -693,7 +691,6 @@ module OpenWFE
       end
 
       linfo { "reschedule() done. (took #{t.duration} ms)" }
-      #end
     end
 
     #

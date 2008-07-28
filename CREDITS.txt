@@ -40,6 +40,8 @@ Donators
 Feedback
 --------
 
+Petia Wohed - workflow patterns implementation evaluation
+Ralph DeGuelle - sleep silent death report
 Leo Venegas - various bug reports
 Corin Moss - sync launch and ruote-rest balancing
 Scott Sproule - missing read() method in rufus-verbs fopen()
