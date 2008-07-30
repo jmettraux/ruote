@@ -38,20 +38,19 @@ class FlowTest55 < Test::Unit::TestCase
   def test_0
 
     #scheduler = @engine.get_scheduler
-    #class << scheduler
-    #  attr_reader :pending_jobs
-    #end
-
     #log_level_to_debug
 
     @engine.register_participant :channel_z, OpenWFE::NullParticipant
 
-    #require 'pp'; pp(scheduler.pending_jobs)
+    #p scheduler.at_job_count
     assert_no_jobs_left
 
     dotest Test0, "concurrence done"
 
-    #require 'pp'; pp(scheduler.pending_jobs)
+    sleep 0.350 # give some time for the timeout unschedule
+
+    #p scheduler.at_job_count
+    #p scheduler.instance_variable_get(:@non_cron_jobs)
     assert_no_jobs_left
   end
 

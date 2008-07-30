@@ -225,15 +225,9 @@ end}.strip
   CODE_DEF4b = %{
 process_definition :name => "Test", :revision => "4b" do
   sequence do
-    participant do
-      'b'
-    end
-    participant do
-      'b'
-    end
-    participant do
-      'b'
-    end
+    participant 'b'
+    participant 'b'
+    participant 'b'
   end
 end}.strip
 

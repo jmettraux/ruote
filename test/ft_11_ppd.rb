@@ -162,14 +162,10 @@ ftoto:_nada__321
 process_definition :name => \"test4\", :revision => \"0\" do
   sequence do
     sequence do
-      _print do
-        'a'
-      end
+      _print 'a'
     end
     sequence do
-      _print do
-        'b'
-      end
+      _print 'b'
     end
   end
 end
