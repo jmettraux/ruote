@@ -183,20 +183,25 @@ module OpenWFE
       s << sa[1..-1] if sa.length > 0
 
       if tree.last.length > 0
-        s << " do\n"
-        tree.last.each do |child|
-          #if child.respond_to?(:to_code_s)
-          if child.is_a?(Array) and child.size == 3 # and ...
-            s << to_code_s(child, indentation + 1)
-          else
-            s << ind
-            s << tab
-            s << "'#{child.to_s}'"
+        if tree.last.size == 1 and tree.last.first.class == String
+          # maybe could work for things that are not string either...
+          s << " '#{tree.last.first}'"
+        else
+          s << " do\n"
+          tree.last.each do |child|
+            #if child.respond_to?(:to_code_s)
+            if child.is_a?(Array) and child.size == 3 # and ...
+              s << to_code_s(child, indentation + 1)
+            else
+              s << ind
+              s << tab
+              s << "'#{child.to_s}'" # inspect instead of to_s ?
+            end
+            s << "\n"
           end
-          s << "\n"
+          s << ind
+          s << "end"
         end
-        s << ind
-        s << "end"
       end
 
       s

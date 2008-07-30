@@ -2,7 +2,7 @@ h2. workflow control patterns
 
 The "Workflow Patterns":http://workflowpatterns.com/patterns/control/index.php are a catalog of various building blocks for workflow execution.
 
-Described here are ways to implement each of them (if necessary) with OpenWFEru.
+Described here are ways to implement each of them (if necessary) with Ruote (OpenWFEru). Some of the patterns are not directly implementable with Ruote, workarounds are proposed.
 
 For each pattern, an example is given in XML and in Ruby. There is also a link to the academic explanation of the pattern.
 
@@ -619,6 +619,8 @@ h2. <a name="pat_e"></a>State-based Patterns
 
 
 h3. <a name="pat_16_deferred_choice"></a>Deferred Choice
+
+This pattern is not directly supported by Ruote (OpenWFEru), as it require a better control of the state of the task (workitems). The Ruote engine pushes the workitems towards the participants but does enforce any particular workitem state (offered, started, terminated, ...), it considers that the job of the participant implementation.
 
 #:code#xml#
   <concurrence
