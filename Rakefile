@@ -46,7 +46,7 @@ spec = Gem::Specification.new do |s|
     s.extra_rdoc_files  = [ 'README.txt' ]
 
     [ 'builder',
-      'json_pure',
+      #'json_pure',
       #'ruby_parser',
       'rogue_parser',
       'rufus-lru',

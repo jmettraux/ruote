@@ -37,17 +37,11 @@
 # John Mettraux at openwfe.org
 #
 
-require 'json' # gem 'json_pure'
+#require 'json' # gem 'json_pure'
 
 require 'openwfe/util/xml'
 require 'openwfe/expressions/flowexpression'
 
-
-#
-# 'f', 'q' and 'v' expressions
-#
-# 'a' as well
-#
 
 module OpenWFE
 
@@ -240,7 +234,10 @@ module OpenWFE
 
         begin
 
-          JSON.parse text
+          return JSON.parse(text) if defined?(JSON)
+
+          return ActiveSupport::JSON.decode(text) \
+            if defined?(ActiveSupport::JSON)
 
         rescue Exception => e
           linfo { "from_json() failed : #{e}" }

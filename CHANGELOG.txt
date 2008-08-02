@@ -4,6 +4,8 @@
 
 == ruote - 0.9.19    not yet released
 
+- todo  #21419 : removed direct dependency on json gem, relying on whatever
+                 is present (activesupport or json).
 - bug   #21347 : scheduler was silent when encountering error. Fixed.
 - bug   #21306 : made sure duplicate insert bug for ActiveParticipant is fixed.
 - todo  #21334 : optimized fulldup() (almost 2 times faster).

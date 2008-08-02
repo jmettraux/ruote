@@ -140,6 +140,8 @@ a|b|3
 
   def test_4
 
+    require 'json'
+
     dotest Test4, "123falsetotoToTo"
   end
 end

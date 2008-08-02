@@ -104,7 +104,7 @@ module OpenWFE
     #
     def initial_engine_id= (s)
 
-      # silently discard
+      # discard silently
     end
     def initial_engine_id
 
@@ -115,6 +115,7 @@ module OpenWFE
     # Overrides the classical to_s()
     #
     def to_s
+
       "(fei #{@owfe_version} #{@engine_id} #{wfurl} #{wfname} #{wfrevision} #{wfid} #{expname} #{expid})"
     end
 
