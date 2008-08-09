@@ -64,7 +64,7 @@ module OpenWFE
         self[fei] = fe
       end
       get_expression_pool.add_observer(:remove) do |channel, fei|
-        ldebug { ":delete  for #{fei}" }
+        ldebug { ":remove  for #{fei}" }
         self.delete fei
       end
     end
