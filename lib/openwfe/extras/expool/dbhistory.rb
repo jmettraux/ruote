@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,67 +30,92 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
-# $Id: utils.rb 3454 2006-10-08 16:51:00Z jmettraux $
-#
 
 #
 # "made in Japan"
 #
-# john.mettraux@openwfe.org
+# John Mettraux
 #
 
-require 'openwfe/flowexpressionid'
+#require_gem 'activerecord'
+gem 'activerecord'; require 'active_record'
+
+require 'openwfe/expool/history'
 
 
-module OpenWFE
+module OpenWFE::Extras
 
   #
-  # A few methods about FlowExpressionIds
+  # The migration for the DbHistory table
   #
-  module FeiMixin
+  class HistoryTables < ActiveRecord::Migration
 
-    protected
+    def self.up
 
-      #
-      # Makes sure to return a FlowExpressionId instance.
-      #
-      def extract_fei (object)
+      create_table :history do |t|
 
-        if object.is_a?(FlowExpressionId)
+        t.column :created_at, :timestamp
+          # just this timestamp, not updated_at
 
-          object
-
-        #elsif object.is_a?(FlowExpression) or
-        #  object.is_a?(InFlowItem)
-        elsif object.respond_to?(:fei)
-
-          object.fei
-
-        elsif object.is_a?(String)
-
-          FlowExpressionId.to_fei object
-
-        else
-
-          raise \
-            "cannot extract FlowExpressionId "+
-            "out of #{object.inspect}"
-        end
+        t.column :source, :string, :null => false
+        t.column :event, :string, :null => false
+        t.column :wfid, :string
+        t.column :fei, :string
+        t.column :message, :string # empty is ok
       end
 
-      #
-      # A small method for ensuring we have a workflow instance id.
-      #
-      def extract_wfid (o, parent=false)
+      add_index :history, :created_at
+      add_index :history, :source
+      add_index :history, :event
+      add_index :history, :wfid
+    end
 
-        case o
-          #when String then o
-          when FlowExpressionId then o.wfid(parent)
-          when FlowExpression then o.fei.wfid(parent)
-          else o.to_s
-        end
-      end
+    def self.down
+
+      drop_table :history
+    end
   end
+
+  #
+  # The active record for process errors. Not much to say.
+  #
+  class HistoryEntry < ActiveRecord::Base
+
+    set_table_name "history"
+  end
+
+  class DbHistory < OpenWFE::History
+
+    #def initialize (service_name, application_context)
+    #  super
+    #end
+
+    def log (source, event, *args)
+
+      fei = get_fei args
+
+      he = HistoryEntry.new
+
+      he.source = source.to_s
+      he.event = event.to_s
+      if fei
+        he.wfid = fei.parent_wfid
+        he.fei = fei.to_s
+      end
+      he.message = get_message source, event, args
+
+      begin
+        he.save!
+      rescue Exception => e
+        lerror { "history logging failure" }
+      end
+    end
+  end
+
+  #--
+  #class ThreadedDbHistory < History
+  #end
+  #++
 
 end
 

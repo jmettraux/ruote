@@ -26,18 +26,18 @@ class FlowTest22 < Test::Unit::TestCase
   #
 
   class TestDefinition0 < OpenWFE::ProcessDefinition
-    def make
-      process_definition :name => "test0", :revision => "0" do
-        sequence do
-          _print "a"
-          _print "b"
-          _print "c"
-        end
-      end
+    sequence do
+      _print "a"
+      _print "b"
+      participant "c"
     end
   end
 
   def test_history_0
+
+    @engine.register_participant 'c' do
+      @tracer << "c\n"
+    end
 
     @engine.init_service "history", OpenWFE::InMemoryHistory
 
@@ -52,10 +52,14 @@ class FlowTest22 < Test::Unit::TestCase
     #f.write(history.to_s)
     #f.close()
 
-    assert_equal 22, history.entries.size
+    assert_equal 4, history.entries.size
   end
 
   def test_history_1
+
+    @engine.register_participant 'c' do
+      @tracer << "c\n"
+    end
 
     @engine.init_service "history", OpenWFE::FileHistory
 
@@ -67,7 +71,7 @@ class FlowTest22 < Test::Unit::TestCase
       f.readlines.size
     end
 
-    assert_equal 22, linecount
+    assert_equal 4, linecount
   end
 
 end

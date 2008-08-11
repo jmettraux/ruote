@@ -40,7 +40,7 @@
 
 require 'fileutils'
 
-#require 'rufus/lru'
+require 'rufus/lru'
 
 require 'openwfe/service'
 require 'openwfe/flowexpressionid'

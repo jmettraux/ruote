@@ -23,6 +23,7 @@ if "./#{ENV['TEST']}" == __FILE__
   require 'openwfe/extras/participants/activeparticipants'
   require 'openwfe/extras/expool/dberrorjournal'
   require 'openwfe/extras/expool/dbexpstorage'
+  require 'openwfe/extras/expool/dbhistory'
 
   def bring_down (migration)
     begin
@@ -37,9 +38,11 @@ if "./#{ENV['TEST']}" == __FILE__
   bring_down OpenWFE::Extras::WorkitemTables
   bring_down OpenWFE::Extras::ProcessErrorTables
   bring_down OpenWFE::Extras::ExpressionTables
+  bring_down OpenWFE::Extras::HistoryTables
 
   OpenWFE::Extras::WorkitemTables.up
   OpenWFE::Extras::ProcessErrorTables.up
   OpenWFE::Extras::ExpressionTables.up
+  OpenWFE::Extras::HistoryTables.up
 end
 

@@ -51,18 +51,94 @@ module OpenWFE
     include ServiceMixin
     include OwfeServiceLocator
 
+    EXPOOL_EVENTS = [
+      :launch, # launching of a [sub]process instance
+      :terminate, # process instance terminates
+      :cancel, # cancelling an expression
+      :error,
+      :reschedule, # at restart, engine reschedules a timed expression
+      :stop, # stopping the process engine
+      #:launch_child, # launching a process 'fragment'
+      #:launch_orphan, # firing and forgetting a sub process
+      #:forget, # forgetting an expression (making it an orphan)
+      #:remove, # removing an expression
+      #:update, # expression changed, reinsertion into storage
+      #:apply,
+      #:reply,
+      #:reply_to_parent, # expression replies to its parent expression
+    ]
+
     def service_init (service_name, application_context)
 
       super
 
       get_expression_pool.add_observer(:all) do |event, *args|
-        log(event, *args)
+        handle :expool, event, *args
+      end
+      get_participant_map.add_observer(:all) do |event, *args|
+        handle :pmap, event, *args
       end
     end
 
-    def log (event, *args)
+    #
+    # filter events, eventually logs them
+    #
+    def handle (source, event, *args)
+
+      # filtering expool events
+
+      return if source == :expool and (not EXPOOL_EVENTS.include?(event))
+
+      # normalizing pmap events
+
+      return if source == :pmap and args.first == :after_consume
+
+      if source == :pmap and (not event.is_a?(Symbol))
+        return if args.first == :apply
+        e = event
+        event = args.first
+        args[0] = e
+      end
+        # have to do that swap has pmap uses the participant name as
+        # a "channel name"
+
+      # ok, do log now
+
+      log source, event, *args
+    end
+
+    #
+    # the logging job itself
+    #
+    def log (source, event, *args)
+
       raise NotImplementedError.new(
-        "please provide an implementation of log(e, fei, wi)")
+        "please provide an implementation of log(source, event, *args)")
+    end
+
+    #
+    # scans the arguments of the event to determine the fei
+    # (flow expression id) related to the event
+    #
+    def get_fei (args)
+
+      args.each do |a|
+        return a.fei if a.respond_to?(:fei)
+        return a if a.is_a?(FlowExpressionId)
+      end
+
+      nil
+    end
+
+    #
+    # builds a 'message' string out of the event / args combination
+    #
+    def get_message (source, event, args)
+
+      args.inject([]) { |r, a|
+        r << a if a.is_a?(Symbol) or a.is_a?(String)
+        r
+      }.join(" ")
     end
   end
 
@@ -71,8 +147,6 @@ module OpenWFE
   #
   class History
     include HistoryMixin
-    include FeiMixin
-
 
     def initialize (service_name, application_context)
 
@@ -81,43 +155,38 @@ module OpenWFE
       service_init(service_name, application_context)
     end
 
-    def log (event, *args)
+    def log (source, event, *args)
 
-      return if event == :update
-      return if event == :reschedule
-      return if event == :stop
+      t = Time.now
 
-      msg = "#{Time.now.to_s} -- "
+      msg = "#{t} .#{t.usec} -- #{source.to_s} #{event.to_s}"
 
-      msg << event.to_s
+      msg << " #{get_fei(args).to_s}" if args.length > 0
 
-      if args.length > 0
-        fei = extract_fei args[0]
-        msg << " #{fei.to_s}"
-      end
-
-      #msg << " #{args[1].to_s}" \
-      #  if args.length > 1
+      m = get_message(source, event, args)
+      msg << " #{m}" if m
 
       @output << msg + "\n"
     end
   end
 
   #
-  # The simplest implementation, stores all history entries in memory.
-  #
-  # DO NOT USE IN PRODUCTION, it will trigger an 'out of memory' error
-  # sooner or later.
-  #
-  # Is only used for unit testing purposes.
+  # The simplest implementation, stores the latest 1000 history
+  # entries in memory.
   #
   class InMemoryHistory < History
+
+    #
+    # the max number of history items stored. By default it's 1000
+    #
+    attr_accessor :maxsize
 
     def initialize (service_name, application_context)
 
       super
 
       @output = []
+      @maxsize = 1008
     end
 
     #
@@ -125,6 +194,15 @@ module OpenWFE
     #
     def entries
       @output
+    end
+
+    def log (source, event, *args)
+
+      super
+
+      while @output.size > @maxsize
+        @output.shift
+      end
     end
 
     #
@@ -150,6 +228,11 @@ module OpenWFE
       @output = File.open(@output, "w+")
 
       linfo { "new() outputting history to #{@output.path}" }
+    end
+
+    def log (source, event, *args)
+
+      super unless @output.closed?
     end
 
     #

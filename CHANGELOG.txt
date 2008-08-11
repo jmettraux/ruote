@@ -4,6 +4,7 @@
 
 == ruote - 0.9.19    not yet released
 
+- todo  #21498 : implemented DbHistory (with History redux)
 - todo  #21419 : removed direct dependency on json gem, relying on whatever
                  is present (activesupport or json).
 - bug   #21347 : scheduler was silent when encountering error. Fixed.

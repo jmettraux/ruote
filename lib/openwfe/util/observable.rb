@@ -108,32 +108,26 @@ module OpenWFE
 
         #ldebug { "do_notify() @observers.size is #{@observers.size}" }
 
-        if target_channel.is_a?(String)
+        observers = if target_channel.is_a?(String)
 
-          observers = []
-
-          @observers.each do |c, o|
+          @observers.inject([]) do |r, (c, o)|
 
             if c.is_a?(String)
-              next unless target_channel.match(c)
+              r += o if target_channel.match(c)
             elsif c.is_a?(Regexp)
-              next unless c.match(target_channel)
-            else
-              next
+              r += o if c.match(target_channel)
             end
 
-            observers = observers + o
+            r
           end
         else
 
-          observers = @observers[target_channel]
+          @observers[target_channel]
         end
 
         return false unless observers
 
-        observers.each do |obs|
-          obs.call channel, *args
-        end
+        observers.each { |obs| obs.call channel, *args }
 
         (observers.size > 0)
           #

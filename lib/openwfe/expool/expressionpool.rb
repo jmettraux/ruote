@@ -51,7 +51,7 @@ require 'openwfe/expool/representation'
 require 'openwfe/expressions/environment'
 require 'openwfe/expressions/raw'
 
-require 'rufus/lru' # gem 'rufus-lru'
+#require 'rufus/lru' # gem 'rufus-lru'
 require 'rufus/verbs' # gem 'rufus-lru'
 
 
@@ -455,6 +455,7 @@ module OpenWFE
       cancel root
     end
     alias :cancel_flow :cancel_process
+
     #
     # Forgets the given expression (make it an orphan).
     #
