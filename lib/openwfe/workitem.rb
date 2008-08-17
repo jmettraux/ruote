@@ -79,18 +79,17 @@ module OpenWFE
     def to_h
 
       h = {}
-      h[:type] = self.class.name
-      h[:last_modified] = @last_modified
-      h[:attributes] = @attributes
+      h['type'] = self.class.name
+      h['last_modified'] = @last_modified
+      h['attributes'] = @attributes
       h
     end
 
     def self.from_h (h)
 
-      #wi = eval("#{h[:type]}.new")
       wi = OpenWFE.get_class(h).new
-      wi.last_modified = h[:last_modified]
-      wi.attributes = h[:attributes]
+      wi.last_modified = h['last_modified']
+      wi.attributes = h['attributes']
       wi
     end
 
@@ -166,7 +165,7 @@ module OpenWFE
       #  return @attributes[args[0]] = args[1]
       #end
 
-      if args.length == 1 and methodname[-1, 1] == "="
+      if args.length == 1 and methodname[-1, 1] == '='
         return @attributes[methodname[0..-2]] = args[0]
       end
 
@@ -262,15 +261,15 @@ module OpenWFE
 
     def to_h
       h = super
-      h[:flow_expression_id] = @flow_expression_id.to_h
-      h[:participant_name] = @participant_name
+      h['flow_expression_id'] = @flow_expression_id.to_h
+      h['participant_name'] = @participant_name
       h
     end
 
     def InFlowItem.from_h (h)
       wi = super
-      wi.flow_expression_id = FlowExpressionId.from_h(h[:flow_expression_id])
-      wi.participant_name = h[:participant_name]
+      wi.flow_expression_id = FlowExpressionId.from_h(h['flow_expression_id'])
+      wi.participant_name = h['participant_name']
       wi
     end
   end
@@ -327,9 +326,9 @@ module OpenWFE
     def to_h
 
       h = super
-      h[:dispatch_time] = @dispatch_time
+      h['dispatch_time'] = @dispatch_time
       #h[:history] = @history
-      h[:filter] = @filter
+      h['filter'] = @filter
       h
     end
 
@@ -339,9 +338,8 @@ module OpenWFE
     def InFlowWorkItem.from_h (h)
 
       wi = super
-      wi.dispatch_time = h[:dispatch_time]
-      #wi.history = h[:history]
-      wi.filter = h[:filter]
+      wi.dispatch_time = h['dispatch_time']
+      wi.filter = h['filter']
       wi
     end
 
@@ -378,7 +376,7 @@ module OpenWFE
 
       r = get_result
       return false unless r
-      (r == true or r == "true")
+      (r == true or r == 'true')
     end
   end
 
@@ -464,14 +462,14 @@ module OpenWFE
     def to_h
 
       h = super
-      h[:workflow_definition_url] = @workflow_definition_url
+      h['workflow_definition_url'] = @workflow_definition_url
       h
     end
 
     def self.from_h (h)
 
       li = super
-      li.workflow_definition_url = h[:workflow_definition_url]
+      li.workflow_definition_url = h['workflow_definition_url']
       li
     end
   end
@@ -482,17 +480,20 @@ module OpenWFE
   #
   def OpenWFE.workitem_from_h (h)
 
-    #wi_class = eval(h[:type])
     wi_class = get_class(h)
     wi_class.from_h(h)
   end
 
+  WI_CLASSES = [
+    OpenWFE::LaunchItem, OpenWFE::InFlowWorkItem, OpenWFE::CancelItem
+  ].inject({}) { |r, c| r[c.to_s] = c; r }
+
+  #
+  # returns the workitem class for the given hash
+  #
   def OpenWFE.get_class (h)
 
-    cl = h[:type]
-    return nil if cl.index(";")
-    return nil if cl.index(" ")
-    eval(cl)
+    WI_CLASSES[h['type']]
   end
 
 end

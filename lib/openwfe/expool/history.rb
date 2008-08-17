@@ -140,6 +140,14 @@ module OpenWFE
         r
       }.join(" ")
     end
+
+    #
+    # returns the workitem among the logged args
+    #
+    def get_workitem (args)
+
+      args.find { |a| a.is_a?(WorkItem) }
+    end
   end
 
   #
@@ -224,8 +232,8 @@ module OpenWFE
 
       super
 
-      @output = get_work_directory + "/history.log"
-      @output = File.open(@output, "w+")
+      @output = get_work_directory + '/history.log'
+      @output = File.open(@output, 'w+')
 
       linfo { "new() outputting history to #{@output.path}" }
     end

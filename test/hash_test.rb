@@ -7,6 +7,9 @@
 # Sun Oct 29 16:18:25 JST 2006
 #
 
+require 'rubygems'
+require 'json'
+
 require 'test/unit'
 
 require 'openwfe/workitem'
@@ -68,8 +71,20 @@ class HashTest < Test::Unit::TestCase
     li1 = OpenWFE::workitem_from_h h
 
     assert_kind_of OpenWFE::LaunchItem, li1
-    assert_equal "USD 12", li1.price
+    assert_equal 'USD 12', li1.price
     assert_equal 2, li1.attributes.size
   end
 
+  def test_wi_to_h_to_json_and_back
+
+    wi0 = OpenWFE::InFlowWorkItem.new
+    wi0.fei = new_fei
+    wi0.attributes['data'] = (0..1000).to_a
+
+    s = wi0.to_h.to_json
+
+    wi1 = OpenWFE::InFlowWorkItem.from_h(JSON.parse(s))
+  end
+
 end
+
