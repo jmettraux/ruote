@@ -79,11 +79,14 @@ class HashTest < Test::Unit::TestCase
 
     wi0 = OpenWFE::InFlowWorkItem.new
     wi0.fei = new_fei
-    wi0.attributes['data'] = (0..1000).to_a
+    wi0.attributes['data'] = (0..5).to_a
 
     s = wi0.to_h.to_json
 
     wi1 = OpenWFE::InFlowWorkItem.from_h(JSON.parse(s))
+
+    assert_equal wi0.attributes, wi1.attributes
+    assert_equal wi0.fei, wi1.fei
   end
 
 end

@@ -82,6 +82,14 @@ module OpenWFE::Extras
   class HistoryEntry < ActiveRecord::Base
 
     set_table_name "history"
+
+    #
+    # Returns a FlowExpressionId instance if the entry has a 'fei' or
+    # nil instead.
+    #
+    def full_fei
+      fei ? OpenWFE::FlowExpressionId.from_s(fei) : nil
+    end
   end
 
   class DbHistory < OpenWFE::History
