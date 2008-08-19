@@ -18,10 +18,13 @@ The developer mailing list for OpenWFE is at "http://groups.google.com/group/ope
 
 h3. other OpenWFEru components
 
-They are all at "http://github.com/jmettraux":http://github.com/jmettraux
+They are all at "http://github.com/jmettraux":http://github.com/jmettraux with a "ruote-" prefix.
 
 The highlights are :
 
 * "Ruote-web":http://github.com/jmettraux/ruote-web (ex-"Densha") : a Ruby on Rails web application wrapping the OpenWFEru ruote engine. ("online demo":http://difference.openwfe.org:3000)
 
-* "Ruote-rest":http://github.com/jmettraux/ruote-rest : A "Sinatra":http://sinatrarb.com based RESTful BPM / workflow service
+* "Ruote-rest":http://github.com/jmettraux/ruote-rest : A RESTful BPM / workflow service
+
+* "Ruote-fluo":http://github.com/jmettraux/ruote-fluo : the beginning of a process definition editor ("online demo":http://difference.openwfe.org:4567/?pdef=pdef_ttt.xml)
+

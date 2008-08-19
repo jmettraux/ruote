@@ -55,12 +55,11 @@ module OpenWFE::Extras
       create_table :history do |t|
 
         t.column :created_at, :timestamp
-          # just this timestamp, not updated_at
-
         t.column :source, :string, :null => false
         t.column :event, :string, :null => false
         t.column :wfid, :string
         t.column :fei, :string
+        t.column :participant, :string
         t.column :message, :string # empty is ok
       end
 
@@ -68,6 +67,7 @@ module OpenWFE::Extras
       add_index :history, :source
       add_index :history, :event
       add_index :history, :wfid
+      add_index :history, :participant
     end
 
     def self.down
@@ -84,11 +84,12 @@ module OpenWFE::Extras
     set_table_name "history"
 
     #
-    # Returns a FlowExpressionId instance if the entry has a 'fei' or
+    # returns a FlowExpressionId instance if the entry has a 'fei' or
     # nil instead.
     #
     def full_fei
-      fei ? OpenWFE::FlowExpressionId.from_s(fei) : nil
+
+      self.fei ? OpenWFE::FlowExpressionId.from_s(self.fei) : nil
     end
   end
 
@@ -106,11 +107,16 @@ module OpenWFE::Extras
 
       he.source = source.to_s
       he.event = event.to_s
+
       if fei
         he.wfid = fei.parent_wfid
         he.fei = fei.to_s
       end
-      he.message = get_message source, event, args
+
+      he.message = get_message(source, event, args)
+
+      wi = get_workitem(args)
+      he.participant = wi.participant_name if wi.respond_to?(:participant_name)
 
       begin
         he.save!
