@@ -109,6 +109,8 @@ module OpenWFE
       @variables = nil
       @scheduled_jobs = nil
       @paused = false
+
+      @all_expressions.extend(RepresentationMixin)
     end
 
     #
@@ -168,7 +170,7 @@ module OpenWFE
     #
     def << (item)
 
-      if item.kind_of?(FlowExpression)
+      if item.is_a?(FlowExpression)
 
         @wfid ||= item.fei.parent_wfid
 
@@ -209,9 +211,9 @@ module OpenWFE
   end
 
   #
-  # an extension of Hash for holding the process statuses.
+  # just a nice to_s for the ProcessStatuses hash
   #
-  class ProcessStatuses < Hash
+  module StatusesMixin
 
     #
     # Renders a nice, terminal oriented, representation of an
@@ -272,16 +274,15 @@ module OpenWFE
 
       options = { :wfid_prefix => options } if options.is_a?(String)
 
-      result = ProcessStatuses.new
+      expressions = get_expression_storage.find_expressions(options)
 
-      expressions = get_expression_storage.find_expressions options
-
-      expressions.each do |fe|
+      result = expressions.inject({}) do |r, fe|
 
         #next unless (fe.apply_time or fe.is_a?(Environment))
         #next if fe.fei.wfid == '0' # skip the engine env
 
-        (result[fe.fei.parent_wfid] ||= ProcessStatus.new) << fe
+        (r[fe.fei.parent_wfid] ||= ProcessStatus.new) << fe
+        r
       end
 
       result.values.each do |ps|
@@ -300,6 +301,8 @@ module OpenWFE
 
       #
       # done
+
+      result.extend(StatusesMixin)
 
       result
     end

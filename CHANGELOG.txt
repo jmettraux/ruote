@@ -4,6 +4,7 @@
 
 == ruote - 0.9.19    not yet released
 
+- todo  #21644 : included process_stack result into process_status
 - bug   #21585 : to_h.to_json and back broken. Fixed and discarded eval(class)
 - todo  #21498 : implemented DbHistory (with History redux)
 - todo  #21419 : removed direct dependency on json gem, relying on whatever
