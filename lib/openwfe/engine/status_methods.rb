@@ -261,6 +261,16 @@ module OpenWFE
   #
   module StatusMethods
 
+    def init_status_cache
+
+      @status_cache = LruHash.new(30)
+
+      get_expression_pool.add_observer(:all) do |event, *args|
+        fei = args.find { |a| a.is_a?(FlowExpressionId) }
+        @status_cache.delete(fei.wfid) if fei
+      end
+    end
+
     #
     # Returns a hash of ProcessStatus instances. The keys of the hash
     # are workflow instance ids.
@@ -317,9 +327,14 @@ module OpenWFE
     #
     def process_status (wfid)
 
-      wfid = extract_wfid wfid, true
+      init_status_cache unless @status_cache
 
-      process_statuses(:wfid_prefix => wfid).values.first
+      (r = @status_cache[wfid]) and return r
+
+      wfid = extract_wfid(wfid, true)
+
+      @status_cache[wfid] = process_statuses(:wfid_prefix => wfid).values.first
+        # caches and returns the status
     end
 
     #
