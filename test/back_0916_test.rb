@@ -49,7 +49,7 @@ class Back0916Test < Test::Unit::TestCase
 
     @engine.reload
 
-    ps = @engine.process_status "20080212-moshijuzuke" # an XML process
+    ps = @engine.process_status '20080212-moshijuzuke' # an XML process
     #p ps.expressions.collect { |e| e.fei.to_s }
     exp = ps.expressions.first
     wi = exp.applied_workitem
@@ -61,7 +61,7 @@ class Back0916Test < Test::Unit::TestCase
 
     assert_equal [ :alpha ], trace
 
-    ps = @engine.process_status "20080212-moshijuzuke"
+    ps = @engine.process_status '20080212-moshijuzuke'
     #puts ps.size
     #puts ps.collect { |e| e.fei.to_s }.join("\n")
 
@@ -85,14 +85,12 @@ class Back0916Test < Test::Unit::TestCase
     #  trace << :employee
     #end
     [ :user_bob, :user_alice ].each do |p|
-      @engine.register_participant p do
-        trace << p
-      end
+      @engine.register_participant(p) { trace << p }
     end
 
     @engine.reload
 
-    ps = @engine.process_status "20080213-depejetzube" # an ruby procdef
+    ps = @engine.process_status '20080213-depejetzube' # a ruby procdef
     exp = ps.expressions.first
     wi = exp.applied_workitem
 
@@ -102,7 +100,7 @@ class Back0916Test < Test::Unit::TestCase
 
     assert_equal [ :user_bob, :user_bob ], trace
 
-    assert_nil @engine.process_status("20080213-depejetzube")
+    assert_nil @engine.process_status('20080213-depejetzube')
 
     @engine.stop
 

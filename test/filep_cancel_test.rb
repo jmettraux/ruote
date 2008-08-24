@@ -63,13 +63,13 @@ XML
     #fei = @engine.launch TestDef0
     fei = @engine.launch XMLDEF
 
-    sleep 0.300
+    sleep 0.350
 
     assert File.exist?(path0(fei))
 
     @engine.cancel_process fei.wfid
 
-    sleep 0.300
+    sleep 0.350
 
     assert ( ! File.exist?(path0(fei)))
     #assert ( ! File.exist?("./work/ejournal/#{fei.wfid}.ejournal"))

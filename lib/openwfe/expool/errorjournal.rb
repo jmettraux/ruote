@@ -186,30 +186,23 @@ module OpenWFE
       get_error_log(wfid).size > 0
     end
 
-    #--
     #
-    # Commented out : has no real value
+    # Takes care of removing an error from the error journal and
+    # they replays its process at that point.
     #
-    # Replays the given process instance (wfid or fei) at its last
-    # recorded error.
-    #
-    # There is an optional 'offset' parameter. Its default value is '0'.
-    # Which means that the replay will occur at the last error.
-    #
-    #   ejournal.replay_at_last_error('20070630-hiwakuzara', 1)
-    #
-    # Will replay a given process instance at its 1 to last error.
-    #
-    #def replay_at_last_error (wfid, offset=0)
-    #  wfid = extract_wfid(wfid)
-    #  log = get_error_log(wfid)
-    #  index = (-1 - offset)
-    #  error = log[index]
-    #  raise "no error for process '#{wfid}' at offset #{offset}" \
-    #    unless error
-    #  replay_at_error error
-    #end
-    #++
+    def replay_at_error (error)
+
+      remove_errors(
+        error.fei.parent_wfid,
+        error)
+
+      get_workqueue.push(
+        get_expression_pool,
+        :do_apply_reply,
+        error.message,
+        error.fei,
+        error.workitem)
+    end
 
     #
     # A utility method : given a list of errors, will make sure that for

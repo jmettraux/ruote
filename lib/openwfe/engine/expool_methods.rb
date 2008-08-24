@@ -148,6 +148,35 @@ module OpenWFE
       get_expression_pool.forget exp_or_fei
     end
 
+    #
+    # Pauses a process instance.
+    #
+    def pause_process (wfid)
+
+      get_expression_pool.pause_process wfid
+    end
+
+    #
+    # Restarts a process : removes its 'paused' flag (variable) and makes
+    # sure to 'replay' events (replies) that came for it while it was
+    # in pause.
+    #
+    def resume_process (wfid)
+
+      get_expression_pool.resume_process wfid
+    end
+
+    #
+    # Not a delegate to an expool method, placed here for now.
+    #
+    # Takes care of removing an error from the error journal and
+    # they replays its process at that point.
+    #
+    def replay_at_error (error)
+
+      get_error_journal.replay_at_error error
+    end
+
     protected
 
       #

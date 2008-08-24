@@ -66,6 +66,8 @@ class FlowTest63 < Test::Unit::TestCase
 
     @engine.resume_process fei.workflow_instance_id
 
+    #assert ! @engine.process_status(fei.wfid).paused?
+
     #unless @engine.get_expression_storage.is_a?(
     #  OpenWFE::InMemoryExpressionStorage)
     #
@@ -78,7 +80,7 @@ class FlowTest63 < Test::Unit::TestCase
     sleep 0.350
 
     assert_nil @engine.process_status(fei.wfid)
-    assert_equal @tracer.to_s, "done."
+    assert_equal @tracer.to_s, 'done.'
   end
 
 

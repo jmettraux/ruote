@@ -48,6 +48,7 @@ require 'openwfe/flowexpressionid'
 require 'openwfe/util/observable'
 require 'openwfe/expool/parser'
 require 'openwfe/expool/representation'
+require 'openwfe/expool/expool_pause_methods'
 require 'openwfe/expressions/environment'
 require 'openwfe/expressions/raw'
 
@@ -64,10 +65,12 @@ module OpenWFE
   # expressions.
   #
   class ExpressionPool
+
     include ServiceMixin
     include OwfeServiceLocator
     include OwfeObservable
     include FeiMixin
+    include ExpoolPauseMethods
 
     #
     # The hash containing the wfid of the process instances currently
