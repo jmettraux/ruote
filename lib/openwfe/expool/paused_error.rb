@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux OpenWFE.org
+# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,62 +37,41 @@
 # John Mettraux at openwfe.org
 #
 
-#
-# Gets included into the ExpressionPool class
-#
-module OpenWFE::ExpoolPauseMethods
+module OpenWFE
 
-    #
-    # Pauses a process (sets its /__paused__ variable to true).
-    #
-    def pause_process (wfid)
+  #
+  # This error is raised when an expression belonging to a paused
+  # process is applied or replied to.
+  #
+  class PausedError < RuntimeError
 
-      wfid = extract_wfid wfid
+    attr_reader :wfid
 
-      root_expression = fetch_root wfid
+    def initialize (wfid)
 
-      @paused_instances[wfid] = true
-      root_expression.set_variable OpenWFE::VAR_PAUSED, true
-
-      onotify :pause, wfid
+      super "process '#{wfid}' is paused"
+      @wfid = wfid
     end
 
     #
-    # Restarts a process : removes its 'paused' flag (variable) and makes
-    # sure to 'replay' events (replies) that came for it while it was
-    # in pause.
+    # Returns a hash for this PausedError instance.
+    # (simply returns the hash of the paused process' wfid).
     #
-    def resume_process (wfid)
+    def hash
 
-      wfid = extract_wfid wfid
-
-      root_expression = fetch_root wfid
-
-      #
-      # remove 'paused' flag
-
-      @paused_instances.delete wfid
-      root_expression.unset_variable OpenWFE::VAR_PAUSED
-
-      #
-      # notify ...
-
-      onotify :resume, wfid
-
-      #
-      # replay
-      #
-      # select PausedError instances in separate list
-
-      errors = get_error_journal.get_error_log wfid
-      error_class = OpenWFE::PausedError.name
-      paused_errors = errors.select { |e| e.error_class == error_class }
-
-      return if paused_errors.size < 1
-
-      # replay select PausedError instances
-
-      paused_errors.each { |e| get_error_journal.replay_at_error e }
+      @wfid.hash
     end
+
+    #
+    # Returns true if the other is a PausedError issued for the
+    # same process instance (wfid).
+    #
+    def == (other)
+
+      return false unless other.is_a?(PausedError)
+
+      (@wfid == other.wfid)
+    end
+  end
 end
 

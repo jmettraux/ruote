@@ -37,6 +37,11 @@ class FlowTest63 < Test::Unit::TestCase
 
     sa = @engine.register_participant :alpha, OpenWFE::HashParticipant
 
+    pause_events = []
+    @engine.get_expression_pool.add_observer :all do |channel, args|
+      pause_events << [ channel, args ] if [ :pause, :resume ].include?(channel)
+    end
+
     fei = @engine.launch Test0
 
     sleep 0.350
@@ -54,6 +59,7 @@ class FlowTest63 < Test::Unit::TestCase
 
     assert @engine.process_status(fei.wfid).paused?
     assert @engine.is_paused?(fei.wfid)
+    assert_equal [ [ :pause, fei.wfid ] ], pause_events
 
     hp = @engine.get_participant :alpha
     wi = hp.first_workitem
@@ -62,7 +68,7 @@ class FlowTest63 < Test::Unit::TestCase
     sleep 0.350
 
     assert_equal @engine.process_status(fei.wfid).errors.size, 1
-    assert_equal @tracer.to_s, ""
+    assert_equal @tracer.to_s, ''
 
     @engine.resume_process fei.workflow_instance_id
 
@@ -78,6 +84,10 @@ class FlowTest63 < Test::Unit::TestCase
     #end
 
     sleep 0.350
+
+    assert_equal(
+      [ [ :pause, fei.wfid ], [ :resume, fei.wfid ] ],
+      pause_events)
 
     assert_nil @engine.process_status(fei.wfid)
     assert_equal @tracer.to_s, 'done.'

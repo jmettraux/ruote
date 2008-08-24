@@ -48,11 +48,11 @@ require 'openwfe/flowexpressionid'
 require 'openwfe/util/observable'
 require 'openwfe/expool/parser'
 require 'openwfe/expool/representation'
+require 'openwfe/expool/paused_error'
 require 'openwfe/expool/expool_pause_methods'
 require 'openwfe/expressions/environment'
 require 'openwfe/expressions/raw'
 
-#require 'rufus/lru' # gem 'rufus-lru'
 require 'rufus/verbs' # gem 'rufus-lru'
 
 
@@ -70,11 +70,12 @@ module OpenWFE
     include OwfeServiceLocator
     include OwfeObservable
     include FeiMixin
+
     include ExpoolPauseMethods
 
     #
     # The hash containing the wfid of the process instances currently
-    # paused.
+    # paused (a cache).
     #
     attr_reader :paused_instances
 
@@ -1128,41 +1129,6 @@ module OpenWFE
 
         parent.store_itself
       end
-  end
-
-  #
-  # This error is raised when an expression belonging to a paused
-  # process is applied or replied to.
-  #
-  class PausedError < RuntimeError
-
-    attr_reader :wfid
-
-    def initialize (wfid)
-
-      super "process '#{wfid}' is paused"
-      @wfid = wfid
-    end
-
-    #
-    # Returns a hash for this PausedError instance.
-    # (simply returns the hash of the paused process' wfid).
-    #
-    def hash
-
-      @wfid.hash
-    end
-
-    #
-    # Returns true if the other is a PausedError issued for the
-    # same process instance (wfid).
-    #
-    def == (other)
-
-      return false unless other.is_a?(PausedError)
-
-      (@wfid == other.wfid)
-    end
   end
 
 end
