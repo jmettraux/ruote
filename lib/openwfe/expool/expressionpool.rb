@@ -783,9 +783,8 @@ module OpenWFE
 
       se = OpenWFE::exception_to_s error
 
-      onotify :error, fei, message, workitem, error.class.name, se
-
-      #fei = extract_fei fei
+      #onotify :error, fei, message, workitem, error.class.name, se
+      onotify(:error, fei, message, workitem, error.class.name, error.to_s)
 
       if error.is_a?(PausedError)
         lwarn do

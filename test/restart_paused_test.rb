@@ -6,6 +6,8 @@
 # Thu Feb  7 15:26:57 JST 2008
 #
 
+require 'rubygems'
+
 require 'test/unit'
 
 require 'openwfe/workitem'
@@ -73,6 +75,9 @@ class RestartPauseTest < Test::Unit::TestCase
 
       assert_equal(
         true, engine.get_expression_pool.paused_instances[fei.wfid])
+
+      ps = engine.process_status(fei.wfid)
+      assert ps.paused?
 
       engine.stop
 
