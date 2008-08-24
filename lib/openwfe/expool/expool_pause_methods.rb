@@ -54,7 +54,7 @@ module OpenWFE::ExpoolPauseMethods
       @paused_instances[wfid] = true
       root_expression.set_variable OpenWFE::VAR_PAUSED, true
 
-      onotify :pause, wfid
+      onotify :pause, root_expression.fei
     end
 
     #
@@ -77,7 +77,7 @@ module OpenWFE::ExpoolPauseMethods
       #
       # notify ...
 
-      onotify :resume, wfid
+      onotify :resume, root_expression.fei
 
       #
       # replay

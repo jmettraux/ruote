@@ -58,6 +58,8 @@ module OpenWFE
       :error,
       :reschedule, # at restart, engine reschedules a timed expression
       :stop, # stopping the process engine
+      :pause, # pausing a process
+      :resume, # resuming a process
       #:launch_child, # launching a process 'fragment'
       #:launch_orphan, # firing and forgetting a sub process
       #:forget, # forgetting an expression (making it an orphan)
