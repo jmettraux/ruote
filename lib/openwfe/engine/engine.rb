@@ -473,6 +473,9 @@ module OpenWFE
     #
     def pause_process (wfid)
 
+      # TODO : move this method to the expool
+      # and make sure it emits an event !
+
       wfid = extract_wfid wfid
 
       root_expression = get_expression_pool.fetch_root wfid
@@ -487,6 +490,9 @@ module OpenWFE
     # in pause.
     #
     def resume_process (wfid)
+
+      # TODO : move this method to the expool
+      # and make sure it emits an event !
 
       wfid = extract_wfid wfid
 
@@ -511,9 +517,7 @@ module OpenWFE
 
       # replay select PausedError instances
 
-      paused_errors.each do |e|
-        replay_at_error e
-      end
+      paused_errors.each { |e| replay_at_error e }
     end
 
     #

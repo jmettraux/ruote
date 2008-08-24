@@ -62,33 +62,30 @@ spec = Gem::Specification.new do |s|
 
   files = FileList[ "{bin,docs,lib,test,examples}/**/*" ]
   files.exclude "rdoc"
-  files.exclude "extras"
+  #files.exclude "extras"
   s.files = files.to_a
 end
 
-extras_spec = Gem::Specification.new do |s|
-
-  s.name        = "ruote-extras"
-  s.version       = OpenWFE::OPENWFERU_VERSION
-  s.authors       = [ "John Mettraux" ]
-  s.email       = "john at openwfe dot org"
-  s.homepage      = "http://openwferu.rubyforge.org/"
-  s.platform      = Gem::Platform::RUBY
-  s.summary       = "OpenWFEru extras (sqs, csv, ...)"
-  s.require_path    = "lib"
-  s.rubyforge_project = "openwferu"
-  #s.autorequire     = "ruote-extras"
-  s.has_rdoc      = false
-
-  #[ 'rufus-decision', 'rufus-sqs' ].each do |d|
-  #  s.requirements << d
-  #  s.add_dependency d
-  #end
-
-  s.files = FileList[
-    "lib/openwfe/extras/**/*"
-  ].to_a
-end
+#extras_spec = Gem::Specification.new do |s|
+#  s.name        = "ruote-extras"
+#  s.version       = OpenWFE::OPENWFERU_VERSION
+#  s.authors       = [ "John Mettraux" ]
+#  s.email       = "john at openwfe dot org"
+#  s.homepage      = "http://openwferu.rubyforge.org/"
+#  s.platform      = Gem::Platform::RUBY
+#  s.summary       = "OpenWFEru extras (sqs, csv, ...)"
+#  s.require_path    = "lib"
+#  s.rubyforge_project = "openwferu"
+#  #s.autorequire     = "ruote-extras"
+#  s.has_rdoc      = false
+#  #[ 'rufus-decision', 'rufus-sqs' ].each do |d|
+#  #  s.requirements << d
+#  #  s.add_dependency d
+#  #end
+#  s.files = FileList[
+#    "lib/openwfe/extras/**/*"
+#  ].to_a
+#end
 
 task :default => [ :clean, :repackage ]
 
@@ -196,14 +193,14 @@ end
 Rake::GemPackageTask.new(spec) do |pkg|
   #pkg.need_tar = true
 end
-Rake::GemPackageTask.new(extras_spec) do |pkg|
-  #pkg.need_tar = true
-end
+#Rake::GemPackageTask.new(extras_spec) do |pkg|
+#  #pkg.need_tar = true
+#end
 
 #
 # Packaging the source
 #
-Rake::PackageTask.new("openwferu", OpenWFE::OPENWFERU_VERSION) do |pkg|
+Rake::PackageTask.new('rufus', OpenWFE::OPENWFERU_VERSION) do |pkg|
 
   pkg.need_zip = true
   pkg.package_files = FileList[
