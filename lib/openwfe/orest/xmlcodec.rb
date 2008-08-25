@@ -36,13 +36,12 @@
 #
 
 require 'base64'
-require 'rexml/document'
+require 'openwfe/rexml'
 
 require 'openwfe/utils'
 require 'openwfe/workitem'
 require 'openwfe/flowexpressionid'
 require 'openwfe/orest/definitions'
-#require 'openwfe/orest/workitem'
 
 
 module OpenWFE

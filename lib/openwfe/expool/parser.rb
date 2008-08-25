@@ -37,7 +37,7 @@
 # John Mettraux at openwfe.org
 #
 
-require 'rexml/document'
+require 'openwfe/rexml'
 require 'openwfe/expressions/rprocdef'
 
 

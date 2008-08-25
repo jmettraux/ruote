@@ -46,11 +46,10 @@
 #
 
 require 'yaml'
-require 'rexml/document'
+require 'openwfe/rexml'
 
 require 'openwfe/participants/participants'
 
-#require 'rubygems'
 require 'atom/entry' # gem 'atom-tools'
 require 'atom/collection'
 

@@ -39,7 +39,8 @@ class FlowTest63 < Test::Unit::TestCase
 
     pause_events = []
     @engine.get_expression_pool.add_observer :all do |channel, args|
-      pause_events << [ channel, args ] if [ :pause, :resume ].include?(channel)
+      pause_events << [ channel, args.wfid ] \
+        if [ :pause, :resume ].include?(channel)
     end
 
     fei = @engine.launch Test0

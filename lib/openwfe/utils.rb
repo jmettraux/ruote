@@ -37,7 +37,7 @@
 # john.mettraux@openwfe.org
 #
 
-require 'rexml/document'
+require 'openwfe/rexml'
 require 'tmpdir'
 require 'open-uri'
 

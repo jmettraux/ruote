@@ -35,7 +35,7 @@
 # "made in Japan"
 #
 
-require 'rexml/document'
+require 'openwfe/rexml'
 require 'builder'
 
 

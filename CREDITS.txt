@@ -70,6 +70,9 @@ The 'ru' was added by Jamandru Reynolds (http://geometron.net)
 
 Thanks to Tom Copeland for the great RubyForge platform !
 
+Contains the REXML fix by Michael Koziarski (lib/openwfe/rexml.rb)
+(http://www.ruby-lang.org/security/20080823rexml/rexml-expansion-fix.rb)
+
 
 Tools
 -----

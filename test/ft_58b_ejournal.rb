@@ -59,7 +59,7 @@ class FlowTest58 < Test::Unit::TestCase
     assert_equal "RuntimeError", errors.first.error_class
 
     assert_equal(
-      "exception : error inside of block participant",
+      'error inside of block participant',
       errors.first.stacktrace.split("\n").first)
 
     @engine.replay_at_error errors.first
@@ -72,7 +72,7 @@ class FlowTest58 < Test::Unit::TestCase
     assert_equal "RuntimeError", errors.first.error_class
 
     assert_equal(
-      "exception : error inside of block participant",
+      'error inside of block participant',
       errors.first.stacktrace.split("\n").first)
 
     purge_engine

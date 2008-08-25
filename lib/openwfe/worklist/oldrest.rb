@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
 # John Mettraux at openwfe.org
 #
 
-require 'rexml/element'
+require 'openwfe/rexml'
 require 'openwfe/orest/xmlcodec'
 require 'openwfe/orest/oldrestservlet'
 
