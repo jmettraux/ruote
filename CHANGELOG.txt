@@ -4,6 +4,7 @@
 
 == ruote - 0.9.19    not yet released
 
+- todo  #21680 : added timestamp to ProcessStatus
 - todo  #21664 : integrated REXML fix by Michael Koziarski
 - bug   #21649 : pause and resume were not emitting an expool event. Fixed.
 - todo  #21652 : now generating one unique 'ruote' gem

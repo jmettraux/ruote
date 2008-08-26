@@ -86,7 +86,7 @@ module OpenWFE
     attr_reader :variables
 
     #
-    # the jobs registered for that process instance in the rufus
+    # The jobs registered for that process instance in the rufus
     # scheduler used by the engine.
     #
     attr_accessor :scheduled_jobs
@@ -95,6 +95,11 @@ module OpenWFE
     # Is the process currently in pause ?
     #
     attr_accessor :paused
+
+    #
+    # When was this ProcessStatus instance generated ?
+    #
+    attr_accessor :timestamp
 
     #
     # Builds an empty ProcessStatus instance.
@@ -109,6 +114,7 @@ module OpenWFE
       @variables = nil
       @scheduled_jobs = nil
       @paused = false
+      @timestamp = Time.now
 
       @all_expressions.extend(RepresentationMixin)
     end
