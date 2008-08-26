@@ -172,5 +172,36 @@ class FlowTest59 < Test::Unit::TestCase
     purge_engine
   end
 
+  #
+  # TEST 4
+
+  def test_4
+
+    sa = @engine.register_participant('store_a', OpenWFE::HashParticipant)
+    sb = @engine.register_participant('store_b', OpenWFE::HashParticipant)
+
+    fei = launch Def59
+
+    sleep 0.350
+
+    ps0 = @engine.process_status fei.wfid
+    sleep 0.020
+    ps1 = @engine.process_status fei.wfid
+
+    assert_equal ps0.timestamp, ps1.timestamp
+
+    sa.forward(sa.first_workitem)
+
+    sleep 0.350
+
+    ps2 = @engine.process_status fei.wfid
+
+    assert_not_equal ps0.timestamp, ps2.timestamp
+
+    @engine.cancel_process fei
+
+    sleep 0.350
+  end
+
 end
 
