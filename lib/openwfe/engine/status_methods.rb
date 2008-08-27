@@ -221,6 +221,8 @@ module OpenWFE
   #
   module StatusesMixin
 
+    attr_accessor :timestamp
+
     #
     # Renders a nice, terminal oriented, representation of an
     # Engine.get_process_status() result.
@@ -337,6 +339,7 @@ module OpenWFE
       # done
 
       result.extend(StatusesMixin)
+      result.timestamp = Time.now
 
       @all_status_cache = result
         # cache and return
