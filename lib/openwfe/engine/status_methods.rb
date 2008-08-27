@@ -265,15 +265,20 @@ module OpenWFE
   # This mixin is only included by the Engine class. It contains all
   # the methods about ProcessStatus.
   #
+  # Note : it caches process status to avoid too big a load on the
+  # expression storage, the weeping mecha stays here.
+  #
   module StatusMethods
 
     def init_status_cache
 
       @status_cache = LruHash.new(30)
+      @all_status_cache = nil
 
       get_expression_pool.add_observer(:all) do |event, *args|
         fei = args.find { |a| a.is_a?(FlowExpressionId) }
         @status_cache.delete(fei.wfid) if fei
+        @all_status_cache = nil if fei or event == :launch
       end
     end
 
@@ -286,7 +291,15 @@ module OpenWFE
     # located (waiting certainly) and the errors the process currently
     # has (hopefully none).
     #
+    # the :wfid_prefix option is useful when you want to list all the process
+    # for a year (:wfid_prefix => '2007'), a month (:wfid_prefix => '200705') or
+    # a day (:wfid_prefix => '20070529').
+    #
     def process_statuses (options={})
+
+      return @all_status_cache if options == {} and @all_status_cache
+
+      init_status_cache unless @status_cache
 
       options = { :wfid_prefix => options } if options.is_a?(String)
 
@@ -311,8 +324,13 @@ module OpenWFE
 
         ps.scheduled_jobs = get_scheduler.find_jobs(ps.wfid)
 
-        result.delete(ps.wfid) if ps.expressions.size == 0
+        if ps.expressions.size == 0
           # drop result if there are no expressions
+          result.delete(ps.wfid)
+          @status_cache.delete(ps.wfid)
+        else
+          @status_cache[ps.wfid] = ps
+        end
       end
 
       #
@@ -320,7 +338,8 @@ module OpenWFE
 
       result.extend(StatusesMixin)
 
-      result
+      @all_status_cache = result
+        # cache and return
     end
 
     #
@@ -339,8 +358,7 @@ module OpenWFE
 
       wfid = extract_wfid(wfid, true)
 
-      @status_cache[wfid] = process_statuses(:wfid_prefix => wfid).values.first
-        # caches and returns the status
+      process_statuses(:wfid_prefix => wfid).values.first
     end
 
     #
