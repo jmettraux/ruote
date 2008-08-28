@@ -176,7 +176,7 @@ end
 #
 # Packaging the source
 #
-Rake::PackageTask.new('rufus', OpenWFE::OPENWFERU_VERSION) do |pkg|
+Rake::PackageTask.new('ruote', OpenWFE::OPENWFERU_VERSION) do |pkg|
 
   pkg.need_zip = true
   pkg.package_files = FileList[
@@ -269,7 +269,7 @@ task :dtest => :qtest
 # The 'long' tests
 #
 Rake::TestTask.new(:ltest) do |t|
-  t.libs << "test"
+  #t.libs << "test"
   t.test_files = FileList['test/rake_ltest.rb']
   t.verbose = true
 end
