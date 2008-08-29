@@ -167,6 +167,14 @@ module Extras
     end
 
     #
+    # Making sure last_modified is set to Time.now before each save.
+    #
+    def before_save
+
+      touch
+    end
+
+    #
     # Generates a (new) Workitem from an OpenWFEru InFlowWorkItem instance.
     #
     # This is a 'static' method :

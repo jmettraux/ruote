@@ -37,8 +37,6 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'rufus/eval'
-
 require 'openwfe/expressions/flowexpression'
 require 'openwfe/expressions/value'
 require 'openwfe/util/treechecker'
@@ -201,7 +199,8 @@ module OpenWFE
       wi = workitem
         # so that the ruby code being evaluated sees 'wi' and 'workitem'
 
-      TreeChecker.check_reval code
+      #TreeChecker.check_reval code
+      TreeChecker.check code
 
       #result = Rufus::eval_safely code, SAFETY_LEVEL, binding()
       result = eval code, binding()

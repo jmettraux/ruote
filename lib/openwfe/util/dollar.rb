@@ -206,7 +206,8 @@ module OpenWFE
         #eval(ruby_code, binding).to_s
         #eval(ruby_code).to_s
 
-        TreeChecker.check_reval ruby_code
+        #TreeChecker.check_reval ruby_code
+        TreeChecker.check ruby_code
 
         #Rufus::eval_safely(
         #  ruby_code, DSUB_SAFETY_LEVEL, binding()).to_s

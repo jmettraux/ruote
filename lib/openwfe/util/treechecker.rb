@@ -68,7 +68,9 @@ module OpenWFE
     def self.check (sruby)
 
       sexp = parse sruby
+
       #p sexp
+
       do_check sexp
     end
 
@@ -91,15 +93,14 @@ module OpenWFE
       do_check sexp
     end
 
-    #
+    #--
     # Used by RevalExpression and the dollar substitution
     #
-    def self.check_reval (sruby)
-
-      sexp = parse sruby
-
-      do_check sexp
-    end
+    #def self.check_reval (sruby)
+    #  sexp = parse sruby
+    #  do_check sexp
+    #end
+    #++
 
     private
 
