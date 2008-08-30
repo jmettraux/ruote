@@ -56,6 +56,18 @@ require 'openwfe/participants/participants'
   #   <if rtest="var % 2 == 0"> ...
   #
 
+#application_context[:use_ruby_treechecker] = true
+  #
+  # by default, external ruby code (process definitions, ${r:...} snippets)
+  # are checked before evaluation.
+  # Turning this parameter to false, will disable that check.
+  #
+  # Turn this to false only if you have absolute trust in the ruby fragment
+  # coming into the engine. But as they say in the armed forces
+  #
+  # "trusting is good, checking is better"
+  #
+
 #application_context[:dynamic_eval_allowed] = true
   #
   # by default, :dynamic_eval_allowed is not set to true, it means

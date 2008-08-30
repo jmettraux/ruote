@@ -53,6 +53,7 @@ spec = Gem::Specification.new do |s|
     'rufus-scheduler',
     'rufus-dollar',
     #'rufus-eval',
+    'rufus-treechecker',
     'rufus-mnemo',
     'rufus-verbs' ].each do |d|
 
