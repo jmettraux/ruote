@@ -44,8 +44,17 @@ require 'openwfe/service'
 
 module OpenWFE
 
+  #
+  # The TreeChecker service is used to check incoming external ruby code
+  # and raise a security error if it contains potentially evil code.
+  #
   class TreeChecker < Service
 
+    #
+    # builds the treechecker. Will return immediately (and not build)
+    # if the :use_ruby_treechecker option is set to false. By default
+    # the treechecker is used.
+    #
     def initialize (service_name, application_context)
 
       super
@@ -53,32 +62,50 @@ module OpenWFE
       (ac[:use_ruby_treechecker] == false) and return
 
       @checker = Rufus::TreeChecker.new do
+
+        exclude_fvkcall :abort
+        exclude_fvkcall :exit, :exit!
+        exclude_fvkcall :system
         exclude_eval
+        exclude_alias
+        exclude_global_vars
+        exclude_call_on File, FileUtils
+        exclude_module_tinkering
+
+        exclude_class_tinkering OpenWFE::ProcessDefinition
+          # excludes defining/opening any class except
+          # OpenWFE::ProcessDefinition
       end
+
+      @cchecker = @checker.clone # and not dup
+      @cchecker.add_rules do
+        at_root do
+          exclude_head [ :block ] # preventing 'a < b; do_sthing_evil()'
+          exclude_head [ :lasgn ] # preventing 'a = 3'
+        end
+      end
+
+      @checker.freeze
+      @cchecker.freeze
+      freeze
+        #
+        # preventing further modifications
     end
 
     def check (ruby_code)
-      return unless @checker
+
+      @checker.check(ruby_code) if @checker
     end
 
     def check_conditional (ruby_code)
-      return unless @checker
+
+      #puts
+      #puts @cchecker.to_s
+      #puts @cchecker.inspect
+
+      @cchecker.check(ruby_code) if @checker
     end
   end
 
 end
-
-    #
-    # Checks whether only single statement got passed (avoiding
-    # "1 == 2; puts 'doing evil stuff'"
-    #
-    #def self.check_conditional (sruby)
-    #  sexp = parse sruby
-    #  raise SecurityError.new("more than 1 statement") \
-    #    if sexp.first == :block
-    #  raise SecurityError.new("assignment found") \
-    #    if sexp.first == :lasgn
-    #  do_check sexp
-    #end
-
 

@@ -47,7 +47,7 @@ class SecTest < Test::Unit::TestCase
 
     assert(
       OpenWFE::grep(
-        "exception : cannot call method on 'File'",
+        "exception : .:call, .:const, :File.. is forbidden",
         "logs/openwferu.log").size > 0)
 
     def2 =
@@ -110,7 +110,7 @@ class SecTest < Test::Unit::TestCase
     assert_equal(
       2, # now and previously
       OpenWFE::grep(
-        "exception : reopening or definition of class or module not allowed",
+        'is forbidden',
         "logs/openwferu.log").size)
     #assert_equal(
     #  1,
@@ -184,9 +184,7 @@ class SecTest < Test::Unit::TestCase
 
   def test_sec_2
 
-    #assert_equal 35, Rufus::eval_safely("5*7", 4)
-    #assert_equal 35, Rufus::eval_safely("5*7", 4, binding())
-    assert_not_nil OpenWFE::TreeChecker::check("5*7")
+    assert_not_nil OpenWFE::TreeChecker.new(nil, {}).check("5*7")
   end
 
   protected

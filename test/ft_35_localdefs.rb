@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'openwfe/workitem'
 require 'openwfe/participants/storeparticipants'

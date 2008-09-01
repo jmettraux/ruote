@@ -36,7 +36,8 @@ end
   def test_0
 
     #rep = OpenWFE::SimpleExpRepresentation.from_code DEF0
-    rep = OpenWFE::DefParser.parse_string DEF0
+    #rep = OpenWFE::DefParser.parse_string DEF0
+    rep = OpenWFE::DefParser.parse DEF0
 
     assert_equal(
       "not much to say",
@@ -54,7 +55,7 @@ end
 
   def test_1
 
-    rep = OpenWFE::DefParser.parse_string DEF1
+    rep = OpenWFE::DefParser.parse DEF1
 
     assert_equal(
       "just a tiny process",

@@ -809,7 +809,8 @@ module OpenWFE
 
       param = read_uri(param) if param.is_a?(URI)
 
-      DefParser.parse param
+      #DefParser.parse param
+      get_def_parser.parse param
     end
 
     #
@@ -1074,7 +1075,7 @@ module OpenWFE
         fei = FlowExpressionId.new
 
         fei.owfe_version = OPENWFERU_VERSION
-        fei.engine_id = OpenWFE::stu get_engine.service_name
+        fei.engine_id = OpenWFE::stu get_engine.service_name.to_s
         fei.initial_engine_id = OpenWFE::stu fei.engine_id
         fei.workflow_definition_url = OpenWFE::stu url
         fei.workflow_definition_name = OpenWFE::stu flow_name

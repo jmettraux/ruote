@@ -290,12 +290,7 @@ module OpenWFE
       #
       def get_real_storage
 
-        #return @real_storage if @real_storage
-        #@real_storage =
-        #  @application_context[S_EXPRESSION_STORAGE + ".1"]
-        #@real_storage
-
-        @application_context["expressionStorage.1"]
+        @application_context[:s_expression_storage__1]
       end
   end
 

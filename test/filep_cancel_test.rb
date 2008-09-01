@@ -118,6 +118,6 @@ XML
 
     def path1 (fei)
 
-      @engine.ac[OpenWFE::S_EXPRESSION_STORAGE + ".1"].compute_file_path(fei)
+      @engine.ac[:s_expression_storage__1].compute_file_path(fei)
     end
 end

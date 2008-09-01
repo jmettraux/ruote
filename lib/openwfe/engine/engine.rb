@@ -49,6 +49,8 @@ require 'openwfe/service'
 require 'openwfe/workitem'
 require 'openwfe/util/irb'
 require 'openwfe/util/workqueue'
+require 'openwfe/util/treechecker'
+require 'openwfe/expool/parser'
 require 'openwfe/expool/wfidgen'
 require 'openwfe/expool/expressionpool'
 require 'openwfe/expool/expstorage'
@@ -97,7 +99,7 @@ module OpenWFE
     #
     def initialize (application_context={})
 
-      super S_ENGINE, application_context
+      super :s_engine, application_context
 
       @engine_name = application_context[:engine_name] || 'engine'
 
@@ -155,6 +157,16 @@ module OpenWFE
         # builds the error journal (keeping track of failures
         # in business process executions, and an opportunity to
         # fix and replay)
+
+      build_tree_checker
+        #
+        # builds the tree checker (the thing that checks incoming external
+        # ruby code for evil things)
+
+      build_def_parser
+        #
+        # builds the definition parser (the thing that turns process definitions
+        # into actual expression trees, ready for execution).
 
       linfo { "new() --- engine started --- #{self.object_id}" }
     end
@@ -562,7 +574,7 @@ module OpenWFE
       #
       def build_expression_map
 
-        @application_context[S_EXPRESSION_MAP] = ExpressionMap.new
+        @application_context[:s_expression_map] = ExpressionMap.new
           #
           # the expression map is not a Service anymore,
           # it's a simple instance (that will be reused in other
@@ -577,12 +589,12 @@ module OpenWFE
       #
       def build_wfid_generator
 
-        #init_service S_WFID_GENERATOR, DefaultWfidGenerator
-        #init_service S_WFID_GENERATOR, UuidWfidGenerator
-        init_service S_WFID_GENERATOR, KotobaWfidGenerator
+        #init_service :s_wfid_generator, DefaultWfidGenerator
+        #init_service :s_wfid_generator, UuidWfidGenerator
+        init_service :s_wfid_generator, KotobaWfidGenerator
 
         #g = FieldWfidGenerator.new(
-        #  S_WFID_GENERATOR, @application_context, "wfid")
+        #  :s_wfid_generator, @application_context, "wfid")
           #
           # showing how to initialize a FieldWfidGenerator that
           # will take as workflow instance id the value found in
@@ -595,7 +607,7 @@ module OpenWFE
       #
       def build_workqueue
 
-        init_service S_WORKQUEUE, WorkQueue
+        init_service :s_workqueue, WorkQueue
       end
 
       #
@@ -606,7 +618,7 @@ module OpenWFE
       #
       def build_expression_pool
 
-        init_service S_EXPRESSION_POOL, ExpressionPool
+        init_service :s_expression_pool, ExpressionPool
       end
 
       #
@@ -618,7 +630,7 @@ module OpenWFE
       #
       def build_expression_storage
 
-        init_service S_EXPRESSION_STORAGE, InMemoryExpressionStorage
+        init_service :s_expression_storage, InMemoryExpressionStorage
       end
 
       #
@@ -628,7 +640,7 @@ module OpenWFE
       #
       def build_participant_map
 
-        init_service S_PARTICIPANT_MAP, ParticipantMap
+        init_service :s_participant_map, ParticipantMap
       end
 
       #
@@ -637,11 +649,11 @@ module OpenWFE
       #
       def build_scheduler
 
-        @application_context[S_SCHEDULER] = Rufus::Scheduler.start_new(
+        @application_context[:s_scheduler] = Rufus::Scheduler.start_new(
           :thread_name =>
           "rufus scheduler for Ruote (engine #{self.object_id})")
 
-        @application_context[S_SCHEDULER].extend Logging
+        @application_context[:s_scheduler].extend Logging
 
         linfo { "build_scheduler() version is #{Rufus::Scheduler::VERSION}" }
       end
@@ -652,7 +664,24 @@ module OpenWFE
       #
       def build_error_journal
 
-        init_service S_ERROR_JOURNAL, InMemoryErrorJournal
+        init_service :s_error_journal, InMemoryErrorJournal
+      end
+
+      #
+      # builds the tree checker (see lib/openwfe/util/treechecker.rb)
+      #
+      def build_tree_checker
+
+        init_service :s_tree_checker, OpenWFE::TreeChecker
+      end
+
+      #
+      # builds the service that turn process definitions into runnable
+      # expression trees...
+      #
+      def build_def_parser
+
+        init_service :s_def_parser, DefParser
       end
 
       #

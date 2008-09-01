@@ -37,8 +37,6 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'rufus/eval' # gem 'rufus-eval'
-
 require 'openwfe/util/treechecker'
 require 'openwfe/utils'
 require 'openwfe/expressions/raw'
@@ -223,17 +221,14 @@ module OpenWFE
     # Turns a String containing a ProcessDefinition ...
     #
     def self.eval_ruby_process_definition (code)
-    #def self.eval_ruby_process_definition (code, safety_level=2)
 
-      #puts "\nin:\n#{code}\n"
-
-      TreeChecker.check code
+      #TreeChecker.check code
         #
         # checks for 'illicit' ruby code before the eval
+        # (now done in the DefParser)
 
       code, is_wrapped = wrap_code code
 
-      #o = Rufus::eval_safely code, safety_level, binding()
       o = eval code, binding()
 
       o = extract_class(code) \
@@ -243,13 +238,8 @@ module OpenWFE
           # grab the first process definition class found
           # in the given code
 
-      #return o.do_make \
-      #  if o.is_a?(ProcessDefinition) or o.is_a?(Class)
-      #o
-
       result = o.do_make
 
-      #return result.first_child if is_wrapped
       return result.last.first if is_wrapped
 
       result

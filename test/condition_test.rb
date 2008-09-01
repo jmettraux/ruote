@@ -13,17 +13,28 @@ require 'test/unit'
 
 require 'rutest_utils'
 
+require 'openwfe/rudefinitions'
+require 'openwfe/expressions/rprocdef'
 require 'openwfe/expressions/condition'
+
 
 #
 # testing expression conditions
 #
-
 class ConditionTest < Test::Unit::TestCase
+
   include OpenWFE::ConditionMixin
+  include OpenWFE::OwfeServiceLocator
+
 
   def setup
+
     @debug = false
+
+    @application_context = {}
+    @application_context = {
+      :s_tree_checker => OpenWFE::TreeChecker.new(nil, @application_context)
+    }
   end
 
   #def teardown

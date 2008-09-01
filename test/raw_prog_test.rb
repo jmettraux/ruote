@@ -165,8 +165,7 @@ end""".strip
       CODE_DEF3,
       OpenWFE::ExpressionTree.to_code_s(TestDefinition3.do_make))
 
-    #r = OpenWFE::SimpleExpRepresentation.from_xml(s)
-    r = OpenWFE::DefParser.parse_xml s
+    r = OpenWFE::DefParser.parse s
 
     assert_equal CODE_DEF3, OpenWFE::ExpressionTree.to_code_s(r)
   end

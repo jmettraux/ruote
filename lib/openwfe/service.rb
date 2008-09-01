@@ -67,7 +67,7 @@ module OpenWFE
       @service_name = service_name
       @application_context = application_context
 
-      @application_context[@service_name.to_s] = self \
+      @application_context[@service_name] = self \
         if @service_name and @application_context
     end
 

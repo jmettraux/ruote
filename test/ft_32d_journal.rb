@@ -37,12 +37,11 @@ class FlowTest32d < Test::Unit::TestCase
     end
   end
 
-  #def xxxx_0
   def test_0
 
     @engine.application_context[:keep_journals] = true
 
-    @engine.init_service "journal", Journal
+    @engine.init_service :s_journal, Journal
 
     @engine.register_participant(:alpha) do |wi|
       @tracer << "alpha\n"

@@ -37,8 +37,6 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'rufus/eval' # gem 'rufus-eval'
-
 require 'openwfe/util/treechecker'
 
 
@@ -233,7 +231,8 @@ module OpenWFE
       #
       def do_eval (s, workitem)
 
-        TreeChecker.check_conditional s
+        #TreeChecker.check_conditional s
+        get_tree_checker.check_conditional s
 
         # ok, green for eval
 

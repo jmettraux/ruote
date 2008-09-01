@@ -7,7 +7,7 @@
 # Sun Oct 29 16:18:25 JST 2006
 #
 
-#require "rubygems"
+require "rubygems"
 #require "thread"
 #require "fastthread"
 
@@ -33,7 +33,7 @@ class WfidTest < Test::Unit::TestCase
 
   def test_wfid_0
 
-    gen = OpenWFE::DefaultWfidGenerator.new("wfidgen", nil)
+    gen = OpenWFE::DefaultWfidGenerator.new('wfidgen', nil)
 
     thread = nil
 
@@ -71,7 +71,7 @@ class WfidTest < Test::Unit::TestCase
 
   def test_wfid_1
 
-    gen = OpenWFE::DefaultWfidGenerator.new("wfidgen", nil)
+    gen = OpenWFE::DefaultWfidGenerator.new('wfidgen', nil)
 
     a = %w{ 1 2 3 4 5 }
     s = a.join
@@ -84,7 +84,7 @@ class WfidTest < Test::Unit::TestCase
 
   def test_wfid_2
 
-    gen = OpenWFE::UuidWfidGenerator.new("wfidgen", nil)
+    gen = OpenWFE::UuidWfidGenerator.new('wfidgen', nil)
 
     id = gen.generate
 
@@ -96,7 +96,7 @@ class WfidTest < Test::Unit::TestCase
 
   def test_kotoba_wfid
 
-    gen = OpenWFE::KotobaWfidGenerator.new("wfidgen", nil)
+    gen = OpenWFE::KotobaWfidGenerator.new('wfidgen', nil)
 
     t = Time.now.gmtime
     kid = gen.generate
@@ -139,8 +139,8 @@ class WfidTest < Test::Unit::TestCase
 
     def build_wfid_generator
 
-      g = FieldWfidGenerator.new(
-        S_WFID_GENERATOR, @application_context, "wfid")
+      OpenWFE::FieldWfidGenerator.new(
+        :s_wfid_generator, @application_context, 'wfid')
     end
   end
 
@@ -155,17 +155,17 @@ class WfidTest < Test::Unit::TestCase
     eng = MyEngine.new
 
     li = OpenWFE::LaunchItem.new MyProcDef
-    li.wfid = "toto"
+    li.wfid = 'toto'
     fei = eng.launch(li)
 
-    assert_equal fei.wfid, "toto"
+    assert_equal fei.wfid, 'toto'
 
     li = OpenWFE::LaunchItem.new(MyProcDef)
     fei = eng.launch(li)
 
     #puts fei.wfid
 
-    assert_not_equal fei.wfid, "toto"
+    assert_not_equal fei.wfid, 'toto'
 
     t = OpenWFE::KotobaWfidGenerator.to_time(fei.wfid)
 

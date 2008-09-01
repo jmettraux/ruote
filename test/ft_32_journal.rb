@@ -40,7 +40,7 @@ class FlowTest32 < Test::Unit::TestCase
 
     @engine.application_context[:keep_journals] = true
 
-    @engine.init_service "journal", OpenWFE::Journal
+    @engine.init_service :s_journal, OpenWFE::Journal
 
     @engine.register_participant(:alpha) do |wi|
       @tracer << "alpha\n"
@@ -51,7 +51,8 @@ class FlowTest32 < Test::Unit::TestCase
 
     result = dotest(TestDefinition0, "alpha\nbravo")
 
-    journal_service = @engine.application_context["journal"]
+    #journal_service = @engine.application_context[:s_journal]
+    journal_service = @engine.get_journal
 
     fn = journal_service.donedir + "/" + result[2].wfid + ".journal"
 

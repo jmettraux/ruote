@@ -59,7 +59,7 @@ module OpenWFE::Extras
       #
       def build_expression_storage
 
-        init_service OpenWFE::S_EXPRESSION_STORAGE, DbExpressionStorage
+        init_service :s_expression_storage, DbExpressionStorage
       end
 
       #
@@ -67,7 +67,7 @@ module OpenWFE::Extras
       #
       def build_error_journal
 
-        init_service OpenWFE::S_ERROR_JOURNAL, DbErrorJournal
+        init_service :s_error_journal, DbErrorJournal
       end
   end
 
@@ -81,20 +81,14 @@ module OpenWFE::Extras
 
     protected
 
-      def build_expression_storage ()
+      def build_expression_storage
 
         @application_context[:expression_cache_size] ||= 1000
 
-        init_service(
-          OpenWFE::S_EXPRESSION_STORAGE,
-          OpenWFE::CacheExpressionStorage)
+        init_service(:s_expression_storage, OpenWFE::CacheExpressionStorage)
 
-        #init_service(
-        #  S_EXPRESSION_STORAGE + ".1",
-        #  DbExpressionStorage)
-        init_service(
-          OpenWFE::S_EXPRESSION_STORAGE + ".1",
-          ThreadedDbExpressionStorage)
+        #init_service(:s_expression_storage__1, DbExpressionStorage)
+        init_service(:s_expression_storage__1, ThreadedDbExpressionStorage)
       end
   end
 end

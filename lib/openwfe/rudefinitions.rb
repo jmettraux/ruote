@@ -46,17 +46,7 @@ module OpenWFE
   #
   # service names
 
-  S_LOGGER = :logger
-
-  S_ENGINE = 'engine'
-  S_EXPRESSION_MAP = 'expressionMap'
-  S_WFID_GENERATOR = 'wfidGenerator'
-  S_WORKQUEUE = 'workQueue'
-  S_EXPRESSION_POOL = 'expressionPool'
-  S_EXPRESSION_STORAGE = 'expressionStorage'
-  S_PARTICIPANT_MAP = 'participantMap'
-  S_SCHEDULER = 'scheduler'
-  S_ERROR_JOURNAL = 'errorJournal'
+  #S_LOGGER = :logger
 
   #
   # some special expression names
@@ -75,34 +65,40 @@ module OpenWFE
   module OwfeServiceLocator
 
     def get_engine
-      @application_context[S_ENGINE]
+      @application_context[:s_engine]
     end
     def get_scheduler
-      @application_context[S_SCHEDULER]
+      @application_context[:s_scheduler]
     end
     def get_expression_map
-      @application_context[S_EXPRESSION_MAP]
+      @application_context[:s_expression_map]
     end
     def get_wfid_generator
-      @application_context[S_WFID_GENERATOR]
+      @application_context[:s_wfid_generator]
     end
     def get_workqueue
-      @application_context[S_WORKQUEUE]
+      @application_context[:s_workqueue]
     end
     def get_expool
-      @application_context[S_EXPRESSION_POOL]
+      @application_context[:s_expression_pool]
     end
     def get_expression_pool
-      @application_context[S_EXPRESSION_POOL]
+      @application_context[:s_expression_pool]
     end
     def get_expression_storage
-      @application_context[S_EXPRESSION_STORAGE]
+      @application_context[:s_expression_storage]
     end
     def get_participant_map
-      @application_context[S_PARTICIPANT_MAP]
+      @application_context[:s_participant_map]
     end
     def get_error_journal
-      @application_context[S_ERROR_JOURNAL]
+      @application_context[:s_error_journal]
+    end
+    def get_tree_checker
+      @application_context[:s_tree_checker]
+    end
+    def get_def_parser
+      @application_context[:s_def_parser]
     end
 
     #
@@ -110,7 +106,7 @@ module OpenWFE
     # journal service available).
     #
     def get_journal
-      @application_context['journal']
+      @application_context[:s_journal]
     end
 
     #
@@ -120,7 +116,7 @@ module OpenWFE
     def get_expression_storages
 
       @application_context.inject([]) do |r, (k, v)|
-        r << v if OpenWFE::starts_with(k.to_s, S_EXPRESSION_STORAGE)
+        r << v if k.to_s.match(/^s_expression_storage/)
         r
       end
     end

@@ -38,6 +38,9 @@
 #
 
 require 'openwfe/rexml'
+require 'openwfe/service'
+require 'openwfe/contextual'
+require 'openwfe/util/treechecker'
 require 'openwfe/expressions/rprocdef'
 
 
@@ -48,13 +51,38 @@ module OpenWFE
   #
   # Currently supports XML, Ruby process pdefinitions, YAML and JSON.
   #
-  module DefParser
+  class DefParser < Service
+    include OwfeServiceLocator
+
+    #
+    # a static version of the parse method,
+    # by default checks the tree if it's Ruby code that is passed.
+    #
+    def self.parse (pdef, use_ruby_treechecker=true)
+
+      #
+      # preparing a small ad-hoc env (app context) for this parsing
+
+      ac = { :use_ruby_treechecker => use_ruby_treechecker }
+
+      ac[:s_tree_checker] = TreeChecker.new(:s_tree_checker, ac)
+      ac[:s_def_parser] = DefParser.new(:s_def_parser, ac)
+
+      ac[:s_def_parser].parse(pdef)
+    end
+
+    #
+    # the classical initialize() of Ruote services
+    #
+    def initialize (service_name, application_context)
+      super
+    end
 
     #
     # in : a process pdefinition
     # out : a tree [ name, attributes, children ]
     #
-    def self.parse (pdef)
+    def parse (pdef)
 
       return pdef \
         if pdef.is_a?(Array)
@@ -72,18 +100,22 @@ module OpenWFE
       raise "cannot handle pdefinition of class #{pdef.class.name}"
     end
 
-    def self.parse_string (pdef)
+    def parse_string (pdef)
 
       pdef = pdef.strip
 
       return parse_xml(pdef) \
-        if pdef[0, 1] == "<"
+        if pdef[0, 1] == '<'
 
       return YAML.load(s) \
         if pdef.match(/^--- ./)
 
       #
       # else it's some ruby code to eval
+
+      get_tree_checker.check pdef
+
+      # green for eval...
 
       ProcessDefinition.eval_ruby_process_definition pdef
     end
@@ -92,7 +124,7 @@ module OpenWFE
     # The process definition is expressed as XML, turn that into
     # an expression tree.
     #
-    def self.parse_xml (xml)
+    def parse_xml (xml)
 
       xml = REXML::Document.new(xml) \
         if xml.is_a?(String)
@@ -111,16 +143,12 @@ module OpenWFE
 
       return nil if xml.is_a?(REXML::Comment)
 
-      # xml element thus...
+      # then it's a REXML::Element
 
-      name = xml.name
-
-      attributes = xml.attributes.inject({}) do |r, (k, v)|
-        r[k] = v
-        r
-      end
-
-      rep = [ name, attributes, [] ]
+      rep = [
+        xml.name,
+        xml.attributes.inject({}) { |r, (k, v)| r[k] = v; r },
+        [] ]
 
       xml.children.each do |c|
 

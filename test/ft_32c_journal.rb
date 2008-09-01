@@ -41,7 +41,7 @@ class FlowTest32c < Test::Unit::TestCase
 
     @engine.application_context[:keep_journals] = true
 
-    @engine.init_service "journal", OpenWFE::Journal
+    @engine.init_service :s_journal, OpenWFE::Journal
 
     @engine.register_participant(:alpha) do |wi|
       @tracer << "alpha\n"

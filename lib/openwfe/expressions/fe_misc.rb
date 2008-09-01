@@ -134,8 +134,6 @@ module OpenWFE
   # Evals some Ruby code contained within the process definition
   # or within the workitem.
   #
-  # The code is evaluated at a SAFE level of 3.
-  #
   # If the :ruby_eval_allowed isn't set to true
   # (<tt>engine.application_context[:ruby_eval_allowed] = true</tt>), this
   # expression will throw an exception at apply.
@@ -178,15 +176,6 @@ module OpenWFE
 
     names :reval
 
-    #--
-    # See for an explanation on Ruby safety levels :
-    # http://www.rubycentral.com/book/taint.html
-    #
-    # 'reval' is entitled a safe level of 3.
-    #
-    #SAFETY_LEVEL = 3
-    #++
-
 
     def reply (workitem)
 
@@ -199,14 +188,13 @@ module OpenWFE
       wi = workitem
         # so that the ruby code being evaluated sees 'wi' and 'workitem'
 
-      #TreeChecker.check_reval code
-      TreeChecker.check code
+      #TreeChecker.check code
+      get_tree_checker.check code
 
-      #result = Rufus::eval_safely code, SAFETY_LEVEL, binding()
       result = eval code, binding()
 
       workitem.set_result(result) \
-        if result != nil  # 'false' is a valid result
+        if result != nil  # as 'false' is a valid result
 
       reply_to_parent workitem
     end

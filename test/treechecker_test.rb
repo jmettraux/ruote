@@ -12,11 +12,12 @@ require 'rubygems'
 require 'test/unit'
 
 require 'openwfe/util/treechecker'
+require 'openwfe/expressions/rprocdef'
+
 
 #
 # testing expression conditions
 #
-
 class TreeCheckerTest < Test::Unit::TestCase
 
   #def setup
@@ -54,6 +55,7 @@ class TreeCheckerTest < Test::Unit::TestCase
     assert_safe :check_conditional, "1 == 1"
     assert_unsafe :check_conditional, "puts 'ok'; 1 == 1"
     assert_unsafe :check_conditional, "exit"
+
     assert_unsafe :check_conditional, "a = 2"
   end
 
@@ -81,10 +83,17 @@ class TreeCheckerTest < Test::Unit::TestCase
 
       begin
 
-        OpenWFE::TreeChecker.send check_method, code
+        tc = OpenWFE::TreeChecker.new(nil, {})
+        #tc.instance_variable_get(:@checker).ptree code
+        #puts "\n==="
+        #puts tc.instance_variable_get(:@checker)
+        #puts "==="
+        #puts tc.instance_variable_get(:@cchecker)
+        tc.send check_method, code
 
       rescue Exception => e
-        #puts e
+        #puts "caught..."
+        #puts ":: #{e}"
         #puts e.backtrace
         return false
       end
