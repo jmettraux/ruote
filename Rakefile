@@ -270,7 +270,7 @@ task :dtest => :qtest
 # The 'long' tests
 #
 Rake::TestTask.new(:ltest) do |t|
-  #t.libs << "test"
+  t.libs << "test"
   t.test_files = FileList['test/rake_ltest.rb']
   t.verbose = true
 end

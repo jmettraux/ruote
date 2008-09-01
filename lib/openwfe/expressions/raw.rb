@@ -481,8 +481,7 @@ module OpenWFE
 
     def raw_representation
 
-      #SimpleExpRepresentation.from_xml @raw_representation_s
-      DefParser.parse_xml @raw_representation_s
+      get_def_parser.parse @raw_representation_s
     end
   end
 
