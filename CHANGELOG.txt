@@ -4,6 +4,7 @@
 
 == ruote - 0.9.19    not yet released
 
+- todo  #21716 : added option switch :use_ruby_treechecker, on by default
 - todo  #21722 : replaced TreeChecker by the rufus-treechecker gem
 - todo  #21646 : integrated a process status cache
 - todo  #21680 : added timestamp to ProcessStatus

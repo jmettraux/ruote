@@ -7,6 +7,8 @@
 # Thu Nov  1 15:21:34 JST 2007
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 
 require 'flowtestbase'

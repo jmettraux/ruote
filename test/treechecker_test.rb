@@ -67,6 +67,14 @@ class TreeCheckerTest < Test::Unit::TestCase
     assert_unsafe :check, "class << e\nend"
   end
 
+  def test_3
+    assert_unsafe :check, "trap"
+    assert_unsafe :check, "Kernel.trap"
+    assert_unsafe :check, "k = Kernel; k.trap"
+    assert_unsafe :check, "k = Kernel; k.trap(x)"
+    assert_unsafe :check, "k = ::Kernel; k.trap(x)"
+  end
+
   protected
 
     def assert_safe (check_method, code)

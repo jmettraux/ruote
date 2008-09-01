@@ -37,9 +37,10 @@
 # John Mettraux at openwfe.org
 #
 
-require 'rufus/treechecker' #gem "rufus-treechecker"
-
 require 'openwfe/service'
+
+  require 'rufus/treechecker' #gem "rufus-treechecker"
+    # only require if needed
 
 
 module OpenWFE
@@ -63,18 +64,31 @@ module OpenWFE
 
       @checker = Rufus::TreeChecker.new do
 
-        exclude_fvkcall :abort
-        exclude_fvkcall :exit, :exit!
-        exclude_fvkcall :system
-        exclude_eval
-        exclude_alias
-        exclude_global_vars
-        exclude_call_on File, FileUtils
-        exclude_module_tinkering
+        exclude_fvccall :abort, :exit, :exit!
+        exclude_fvccall :system, :fork, :syscall, :trap, :require, :load
+
+        #exclude_call_to :class
+        exclude_fvcall :private, :public, :protected
+
+        #exclude_def               # no method definition
+        exclude_eval              # no eval, module_eval or instance_eval
+        exclude_backquotes        # no `rm -fR the/kitchen/sink`
+        exclude_alias             # no alias or aliast_method
+        exclude_global_vars       # $vars are off limits
+        exclude_module_tinkering  # no module opening
+        exclude_raise             # no raise or throw
+
+        exclude_rebinding Kernel # no 'k = Kernel'
+
+        exclude_access_to(
+          IO, File, FileUtils, Process, Signal, Thread, ThreadGroup)
 
         exclude_class_tinkering OpenWFE::ProcessDefinition
+          #
           # excludes defining/opening any class except
           # OpenWFE::ProcessDefinition
+
+        exclude_call_to :instance_variable_get, :instance_variable_set
       end
 
       @cchecker = @checker.clone # and not dup
@@ -98,10 +112,6 @@ module OpenWFE
     end
 
     def check_conditional (ruby_code)
-
-      #puts
-      #puts @cchecker.to_s
-      #puts @cchecker.inspect
 
       @cchecker.check(ruby_code) if @checker
     end
