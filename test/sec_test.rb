@@ -47,7 +47,7 @@ class SecTest < Test::Unit::TestCase
 
     assert(
       OpenWFE::grep(
-        "exception : .:call, .:const, :File.. is forbidden",
+        "exception : .:call, .:const, :File.. is excluded",
         "logs/openwferu.log").size > 0)
 
     def2 =

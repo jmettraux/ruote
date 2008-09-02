@@ -179,7 +179,7 @@ module OpenWFE
 
     def reply (workitem)
 
-      raise "evaluation of ruby code is not allowed" \
+      raise 'evaluation of ruby code is not allowed' \
         if @application_context[:ruby_eval_allowed] != true
 
       code = lookup_vf_attribute(workitem, 'code') || workitem.get_result
@@ -188,7 +188,6 @@ module OpenWFE
       wi = workitem
         # so that the ruby code being evaluated sees 'wi' and 'workitem'
 
-      #TreeChecker.check code
       get_tree_checker.check code
 
       result = eval code, binding()

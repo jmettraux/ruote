@@ -38,9 +38,7 @@
 #
 
 require 'openwfe/service'
-
-  require 'rufus/treechecker' #gem "rufus-treechecker"
-    # only require if needed
+require 'rufus/treechecker'
 
 
 module OpenWFE
@@ -83,7 +81,7 @@ module OpenWFE
         exclude_access_to(
           IO, File, FileUtils, Process, Signal, Thread, ThreadGroup)
 
-        exclude_class_tinkering OpenWFE::ProcessDefinition
+        exclude_class_tinkering :except => OpenWFE::ProcessDefinition
           #
           # excludes defining/opening any class except
           # OpenWFE::ProcessDefinition
