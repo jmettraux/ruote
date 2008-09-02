@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -31,7 +31,7 @@ class FlowTest38b < Test::Unit::TestCase
 
   class TestTag4 < OpenWFE::ProcessDefinition
     sequence do
-      sequence :tag => "seq0" do
+      sequence :tag => 'seq0' do
         peekin
       end
       peekout
@@ -50,7 +50,7 @@ class FlowTest38b < Test::Unit::TestCase
 
       assert_equal 2, @engine.get_variables(fei.wfid).size
       assert_equal 1, @engine.process_status(fei.wfid).tags.size
-      assert_equal "seq0", @engine.process_status(fei.wfid).tags.to_s
+      assert_equal 'seq0', @engine.process_status(fei.wfid).tags.to_s
       assert_not_nil @engine.get_variables(fei.wfid)["seq0"]
 
       @tracer << "peekin\n"
@@ -79,8 +79,8 @@ class FlowTest38b < Test::Unit::TestCase
   class TestTag6 < OpenWFE::ProcessDefinition
 
     concurrence do
-      peek :tag => "A"
-      peek :tag => "B"
+      peek :tag => 'A'
+      peek :tag => 'B'
     end
   end
 
@@ -105,12 +105,12 @@ class FlowTest38b < Test::Unit::TestCase
     concurrence do
       sequence do
         participant0
-        participant1 :tag => "milestone"
+        participant1 :tag => 'milestone'
         participant2
       end
       sequence do
         #wait :until => "'${milestone}' != ''", :frequency => "300"
-        wait :until => "${milestone} is set", :frequency => "300"
+        wait :until => '${milestone} is set', :frequency => '300'
         participant3
       end
     end

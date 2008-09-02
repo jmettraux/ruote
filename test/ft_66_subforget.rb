@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -24,14 +24,14 @@ class FlowTest66 < Test::Unit::TestCase
   #
   # TEST 0
 
-  class Test0 < ProcessDefinition
+  class Test0 < OpenWFE::ProcessDefinition
     sequence do
       subproc :forget => true
-      _print "main done."
+      _print 'main done.'
     end
     process_definition :name => :subproc do
       sequence do
-        _print "sub done."
+        _print 'sub done.'
       end
     end
   end
@@ -47,14 +47,14 @@ class FlowTest66 < Test::Unit::TestCase
   #
   # TEST 1
 
-  class Test1 < ProcessDefinition
+  class Test1 < OpenWFE::ProcessDefinition
     sequence do
       subproc
-      _print "main done."
+      _print 'main done.'
     end
     process_definition :name => :subproc do
       sequence do
-        _print "sub done."
+        _print 'sub done.'
       end
     end
   end

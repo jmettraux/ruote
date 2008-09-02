@@ -11,7 +11,6 @@ require 'openwfe/participants/participant'
 
 require 'openwfe/extras/participants/activeparticipants'
 
-#include OpenWFE
 #Thread.abort_on_exception = true
 
 

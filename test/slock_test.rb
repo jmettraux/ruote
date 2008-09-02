@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -30,7 +30,7 @@ class StoreLockTest < Test::Unit::TestCase
 
   def test_0
 
-    store = StoreWithLocks.new(HashParticipant)
+    store = OpenWFE::StoreWithLocks.new(OpenWFE::HashParticipant)
 
     wi0 = MockItem.new("fei")
 
@@ -58,8 +58,8 @@ class StoreLockTest < Test::Unit::TestCase
 
   def test_1
 
-    store = StoreWithLocks.new(
-      HashParticipant,
+    store = OpenWFE::StoreWithLocks.new(
+      OpenWFE::HashParticipant,
       nil,
       :lock_max_age => "100")
 

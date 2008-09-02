@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -24,12 +24,12 @@ class FlowTest68 < Test::Unit::TestCase
   #
   # TEST 0
 
-  class Test0 < ProcessDefinition
+  class Test0 < OpenWFE::ProcessDefinition
     sequence do
       alpha :id => 0
-      alpha :id => 1, :if => "${r:$count > 1}"
+      alpha :id => 1, :if => '${r:$count > 1}'
       alpha :id => 2
-      alpha :id => 3, :if => "${r:$count > 1}"
+      alpha :id => 3, :if => '${r:$count > 1}'
     end
   end
 
@@ -50,14 +50,14 @@ class FlowTest68 < Test::Unit::TestCase
   #
   # TEST 1
 
-  class Test1 < ProcessDefinition
+  class Test1 < OpenWFE::ProcessDefinition
     sequence do
       subp :id => 0
-      subp :id => 1, :unless => "true"
+      subp :id => 1, :unless => 'true'
       subp :id => 2
     end
-    process_definition :name => "subp" do
-      _print "${id}"
+    process_definition :name => 'subp' do
+      _print '${id}'
     end
   end
 

@@ -1,6 +1,8 @@
 
 require 'test/unit'
 
+require 'rubygems'
+
 require 'openwfe/engine/engine'
 require 'openwfe/expool/expstorage'
 require 'openwfe/expool/yamlexpstorage'
@@ -9,7 +11,7 @@ require 'openwfe/expool/yamlexpstorage'
 class FilePersistenceTest < Test::Unit::TestCase
 
   def setup
-    @engine = Engine.new
+    @engine = OpenWFE::Engine.new
   end
 
   def teardown
@@ -69,6 +71,7 @@ class FilePersistenceTest < Test::Unit::TestCase
 
   #
   # test UTF-8 data persistence
+  #
   def test_utf8_with_file
 
     workflow_definition_name = "みんなにARIGATOU★☆に関する最新の情報公開"
@@ -82,7 +85,8 @@ class FilePersistenceTest < Test::Unit::TestCase
     #puts fei.workflow_definition_name
     #puts loaded.fei.workflow_definition_name
 
-    assert_equal loaded.fei.workflow_definition_name, fei.workflow_definition_name
+    assert_equal(
+      loaded.fei.workflow_definition_name, fei.workflow_definition_name)
   end
 
 
@@ -97,10 +101,10 @@ class FilePersistenceTest < Test::Unit::TestCase
         fe : \
         OpenWFE::RawExpression.new_raw(fei, 'parent', 'env', nil, nil)
 
-      assert \
-        (not fes.has_key?(fei)),
+      assert(
+        !fes.has_key?(fei),
         "they key is present in the file system. "+
-        "Maybe a previous test did not delete the "
+        "Maybe a previous test did not delete the ") # なに ?
 
       fes[fei] = raw
       assert fes.has_key?(fei)
@@ -109,26 +113,23 @@ class FilePersistenceTest < Test::Unit::TestCase
 
       fes.delete(fei)
       assert !(fes.has_key?(fei))
-      return loaded
+
+      loaded
     end
 
     def new_fei (definition_name=nil)
 
-      fei = OpenWFE::FlowExpressionId.new()
-      fei.owfe_version = OPENWFERU_VERSION
+      fei = OpenWFE::FlowExpressionId.new
+      fei.owfe_version = OpenWFE::OPENWFERU_VERSION
       fei.engine_id = 'this'
       fei.initial_engine_id = 'that'
       fei.workflow_definition_url = 'http://test/test.xml'
-      fei.workflow_definition_name = if definition_name == nil
-        'test'
-      else
-         definition_name
-      end
+      fei.workflow_definition_name = definition_name || 'test'
       fei.workflow_definition_revision = '1.0'
       fei.workflow_instance_id = @engine.get_wfid_generator.generate
       fei.expression_name = 'do-test'
       fei.expression_id = '0.0'
-      return fei
+      fei
     end
 
 end

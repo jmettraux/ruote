@@ -12,8 +12,6 @@
 require 'flowtestbase'
 require 'openwfe/def'
 
-include OpenWFE
-
 
 class FlowTest26c < Test::Unit::TestCase
   include FlowTestBase

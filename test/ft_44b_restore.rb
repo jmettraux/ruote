@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFEru
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -203,7 +203,7 @@ class FlowTest44b < Test::Unit::TestCase
 
   def test_8
 
-    li = LaunchItem.new Test44b8
+    li = OpenWFE::LaunchItem.new Test44b8
     li.approved = true
     dotest li, "Zigue (34) true"
   end

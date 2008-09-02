@@ -1,5 +1,6 @@
+
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -20,7 +21,7 @@ class HParticipantTest < Test::Unit::TestCase
 
   def setup
 
-    @engine = Engine.new({ :definition_in_launchitem_allowed => true })
+    @engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
   end
 
   def teardown
@@ -37,8 +38,8 @@ class HParticipantTest < Test::Unit::TestCase
 
   def test_hp_0
 
-    @hpAlice = HashParticipant.new
-    @hpBob = HashParticipant.new
+    @hpAlice = OpenWFE::HashParticipant.new
+    @hpBob = OpenWFE::HashParticipant.new
 
     @engine.register_participant :alice, @hpAlice
     @engine.register_participant :bob, @hpBob
@@ -52,12 +53,15 @@ class HParticipantTest < Test::Unit::TestCase
     FileUtils.rm_rf "work" if File.exist? "./work"
 
     @engine.application_context[:work_directory] = "./work"
-    @hpAlice = YamlParticipant.new("alice", @engine.application_context)
-    #@hpBob = YamlParticipant.new("bob", @engine.application_context)
+
+    @hpAlice = OpenWFE::YamlParticipant.new(
+      "alice", @engine.application_context)
+    #@hpBob = OpenWFE::YamlParticipant.new(
+    #  "bob", @engine.application_context)
 
     @engine.register_participant(:alice, @hpAlice)
     #@engine.register_participant(:bob, @hpBob)
-    @hpBob = @engine.register_participant(:bob, YamlParticipant)
+    @hpBob = @engine.register_participant(:bob, OpenWFE::YamlParticipant)
 
     do_test
   end
@@ -67,7 +71,7 @@ class HParticipantTest < Test::Unit::TestCase
     id = @engine.launch HpDefinition0
 
     assert \
-      id.kind_of?(FlowExpressionId),
+      id.is_a?(OpenWFE::FlowExpressionId),
       "engine.launch() doesn't return an instance of FlowExpressionId "+
       "but of #{id.class}"
 
@@ -112,8 +116,8 @@ class HParticipantTest < Test::Unit::TestCase
 
   def test_d_0
 
-    @hpAlice = HashParticipant.new
-    @hpBob = HashParticipant.new
+    @hpAlice = OpenWFE::HashParticipant.new
+    @hpBob = OpenWFE::HashParticipant.new
 
     @engine.register_participant :alice, @hpAlice
     @engine.register_participant :bob, @hpBob

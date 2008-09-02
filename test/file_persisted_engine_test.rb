@@ -54,7 +54,7 @@ class FilePersistedEngineTest < Test::Unit::TestCase
   workdir = "test_custom_working_directory-#{Time.now.to_i}-#{rand(99999)}"
   FileUtils.rm_rf(workdir) if File.exists?(workdir)
 
-  engine = FilePersistedEngine.new(:work_directory => workdir)
+  engine = OpenWFE::FilePersistedEngine.new(:work_directory => workdir)
 
   assert File.exists?(workdir),
     "Custom working directory '#{workdir}' was not created by #{engine.class} during testing!"

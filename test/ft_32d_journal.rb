@@ -1,18 +1,17 @@
 
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
-
 require 'flowtestbase'
-
 require 'openwfe/expool/journal'
-
 
 
 class FlowTest32d < Test::Unit::TestCase
@@ -29,7 +28,7 @@ class FlowTest32d < Test::Unit::TestCase
   #
   # TEST 0
 
-  class Test0 < ProcessDefinition
+  class Test0 < OpenWFE::ProcessDefinition
     sequence do
       participant :alpha
       participant :nada
@@ -41,7 +40,7 @@ class FlowTest32d < Test::Unit::TestCase
 
     @engine.application_context[:keep_journals] = true
 
-    @engine.init_service :s_journal, Journal
+    @engine.init_service :s_journal, OpenWFE::Journal
 
     @engine.register_participant(:alpha) do |wi|
       @tracer << "alpha\n"
@@ -51,8 +50,7 @@ class FlowTest32d < Test::Unit::TestCase
       public :flush_buckets
     end
 
-    li = LaunchItem.new Test0
-    fei = launch li
+    fei = launch Test0
 
     sleep 0.500
 

@@ -30,8 +30,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
-# $Id: workitem.rb 3556 2006-11-13 04:15:52Z jmettraux $
-#
 
 #
 # Made in Japan
@@ -41,8 +39,6 @@
 
 require 'openwfe/workitem'
 require 'openwfe/engine/engine'
-
-#include OpenWFE
 
 
 module OpenWFE

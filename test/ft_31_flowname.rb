@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -24,13 +24,12 @@ class FlowTest31 < Test::Unit::TestCase
   #
   # TEST 0
 
-  class TestDefinition0 < ProcessDefinition
+  class TestDefinition0 < OpenWFE::ProcessDefinition
     _process_definition :name => "31 thirty one", :revision => "0 0" do
       _print "ok"
     end
   end
 
-  #def xxxx_flowname_0
   def test_flowname_0
 
     dotest(TestDefinition0, "ok")

@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -24,7 +24,7 @@ class FlowTest36 < Test::Unit::TestCase
   #
   # TEST 0
 
-  class TestSubProcId0 < ProcessDefinition
+  class TestSubProcId0 < OpenWFE::ProcessDefinition
     concurrence do
       subproc
       subproc
@@ -37,9 +37,9 @@ class FlowTest36 < Test::Unit::TestCase
     end
   end
 
-  class TestSubProcId1 < ProcessDefinition
+  class TestSubProcId1 < OpenWFE::ProcessDefinition
     concurrence do
-      subprocess :ref => "subproc"
+      subprocess :ref => 'subproc'
       subprocess :ref => :subproc
     end
     process_definition :name => :subproc do
@@ -71,8 +71,8 @@ class FlowTest36 < Test::Unit::TestCase
   #
   # TEST about Iterator
 
-  class TestIteratorSubId0 < ProcessDefinition
-    iterator :on_value => "a, b", :to_variable => "v" do
+  class TestIteratorSubId0 < OpenWFE::ProcessDefinition
+    iterator :on_value => 'a, b', :to_variable => 'v' do
       check
     end
   end

@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -23,22 +23,21 @@ class FlowTest64a < Test::Unit::TestCase
   #
   # TEST 0
 
-  class Test0 < ProcessDefinition
+  class Test0 < OpenWFE::ProcessDefinition
     sequence do
       participant :bravo
       participant :abracadabra
     end
   end
 
-  #def xxxx_0
   def test_0
 
-    @engine.register_participant "a.*" do |workitem|
+    @engine.register_participant 'a.*' do |workitem|
       @tracer << workitem.participant_name
       @tracer << "\n"
     end
 
-    @engine.register_participant :bravo, AliasParticipant.new("alpha")
+    @engine.register_participant :bravo, OpenWFE::AliasParticipant.new("alpha")
 
     dotest(Test0, "alpha\nabracadabra")
   end
@@ -47,9 +46,9 @@ class FlowTest64a < Test::Unit::TestCase
   #
   # TEST 1
 
-  class Test1 < ProcessDefinition
+  class Test1 < OpenWFE::ProcessDefinition
     sequence do
-      set :v => "toto", :val => "elvis"
+      set :v => 'toto', :val => 'elvis'
       toto
     end
   end
@@ -58,24 +57,24 @@ class FlowTest64a < Test::Unit::TestCase
 
     #log_level_to_debug
 
-    @engine.register_participant "elvis" do
-      @tracer << "sivle"
+    @engine.register_participant 'elvis' do
+      @tracer << 'sivle'
     end
 
-    dotest(Test1, "sivle")
+    dotest(Test1, 'sivle')
   end
 
 
   #
   # TEST 2
 
-  class Test2 < ProcessDefinition
+  class Test2 < OpenWFE::ProcessDefinition
 
     #
     # some aliases
 
-    set :v => "alice", :val => "elvis"
-    set :v => "bob", :val => "elvis"
+    set :v => 'alice', :val => 'elvis'
+    set :v => 'bob', :val => 'elvis'
 
     #
     # the body of the process
@@ -90,7 +89,7 @@ class FlowTest64a < Test::Unit::TestCase
 
     #log_level_to_debug
 
-    @engine.register_participant "elvis" do |workitem|
+    @engine.register_participant 'elvis' do |workitem|
       @tracer << workitem.fei.expression_id
       @tracer << "\n"
     end

@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing OpenWFEru (Ruote)
 #
 # John Mettraux at openwfe.org
 #
@@ -24,10 +24,10 @@ class FlowTest70 < Test::Unit::TestCase
   #
   # TEST 0
 
-  class Test0 < ProcessDefinition
+  class Test0 < OpenWFE::ProcessDefinition
     sequence do
-      set :v => "//topvar", :val => "top"
-      set :v => "localvar", :val => "local"
+      set :v => '//topvar', :val => 'top'
+      set :v => 'localvar', :val => 'local'
       toto
     end
   end
@@ -36,15 +36,15 @@ class FlowTest70 < Test::Unit::TestCase
 
     #log_level_to_debug
 
-    @engine.register_participant "toto", NullParticipant
+    @engine.register_participant 'toto', OpenWFE::NullParticipant
 
     fei = launch Test0
 
     sleep 0.350
 
-    assert_equal @engine.lookup_variable("topvar"), "top"
-    assert_equal @engine.lookup_variable("topvar", fei.wfid), "top"
-    assert_equal @engine.lookup_variable("localvar", fei.wfid), "local"
+    assert_equal @engine.lookup_variable('topvar'), 'top'
+    assert_equal @engine.lookup_variable('topvar', fei.wfid), 'top'
+    assert_equal @engine.lookup_variable('localvar', fei.wfid), 'local'
 
     @engine.cancel_process(fei.wfid)
 

@@ -38,7 +38,7 @@
 #
 
 require 'openwfe/service'
-require 'rufus/treechecker'
+#require 'rufus/treechecker'
 
 
 module OpenWFE
@@ -59,6 +59,9 @@ module OpenWFE
       super
 
       (ac[:use_ruby_treechecker] == false) and return
+
+      require 'rufus/treechecker' # gem 'rufus-treechecker'
+        # load only when needed
 
       @checker = Rufus::TreeChecker.new do
 

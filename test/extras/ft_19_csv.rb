@@ -9,10 +9,6 @@ require 'flowtestbase'
 require 'openwfe/def'
 require 'openwfe/extras/participants/csvparticipants'
 
-include OpenWFE
-include OpenWFE::Extras
-
-
 
 class FlowTest19 < Test::Unit::TestCase
   include FlowTestBase
@@ -38,7 +34,7 @@ cloudy,   ,     no
   # Test 0
   #
 
-  class TestDefinition0 < ProcessDefinition
+  class TestDefinition0 < OpenWFE::ProcessDefinition
     sequence do
       set :field => "weather", :value => "cloudy"
       set :field => "month", :value => "may"
@@ -49,7 +45,7 @@ cloudy,   ,     no
 
   def test_0
 
-    csvParticipant = CsvParticipant.new(CSV0)
+    csvParticipant = OpenWFE::Extras::CsvParticipant.new(CSV0)
 
     @engine.register_participant("decision", csvParticipant)
 
