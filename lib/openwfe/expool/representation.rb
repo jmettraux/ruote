@@ -107,7 +107,7 @@ module OpenWFE
       def find_root_expression
 
         self.find do |fexp|
-          fexp.fei.expid == "0" &&
+          fexp.fei.expid == '0' &&
           ( ! fexp.is_a?(OpenWFE::Environment)) &&
           fexp.fei.is_in_parent_process?
         end

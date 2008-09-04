@@ -47,7 +47,6 @@
 
 require 'monitor'
 
-#require 'rubygems'
 require 'atom/collection' # gem 'atom-tools'
 
 require 'openwfe/participants/participant'

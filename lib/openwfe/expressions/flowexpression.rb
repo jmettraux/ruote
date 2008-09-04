@@ -128,6 +128,11 @@ module OpenWFE
     #
     attr_accessor :raw_rep_updated
 
+    #
+    # When was this expression last updated ?
+    #
+    attr_accessor :updated_at
+
 
     #
     # The classical no-params constructors.

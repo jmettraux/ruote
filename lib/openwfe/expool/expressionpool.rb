@@ -559,6 +559,8 @@ module OpenWFE
     #
     def update (flow_expression)
 
+      flow_expression.updated_at = Time.now
+
       ldebug { "update() for #{flow_expression.fei.to_debug_s}" }
 
       #t = Timer.new
