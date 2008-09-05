@@ -56,7 +56,7 @@ module OpenWFE
       :terminate, # process instance terminates
       :cancel, # cancelling an expression
       :error,
-      :reschedule, # at restart, engine reschedules a timed expression
+      #:reschedule, # at restart, engine reschedules a timed expression
       :stop, # stopping the process engine
       :pause, # pausing a process
       :resume, # resuming a process
