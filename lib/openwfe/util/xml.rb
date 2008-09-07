@@ -169,9 +169,12 @@ module OpenWFE
     #
     # Pipes a workitem into a XML builder
     #
-    def self._workitem_to_xml (builder, wi, top_attributes={})
+    def self._workitem_to_xml (builder, wi)
 
-      builder.workitem(top_attributes) do
+      atts = {}
+      atts['href'] = wi.uri if wi.uri
+
+      builder.workitem(atts) do
 
         _fei_to_xml builder, wi.fei # flow expression id
 
@@ -197,6 +200,9 @@ module OpenWFE
       root = to_element xml, 'workitem'
 
       wi = InFlowWorkItem.new
+
+      wi.uri = root.attribute('href')
+      wi.uri = wi.uri.value if wi.uri
 
       wi.fei = fei_from_xml root.elements['flow_expression_id']
 

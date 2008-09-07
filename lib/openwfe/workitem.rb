@@ -286,6 +286,12 @@ module OpenWFE
     attr_accessor :filter
 
     #
+    # in some contexts (ruote-rest, ruote-web2, the web...) workitems
+    # have an URI
+    #
+    attr_accessor :uri
+
+    #
     # In OpenWFEja, workitem history was stored, OpenWFEru doesn't do
     # it (no need to copy history over and over).
     #
