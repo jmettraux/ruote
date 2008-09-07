@@ -169,9 +169,9 @@ module OpenWFE
     #
     # Pipes a workitem into a XML builder
     #
-    def self._workitem_to_xml (builder, wi)
+    def self._workitem_to_xml (builder, wi, top_attributes={})
 
-      builder.workitem do
+      builder.workitem(top_attributes) do
 
         _fei_to_xml builder, wi.fei # flow expression id
 
