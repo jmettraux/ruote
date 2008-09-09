@@ -2,7 +2,7 @@
 = OpenWFEru ruote - CHANGELOG.txt
 
 
-== ruote - 0.9.19    not yet released
+== ruote - 0.9.19    released 2008/09/09
 
 - todo  #21849 : added :uri attribute to InFlowWorkitem
 - todo  #21802 : added an updated_at field to FlowExpression
@@ -10,7 +10,7 @@
 - todo  #21722 : replaced TreeChecker by the rufus-treechecker gem
 - todo  #21646 : integrated a process status cache
 - todo  #21680 : added timestamp to ProcessStatus
-- todo  #21664 : integrated REXML fix by Michael Koziarski
+- todo  #21664 : integrated REXML security patch by Michael Koziarski
 - bug   #21649 : pause and resume were not emitting an expool event. Fixed.
 - todo  #21652 : now generating one unique 'ruote' gem
 - todo  #21644 : included process_stack result into process_status
@@ -32,7 +32,7 @@
 - bug   #20625 : exception inside of BlockParticipant can't get replayed. Fixed.
 - todo  #20467 : got rid of unnecessary synces in yamlfilestorage
 - todo  #20564 : sequence : caching current position for speed gain
-- todo  #20554 : optimized wait_far and added :wait_for option to engine.launch
+- todo  #20554 : optimized wait_for and added :wait_for option to engine.launch
 - todo  #20539 : indent = 2
 - bug   #20505 : fixed issues with branch count in ProcessStatus.
 - todo  #11856 : got rid of old rest interface (but kept xmlcodec for a while)

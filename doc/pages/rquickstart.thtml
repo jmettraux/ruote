@@ -20,14 +20,14 @@ For instance, you could write :
 
 #:code#ruby#
 class MyProcessDefinition0 < OpenWFE::ProcessDefinition
-    sequence do
-        participant "alpha"
-        concurrence do
-            participant "user_alice"
-            participant "user_bob"
-        end
-        participant "alpha" # finally
+  sequence do
+    participant "alpha"
+    concurrence do
+      participant "user_alice"
+      participant "user_bob"
     end
+    participant "alpha" # finally
+  end
 end
 #:code#
 

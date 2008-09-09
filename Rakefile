@@ -11,13 +11,15 @@ require 'rake/rdoctask'
 require 'rake/testtask'
 
 if RAKEVERSION != "0.8.1"
-require 'rote'
-require 'rote/filters'
-require 'rote/filters/redcloth'
-require 'rote/filters/tidy'
-require 'rote/format/html'
-require 'rote/extratasks'
-include Rote
+  require 'rote'
+  require 'rote/filters'
+  require 'rote/filters/redcloth'
+  require 'rote/filters/tidy'
+  require 'rote/format/html'
+  require 'rote/extratasks'
+  include Rote
+#else
+#  puts "rake version #{RAKEVERSION} doesn't play well with 'rote'..."
 end
 
 
