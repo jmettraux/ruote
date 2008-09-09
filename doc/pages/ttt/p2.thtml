@@ -15,7 +15,7 @@ The latest Rails 2.0.x should be OK for running "ruote-web".
 
 h3. getting "ruote-web"
 
-There is a packaged version of "ruote-web" (ex "densha") : "ruote-web-0.9.19pre0.zip":http://rubyforge.org/frs/download.php/37864/ruote-web-0.9.19pre0.zip
+There is a packaged version of "ruote-web" (ex "densha") : "ruote-web-0.9.19.zip":http://rubyforge.org/frs/download.php/43042/ruote-web-0.9.19.zip
 
 When unzipped, rename the top directory 'ruote-web' to 'ttt' :
 
