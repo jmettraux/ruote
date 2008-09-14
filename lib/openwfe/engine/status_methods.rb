@@ -171,6 +171,25 @@ module OpenWFE
     end
 
     #
+    # Returns the tree (representation of the process definition) as it
+    # currently is (in-flight modifications taken into account).
+    #
+    def current_tree
+
+      @all_expressions.representation
+    end
+
+    #
+    # Returns the tree (representation of the process definition) as it
+    # was when the process instance was launched (in-flight modifications
+    # are NOT taken into account).
+    #
+    def initial_tree
+
+      @all_expressions.find_root_expression.raw_representation
+    end
+
+    #
     # this method is used by Engine.get_process_status() when
     # it prepares its results.
     #

@@ -313,3 +313,13 @@ engine.replay_at_error error
 
 This method call will take care of removing the error from the journal before replaying it. Only 'active' errors will remain in the error journal.
 
+
+h4. modifying a process "in-flight"
+
+Coming soon.
+
+See already
+"update_expression":http://openwferu.rubyforge.org/rdoc/classes/OpenWFE/Engine.html#M000453
+"update_expression_data":http://openwferu.rubyforge.org/rdoc/classes/OpenWFE/Engine.html#M000451
+"update_raw_expression":http://openwferu.rubyforge.org/rdoc/classes/OpenWFE/Engine.html#M000452
+

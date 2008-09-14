@@ -288,7 +288,7 @@ module OpenWFE
             efei = @environment_id
 
             rawexp = RawExpression.new_raw(
-              cfei, @fei, efei, @application_context, child)
+              cfei, @fei, efei, @application_context, OpenWFE::fulldup(child))
 
             get_expression_pool.update rawexp
 

@@ -146,7 +146,7 @@ class FlowTest84 < Test::Unit::TestCase
 
     ps = @engine.process_stack fei.wfid, true
 
-    s3fei = ps.find { |fexp| fexp.fei.expid == "0.0.1" }.fei
+    s3fei = ps.find { |fexp| fexp.fei.expid == '0.0.1' }.fei
 
     # update happens here
 
@@ -187,6 +187,14 @@ class FlowTest84 < Test::Unit::TestCase
 
     assert_equal 0, ps.find_all { |fexp| fexp.fei.expid == '0.0.1' }.size
       # making sure the 2nd participant is over
+
+    #p ps.representation
+
+    pstatus = @engine.process_status(fei.wfid)
+    #p pstatus.current_tree
+    #p pstatus.initial_tree
+
+    assert_not_equal pstatus.current_tree, pstatus.initial_tree
 
     #@engine.cancel_process fei
     #sleep 0.350

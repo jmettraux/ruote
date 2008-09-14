@@ -2,6 +2,11 @@
 = OpenWFEru ruote - CHANGELOG.txt
 
 
+== ruote - 0.9.20    not yet released
+
+- bug   #21958 : InMemoryEngine initial_tree and current_tree conflict. Fixed.
+
+
 == ruote - 0.9.19    released 2008/09/09
 
 - todo  #21849 : added :uri attribute to InFlowWorkitem

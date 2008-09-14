@@ -726,20 +726,15 @@ module OpenWFE
       @raw_representation[2]
     end
 
-    SUBIDMUTEX = Mutex.new
-
     #
     # Returns the next sub process id available (this counter
     # is stored in the process environment under the key :next_sub_id)
     #
     def get_next_sub_id
 
-      #env = get_environment
       env = get_root_environment
 
       c = nil
-
-      #env.synchronize do
 
       c = env.variables[:next_sub_id]
       n = if c
@@ -750,7 +745,6 @@ module OpenWFE
       end
       env.variables[:next_sub_id] = n
       env.store_itself
-      #end
 
       c
     end

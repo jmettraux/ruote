@@ -81,6 +81,7 @@ module OpenWFE
 
       process_stack(workflow_instance_id, true).representation
     end
+    alias :process_tree :process_representation
 
     #
     # Lists all workflow (process) instances currently in the expool (in

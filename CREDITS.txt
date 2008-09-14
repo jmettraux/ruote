@@ -15,6 +15,9 @@ Matt Zukowski (senior developer)
 Nicolas Modrzyk ( senior developer )
 David Lee ( senior developer )
 
+Frederic Piccand
+Richard Jennings
+
 
 Contributors
 ------------

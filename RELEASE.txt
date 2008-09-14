@@ -15,7 +15,7 @@ There have been many bugfixes as well as simplifications. One of the most obviou
 
 On the web front, note that ruote-fluo, the javascript library used for drawing process definitions on the fly (used by ruote-rest and ruote-web) is currently usable with Firefox 3 only. I hope that the webkit based browsers will implement canvas text drawing soon.
 
-Ruote-fluo first task is to render process definition graphically, on the fly. Lately, it was enhanced as a process designer as well [1]. It's currently rather alpha, but promising.
+Ruote-fluo first task is to render process definitions graphically, on the fly. Lately, it was enhanced as a process designer as well [1]. It's currently rather alpha, but promising.
 
 A DbHistory has been implemented (and integrated into ruote-rest). It tracks activity in the workflow engine and is easily queriable. Ruote-rest provides an atom feed representation for it.
 

@@ -54,6 +54,11 @@ module OpenWFE
     # Computes and returns the up-to-date representation of
     # the process definition (on the fly changes included)
     #
+    # A 'representation' is an array
+    # [ expression_name, attributes, children_expression ] where
+    # expression_name is a String, attributes a Hash and children_expression
+    # an Array of representations.
+    #
     def representation
 
       root_exp = find_root_expression
@@ -61,10 +66,36 @@ module OpenWFE
       update_rep root_exp
     end
 
+    #
+    # 'tree' is probably a better name than representation
+    #
+    alias :tree :representation
+
+    #
+    # Returns the root expression (the one with no parent expression)
+    # among the expressions in self (Array of FlowExpression instances).
+    #
+    def find_root_expression
+
+      self.find do |fexp|
+        fexp.fei.expid == '0' &&
+        ( ! fexp.is_a?(OpenWFE::Environment)) &&
+        fexp.fei.is_in_parent_process?
+      end
+    end
+
+    #
+    # Returns an expression given its FlowExpressionId.
+    #
+    def find_expression (fei)
+
+      self.find { |fexp| fexp.fei == fei }
+    end
+
     protected
 
       #
-      # if a child expression is present (in the process stack)
+      # If a child expression is present (in the process stack)
       # makes sure to take its current representation and include
       # it in the parent representation.
       #
@@ -102,20 +133,6 @@ module OpenWFE
         } if children and children.size > 0
 
         rep
-      end
-
-      def find_root_expression
-
-        self.find do |fexp|
-          fexp.fei.expid == '0' &&
-          ( ! fexp.is_a?(OpenWFE::Environment)) &&
-          fexp.fei.is_in_parent_process?
-        end
-      end
-
-      def find_expression (fei)
-
-        self.find { |fexp| fexp.fei == fei }
       end
   end
 end
