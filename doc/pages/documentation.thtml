@@ -4,7 +4,7 @@ h3. <a name="basic"></a>basic documentation
 
 * "OpenWFEru quickstart":quickstart.html : doing a gem install of OpenWFEru and running a first OpenWFEru powered program.
 
-* "How does Ruote works ?":http://jmettraux.wordpress.com/2008/09/07/how-does-ruote-work/ : a blog post describing how Ruote (OpenWFEru) interprets and run a business process
+* "How does Ruote work ?":http://jmettraux.wordpress.com/2008/09/07/how-does-ruote-work/ : a blog post describing how Ruote (OpenWFEru) interprets and run a business process
 
 * "Glossary":glossary.html : explaining the terms used in OpenWFE[ru]
 
