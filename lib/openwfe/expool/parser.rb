@@ -41,6 +41,7 @@ require 'openwfe/rexml'
 require 'openwfe/service'
 require 'openwfe/contextual'
 require 'openwfe/util/treechecker'
+require 'openwfe/util/xml'
 require 'openwfe/expressions/rprocdef'
 
 
@@ -244,7 +245,11 @@ module OpenWFE
 
       tree[1].each do |k, v|
 
-        elt.attributes[k] = v
+        if k == 'value' and (not v.is_a?(String))
+          elt << OpenWFE::Xml::to_rexml(v)
+        else
+          elt.attributes[k] = v
+        end
       end
 
       tree.last.each do |child|

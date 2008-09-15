@@ -171,5 +171,20 @@ class FlowTest1 < Test::Unit::TestCase
       '4321')
   end
 
+#  def test_set_with_ruby_hash
+#    dotest(
+#'''<process-definition name="set_a1f" revision="0">
+#  <sequence>
+#    <set field="x">
+#      ${r:{"color" => "blue"}}
+#    </set>
+#    <print>${f:x}</print>
+#  </sequence>
+#</process-definition>''',
+#      'colorblue')
+#  end
+  #
+  # ${} always returns a String, this test is pointless
+
 end
 

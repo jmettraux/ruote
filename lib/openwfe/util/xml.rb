@@ -256,6 +256,7 @@ module OpenWFE
       return array_to_xml(xml, o) if o.is_a?(Array)
 
       return xml.string(o.to_s) if o.is_a?(String)
+      return xml.symbol(o.to_s) if o.is_a?(Symbol)
 
       xml.object o.to_s
     end
@@ -296,6 +297,16 @@ module OpenWFE
       object_to_xml b, o
 
       b.target!
+    end
+
+    #
+    # Like to_xml(o) but instead of returning a String, returns a REXML
+    # Element
+    #
+    def self.to_rexml (o)
+
+      d = REXML::Document.new(to_xml(o))
+      d.root
     end
 
     private

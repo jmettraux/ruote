@@ -403,5 +403,31 @@ end""".strip
     assert CODE_DEF9, TestDefinition9.do_make.to_code_s
   end
 
+  #
+  # TEST 10
+  #
+
+  class TestDefinition10 < OpenWFE::ProcessDefinition
+    set_fields :value => { 'type' => 'horse', :color => 'white' }
+  end
+  class TestDefinition10b < OpenWFE::ProcessDefinition
+    set_fields do
+      { 'type' => 'horse', :color => 'white' }
+    end
+  end
+
+  def test_10
+
+    assert_equal(
+      %{process_definition :name => "Test", :revision => "10" do
+  set_fields :value => {"type"=>"horse", :color=>"white"}
+end},
+      OpenWFE::ExpressionTree.to_code_s(TestDefinition10.do_make))
+
+    assert_equal(
+      %{<process-definition name='Test' revision='10'><set-fields><hash><entry><string>type</string><string>horse</string></entry><entry><symbol>color</symbol><string>white</string></entry></hash></set-fields></process-definition>},
+      OpenWFE::ExpressionTree.to_xml(TestDefinition10.do_make).to_s)
+  end
+
 end
 

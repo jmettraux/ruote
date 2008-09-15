@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- bug   #21206 : tree.to_xml not happy with hash attributes. Fixed.
 - bug   #21958 : InMemoryEngine initial_tree and current_tree conflict. Fixed.
 
 
