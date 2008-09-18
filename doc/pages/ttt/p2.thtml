@@ -57,7 +57,8 @@ mysql -u root -p -e "create database ttt_development CHARACTER SET utf8 COLLATE 
 
 <pre>
 cd ttt/
-rake db:migrate
+rake data:bootstrap
+rake data:populate
 </pre>
 
 

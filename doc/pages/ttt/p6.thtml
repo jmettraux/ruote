@@ -14,31 +14,31 @@ The process thus becomes :
 
 #:code#ruby#
 class TeaTesting03 < OpenWFE::ProcessDefinition
-    description "TeaTestingTeam version 0.3"
-    sequence do
-        reception
-        concurrence do
-            ted
-            tang
-            sequence do
-                tim
-                tang :activity => "check Tim's work"
-            end
-        end
-        takeshi
-        _cancel_process :if => "${f:takeshi_appreciation} == bad"
-        planning
+  description "TeaTestingTeam version 0.3"
+  sequence do
+    reception
+    concurrence do
+      ted
+      tang
+      sequence do
+        tim
+        tang :activity => "check Tim's work"
+      end
     end
+    takeshi
+    cancel_process :if => "${f:takeshi_appreciation} == bad"
+    planning
+  end
 end
 #:code#
 
 Note that the participant "tim" got integrated. We also not only got rid of the brackets but also of the "participant" keyword, simply stating sequences like :
 
 #:code#ruby#
-    sequence do
-        tim
-        tang :activity => "check Tim's work"
-    end
+  sequence do
+    tim
+    tang :activity => "check Tim's work"
+  end
 #:code#
 
 very lightweight.
@@ -57,29 +57,29 @@ OpenWFEru provides the concept of "launch items":../glossary.html#launch_item, u
 #:code#ruby#
 class TeaTesting03 < OpenWFE::ProcessDefinition
 
-    description "TeaTestingTeam version 0.3"
+  description "TeaTestingTeam version 0.3"
 
-    set_fields :value => {
-        "scout" => "",
-        "country" => "",
-        "type" => "",
-        "sample_id" => ""
-    }
+  set_fields :value => {
+    "scout" => "",
+    "country" => "",
+    "type" => "",
+    "sample_id" => ""
+  }
 
-    sequence do
-        reception
-        concurrence do
-            ted
-            tang
-            sequence do
-                tim
-                tang :activity => "check Tim's work"
-            end
-        end
-        takeshi
-        _cancel_process :if => "${f:takeshi_appreciation} == bad"
-        planning
+  sequence do
+    reception
+    concurrence do
+      ted
+      tang
+      sequence do
+        tim
+        tang :activity => "check Tim's work"
+      end
     end
+    takeshi
+    cancel_process :if => "${f:takeshi_appreciation} == bad"
+    planning
+  end
 end
 #:code#
 

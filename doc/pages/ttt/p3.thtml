@@ -16,13 +16,13 @@ The first version of the process definition will be XML based :
 
 #:code#xml#
 <process-definition name="TeaTesting" revision="0.1">
-    <sequence>
-        <participant ref="Reception" />
-        <participant ref="Ted" />
-        <participant ref="Tang" />
-        <participant ref="Takeshi" />
-        <participant ref="PlanningTeam" />
-    </sequence>
+  <sequence>
+    <participant ref="Reception" />
+    <participant ref="Ted" />
+    <participant ref="Tang" />
+    <participant ref="Takeshi" />
+    <participant ref="PlanningTeam" />
+  </sequence>
 </process-definition>
 #:code#
 
@@ -34,15 +34,15 @@ Your first impulse drew you to make the 3 wisemen tests run concurrently, but th
 
 #:code#xml#
 <process-definition name="TeaTesting" revision="0.2">
-    <sequence>
-        <participant ref="reception" />
-        <concurrence>
-            <participant ref="ted" />
-            <participant ref="tang" />
-        </concurrence>
-        <participant ref="takeshi" />
-        <participant ref="planning" />
-    </sequence>
+  <sequence>
+    <participant ref="reception" />
+    <concurrence>
+      <participant ref="ted" />
+      <participant ref="tang" />
+    </concurrence>
+    <participant ref="takeshi" />
+    <participant ref="planning" />
+  </sequence>
 </process-definition>
 #:code#
 
