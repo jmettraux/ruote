@@ -13,7 +13,7 @@ require 'test/unit'
 
 require 'openwfe/workitem'
 require 'openwfe/flowexpressionid'
-require 'openwfe/util/xml'
+require 'openwfe/representations'
 
 require 'rutest_utils'
 

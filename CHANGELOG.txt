@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22005 : moved process_to_xml to ruote (openwfe/representations.rb)
 - todo  #20613 : cleaned up xml generation (builder(options) do |xml|)
 - bug   #21206 : tree.to_xml not happy with hash attributes. Fixed.
 - bug   #21958 : InMemoryEngine initial_tree and current_tree conflict. Fixed.

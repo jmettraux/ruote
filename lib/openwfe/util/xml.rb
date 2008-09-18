@@ -70,115 +70,7 @@ end
 
 module OpenWFE
 
-  #
-  # Simple methods for converting launchitems and workitems from and to
-  # XML.
-  #
-  # There are also the from_xml(xml) and the to_xml(object) methods
-  # that are interesting (though limited).
-  #
   module Xml
-
-    #--
-    # launchitems
-    #++
-
-    #
-    # Turns a launchitem into an XML String
-    #
-    def self.launchitem_to_xml (li, options={})
-
-      builder(options) do |xml|
-        xml.launchitem do
-          xml.workflow_definition_url(li.workflow_definition_url)
-          xml.attributes do
-            hash_to_xml(li.attributes, options)
-          end
-        end
-      end
-    end
-
-    #
-    # Given some XML (string or rexml doc/elt), extracts the LaunchItem
-    # instance.
-    #
-    def self.launchitem_from_xml (xml)
-
-      root = to_element xml, 'launchitem'
-
-      li = LaunchItem.new
-
-      li.wfdurl = text root, 'workflow_definition_url'
-
-      li.attributes = object_from_xml(
-        root.owfe_first_elt_child('attributes').owfe_first_elt_child)
-
-      li
-    end
-
-    #--
-    # flow expression id
-    #++
-
-    def self.fei_to_xml (fei, options={})
-
-      builder(options) do |xml|
-        xml.flow_expression_id do
-          FlowExpressionId::FIELDS.each do |f|
-            xml.tag! f.to_s, fei.send(f)
-          end
-
-          xml.fei_short fei.to_s
-            # a short, 1 string version of the fei
-        end
-      end
-    end
-
-    def self.fei_from_xml (xml)
-
-      xml = to_element xml, 'flow_expression_id'
-
-      fei = FlowExpressionId.new
-
-      FlowExpressionId::FIELDS.each do |f|
-        fei.send "#{f}=", text(xml, f.to_s)
-      end
-
-      fei
-    end
-
-    #--
-    # workitems
-    #++
-
-    #
-    # Turns an [InFlow]WorkItem into some XML.
-    #
-    def self.workitem_to_xml (wi, options={})
-
-      builder(options) do |xml|
-
-        atts = {}
-        atts['href'] = wi.uri if wi.uri
-
-        xml.workitem(atts) do
-
-          fei_to_xml(wi.fei, options)
-
-          xml.last_modified to_httpdate(wi.last_modified)
-
-          xml.participant_name wi.participant_name
-
-          xml.dispatch_time to_httpdate(wi.dispatch_time)
-          #xml.filter ...
-          xml.store wi.store
-
-          xml.attributes do
-            hash_to_xml wi.attributes, options
-          end
-        end
-      end
-    end
 
     #
     # This method is used by all the to_xml methods, it ensures a builder
@@ -209,59 +101,6 @@ module OpenWFE
       end
     end
 
-    #
-    # Extracts an [InFlow]WorkItem instance from some XML.
-    #
-    def self.workitem_from_xml (xml)
-
-      root = to_element xml, 'workitem'
-
-      wi = InFlowWorkItem.new
-
-      wi.uri = root.attribute('href')
-      wi.uri = wi.uri.value if wi.uri
-
-      wi.fei = fei_from_xml root.elements['flow_expression_id']
-
-      wi.last_modified = from_httpdate(text(root, 'last_modified'))
-      wi.participant_name = text root, 'participant_name'
-      wi.dispatch_time = from_httpdate(text(root, 'dispatch_time'))
-
-      wi.attributes = object_from_xml(
-        root.owfe_first_elt_child('attributes').owfe_first_elt_child)
-
-      wi
-    end
-
-    #
-    # Extracts a list of workitems from some XML.
-    #
-    def self.workitems_from_xml (xml)
-
-      root = to_element xml, 'workitems'
-
-      root.owfe_elt_children.collect do |elt|
-        workitem_from_xml elt
-      end
-    end
-
-    #--
-    # cancelitems
-    #++
-
-    def self.cancelitem_to_xml (ci)
-
-      nil # TODO : implement me
-    end
-
-    def self.cancelitem_from_xml (xml)
-
-      nil # TODO : implement me
-    end
-
-    #
-    # An 'internal' method, turning an object into some XML.
-    #
     def self.object_to_xml (o, options={})
 
       builder(options) do |xml|
@@ -359,8 +198,10 @@ module OpenWFE
 
       def self.hash_to_xml (h, options={})
 
+        tagname = options.delete(:tag) || 'hash'
+
         builder(options) do |xml|
-          xml.hash do
+          xml.tag! tagname do
             h.each do |k, v|
               xml.entry do
                 object_to_xml k, options
