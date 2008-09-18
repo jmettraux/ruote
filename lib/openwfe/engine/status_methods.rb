@@ -213,6 +213,21 @@ module OpenWFE
       end
     end
 
+    #
+    # A lighter version
+    #
+    def to_h
+      {
+        #'href' => href(request),
+        'timestamp' => timestamp.to_s,
+        'wfid' => wfid,
+        'launch_time' => launch_time,
+        'paused' => paused,
+        'variables' => variables,
+        'tags' => tags
+      }
+    end
+
     protected
 
       #
