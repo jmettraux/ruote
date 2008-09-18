@@ -13,7 +13,7 @@ class DbHistory0Test < Test::Unit::TestCase
 
     @engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
 
-    @engine.init_service "history", OpenWFE::Extras::DbHistory
+    @engine.init_service 'history', OpenWFE::Extras::DbHistory
 
     @engine.register_participant :alpha do
       # nothing

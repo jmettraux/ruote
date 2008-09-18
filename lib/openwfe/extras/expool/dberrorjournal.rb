@@ -38,8 +38,6 @@
 # John Mettraux
 #
 
-#require 'rubygems'
-
 #require_gem 'activerecord'
 gem 'activerecord'; require 'active_record'
 

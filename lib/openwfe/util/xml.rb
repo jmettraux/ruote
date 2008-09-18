@@ -86,20 +86,16 @@ module OpenWFE
     #
     # Turns a launchitem into an XML String
     #
-    def self.launchitem_to_xml (li, indent=0)
+    def self.launchitem_to_xml (li, options={})
 
-      b = Builder::XmlMarkup.new :indent => indent
-
-      b.instruct!
-
-      b.launchitem do
-        b.workflow_definition_url li.workflow_definition_url
-        b.attributes do
-          hash_to_xml b, li.attributes
+      builder(options) do |xml|
+        xml.launchitem do
+          xml.workflow_definition_url(li.workflow_definition_url)
+          xml.attributes do
+            hash_to_xml(li.attributes, options)
+          end
         end
       end
-
-      b.target!
     end
 
     #
@@ -124,15 +120,18 @@ module OpenWFE
     # flow expression id
     #++
 
-    def self.fei_to_xml (fei, indent=0)
+    def self.fei_to_xml (fei, options={})
 
-      b = Builder::XmlMarkup.new :indent => indent
+      builder(options) do |xml|
+        xml.flow_expression_id do
+          FlowExpressionId::FIELDS.each do |f|
+            xml.tag! f.to_s, fei.send(f)
+          end
 
-      b.instruct!
-
-      _fei_to_xml b, fei
-
-      b.target!
+          xml.fei_short fei.to_s
+            # a short, 1 string version of the fei
+        end
+      end
     end
 
     def self.fei_from_xml (xml)
@@ -155,40 +154,58 @@ module OpenWFE
     #
     # Turns an [InFlow]WorkItem into some XML.
     #
-    def self.workitem_to_xml (wi, indent=0)
+    def self.workitem_to_xml (wi, options={})
 
-      b = Builder::XmlMarkup.new :indent => indent
+      builder(options) do |xml|
 
-      b.instruct!
+        atts = {}
+        atts['href'] = wi.uri if wi.uri
 
-      _workitem_to_xml b, wi
+        xml.workitem(atts) do
 
-      b.target!
+          fei_to_xml(wi.fei, options)
+
+          xml.last_modified to_httpdate(wi.last_modified)
+
+          xml.participant_name wi.participant_name
+
+          xml.dispatch_time to_httpdate(wi.dispatch_time)
+          #xml.filter ...
+          xml.store wi.store
+
+          xml.attributes do
+            hash_to_xml wi.attributes, options
+          end
+        end
+      end
     end
 
     #
-    # Pipes a workitem into a XML builder
+    # This method is used by all the to_xml methods, it ensures a builder
+    # is available via the :builder key in the options hash.
     #
-    def self._workitem_to_xml (builder, wi)
-
-      atts = {}
-      atts['href'] = wi.uri if wi.uri
-
-      builder.workitem(atts) do
-
-        _fei_to_xml builder, wi.fei # flow expression id
-
-        builder.last_modified to_httpdate(wi.last_modified)
-
-        builder.participant_name wi.participant_name
-
-        builder.dispatch_time to_httpdate(wi.dispatch_time)
-        #builder.filter ...
-        builder.store wi.store
-
-        builder.attributes do
-          hash_to_xml builder, wi.attributes
-        end
+    # Usage example :
+    #
+    #    builder(options) do |xml|
+    #      xml.hash do
+    #        h.each do |k, v|
+    #          xml.entry do
+    #            object_to_xml k, options
+    #            object_to_xml v, options
+    #          end
+    #        end
+    #      end
+    #    end
+    #
+    def self.builder (options={}, &block)
+      if b = options[:builder]
+        block.call(b)
+      else
+        b = Builder::XmlMarkup.new(:indent => (options[:indent] || 0))
+        options[:builder] = b
+        b.instruct! unless options[:instruct] == false
+        block.call(b)
+        b.target!
       end
     end
 
@@ -245,20 +262,29 @@ module OpenWFE
     #
     # An 'internal' method, turning an object into some XML.
     #
-    def self.object_to_xml (xml, o)
+    def self.object_to_xml (o, options={})
 
-      return xml.true if o == true
-      return xml.false if o == false
-      return xml.null if o == nil
-      return xml.number(o.to_s) if o.is_a?(Numeric)
+      builder(options) do |xml|
+        case o
+          when true then xml.true
+          when false then xml.false
+          when nil then xml.null
+          when Numeric then xml.number(o.to_s)
+          when Hash then hash_to_xml(o, options)
+          when Array then array_to_xml(o, options)
+          when String then xml.string(o.to_s)
+          when Symbol then xml.symbol(o.to_s)
+          else xml.object(o.to_s)
+        end
+      end
+    end
 
-      return hash_to_xml(xml, o) if o.is_a?(Hash)
-      return array_to_xml(xml, o) if o.is_a?(Array)
+    #
+    # an alias
+    #
+    def self.to_xml (o, options={})
 
-      return xml.string(o.to_s) if o.is_a?(String)
-      return xml.symbol(o.to_s) if o.is_a?(Symbol)
-
-      xml.object o.to_s
+      object_to_xml(o, options)
     end
 
     #
@@ -283,20 +309,6 @@ module OpenWFE
       xml = to_element xml
 
       object_from_xml xml
-    end
-
-    #
-    # from_xml, the other way
-    #
-    def self.to_xml (o, indent=0, instruct = false)
-
-      b = Builder::XmlMarkup.new :indent => indent
-
-      b.instruct! if instruct
-
-      object_to_xml b, o
-
-      b.target!
     end
 
     #
@@ -329,18 +341,6 @@ module OpenWFE
       # OUT
       #++
 
-      def self._fei_to_xml (xml, fei)
-
-        xml.flow_expression_id do
-          FlowExpressionId::FIELDS.each do |f|
-            xml.tag! f.to_s, fei.send(f)
-          end
-
-          xml.fei_short fei.to_s
-            # a short, 1 string version of the fei
-        end
-      end
-
       def self.to_element (xml, root_name=nil)
 
         xml = if xml.is_a?(REXML::Element)
@@ -357,22 +357,26 @@ module OpenWFE
         xml
       end
 
-      def self.hash_to_xml (xml, h)
+      def self.hash_to_xml (h, options={})
 
-        xml.hash do
-          h.each do |k, v|
-            xml.entry do
-              object_to_xml xml, k
-              object_to_xml xml, v
+        builder(options) do |xml|
+          xml.hash do
+            h.each do |k, v|
+              xml.entry do
+                object_to_xml k, options
+                object_to_xml v, options
+              end
             end
           end
         end
       end
 
-      def self.array_to_xml (xml, a)
+      def self.array_to_xml (a, options={})
 
-        xml.array do
-          a.each { |o| object_to_xml xml, o }
+        builder(options) do |xml|
+          xml.array do
+            a.each { |o| object_to_xml(o, options) }
+          end
         end
       end
 

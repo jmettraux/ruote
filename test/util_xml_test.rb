@@ -78,7 +78,7 @@ class UtilXmlTest < Test::Unit::TestCase
     li.wfdurl = "http://toto"
     li.customer_name = "toto"
 
-    xml = OpenWFE::Xml.launchitem_to_xml li, 2
+    xml = OpenWFE::Xml.launchitem_to_xml li, :indent => 2
 
     li1 = OpenWFE::Xml.launchitem_from_xml xml
 
@@ -103,7 +103,7 @@ class UtilXmlTest < Test::Unit::TestCase
 
     assert_equal [ 'alpha', 2, 2.3, false, nil ], o
 
-    a1 = OpenWFE::Xml.to_xml(o, 2).strip
+    a1 = OpenWFE::Xml.to_xml(o, :indent => 2, :instruct => false).strip
 
     assert_equal a, a1
   end
