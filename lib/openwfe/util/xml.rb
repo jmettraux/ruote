@@ -190,8 +190,9 @@ module OpenWFE
           REXML::Document.new(xml).root
         end
 
-        raise "not the XML of a #{root_name} ('#{xml.name}')" \
-          if root_name and (xml.name != root_name)
+        #raise "not the XML of a #{root_name} ('#{xml.name}')" \
+        #  if root_name and (xml.name != root_name)
+        return nil if root_name and (xml.name != root_name)
 
         xml
       end
@@ -231,7 +232,8 @@ module OpenWFE
       #
       def self.text (parent, elt_name)
 
-        parent.elements[elt_name].text
+        elt = parent.elements[elt_name]
+        elt ? elt.text : nil
       end
 
       def self.object_from_xml (elt)

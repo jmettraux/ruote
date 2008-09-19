@@ -48,5 +48,22 @@ class UtilXmlTest < Test::Unit::TestCase
     assert_equal a, a1
   end
 
+  def test_1
+
+    x = <<-EOS
+<process>
+  <definition><![CDATA[
+    <process-definition name="toto">
+    </process-definition>
+  ]]></definition>
+</process>
+    EOS
+
+    assert_equal(
+      %{<process-definition name="toto">
+    </process-definition>},
+      OpenWFE::Xml.text(REXML::Document.new(x).root, 'definition').strip)
+  end
+
 end
 

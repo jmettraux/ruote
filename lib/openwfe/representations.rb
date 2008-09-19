@@ -100,16 +100,28 @@ module OpenWFE
     # Given some XML (string or rexml doc/elt), extracts the LaunchItem
     # instance.
     #
+    # (getting tolerant, also accepting <process/> representations)
+    #
     def self.launchitem_from_xml (xml)
-
-      root = to_element xml, 'launchitem'
 
       li = LaunchItem.new
 
-      li.wfdurl = text root, 'workflow_definition_url'
+      root =
+        to_element(xml, 'launchitem') ||
+        to_element(xml, 'process')
 
-      li.attributes = object_from_xml(
-        root.owfe_first_elt_child('attributes').owfe_first_elt_child)
+      li.wfdurl =
+        text(root, 'workflow_definition_url') ||
+        text(root, 'definition_url')
+
+      attributes =
+        root.owfe_first_elt_child('attributes') ||
+        root.owfe_first_elt_child('fields')
+
+      li.attributes = object_from_xml(attributes.owfe_first_elt_child)
+
+      definition = text(root, 'definition')
+      li.attributes['__definition'] = definition if definition
 
       li
     end
@@ -134,7 +146,7 @@ module OpenWFE
 
     def self.fei_from_xml (xml)
 
-      xml = to_element xml, 'flow_expression_id'
+      xml = to_element(xml, 'flow_expression_id')
 
       fei = FlowExpressionId.new
 

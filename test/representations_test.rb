@@ -46,6 +46,44 @@ class UtilXmlTest < Test::Unit::TestCase
     assert_equal({}, li.attributes)
   end
 
+  def test_0b
+
+    xml = %{<?xml version="1.0" encoding="UTF-8"?>
+<process>
+  <definition_url>http://processdef.server.example.com/process1</definition_url>
+  <fields><hash></hash></fields>
+</process>"}
+    li = OpenWFE::Xml.launchitem_from_xml xml
+    assert_equal('http://processdef.server.example.com/process1', li.wfdurl)
+    assert_equal({}, li.attributes)
+  end
+
+  def test_0c
+
+    xml = %{<?xml version="1.0" encoding="UTF-8"?>
+<process>
+  <definition>class ProcDef1 &lt; OpenWFE::ProcessDefinition
+  sequence do
+    participant "alpha"
+    participant "bravo"
+  end
+end</definition>
+  <fields><hash></hash></fields>
+</process>"}
+
+    li = OpenWFE::Xml.launchitem_from_xml xml
+
+    assert_equal(nil, li.wfdurl)
+
+    assert_equal(
+      { '__definition' => %{class ProcDef1 < OpenWFE::ProcessDefinition
+  sequence do
+    participant "alpha"
+    participant "bravo"
+  end
+end}}, li.attributes)
+  end
+
   def test_1
 
     li = OpenWFE::LaunchItem.new
@@ -139,7 +177,7 @@ class UtilXmlTest < Test::Unit::TestCase
     assert_match(
       /"http:\/\/www.example.com:80\/processes"/, xml)
     assert_match(
-      /count="1"/, xml)
+      /count="2"/, xml)
     assert_match(
       /"http:\/\/www.example.com:80\/processes\/20080919-victrix"/, xml)
     assert_match(
