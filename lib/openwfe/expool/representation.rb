@@ -61,9 +61,7 @@ module OpenWFE
     #
     def representation
 
-      root_exp = find_root_expression
-
-      update_rep root_exp
+      update_rep(find_root_expression)
     end
 
     #

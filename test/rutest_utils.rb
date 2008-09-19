@@ -36,7 +36,7 @@ end
 #
 # Returns a new FlowExpressionId, for testing purposes
 #
-def new_fei
+def new_fei (wfid='20080919-equestris')
 
   fei = OpenWFE::FlowExpressionId.new
 
@@ -46,7 +46,7 @@ def new_fei
   fei.workflow_definition_url = 'http://test/test.xml'
   fei.workflow_definition_name = 'test'
   fei.workflow_definition_revision = '1.0'
-  fei.workflow_instance_id = '123456'
+  fei.workflow_instance_id = wfid
   fei.expression_name = 'do-test'
   fei.expression_id = '0.0'
 

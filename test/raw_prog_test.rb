@@ -408,11 +408,11 @@ end""".strip
   #
 
   class TestDefinition10 < OpenWFE::ProcessDefinition
-    set_fields :value => { 'type' => 'horse', :color => 'white' }
+    set_fields :value => { 'type' => 'horse' }
   end
   class TestDefinition10b < OpenWFE::ProcessDefinition
     set_fields do
-      { 'type' => 'horse', :color => 'white' }
+      { 'type' => 'horse' }
     end
   end
 
@@ -420,12 +420,12 @@ end""".strip
 
     assert_equal(
       %{process_definition :name => "Test", :revision => "10" do
-  set_fields :value => {"type"=>"horse", :color=>"white"}
+  set_fields :value => {"type"=>"horse"}
 end},
       OpenWFE::ExpressionTree.to_code_s(TestDefinition10.do_make))
 
     assert_equal(
-      %{<process-definition name='Test' revision='10'><set-fields><hash><entry><string>type</string><string>horse</string></entry><entry><symbol>color</symbol><string>white</string></entry></hash></set-fields></process-definition>},
+      %{<process-definition name='Test' revision='10'><set-fields><hash><entry><string>type</string><string>horse</string></entry></hash></set-fields></process-definition>},
       OpenWFE::ExpressionTree.to_xml(TestDefinition10.do_make).to_s)
   end
 

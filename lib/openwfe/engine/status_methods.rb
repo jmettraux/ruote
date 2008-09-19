@@ -216,9 +216,9 @@ module OpenWFE
     #
     # A lighter version
     #
-    def to_h
+    def to_h (options={})
       {
-        #'href' => href(request),
+        'href' => OpenWFE::href(options, [ :processes, wfid ]),
         'timestamp' => timestamp.to_s,
         'wfid' => wfid,
         'launch_time' => launch_time,

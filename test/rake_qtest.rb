@@ -39,6 +39,7 @@ require 'description_test'
 require 'ps_representation'
 
 require 'util_xml_test'
+require 'representations_test'
 
 require 'ft_tests'
   #

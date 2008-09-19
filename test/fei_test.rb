@@ -121,15 +121,11 @@ class FeiTest < Test::Unit::TestCase
 
     fei = new_fei
 
-    assert \
-      fei.parent_workflow_instance_id == "123456",
-      "failure 0"
+    assert_equal '20080919-equestris', fei.parent_workflow_instance_id
 
     fei.workflow_instance_id = "123456.0.0"
 
-    assert \
-      fei.parent_workflow_instance_id == "123456",
-      "failure 1"
+    assert_equal '123456', fei.parent_workflow_instance_id
   end
 
   def test_initial_engine_id_deprecation

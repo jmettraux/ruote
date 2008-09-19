@@ -40,6 +40,34 @@ require 'openwfe/util/xml'
 
 module OpenWFE
 
+  def self.href (options, args)
+    RequestAdapter.new(options[:request]).href(*args)
+  end
+
+  #
+  # A wrapper around Rack requests or Rails requests
+  #
+  # (waiting for Rails to be based on Rack :))
+  #
+  class RequestAdapter
+    #
+    # TODO : manage urlmap and co
+    #
+    def initialize (request)
+      @request = request
+    end
+    def method_missing (m, *args)
+      @request.send(m)
+    end
+    def scheme
+      @request.respond_to?(:scheme) ?
+        "#{@request.scheme}://" : @request.protocol
+    end
+    def href (*args)
+      @request ? "#{scheme}#{host}:#{port}/#{args.join('/')}" : nil
+    end
+  end
+
   #
   # Simple methods for converting launchitems and workitems from and to
   # XML.
@@ -204,16 +232,22 @@ module OpenWFE
     # processes (instances of ProcessStatus)
     #++
 
-    def self.href (options, args)
-      href = options[:href]
-      href ? href.call(*args) : nil
+    def self.processes_to_xml (ps, options={ :indent => 2 })
+
+      builder(options) do |xml|
+        xml.processes :href => OpenWFE::href(options, :processes), :count => ps.size do
+          ps.each do |fei, process_status|
+            process_to_xml(process_status, options)
+          end
+        end
+      end
     end
 
     def self.process_to_xml (p, options={ :indent => 2 })
 
       builder(options) do |xml|
 
-        xml.process :href => href(options, [ :processes, p.wfid ]) do
+        xml.process :href => OpenWFE::href(options, [ :processes, p.wfid ]) do
 
           xml.wfid p.wfid
           xml.wfname p.wfname
@@ -246,7 +280,7 @@ module OpenWFE
             end
           end
 
-          xml.active_expressions :href => href(options, [ :expressions, p.wfid ]) do
+          xml.active_expressions :href => OpenWFE::href(options, [ :expressions, p.wfid ]) do
 
             p.expressions.each do |fexp|
 
@@ -259,7 +293,7 @@ module OpenWFE
             end
           end
 
-          xml.errors :href => href(options, [ :errors, p.wfid ]), :count => p.errors.size do
+          xml.errors :href => OpenWFE::href(options, [ :errors, p.wfid ]), :count => p.errors.size do
             p.errors.each do |k, v|
               xml.error do
                 #xml.stacktrace do
@@ -271,9 +305,12 @@ module OpenWFE
             end
           end
 
+          tree = p.all_expressions.tree
+          tree.respond_to?(:to_json) ? tree.to_json : tree.inspect
+
           xml.tree(
-            p.all_expressions.tree.to_json,
-            :href => href(options, [ :processes, p.wfid, :tree ]))
+            tree,
+            :href => OpenWFE::href(options, [ :processes, p.wfid, :tree ]))
         end
       end
     end
