@@ -37,11 +37,13 @@
 # John Mettraux at openwfe.org
 #
 
+require 'yaml'
 require 'openwfe/rexml'
 require 'openwfe/service'
 require 'openwfe/contextual'
 require 'openwfe/util/treechecker'
 require 'openwfe/util/xml'
+require 'openwfe/util/json'
 require 'openwfe/expressions/rprocdef'
 
 
@@ -105,11 +107,11 @@ module OpenWFE
 
       pdef = pdef.strip
 
-      return parse_xml(pdef) \
-        if pdef[0, 1] == '<'
+      return parse_xml(pdef) if pdef[0, 1] == '<'
 
-      return YAML.load(s) \
-        if pdef.match(/^--- ./)
+      return YAML.load(pdef) if pdef[0, 4] == '--- '
+
+      (json = (OpenWFE::Json.from_json(pdef) rescue nil)) and return json
 
       #
       # else it's some ruby code to eval
@@ -118,7 +120,7 @@ module OpenWFE
 
       # green for eval...
 
-      ProcessDefinition.eval_ruby_process_definition pdef
+      ProcessDefinition.eval_ruby_process_definition(pdef)
     end
 
     #

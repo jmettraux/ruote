@@ -40,6 +40,7 @@
 #require 'json' # gem 'json_pure'
 
 require 'openwfe/util/xml'
+require 'openwfe/util/json'
 require 'openwfe/expressions/flowexpression'
 
 
@@ -94,9 +95,9 @@ module OpenWFE
     protected
 
       MAP = {
-        "f" => :field,
-        "q" => :quote,
-        "v" => :variable
+        'f' => :field,
+        'q' => :quote,
+        'v' => :variable
       }
 
       def field (text, workitem)
@@ -195,7 +196,7 @@ module OpenWFE
         from_xml text
       end
 
-      result = from_json(text) if result == nil
+      result = OpenWFE::Json::from_json(text) if result == nil
 
       #p [ :result, result, text ]
 
@@ -226,21 +227,6 @@ module OpenWFE
 
         rescue Exception => e
           linfo { "from_xml() failed : #{e}" }
-          nil
-        end
-      end
-
-      def from_json (text)
-
-        begin
-
-          return JSON.parse(text) if defined?(JSON)
-
-          return ActiveSupport::JSON.decode(text) \
-            if defined?(ActiveSupport::JSON)
-
-        rescue Exception => e
-          linfo { "from_json() failed : #{e}" }
           nil
         end
       end

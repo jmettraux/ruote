@@ -371,8 +371,8 @@ end}.strip
 
   def test_process_names_2
 
-    do_test_2 "MyProcessDefinition_10", ["MyProcess", "10"]
-    do_test_2 "MyProcessDefinition5b", ["MyProcess", "5b"]
+    do_test_2 'MyProcessDefinition_10', ['MyProcess', '10']
+    do_test_2 'MyProcessDefinition5b', ['MyProcess', '5b']
   end
 
 
@@ -380,27 +380,25 @@ end}.strip
   # TEST 9
   #
 
-  class TestDefinition9 < OpenWFE::ProcessDefinition
-    def make
-      description "this is my process"
-      sequence do
-        participant :ref => :toto
-      end
-    end
+  JSON_DEF = <<-EOS
+    ["process-definition",{"name":"mydef","revision":"0"},["alpha",{},[]]]
+  EOS
+
+  def test_9
+
+    require 'json'
+    assert_equal(
+      ["process-definition", {"name"=>"mydef", "revision"=>"0"}, ["alpha", {}, []]],
+      OpenWFE::DefParser.parse(JSON_DEF.strip))
   end
 
-  CODE_DEF9 = """
-process_definition :name => 'Test', :revision => '60' do
-  description 'this is my process'
-  sequence do
-    participant :ref => 'toto'
-    nada
-  end
-end""".strip
+  YAML_DEF = "--- \n- process-definition\n- name: mydef\n  revision: \"0\"\n- - alpha\n  - {}\n\n  - []\n\n"
 
-  def _test_prog_9
+  def test_9b
 
-    assert CODE_DEF9, TestDefinition9.do_make.to_code_s
+    assert_equal(
+      ["process-definition", {"name"=>"mydef", "revision"=>"0"}, ["alpha", {}, []]],
+      OpenWFE::DefParser.parse(YAML_DEF))
   end
 
   #

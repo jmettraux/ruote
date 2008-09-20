@@ -39,6 +39,7 @@
 #
 
 require 'openwfe/utils'
+require 'openwfe/representations'
 
 
 module OpenWFE
@@ -341,12 +342,29 @@ module OpenWFE
     #
     # Rebuilds an InFlowWorkItem from its hash version.
     #
-    def InFlowWorkItem.from_h (h)
+    def self.from_h (h)
 
       wi = super
       wi.dispatch_time = h['dispatch_time']
       wi.filter = h['filter']
       wi
+    end
+
+    #
+    # Returns a String containing the XML representation of this workitem.
+    #
+    def to_xml (options={ :indent => 2 })
+
+      OpenWFE::Xml.workitem_to_xml(self, options)
+    end
+
+    #
+    # Reads a String or a REXML document or element and returns a copy of the
+    # InFlowWorkitem it represents.
+    #
+    def self.from_xml (xml)
+
+      OpenWFE::Xml.workitem_from_xml(xml)
     end
 
     #

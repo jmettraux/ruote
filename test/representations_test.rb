@@ -114,6 +114,18 @@ end}}, li.attributes)
     #p wi1.fei
   end
 
+  def test_2b
+
+    wi = OpenWFE::InFlowWorkItem.new
+    wi.fei = new_fei
+
+    wi1 = OpenWFE::InFlowWorkItem.from_xml(wi.to_xml)
+
+    assert_equal wi.fei, wi1.fei
+
+    #p wi1.fei
+  end
+
   def test_3
 
     li = OpenWFE::LaunchItem.new
