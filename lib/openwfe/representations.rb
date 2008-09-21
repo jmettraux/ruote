@@ -36,6 +36,7 @@
 #
 
 require 'openwfe/util/xml'
+require 'openwfe/util/json'
 
 
 module OpenWFE
@@ -68,263 +69,261 @@ module OpenWFE
     end
   end
 
+  #--
+  # launchitems
+  #++
+
   #
-  # Simple methods for converting launchitems and workitems from and to
-  # XML.
+  # Turns a launchitem into an XML String
   #
-  # There are also the from_xml(xml) and the to_xml(object) methods
-  # that are interesting (though limited).
+  def Xml.launchitem_to_xml (li, options={})
+
+    builder(options) do |xml|
+      xml.launchitem do
+        xml.workflow_definition_url(li.workflow_definition_url)
+        xml.attributes do
+          hash_to_xml(li.attributes, options)
+        end
+      end
+    end
+  end
+
   #
-  module Xml
+  # Given some XML (string or rexml doc/elt), extracts the LaunchItem
+  # instance.
+  #
+  # (getting tolerant, also accepting <process/> representations)
+  #
+  def Xml.launchitem_from_xml (xml)
 
-    #--
-    # launchitems
-    #++
+    li = LaunchItem.new
 
-    #
-    # Turns a launchitem into an XML String
-    #
-    def self.launchitem_to_xml (li, options={})
+    root =
+      to_element(xml, 'launchitem') ||
+      to_element(xml, 'process')
 
-      builder(options) do |xml|
-        xml.launchitem do
-          xml.workflow_definition_url(li.workflow_definition_url)
-          xml.attributes do
-            hash_to_xml(li.attributes, options)
-          end
+    li.wfdurl =
+      text(root, 'workflow_definition_url') ||
+      text(root, 'definition_url')
+
+    attributes =
+      root.owfe_first_elt_child('attributes') ||
+      root.owfe_first_elt_child('fields')
+
+    li.attributes = attributes ?
+      object_from_xml(attributes.owfe_first_elt_child) : {}
+
+    definition = text(root, 'definition')
+    li.attributes['__definition'] = definition if definition
+
+    li
+  end
+
+  #
+  # Creates a LaunchItem instance from a JSON string.
+  #
+  def Json.launchitem_from_json (json)
+
+    OpenWFE::LaunchItem.from_h(from_json(json))
+  end
+
+  #--
+  # flow expression id
+  #++
+
+  def Xml.fei_to_xml (fei, options={})
+
+    builder(options) do |xml|
+      xml.flow_expression_id do
+        FlowExpressionId::FIELDS.each do |f|
+          xml.tag! f.to_s, fei.send(f)
+        end
+
+        xml.fei_short fei.to_s
+          # a short, 1 string version of the fei
+      end
+    end
+  end
+
+  def Xml.fei_from_xml (xml)
+
+    xml = to_element(xml, 'flow_expression_id')
+
+    fei = FlowExpressionId.new
+
+    FlowExpressionId::FIELDS.each do |f|
+      fei.send "#{f}=", text(xml, f.to_s)
+    end
+
+    fei
+  end
+
+  #--
+  # workitems
+  #++
+
+  #
+  # Turns an [InFlow]WorkItem into some XML.
+  #
+  def Xml.workitem_to_xml (wi, options={})
+
+    builder(options) do |xml|
+
+      atts = {}
+      atts['href'] = wi.uri if wi.uri
+
+      xml.workitem(atts) do
+
+        fei_to_xml(wi.fei, options)
+
+        xml.last_modified to_httpdate(wi.last_modified)
+
+        xml.participant_name wi.participant_name
+
+        xml.dispatch_time to_httpdate(wi.dispatch_time)
+        #xml.filter ...
+        xml.store wi.store
+
+        xml.attributes do
+          hash_to_xml wi.attributes, options
         end
       end
     end
+  end
 
-    #
-    # Given some XML (string or rexml doc/elt), extracts the LaunchItem
-    # instance.
-    #
-    # (getting tolerant, also accepting <process/> representations)
-    #
-    def self.launchitem_from_xml (xml)
+  #
+  # Extracts an [InFlow]WorkItem instance from some XML.
+  #
+  def Xml.workitem_from_xml (xml)
 
-      li = LaunchItem.new
+    root = to_element xml, 'workitem'
 
-      root =
-        to_element(xml, 'launchitem') ||
-        to_element(xml, 'process')
+    wi = InFlowWorkItem.new
 
-      li.wfdurl =
-        text(root, 'workflow_definition_url') ||
-        text(root, 'definition_url')
+    wi.uri = root.attribute('href')
+    wi.uri = wi.uri.value if wi.uri
 
-      attributes =
-        root.owfe_first_elt_child('attributes') ||
-        root.owfe_first_elt_child('fields')
+    wi.fei = fei_from_xml root.elements['flow_expression_id']
 
-      li.attributes = attributes ?
-        object_from_xml(attributes.owfe_first_elt_child) : {}
+    wi.last_modified = from_httpdate(text(root, 'last_modified'))
+    wi.participant_name = text root, 'participant_name'
+    wi.dispatch_time = from_httpdate(text(root, 'dispatch_time'))
 
-      definition = text(root, 'definition')
-      li.attributes['__definition'] = definition if definition
+    wi.attributes = object_from_xml(
+      root.owfe_first_elt_child('attributes').owfe_first_elt_child)
 
-      li
+    wi
+  end
+
+  #
+  # Extracts a list of workitems from some XML.
+  #
+  def Xml.workitems_from_xml (xml)
+
+    root = to_element xml, 'workitems'
+
+    root.owfe_elt_children.collect do |elt|
+      workitem_from_xml elt
     end
+  end
 
-    #--
-    # flow expression id
-    #++
+  #--
+  # cancelitems
+  #++
 
-    def self.fei_to_xml (fei, options={})
+  def Xml.cancelitem_to_xml (ci)
 
-      builder(options) do |xml|
-        xml.flow_expression_id do
-          FlowExpressionId::FIELDS.each do |f|
-            xml.tag! f.to_s, fei.send(f)
-          end
+    nil # TODO : implement me
+  end
 
-          xml.fei_short fei.to_s
-            # a short, 1 string version of the fei
+  def Xml.cancelitem_from_xml (xml)
+
+    nil # TODO : implement me
+  end
+
+  #--
+  # processes (instances of ProcessStatus)
+  #++
+
+  def Xml.processes_to_xml (ps, options={ :indent => 2 })
+
+    builder(options) do |xml|
+      xml.processes :href => OpenWFE::href(options, :processes), :count => ps.size do
+        ps.each do |fei, process_status|
+          process_to_xml(process_status, options)
         end
       end
     end
+  end
 
-    def self.fei_from_xml (xml)
+  def Xml.process_to_xml (p, options={ :indent => 2 })
 
-      xml = to_element(xml, 'flow_expression_id')
+    builder(options) do |xml|
 
-      fei = FlowExpressionId.new
+      xml.process :href => OpenWFE::href(options, [ :processes, p.wfid ]) do
 
-      FlowExpressionId::FIELDS.each do |f|
-        fei.send "#{f}=", text(xml, f.to_s)
-      end
+        xml.wfid p.wfid
+        xml.wfname p.wfname
+        xml.wfrevision p.wfrevision
 
-      fei
-    end
+        xml.launch_time p.launch_time
+        xml.paused p.paused
 
-    #--
-    # workitems
-    #++
+        xml.timestamp p.timestamp.to_s
 
-    #
-    # Turns an [InFlow]WorkItem into some XML.
-    #
-    def self.workitem_to_xml (wi, options={})
-
-      builder(options) do |xml|
-
-        atts = {}
-        atts['href'] = wi.uri if wi.uri
-
-        xml.workitem(atts) do
-
-          fei_to_xml(wi.fei, options)
-
-          xml.last_modified to_httpdate(wi.last_modified)
-
-          xml.participant_name wi.participant_name
-
-          xml.dispatch_time to_httpdate(wi.dispatch_time)
-          #xml.filter ...
-          xml.store wi.store
-
-          xml.attributes do
-            hash_to_xml wi.attributes, options
-          end
+        xml.tags do
+          p.tags.each { |t| xml.tag t }
         end
-      end
-    end
 
-    #
-    # Extracts an [InFlow]WorkItem instance from some XML.
-    #
-    def self.workitem_from_xml (xml)
+        xml.branches p.branches
 
-      root = to_element xml, 'workitem'
+        options[:tag] = 'variables'
+        hash_to_xml(p.variables, options)
 
-      wi = InFlowWorkItem.new
-
-      wi.uri = root.attribute('href')
-      wi.uri = wi.uri.value if wi.uri
-
-      wi.fei = fei_from_xml root.elements['flow_expression_id']
-
-      wi.last_modified = from_httpdate(text(root, 'last_modified'))
-      wi.participant_name = text root, 'participant_name'
-      wi.dispatch_time = from_httpdate(text(root, 'dispatch_time'))
-
-      wi.attributes = object_from_xml(
-        root.owfe_first_elt_child('attributes').owfe_first_elt_child)
-
-      wi
-    end
-
-    #
-    # Extracts a list of workitems from some XML.
-    #
-    def self.workitems_from_xml (xml)
-
-      root = to_element xml, 'workitems'
-
-      root.owfe_elt_children.collect do |elt|
-        workitem_from_xml elt
-      end
-    end
-
-    #--
-    # cancelitems
-    #++
-
-    def self.cancelitem_to_xml (ci)
-
-      nil # TODO : implement me
-    end
-
-    def self.cancelitem_from_xml (xml)
-
-      nil # TODO : implement me
-    end
-
-    #--
-    # processes (instances of ProcessStatus)
-    #++
-
-    def self.processes_to_xml (ps, options={ :indent => 2 })
-
-      builder(options) do |xml|
-        xml.processes :href => OpenWFE::href(options, :processes), :count => ps.size do
-          ps.each do |fei, process_status|
-            process_to_xml(process_status, options)
-          end
-        end
-      end
-    end
-
-    def self.process_to_xml (p, options={ :indent => 2 })
-
-      builder(options) do |xml|
-
-        xml.process :href => OpenWFE::href(options, [ :processes, p.wfid ]) do
-
-          xml.wfid p.wfid
-          xml.wfname p.wfname
-          xml.wfrevision p.wfrevision
-
-          xml.launch_time p.launch_time
-          xml.paused p.paused
-
-          xml.timestamp p.timestamp.to_s
-
-          xml.tags do
-            p.tags.each { |t| xml.tag t }
-          end
-
-          xml.branches p.branches
-
-          options[:tag] = 'variables'
-          hash_to_xml(p.variables, options)
-
-          xml.scheduled_jobs do
-            p.scheduled_jobs.each do |j|
-              xml.job do
-                xml.type j.class.name
-                xml.schedule_info j.schedule_info
-                xml.next_time j.next_time.to_s
-                xml.tags do
-                  j.tags.each { |t| xml.tag t }
-                end
+        xml.scheduled_jobs do
+          p.scheduled_jobs.each do |j|
+            xml.job do
+              xml.type j.class.name
+              xml.schedule_info j.schedule_info
+              xml.next_time j.next_time.to_s
+              xml.tags do
+                j.tags.each { |t| xml.tag t }
               end
             end
           end
-
-          xml.active_expressions :href => OpenWFE::href(options, [ :expressions, p.wfid ]) do
-
-            p.expressions.each do |fexp|
-
-              fei = fexp.fei
-
-              xml.expression(
-                "#{fei.to_s}",
-                :short => fei.to_web_s)
-                #:href => fei.href(request))
-            end
-          end
-
-          xml.errors :href => OpenWFE::href(options, [ :errors, p.wfid ]), :count => p.errors.size do
-            p.errors.each do |k, v|
-              xml.error do
-                #xml.stacktrace do
-                #  xml.cdata! "\n#{v.stacktrace}\n"
-                #end
-                xml.fei v.fei.to_s
-                xml.message v.stacktrace.split("\n")[0]
-              end
-            end
-          end
-
-          tree = p.all_expressions.tree
-          tree.respond_to?(:to_json) ? tree.to_json : tree.inspect
-
-          xml.tree(
-            tree,
-            :href => OpenWFE::href(options, [ :processes, p.wfid, :tree ]))
         end
+
+        xml.active_expressions :href => OpenWFE::href(options, [ :expressions, p.wfid ]) do
+
+          p.expressions.each do |fexp|
+
+            fei = fexp.fei
+
+            xml.expression(
+              "#{fei.to_s}",
+              :short => fei.to_web_s)
+              #:href => fei.href(request))
+          end
+        end
+
+        xml.errors :href => OpenWFE::href(options, [ :errors, p.wfid ]), :count => p.errors.size do
+          p.errors.each do |k, v|
+            xml.error do
+              #xml.stacktrace do
+              #  xml.cdata! "\n#{v.stacktrace}\n"
+              #end
+              xml.fei v.fei.to_s
+              xml.message v.stacktrace.split("\n")[0]
+            end
+          end
+        end
+
+        tree = p.all_expressions.tree
+        tree.respond_to?(:to_json) ? tree.to_json : tree.inspect
+
+        xml.tree(
+          tree,
+          :href => OpenWFE::href(options, [ :processes, p.wfid, :tree ]))
       end
     end
   end

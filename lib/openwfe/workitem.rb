@@ -88,9 +88,10 @@ module OpenWFE
 
     def self.from_h (h)
 
-      wi = OpenWFE.get_class(h).new
+      klass = WI_CLASSES[h['type']] || self
+      wi = klass.new
       wi.last_modified = h['last_modified']
-      wi.attributes = h['attributes']
+      wi.attributes = h['attributes'] || h['fields'] || {}
       wi
     end
 
@@ -502,10 +503,20 @@ module OpenWFE
       h
     end
 
+    #
+    # Turns a hash into a LaunchItem instance.
+    #
     def self.from_h (h)
 
       li = super
-      li.workflow_definition_url = h['workflow_definition_url']
+      li.definition_url =
+        h['workflow_definition_url'] ||
+        h['definition_url'] ||
+        h['pdef_url']
+      li.definition =
+        h['workflow_definition'] ||
+        h['definition'] ||
+        h['pdef']
       li
     end
   end
@@ -514,23 +525,15 @@ module OpenWFE
   # Turns a hash into its corresponding workitem (InFlowWorkItem, CancelItem,
   # LaunchItem).
   #
-  def OpenWFE.workitem_from_h (h)
+  def self.workitem_from_h (h)
 
-    wi_class = get_class(h)
+    wi_class = WI_CLASSES[h['type']]
     wi_class.from_h(h)
   end
 
   WI_CLASSES = [
     OpenWFE::LaunchItem, OpenWFE::InFlowWorkItem, OpenWFE::CancelItem
   ].inject({}) { |r, c| r[c.to_s] = c; r }
-
-  #
-  # returns the workitem class for the given hash
-  #
-  def OpenWFE.get_class (h)
-
-    WI_CLASSES[h['type']]
-  end
 
 end
 
