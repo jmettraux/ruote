@@ -89,8 +89,7 @@ module OpenWFE
 
     def self.method_missing (m, *args, &block)
 
-      @ccontext = Context.new \
-        if (not @ccontext) or @ccontext.discarded?
+      @ccontext = Context.new if (not @ccontext) or @ccontext.discarded?
 
       ProcessDefinition.make_expression(
         @ccontext,
@@ -180,6 +179,7 @@ module OpenWFE
 
         instance.make
         instance.context
+
       else
 
         pdef = self.new
@@ -193,8 +193,8 @@ module OpenWFE
         extract_name_and_revision(self.metaclass.to_s[8..-2])
 
       top_expression = [
-        "process-definition",
-        { "name" => name, "revision" => revision },
+        'process-definition',
+        { 'name' => name, 'revision' => revision },
         context.top_expressions
       ]
 
@@ -227,22 +227,20 @@ module OpenWFE
         # checks for 'illicit' ruby code before the eval
         # (now done in the DefParser)
 
-      code, is_wrapped = wrap_code code
+      code, is_wrapped = wrap_code(code)
 
-      o = eval code, binding()
+      o = eval(code, binding())
 
-      o = extract_class(code) \
-        if (o == nil) or o.is_a?(Array)
-        #if (o == nil) or o.is_a?(SimpleExpRepresentation)
-          #
-          # grab the first process definition class found
-          # in the given code
+      return o if o.is_a?(Array) and is_wrapped
 
-      result = o.do_make
+      klass = extract_class(code)
+        #
+        # grab the first process definition class found
+        # in the given code
 
-      return result.last.first if is_wrapped
+      tree = klass.do_make
 
-      result
+      is_wrapped ? tree.last.first : tree
     end
 
     protected

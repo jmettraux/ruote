@@ -176,13 +176,6 @@ module OpenWFE
     #
     def self.get_description (tree)
 
-      #return tree.last.first.to_s if tree.first == 'description'
-      #tree.last.each do |child|
-      #  d = get_description(child)
-      #  return d if d
-      #end
-      #nil
-
       tree.last.each do |child|
         next unless child.is_a?(Array)
         return child.last.first if child.first == 'description'
@@ -197,14 +190,14 @@ module OpenWFE
     #
     def self.to_code_s (tree, indentation = 0)
 
-      s = ""
-      tab = "  "
+      s = ''
+      tab = '  '
       ind = tab * indentation
 
       s << ind
       s << OpenWFE::make_safe(tree.first)
 
-      sa = ""
+      sa = ''
       tree[1].each do |k, v|
         #v = "'#{v}'" if v.is_a?(String)
         #v = ":#{v}" if v.is_a?(Symbol)
@@ -276,7 +269,7 @@ module OpenWFE
 
       d = REXML::Document.new
       d << to_xml(tree)
-      s = ""
+      s = ''
       d.write s, indent
       s
     end

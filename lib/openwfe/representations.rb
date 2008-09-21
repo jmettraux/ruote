@@ -118,7 +118,8 @@ module OpenWFE
         root.owfe_first_elt_child('attributes') ||
         root.owfe_first_elt_child('fields')
 
-      li.attributes = object_from_xml(attributes.owfe_first_elt_child)
+      li.attributes = attributes ?
+        object_from_xml(attributes.owfe_first_elt_child) : {}
 
       definition = text(root, 'definition')
       li.attributes['__definition'] = definition if definition

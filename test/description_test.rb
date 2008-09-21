@@ -40,7 +40,7 @@ end
     rep = OpenWFE::DefParser.parse DEF0
 
     assert_equal(
-      "not much to say",
+      'not much to say',
       OpenWFE::ExpressionTree.get_description(rep))
   end
 
@@ -58,7 +58,7 @@ end
     rep = OpenWFE::DefParser.parse DEF1
 
     assert_equal(
-      "just a tiny process",
+      'just a tiny process',
       OpenWFE::ExpressionTree.get_description(rep))
   end
 

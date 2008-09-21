@@ -90,8 +90,6 @@ module OpenWFE
 
       @paused_instances = {}
 
-      #@monitors = MonitorProvider.new(application_context)
-
       @observers = {}
 
       @stopped = false
@@ -110,16 +108,6 @@ module OpenWFE
       onotify :stop
     end
 
-    #--
-    # Obtains a unique monitor for an expression.
-    # It avoids the need for the FlowExpression instances to include
-    # the monitor mixin by themselves
-    #
-    #def get_monitor (fei)
-    #  @monitors[fei]
-    #end
-    #++
-
     #
     # This method is called by the launch method. It's actually the first
     # stage of that method.
@@ -134,27 +122,28 @@ module OpenWFE
 
       wfdurl = launchitem.workflow_definition_url
 
-      raise "launchitem.workflow_definition_url not set, cannot launch" \
-        unless wfdurl
+      definition, in_launchitem = if (not wfdurl)
 
-      definition = if wfdurl.match "^field:"
+        [ launchitem.attributes.delete('__definition'), true ]
 
-        raise(
-          ":definition_in_launchitem_allowed not set to true, "+
-          "cannot launch"
-        ) if ac[:definition_in_launchitem_allowed] != true
+      elsif wfdurl[0, 6] == 'field:'
 
-        wfdfield = wfdurl[6..-1]
-        launchitem.attributes.delete wfdfield
+        [ launchitem.attributes.delete(wfdurl[6..-1]), true ]
+
       else
 
-        read_uri wfdurl
+        [ read_uri(wfdurl), false ]
       end
 
-      raise "didn't find process definition at '#{wfdurl}'" \
-        unless definition
+      raise(
+        "didn't find process definition at '#{wfdurl}'"
+      ) unless definition
 
-      raw_expression = build_raw_expression launchitem, definition
+      raise(
+        ":definition_in_launchitem_allowed not set to true, cannot launch."
+      ) if in_launchitem and ac[:definition_in_launchitem_allowed] != true
+
+      raw_expression = build_raw_expression(launchitem, definition)
 
       raw_expression.check_parameters launchitem
         #
@@ -593,9 +582,7 @@ module OpenWFE
 
       elsif not exp.is_a?(FlowExpressionId)
 
-        raise \
-          "Cannot fetch expression with key : "+
-          "'#{fei}' (#{fei.class})"
+        raise "Cannot fetch expression with key : '#{fei}' (#{fei.class})"
 
       else
 
@@ -656,8 +643,7 @@ module OpenWFE
     #
     def remove (exp)
 
-      exp, _fei = fetch(exp) \
-        if exp.is_a?(FlowExpressionId)
+      exp, _fei = fetch(exp) if exp.is_a?(FlowExpressionId)
 
       return unless exp
 
@@ -665,12 +651,7 @@ module OpenWFE
 
       onotify :remove, exp.fei
 
-      #synchronize do
-      #@monitors.delete(exp.fei)
-
-      remove_environment(exp.environment_id) \
-        if exp.owns_its_environment?
-      #end
+      remove_environment(exp.environment_id) if exp.owns_its_environment?
     end
 
     #
@@ -811,8 +792,7 @@ module OpenWFE
 
       param = read_uri(param) if param.is_a?(URI)
 
-      #DefParser.parse param
-      get_def_parser.parse param
+      get_def_parser.parse(param)
     end
 
     #
@@ -1069,7 +1049,7 @@ module OpenWFE
       def new_fei (launchitem, flow_name, flow_revision, exp_name)
 
         url = if launchitem
-          launchitem.workflow_definition_url
+          launchitem.workflow_definition_url || LaunchItem::FIELD_DEF
         else
           "no-url"
         end
@@ -1098,7 +1078,7 @@ module OpenWFE
       #
       def build_raw_expression (launchitem, param)
 
-        procdef = determine_rep param
+        procdef = determine_rep(param)
 
         atts = procdef[1]
         flow_name = atts['name'] || "noname"

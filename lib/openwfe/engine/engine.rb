@@ -254,9 +254,7 @@ module OpenWFE
     #
     def launch (launch_object, options={})
 
-      launchitem = extract_launchitem launch_object
-
-      fei = get_expression_pool.launch launchitem, options
+      fei = get_expression_pool.launch(to_launchitem(launch_object), options)
 
       #linfo { "launch() #{fei.wfid} : #{fei.wfname} #{fei.wfrevision}" }
 
@@ -687,32 +685,26 @@ module OpenWFE
       #
       # Turns the raw launch request info into a LaunchItem instance.
       #
-      def extract_launchitem (launch_object)
+      def to_launchitem (o)
 
-        if launch_object.kind_of?(OpenWFE::LaunchItem)
+        return o if o.is_a?(OpenWFE::LaunchItem)
+        return OpenWFE::LaunchItem.new(o) unless o.is_a?(String)
 
-          launch_object
+        li = OpenWFE::LaunchItem.new
 
-        elsif launch_object.kind_of?(Class)
-
-          LaunchItem.new launch_object
-
-        elsif launch_object.kind_of?(String)
-
-          li = OpenWFE::LaunchItem.new
-
-          if launch_object[0, 1] == '<' or launch_object.index("\n")
-
-            li.workflow_definition_url = "field:__definition"
-            li['__definition'] = launch_object
-
-          else
-
-            li.workflow_definition_url = launch_object
-          end
-
-          li
+        if %w{ < [ - }.include?(o.strip[0, 1]) or o.match(/\s/)
+          #
+          # XML, JSON or YAML or not a URI
+          #
+          li.definition = o
+        else
+          #
+          # it's a URI
+          #
+          li.definition_url = o
         end
+
+        li
       end
   end
 

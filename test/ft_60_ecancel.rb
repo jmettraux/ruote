@@ -28,13 +28,13 @@ class FlowTest60 < Test::Unit::TestCase
 
   class TestDefinition0 < OpenWFE::ProcessDefinition
     sequence do
-      _print "a"
+      _print 'a'
       sequence do
-        _print "b.0"
-        _sleep "1s"
-        _print "b.1"
+        _print 'b.0'
+        _sleep '1s'
+        _print 'b.1'
       end
-      _print "c"
+      _print 'c'
     end
   end
 
@@ -50,8 +50,8 @@ class FlowTest60 < Test::Unit::TestCase
     #puts @engine.get_process_stack fei.wfid
     #puts
 
-    fei.expression_id = "0.0.1"
-    fei.expression_name = "sequence"
+    fei.expression_id = '0.0.1'
+    fei.expression_name = 'sequence'
     @engine.cancel_expression fei
 
     sleep 0.350
@@ -70,8 +70,8 @@ class FlowTest60 < Test::Unit::TestCase
 
     sleep 0.350
 
-    fei.expression_id = "0.0.1.2"
-    fei.expression_name = "print"
+    fei.expression_id = '0.0.1.2'
+    fei.expression_name = 'print'
     @engine.cancel_expression fei
 
     #@engine.wait_for(fei.wfid)
@@ -91,8 +91,8 @@ class FlowTest60 < Test::Unit::TestCase
 
     sleep 0.350
 
-    fei.expression_id = "0"
-    fei.expression_name = "process-definition"
+    fei.expression_id = '0'
+    fei.expression_name = 'process-definition'
     @engine.cancel_expression fei
 
     sleep 0.350
@@ -120,14 +120,14 @@ class FlowTest60 < Test::Unit::TestCase
 
     sleep 0.350
 
-    fei.expression_id = "0"
-    fei.expression_name = "process-definition"
+    fei.expression_id = '0'
+    fei.expression_name = 'process-definition'
     @engine.cancel_expression fei
 
     sleep 0.350
     #puts @engine.get_error_journal.get_error_log(fei.wfid).to_s
 
-    assert_equal "", @tracer.to_s
+    assert_equal '', @tracer.to_s
 
     assert_equal 0, @engine.process_stack(fei.wfid).size
     assert_equal 1, @engine.get_expression_storage.size
@@ -141,8 +141,8 @@ class FlowTest60 < Test::Unit::TestCase
 
     sleep 0.350
 
-    fei.expression_id = "0.0"
-    fei.expression_name = "sequence"
+    fei.expression_id = '0.0'
+    fei.expression_name = 'sequence'
     @engine.cancel_expression fei
 
     #@engine.wait_for(fei.wfid)

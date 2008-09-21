@@ -62,7 +62,7 @@ class FlowTest38b < Test::Unit::TestCase
 
       assert_equal 1, @engine.get_variables(fei.wfid).size
       assert_equal 0, @engine.process_status(fei.wfid).tags.size
-      assert_equal "", @engine.process_status(fei.wfid).tags.to_s
+      assert_equal '', @engine.process_status(fei.wfid).tags.to_s
 
       @tracer << "peekout\n"
     end

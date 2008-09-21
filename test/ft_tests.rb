@@ -128,3 +128,5 @@ require 'ft_87_define'
 
 #require 'ft_88_http' # this test requires rufus/verbs
 
+require 'ft_89_polyglot'
+

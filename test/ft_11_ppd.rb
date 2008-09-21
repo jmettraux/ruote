@@ -242,7 +242,7 @@ end
     end
 
     def make
-      process_definition :name => "test6", :revision => "0" do
+      process_definition :name => 'test6', :revision => '0' do
         sequence do
           @count.times do |i|
             _print i

@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22023 : made sure YAML, JSON and Array expression were accepted
 - todo  #22036 : introduced openwfe/util/json for from_json(s)
 - todo  #22005 : moved process_to_xml to ruote (openwfe/representations.rb)
 - todo  #20613 : cleaned up xml generation (builder(options) do |xml|)

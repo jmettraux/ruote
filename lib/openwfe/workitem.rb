@@ -426,7 +426,7 @@ module OpenWFE
   #
   class LaunchItem < WorkItem
 
-    DEF = "__definition"
+    DEF = '__definition'
     FIELD_DEF = "field:#{DEF}"
 
     attr_accessor :workflow_definition_url
@@ -434,6 +434,9 @@ module OpenWFE
 
     alias :wfdurl :workflow_definition_url
     alias :wfdurl= :workflow_definition_url=
+
+    alias :definition_url :workflow_definition_url
+    alias :definition_url= :workflow_definition_url=
 
     #
     # This constructor will build an empty LaunchItem.
@@ -452,8 +455,8 @@ module OpenWFE
     #   definition = """
     #   <process-definition name="x" revision="y">
     #     <sequence>
-    #     <participant ref="alpha" />
-    #     <participant ref="bravo" />
+    #       <participant ref="alpha" />
+    #       <participant ref="bravo" />
     #     </sequence>
     #   </process-definition>
     #   """.strip
@@ -473,9 +476,18 @@ module OpenWFE
 
       super()
 
+      self.definition = process_definition
+    end
+
+    def definition
+      @attributes[DEF]
+    end
+
+    def definition= (process_definition)
       if process_definition
-        @workflow_definition_url = FIELD_DEF
         @attributes[DEF] = process_definition
+      else
+        @attributes.delete(DEF)
       end
     end
 

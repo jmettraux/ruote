@@ -174,7 +174,7 @@ module FlowTestBase
     #
     def launch (li, options={})
 
-      result = @engine.launch li, options
+      result = @engine.launch(li, options)
 
       fei = result.is_a?(Array) ? result[2] : result
 
@@ -189,24 +189,24 @@ module FlowTestBase
     # dotest()
     #
     def dotest (
-      flowDef,
+      flowdef,
       expected_trace,
       join=false,
       allow_remaining_expressions=false)
 
       @tracer.clear
 
-      li = if flowDef.kind_of?(OpenWFE::LaunchItem)
-        flowDef
-      else
-        OpenWFE::LaunchItem.new flowDef
-      end
+      #li = if flowDef.kind_of?(OpenWFE::LaunchItem)
+      #  flowDef
+      #else
+      #  OpenWFE::LaunchItem.new flowDef
+      #end
 
       options = {}
       options[:wait_for] = true unless join.is_a?(Numeric)
 
-      fei = launch li, options
-      #p fei
+      #fei = launch li, options
+      fei = launch(flowdef, options)
 
       sleep join if join.is_a?(Numeric)
 
@@ -303,9 +303,7 @@ module FlowTestBase
     #
     def purge_engine
 
-      @engine.get_expression_storages.each do |storage|
-        storage.purge
-      end
+      @engine.get_expression_storages.each { |s| s.purge }
     end
 
     def assert_trace (desired_trace)
