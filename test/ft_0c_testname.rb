@@ -26,7 +26,7 @@ class TestTestName < Test::Unit::TestCase
   <print>#{name_of_test}</print>
 </process-definition>
       """.strip,
-      "name_of_test")
+      'name_of_test')
   end
 
 end

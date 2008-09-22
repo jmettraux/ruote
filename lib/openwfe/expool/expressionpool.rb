@@ -150,6 +150,8 @@ module OpenWFE
         # will raise an exception if there are requirements
         # and one of them is not met
 
+      raw_expression.store_itself
+
       raw_expression
     end
 
@@ -164,7 +166,7 @@ module OpenWFE
     #
     def launch (launchitem, options={})
 
-      wait = (options[:wait_for] == true)
+      wait = (options.delete(:wait_for) == true)
 
       #
       # prepare raw expression

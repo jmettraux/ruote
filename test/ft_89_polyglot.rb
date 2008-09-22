@@ -44,5 +44,20 @@ class FlowTest89 < Test::Unit::TestCase
       'alpha')
   end
 
+  def test_break_immediately
+
+    #log_level_to_debug
+
+    fei = @engine.launch '["toto",{},[]]'
+    #fei = @engine.launch '["sequence",{},[["toto",{},[]]]]'
+    sleep 0.350
+
+    #p @engine.get_expression_storage.collect { |k, v| "#{k.wfid} #{k.expid} - #{k.expname} --  #{v.class}" }
+    assert_equal 1, @engine.process_statuses.length
+
+    @engine.cancel_process fei.wfid
+    sleep 0.350
+  end
+
 end
 

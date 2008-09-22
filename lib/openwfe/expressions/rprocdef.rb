@@ -227,46 +227,30 @@ module OpenWFE
         # checks for 'illicit' ruby code before the eval
         # (now done in the DefParser)
 
-      code, is_wrapped = wrap_code(code)
-
       o = eval(code, binding())
-
-      return o if o.is_a?(Array) and is_wrapped
 
       klass = extract_class(code)
         #
         # grab the first process definition class found
         # in the given code
 
-      tree = klass.do_make
+      return o unless klass
 
-      is_wrapped ? tree.last.first : tree
+      klass.do_make
     end
 
     protected
 
       ClassNameRex = Regexp.compile(
         " *class *([a-zA-Z0-9]*) *< .*ProcessDefinition")
-      ProcessDefinitionRex = Regexp.compile(
-        "^class *[a-zA-Z0-9]* *< .*ProcessDefinition")
+      #ProcessDefinitionRex = Regexp.compile(
+      #  "^class *[a-zA-Z0-9]* *< .*ProcessDefinition")
       ProcessNameAndDefRex = Regexp.compile(
         "([^0-9_]*)_*([0-9].*)$")
       ProcessNameRex = Regexp.compile(
         "(.*$)")
       EndsInDefinitionRex = Regexp.compile(
         ".*Definition$")
-
-      def self.wrap_code (code)
-
-        return [ code, false ] if ProcessDefinitionRex.match(code)
-
-        s =  "class NoName0 < ProcessDefinition"
-        s << "\n"
-        s << code
-        s << "\nend"
-
-        [ s, true ]
-      end
 
       def self.pack_args (args)
 

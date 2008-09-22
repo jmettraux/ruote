@@ -360,14 +360,18 @@ module OpenWFE
 
         ps.scheduled_jobs = get_scheduler.find_jobs(ps.wfid)
 
-        if ps.expressions.size == 0
-          # drop result if there are no expressions
-          result.delete(ps.wfid)
-          @status_cache.delete(ps.wfid)
-        else
-          @status_cache[ps.wfid] = ps
-        end
+        #if ps.expressions.size == 0
+        #  # drop result if there are no expressions
+        #  result.delete(ps.wfid)
+        #  @status_cache.delete(ps.wfid)
+        #else
+        #  @status_cache[ps.wfid] = ps
+        #end
+        @status_cache[ps.wfid] = ps
       end
+
+      result.delete('0')
+      @status_cache.delete('0')
 
       #
       # done

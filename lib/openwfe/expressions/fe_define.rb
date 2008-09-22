@@ -95,35 +95,14 @@ module OpenWFE
     #
     attr_accessor :body_fei
 
-    #--
-    # Evaluates the definition, but doesn't apply its body, will
-    # simply return the body fei.
-    #
-    #def evaluate (workitem)
-    #  @eval_only = true
-    #  apply workitem
-    #  @body_fei
-    #end
-    #++
-
     #
     # Called at the end of the 'evaluation', the 'apply' operation on
     # the body of the definition is done here.
     #
     def reply_to_parent (workitem)
 
-      #return if @eval_only
-
-      #puts "/// \n   bf #{@body_fei} \n   wi.fei #{workitem.fei}"
-
       return super(workitem) \
         if @body_fei == nil or @body_fei == workitem.fei
-        #unless @body_fei
-
-      #_fei = @body_fei
-      #@body_fei = nil
-      #store_itself
-      #get_expression_pool.apply _fei, workitem
 
       get_expression_pool.apply @body_fei, workitem
     end
@@ -136,7 +115,7 @@ module OpenWFE
     #
     def set_variable (name, fei)
 
-      if name[0, 2] == "//"
+      if name[0, 2] == '//'
 
         raw_exp = get_expression_pool.fetch_expression(fei).dup
         raw_exp.parent_id = nil

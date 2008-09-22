@@ -47,6 +47,19 @@ elsif persistence == "cached-db-persistence"
   $WORKFLOW_ENGINE_CLASS = OpenWFE::Extras::CachedDbPersistedEngine
 end
 
+#
+# finding which test is currently 'on'
+#
+def get_test_filename
+  c = caller
+  l = c.find do |l|
+    l.match(/test\//) and
+    (not l.match(/test\/unit/)) and
+    (not l.match(/test\/flowtestbase/))
+  end
+  "#{l} (#{c.size} lines)"
+end
+
 
 puts
 puts "testing with engine of class " + $WORKFLOW_ENGINE_CLASS.to_s
@@ -54,8 +67,7 @@ puts
 
 module FlowTestBase
 
-  attr_reader \
-    :engine, :tracer
+  attr_reader :engine, :tracer
 
   #
   # SETUP
@@ -64,8 +76,41 @@ module FlowTestBase
 
     @engine = $WORKFLOW_ENGINE_CLASS.new
 
+    class << @engine.get_wfid_generator
+      #
+      # tracking which wfids got generated
+      #
+      include OpenWFE::OwfeServiceLocator
+      alias :old_generate :generate
+      def generate (launchitem=nil)
+        wfid = old_generate(launchitem)
+        $OWFE_LOG.info(
+          "new wfid : #{wfid} " +
+          "at #{get_test_filename} " +
+          "for engine #{get_engine.object_id}")
+        wfid
+      end
+    end
+    class << @engine
+      #
+      # tagging which process instance (wfid) got started for which test
+      # in the log file
+      #
+      alias :old_launch :launch
+      def launch (launch_object, options={})
+        result = old_launch(launch_object, options)
+        fei = result.is_a?(Array) ? result.last : result
+        $OWFE_LOG.info(
+          "launched #{fei.wfid} " +
+          "at #{get_test_filename} " +
+          "on engine #{self.object_id}")
+        result
+      end
+    end
+
     $OWFE_LOG.info(
-      "setup() started engine #{@engine.object_id} @ #{caller[-1]}")
+      #"setup() started engine #{@engine.object_id} @ #{caller[-1]}")
+      "setup() started engine #{@engine.object_id}")
 
     @terminated_processes = []
     @engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|
@@ -177,10 +222,6 @@ module FlowTestBase
       result = @engine.launch(li, options)
 
       fei = result.is_a?(Array) ? result[2] : result
-
-      $OWFE_LOG.info(
-        "dotest() launched #{fei.to_short_s} "+
-        "@ #{caller[1]} on engine #{@engine.object_id}")
 
       result
     end

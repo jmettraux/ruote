@@ -19,8 +19,9 @@ class ParameterTest < Test::Unit::TestCase
   #def setup
   #end
 
-  #def teardown
-  #end
+  def teardown
+    purge_engine
+  end
 
   #
   # test 0

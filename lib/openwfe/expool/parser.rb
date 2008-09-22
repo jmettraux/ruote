@@ -45,6 +45,7 @@ require 'openwfe/util/treechecker'
 require 'openwfe/util/xml'
 require 'openwfe/util/json'
 require 'openwfe/expressions/rprocdef'
+require 'openwfe/expressions/expressionmap'
 
 
 module OpenWFE
@@ -70,6 +71,7 @@ module OpenWFE
 
       ac[:s_tree_checker] = TreeChecker.new(:s_tree_checker, ac)
       ac[:s_def_parser] = DefParser.new(:s_def_parser, ac)
+      ac[:s_expression_map] = ExpressionMap.new
 
       ac[:s_def_parser].parse(pdef)
     end
@@ -87,20 +89,23 @@ module OpenWFE
     #
     def parse (pdef)
 
-      return pdef \
-        if pdef.is_a?(Array)
+      tree = case pdef
+        when Array then pdef
+        when String then parse_string(pdef)
+        when Class then pdef.do_make
+        when ProcessDefinition then pdef.do_make
+        when SimpleExpRepresentation then pdef.do_make # legacy...
+        else
+          raise "cannot handle pdefinition of class #{pdef.class.name}"
+      end
 
-      return parse_string(pdef) \
-        if pdef.is_a?(String)
+      tree = [ 'define', { 'name' => 'NoName', 'revision' => '0' }, [ tree ] ] \
+        unless get_expression_map.is_definition?(tree.first)
+          #
+          # making sure the first expression in the tree is a DefineExpression
+          # (an alias for 'process-definition')
 
-      return pdef.do_make \
-        if pdef.is_a?(ProcessDefinition) or pdef.is_a?(Class)
-
-      return pdef.to_a \
-        if pdef.is_a?(SimpleExpRepresentation)
-          # for legacy stuff
-
-      raise "cannot handle pdefinition of class #{pdef.class.name}"
+      tree
     end
 
     def parse_string (pdef)

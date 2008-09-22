@@ -28,7 +28,7 @@ class FlowTest73 < Test::Unit::TestCase
     sequence do
       sub0
     end
-    process_definition :name => "sub0" do
+    process_definition :name => 'sub0' do
       p0
     end
   end
@@ -47,7 +47,7 @@ class FlowTest73 < Test::Unit::TestCase
     #puts "in store : " + p0.first_workitem.fei.to_s
 
     wi = p0.first_workitem
-    assert_equal wi.fei.wfid, fei.wfid + ".0"
+    assert_equal wi.fei.wfid, fei.wfid + '.0'
 
     @engine.cancel_process fei
 
@@ -64,9 +64,9 @@ class FlowTest73 < Test::Unit::TestCase
   class Test1 < OpenWFE::ProcessDefinition
     sequence do
       sub1 :forget => true
-      _sleep :for => "5m"
+      _sleep :for => '5m'
     end
-    process_definition :name => "sub1" do
+    process_definition :name => 'sub1' do
       p1
     end
   end
@@ -85,7 +85,7 @@ class FlowTest73 < Test::Unit::TestCase
     #puts "in store : " + p1.first_workitem.fei.to_s
 
     wi = p1.first_workitem
-    assert_equal wi.fei.wfid, fei.wfid + ".0"
+    assert_equal wi.fei.wfid, fei.wfid + '.0'
 
     @engine.cancel_process(fei)
 
@@ -110,7 +110,7 @@ class FlowTest73 < Test::Unit::TestCase
       sub2 :forget => true
       p2
     end
-    process_definition :name => "sub2" do
+    process_definition :name => 'sub2' do
       p20
     end
   end
