@@ -319,7 +319,7 @@ module OpenWFE
         end
 
         tree = p.all_expressions.tree
-        tree.respond_to?(:to_json) ? tree.to_json : tree.inspect
+        tree = tree.respond_to?(:to_json) ? tree.to_json : tree.inspect
 
         xml.tree(
           tree,
