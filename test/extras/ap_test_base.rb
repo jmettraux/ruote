@@ -9,10 +9,10 @@ module ApTestBase
 
       wi = OpenWFE::Extras::Workitem.new
 
-      wi.fei = "fei"
-      wi.wfid = "wfid"
-      wi.wf_name = "wf_name"
-      wi.wf_revision = "wf_revision"
+      wi.fei = "fei_#{Time.now.to_f}"
+      wi.wfid = 'wfid'
+      wi.wf_name = 'wf_name'
+      wi.wf_revision = 'wf_revision'
       wi.participant_name = participant_name
 
       hash.each do |k, v|

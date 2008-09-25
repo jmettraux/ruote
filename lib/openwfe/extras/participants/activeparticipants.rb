@@ -53,8 +53,6 @@ require 'openwfe/participants/participant'
 module OpenWFE
 module Extras
 
-  #MUTEX = Mutex.new
-
   #
   # The migration for ActiveParticipant and associated classes.
   #
@@ -151,7 +149,10 @@ module Extras
   #
   class Workitem < ActiveRecord::Base
 
-    has_many :fields, :dependent => :destroy
+    has_many(
+      :fields,
+      :dependent => :delete_all,
+      :class_name => 'OpenWFE::Extras::Field')
 
     serialize :yattributes
 
@@ -476,7 +477,7 @@ module Extras
   #
   class Field < ActiveRecord::Base
 
-    belongs_to :workitem
+    belongs_to :workitem, :class_name => 'OpenWFE::Extras::Workitem'
     serialize :yvalue
 
     #
@@ -681,6 +682,7 @@ module Extras
 
       Workitem.destroy_all([ "fei = ?", cancelitem.fei.to_s ])
         # note that delete_all was not removing workitem fields
+        # probably my fault (bad :has_many setting)
     end
 
     #

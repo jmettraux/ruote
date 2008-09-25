@@ -320,8 +320,7 @@ module OpenWFE
 
       s << "  {\n"
       @attributes.keys.sort.each do |k|
-        v = @attributes[k]
-      s << "    #{k.inspect} => #{v.inspect},\n"
+        s << "    #{k.inspect} => #{@attributes[k].inspect},\n"
       end
       s << "  }"
       s

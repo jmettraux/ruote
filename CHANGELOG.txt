@@ -4,6 +4,8 @@
 
 == ruote - 0.9.20    not yet released
 
+- bug   #22158 : ArgumentError: OpenWFE::Extras is not missing constant Field!
+                 Fixed.
 - todo  #22122 : tree wrapping redux (see test/ft_89_polyglot.rb)
 - bug   #22121 : when wait_for => true, two wfids were generated. Fixed.
 - todo  #22023 : made sure YAML, JSON and Array expression were accepted

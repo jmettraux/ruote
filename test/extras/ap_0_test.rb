@@ -65,16 +65,19 @@ class Active0Test < Test::Unit::TestCase
   def test_2
 
     wi = new_wi "participant y"
+    wi.fei = 'fei0'
     wi.fields << OpenWFE::Extras::Field.new_field("toto", "a")
     wi.store_name = "store_a"
     wi.save
 
     wi = new_wi "participant y"
+    wi.fei = 'fei1'
     wi.fields << OpenWFE::Extras::Field.new_field("toto", "b")
     wi.store_name = "store_b"
     wi.save
 
     wi = new_wi "participant z"
+    wi.fei = 'fei2'
     wi.fields << OpenWFE::Extras::Field.new_field("toto", "c")
     wi.store_name = "store_c"
     wi.save
@@ -89,7 +92,7 @@ class Active0Test < Test::Unit::TestCase
 
     values = [ wl[0].field(:toto).value, wl[1].field(:toto).value ].sort
 
-    assert_equal [ "a", "b" ], values
+    assert_equal [ 'a', 'b' ], values
 
     assert_equal(
       2,

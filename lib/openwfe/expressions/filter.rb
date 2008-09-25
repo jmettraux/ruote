@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,16 +30,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
-# $Id: definitions.rb 2725 2006-06-02 13:26:32Z jmettraux $
-#
 
 #
 # "made in Japan"
 #
 # John Mettraux at openwfe.org
 #
-
-#require 'openwfe/filterdef'
 
 
 module OpenWFE
@@ -58,7 +54,7 @@ module OpenWFE
     # the attributes of the workitem with filtered ones.
     # Assumes the original workitem is kept under @applied_workitem.
     #
-    def filter_in workitem, filter_attribute_name=:filter
+    def filter_in (workitem, filter_attribute_name=:filter)
 
       @filter = get_filter filter_attribute_name, workitem
 
@@ -74,7 +70,7 @@ module OpenWFE
     # the 'add_ok', 'remove_ok', 'closed' filter directives.
     # Assumes the original workitem is kept under @applied_workitem.
     #
-    def filter_out incoming_workitem
+    def filter_out (incoming_workitem)
 
       return unless @filter
 
@@ -90,7 +86,7 @@ module OpenWFE
       # Fetches the filter pointed at via the 'filter' attribute
       # of the including expression class.
       #
-      def get_filter filter_attribute_name, workitem
+      def get_filter (filter_attribute_name, workitem)
 
         filter_name = lookup_attribute filter_attribute_name, workitem
 
