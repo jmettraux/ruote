@@ -333,7 +333,9 @@ module OpenWFE
     #
     def process_statuses (options={})
 
-      return @all_status_cache if options == {} and @all_status_cache
+      all = (options == {})
+
+      return @all_status_cache if all and @all_status_cache
 
       init_status_cache unless @status_cache
 
@@ -342,12 +344,7 @@ module OpenWFE
       expressions = get_expression_storage.find_expressions(options)
 
       result = expressions.inject({}) do |r, fe|
-
-        #next unless (fe.apply_time or fe.is_a?(Environment))
-        #next if fe.fei.wfid == '0' # skip the engine env
-
-        (r[fe.fei.parent_wfid] ||= ProcessStatus.new) << fe
-        r
+        (r[fe.fei.parent_wfid] ||= ProcessStatus.new) << fe; r
       end
 
       result.values.each do |ps|
@@ -359,15 +356,6 @@ module OpenWFE
         ps.send :pack_expressions # letting it protected
 
         ps.scheduled_jobs = get_scheduler.find_jobs(ps.wfid)
-
-        #if ps.expressions.size == 0
-        #  # drop result if there are no expressions
-        #  result.delete(ps.wfid)
-        #  @status_cache.delete(ps.wfid)
-        #else
-        #  @status_cache[ps.wfid] = ps
-        #end
-        @status_cache[ps.wfid] = ps
       end
 
       result.delete('0')
@@ -379,8 +367,9 @@ module OpenWFE
       result.extend(StatusesMixin)
       result.timestamp = Time.now
 
-      @all_status_cache = result
-        # cache and return
+      @all_status_cache = result if all
+
+      result
     end
 
     #

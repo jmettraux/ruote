@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- bug   #22213 : engine.process_status() cache keeping 1! result. Fixed.
 - todo  #22202 : engine.launch(li, :variables => {...}) implemented
 - bug   #22158 : ArgumentError: OpenWFE::Extras is not missing constant Field!
                  Fixed.

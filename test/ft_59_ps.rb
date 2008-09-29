@@ -190,7 +190,7 @@ class FlowTest59 < Test::Unit::TestCase
     ps1 = @engine.process_status fei.wfid
     pss1 = @engine.process_statuses
 
-    assert_equal ps0.timestamp, ps1.timestamp
+    assert_not_equal ps0.timestamp, ps1.timestamp
     assert_equal pss0.object_id, pss1.object_id
 
     sa.forward(sa.first_workitem)
