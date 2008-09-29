@@ -258,7 +258,7 @@ module Extras
     #
     # (Each time this method is called, it returns a new hash).
     #
-    def fields_hash
+    def field_hash
 
       return self.yattributes if self.yattributes
 
@@ -267,6 +267,8 @@ module Extras
         r
       end
     end
+
+    alias :fields_hash :field_hash
 
     #
     # Replaces the current fields of this workitem with the given hash.
@@ -663,11 +665,10 @@ module Extras
     #
     def consume (workitem)
 
-      if compact_workitems
-        workitem.attributes["compact_workitems"] = true
-      end
+      workitem.attributes['compact_workitems'] = true if compact_workitems
 
       Workitem.from_owfe_workitem workitem
+        # does the 'saving to db'
     end
 
     #
@@ -724,9 +725,7 @@ module Extras
     #
     def consume (workitem)
 
-      if compact_workitems
-        workitem.attributes["compact_workitems"] = true
-      end
+      workitem.attributes['compact_workitems'] = true if compact_workitems
 
       Workitem.from_owfe_workitem(workitem, @store_name)
     end

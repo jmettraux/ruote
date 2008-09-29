@@ -193,7 +193,7 @@ module OpenWFE
 
       unschedule_timeout()
 
-      workitem.attributes.delete "params"
+      workitem.attributes.delete 'params'
 
       filter_out workitem
 
@@ -255,7 +255,7 @@ module OpenWFE
           # if there is an applied workitem, it means there
           # is a participant to cancel...
 
-        participant = \
+        participant =
           get_participant_map.lookup_participant(@participant_name)
 
         cancelitem = CancelItem.new(@applied_workitem)
