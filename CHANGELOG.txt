@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22202 : engine.launch(li, :variables => {...}) implemented
 - bug   #22158 : ArgumentError: OpenWFE::Extras is not missing constant Field!
                  Fixed.
 - todo  #22122 : tree wrapping redux (see test/ft_89_polyglot.rb)

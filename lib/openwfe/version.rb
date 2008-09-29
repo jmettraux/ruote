@@ -33,5 +33,6 @@
 
 module OpenWFE
 
-  OPENWFERU_VERSION = '0.9.19'
+  OPENWFERU_VERSION = '0.9.20'
 end
+

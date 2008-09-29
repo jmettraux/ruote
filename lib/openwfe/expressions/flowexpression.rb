@@ -520,8 +520,6 @@ module OpenWFE
     #
     def new_environment (initial_vars=nil)
 
-      ldebug { "new_environment() for #{@fei.to_debug_s}" }
-
       @environment_id = @fei.dup
       @environment_id.expression_name = EN_ENVIRONMENT
 
@@ -544,7 +542,9 @@ module OpenWFE
           # keeping track of the raw representation
           # of the top expression (for top recursion)
 
-      ldebug { "new_environment() is #{env.fei.to_debug_s}" }
+      ldebug do
+        "new_environment() for #{@fei.to_debug_s} is #{env.fei.to_debug_s}"
+      end
 
       env.store_itself
 

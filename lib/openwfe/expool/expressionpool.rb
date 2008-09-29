@@ -167,6 +167,7 @@ module OpenWFE
     def launch (launchitem, options={})
 
       wait = (options.delete(:wait_for) == true)
+      initial_variables = options.delete(:vars) || options.delete(:variables)
 
       #
       # prepare raw expression
@@ -177,13 +178,15 @@ module OpenWFE
         # and one of them is not met
 
       raw_expression = wrap_in_schedule(raw_expression, options) \
-        if options.size > 0
+        if (options.keys & [ :in, :at, :cron, :every ]).size > 0
 
-      raw_expression.new_environment
+      raw_expression.new_environment(initial_variables)
         #
         # as this expression is the root of a new process instance,
         # it has to have an environment for all the variables of
         # the process instance
+        #
+        # (new_environment() calls store_itself on the new env)
 
       fei = raw_expression.fei
 
@@ -958,38 +961,38 @@ module OpenWFE
         template = if oat or oin
 
           sleep_atts = if oat
-            { "until" => oat }
+            { 'until' => oat }
           else #oin
-            { "for" => oin }
+            { 'for' => oin }
           end
-          sleep_atts["scheduler-tags"] = "scheduled-launch, #{fei.wfid}"
+          sleep_atts['scheduler-tags'] = "scheduled-launch, #{fei.wfid}"
 
           raw_expression.new_environment
           raw_expression.store_itself
 
           [
-            "sequence", {}, [
-              [ "sleep", sleep_atts, [] ],
+            'sequence', {}, [
+              [ 'sleep', sleep_atts, [] ],
               raw_expression.fei
             ]
           ]
 
         elsif ocron or oevery
 
-          fei.expression_name = "cron"
+          fei.expression_name = 'cron'
 
           cron_atts = if ocron
-            { "tab" => ocron }
+            { 'tab' => ocron }
           else #oevery
-            { "every" => oevery }
+            { 'every' => oevery }
           end
-          cron_atts["name"] = "//cron_launch__#{fei.wfid}"
-          cron_atts["scheduler-tags"] = "scheduled-launch, #{fei.wfid}"
+          cron_atts['name'] = "//cron_launch__#{fei.wfid}"
+          cron_atts['scheduler-tags'] = "scheduled-launch, #{fei.wfid}"
 
           template = raw_expression.raw_representation
           remove raw_expression
 
-          [ "cron", cron_atts, [ template ] ]
+          [ 'cron', cron_atts, [ template ] ]
 
         else
 
