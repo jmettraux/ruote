@@ -164,7 +164,11 @@ module Extras
     #
     def full_fei
 
-      OpenWFE::FlowExpressionId.from_s(fei)
+      @full_fei ||= OpenWFE::FlowExpressionId.from_s(fei)
+    end
+
+    def expid
+      full_fei.expid
     end
 
     #
