@@ -260,14 +260,10 @@ module OpenWFE
 
       if @evaluating_condition
 
-        result = workitem.get_boolean_result
-
-        #ldebug { "reply() result : '#{result.to_s}' (#{result.class})" }
-
-        trigger_child workitem, !result
+        trigger_child(workitem, ( ! workitem.get_boolean_result))
       else
 
-        reply_to_parent workitem
+        reply_to_parent(workitem)
       end
     end
 

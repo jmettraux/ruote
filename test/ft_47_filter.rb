@@ -147,13 +147,13 @@ playboy
 
     dotest(
       TestFilter47a2,
-      """
+      %{
 hidden: playboy
 randw: nada
 readable: bible
 writable: nada
 --
-      """.strip)
+      }.strip)
   end
 
 end

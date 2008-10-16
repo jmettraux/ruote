@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,8 +29,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
-#
-# $Id: definitions.rb 2725 2006-06-02 13:26:32Z jmettraux $
 #
 
 #

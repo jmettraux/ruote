@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22442 : now storing filter as workitem attribute
 - todo         : added expid() to OpenWFE::Extras::Workitem
 - bug   #22213 : engine.process_status() cache keeping 1! result. Fixed.
 - todo  #22202 : engine.launch(li, :variables => {...}) implemented

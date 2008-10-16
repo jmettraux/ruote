@@ -306,6 +306,22 @@ module OpenWFE
       # special : added by the ruby lib, not given by the worklist
 
     #
+    # sets the filter for this workitem
+    #
+    def filter= (f)
+
+      f ? @attributes['__filter__'] = f : @attributes.delete('__filter__')
+    end
+
+    #
+    # returns the filter for this workitem
+    #
+    def filter
+
+      @attributes['__filter__']
+    end
+
+    #
     # Outputting the workitem in a human readable format
     #
     def to_s
