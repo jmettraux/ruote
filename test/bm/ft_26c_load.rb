@@ -29,7 +29,7 @@ class FlowTest26c < Test::Unit::TestCase
   N = 10_000
   #N = 100
 
-  class TestDefinition0 < ProcessDefinition
+  class TestDefinition0 < OpenWFE::ProcessDefinition
     sequence do
       N.times do
         count
@@ -52,7 +52,8 @@ class FlowTest26c < Test::Unit::TestCase
       print "."
     end
 
-    fei = @engine.launch LaunchItem.new(TestDefinition0), :wait_for => true
+    fei = @engine.launch(
+      OpenWFE::LaunchItem.new(TestDefinition0), :wait_for => true)
 
     #log_level_to_debug
 
@@ -96,6 +97,16 @@ class FlowTest26c < Test::Unit::TestCase
   # ruby 1.8.6 (2008-03-03 patchlevel 114) [universal-darwin9.0]
   #
   # focusing on Marshal for fulldup...
+  #
+
+  #
+  # Thu Oct 16 22:58:15 JST 2008
+  #
+  # 10_000 in 31.939
+  #
+  # ruby 1.8.6 (2008-03-03 patchlevel 114) [universal-darwin9.0]
+  #
+  # 2GB RAM -> 4GB RAM, well...
   #
 
 end
