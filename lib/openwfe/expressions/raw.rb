@@ -501,7 +501,7 @@ module OpenWFE
         end
       end
 
-      a = [ @name, @attributes, children ]
+      [ @name, @attributes, children ]
     end
   end
 

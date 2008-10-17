@@ -200,7 +200,7 @@ module OpenWFE
       if wait
         wait_for(fei) { apply raw_expression, wi }
       else
-        apply raw_expression, wi
+        apply(raw_expression, wi)
         fei
       end
     end
@@ -227,7 +227,7 @@ module OpenWFE
       raw_exp.parent_id = parent_exp.fei
 
       if vars
-        raw_exp.new_environment vars
+        raw_exp.new_environment(vars)
       else
         raw_exp.environment_id = parent_exp.environment_id
       end
@@ -237,7 +237,7 @@ module OpenWFE
 
       if register_child
         (parent_exp.children ||= []) << raw_exp.fei
-        update raw_exp
+        update(raw_exp)
       end
 
       raw_exp
@@ -309,7 +309,7 @@ module OpenWFE
 
       raw_exp = if template.is_a?(FlowExpressionId)
 
-        fetch_expression template
+        fetch_expression(template)
 
       elsif template.is_a?(RawExpression)
 
@@ -318,17 +318,12 @@ module OpenWFE
 
       else # probably an URI
 
-        build_raw_expression nil, template
+        build_raw_expression(nil, template)
       end
 
       raw_exp = raw_exp.dup
       raw_exp.fei = raw_exp.fei.dup
-
-      if forget
-        raw_exp.parent_id = nil
-      else
-        raw_exp.parent_id = firing_exp.fei
-      end
+      raw_exp.parent_id = forget ? nil : firing_exp.fei
 
       #raw_exp.fei.wfid = get_wfid_generator.generate
       #raw_exp.fei.wfid =
@@ -336,11 +331,11 @@ module OpenWFE
       raw_exp.fei.wfid =
         "#{firing_exp.fei.parent_wfid}.#{firing_exp.get_next_sub_id}"
 
-      raw_exp.new_environment params
+      raw_exp.new_environment(params)
 
       raw_exp.store_itself
 
-      apply raw_exp, workitem
+      apply(raw_exp, workitem)
 
       raw_exp.fei
     end
