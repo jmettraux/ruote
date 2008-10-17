@@ -14,6 +14,8 @@ The quickstart is at : http://openwferu.rubyforge.org/quickstart.html
 http://openwferu.rubyforge.org
 http://rubyforge.org/projects/openwferu
 
+http://jmettraux.wordpress.com (blog)
+
 
 == feedback
 
