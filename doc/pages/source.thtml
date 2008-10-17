@@ -24,6 +24,8 @@ The highlights are :
 
 * "Ruote-web":http://github.com/jmettraux/ruote-web (ex-"Densha") : a Ruby on Rails web application wrapping the OpenWFEru ruote engine. ("online demo":http://difference.openwfe.org:3000)
 
+* "Ruote-web2":http://github.com/jmettraux/ruote-web2 : the second take on 'ruote-web', gathers the learnings from ruote-rest and ruote-web
+
 * "Ruote-rest":http://github.com/jmettraux/ruote-rest : A RESTful BPM / workflow service
 
 * "Ruote-fluo":http://github.com/jmettraux/ruote-fluo : the beginning of a process definition editor ("online demo":http://difference.openwfe.org:4567/?pdef=pdef_ttt.xml)
