@@ -30,8 +30,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #++
 #
-# $Id: definitions.rb 2725 2006-06-02 13:26:32Z jmettraux $
-#
 
 #
 # "made in Japan"
@@ -68,15 +66,15 @@ module OpenWFE
     def apply (workitem)
 
       if @children.size < 1
-        reply_to_parent workitem
+        reply_to_parent(workitem)
         return
       end
 
       @applied_workitem = workitem.dup
 
-      schedule_timeout :after
+      schedule_timeout(workitem, :after)
 
-      get_expression_pool.apply @children[0], workitem
+      get_expression_pool.apply(@children[0], workitem)
     end
 
     #
@@ -85,7 +83,7 @@ module OpenWFE
     #
     def reply (workitem)
 
-      unschedule_timeout
+      unschedule_timeout(workitem)
 
       super
     end
@@ -98,7 +96,7 @@ module OpenWFE
 
       get_expression_pool.cancel(@children[0]) if @applied_workitem
 
-      unschedule_timeout
+      unschedule_timeout(nil)
 
       super
     end

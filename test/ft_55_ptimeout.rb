@@ -47,7 +47,7 @@ class FlowTest55 < Test::Unit::TestCase
 
     dotest Test0, "concurrence done"
 
-    sleep 0.350 # give some time for the timeout unschedule
+    sleep 0.370 # give some time for the timeout unschedule
 
     #p scheduler.at_job_count
     #p scheduler.instance_variable_get(:@non_cron_jobs)

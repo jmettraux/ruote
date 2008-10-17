@@ -167,7 +167,7 @@ module OpenWFE
       @frequency = MIN_FREQUENCY \
         if @frequency < MIN_FREQUENCY
 
-      determine_timeout
+      determine_timeout(workitem)
       determine_scheduler_tags
 
       condition_attribute = determine_condition_attribute(
@@ -214,7 +214,7 @@ module OpenWFE
     #
     def cancel
 
-      unschedule_timeout
+      unschedule_timeout(nil)
       super()
     end
 
@@ -226,8 +226,8 @@ module OpenWFE
         #
         # do timeout...
         #
-        set_timedout_flag @applied_workitem
-        reply_to_parent @applied_workitem
+        set_timedout_flag(@applied_workitem)
+        reply_to_parent(@applied_workitem)
         return
       end
 
@@ -255,9 +255,9 @@ module OpenWFE
     def reply_to_parent (workitem)
 
       unschedule
-      unschedule_timeout
+      unschedule_timeout(workitem)
 
-      super workitem
+      super(workitem)
     end
 
     protected

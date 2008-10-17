@@ -151,13 +151,13 @@ module OpenWFE
 
       @applied_workitem = workitem.dup
 
-      schedule_timeout
+      schedule_timeout(workitem)
 
-      filter_in workitem
+      filter_in(workitem)
 
       store_itself
 
-      workitem.params = lookup_attributes workitem
+      workitem.params = lookup_attributes(workitem)
 
       #
       # threading AFTER the store_itself()
@@ -191,13 +191,13 @@ module OpenWFE
         #
         # for 'listen' expressions waiting for replies
 
-      unschedule_timeout()
+      unschedule_timeout(workitem)
 
-      workitem.attributes.delete 'params'
+      workitem.attributes.delete('params')
 
-      filter_out workitem
+      filter_out(workitem)
 
-      super workitem
+      super(workitem)
     end
 
     #
@@ -207,7 +207,7 @@ module OpenWFE
     #
     def cancel
 
-      unschedule_timeout
+      unschedule_timeout(nil)
 
       cancel_participant
 
@@ -236,10 +236,9 @@ module OpenWFE
 
       rescue
 
-        lerror do
-          "trigger() problem while timing out\n"+
-          OpenWFE::exception_to_s($!)
-        end
+        lerror {
+          "trigger() problem while timing out\n#{OpenWFE::exception_to_s($!)}"
+        }
       end
     end
 

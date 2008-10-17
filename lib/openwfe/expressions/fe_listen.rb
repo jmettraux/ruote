@@ -195,7 +195,7 @@ module OpenWFE
       #
       # once
 
-      @once = lookup_boolean_attribute :once, workitem, true
+      @once = lookup_boolean_attribute(:once, workitem, true)
 
       @once = true if raw_children.size < 1
         # a 'blocking listen' can only get triggered once.
@@ -205,7 +205,7 @@ module OpenWFE
       #
       # merge
 
-      merge = lookup_boolean_attribute :merge, workitem, false
+      merge = lookup_boolean_attribute(:merge, workitem, false)
 
       ldebug { "apply() merge is #{@merge}" }
 
@@ -214,17 +214,15 @@ module OpenWFE
       #
       # upon
 
-      @upon = lookup_sym_attribute(
-        :upon, workitem, :default => :apply)
-
+      @upon = lookup_sym_attribute(:upon, workitem, :default => :apply)
       @upon = (@upon == :reply) ? :reply : :apply
 
       ldebug { "apply() @upon is #{@upon}" }
 
       @call_count = 0
 
-      determine_timeout
-      reschedule get_scheduler
+      determine_timeout(nil) # workitem set to nil, no stamp needed.
+      reschedule(get_scheduler)
 
       store_itself
     end
@@ -355,7 +353,7 @@ module OpenWFE
       #
       def start_observing
 
-        get_participant_map.add_observer @participant_regex, self
+        get_participant_map.add_observer(@participant_regex, self)
       end
 
       #
@@ -363,7 +361,7 @@ module OpenWFE
       #
       def stop_observing
 
-        get_participant_map.remove_observer self
+        get_participant_map.remove_observer(self)
       end
   end
 

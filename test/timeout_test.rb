@@ -6,6 +6,8 @@
 # Sun Oct 29 15:41:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'test/unit'
 
 require 'openwfe/engine/engine'
@@ -32,7 +34,7 @@ class TimeoutTest < Test::Unit::TestCase
     end
   end
 
-  def test_timeout_0
+  def test_0
 
     albert = OpenWFE::HashParticipant.new
 
@@ -59,7 +61,7 @@ class TimeoutTest < Test::Unit::TestCase
     assert_equal "timedout? true\nover", s, "flow did not reach 'over'"
   end
 
-  def test_timeout_1
+  def test_1
 
     albert = OpenWFE::HashParticipant.new
 
@@ -70,9 +72,7 @@ class TimeoutTest < Test::Unit::TestCase
     engine.register_participant(:albert, albert)
 
     pjc = engine.get_scheduler.pending_job_count
-    assert \
-      pjc == 0,
-      "0 pending_jobs_count is at #{pjc}, it should be at 0"
+    assert_equal 0, pjc
 
     li = OpenWFE::LaunchItem.new TimeoutDefinition0
 
@@ -99,6 +99,35 @@ class TimeoutTest < Test::Unit::TestCase
     pjc = engine.get_scheduler.pending_job_count
 
     assert_equal 0, pjc, "pending_jobs_count is at #{pjc}, should be at 0"
+  end
+
+  class Test2 < OpenWFE::ProcessDefinition
+    albert :timeout => '10s'
+  end
+
+  def test_2
+
+    engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
+
+    workitem = nil
+
+    engine.register_participant 'albert' do |wi|
+      workitem = wi.dup
+    end
+
+    fei = engine.launch(Test2)
+
+    sleep 0.350
+
+    assert_equal(
+      1, workitem.attributes['__timeouts__'].size)
+    assert_equal(
+      5, workitem.attributes['__timeouts__']["#{fei.wfid}__0.0"].size)
+
+    assert_equal(
+      5, workitem.current_timeout.size)
+
+    #puts workitem
   end
 
 end

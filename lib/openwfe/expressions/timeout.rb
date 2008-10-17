@@ -61,16 +61,18 @@ module OpenWFE
     # Looks for the "timeout" attribute in its process definition
     # and then sets the @timeout_at field (if there is a timeout).
     #
-    def determine_timeout (timeout_attname=:timeout)
+    def determine_timeout (workitem, timeout_attname=:timeout)
 
       #@timeout_at = nil
       #@timeout_job_id = nil
 
-      timeout = lookup_attribute(timeout_attname, @applied_workitem)
-      return unless timeout
+      s_timeout = lookup_attribute(timeout_attname, @applied_workitem)
+      return unless s_timeout
 
-      timeout = Rufus::parse_time_string(timeout)
+      timeout = Rufus::parse_time_string(s_timeout)
       @timeout_at = Time.new.to_f + timeout
+
+      stamp_workitem(workitem, s_timeout)
     end
 
     #
@@ -85,9 +87,9 @@ module OpenWFE
     #
     # Combines a call to determine_timeout and to reschedule.
     #
-    def schedule_timeout (timeout_attname=:timeout)
+    def schedule_timeout (workitem, timeout_attname=:timeout)
 
-      determine_timeout(timeout_attname)
+      determine_timeout(workitem, timeout_attname)
       to_reschedule(get_scheduler)
     end
 
@@ -99,7 +101,7 @@ module OpenWFE
     # No method override in a mixin...
     #
     #def reply_to_parent (workitem)
-    #  unschedule_timeout()
+    #  unschedule_timeout(workitem)
     #  super(workitem)
     #end
     #++
@@ -109,7 +111,7 @@ module OpenWFE
     #
     def set_timedout_flag (workitem)
 
-      workitem.attributes["__timed_out__"] = "true"
+      workitem.attributes['__timed_out__'] = 'true'
     end
 
     #
@@ -117,10 +119,33 @@ module OpenWFE
     #
     def remove_timedout_flag (workitem)
 
-      workitem.attributes.delete("__timed_out__")
+      workitem.attributes.delete('__timed_out__')
     end
 
     protected
+
+      def stamp_workitem (wi, timeout)
+
+        return unless wi
+
+        key = "#{@fei.wfid}__#{@fei.expid}"
+
+        stamp = [
+          self.class.name, @fei.expname, Time.now.to_f, timeout, @timeout_at
+        ]
+
+        (wi.attributes['__timeouts__'] ||= {})[key] = stamp
+      end
+
+      def unstamp_workitem (wi)
+
+        return unless wi
+
+        stamps = wi.attributes['__timeouts__']
+        return unless stamps
+
+        stamps.delete("#{@fei.wfid}__#{@fei.expid}")
+      end
 
       #
       # prefixed with "to_" for easy mix in
@@ -159,18 +184,18 @@ module OpenWFE
       #
       # Unschedules the timeout
       #
-      def unschedule_timeout ()
+      def unschedule_timeout (workitem)
 
-        ldebug do
-          "unschedule_timeout() " +
-          "@timeout_job_id is #{@timeout_job_id}" +
-          " (oid #{object_id})"
-        end
+        #ldebug do
+        #  "unschedule_timeout() " +
+        #  "@timeout_job_id is #{@timeout_job_id}" +
+        #  " (oid #{object_id})"
+        #end
 
-        #ldebug_callstack "unschedule_timeout()"
+        return unless @timeout_job_id
 
-        get_scheduler.unschedule(@timeout_job_id) \
-          if @timeout_job_id
+        get_scheduler.unschedule(@timeout_job_id)
+        unstamp_workitem(workitem)
       end
   end
 

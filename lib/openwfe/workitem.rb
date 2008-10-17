@@ -48,7 +48,7 @@ module OpenWFE
   # The convention for the result of some expressions is to store
   # their result in a workitem field named "__result__".
   #
-  FIELD_RESULT = "__result__"
+  FIELD_RESULT = '__result__'
 
   #--
   # WORKITEMS
@@ -322,12 +322,28 @@ module OpenWFE
     end
 
     #
+    # Returns the current timeout for the workitem (or nil if none is set).
+    #
+    # The result is an array [
+    #   exp_class_name, exp_name, timestamp, timeout_duration, timeout_point ]
+    #
+    # 'timestamp' and 'timeout_point' are Float instances (use Time.at(f) to
+    # turn into local Time instances)
+    #
+    def current_timeout
+
+      stamps = self.attributes['__timeouts__']
+      return nil unless stamps
+
+      stamps["#{fei.wfid}__#{fei.expid}"]
+    end
+
+    #
     # Outputting the workitem in a human readable format
     #
     def to_s
 
-      s = ""
-      s << "  #{self.class} :\n"
+      s =  "  #{self.class} :\n"
       s << "  - flow_expression_id : #{@flow_expression_id}\n"
       s << "  - participant_name :   #{@participant_name}\n"
       s << "  - last_modified :    #{@last_modified}\n"

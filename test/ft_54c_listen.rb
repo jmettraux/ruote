@@ -32,7 +32,7 @@ class FlowTest54c < Test::Unit::TestCase
       end
 
       sequence do
-        _sleep "300"
+        _sleep '350'
         participant :ref => "channel_z"
         channel_z
       end
@@ -52,7 +52,7 @@ class FlowTest54c < Test::Unit::TestCase
       %w{ z z apply apply }.join("\n")
     ]
 
-    dotest Test0, outputs, 0.850, true
+    dotest Test0, outputs, 0.900, true
   end
 
   #
@@ -65,7 +65,7 @@ class FlowTest54c < Test::Unit::TestCase
         listen9
       end
       sequence do
-        _sleep "300"
+        _sleep '350'
         channel9
       end
     end
@@ -80,7 +80,7 @@ class FlowTest54c < Test::Unit::TestCase
 
     fei = launch Test1
 
-    sleep 0.700
+    sleep 0.750
 
     #puts @engine.get_expression_storage
     assert_equal 8, @engine.get_expression_storage.size
@@ -89,7 +89,7 @@ class FlowTest54c < Test::Unit::TestCase
 
     @engine.cancel_process fei
 
-    sleep 0.700
+    sleep 0.750
 
     #puts @engine.get_expression_storage
     assert_equal 1, @engine.get_expression_storage.size
