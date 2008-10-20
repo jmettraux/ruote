@@ -227,7 +227,7 @@ module OpenWFE
 
         exp_name = expression_name()
         exp_class = expression_class()
-        var_value = lookup_variable exp_name
+        var_value = lookup_variable(exp_name)
         attributes = extract_attributes
 
         unless var_value
@@ -256,38 +256,18 @@ module OpenWFE
         elsif var_value.is_a?(FlowExpressionId) \
           or var_value.is_a?(RawExpression)
 
+          raise 'old style !'
+
+        elsif var_value.is_a?(Array)
+
           exp_class = SubProcessRefExpression
           attributes['ref'] = exp_name
+
         end
         # else, it's a standard expression
 
         [ exp_name, exp_class, attributes ]
       end
-
-      #def extract_children
-      #  i = 0
-      #  result = []
-      #  raw_representation.last.each do |child|
-      #    if is_not_a_node?(child)
-      #      result << child
-      #    else
-      #      cname = child.first.intern
-      #      next if cname == :param
-      #      next if cname == :parameter
-      #      #next if cname == :description
-      #      cfei = @fei.dup
-      #      cfei.expression_name = child.first
-      #      cfei.expression_id = "#{cfei.expression_id}.#{i}"
-      #      efei = @environment_id
-      #      rawexp = RawExpression.new_raw(
-      #        cfei, @fei, efei, @application_context, OpenWFE::fulldup(child))
-      #      get_expression_pool.update rawexp
-      #      i = i + 1
-      #      result << rawexp.fei
-      #    end
-      #  end
-      #  result
-      #end
 
       def extract_parameters
 
@@ -296,7 +276,7 @@ module OpenWFE
 
           #next unless child.is_a?(SimpleExpRepresentation)
           #next unless child.is_a?(Array)
-          next if is_not_a_node?(child)
+          next if OpenWFE::ExpressionTree.is_not_a_node?(child)
 
           name = child.first.to_sym
           next unless (name == :parameter or name == :param)
@@ -310,13 +290,6 @@ module OpenWFE
             attributes['type'])
         end
         r
-      end
-
-      def is_not_a_node? (child)
-
-        (( ! child.is_a?(Array)) ||
-         child.size != 3 ||
-         ( ! child.first.is_a?(String)))
       end
 
       #

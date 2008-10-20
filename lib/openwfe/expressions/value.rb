@@ -65,45 +65,41 @@ module OpenWFE
 
       child = raw_children.first
 
-      if child.is_a?(Array)
+      if child.is_a?(Array) # child is an expression
 
-        handle_child(child, workitem)
-        return
+        apply_child(0, workitem)
+
+      else # child is a piece of text
+
+        workitem.attributes[FIELD_RESULT] =
+          fetch_text_content(workitem, escape)
+
+        reply(workitem)
       end
-
-      workitem.attributes[FIELD_RESULT] = fetch_text_content(workitem, escape)
-
-      reply(workitem)
     end
 
     def lookup_variable_attribute (workitem)
 
-      lookup [ "variable", "var", "v" ], workitem
+      lookup [ 'variable', 'var', 'v' ], workitem
     end
 
     def lookup_field_attribute (workitem)
 
-      lookup [ "field", "fld", "f" ], workitem
+      lookup [ 'field', 'fld', 'f' ], workitem
     end
 
-    protected
-
-      def handle_child (child, workitem)
-
-        raw_child, _fei = get_expression_pool.fetch(child)
-
-        if raw_child.is_definition?
-
-          workitem.attributes[FIELD_RESULT] = raw_child
-            #
-            # storing the child raw expression
-
-          reply workitem
-        else
-
-          get_expression_pool.apply(raw_child, workitem)
-        end
-      end
+    #protected
+      #def handle_child (child, workitem)
+      #  raw_child, _fei = get_expression_pool.fetch(child)
+      #  if raw_child.is_definition?
+      #    workitem.attributes[FIELD_RESULT] = raw_child
+      #      #
+      #      # storing the child raw expression
+      #    reply workitem
+      #  else
+      #    get_expression_pool.apply(raw_child, workitem)
+      #  end
+      #end
 
     private
 

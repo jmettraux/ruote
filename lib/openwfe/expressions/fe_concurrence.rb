@@ -136,76 +136,36 @@ module OpenWFE
 
     names :concurrence
 
-    attr_accessor \
-      :sync_expression
+    attr_accessor :sync_expression
 
 
     def apply (workitem)
 
-      sync = lookup_sym_attribute(
-        :sync, workitem, :default => :generic)
+      extract_children # initializes the @children array
+
+      sync = lookup_sym_attribute(:sync, workitem, :default => :generic)
 
       @sync_expression =
         get_expression_map.get_sync_class(sync).new(self, workitem)
 
       @children.each do |child|
-        @sync_expression.add_child child
+        @sync_expression.add_child(child)
       end
 
       store_itself
 
-      #concurrence = self
-
       @children.each_with_index do |child, index|
 
-        get_expression_pool.apply(
-          child,
-          get_workitem(workitem, index))
-
-        #Thread.new do
-        #  begin
-        #    #ldebug { "apply() child : #{child.to_debug_s}" }
-        #    concurrence.synchronize do
-        #      get_expression_pool().apply(
-        #        child,
-        #        #workitem.dup)
-        #        get_workitem(workitem, index))
-        #    end
-        #  rescue Exception => e
-        #    lwarn do
-        #      "apply() " +
-        #      "caught exception in concurrent child  " +
-        #      child.to_debug_s + "\n" +
-        #      OpenWFE::exception_to_s(e)
-        #    end
-        #  end
-        #end
+        get_expression_pool.apply(child, workitem.dup)
       end
 
-      #@sync_expression.ready(self)
-        #
-        # this is insufficient, have to do that :
-
-      #synchronize do
-      #
-      # Making sure the freshest version of the concurrence
-      # expression is used.
-      # This is especially important when using pure persistence.
-      #
-      reloaded_self, _fei = get_expression_pool.fetch @fei
-      reloaded_self.sync_expression.ready reloaded_self
-      #end
+      reloaded_self, _fei = get_expression_pool.fetch(@fei)
+      reloaded_self.sync_expression.ready(reloaded_self)
     end
 
     def reply (workitem)
       @sync_expression.reply(self, workitem)
     end
-
-    protected
-
-      def get_workitem (workitem, index)
-        workitem.dup
-      end
   end
 
   #
@@ -256,10 +216,6 @@ module OpenWFE
 
         vars = iterator.next wi
 
-        #rawexp = get_expression_pool.prepare_from_template(
-        #  self, nil, iterator.index, template, vars)
-        #@children << rawexp.fei
-
         get_expression_pool.tprepare_child(
           self,
           raw_children.first,
@@ -271,12 +227,10 @@ module OpenWFE
       super
     end
 
-    protected
-
-      def get_workitem (workitem, index)
-
-        @workitems[index]
-      end
+    #protected
+    #  def get_workitem (workitem, index)
+    #    @workitems[index]
+    #  end
   end
 
   #
@@ -345,7 +299,6 @@ module OpenWFE
     # can be processed
     #
     def ready (synchable)
-      #synchable.synchronize do
 
       synchable.ldebug do
         "ready() called by  #{synchable.fei.to_debug_s}  " +
@@ -363,7 +316,6 @@ module OpenWFE
           # concurrence is over, if this is the case, the
           # queue should not be treated anymore
       end
-      #end
     end
 
     def add_child (child)
@@ -371,7 +323,6 @@ module OpenWFE
     end
 
     def reply (synchable, workitem)
-      #synchable.synchronize do
 
       if @unready_queue
 
@@ -387,7 +338,6 @@ module OpenWFE
       else
         do_reply synchable, workitem
       end
-      #end
     end
 
     protected
@@ -450,12 +400,10 @@ module OpenWFE
 
         workitem = @merge_array.do_merge
 
-        synchable.reply_to_parent workitem
+        synchable.reply_to_parent(workitem)
       end
 
       def treat_remaining_children (synchable)
-
-        expool = synchable.get_expression_pool
 
         @remaining_children.each do |child|
 
@@ -466,9 +414,9 @@ module OpenWFE
           end
 
           if @cancel_remaining
-            expool.cancel(child)
+            synchable.get_expression_pool.cancel(child)
           else
-            expool.forget(synchable, child)
+            synchable.get_expression_pool.forget(synchable, child)
           end
         end
       end

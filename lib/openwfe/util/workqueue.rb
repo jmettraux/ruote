@@ -70,7 +70,7 @@ module OpenWFE
 
           target, method_name, args = work
 
-          target.send method_name, *args
+          target.send(method_name, *args)
         end
       end
     end
@@ -98,7 +98,7 @@ module OpenWFE
     def stop
 
       @stopped = true
-      @queue.push :stop
+      @queue.push(:stop)
     end
 
     #
@@ -106,9 +106,13 @@ module OpenWFE
     #
     def push (target, method_name, *args)
 
+      fei = args.find { |e| e.respond_to?(:fei) }
+      fei = fei.fei.to_s if fei
+      p [ :push, method_name, args.find { |e| e.is_a?(Symbol) }, fei ]
+
       if @stopped
 
-        target.send method_name, *args
+        target.send(method_name, *args)
           #
           # degraded mode : as if there were no workqueue
       else

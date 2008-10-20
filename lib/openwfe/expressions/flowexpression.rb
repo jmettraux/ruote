@@ -193,7 +193,7 @@ module OpenWFE
     #
     def reply_to_parent (workitem)
 
-      get_expression_pool.reply_to_parent self, workitem
+      get_expression_pool.reply_to_parent(self, workitem)
     end
 
     #
@@ -211,7 +211,7 @@ module OpenWFE
 
         next if child.is_a?(String)
 
-        i = get_expression_pool.cancel child
+        i = get_expression_pool.cancel(child)
         inflowitem ||= i
       end
 
@@ -829,6 +829,35 @@ module OpenWFE
     #++
 
     protected
+
+      #
+      # Initializes the @children member array.
+      #
+      # Used by 'concurrence' for example.
+      #
+      def extract_children
+        i = 0
+        @children = []
+        raw_representation.last.each do |child|
+          if OpenWFE::ExpressionTree.is_not_a_node?(child)
+            @children << child
+          else
+            cname = child.first.intern
+            next if cname == :param
+            next if cname == :parameter
+            #next if cname == :description
+            cfei = @fei.dup
+            cfei.expression_name = child.first
+            cfei.expression_id = "#{cfei.expression_id}.#{i}"
+            efei = @environment_id
+            rawexp = RawExpression.new_raw(
+              cfei, @fei, efei, @application_context, OpenWFE::fulldup(child))
+            get_expression_pool.update(rawexp)
+            i += 1
+            @children << rawexp.fei
+          end
+        end
+      end
 
       #
       # If the varname starts with '//' will return the engine

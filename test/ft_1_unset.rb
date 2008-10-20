@@ -35,7 +35,7 @@ class FlowTest1 < Test::Unit::TestCase
       #true)
   end
 
-  def test_unset_2
+  def test_unset_1
     dotest(
 '''<process-definition name="n" revision="0">
   <sequence>

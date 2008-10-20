@@ -24,9 +24,9 @@ class FlowTest2 < Test::Unit::TestCase
 
   # test_con_0 got moved to ft_2c_concurrence.rb
 
-  def test_con_1
+  def test_1
 
-    #log_level_to_debug
+    log_level_to_debug
 
     dotest(
 '''<process-definition name="ft_2_concurrence" revision="1">
@@ -44,7 +44,7 @@ class FlowTest2 < Test::Unit::TestCase
       true)
   end
 
-  def test_con_2
+  def test_2
 
     #log_level_to_debug
 

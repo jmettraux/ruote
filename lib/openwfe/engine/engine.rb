@@ -101,7 +101,7 @@ module OpenWFE
 
       super :s_engine, application_context
 
-      @engine_name = application_context[:engine_name] || 'engine'
+      @engine_name = (application_context[:engine_name] || 'engine').to_s
 
       $OWFE_LOG = application_context[:logger]
 

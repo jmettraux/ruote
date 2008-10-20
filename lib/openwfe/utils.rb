@@ -500,7 +500,7 @@ module OpenWFE
     end
 
     #
-    # looks up in a container (something that has a [] method)  with a key,
+    # Looks up in a container (something that has a [] method)  with a key,
     # if nothing has been found and the key is a number, turns the
     # the number into a String a does a last lookup.
     #
@@ -522,6 +522,5 @@ module OpenWFE
 
       value
     end
-
 end
 

@@ -146,20 +146,28 @@ module OpenWFE
 
         if child.is_a?(Array)
 
-          if get_expression_map.is_definition?(child[0])
+          if get_expression_map.get_class(child[0]) == DefineExpression
 
-            set_variable(child[0], child)
-            return next_child_index(child_index)
+            name = child[1]['name'] || child[2].first
 
-          elsif (not @body_index)
+            raise "process defintion without a 'name' attribute" \
+              unless name.is_a?(String)
+
+            set_variable(name, child)
+
+          elsif get_expression_map.is_definition?(child[0])
+
+            return child_index # let it get 'applied'
+
+          elsif @body_index == nil
 
             @body_index = child_index
             store_itself
-            return next_child_index(child_index)
           end
+
         end
 
-        child_index
+        next_child_index(child_index)
       end
   end
 

@@ -385,20 +385,21 @@ module OpenWFE
     #
     def cancel (exp)
 
-      exp, fei = fetch exp
+      exp, fei = fetch(exp)
 
       unless exp
+        p "cancel() cannot cancel missing  #{fei.to_debug_s}"
         linfo { "cancel() cannot cancel missing  #{fei.to_debug_s}" }
         return nil
       end
 
       ldebug { "cancel() for  #{fei.to_debug_s}" }
 
-      onotify :cancel, exp
+      onotify(:cancel, exp)
 
       wi = exp.cancel
 
-      remove exp
+      remove(exp)
 
       wi
     end
@@ -413,19 +414,19 @@ module OpenWFE
     #
     def cancel_expression (exp)
 
-      exp = fetch_expression exp
+      exp = fetch_expression(exp)
 
-      wi = cancel exp
+      wi = do_cancel(exp)
 
       # ( remember that in case of error, no wi could get returned...)
 
       if wi
 
-        reply_to_parent exp, wi, false
+        reply_to_parent(exp, wi, false)
 
       elsif exp.parent_id
 
-        parent_exp = fetch_expression exp.parent_id
+        parent_exp = fetch_expression(exp.parent_id)
         parent_exp.remove_child(exp.fei) if parent_exp
       end
     end
@@ -436,7 +437,7 @@ module OpenWFE
     #
     def cancel_process (exp_or_wfid)
 
-      wfid = extract_wfid exp_or_wfid, false
+      wfid = extract_wfid(exp_or_wfid, false)
         # 'true' would have made sure that the parent wfid is used...
 
       ldebug { "cancel_process() '#{wfid}'" }
@@ -540,7 +541,7 @@ module OpenWFE
       #
       # parent still present, reply to it
 
-      reply exp.parent_id, workitem
+      reply(exp.parent_id, workitem)
     end
 
     #
@@ -572,9 +573,6 @@ module OpenWFE
     # has to be reloaded.
     #
     def fetch (exp)
-      #synchronize do
-
-      #ldebug { "fetch() exp is of kind #{exp.class}" }
 
       fei = if exp.is_a?(FlowExpression)
 
@@ -589,10 +587,7 @@ module OpenWFE
         exp
       end
 
-      #ldebug { "fetch() for  #{fei.to_debug_s}" }
-
       [ get_expression_storage[fei], fei ]
-      #end
     end
 
     #
@@ -603,7 +598,7 @@ module OpenWFE
     #
     def fetch_expression (exp)
 
-      exp, fei = fetch exp
+      exp, fei = fetch(exp)
       exp
     end
 
@@ -611,12 +606,9 @@ module OpenWFE
     # Returns the engine environment (the top level environment)
     #
     def fetch_engine_environment
-      #synchronize do
-        #
-        # synchronize to ensure that there's 1! engine env
 
       eei = engine_environment_id
-      ee, fei = fetch eei
+      ee, fei = fetch(eei)
 
       return ee if ee
 
@@ -626,7 +618,6 @@ module OpenWFE
       ee.store_itself
 
       ee
-      #end
     end
 
     #
@@ -647,9 +638,9 @@ module OpenWFE
 
       return unless exp
 
-      ldebug { "remove() fe  #{exp.fei.to_debug_s}" }
+      #ldebug { "remove() fe  #{exp.fei.to_debug_s}" }
 
-      onotify :remove, exp.fei
+      onotify(:remove, exp.fei)
 
       remove_environment(exp.environment_id) if exp.owns_its_environment?
     end
@@ -687,14 +678,12 @@ module OpenWFE
     # 'singleton' method.
     #
     def engine_environment_id
-      #synchronize do
-        # no need, it's been already called at initialization
 
       return @eei if @eei
 
       @eei = FlowExpressionId.new
       @eei.owfe_version = OPENWFERU_VERSION
-      @eei.engine_id = get_engine.engine_name
+      @eei.engine_id = OpenWFE::stu(get_engine.engine_name)
       @eei.initial_engine_id = @eei.engine_id
       @eei.workflow_definition_url = 'ee'
       @eei.workflow_definition_name = 'ee'
@@ -703,7 +692,6 @@ module OpenWFE
       @eei.expression_name = EN_ENVIRONMENT
       @eei.expression_id = '0'
       @eei
-      #end
     end
 
     #
@@ -749,7 +737,7 @@ module OpenWFE
         # so that expressions like 'sequence' can be used
         # as root expressions. Later...
 
-      get_expression_storage.find_expressions options
+      get_expression_storage.find_expressions(options)
     end
 
     #
@@ -814,24 +802,24 @@ module OpenWFE
       #
       def wait_for (fei_or_wfid)
 
-        wfid = extract_wfid fei_or_wfid, false
+        wfid = extract_wfid(fei_or_wfid, false)
 
         t = Thread.current
         result = nil
 
-        to = get_expression_pool.add_observer(:terminate) do |c, fe, wi|
+        to = add_observer(:terminate) do |c, fe, wi|
           if fe.fei.workflow_instance_id == wfid
             result = [ :terminate, wi, fei_or_wfid ]
             t.wakeup
           end
         end
-        te = get_expression_pool.add_observer(:error) do |c, fei, m, i, e|
+        te = add_observer(:error) do |c, fei, m, i, e|
           if fei.parent_wfid == wfid
             result = [ :error, e, fei_or_wfid ]
             t.wakeup
           end
         end
-        tc = get_expression_pool.add_observer(:cancel) do |c, fe|
+        tc = add_observer(:cancel) do |c, fe|
           if fe.fei.wfid == wfid and fe.fei.expid == '0'
             result = [ :cancel, wfid, fei_or_wfid ]
             t.wakeup
@@ -845,9 +833,9 @@ module OpenWFE
 
         linfo { "wait_for() '#{wfid}' is over" }
 
-        get_expression_pool.remove_observer to, :terminate
-        get_expression_pool.remove_observer te, :error
-        get_expression_pool.remove_observer tc, :cancel
+        remove_observer(to, :terminate)
+        remove_observer(te, :error)
+        remove_observer(tc, :cancel)
 
         result
       end
@@ -1057,7 +1045,7 @@ module OpenWFE
         fei = FlowExpressionId.new
 
         fei.owfe_version = OPENWFERU_VERSION
-        fei.engine_id = OpenWFE::stu get_engine.service_name.to_s
+        fei.engine_id = OpenWFE::stu(get_engine.engine_name)
         fei.initial_engine_id = OpenWFE::stu fei.engine_id
         fei.workflow_definition_url = OpenWFE::stu url
         fei.workflow_definition_name = OpenWFE::stu flow_name

@@ -175,6 +175,14 @@ module OpenWFE
   module ExpressionTree
 
     #
+    # Returns true if the argument is a leaf.
+    #
+    def self.is_not_a_node? (o)
+
+      (( ! o.is_a?(Array)) || o.size != 3 || ( ! o.first.is_a?(String)))
+    end
+
+    #
     # Extracts the description out of a process definition tree.
     #
     # TODO #14964 : add language support here
