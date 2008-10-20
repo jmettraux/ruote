@@ -43,7 +43,7 @@ class FlowTest6 < Test::Unit::TestCase
 
   class Test1 < OpenWFE::ProcessDefinition
     sequence do
-      _set :v => "inside1r" do
+      _set :v => 'inside1r' do
         process_definition do
           _print "hello ${name}"
         end
@@ -55,7 +55,7 @@ class FlowTest6 < Test::Unit::TestCase
 
   def test_1
 
-    #log_level_to_debug
+    log_level_to_debug
 
     dotest(Test1, "hello mundo\ndone.")
   end

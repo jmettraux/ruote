@@ -67,7 +67,15 @@ module OpenWFE
 
       if child.is_a?(Array) # child is an expression
 
-        apply_child(0, workitem)
+        if get_expression_map.get_class(child[0]) == DefineExpression
+
+          workitem.attributes[FIELD_RESULT] = child # bind process
+
+          reply(workitem)
+        else
+
+          apply_child(0, workitem) # apply child
+        end
 
       else # child is a piece of text
 

@@ -42,7 +42,7 @@ class FlowTest3 < Test::Unit::TestCase
   end
 
   def test_2
-    log_level_to_debug
+    #log_level_to_debug
     dotest(
 '''<process-definition name="if_0" revision="0">
   <if>
