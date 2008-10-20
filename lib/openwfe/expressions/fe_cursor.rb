@@ -89,10 +89,11 @@ module OpenWFE
     #
     attr_accessor :current_child_id
 
-    #
+    #--
     # keeping track of the current child (if any)
     #
-    attr_accessor :current_child_fei
+    #attr_accessor :current_child_fei
+    #++
 
 
     def apply (workitem)
@@ -155,29 +156,32 @@ module OpenWFE
       #
       # launch the next child as a template
 
-      @current_child_fei = get_expression_pool.tlaunch_child(
-        self,
-        template,
-        @current_child_id,
-        workitem,
-        false) # not registering child
+      #@current_child_fei = get_expression_pool.tlaunch_child(
+      #  self,
+      #  template,
+      #  @current_child_id,
+      #  workitem,
+      #  #false) # not registering child
+      #  true) # registering child
+        #
+        # TODO : check if the register_child switch is still necessary...
+
+      @children.clear if @children
+      apply_child(@current_child_id, workitem)
 
       store_itself
     end
 
-    #
+    #--
     # takes care of cancelling the current child if necessary
     #
-    def cancel
-
-      cfei = current_child_fei
-      get_expression_pool.cancel(cfei) if cfei
-
-      get_expression_pool.cancel(@current_child_fei) \
-        if @current_child_fei
-
-      super
-    end
+    #def cancel
+    #  cfei = current_child_fei
+    #  get_expression_pool.cancel(cfei) if cfei
+    #  get_expression_pool.cancel(@current_child_fei) if @current_child_fei
+    #  super
+    #end
+    #++
 
     #
     # Returns false, the child class LoopExpression does return true.

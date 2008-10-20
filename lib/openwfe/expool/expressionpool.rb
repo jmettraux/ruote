@@ -258,9 +258,9 @@ module OpenWFE
       raw_exp = tprepare_child(
         parent_exp, template, sub_id, register_child, vars)
 
-      onotify :tlaunch_child, raw_exp.fei, workitem
+      onotify(:tlaunch_child, raw_exp.fei, workitem)
 
-      apply raw_exp, workitem
+      apply(raw_exp, workitem)
 
       raw_exp.fei
     end

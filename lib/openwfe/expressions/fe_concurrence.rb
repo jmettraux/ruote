@@ -355,19 +355,16 @@ module OpenWFE
 
         @remaining_children.delete(workitem.last_expression_id)
 
-        #synchable.ldebug do
-        #  "#{self.class}.do_reply()  "+
-        #  "remaining children : #{@remaining_children.length}"
-        #end
-
         if @remaining_children.length <= 0
           reply_to_parent(synchable)
           return true
         end
 
         if @count > 0 and @reply_count >= @count
-          treat_remaining_children(synchable)
-          reply_to_parent(synchable)
+
+          synchable.get_workqueue.push(
+            self, :treat_remaining_children, synchable)
+
           return true
         end
 
@@ -378,20 +375,17 @@ module OpenWFE
           synchable.eval_condition("over-if", workitem, "over-unless")
 
         if conditional
-          treat_remaining_children(synchable)
-          reply_to_parent(synchable)
+
+          synchable.get_workqueue.push(
+            self, :treat_remaining_children, synchable)
+
           return true
         end
 
         #
         # not over, resuming
 
-        synchable.store_itself()
-
-        #synchable.ldebug do
-        #  "#{self.class}.do_reply() not replying to parent "+
-        #  "#{workitem.last_expression_id.to_debug_s}"
-        #end
+        synchable.store_itself
 
         false
       end
@@ -419,6 +413,8 @@ module OpenWFE
             synchable.get_expression_pool.forget(synchable, child)
           end
         end
+
+        reply_to_parent(synchable)
       end
 
       def cancel_remaining? (synchable_expression, workitem)

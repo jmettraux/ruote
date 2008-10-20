@@ -106,9 +106,9 @@ module OpenWFE
     #
     def push (target, method_name, *args)
 
-      fei = args.find { |e| e.respond_to?(:fei) }
-      fei = fei.fei.to_s if fei
-      p [ :push, method_name, args.find { |e| e.is_a?(Symbol) }, fei ]
+      #fei = args.find { |e| e.respond_to?(:fei) }
+      #fei = fei.fei.to_s if fei
+      #p [ :push, method_name, args.find { |e| e.is_a?(Symbol) }, fei ]
 
       if @stopped
 

@@ -205,17 +205,17 @@ module OpenWFE
 
       return nil unless @children
 
-      inflowitem = nil
+      wi = nil
 
       @children.each do |child|
 
         next if child.is_a?(String)
 
         i = get_expression_pool.cancel(child)
-        inflowitem ||= i
+        wi ||= i
       end
 
-      inflowitem
+      wi
     end
 
     #
@@ -227,7 +227,7 @@ module OpenWFE
     #
     def get_parent
 
-      get_expression_pool.fetch_expression @parent_id
+      get_expression_pool.fetch_expression(@parent_id)
     end
 
     #
@@ -242,7 +242,7 @@ module OpenWFE
       ldebug { "store_itself() for  #{@fei.to_debug_s}" }
       #ldebug { "store_itself() \n#{OpenWFE::caller_to_s(0, 6)}" }
 
-      get_expression_pool.update self
+      get_expression_pool.update(self)
     end
 
     #
@@ -272,7 +272,7 @@ module OpenWFE
     #
     def fetch_environment
 
-      get_expression_pool.fetch_expression @environment_id
+      get_expression_pool.fetch_expression(@environment_id)
     end
 
     #
@@ -292,8 +292,8 @@ module OpenWFE
       ei = @fei.dup
       vi = @environment_id.dup
 
-      ei.expression_name = "neutral"
-      vi.expression_name = "neutral"
+      ei.expression_name = 'neutral'
+      vi.expression_name = 'neutral'
 
       #ldebug do
       #  "owns_its_environment?()\n"+

@@ -313,12 +313,10 @@ module OpenWFE
     alias :purge :clear
 
     def []= (k, v)
-      p [ :put, k.to_s ]
       super
     end
 
     def delete (k)
-      p [ :delete, k.to_s ]
       super
     end
 
