@@ -93,7 +93,8 @@ module OpenWFE
     #
     # A pointer to the body expression of this process definition.
     #
-    attr_accessor :body_fei
+    ##attr_accessor :body_fei
+    attr_accessor :body_index
 
     #
     # Called at the end of the 'evaluation', the 'apply' operation on
@@ -101,10 +102,14 @@ module OpenWFE
     #
     def reply_to_parent (workitem)
 
-      return super(workitem) \
-        if @body_fei == nil or @body_fei == workitem.fei
+      #return super(workitem) \
+      #  if @body_fei == nil or @body_fei == workitem.fei
+      #get_expression_pool.apply(@body_fei, workitem)
 
-      get_expression_pool.apply @body_fei, workitem
+      return super(workitem) \
+        if @body_index == nil or (@children and @children.first == workitem.fei)
+
+      apply_child(@body_index, workitem)
     end
 
     #
@@ -126,44 +131,35 @@ module OpenWFE
         raw_exp.store_itself
       end
 
-      super name, fei
+      super(name, fei)
     end
 
     protected
 
-      #
-      # Determines the flowExpressionId of the next child to apply.
-      #
-      def next_child (current_fei)
+      def next_child_index (returning_fei)
 
-        next_fei = super
+        child_index = super
 
-        return nil unless next_fei
+        return nil unless child_index
 
-        rawchild = get_expression_pool.fetch_expression next_fei
+        child = raw_children[child_index]
 
-        return next_child(next_fei) unless rawchild
+        if child.is_a?(Array)
 
-        unless rawchild.is_definition?
+          if get_expression_map.is_definition?(child[0])
 
-          unless @body_fei
-            @body_fei = next_fei
+            set_variable(child[0], child)
+            return next_child_index(child_index)
+
+          elsif (not @body_index)
+
+            @body_index = child_index
             store_itself
+            return next_child_index(child_index)
           end
-          return next_child(next_fei)
         end
 
-        exp_class = get_expression_map.get_class rawchild
-
-        if exp_class == DefineExpression
-          set_variable rawchild.definition_name, next_fei
-          return next_child(next_fei)
-        end
-
-        next_fei
-          #
-          # expression is a 'set', a 'filter-definition' or
-          # something like that, let it get applied
+        child_index
       end
   end
 

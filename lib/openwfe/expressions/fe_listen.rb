@@ -136,7 +136,7 @@ module OpenWFE
 
     names :listen, :intercept, :receive
 
-    uses_template
+    #uses_template
 
     #
     # the channel on which this expression 'listens'

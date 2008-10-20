@@ -233,9 +233,7 @@ module OpenWFE
 
     names :concurrent_iterator
 
-    #attr_accessor :template
-
-    uses_template
+    #uses_template
 
 
     def apply (workitem)

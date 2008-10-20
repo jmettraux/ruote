@@ -54,27 +54,26 @@ module OpenWFE
 
       escape = lookup_boolean_attribute('escape', workitem, false)
 
-      if @children.length < 1
+      if raw_children.length < 1
 
         workitem.attributes[FIELD_RESULT] =
-          lookup_value workitem, :escape => escape
+          lookup_value(workitem, :escape => escape)
 
-        reply workitem
+        reply(workitem)
         return
       end
 
-      child = @children.first
+      child = raw_children.first
 
-      if child.kind_of?(OpenWFE::FlowExpressionId)
+      if child.is_a?(Array)
 
-        handle_child child, workitem
+        handle_child(child, workitem)
         return
       end
 
-      workitem.attributes[FIELD_RESULT] =
-        fetch_text_content workitem, escape
+      workitem.attributes[FIELD_RESULT] = fetch_text_content(workitem, escape)
 
-      reply workitem
+      reply(workitem)
     end
 
     def lookup_variable_attribute (workitem)
@@ -95,9 +94,6 @@ module OpenWFE
 
         if raw_child.is_definition?
 
-          #body_fei = get_expression_pool.evaluate child, workitem
-          #workitem.attributes[FIELD_RESULT] = body_fei
-
           workitem.attributes[FIELD_RESULT] = raw_child
             #
             # storing the child raw expression
@@ -105,7 +101,7 @@ module OpenWFE
           reply workitem
         else
 
-          get_expression_pool.apply raw_child, workitem
+          get_expression_pool.apply(raw_child, workitem)
         end
       end
 
@@ -114,7 +110,7 @@ module OpenWFE
       def lookup (name_array, workitem)
 
         name_array.each do |n|
-          v = lookup_string_attribute n, workitem
+          v = lookup_string_attribute(n, workitem)
           return v if v
         end
 

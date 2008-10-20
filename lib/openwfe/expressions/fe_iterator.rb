@@ -78,7 +78,7 @@ module OpenWFE
 
     names :iterator
 
-    uses_template
+    #uses_template
 
     #
     # an Iterator instance that holds the list of values being iterated

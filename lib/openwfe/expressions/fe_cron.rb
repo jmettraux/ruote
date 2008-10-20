@@ -95,7 +95,7 @@ module OpenWFE
 
     names :cron
 
-    uses_template
+    #uses_template
 
     #
     # The cron 'tab', something like "0 9-17 * * mon-fri"

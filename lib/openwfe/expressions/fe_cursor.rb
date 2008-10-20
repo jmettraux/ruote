@@ -77,7 +77,7 @@ module OpenWFE
 
     names :cursor
 
-    uses_template
+    #uses_template
 
     #
     # the integer identifier for the current loop
@@ -113,7 +113,7 @@ module OpenWFE
           #
           # well, currently, no infinite empty loop allowed
 
-      command, step = determine_command_and_step workitem
+      command, step = determine_command_and_step(workitem)
 
       ldebug { "reply() command is '#{command} #{step}'" }
 

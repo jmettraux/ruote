@@ -71,52 +71,41 @@ module OpenWFE
 
     def reply (workitem)
 
-      cfei = next_child workitem.fei
+      child_index = next_child_index(workitem.fei)
 
-      return reply_to_parent(workitem) \
-        unless cfei
+      return reply_to_parent(workitem) unless child_index
 
       #ldebug do
       #  "reply() self : \n#{self.to_s}\n" +
       #  "reply() next is #{@current_child_id} : #{cfei.to_debug_s}"
       #end
 
-      get_expression_pool.apply cfei, workitem
+      @children.clear if @children
+        # keeping track of only 1 child, it's a sequence ...
+
+      apply_child(child_index, workitem)
     end
 
     protected
 
       #
-      # Returns the flowExpressionId of the next child to apply, or
-      # nil if the sequence is over.
+      # Returns the child_index (in the raw_children array) of the next child
+      # to apply, or nil if the sequence is over.
       #
-      def next_child (current_fei)
+      def next_child_index (returning_fei)
 
-        # using @current_id as 'memo' of the current position
-
-        @current_id = nil \
-          if @current_id and (@children[@current_id] != current_fei)
-            #
-            # the list of children changed, forget the current position
-            # will have to redetermine it ...
-
-        @current_id = if @current_id
-          @current_id + 1
-        elsif current_fei == self.fei
+        next_id = if returning_fei.is_a?(Integer)
+          returning_fei + 1
+        elsif returning_fei == self.fei
           0
         else
-          @children.index(current_fei) + 1
+          returning_fei.child_id.to_i + 1
         end
 
         loop do
-
-          break if @current_id >= @children.length
-
-          child = @children[@current_id]
-
-          return child if child.is_a?(FlowExpressionId)
-
-          @current_id += 1
+          break if next_id > raw_children.length
+          return next_id if raw_children[next_id].is_a?(Array)
+          next_id += 1
         end
 
         nil

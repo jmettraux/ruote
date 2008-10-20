@@ -711,7 +711,6 @@ module OpenWFE
         lookup_attribute(
         "#{prefix}f#{att_name}", workitem, options)
 
-      #return workitem.attributes[f] if f
       return workitem.attributes[f.to_s] if f
 
       nil
@@ -747,6 +746,19 @@ module OpenWFE
       env.store_itself
 
       c
+    end
+
+    #
+    # Given a child index (in the raw_children list/array), applies that
+    # child.
+    #
+    # Does the bulk work of preparing the children and applying it (also
+    # cares about registering the child in the @children array).
+    #
+    def apply_child (child_index, workitem)
+
+      get_expression_pool.tlaunch_child(
+        self, raw_children[child_index], child_index, workitem, true)
     end
 
     #
@@ -802,18 +814,19 @@ module OpenWFE
       end
     end
 
-    #
+    #--
     # returns true if the expression class 'uses a template'
     # (children will not immediately get expanded at 'parse' time)
     #
-    def self.uses_template?
-      false
-    end
-    def self.uses_template
-      meta_def :uses_template? do
-        true
-      end
-    end
+    #def self.uses_template?
+    #  false
+    #end
+    #def self.uses_template
+    #  meta_def :uses_template? do
+    #    true
+    #  end
+    #end
+    #++
 
     protected
 

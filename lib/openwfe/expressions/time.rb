@@ -127,7 +127,7 @@ module OpenWFE
 
     attr_accessor :frequency
 
-    uses_template
+    #uses_template
 
     #
     # By default, classes extending this class do poll for their

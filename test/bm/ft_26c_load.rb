@@ -109,5 +109,13 @@ class FlowTest26c < Test::Unit::TestCase
   # 2GB RAM -> 4GB RAM, well...
   #
 
+  #
+  # Mon Oct 20 10:30:47 JST 2008
+  #
+  # 10_000 in 23.845
+  #
+  # ruby 1.8.6 (2008-03-03 patchlevel 114) [universal-darwin9.0]
+  #
+
 end
 

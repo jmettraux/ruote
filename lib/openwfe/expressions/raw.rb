@@ -116,8 +116,8 @@ module OpenWFE
 
       consider_tag workitem, exp
 
-      exp.children = extract_children \
-        unless exp_class.uses_template?
+      #exp.children = extract_children \
+      #  unless exp_class.uses_template?
 
       exp
     end
@@ -264,41 +264,30 @@ module OpenWFE
         [ exp_name, exp_class, attributes ]
       end
 
-      def extract_children
-
-        i = 0
-        result = []
-        raw_representation.last.each do |child|
-
-          if is_not_a_node?(child)
-
-            result << child
-          else
-
-            cname = child.first.intern
-
-            next if cname == :param
-            next if cname == :parameter
-            #next if cname == :description
-
-            cfei = @fei.dup
-            cfei.expression_name = child.first
-            cfei.expression_id = "#{cfei.expression_id}.#{i}"
-
-            efei = @environment_id
-
-            rawexp = RawExpression.new_raw(
-              cfei, @fei, efei, @application_context, OpenWFE::fulldup(child))
-
-            get_expression_pool.update rawexp
-
-            i = i + 1
-
-            result << rawexp.fei
-          end
-        end
-        result
-      end
+      #def extract_children
+      #  i = 0
+      #  result = []
+      #  raw_representation.last.each do |child|
+      #    if is_not_a_node?(child)
+      #      result << child
+      #    else
+      #      cname = child.first.intern
+      #      next if cname == :param
+      #      next if cname == :parameter
+      #      #next if cname == :description
+      #      cfei = @fei.dup
+      #      cfei.expression_name = child.first
+      #      cfei.expression_id = "#{cfei.expression_id}.#{i}"
+      #      efei = @environment_id
+      #      rawexp = RawExpression.new_raw(
+      #        cfei, @fei, efei, @application_context, OpenWFE::fulldup(child))
+      #      get_expression_pool.update rawexp
+      #      i = i + 1
+      #      result << rawexp.fei
+      #    end
+      #  end
+      #  result
+      #end
 
       def extract_parameters
 
