@@ -114,12 +114,11 @@ module OpenWFE
         # since OpenWFEru 0.9.16 previous __result__ values
         # are not erased before an 'if'.
 
-      test = eval_condition :test, workitem, :not
+      test = eval_condition(:test, workitem, :not)
 
-      if @children.length < 1
-        #workitem.set_result test if test
+      if raw_children.length < 1
         workitem.set_result((test != nil and test != false))
-        reply_to_parent workitem
+        reply_to_parent(workitem)
         return
       end
 
@@ -135,7 +134,7 @@ module OpenWFE
 
       lwarn {
         "apply() 'if' with more than #{maxchildren} children"
-      } if @children.size > maxchildren
+      } if raw_children.size > maxchildren
 
       # apply next step
 
@@ -143,12 +142,13 @@ module OpenWFE
         #
         # apply then or else (condition result known)
         #
-        apply_consequence test, workitem, 0
+        apply_consequence(test, workitem, 0)
       else
         #
         # apply condition
         #
-        get_expression_pool.apply @children.first, workitem
+        #get_expression_pool.apply(raw_children.first, workitem)
+        apply_child(0, workitem)
       end
     end
 
@@ -163,7 +163,7 @@ module OpenWFE
 
       store_itself
 
-      apply_consequence result, workitem
+      apply_consequence(result, workitem)
     end
 
     #
@@ -175,7 +175,7 @@ module OpenWFE
     def reply_to_parent (workitem)
 
       clean_children
-      super workitem
+      super(workitem)
     end
 
     protected
@@ -194,10 +194,11 @@ module OpenWFE
 
         index = index + offset
 
-        if index >= @children.length
-          reply_to_parent workitem
+        if index >= raw_children.length
+          reply_to_parent(workitem)
         else
-          get_expression_pool.apply @children[index], workitem
+          #get_expression_pool.apply(@children[index], workitem)
+          apply_child(index, workitem)
         end
       end
   end
@@ -253,7 +254,7 @@ module OpenWFE
 
       @offset = nil
 
-      trigger_child workitem, true
+      trigger_child(workitem, true)
     end
 
     def reply (workitem)
@@ -282,8 +283,8 @@ module OpenWFE
         #ldebug { "trigger_child() is_condition ? #{is_condition}" }
         #ldebug { "trigger_child() next offset is #{@offset}" }
 
-        unless @children[@offset]
-          reply_to_parent workitem
+        unless raw_children[@offset]
+          reply_to_parent(workitem)
           return
         end
 
@@ -291,7 +292,8 @@ module OpenWFE
 
         store_itself
 
-        get_expression_pool.apply(@children[@offset], workitem)
+        #get_expression_pool.apply(@children[@offset], workitem)
+        apply_child(@offset, workitem)
       end
   end
 

@@ -26,7 +26,7 @@ class FlowTest2 < Test::Unit::TestCase
 
   def test_1
 
-    log_level_to_debug
+    #log_level_to_debug
 
     dotest(
 '''<process-definition name="ft_2_concurrence" revision="1">

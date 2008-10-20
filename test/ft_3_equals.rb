@@ -19,7 +19,7 @@ class FlowTest3 < Test::Unit::TestCase
   #def teardown
   #end
 
-  def test_equals_0
+  def test_0
     dotest(
 '''<process-definition name="equals_0" revision="0">
   <sequence>
@@ -27,10 +27,10 @@ class FlowTest3 < Test::Unit::TestCase
     <print>${field:__result__}</print>
   </sequence>
 </process-definition>''',
-      "true")
+      'true')
   end
 
-  def test_equals_1
+  def test_1
     dotest(
 '''<process-definition name="equals_1" revision="0">
   <sequence>
@@ -41,7 +41,8 @@ class FlowTest3 < Test::Unit::TestCase
       "false")
   end
 
-  def test_if_0
+  def test_2
+    log_level_to_debug
     dotest(
 '''<process-definition name="if_0" revision="0">
   <if>
@@ -49,10 +50,10 @@ class FlowTest3 < Test::Unit::TestCase
     <print>ok</print>
   </if>
 </process-definition>''',
-      "ok")
+      'ok')
   end
 
-  def test_if_1
+  def test_3
     dotest(
 '''<process-definition name="if_1" revision="0">
   <if>
@@ -64,7 +65,7 @@ class FlowTest3 < Test::Unit::TestCase
       "ok")
   end
 
-  def test_if_2
+  def test_4
     dotest(
 '''<process-definition name="if_2" revision="0">
   <if>
@@ -75,7 +76,7 @@ class FlowTest3 < Test::Unit::TestCase
       "")
   end
 
-  def test_if_3
+  def test_5
     dotest(
 '''<process-definition name="if_3" revision="0">
   <if>
@@ -86,7 +87,7 @@ class FlowTest3 < Test::Unit::TestCase
 </process-definition>''', "ok")
   end
 
-  def test_equals_0
+  def test_6
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <sequence>
@@ -99,11 +100,10 @@ class FlowTest3 < Test::Unit::TestCase
     </if>
   </sequence>
 </process-definition>''',
-"""true
-true""")
+      "true\ntrue")
   end
 
-  def test_equals_1
+  def test_7
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <sequence>
@@ -119,7 +119,7 @@ true""")
       "true\ntrue")
   end
 
-  def test_equals_2
+  def test_8
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <sequence>
@@ -135,7 +135,7 @@ true""")
       "true\ntrue")
   end
 
-  def test_equals_3
+  def test_9
 
     #log_level_to_debug
 

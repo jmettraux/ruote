@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'flowtestbase'
 
@@ -20,8 +22,7 @@ class FlowTest2c < Test::Unit::TestCase
   #def teardown
   #end
 
-  #def xxxx_con_0
-  def test_con_0
+  def test_0
     dotest(
       '''<process-definition name="con" revision="0">
   <concurrence>
@@ -53,7 +54,7 @@ a'''
     end
   end
 
-  def test_con_1
+  def test_1
     dotest(
       TestCon2c1,
       "a\nc\nb",

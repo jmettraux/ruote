@@ -94,7 +94,7 @@ module OpenWFE
       attname.each do |aname|
         aname = aname.intern if aname.is_a?(String)
         return aname if has_attribute(aname)
-        return aname if has_attribute("r" + aname.to_s)
+        return aname if has_attribute("r#{aname.to_s}")
       end
 
       nil
@@ -104,11 +104,8 @@ module OpenWFE
 
       def do_eval_condition (attname, workitem)
 
-        #attname = pick_attribute(attname) \
-        #  if attname.is_a?(Array)
-
         conditional = lookup_attribute(attname, workitem)
-        rconditional = lookup_attribute("r"+attname.to_s, workitem)
+        rconditional = lookup_attribute("r#{attname.to_s}", workitem)
 
         return do_eval(rconditional, workitem) \
           if rconditional and not conditional
@@ -122,7 +119,7 @@ module OpenWFE
 
         ldebug { "do_eval_condition() 1 for  >#{conditional}<" }
 
-        r = eval_set conditional
+        r = eval_set(conditional)
         return r if r != nil
 
         begin
@@ -198,7 +195,7 @@ module OpenWFE
 
         op = find_operator string
 
-        return '"' + string + '"' unless op
+        return "\"#{string}\"" unless op
 
         op, i = op
 
@@ -223,15 +220,15 @@ module OpenWFE
           next unless i
           return [ op, i ]
         end
+
         nil
       end
 
       #
-      # Evalutates the given code (after security checks)
+      # Evaluates the given code (after security checks)
       #
       def do_eval (s, workitem)
 
-        #TreeChecker.check_conditional s
         get_tree_checker.check_conditional s
 
         # ok, green for eval
@@ -242,8 +239,7 @@ module OpenWFE
           # wi and fe are thus available as well
           # (as self and workitem)
 
-        #Rufus::eval_safely(s, 4, binding())
-        eval s, binding()
+        eval(s, binding())
       end
   end
 
