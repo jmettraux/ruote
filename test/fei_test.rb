@@ -7,6 +7,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'rubygems'
+
 require 'test/unit'
 require 'rutest_utils'
 #require 'openwfe/owfe'
@@ -16,12 +18,6 @@ require 'openwfe/rudefinitions'
 
 
 class FeiTest < Test::Unit::TestCase
-
-  #def setup
-  #end
-
-  #def teardown
-  #end
 
   def test_equality
 

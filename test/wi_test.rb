@@ -5,18 +5,14 @@
 # John Mettraux at openwfe.org
 #
 
+require 'rubygems'
+
 require 'test/unit'
 require 'openwfe/workitem'
 require 'openwfe/util/dollar'
 
 
 class WiTest < Test::Unit::TestCase
-
-  #def setup
-  #end
-
-  #def teardown
-  #end
 
   def test_0
 

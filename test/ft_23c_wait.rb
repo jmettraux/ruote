@@ -12,12 +12,6 @@ require 'openwfe/def'
 class FlowTest23c < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   #
   # Test 0
   #
@@ -71,7 +65,7 @@ class FlowTest23c < Test::Unit::TestCase
 
   def test_1
 
-    #log_level_to_debug
+    log_level_to_debug
 
     dotest Wait1c, [ 'before done', 'after wait', 'over' ].join("\n")
   end

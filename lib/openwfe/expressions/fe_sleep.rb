@@ -153,6 +153,8 @@ module OpenWFE
 
       @scheduler_job_id = "sleep_#{self.fei.to_s}"
 
+      store_itself
+
       scheduler.schedule_at(
         @awakening_time,
         {
@@ -164,8 +166,6 @@ module OpenWFE
         "[re]schedule() @scheduler_job_id is '#{@scheduler_job_id}' "+
         " (scheduler #{scheduler.object_id})"
       end
-
-      store_itself
     end
   end
 

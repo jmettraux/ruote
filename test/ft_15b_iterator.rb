@@ -17,12 +17,6 @@ require 'flowtestbase'
 class FlowTest15b < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   #
   # Test 0
   #
@@ -58,7 +52,8 @@ class FlowTest15b < Test::Unit::TestCase
 
     sleep 0.350
 
-    assert_equal 8, @engine.get_expression_storage.size
+    #puts @engine.get_expression_storage.to_s
+    assert_equal 7, @engine.get_expression_storage.size
     assert_equal "", @tracer.to_s
 
     @engine.cancel_process fei
