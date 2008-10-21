@@ -7,6 +7,8 @@
 # Tue Jan  2 13:14:37 JST 2007
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 require 'openwfe/participants/participants'
 require 'openwfe/participants/enoparticipants'
@@ -46,7 +48,7 @@ class FlowTest13 < Test::Unit::TestCase
   def test_ppd_0
     dotest(
       TestDefinition0,
-      "ok")
+      'ok')
   end
 end
 

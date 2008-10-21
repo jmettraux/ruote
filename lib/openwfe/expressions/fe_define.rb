@@ -150,10 +150,10 @@ module OpenWFE
 
             name = child[1]['name'] || child[2].first
 
-            raise "process defintion without a 'name' attribute" \
-              unless name.is_a?(String)
+            raise "process definition without a 'name' attribute" \
+              unless name
 
-            set_variable(name, child)
+            set_variable(name.to_s, child)
 
           elsif get_expression_map.is_definition?(child[0])
 

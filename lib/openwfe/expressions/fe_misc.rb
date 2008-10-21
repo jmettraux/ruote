@@ -238,27 +238,13 @@ module OpenWFE
 
       ldebug { "apply() def is >#{df}<" }
 
-      raw_expression = build_raw_expression df
+      procdef = get_expression_pool.determine_rep(df)
 
-      #puts
-      #puts "======================================"
-      #puts raw_expression.to_s
-      #puts raw_expression.raw_representation
-      #puts "======================================"
-      #puts
+      raw_expression = RawExpression.new_raw(
+        fei, parent_id, environment_id, application_context, procdef)
 
-      raw_expression.apply workitem
+      raw_expression.apply(workitem)
     end
-
-    protected
-
-      def build_raw_expression (df)
-
-        procdf = get_expression_pool.determine_rep df
-
-        RawExpression.new_raw(
-          fei, parent_id, environment_id, application_context, procdf)
-      end
   end
 
   #
@@ -341,7 +327,7 @@ module OpenWFE
       #
       def extract_attributes
 
-        att = lookup_vf_attribute @applied_workitem, :attributes
+        att = lookup_vf_attribute(@applied_workitem, :attributes)
           # will currently only work with an attribute hash
           # whose keys are strings... symbols :(
 

@@ -143,9 +143,9 @@ module OpenWFE
         ":definition_in_launchitem_allowed not set to true, cannot launch."
       ) if in_launchitem and ac[:definition_in_launchitem_allowed] != true
 
-      raw_expression = build_raw_expression(launchitem, definition)
+      raw_expression = build_raw_expression(definition, launchitem)
 
-      raw_expression.check_parameters launchitem
+      raw_expression.check_parameters(launchitem)
         #
         # will raise an exception if there are requirements
         # and one of them is not met
@@ -172,7 +172,7 @@ module OpenWFE
       #
       # prepare raw expression
 
-      raw_expression = prepare_raw_expression launchitem
+      raw_expression = prepare_raw_expression(launchitem)
         #
         # will raise an exception if there are requirements
         # and one of them is not met
@@ -193,12 +193,12 @@ module OpenWFE
       #
       # apply prepared raw expression
 
-      wi = build_workitem launchitem
+      wi = build_workitem(launchitem)
 
-      onotify :launch, fei, launchitem
+      onotify(:launch, fei, launchitem)
 
       if wait
-        wait_for(fei) { apply raw_expression, wi }
+        wait_for(fei) { apply(raw_expression, wi) }
       else
         apply(raw_expression, wi)
         fei
@@ -306,27 +306,12 @@ module OpenWFE
     def launch_subprocess (
       firing_exp, template, forget, workitem, params)
 
-      raw_exp = if template.is_a?(FlowExpressionId)
+      raw_exp = build_raw_expression(template)
 
-        fetch_expression(template)
-
-      elsif template.is_a?(RawExpression)
-
-        template.application_context = @application_context
-        template
-
-      else # probably an URI
-
-        build_raw_expression(nil, template)
-      end
-
-      raw_exp = raw_exp.dup
-      raw_exp.fei = raw_exp.fei.dup
       raw_exp.parent_id = forget ? nil : firing_exp.fei
 
-      #raw_exp.fei.wfid = get_wfid_generator.generate
-      #raw_exp.fei.wfid =
-      #  "#{firing_exp.fei.wfid}.#{firing_exp.get_next_sub_id}"
+      raw_exp.fei.workflow_definition_url = firing_exp.fei.wfurl
+
       raw_exp.fei.wfid =
         "#{firing_exp.fei.parent_wfid}.#{firing_exp.get_next_sub_id}"
 
@@ -669,19 +654,11 @@ module OpenWFE
     #
     def engine_environment_id
 
-      return @eei if @eei
-
-      @eei = FlowExpressionId.new
-      @eei.owfe_version = OPENWFERU_VERSION
-      @eei.engine_id = OpenWFE::stu(get_engine.engine_name)
-      @eei.initial_engine_id = @eei.engine_id
-      @eei.workflow_definition_url = 'ee'
-      @eei.workflow_definition_name = 'ee'
-      @eei.workflow_definition_revision = '0'
-      @eei.workflow_instance_id = '0'
-      @eei.expression_name = EN_ENVIRONMENT
-      @eei.expression_id = '0'
-      @eei
+      @eei ||= new_fei(
+        :workflow_definition_url => 'ee',
+        :workflow_definition_name => 'ee',
+        :workflow_instance_id => '0',
+        :expression_name => EN_ENVIRONMENT)
     end
 
     #
@@ -816,7 +793,6 @@ module OpenWFE
           end
         end
 
-        #apply raw_expression, wi
         yield if block_given?
 
         Thread.stop unless result
@@ -925,7 +901,10 @@ module OpenWFE
         ocron = options[:cron]
         oevery = options[:every]
 
-        fei = new_fei nil, "schedlaunch", "0", "sequence"
+        fei = new_fei(
+          :workflow_instance_id => get_wfid_generator.generate(nil),
+          :workflow_definition_name => 'schedlaunch',
+          :expression_name => 'sequence')
 
         # not very happy with this code, it builds custom
         # wrapping processes manually, maybe there is
@@ -1002,9 +981,7 @@ module OpenWFE
 
         env.unbind
 
-        #get_expression_storage().delete(environment_id)
-
-        onotify :remove, environment_id
+        onotify(:remove, environment_id)
       end
 
       #
@@ -1024,27 +1001,11 @@ module OpenWFE
       # Builds a FlowExpressionId instance for a process being
       # launched.
       #
-      def new_fei (launchitem, flow_name, flow_revision, exp_name)
+      def new_fei (h)
 
-        url = if launchitem
-          launchitem.workflow_definition_url || LaunchItem::FIELD_DEF
-        else
-          "no-url"
-        end
-
-        fei = FlowExpressionId.new
-
-        fei.owfe_version = OPENWFERU_VERSION
-        fei.engine_id = OpenWFE::stu(get_engine.engine_name)
-        fei.initial_engine_id = OpenWFE::stu fei.engine_id
-        fei.workflow_definition_url = OpenWFE::stu url
-        fei.workflow_definition_name = OpenWFE::stu flow_name
-        fei.workflow_definition_revision = OpenWFE::stu flow_revision
-        fei.wfid = get_wfid_generator.generate launchitem
-        fei.expression_id = "0"
-        fei.expression_name = exp_name
-
-        fei
+        FlowExpressionId.new_fei({
+          :engine_id => OpenWFE::stu(get_engine.engine_name)
+        }.merge(h))
       end
 
       #
@@ -1054,19 +1015,27 @@ module OpenWFE
       # The param can be a template or a definition (anything
       # accepted by the determine_representation() method).
       #
-      def build_raw_expression (launchitem, param)
+      def build_raw_expression (param, launchitem=nil)
 
         procdef = determine_rep(param)
-
         atts = procdef[1]
-        flow_name = atts['name'] || "noname"
-        flow_revision = atts['revision'] || "0"
-        exp_name = procdef.first
 
-        fei = new_fei launchitem, flow_name, flow_revision, exp_name
+        h = {
+          :workflow_instance_id =>
+            get_wfid_generator.generate(launchitem),
+          :workflow_definition_name =>
+            atts['name'] || procdef[2].first || 'no-name',
+          :workflow_definition_revision =>
+            atts['revision'] || '0',
+          :expression_name =>
+            procdef[0] }
+
+        h[:workflow_definition_url] = (
+          launchitem.workflow_definition_url || LaunchItem::FIELD_DEF
+        ) if launchitem
 
         RawExpression.new_raw(
-          fei, nil, nil, @application_context, procdef)
+          new_fei(h), nil, nil, @application_context, procdef)
       end
 
       #

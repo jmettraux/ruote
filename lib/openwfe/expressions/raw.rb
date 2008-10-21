@@ -71,21 +71,6 @@ module OpenWFE
       re
     end
 
-    #--
-    # A duplication method that duplicates everything, except
-    # the application context
-    #
-    #def dup
-    #  self.class.new_raw(
-    #    @fei.dup,
-    #    @parent_id ? @parent_id.dup : nil,
-    #    @environment_id ? @environment_id.dup : nil,
-    #    @application_context,
-    #    raw_representation)
-    #end
-    #alias :fulldup :dup
-    #++
-
     def instantiate_real_expression (
       workitem, exp_name=nil, exp_class=nil, attributes=nil)
 
@@ -114,7 +99,7 @@ module OpenWFE
         # keeping track of how the expression look at apply /
         # instantiation time
 
-      consider_tag workitem, exp
+      consider_tag(workitem, exp)
 
       #exp.children = extract_children \
       #  unless exp_class.uses_template?
@@ -193,6 +178,8 @@ module OpenWFE
     # at the attributes of an expression before it's really
     # 'instantiated'.
     #
+    # (overriden by ExpExpression)
+    #
     def extract_attributes
 
       raw_representation[1]
@@ -253,10 +240,10 @@ module OpenWFE
             attributes['ref'] = participant_name
           end
 
-        elsif var_value.is_a?(FlowExpressionId) \
-          or var_value.is_a?(RawExpression)
-
-          raise 'old style !'
+        #elsif var_value.is_a?(FlowExpressionId) \
+        #  or var_value.is_a?(RawExpression)
+        #
+        #  raise 'old style !'
 
         elsif var_value.is_a?(Array)
 
@@ -421,50 +408,6 @@ module OpenWFE
             end
           end
       end
-  end
-
-  #
-  # This class is only present to ensure that OpenWFEru 0.9.17 can read
-  # previous (<= 0.9.16) expools.
-  #
-  class ProgRawExpression < RawExpression
-
-    def raw_representation
-
-      @raw_representation.to_a
-    end
-  end
-
-  #
-  # This class is only present to ensure that OpenWFEru 0.9.17 can read
-  # previous (<= 0.9.16) expools.
-  #
-  class XmlRawExpression < RawExpression
-
-    def raw_representation
-
-      get_def_parser.parse @raw_representation_s
-    end
-  end
-
-  #
-  # This class is only present to ensure that OpenWFEru 0.9.17 can read
-  # previous (<= 0.9.16) expools.
-  #
-  class SimpleExpRepresentation
-
-    def to_a
-
-      children = @children.collect do |c|
-        if c.is_a?(SimpleExpRepresentation)
-          c.to_a
-        else
-          c
-        end
-      end
-
-      [ @name, @attributes, children ]
-    end
   end
 
   private

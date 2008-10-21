@@ -59,7 +59,7 @@ class FlowTest14b < Test::Unit::TestCase
 
   def test_1
 
-    dotest SubTest1, "toto A"
+    dotest(SubTest1, 'toto A')
   end
 
 
@@ -132,7 +132,7 @@ class FlowTest14b < Test::Unit::TestCase
 
   class Test4 < OpenWFE::ProcessDefinition
     sub0
-    process_definition :name => "sub0" do
+    process_definition :name => 'sub0' do
       toto
     end
   end
@@ -148,7 +148,7 @@ class FlowTest14b < Test::Unit::TestCase
     sleep 0.350
 
     #puts @engine.get_expression_storage
-    assert_equal 8, @engine.get_expression_storage.size
+    assert_equal(7, @engine.get_expression_storage.size)
 
     @engine.cancel_process fei
 

@@ -129,12 +129,27 @@ module OpenWFE
     #
     # Rebuilds a FlowExpressionId from its Hash representation.
     #
-    def FlowExpressionId.from_h (h)
+    def self.from_h (h)
 
-      FIELDS.inject FlowExpressionId.new do |fei, f|
+      FIELDS.inject(FlowExpressionId.new) do |fei, f|
         fei.instance_variable_set("@#{f}", h[f] || h[f.to_s])
         fei
       end
+    end
+
+    #
+    # Builds a new FlowExpressionId out of a hash (overriding some defaults)
+    #
+    def self.new_fei (h={})
+      from_h({
+        :owfe_version => OPENWFERU_VERSION,
+        :workflow_definition_url => 'no-url',
+        :workflow_definition_name => 'no-name',
+        :workflow_definition_revision => '0',
+        :workflow_instance_id => '-1',
+        :expression_name => 'no-exp',
+        :expression_id => '0'
+      }.merge(h))
     end
 
     def hash
