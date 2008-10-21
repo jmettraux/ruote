@@ -97,9 +97,9 @@ module OpenWFE
 
       if child
 
-        get_expression_pool.forget(self, child) # TODO : fix me !
+        #get_expression_pool.forget(self, child)
 
-        get_expression_pool.tlaunch_child(
+        get_expression_pool.tlaunch_orphan(
           self, child, raw_children.index(child), workitem.dup, false)
       end
 

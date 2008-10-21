@@ -281,7 +281,6 @@ module OpenWFE
       raw_exp = RawExpression.new_raw(
         fei, nil, nil, @application_context, template)
 
-      #raw_exp.parent_id = GONE_PARENT_ID
       raw_exp.parent_id = nil
         # it's an orphan, no parent
 
@@ -291,9 +290,9 @@ module OpenWFE
       (firing_exp.children ||= []) << raw_exp.fei \
         if register_child
 
-      onotify :tlaunch_orphan, raw_exp.fei, workitem
+      onotify(:tlaunch_orphan, raw_exp.fei, workitem)
 
-      apply raw_exp, workitem
+      apply(raw_exp, workitem)
 
       raw_exp.fei
     end
@@ -449,29 +448,21 @@ module OpenWFE
     end
     alias :cancel_flow :cancel_process
 
-    #
+    #--
     # Forgets the given expression (make it an orphan).
     #
-    def forget (parent_exp, exp)
-
-      exp, fei = fetch exp
-
-      #ldebug { "forget() forgetting  #{fei}" }
-
-      return if not exp
-
-      onotify :forget, exp
-
-      parent_exp.children.delete(fei)
-
-      #exp.parent_id = GONE_PARENT_ID
-      exp.parent_id = nil
-
-      exp.dup_environment
-      exp.store_itself()
-
-      ldebug { "forget() forgot    #{fei}" }
-    end
+    #def forget (parent_exp, exp)
+    #  exp, fei = fetch exp
+    #  #ldebug { "forget() forgetting  #{fei}" }
+    #  return if not exp
+    #  onotify :forget, exp
+    #  parent_exp.children.delete(fei)
+    #  exp.parent_id = nil
+    #  exp.dup_environment
+    #  exp.store_itself()
+    #  ldebug { "forget() forgot    #{fei}" }
+    #end
+    #++
 
     #
     # Replies to the parent of the given expression.
