@@ -757,8 +757,14 @@ module OpenWFE
     #
     def apply_child (child_index, workitem)
 
+      child_index, child = if child_index.is_a?(Integer)
+        [ child_index, raw_children[child_index] ]
+      else
+        [ raw_children.index(child_index), child_index ]
+      end
+
       get_expression_pool.tlaunch_child(
-        self, raw_children[child_index], child_index, workitem, true)
+        self, child, child_index, workitem, true)
     end
 
     #

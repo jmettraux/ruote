@@ -64,13 +64,16 @@ module OpenWFE
 
     def apply (workitem)
 
-      get_expression_pool.apply(children[0], workitem) \
-        if (@children and @children.length > 0)
+      child = raw_children.find { |c| c.is_a?(Array) }
+
+      return unless child
+
+      apply_child(child, workitem)
     end
 
     def reply (workitem)
 
-      get_expression_pool.remove self
+      get_expression_pool.remove(self)
     end
   end
 
@@ -90,16 +93,17 @@ module OpenWFE
 
     def apply (workitem)
 
-      if (@children and @children.length > 0)
+      child = raw_children.find { |c| c.is_a?(Array) }
 
-        wi = workitem.dup
+      if child
 
-        child = @children[0]
-        get_expression_pool.forget self, child
-        get_expression_pool.apply child, wi
+        get_expression_pool.forget(self, child) # TODO : fix me !
+
+        get_expression_pool.tlaunch_child(
+          self, child, raw_children.index(child), workitem.dup, false)
       end
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
 
     def reply (workitem)

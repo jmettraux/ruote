@@ -23,6 +23,9 @@ class FlowTest7 < Test::Unit::TestCase
   #end
 
   def test_lose_0
+
+    #log_level_to_debug
+
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <sequence>

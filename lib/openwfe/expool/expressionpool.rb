@@ -388,7 +388,6 @@ module OpenWFE
       exp, fei = fetch(exp)
 
       unless exp
-        p "cancel() cannot cancel missing  #{fei.to_debug_s}"
         linfo { "cancel() cannot cancel missing  #{fei.to_debug_s}" }
         return nil
       end
