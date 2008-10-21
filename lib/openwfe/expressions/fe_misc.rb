@@ -188,14 +188,14 @@ module OpenWFE
       wi = workitem
         # so that the ruby code being evaluated sees 'wi' and 'workitem'
 
-      get_tree_checker.check code
+      get_tree_checker.check(code)
 
-      result = eval code, binding()
+      result = eval(code, binding())
 
       workitem.set_result(result) \
         if result != nil  # as 'false' is a valid result
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
   end
 

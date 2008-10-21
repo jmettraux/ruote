@@ -168,17 +168,15 @@ module OpenWFE
 
     def apply (workitem)
 
-      child = @children.first
+      child = raw_children.first
 
       text = if child.is_a?(String)
 
-        #child
-        fetch_text_content workitem
+        fetch_text_content(workitem)
 
-      elsif child.is_a?(FlowExpressionId)
+      elsif child.is_a?(Array)
 
-        exp = get_expression_pool.fetch_expression child
-        ExpressionTree.to_s exp.raw_representation
+        ExpressionTree.to_s(child)
 
       else
 
@@ -202,7 +200,7 @@ module OpenWFE
 
       workitem.set_result(result) if result != nil
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
 
     protected

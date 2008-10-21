@@ -283,7 +283,7 @@ module OpenWFE
       d = REXML::Document.new
       d << to_xml(tree)
       s = ''
-      d.write s, indent
+      d.write(s, indent)
       s
     end
   end
