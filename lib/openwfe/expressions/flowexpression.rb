@@ -717,6 +717,27 @@ module OpenWFE
     end
 
     #
+    # Returns true if the current expression has no expression among its
+    # [raw] children.
+    #
+    def has_no_expression_child
+
+      (first_expression_child == -1)
+    end
+
+    #
+    # Returns the index of the first child that is an expression.
+    #
+    def first_expression_child
+
+      @raw_representation[2].each_with_index do |c, i|
+        return i if c.is_a?(Array)
+      end
+
+      -1
+    end
+
+    #
     # Returns the next sub process id available (this counter
     # is stored in the process environment under the key :next_sub_id)
     #

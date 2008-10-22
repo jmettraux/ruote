@@ -164,6 +164,7 @@ module OpenWFE
     end
 
     def reply (workitem)
+
       @sync_expression.reply(self, workitem)
     end
   end

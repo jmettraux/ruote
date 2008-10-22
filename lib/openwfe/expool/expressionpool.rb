@@ -846,7 +846,7 @@ module OpenWFE
         begin
 
           exp, fei = if exp_or_fei.is_a?(FlowExpressionId)
-            fetch exp_or_fei
+            fetch(exp_or_fei)
           else
             [ exp_or_fei, exp_or_fei.fei ]
           end
@@ -856,31 +856,29 @@ module OpenWFE
             # I uncomment that sometimes to see how the stack
             # grows (wfids and expids)
 
-          ldebug {
-            ":#{direction} "+
-            "target #{fei.to_debug_s}" }
+          ldebug { ":#{direction} target #{fei.to_debug_s}" }
 
           if not exp
 
             #raise "apply() cannot apply missing #{_fei.to_debug_s}"
               # not very helpful anyway
 
-            lwarn { "do_apply_reply() cannot find >#{fei}" }
+            lwarn { "do_apply_reply() :#{direction} but cannot find #{fei}" }
 
             return
           end
 
-          check_if_paused exp
+          check_if_paused(exp)
 
           workitem.fei = exp.fei if direction == :apply
 
-          onotify direction, exp, workitem
+          onotify(direction, exp, workitem)
 
-          exp.send direction, workitem
+          exp.send(direction, workitem)
 
         rescue Exception => e
 
-          notify_error e, fei, direction, workitem
+          notify_error(e, fei, direction, workitem)
         end
       end
 

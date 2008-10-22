@@ -197,10 +197,14 @@ module OpenWFE
 
       if item.is_a?(FlowExpression)
 
-        @wfid ||= item.fei.parent_wfid
+        fei = item.fei
 
-        @variables = item.variables \
-          if item.is_a?(Environment) and item.fei.expid == "0"
+        @wfid ||= fei.parent_wfid
+
+        @variables = item.variables if (
+          item.is_a?(Environment) and
+          fei.sub_instance_id == '' and
+          fei.expid == '0')
 
         @launch_time ||= item.apply_time \
           if item.fei.expid == '0' and item.fei.is_in_parent_process?

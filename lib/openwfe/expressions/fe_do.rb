@@ -77,33 +77,25 @@ module OpenWFE
 
     def apply (workitem)
 
-      tag = lookup_tag(workitem)
+      if tag = lookup_tag(workitem)
 
-      undo_self = false
+        get_workqueue.push(self, :process_tag, tag, workitem)
 
-      if tag
-        #OpenWFE::call_in_thread(fei.expression_name, self) do
-        process_tag tag
-        #end
+      else
 
-        undo_self = tag.fei.ancestor_of?(@fei)
+        reply_to_parent(workitem)
       end
-
-      reply_to_parent(workitem) unless undo_self
     end
 
     #
     # Calls the expression pool cancel() method upon the tagged
     # expression.
     #
-    def process_tag (tag)
+    def process_tag (tag, workitem)
 
       ldebug do
         "process_tag() #{fei.to_debug_s} to undo #{tag.fei.to_debug_s}"
       end
-
-      #get_expression_pool.cancel_and_reply_to_parent(
-      #  tag.raw_expression.fei, tag.workitem)
 
       exp = get_expression_pool.fetch_expression(tag.raw_expression.fei)
 
@@ -113,6 +105,10 @@ module OpenWFE
         #
         # 'remove' is set to false, cancel already removed the
         # expression
+
+      undoing_self = tag.fei.ancestor_of?(@fei)
+
+      reply_to_parent(workitem) unless undoing_self
     end
 
     #def reply (workitem)
@@ -122,12 +118,11 @@ module OpenWFE
 
       def lookup_tag (workitem)
 
-        tagname = lookup_attribute :ref, workitem
+        tagname = lookup_attribute(:ref, workitem)
 
-        tag = lookup_variable tagname
+        tag = lookup_variable(tagname)
 
-        lwarn { "lookup_tag() no tag named '#{tagname}' found" } \
-          unless tag
+        lwarn { "lookup_tag() no tag named '#{tagname}' found" } unless tag
 
         tag
       end
@@ -144,11 +139,9 @@ module OpenWFE
 
     names :redo
 
-    def process_tag (tag)
+    def process_tag (tag, workitem)
 
-      ldebug do
-        "process_tag() #{fei.to_debug_s} to redo #{tag.fei.to_debug_s}"
-      end
+      ldebug { "process_tag() #{fei.to_debug_s} to redo #{tag.fei.to_debug_s}" }
 
       #
       # cancel
@@ -160,7 +153,9 @@ module OpenWFE
 
       tag.raw_expression.application_context = @application_context
 
-      get_expression_pool.apply tag.raw_expression, tag.workitem
+      get_expression_pool.apply(tag.raw_expression, tag.workitem)
+
+      reply_to_parent(workitem)
     end
   end
 

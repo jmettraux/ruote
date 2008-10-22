@@ -15,12 +15,6 @@ require 'openwfe/def'
 class FlowTest38 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
   #
   # test 0
   #
@@ -36,11 +30,11 @@ class FlowTest38 < Test::Unit::TestCase
     end
   end
 
-  def test_tag_0
+  def test_0
 
     #log_level_to_debug
 
-    dotest TestTag0, "blah"
+    dotest TestTag0, 'blah'
   end
 
 
@@ -60,7 +54,9 @@ class FlowTest38 < Test::Unit::TestCase
     end
   end
 
-  def test_tag_1
+  def test_1
+
+    log_level_to_debug
 
     count = 0
 
@@ -70,7 +66,7 @@ class FlowTest38 < Test::Unit::TestCase
 
     dotest TestTag1, "blah\nhello"
 
-    assert_equal 1, count
+    assert_equal 2, count
   end
 
 
@@ -89,7 +85,7 @@ class FlowTest38 < Test::Unit::TestCase
     end
   end
 
-  def test_tag_2
+  def test_2
 
     count = 0
 
@@ -118,7 +114,7 @@ class FlowTest38 < Test::Unit::TestCase
     end
   end
 
-  def test_tag_3
+  def test_3
 
     dotest TestTag3, "1\n3"
   end

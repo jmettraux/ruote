@@ -37,8 +37,6 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'thread'
-
 
 module OpenWFE
 
@@ -70,12 +68,6 @@ module OpenWFE
   #
   class ReserveExpression < FlowExpression
 
-    #
-    # A mutex for the whole class, it's meant to prevent 'reserve'
-    # from reserving a workflow mutex simultaneaously.
-    #
-    #@@mutex = Mutex.new
-
     names :reserve
 
     #
@@ -95,24 +87,20 @@ module OpenWFE
 
     def apply (workitem)
 
-      return reply_to_parent(workitem) \
-        if @children.size < 1
+      return reply_to_parent(workitem) if has_no_expression_child
 
       @mutex_name = lookup_string_attribute :mutex, workitem
 
-      #FlowMutex.synchronize do
-
       mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
 
-      mutex.register self, workitem
-      #end
+      mutex.register(self, workitem)
     end
 
     def reply (workitem)
 
       lookup_variable(@mutex_name).release self
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
 
     #
@@ -131,8 +119,7 @@ module OpenWFE
     #
     def enter (workitem=nil)
 
-      get_expression_pool.apply(
-        @children[0], workitem || @applied_workitem)
+      apply_child(first_expression_child, workitem || @applied_workitem)
     end
   end
 

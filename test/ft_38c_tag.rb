@@ -18,13 +18,6 @@ require 'flowtestbase'
 class FlowTest38c < Test::Unit::TestCase
   include FlowTestBase
 
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
-
   #
   # test 5
   #
@@ -42,7 +35,7 @@ class FlowTest38c < Test::Unit::TestCase
     end
   end
 
-  def test_tag_5
+  def test_5
 
     @engine.register_participant :peekin do |fexp, wi|
 
@@ -84,16 +77,17 @@ class FlowTest38c < Test::Unit::TestCase
 
       wfid = fexp.fei.parent_workflow_instance_id
 
+      #p @engine.get_variables(wfid).keys
       assert_equal 4, @engine.get_variables(wfid).size
         # :next_sub_id and one [sub] process definition (and the tag)
 
-      assert_equal 1, @engine.process_status(wfid).tags.size
-      assert_equal "seq0", @engine.process_status(wfid).tags.to_s
+      #p @engine.process_status(wfid).tags
+      assert_equal [ 'seq0' ], @engine.process_status(wfid).tags
 
-      @tracer << "peekin\n"
+      @tracer << 'peekin'
     end
 
-    dotest TestTag5b, "peekin"
+    dotest TestTag5b, 'peekin'
   end
 
 end
