@@ -70,11 +70,8 @@ class FlowTest32 < Test::Unit::TestCase
 
     sleep 0.350
 
-    #puts
     #puts @engine.get_expression_storage.to_s
-    #puts
-
-    assert_equal @engine.get_expression_storage.size, 6
+    assert_equal 5, @engine.get_expression_storage.size
 
     journal_service.replay fn, 18, true
       #

@@ -433,21 +433,27 @@ module OpenWFE
     end
     alias :cancel_flow :cancel_process
 
-    #--
+    #
     # Forgets the given expression (make it an orphan).
     #
-    #def forget (parent_exp, exp)
-    #  exp, fei = fetch exp
-    #  #ldebug { "forget() forgetting  #{fei}" }
-    #  return if not exp
-    #  onotify :forget, exp
-    #  parent_exp.children.delete(fei)
-    #  exp.parent_id = nil
-    #  exp.dup_environment
-    #  exp.store_itself()
-    #  ldebug { "forget() forgot    #{fei}" }
-    #end
-    #++
+    def forget (parent_exp, exp)
+
+      exp, fei = fetch exp
+
+      #ldebug { "forget() forgetting  #{fei}" }
+
+      return if not exp
+
+      parent_exp.children.delete(fei)
+
+      exp.parent_id = nil
+      exp.dup_environment
+      exp.store_itself
+
+      onotify(:forget, exp)
+
+      ldebug { "forget() forgot    #{fei}" }
+    end
 
     #
     # Replies to the parent of the given expression.

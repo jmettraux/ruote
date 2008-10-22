@@ -83,7 +83,7 @@ module OpenWFE
       set_variable(DESC, text) unless lookup_variable(DESC)
         # set default if not set
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
   end
 

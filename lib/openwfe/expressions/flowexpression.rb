@@ -629,31 +629,22 @@ module OpenWFE
     #
     def fetch_text_content (workitem, escape=false)
 
-      cs = children || raw_children
+      text = (children || raw_children).inject('') do |r, child|
 
-      text = cs.inject("") do |r, child|
-
-        if child.is_a?(RawExpression)
-
-          r << child.fei.to_s
-
-        elsif child.is_a?(FlowExpressionId)
-
-          r << get_expression_pool\
-            .fetch_expression(child).raw_representation.to_s
-
-        else
-
-          r << child.to_s
-        end
+        #if child.is_a?(RawExpression)
+        #  r << child.fei.to_s
+        #elsif child.is_a?(FlowExpressionId)
+        #  r << get_expression_pool\
+        #    .fetch_expression(child).raw_representation.to_s
+        #else
+        #  r << child.to_s
+        #end
+        r << child.to_s
       end
 
       return nil if text == ""
 
-      text = OpenWFE::dosub(text, self, workitem) \
-        unless escape
-
-      text
+      escape ? text : OpenWFE::dosub(text, self, workitem)
     end
 
     #

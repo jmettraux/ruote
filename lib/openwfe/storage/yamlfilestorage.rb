@@ -126,14 +126,12 @@ module OpenWFE
     # instance.
     #
     def delete (fei)
-      #synchronize do
 
       fei_path = compute_file_path fei
 
-      ldebug { "delete()\n  for #{fei.to_debug_s}\n  at #{fei_path}" }
+      ldebug { "delete() for #{fei.to_debug_s} at #{fei_path}" }
 
-      File.delete fei_path
-      #end
+      File.delete(fei_path)
     end
 
     #

@@ -94,7 +94,7 @@ module OpenWFE
         "cancel() removing workitem  #{cancelitem.flow_expression_id}"
       end
 
-      self.delete(cancelitem.flow_expression_id)
+      delete(cancelitem.flow_expression_id)
     end
 
     #
@@ -118,8 +118,7 @@ module OpenWFE
       raise "Workitem not found in #{self.class}, cannot forward." \
         unless self.has_key? workitem.flow_expression_id
 
-      #self.delete(workitem.flow_expression_id)
-      self.delete(workitem)
+      delete(workitem)
 
       reply_to_engine(workitem)
     end
@@ -134,9 +133,7 @@ module OpenWFE
     # identifier.
     #
     def delete (wi_or_fei)
-      #fei = wi_or_fei
-      #fei = fei.fei if fei.is_a? InFlowWorkItem
-      #super fei
+
       super extract_fei(wi_or_fei)
     end
 
@@ -145,6 +142,7 @@ module OpenWFE
     # store participant.
     #
     def delegate (wi_or_fei, other_store_participant)
+
       wi = delete(wi_or_fei)
       other_store_participant.push(wi)
     end
@@ -180,7 +178,7 @@ module OpenWFE
         break
       end
 
-      return result
+      result
     end
   end
 
@@ -233,9 +231,9 @@ module OpenWFE
 
       @dirname = OpenWFE::ensure_for_filename(dirname.to_s)
 
-      service_name = self.class.name + "__" + @dirname
+      service_name = self.class.name + '__' + @dirname
 
-      path = "/participants/" + @dirname
+      path = '/participants/' + @dirname
 
       super(service_name, application_context, path)
     end
@@ -245,10 +243,10 @@ module OpenWFE
       def compute_file_path (fei)
 
         @basepath +
-        fei.workflow_instance_id + "__" +
-        fei.workflow_definition_name + "_" +
-        fei.workflow_definition_revision + "__" +
-        fei.expression_id + ".yaml"
+        fei.workflow_instance_id + '__' +
+        fei.workflow_definition_name + '_' +
+        fei.workflow_definition_revision + '__' +
+        fei.expression_id + '.yaml'
       end
   end
 end

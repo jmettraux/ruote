@@ -120,9 +120,9 @@ class FlowTest27 < Test::Unit::TestCase
       :consider_subprocesses => false, :wfid_prefix => fei.wfid[0, 3])
     assert_equal 1, l.size
 
-    l = @engine.process_stack fei, true # unapplied exps as well
+    l = @engine.process_stack(fei, true) # unapplied exps as well
     #print_exp_list l
-    assert_equal 5, l.size
+    assert_equal 4, l.size
 
     #
     # resume flow and terminate it
@@ -131,11 +131,12 @@ class FlowTest27 < Test::Unit::TestCase
 
     assert_not_nil wi
 
-    sp.forward wi
+    sp.forward(wi)
 
     #@engine.wait_for fei
-    wait_for fei
+    wait_for(fei)
 
+    #p sp.list_workitems.collect { |wi| wi.fei.to_s }
     assert_equal 0, sp.size
   end
 

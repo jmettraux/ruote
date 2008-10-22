@@ -7,6 +7,10 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+# NOT IN USE ANYMORE, OBSOLETE 'transport'
+
+require 'rubygems'
+
 require 'yaml'
 require 'socket'
 
@@ -20,18 +24,11 @@ require 'flowtestbase'
 class FlowTest30 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
-
   #
   # TEST 0
 
-  class TestDefinition0 < ProcessDefinition
-    _print "${f:message}"
+  class TestDefinition0 < OpenWFE::ProcessDefinition
+    _print '${f:message}'
   end
 
   def test_0
@@ -43,7 +40,7 @@ class FlowTest30 < Test::Unit::TestCase
 
     @engine.add_workitem_listener(sl)
 
-    li = LaunchItem.new(TestDefinition0.do_make)
+    li = OpenWFE::LaunchItem.new(TestDefinition0.do_make)
     li.message = "ok"
     s = YAML.dump(li)
 
@@ -72,7 +69,7 @@ class FlowTest30 < Test::Unit::TestCase
 
     @engine.add_workitem_listener(OpenWFE::SocketListener)
 
-    li = LaunchItem.new(TestDefinition0.do_make)
+    li = OpenWFE::LaunchItem.new(TestDefinition0.do_make)
     li.message = "ok1"
     s = YAML.dump(li)
 
@@ -102,7 +99,7 @@ class FlowTest30 < Test::Unit::TestCase
 
     @engine.add_workitem_listener(OpenWFE::SocketListener)
 
-    li = LaunchItem.new(TestDefinition0.do_make)
+    li = OpenWFE::LaunchItem.new(TestDefinition0)
     li.message = "ok2"
     s = YAML.dump(li)
 
@@ -138,7 +135,7 @@ class FlowTest30 < Test::Unit::TestCase
 
     @engine.add_workitem_listener(OpenWFE::SocketListener)
 
-    li = LaunchItem.new(TestDefinition0.do_make)
+    li = OpenWFE::LaunchItem.new(TestDefinition0)
 
     trace = ""
 

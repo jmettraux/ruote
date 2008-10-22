@@ -95,13 +95,9 @@ module OpenWFE
 
       child = raw_children.find { |c| c.is_a?(Array) }
 
-      if child
-
-        #get_expression_pool.forget(self, child)
-
-        get_expression_pool.tlaunch_orphan(
-          self, child, raw_children.index(child), workitem.dup, false)
-      end
+      get_expression_pool.tlaunch_orphan(
+        self, child, raw_children.index(child), workitem.dup, false
+      ) if child
 
       reply_to_parent(workitem)
     end
