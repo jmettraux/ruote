@@ -143,30 +143,42 @@ module OpenWFE
 
       extract_children # initializes the @children array
 
-      sync = lookup_sym_attribute(:sync, workitem, :default => :generic)
-
-      @sync_expression =
-        get_expression_map.get_sync_class(sync).new(self, workitem)
-
-      @children.each do |child|
-        @sync_expression.add_child(child)
-      end
-
-      store_itself
-
-      @children.each_with_index do |child, index|
-
-        get_expression_pool.apply(child, workitem.dup)
-      end
-
-      reloaded_self, _fei = get_expression_pool.fetch(@fei)
-      reloaded_self.sync_expression.ready(reloaded_self)
+      do_apply(workitem)
     end
 
     def reply (workitem)
 
       @sync_expression.reply(self, workitem)
     end
+
+    protected
+
+      def do_apply (workitem)
+
+        sync = lookup_sym_attribute(:sync, workitem, :default => :generic)
+
+        @sync_expression =
+          get_expression_map.get_sync_class(sync).new(self, workitem)
+
+        @children.each do |child|
+          @sync_expression.add_child(child)
+        end
+
+        store_itself
+
+        @children.each_with_index do |child, index|
+
+          get_expression_pool.apply(child, get_workitem(workitem, index))
+        end
+
+        reloaded_self, _fei = get_expression_pool.fetch(@fei)
+        reloaded_self.sync_expression.ready(reloaded_self)
+      end
+
+      def get_workitem (workitem, index)
+
+        workitem.dup
+      end
   end
 
   #
@@ -194,17 +206,14 @@ module OpenWFE
 
     names :concurrent_iterator
 
-    #uses_template
-
 
     def apply (workitem)
 
-      return reply_to_parent(workitem) \
-        if raw_children.length < 1
+      return reply_to_parent(workitem) if has_no_expression_child
 
       @workitems = []
 
-      iterator = Iterator.new self, workitem
+      iterator = Iterator.new(self, workitem)
 
       return reply_to_parent(workitem) \
         unless iterator.has_next?
@@ -212,26 +221,28 @@ module OpenWFE
       while iterator.has_next?
 
         wi = workitem.dup
-
-        @workitems << wi
-
         vars = iterator.next(wi)
+        @workitems << wi
 
         get_expression_pool.tprepare_child(
           self,
           raw_children.first,
           iterator.index,
-          true, # register child
-          vars)
+          :register_child => true,
+          :variables => vars)
       end
 
-      super
+      store_itself
+
+      do_apply(workitem)
     end
 
-    #protected
-    #  def get_workitem (workitem, index)
-    #    @workitems[index]
-    #  end
+    protected
+
+      def get_workitem (wi, index)
+
+        @workitems[index]
+      end
   end
 
   #

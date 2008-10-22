@@ -47,8 +47,8 @@ module OpenWFE
   #
   class Iterator
 
-    ITERATOR_COUNT = "__ic__"
-    ITERATOR_POSITION = "__ip__"
+    ITERATOR_COUNT = '__ic__'
+    ITERATOR_POSITION = '__ip__'
 
     attr_accessor :iteration_index
     attr_accessor :iteration_list
@@ -113,7 +113,7 @@ module OpenWFE
     #
     def next (workitem)
 
-      position_at workitem, @iteration_index
+      position_at(workitem, @iteration_index)
     end
 
     #
@@ -121,7 +121,7 @@ module OpenWFE
     #
     def rewind (workitem)
 
-      position_at workitem, 0
+      position_at(workitem, 0)
     end
 
     #
@@ -137,7 +137,7 @@ module OpenWFE
         index
       end
 
-      position_at workitem, index
+      position_at(workitem, index)
     end
 
     #
@@ -145,7 +145,7 @@ module OpenWFE
     #
     def skip (workitem, offset)
 
-      jump workitem, @iteration_index + offset
+      jump(workitem, @iteration_index + offset)
     end
 
     #
@@ -168,7 +168,7 @@ module OpenWFE
 
         value = @iteration_list[position]
 
-        return nil unless value
+        return nil if (value == nil)
 
         if @to_field
           workitem.attributes[@to_field] = value
