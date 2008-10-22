@@ -126,7 +126,7 @@ module OpenWFE
         puts text
       end
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
   end
 

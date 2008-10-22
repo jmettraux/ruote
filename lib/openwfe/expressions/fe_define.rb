@@ -106,8 +106,9 @@ module OpenWFE
       #  if @body_fei == nil or @body_fei == workitem.fei
       #get_expression_pool.apply(@body_fei, workitem)
 
-      return super(workitem) \
-        if @body_index == nil or (@children and @children.first == workitem.fei)
+      return super(workitem) if (
+        @body_index == nil or
+        workitem.fei.expid == "#{self.fei.expid}.#{@body_index}")
 
       apply_child(@body_index, workitem)
     end
