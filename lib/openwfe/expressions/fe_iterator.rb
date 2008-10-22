@@ -78,8 +78,6 @@ module OpenWFE
 
     names :iterator
 
-    #uses_template
-
     #
     # an Iterator instance that holds the list of values being iterated
     # upon.
@@ -88,13 +86,11 @@ module OpenWFE
 
     def apply (workitem)
 
-      return reply_to_parent(workitem) \
-        if raw_children.length < 1
+      return reply_to_parent(workitem) if has_no_expression_child
 
       @iterator = Iterator.new(self, workitem)
 
-      return reply_to_parent(workitem) \
-        if @iterator.size < 1
+      return reply_to_parent(workitem) if @iterator.size < 1
 
       reply workitem
     end
@@ -134,8 +130,8 @@ module OpenWFE
         raw_children.first,
         @iterator.index,
         workitem,
-        true, # registering child
-        vars)
+        :register_child => true,
+        :variables => vars)
 
       store_itself
     end

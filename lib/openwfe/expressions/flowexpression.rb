@@ -722,7 +722,7 @@ module OpenWFE
     #
     def has_no_expression_child
 
-      (first_expression_child == -1)
+      (first_expression_child == nil)
     end
 
     #
@@ -730,11 +730,7 @@ module OpenWFE
     #
     def first_expression_child
 
-      @raw_representation[2].each_with_index do |c, i|
-        return i if c.is_a?(Array)
-      end
-
-      -1
+      @raw_representation[2].find { |c| c.is_a?(Array) }
     end
 
     #
@@ -776,7 +772,7 @@ module OpenWFE
       end
 
       get_expression_pool.tlaunch_child(
-        self, child, child_index, workitem, true)
+        self, child, child_index, workitem, :register_child => true)
     end
 
     #

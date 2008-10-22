@@ -184,9 +184,8 @@ module OpenWFE
       get_expression_pool.tprepare_child(
         self,
         consequence,
-        0,
-        true, # please register child
-        nil   # no vars
+        0, # sub_id
+        :register_child => true
       ) if consequence
 
       #
@@ -283,12 +282,12 @@ module OpenWFE
         # else, condition is nested as a child
 
         #if @children.size < 1
-        if raw_children.size < 1
+        if has_no_expression_child
           #
           # no condition attribute and no child attribute,
           # simply reply to parent
           #
-          reply_to_parent @applied_workitem
+          reply_to_parent(@applied_workitem)
           return
         end
 
@@ -299,7 +298,7 @@ module OpenWFE
           raw_children.first,
           (Time.new.to_f * 1000).to_i,
           @applied_workitem.dup,
-          false) # not registering as a child
+          :register_child => false)
       end
 
       #
@@ -308,8 +307,8 @@ module OpenWFE
       #
       def do_reply (result)
 
-        @applied_workitem.set_result result
-        reply @applied_workitem
+        @applied_workitem.set_result(result)
+        reply(@applied_workitem)
       end
 
       #
@@ -320,7 +319,7 @@ module OpenWFE
       #
       def apply_consequence (workitem)
 
-        reply_to_parent workitem
+        reply_to_parent(workitem)
       end
   end
 

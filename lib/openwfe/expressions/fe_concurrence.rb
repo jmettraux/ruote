@@ -215,7 +215,7 @@ module OpenWFE
 
         @workitems << wi
 
-        vars = iterator.next wi
+        vars = iterator.next(wi)
 
         get_expression_pool.tprepare_child(
           self,

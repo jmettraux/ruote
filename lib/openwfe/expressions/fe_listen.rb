@@ -253,7 +253,6 @@ module OpenWFE
     # This is the method called when a 'listenable' workitem comes in
     #
     def call (channel, *args)
-      #synchronize do
 
       upon = args[0]
 
@@ -295,45 +294,18 @@ module OpenWFE
       #
       # reply or launch nested child expression
 
-      return reply_to_parent(workitem) \
-        if raw_children.size < 1
-          #
-          # was just a "blocking listen"
+      return reply_to_parent(workitem) if has_no_expression_child
+        # was just a "blocking listen"
 
-      #parent = @once ? self : nil
-      #get_expression_pool.launch_template(
-      #  parent,
-      #  nil,
-      #  @call_count - 1,
-      #  @children[0],
-      #  workitem,
-      #  nil)
-
-      if @once
-
-        # triggering just once
-
-        get_expression_pool.tlaunch_child(
-          self,
-          raw_children.first,
-          @call_count - 1,
-          workitem,
-          true) # registering child
-
-      else
-
-        # triggering multiple times
-
-        get_expression_pool.tlaunch_orphan(
-          self,
-          raw_children.first,
-          @call_count - 1,
-          workitem,
-          true) # registering child (in case of cancel)
-      end
+      get_expression_pool.tlaunch_child(
+        self,
+        raw_children.first,
+        @call_count - 1,
+        workitem,
+        :orphan => (not @once),
+        :register_child => true) # (in case of cancel)
 
       store_itself
-      #end
     end
 
     #

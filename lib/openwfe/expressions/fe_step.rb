@@ -131,7 +131,7 @@ module OpenWFE
       ]
 
       get_expression_pool.tlaunch_child(
-        self, template, 0, workitem, true) #, vars=nil
+        self, template, 0, workitem, :register_child => true)
     end
 
     def reply (workitem)

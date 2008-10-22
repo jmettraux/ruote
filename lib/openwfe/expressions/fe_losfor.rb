@@ -64,7 +64,7 @@ module OpenWFE
 
     def apply (workitem)
 
-      child = raw_children.find { |c| c.is_a?(Array) }
+      child = first_expression_child
 
       return unless child
 
@@ -78,7 +78,7 @@ module OpenWFE
   end
 
   #
-  # This expression triggers its child (in its own thread) and then
+  # This expression triggers its child and then
   # forgets about it. It immediately replies to its parent expression.
   #
   # The brother expression 'lose' triggers its child but never replies to its
@@ -93,10 +93,15 @@ module OpenWFE
 
     def apply (workitem)
 
-      child = raw_children.find { |c| c.is_a?(Array) }
+      child = first_expression_child
 
-      get_expression_pool.tlaunch_orphan(
-        self, child, raw_children.index(child), workitem.dup, false
+      get_expression_pool.tlaunch_child(
+        self,
+        child,
+        raw_children.index(child),
+        workitem.dup,
+        :orphan => true,
+        :dup_environment => true
       ) if child
 
       reply_to_parent(workitem)

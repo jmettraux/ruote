@@ -211,32 +211,34 @@ module OpenWFE
     # (it's used by the concurrent iterator when preparing all its
     # iteration children)
     #
-    def tprepare_child (
-      parent_exp, template, sub_id, register_child, vars)
+    def tprepare_child (parent_exp, template, sub_id, options={})
 
-      return fetch_expression(template) \
-        if template.is_a?(FlowExpressionId)
+      #return fetch_expression(template) if template.is_a?(FlowExpressionId)
 
       fei = parent_exp.fei.dup
-      fei.expression_name = template.first
       fei.expression_id = "#{fei.expid}.#{sub_id}"
+      fei.expression_name = template.first
+
+      parent_id = options[:orphan] ? nil : parent_exp.fei
 
       raw_exp = RawExpression.new_raw(
-        fei, nil, nil, @application_context, template)
+        fei, parent_id, nil, @application_context, template)
 
-      raw_exp.parent_id = parent_exp.fei
-
-      if vars
+      if vars = options[:variables]
         raw_exp.new_environment(vars)
       else
         raw_exp.environment_id = parent_exp.environment_id
       end
 
+      raw_exp.dup_environment if options[:dup_environment]
+
       #workitem.fei = raw_exp.fei
         # done in do_apply...
 
-      if register_child
+      if options[:register_child] == true
+
         (parent_exp.children ||= []) << raw_exp.fei
+
         update(raw_exp)
       end
 
@@ -252,45 +254,11 @@ module OpenWFE
     #
     # (used by 'cron' and more)
     #
-    def tlaunch_child (
-      parent_exp, template, sub_id, workitem, register_child, vars=nil)
+    def tlaunch_child (parent_exp, template, sub_id, workitem, opts={})
 
-      raw_exp = tprepare_child(
-        parent_exp, template, sub_id, register_child, vars)
+      raw_exp = tprepare_child(parent_exp, template, sub_id, opts)
 
       onotify(:tlaunch_child, raw_exp.fei, workitem)
-
-      apply(raw_exp, workitem)
-
-      raw_exp.fei
-    end
-
-    #
-    # Launches a template, but makes sure the new expression has no
-    # parent.
-    #
-    # (used by 'listen')
-    #
-    def tlaunch_orphan (
-      firing_exp, template, sub_id, workitem, register_child)
-
-      fei = firing_exp.fei.dup
-      fei.expression_id = "#{fei.expid}.#{sub_id}"
-      fei.expression_name = template.first
-
-      raw_exp = RawExpression.new_raw(
-        fei, nil, nil, @application_context, template)
-
-      raw_exp.parent_id = nil
-        # it's an orphan, no parent
-
-      raw_exp.environment_id = firing_exp.environment_id
-        # tapping anyway into the firer's environment
-
-      (firing_exp.children ||= []) << raw_exp.fei \
-        if register_child
-
-      onotify(:tlaunch_orphan, raw_exp.fei, workitem)
 
       apply(raw_exp, workitem)
 
@@ -452,7 +420,7 @@ module OpenWFE
 
       onotify(:forget, exp)
 
-      ldebug { "forget() forgot    #{fei}" }
+      ldebug { "forget() forgot #{fei}" }
     end
 
     #

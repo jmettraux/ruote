@@ -137,7 +137,7 @@ module OpenWFE
     #
     def cancel_expression (exp_or_fei)
 
-      get_expression_pool.cancel_expression exp_or_fei
+      get_expression_pool.cancel_expression(exp_or_fei)
     end
 
     #
@@ -146,7 +146,7 @@ module OpenWFE
     #
     def forget_expression (exp_or_fei)
 
-      get_expression_pool.forget exp_or_fei
+      get_expression_pool.forget(exp_or_fei)
     end
 
     #
@@ -154,7 +154,7 @@ module OpenWFE
     #
     def pause_process (wfid)
 
-      get_expression_pool.pause_process wfid
+      get_expression_pool.pause_process(wfid)
     end
 
     #
@@ -164,7 +164,7 @@ module OpenWFE
     #
     def resume_process (wfid)
 
-      get_expression_pool.resume_process wfid
+      get_expression_pool.resume_process(wfid)
     end
 
     #
@@ -175,7 +175,7 @@ module OpenWFE
     #
     def replay_at_error (error)
 
-      get_error_journal.replay_at_error error
+      get_error_journal.replay_at_error(error)
     end
 
     protected
@@ -188,11 +188,11 @@ module OpenWFE
 
         exp = if fei_or_wfid.is_a?(String)
 
-          get_expression_pool.fetch_root fei_or_wfid
+          get_expression_pool.fetch_root(fei_or_wfid)
 
         else
 
-          get_expression_pool.fetch_expression fei_or_wfid
+          get_expression_pool.fetch_expression(fei_or_wfid)
         end
 
         exp or raise "no expression found for '#{fei_or_wfid.to_s}'"
