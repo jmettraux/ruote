@@ -13,13 +13,6 @@ require 'openwfe/participants/participants'
 class FlowTest54 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-
   #
   # Test 0
   #
@@ -78,7 +71,7 @@ class FlowTest54 < Test::Unit::TestCase
 
   def test_1
 
-    log_level_to_debug
+    #log_level_to_debug
 
     @engine.register_participant :channel_z, OpenWFE::NoOperationParticipant
 

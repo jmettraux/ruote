@@ -175,12 +175,8 @@ module OpenWFE
 
     def apply (workitem)
 
-      #if @children.size < 1
-      #  reply_to_parent workitem
-      #  return
-      #end
-        #
-        # 'listen' now blocks if there is no children
+      #return reply_to_parent(workitem) if has_no_expression_child
+        # 'listen' blocks if there is no children
 
       @participant_regex = lookup_string_attribute(:to, workitem)
 
@@ -195,19 +191,18 @@ module OpenWFE
       #
       # once
 
-      @once = lookup_boolean_attribute(:once, workitem, true)
+      @once =
+        has_no_expression_child ||
+        lookup_boolean_attribute(:once, workitem, true)
 
-      @once = true if raw_children.size < 1
-        # a 'blocking listen' can only get triggered once.
-
-      ldebug { "apply() @once is #{@once}" }
+      #ldebug { "apply() @once is #{@once}" }
 
       #
       # merge
 
       merge = lookup_boolean_attribute(:merge, workitem, false)
 
-      ldebug { "apply() merge is #{@merge}" }
+      #ldebug { "apply() merge is #{@merge}" }
 
       @applied_workitem = workitem.dup if merge
 

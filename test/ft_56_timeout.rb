@@ -14,13 +14,6 @@ class FlowTest56 < Test::Unit::TestCase
   include FlowTestBase
   include PendingJobsMixin
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-
   #
   # Test 0
   #

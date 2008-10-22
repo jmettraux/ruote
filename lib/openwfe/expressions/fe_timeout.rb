@@ -65,16 +65,13 @@ module OpenWFE
 
     def apply (workitem)
 
-      if @children.size < 1
-        reply_to_parent(workitem)
-        return
-      end
+      return reply_to_parent(workitem) if has_no_expression_child
 
       @applied_workitem = workitem.dup
 
       schedule_timeout(workitem, :after)
 
-      get_expression_pool.apply(@children[0], workitem)
+      apply_child(first_expression_child, workitem)
     end
 
     #
@@ -109,11 +106,11 @@ module OpenWFE
 
       ldebug { "trigger() timeout requested for #{@fei.to_debug_s}" }
 
-      set_timedout_flag @applied_workitem
+      set_timedout_flag(@applied_workitem)
 
       cancel
 
-      reply_to_parent @applied_workitem
+      reply_to_parent(@applied_workitem)
     end
   end
 
