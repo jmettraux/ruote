@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -102,13 +102,12 @@ module OpenWFE
     #
     def apply (workitem)
 
-      filter = build_filter workitem
-      filter_name = lookup_attribute :name, workitem
+      filter = build_filter(workitem)
+      filter_name = lookup_attribute(:name, workitem)
 
-      set_variable filter_name, filter \
-        if filter_name and filter
+      set_variable(filter_name, filter) if filter_name and filter
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
 
     protected
@@ -123,25 +122,22 @@ module OpenWFE
 
         # filter attributes
 
-        type = lookup_downcase_attribute :type, workitem
-        closed = lookup_downcase_attribute :closed, workitem
+        type = lookup_downcase_attribute(:type, workitem)
+        closed = lookup_downcase_attribute(:closed, workitem)
 
-        filter.closed = (type == "closed" or closed == "true")
+        filter.closed = (type == 'closed' or closed == 'true')
 
-        add = lookup_downcase_attribute :add, workitem
-        remove = lookup_downcase_attribute :remove, workitem
+        add = lookup_downcase_attribute(:add, workitem)
+        remove = lookup_downcase_attribute(:remove, workitem)
 
-        filter.add_allowed = (add == "true")
-        filter.remove_allowed = (remove == "true")
+        filter.add_allowed = (add == 'true')
+        filter.remove_allowed = (remove == 'true')
 
         # field by field
 
-        @children.each do |fei|
+        raw_expression_children.each do |rawchild|
 
-          rawexp = get_expression_pool.fetch_expression fei
-          get_expression_pool.remove fei
-
-          add_field filter, rawexp, workitem
+          add_field(filter, rawchild, workitem)
         end
 
         filter
@@ -150,17 +146,18 @@ module OpenWFE
       #
       # builds and add a field (a line) of the filter.
       #
-      def add_field (filter, rawexp, workitem)
+      def add_field (filter, rawchild, workitem)
 
+        rawexp = RawExpression.new_raw(
+          nil, nil, @environment_id, @application_context, rawchild)
         rawexp.load_attributes
 
-        regex = rawexp.lookup_attribute :regex, workitem
-        regex = rawexp.lookup_attribute :name, workitem unless regex
+        regex = rawexp.lookup_attribute(:regex, workitem)
+        regex = rawexp.lookup_attribute(:name, workitem) unless regex
 
-        permissions =
-          rawexp.lookup_downcase_attribute :permissions, workitem
+        permissions = rawexp.lookup_downcase_attribute(:permissions, workitem)
 
-        filter.add_field regex, permissions
+        filter.add_field(regex, permissions)
       end
   end
 

@@ -100,26 +100,24 @@ module OpenWFE
     attr_accessor :applied_workitem, :filter
 
 
-    def apply workitem
+    def apply (workitem)
 
-      if @children.length < 1
-        reply_to_parent workitem
-        return
-      end
+      return reply_to_parent(workitem) if has_no_expression_child
 
       @applied_workitem = workitem.dup
-      filter_in workitem, :name
+
+      filter_in(workitem, :name)
 
       store_itself
 
-      get_expression_pool.apply @children[0], workitem
+      apply_child(first_expression_child, workitem)
     end
 
-    def reply workitem
+    def reply (workitem)
 
-      filter_out workitem
+      filter_out(workitem)
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
   end
 

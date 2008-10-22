@@ -12,13 +12,6 @@ require 'openwfe/def'
 class FlowTest47 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-
   #
   # Test 0
   #
@@ -41,9 +34,8 @@ class FlowTest47 < Test::Unit::TestCase
   end
 
   def test_0
-    dotest(
-      TestFilter47a0,
-      "toto\nhector\ntrue\ntrue")
+    #log_level_to_debug
+    dotest(TestFilter47a0, "toto\nhector\ntrue\ntrue")
   end
 
 

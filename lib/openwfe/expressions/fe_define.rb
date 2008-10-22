@@ -96,43 +96,23 @@ module OpenWFE
     ##attr_accessor :body_fei
     attr_accessor :body_index
 
+    attr_accessor :applied_body
+
     #
     # Called at the end of the 'evaluation', the 'apply' operation on
     # the body of the definition is done here.
     #
     def reply_to_parent (workitem)
 
-      #return super(workitem) \
-      #  if @body_fei == nil or @body_fei == workitem.fei
-      #get_expression_pool.apply(@body_fei, workitem)
+      return super(workitem) if @body_index == nil or @applied_body
+        # no body or body just got applied
 
-      return super(workitem) if (
-        @body_index == nil or
-        workitem.fei.expid == "#{self.fei.expid}.#{@body_index}")
+      # apply body of process definition now
+
+      @applied_body = true
+      store_itself
 
       apply_child(@body_index, workitem)
-    end
-
-    #
-    # Overrides the set_variable in FlowExpression to
-    # make sure to intercept requests for binding subprocesses
-    # at the engine level and to store a copy of the raw expression,
-    # not only the flow expression id.
-    #
-    def set_variable (name, fei)
-
-      if name[0, 2] == '//'
-
-        raw_exp = get_expression_pool.fetch_expression(fei).dup
-        raw_exp.parent_id = nil
-        raw_exp.fei = raw_exp.fei.dup
-        fei = raw_exp.fei
-        fei.wfid = get_wfid_generator.generate
-
-        raw_exp.store_itself
-      end
-
-      super(name, fei)
     end
 
     protected

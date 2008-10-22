@@ -717,6 +717,14 @@ module OpenWFE
     end
 
     #
+    # Returns a list of children that are expressions (arrays)
+    #
+    def raw_expression_children
+
+      @raw_representation[2].select { |c| c.is_a?(Array) }
+    end
+
+    #
     # Returns true if the current expression has no expression among its
     # [raw] children.
     #

@@ -12,13 +12,6 @@ require 'openwfe/def'
 class FlowTest48 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-
   #
   # Test 0
   #

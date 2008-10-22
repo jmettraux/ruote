@@ -66,7 +66,7 @@ module OpenWFE
 
     def apply (workitem)
 
-      reply workitem
+      reply(workitem)
     end
 
     def reply (workitem)
@@ -74,11 +74,6 @@ module OpenWFE
       child_index = next_child_index(workitem.fei)
 
       return reply_to_parent(workitem) unless child_index
-
-      #ldebug do
-      #  "reply() self : \n#{self.to_s}\n" +
-      #  "reply() next is #{@current_child_id} : #{cfei.to_debug_s}"
-      #end
 
       @children.clear if @children
         # keeping track of only 1 child, it's a sequence ...
