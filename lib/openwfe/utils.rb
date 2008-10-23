@@ -102,9 +102,7 @@ module OpenWFE
     #
     # duplicate the attributes of the object
     object.instance_variables.each do |v|
-      #puts "v is #{v}"
       value = object.instance_variable_get(v)
-      #puts "value is '#{value}'"
       value = fulldup(value)
       begin
         o.instance_variable_set(v, value)
@@ -118,12 +116,12 @@ module OpenWFE
 
   def OpenWFE.to_underscore (string)
 
-    string.gsub("-", "_")
+    string.gsub('-', '_')
   end
 
   def OpenWFE.to_dash (string)
 
-    string.gsub("_", "-")
+    string.gsub('_', '-')
   end
 
   def OpenWFE.symbol_to_name (symbol)
@@ -143,7 +141,7 @@ module OpenWFE
   #
   def OpenWFE.stu (s)
 
-    s.gsub("\s", "_")
+    s.gsub("\s", '_')
   end
 
   #
@@ -173,10 +171,10 @@ module OpenWFE
 
     return nil unless uri
 
-    return uri if uri.scheme == "file"
-    return uri if uri.scheme == "http"
-    return uri if uri.scheme == "https"
-    return uri if uri.scheme == "ftp"
+    return uri if uri.scheme == 'file'
+    return uri if uri.scheme == 'http'
+    return uri if uri.scheme == 'https'
+    return uri if uri.scheme == 'ftp'
       # what else ...
 
     nil

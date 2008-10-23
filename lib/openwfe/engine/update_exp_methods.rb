@@ -79,17 +79,36 @@ module OpenWFE
     #
     # Useful for modifying [not yet reached] segments of processes.
     #
-    def update_raw_expression (fei, representation)
+    # If the index argument is set, only the raw child pointed by the index
+    # will get updated.
+    #
+    def update_raw_expression (fei, representation, index=nil)
 
-      fexp = fetch_exp fei
+      fexp = fetch_exp(fei)
 
-      raise "cannot update already applied expression" \
-        unless fexp.is_a?(RawExpression)
+      #raise "cannot update already applied expression" \
+      #  unless fexp.is_a?(RawExpression)
 
-      fexp.raw_representation = representation
+      if index
+        #
+        # update just one child
+        #
+
+        fexp.raw_representation = fexp.raw_representation.dup
+        fexp.raw_representation[2] = fexp.raw_representation[2].dup
+          # those dups are for the InMemory case ...
+
+        fexp.raw_representation[2][index] = representation
+      else
+        #
+        # update whole tree
+        #
+        fexp.raw_representation = representation
+      end
+
       fexp.raw_rep_updated = true
 
-      get_expression_pool.update fexp
+      get_expression_pool.update(fexp)
     end
 
     #
@@ -103,7 +122,7 @@ module OpenWFE
 
       fexp.raw_rep_updated = true
 
-      get_expression_pool.update fexp
+      get_expression_pool.update(fexp)
     end
 
   end

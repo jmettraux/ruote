@@ -14,14 +14,16 @@ require 'openwfe/participants/storeparticipants'
 require 'openwfe/storage/yamlcustom'
 
 
+#class Array
+#  alias :old_inspect :inspect
+#  def inspect
+#    "#{self.object_id}:#{old_inspect}"
+#  end
+#end
+
+
 class FlowTest84 < Test::Unit::TestCase
   include FlowTestBase
-
-  #def teardown
-  #end
-
-  #def setup
-  #end
 
   #
   # TEST 0
@@ -42,7 +44,8 @@ class FlowTest84 < Test::Unit::TestCase
 
     sleep 0.350
 
-    s = @engine.process_stack fei, true
+    #s = @engine.process_stack fei, true
+    s = @engine.process_stack(fei)
 
     env = s.find { |fexp| fexp.is_a?(OpenWFE::Environment) }
     par = s.find { |fexp| fexp.is_a?(OpenWFE::ParticipantExpression) }
@@ -79,10 +82,10 @@ class FlowTest84 < Test::Unit::TestCase
   # TEST 1
 
   class TestDefinition1 < OpenWFE::ProcessDefinition
-     sequence do
-       participant "alpha"
-       participant "bravo"
-     end
+   sequence do
+     participant 'alpha'
+     participant 'bravo'
+   end
   end
 
   def test_1
@@ -91,30 +94,35 @@ class FlowTest84 < Test::Unit::TestCase
       @engine.register_participant pname, OpenWFE::HashParticipant
     end
 
-    fei = launch TestDefinition1
+    fei = launch(TestDefinition1)
 
     sleep 0.350
 
-    assert 1, @engine.get_participant("alpha").size
-    assert 0, @engine.get_participant("bravo").size
-    assert 0, @engine.get_participant("charly").size
+    assert 1, @engine.get_participant('alpha').size
+    assert 0, @engine.get_participant('bravo').size
+    assert 0, @engine.get_participant('charly').size
 
-    ps = @engine.process_stack fei.wfid, true
+    ps = @engine.process_stack(fei.wfid)
     #puts ps.collect { |fexp| fexp.to_yaml }.join("\n")
 
-    ebravo = ps.find { |fexp| fexp.fei.expid == '0.0.1' }
-    scharly = ebravo.to_yaml.gsub /bravo/, "charly"
+    esequence = ps.find { |fexp| fexp.fei.expid == '0.0' }
+    esequence.raw_representation = [
+      'sequence', {}, [
+        [ 'alpha', {}, [] ],
+        [ 'charly', {}, [] ]
+      ]
+    ]
 
-    @engine.update_expression(YAML.load(scharly))
+    @engine.update_expression(esequence)
 
-    wi = @engine.get_participant("alpha").first_workitem
-    @engine.get_participant("alpha").forward(wi)
+    wi = @engine.get_participant('alpha').first_workitem
+    @engine.get_participant('alpha').forward(wi)
 
     sleep 0.350
 
-    assert 0, @engine.get_participant("alpha").size
-    assert 0, @engine.get_participant("bravo").size
-    assert 1, @engine.get_participant("charly").size
+    assert 0, @engine.get_participant('alpha').size
+    assert 0, @engine.get_participant('bravo').size
+    assert 1, @engine.get_participant('charly').size
 
     @engine.cancel_process fei.wfid
 
@@ -137,28 +145,37 @@ class FlowTest84 < Test::Unit::TestCase
     #log_level_to_debug
 
     %w{ alpha bravo charly }.each do |pname|
-      @engine.register_participant pname, OpenWFE::HashParticipant
+      @engine.register_participant(pname, OpenWFE::HashParticipant)
     end
 
-    fei = launch TestDefinition2
+    fei = launch(TestDefinition2)
 
     sleep 0.350
 
-    ps = @engine.process_stack fei.wfid, true
+    #
+    # in the beginning...
 
-    s3fei = ps.find { |fexp| fexp.fei.expid == '0.0.1' }.fei
+    #ps = @engine.process_stack fei.wfid, true
+    ps = @engine.process_stack(fei.wfid)
+
+    assert_equal(
+      ["process-definition", {"name"=>"Test", "revision"=>"2"}, [["sequence", {}, [["participant", {}, ["alpha"]], ["participant", {}, ["alpha"]], ["participant", {}, ["charly"]]]]]],
+      ps.tree)
+
+    esequence = ps.find { |fexp| fexp.fei.expid == '0.0' }
 
     # update happens here
 
-    @engine.update_raw_expression s3fei, ["bravo", {}, []]
+    @engine.update_raw_expression(esequence.fei, [ "bravo", {}, [] ], 1)
 
-    ps = @engine.process_stack fei.wfid, true
+    #ps = @engine.process_stack(fei.wfid, true)
+    ps = @engine.process_stack(fei.wfid)
 
     #p ps.representation
 
     assert_equal(
       ["process-definition", {"name"=>"Test", "revision"=>"2"}, [["sequence", {}, [["participant", {}, ["alpha"]], ["bravo", {}, []], ["participant", {}, ["charly"]]]]]],
-      ps.representation)
+      ps.tree)
 
     wi = @engine.get_participant("alpha").first_workitem
     @engine.get_participant("alpha").forward(wi)
@@ -170,7 +187,8 @@ class FlowTest84 < Test::Unit::TestCase
 
     sleep 0.350
 
-    ps = @engine.process_stack fei.wfid, true
+    #ps = @engine.process_stack(fei.wfid, true)
+    ps = @engine.process_stack(fei.wfid)
 
     #puts
     #ps.each do |fexp|
@@ -181,7 +199,7 @@ class FlowTest84 < Test::Unit::TestCase
 
     assert_equal(
       ["process-definition", {"name"=>"Test", "revision"=>"2"}, [["sequence", {}, [["participant", {}, ["alpha"]], ["bravo", {"ref"=>"bravo"}, []], ["participant", {}, ["charly"]]]]]],
-      ps.representation)
+      ps.tree)
 
     # just to be sure
 
@@ -194,7 +212,7 @@ class FlowTest84 < Test::Unit::TestCase
     #p pstatus.current_tree
     #p pstatus.initial_tree
 
-    assert_not_equal pstatus.current_tree, pstatus.initial_tree
+    assert_not_equal(pstatus.current_tree, pstatus.initial_tree)
 
     #@engine.cancel_process fei
     #sleep 0.350

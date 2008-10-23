@@ -5,6 +5,8 @@
 # John Mettraux at openwfe.org
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 
 require 'flowtestbase'
@@ -12,13 +14,6 @@ require 'flowtestbase'
 
 class FlowTest64a < Test::Unit::TestCase
   include FlowTestBase
-
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
 
   #
   # TEST 0

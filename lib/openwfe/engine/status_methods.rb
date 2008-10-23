@@ -176,7 +176,8 @@ module OpenWFE
     #
     def current_tree
 
-      @all_expressions.representation
+      #@all_expressions.representation
+      @all_expressions.tree
     end
 
     #
@@ -186,7 +187,8 @@ module OpenWFE
     #
     def initial_tree
 
-      @all_expressions.find_root_expression.raw_representation
+      #@all_expressions.find_root_expression.raw_representation
+      @all_expressions.initial_tree
     end
 
     #
@@ -242,10 +244,12 @@ module OpenWFE
 
         @expressions = []
 
-        @all_expressions.sort_by { |fe| fe.fei.expid }.each do |fe|
+        @all_expressions.sort_by { |fe|
+          "#{fe.fei.wfid} #{fe.fei.expid}"
+        }.each do |fe|
 
           next unless fe.apply_time
-            # no Environment or RawExpression instances
+            # no Environment instances allowed
 
           @expressions.delete_if { |e| e.fei == fe.parent_id }
 

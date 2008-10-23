@@ -7,6 +7,8 @@
 # Thu Sep 13 17:46:20 JST 2007
 #
 
+require 'rubygems'
+
 require 'openwfe/def'
 
 require 'flowtestbase'
@@ -14,12 +16,6 @@ require 'flowtestbase'
 
 class FlowTest71 < Test::Unit::TestCase
   include FlowTestBase
-
-  #def teardown
-  #end
-
-  #def setup
-  #end
 
   #
   # TEST 0

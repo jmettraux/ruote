@@ -18,12 +18,6 @@ require 'flowtestbase'
 class FlowTest27 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
   #
   # TEST 0
 
@@ -33,7 +27,7 @@ class FlowTest27 < Test::Unit::TestCase
     end
   end
 
-  def test_gfp_0
+  def test_0
 
     #sp = @engine.register_participant("store_p", OpenWFE::YamlParticipant)
     sp = @engine.register_participant "store_p", OpenWFE::HashParticipant
@@ -45,8 +39,7 @@ class FlowTest27 < Test::Unit::TestCase
     l = @engine.process_stack fei.wfid
 
     #print_exp_list l
-
-    assert_equal 3, l.size
+    assert_equal 4, l.size
 
     ps = @engine.list_process_status
     #puts
@@ -89,9 +82,9 @@ class FlowTest27 < Test::Unit::TestCase
     end
   end
 
-  def test_gfp_0b
+  def test_0b
 
-    log_level_to_debug
+    #log_level_to_debug
 
     sp = @engine.register_participant "store_p", OpenWFE::YamlParticipant
 
@@ -101,13 +94,12 @@ class FlowTest27 < Test::Unit::TestCase
     sleep 0.350
 
     #l = @engine.get_process_stack(fei.wfid)
-    l = @engine.process_stack fei
+    l = @engine.process_stack(fei)
       #
       # shortcut version
 
     #print_exp_list l
-
-    assert_equal 3, l.size
+    assert_equal 4, l.size
 
     l = @engine.list_processes
     assert_equal 1, l.size
@@ -120,7 +112,7 @@ class FlowTest27 < Test::Unit::TestCase
       :consider_subprocesses => false, :wfid_prefix => fei.wfid[0, 3])
     assert_equal 1, l.size
 
-    l = @engine.process_stack(fei, true) # unapplied exps as well
+    l = @engine.process_stack(fei)
     #print_exp_list l
     assert_equal 4, l.size
 
@@ -136,8 +128,10 @@ class FlowTest27 < Test::Unit::TestCase
     #@engine.wait_for fei
     wait_for(fei)
 
-    #p sp.list_workitems.collect { |wi| wi.fei.to_s }
+    #puts sp.list_workitems.collect { |wi| wi.fei.to_s }.join("\n")
     assert_equal 0, sp.size
+      #
+      # did "rake clean" ?
   end
 
 end

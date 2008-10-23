@@ -59,15 +59,20 @@ module OpenWFE
     # expression_name is a String, attributes a Hash and children_expression
     # an Array of representations.
     #
-    def representation
+    def tree
 
-      update_rep(find_root_expression)
+      get_updated_rep(find_root_expression)
     end
 
     #
-    # 'tree' is probably a better name than representation
+    # Returns the tree as it was when the process instance was launched.
     #
-    alias :tree :representation
+    # (Where as tree() includes 'in-flight' manipulations)
+    #
+    def initial_tree
+
+      find_root_expression.raw_representation
+    end
 
     #
     # Returns the root expression (the one with no parent expression)
@@ -97,38 +102,14 @@ module OpenWFE
       # makes sure to take its current representation and include
       # it in the parent representation.
       #
-      def update_rep (flow_expression)
+      def get_updated_rep (flow_expression)
 
         rep = flow_expression.raw_representation.dup
-        children = flow_expression.children
+        rep[2] = rep[2].dup
 
-        index = -1
-
-        rep[2] = rep.last.inject([]) { |r, c|
-
-          index += 1
-
-          r << if c.is_a?(Array)
-
-            child_fei = flow_expression.children[index]
-            child_exp = find_expression child_fei
-
-            if child_exp
-              update_rep(child_exp)
-            else
-              #c[1]['__gone__'] = true
-                #
-                # not a good idea
-                # have to differentiate between 'replied'
-                # expressions and removed expressions
-              c
-            end
-          else
-
-            c
-          end
-
-        } if children and children.size > 0
+        (flow_expression.children || []).each do |fei|
+          rep[2][fei.child_id.to_i] = get_updated_rep(find_expression(fei))
+        end
 
         rep
       end

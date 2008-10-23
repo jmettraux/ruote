@@ -436,11 +436,11 @@ module OpenWFE
 
       workitem.last_expression_id = exp.fei
 
-      onotify :reply_to_parent, exp, workitem
+      onotify(:reply_to_parent, exp, workitem)
 
       if remove
 
-        remove exp
+        remove(exp)
           #
           # remove the expression itself
 
@@ -453,14 +453,14 @@ module OpenWFE
       # manage tag, have to remove it so it can get 'redone' or 'undone'
       # (preventing abuse)
 
-      tagname = exp.attributes["tag"] if exp.attributes
+      tagname = exp.attributes['tag'] if exp.attributes
 
       exp.delete_variable(tagname) if tagname
 
       #
       # has raw_expression been updated ?
 
-      track_child_raw_representation exp
+      track_child_raw_representation(exp)
 
       #
       # flow terminated ?
@@ -472,7 +472,7 @@ module OpenWFE
           "#{exp.fei.workflow_instance_id} terminated"
         end
 
-        onotify :terminate, exp, workitem
+        onotify(:terminate, exp, workitem)
 
         return
       end
@@ -480,14 +480,12 @@ module OpenWFE
       #
       # else, gone parent ?
 
-      if (not exp.parent_id) or (exp.parent_id.expname == 'gone')
-        # this 'gone' is kept for some level of 'backward compatibility'
+      #if (not exp.parent_id) or (exp.parent_id.expname == 'gone')
+      #  # this 'gone' is kept for some level of 'backward compatibility'
 
-        ldebug do
-          "reply_to_parent() parent is gone for  " +
-          exp.fei.to_debug_s
-        end
+      if (not exp.parent_id)
 
+        ldebug { "reply_to_parent() parent is gone for #{exp.fei.to_debug_s}"}
         return
       end
 
@@ -647,7 +645,8 @@ module OpenWFE
     # expressions (even those not yet applied) that compose the process
     # instance will be returned. Environments will be returned as well.
     #
-    def process_stack (wfid, unapplied=false)
+    #def process_stack (wfid, unapplied=false)
+    def process_stack (wfid)
 
       #raise "please provide a non-nil workflow instance id" \
       #  unless wfid
@@ -659,11 +658,12 @@ module OpenWFE
         #:exclude_classes => [ Environment ],
         :parent_wfid => wfid
       }
-      params[:applied] = true if (not unapplied)
+      #params[:applied] = true if (not unapplied)
 
       stack = get_expression_storage.find_expressions params
 
-      stack.extend(RepresentationMixin) if unapplied
+      #stack.extend(RepresentationMixin) if unapplied
+      stack.extend(RepresentationMixin)
 
       stack
     end
@@ -1025,12 +1025,9 @@ module OpenWFE
 
         return unless fexp.raw_rep_updated == true
 
-        parent = fetch_expression fexp.parent_id
+        parent = fetch_expression(fexp.parent_id)
 
-        return if parent.class.uses_template?
-
-        parent.raw_children[fexp.fei.child_id.to_i] =
-           fexp.raw_representation
+        parent.raw_children[fexp.fei.child_id.to_i] = fexp.raw_representation
 
         parent.store_itself
       end

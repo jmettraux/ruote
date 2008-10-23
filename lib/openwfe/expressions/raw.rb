@@ -77,12 +77,7 @@ module OpenWFE
       exp_name ||= expression_name
       exp_class ||= expression_class
 
-      raise "unknown expression '#{exp_name}'" \
-        unless exp_class
-
-      #ldebug do
-      #  "instantiate_real_expression() exp_class is #{exp_class}"
-      #end
+      raise "unknown expression '#{exp_name}'" unless exp_class
 
       attributes ||= raw_representation[1]
 
@@ -100,9 +95,6 @@ module OpenWFE
         # instantiation time
 
       consider_tag(workitem, exp)
-
-      #exp.children = extract_children \
-      #  unless exp_class.uses_template?
 
       exp
     end

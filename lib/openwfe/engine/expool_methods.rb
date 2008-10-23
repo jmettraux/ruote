@@ -59,13 +59,15 @@ module OpenWFE
     # This method returns all the expressions (the stack) a process
     # went through to reach its current state.
     #
-    # If the unapplied optional parameter is set to true, all the
-    # expressions (even those not yet applied) that compose the process
-    # instance will be returned.
+    # #If the unapplied optional parameter is set to true, all the
+    # #expressions (even those not yet applied) that compose the process
+    # #instance will be returned.
     #
-    def process_stack (workflow_instance_id, unapplied=false)
+    #def process_stack (workflow_instance_id, unapplied=false)
+    def process_stack (workflow_instance_id)
 
-      get_expression_pool.process_stack workflow_instance_id, unapplied
+      #get_expression_pool.process_stack(workflow_instance_id, unapplied)
+      get_expression_pool.process_stack(workflow_instance_id)
     end
     alias :get_process_stack :process_stack
     alias :get_flow_stack :process_stack
@@ -77,11 +79,11 @@ module OpenWFE
     # given process instance (returns the tree as running, modifications
     # included).
     #
-    def process_representation (workflow_instance_id)
+    def process_tree (workflow_instance_id)
 
-      process_stack(workflow_instance_id, true).representation
+      process_stack(workflow_instance_id).tree
     end
-    alias :process_tree :process_representation
+    alias :process_representation :process_tree
 
     #
     # Lists all workflow (process) instances currently in the expool (in
