@@ -133,7 +133,8 @@ module OpenWFE
         :register_child => true,
         :variables => vars)
 
-      store_itself
+      #store_itself
+        # now done in tlaunch_child()
     end
   end
 

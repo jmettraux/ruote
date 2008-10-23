@@ -120,7 +120,8 @@ module OpenWFE
       @default = lookup_attribute(
         :default, workitem, :to_s => true)
 
-      store_itself
+      #store_itself
+        # now done in tlaunch_child()
 
       # launching the 'step' itself
 

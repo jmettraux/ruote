@@ -300,7 +300,8 @@ module OpenWFE
         :orphan => (not @once),
         :register_child => true) # (in case of cancel)
 
-      store_itself
+      #store_itself
+        # now done in tlaunch_child()
     end
 
     #

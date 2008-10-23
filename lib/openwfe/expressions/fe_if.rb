@@ -126,7 +126,8 @@ module OpenWFE
         #
         # if the "test" attribute is not used, test will be null
 
-      store_itself
+      #store_itself
+        # now done in apply_*
 
       # a warning
 
@@ -147,7 +148,6 @@ module OpenWFE
         #
         # apply condition
         #
-        #get_expression_pool.apply(raw_children.first, workitem)
         apply_child(0, workitem)
       end
     end
@@ -161,7 +161,8 @@ module OpenWFE
 
       @condition_replied = true
 
-      store_itself
+      #store_itself
+        # now done in apply_c*
 
       apply_consequence(result, workitem)
     end
@@ -197,7 +198,6 @@ module OpenWFE
         if index >= raw_children.length
           reply_to_parent(workitem)
         else
-          #get_expression_pool.apply(@children[index], workitem)
           apply_child(index, workitem)
         end
       end

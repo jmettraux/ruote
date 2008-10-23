@@ -185,13 +185,15 @@ module OpenWFE
         self,
         consequence,
         0, # sub_id
-        :register_child => true
+        :register_child => true,
+        :dont_store_parent => true
       ) if consequence
 
       #
       # go east...
 
       store_itself
+        # as :dont_store_parent => true ...
 
       trigger
     end
@@ -275,13 +277,12 @@ module OpenWFE
 
           c = eval_condition condition_attribute, @applied_workitem
 
-          do_reply c
+          do_reply(c)
           return
         end
 
         # else, condition is nested as a child
 
-        #if @children.size < 1
         if has_no_expression_child
           #
           # no condition attribute and no child attribute,

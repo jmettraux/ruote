@@ -95,7 +95,8 @@ module OpenWFE
 
       unschedule_timeout(nil)
 
-      super
+      #super
+      @applied_workitem
     end
 
     #

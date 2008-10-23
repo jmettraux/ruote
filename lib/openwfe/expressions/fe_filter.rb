@@ -108,7 +108,8 @@ module OpenWFE
 
       filter_in(workitem, :name)
 
-      store_itself
+      #store_itself
+        # now done in apply_child()
 
       apply_child(first_expression_child, workitem)
     end

@@ -98,7 +98,7 @@ module OpenWFE
 
     def reply (workitem)
 
-      lookup_variable(@mutex_name).release self
+      lookup_variable(@mutex_name).release(self)
 
       reply_to_parent(workitem)
     end
@@ -156,14 +156,14 @@ module OpenWFE
 
       @feis << fexp.fei
 
-      fexp.set_variable @mutex_name, self
+      fexp.set_variable(@mutex_name, self)
 
       if @feis.size == 1
         #
         # immediately let the expression enter the critical section
         #
-        fexp.store_itself
-        fexp.enter workitem
+        #fexp.store_itself
+        fexp.enter(workitem)
       else
         #
         # later...
@@ -177,17 +177,14 @@ module OpenWFE
 
       next_fei = nil
 
-      #@@class_mutex.synchronize do
-
       current_fei = @feis.delete_at 0
 
-      releaser.set_variable @mutex_name, self
+      releaser.set_variable(@mutex_name, self)
 
       log.warn "release() BAD! c:#{current_fei} r:#{releaser.fei}" \
         if releaser.fei != current_fei
 
       next_fei = @feis.first
-      #end
 
       return unless next_fei
 

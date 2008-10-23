@@ -240,6 +240,8 @@ module OpenWFE
         (parent_exp.children ||= []) << raw_exp.fei
 
         update(raw_exp)
+
+        parent_exp.store_itself unless options[:dont_store_parent]
       end
 
       raw_exp

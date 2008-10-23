@@ -110,7 +110,9 @@ module OpenWFE
       # apply body of process definition now
 
       @applied_body = true
-      store_itself
+
+      #store_itself
+        # now done in apply_child()
 
       apply_child(@body_index, workitem)
     end

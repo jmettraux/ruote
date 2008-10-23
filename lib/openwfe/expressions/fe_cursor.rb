@@ -156,20 +156,11 @@ module OpenWFE
       #
       # launch the next child as a template
 
-      #@current_child_fei = get_expression_pool.tlaunch_child(
-      #  self,
-      #  template,
-      #  @current_child_id,
-      #  workitem,
-      #  #false) # not registering child
-      #  true) # registering child
-        #
-        # TODO : check if the register_child switch is still necessary...
-
       @children.clear if @children
       apply_child(@current_child_id, workitem)
 
-      store_itself
+      #store_itself
+        # now done in apply_child()
     end
 
     #--

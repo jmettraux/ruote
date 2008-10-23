@@ -20,18 +20,18 @@ class FlowTest54 < Test::Unit::TestCase
   class Test0 < OpenWFE::ProcessDefinition
     concurrence do
 
-      listen :to => "^channel_.$" do
-        _print "ok"
+      listen :to => '^channel_.$' do
+        _print 'ok'
       end
 
       sequence do
 
-        _sleep "500"
+        _sleep '500'
           #
           # just making sure that the participant is evaluated
           # after the listen [registration]
 
-        participant :ref => "channel_z"
+        participant :ref => 'channel_z'
       end
     end
   end
@@ -40,7 +40,7 @@ class FlowTest54 < Test::Unit::TestCase
 
     @engine.register_participant :channel_z, OpenWFE::NoOperationParticipant
 
-    dotest Test0, "ok"
+    dotest Test0, 'ok'
   end
 
 

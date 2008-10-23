@@ -229,6 +229,7 @@ module OpenWFE
           raw_children.first,
           iterator.index,
           :register_child => true,
+          :dont_store_parent => true,
           :variables => vars)
       end
 

@@ -95,8 +95,6 @@ module OpenWFE
 
     names :cron
 
-    #uses_template
-
     #
     # The cron 'tab', something like "0 9-17 * * mon-fri"
     #
@@ -116,28 +114,26 @@ module OpenWFE
 
     def apply (workitem)
 
-      return reply_to_parent(workitem) \
-        if raw_children.size < 1
+      return reply_to_parent(workitem) if has_no_expression_child
 
-      @counter = 0
-      #@engine_cron = false
+      @counter = -1
 
       @applied_workitem = workitem.dup
       @applied_workitem.flow_expression_id = nil
 
-      @tab = lookup_attribute :tab, workitem
-      @every = lookup_attribute :every, workitem
+      @tab = lookup_attribute(:tab, workitem)
+      @every = lookup_attribute(:every, workitem)
 
       determine_scheduler_tags
 
       #
       # schedule self
 
-      reschedule get_scheduler
+      reschedule(get_scheduler)
     end
 
     def reply (workitem)
-      # discard silently... should never get called though
+      # discard silently...
     end
 
     #
@@ -152,32 +148,33 @@ module OpenWFE
       ldebug { "trigger() cron : #{@fei.to_debug_s}" }
 
       #@raw_child.application_context = @application_context
-        # done in expool.launch_template()
+        # done in expool.tlaunch_child()
 
       begin
 
-        #template = @raw_child
-        #template, _fei = get_expression_pool.fetch @children[0]
-        template = raw_children.first
+        @counter += 1
+        store_itself
+          #
+          # note : one variant would be to give Time.now.to_f as a sub_id...
+          # then no need to store...
+          #
+          # but it's good to have a counter to keep track of the number of
+          # executions
 
         child_fei = get_expression_pool.tlaunch_child(
-          self, template, @counter, @applied_workitem.dup, false)
+          self,
+          first_expression_child,
+          @counter,
+          @applied_workitem.dup,
+          :register_child => false)
             #
             # register_child is set to false, cron doesn't keep
             # track of its spawned children
 
-        #
-        # update count and store self
-
-        @counter += 1
-
-        store_itself
-
       rescue
 
         lerror do
-          "trigger() cron caught exception\n"+
-          OpenWFE::exception_to_s($!)
+          "trigger() cron caught exception\n#{OpenWFE::exception_to_s($!)}"
         end
       end
     end
