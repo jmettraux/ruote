@@ -16,13 +16,6 @@ require 'flowtestbase'
 class FlowTest60 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #  $OWFE_LOG.level = Logger::INFO # done in FlowTestBase !
-  #end
-
   #
   # TEST 0
 
@@ -40,14 +33,14 @@ class FlowTest60 < Test::Unit::TestCase
 
   def test_0
 
-    #$OWFE_LOG.level = Logger::DEBUG
+    #log_level_to_debug
 
     fei = launch TestDefinition0
 
     sleep 0.350
 
     #puts
-    #puts @engine.get_process_stack fei.wfid
+    #puts @engine.get_process_stack(fei.wfid)
     #puts
 
     fei.expression_id = '0.0.1'
@@ -62,13 +55,20 @@ class FlowTest60 < Test::Unit::TestCase
     assert_equal 1, @engine.get_expression_storage.size
   end
 
-  def test_1
+  def _test_1
+    #
+    # as the sequence expression doesn't load up all its children
+    # at once (before apply) this test case became invalid
 
-    #$OWFE_LOG.level = Logger::DEBUG
+    #log_level_to_debug
 
     fei = launch TestDefinition0
 
     sleep 0.350
+
+    #puts
+    #puts @engine.get_process_stack(fei.wfid)
+    #puts
 
     fei.expression_id = '0.0.1.2'
     fei.expression_name = 'print'
@@ -85,7 +85,7 @@ class FlowTest60 < Test::Unit::TestCase
 
   def test_2
 
-    #$OWFE_LOG.level = Logger::DEBUG
+    #log_level_to_debug
 
     fei = launch TestDefinition0
 
@@ -106,7 +106,7 @@ class FlowTest60 < Test::Unit::TestCase
 
   def test_2b
 
-    #$OWFE_LOG.level = Logger::DEBUG
+    #log_level_to_debug
 
     fei = launch <<-EOS
       class Test2b < OpenWFE::ProcessDefinition
@@ -135,7 +135,7 @@ class FlowTest60 < Test::Unit::TestCase
 
   def test_3
 
-    #$OWFE_LOG.level = Logger::DEBUG
+    #log_level_to_debug
 
     fei = launch TestDefinition0
 
@@ -145,7 +145,6 @@ class FlowTest60 < Test::Unit::TestCase
     fei.expression_name = 'sequence'
     @engine.cancel_expression fei
 
-    #@engine.wait_for(fei.wfid)
     wait_for fei
 
     #sleep 0.350

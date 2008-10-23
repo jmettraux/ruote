@@ -309,9 +309,9 @@ module OpenWFE
         application_context,
         template)
 
-      update re
+      update(re)
 
-      apply re, workitem
+      apply(re, workitem)
     end
 
     #
@@ -367,9 +367,11 @@ module OpenWFE
     #
     def cancel_expression (exp)
 
-      exp = fetch_expression(exp)
+      exp, fei = fetch(exp)
 
-      wi = do_cancel(exp)
+      raise "cannot cancel 'missing' expression #{fei.to_short_s}" unless exp
+
+      wi = cancel(exp)
 
       # ( remember that in case of error, no wi could get returned...)
 
