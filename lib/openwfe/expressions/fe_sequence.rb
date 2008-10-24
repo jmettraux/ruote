@@ -98,8 +98,14 @@ module OpenWFE
         end
 
         loop do
+
           break if next_id > raw_children.length
-          return next_id if raw_children[next_id].is_a?(Array)
+
+          raw_child = raw_children[next_id]
+
+          return next_id \
+            if raw_child.is_a?(Array) or raw_child.is_a?(FlowExpressionId)
+
           next_id += 1
         end
 

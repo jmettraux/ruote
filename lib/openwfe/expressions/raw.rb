@@ -54,8 +54,7 @@ module OpenWFE
     #
     # A [static] method for creating new RawExpression instances.
     #
-    def self.new_raw (
-      fei, parent_id, env_id, app_context, raw_representation)
+    def self.new_raw (fei, parent_id, env_id, app_context, raw_tree)
 
       re = self.new
 
@@ -67,7 +66,7 @@ module OpenWFE
       re.children = []
       re.apply_time = nil
 
-      re.raw_representation = raw_representation
+      re.raw_representation = raw_tree
       re
     end
 

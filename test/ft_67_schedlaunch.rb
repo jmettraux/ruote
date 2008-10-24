@@ -16,36 +16,30 @@ require 'flowtestbase'
 class FlowTest67 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
   #
   # TEST 0
 
   class Test0 < OpenWFE::ProcessDefinition
-    _print "hell0"
+    _print 'hell0'
   end
 
   def test_0
 
     #log_level_to_debug
 
-    @engine.launch Test0, :in => "2s"
+    @engine.launch(Test0, :in => '2s')
 
     sleep 0.400
 
     assert_equal(
       1,
-      @engine.get_scheduler.find_jobs("scheduled-launch").size)
+      @engine.get_scheduler.find_jobs('scheduled-launch').size)
 
-    assert_trace ""
+    assert_trace ''
 
     sleep 2.500
 
-    assert_trace "hell0"
+    assert_trace 'hell0'
   end
 
   #

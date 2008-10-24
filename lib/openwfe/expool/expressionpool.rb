@@ -177,9 +177,6 @@ module OpenWFE
         # will raise an exception if there are requirements
         # and one of them is not met
 
-      raw_expression = wrap_in_schedule(raw_expression, options) \
-        if (options.keys & [ :in, :at, :cron, :every ]).size > 0
-
       raw_expression.new_environment(initial_variables)
         #
         # as this expression is the root of a new process instance,
@@ -188,14 +185,17 @@ module OpenWFE
         #
         # (new_environment() calls store_itself on the new env)
 
+      raw_expression = wrap_in_schedule(raw_expression, options) \
+        if (options.keys & [ :in, :at, :cron, :every ]).size > 0
+
       fei = raw_expression.fei
 
       #
       # apply prepared raw expression
 
-      wi = build_workitem(launchitem)
-
       onotify(:launch, fei, launchitem)
+
+      wi = build_workitem(launchitem)
 
       if wait
         wait_for(fei) { apply(raw_expression, wi) }
@@ -213,7 +213,8 @@ module OpenWFE
     #
     def tprepare_child (parent_exp, template, sub_id, options={})
 
-      #return fetch_expression(template) if template.is_a?(FlowExpressionId)
+      return fetch_expression(template) if template.is_a?(FlowExpressionId)
+        # used for "scheduled launches"
 
       fei = parent_exp.fei.dup
       fei.expression_id = "#{fei.expid}.#{sub_id}"
@@ -918,7 +919,7 @@ module OpenWFE
           cron_atts['scheduler-tags'] = "scheduled-launch, #{fei.wfid}"
 
           template = raw_expression.raw_representation
-          remove raw_expression
+          remove(raw_expression)
 
           [ 'cron', cron_atts, [ template ] ]
 
@@ -932,7 +933,8 @@ module OpenWFE
           raw_exp = RawExpression.new_raw(
             fei, nil, nil, @application_context, template)
 
-          raw_exp.store_itself
+          #raw_exp.store_itself
+          raw_exp.new_environment
 
           raw_exp
         else
