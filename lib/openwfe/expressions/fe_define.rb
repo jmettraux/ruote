@@ -127,7 +127,9 @@ module OpenWFE
 
         child = raw_children[child_index]
 
-        if child.is_a?(Array)
+        if child.is_a?(Array) && ( ! [ 'param', 'parameter'].include?(child[0]))
+
+            # don't do a thing
 
           if get_expression_map.get_class(child[0]) == DefineExpression
 

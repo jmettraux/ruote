@@ -108,7 +108,9 @@ module OpenWFE
         rep[2] = rep[2].dup
 
         (flow_expression.children || []).each do |fei|
-          rep[2][fei.child_id.to_i] = get_updated_rep(find_expression(fei))
+          fexp = find_expression(fei)
+          next unless fexp
+          rep[2][fei.child_id.to_i] = get_updated_rep(fexp)
         end
 
         rep

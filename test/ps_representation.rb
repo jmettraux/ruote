@@ -44,28 +44,28 @@ class PsRepresentationTest < Test::Unit::TestCase
 
     sleep 0.350
 
-    ps = @engine.process_stack fei, true
+    ps = @engine.process_stack(fei)
 
     #p ps.representation
 
     assert_equal(
       ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
-      ps.representation)
+      ps.tree)
 
     #
     # change process instance (charly instead of bravo)
 
     #puts ps.collect { |fexp| fexp.fei.to_s }.join("\n")
 
-    bravo_fei = ps.find { |fexp| fexp.fei.expid == "0.0.1" }.fei
+    esequence = ps.find { |fexp| fexp.fei.expid == '0.0' }
 
-    @engine.update_raw_expression bravo_fei, ["charly", {}, []]
+    @engine.update_raw_expression esequence.fei, ['charly', {}, []], 1
 
-    ps = @engine.process_stack fei, true
+    ps = @engine.process_stack(fei)
 
     assert_equal(
       ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
-      ps.representation)
+      ps.tree)
   end
 
   #
@@ -89,43 +89,44 @@ class PsRepresentationTest < Test::Unit::TestCase
 
     sleep 0.350
 
-    ps = @engine.process_stack fei, true
+    ps = @engine.process_stack(fei)
 
     assert_equal(
       ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
-      ps.representation)
+      ps.tree)
 
     #
     # change process instance (charly instead of bravo)
 
-    bravo_fei = ps.find { |fexp| fexp.fei.expid == "0.1.1" }.fei
+    esequence = ps.find { |fexp| fexp.fei.expid == '0.1' }
 
-    @engine.update_raw_expression bravo_fei, ["charly", {}, []]
+    @engine.update_raw_expression(esequence.fei, ['charly', {}, []], 1)
 
-    ps = @engine.process_stack fei, true
+    ps = @engine.process_stack(fei)
 
     assert_equal(
       ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
-      ps.representation)
+      ps.tree)
 
     #
     # nuke participant charly
 
-    @engine.cancel_expression bravo_fei
+    #@engine.update_raw_expression(esequence.fei, nil, 1)
+    @engine.update_raw_expression(esequence.fei, ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]])
 
-    sleep 0.350
+    #sleep 0.350
 
-    ps = @engine.process_stack fei, true
+    ps = @engine.process_stack(fei)
 
     #p ps.representation
 
     assert_equal(
       ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
-      ps.representation)
+      ps.tree)
 
     assert_equal(
       ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
-      @engine.process_representation(fei.wfid))
+      @engine.process_tree(fei.wfid))
   end
 
   # see also test/ft_84_updateexp.rb

@@ -26,7 +26,7 @@ class ParameterTest < Test::Unit::TestCase
   #
   # test 0
 
-  def test_param_0
+  def test_0
 
     definition = '''
 <process-definition name="reqtest" revision="0">
@@ -82,7 +82,7 @@ class ParameterTest < Test::Unit::TestCase
     _print "#{f:customer},  #{f:address}"
   end
 
-  def test_param_1
+  def test_1
 
     li = OpenWFE::LaunchItem.new(TestParam1)
 
@@ -127,7 +127,7 @@ class ParameterTest < Test::Unit::TestCase
     end
   end
 
-  def test_param_2
+  def test_2
 
     li = OpenWFE::LaunchItem.new(TestParam2)
 
@@ -160,7 +160,7 @@ class ParameterTest < Test::Unit::TestCase
     end
   end
 
-  def test_param_3
+  def test_3
 
     li = OpenWFE::LaunchItem.new(TestParam3)
     li.address = 3
@@ -193,7 +193,7 @@ class ParameterTest < Test::Unit::TestCase
     _print "${f:zip}"
   end
 
-  def test_param_4
+  def test_4
 
     li = OpenWFE::LaunchItem.new(TestParam4)
     li.zip = "Colorado"
@@ -215,7 +215,7 @@ class ParameterTest < Test::Unit::TestCase
   #
   # test 5
 
-  def test_param_5
+  def test_5
 
     definition = '''
 <process-definition name="paramtest" revision="5">
@@ -268,7 +268,7 @@ class ParameterTest < Test::Unit::TestCase
     _print "#{f:customer},  #{f:address}"
   end
 
-  def test_param_1
+  def test_6
 
     li = OpenWFE::LaunchItem.new(TestParam6)
 

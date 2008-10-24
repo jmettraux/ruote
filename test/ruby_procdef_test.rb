@@ -56,8 +56,9 @@ class RubyProcDefTest < Test::Unit::TestCase
     stack0 = @engine.process_stack fei0.wfid
     stack1 = @engine.process_stack fei1.wfid
 
-    assert_equal 3, stack0.size
-    assert_equal 3, stack1.size
+    #puts stack0
+    assert_equal 4, stack0.size
+    assert_equal 4, stack1.size
 
     assert_equal 4, count_files(fei0.wfid)
     assert_equal 4, count_files(fei1.wfid)
@@ -89,12 +90,12 @@ end
       OpenWFE::ProcessDefinition.extract_class(TEST1))
 
     stack0 = @engine.process_stack fei0.wfid
-    #puts stack0
     stack1 = @engine.process_stack fei1.wfid
-    #puts stack1
 
-    assert_equal 3, stack0.size
-    assert_equal 3, stack1.size
+    #puts stack0
+    #puts stack1
+    assert_equal 4, stack0.size
+    assert_equal 4, stack1.size
 
     assert_equal 4, count_files(fei0.wfid)
     assert_equal 4, count_files(fei1.wfid)

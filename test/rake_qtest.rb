@@ -10,7 +10,6 @@ require 'rubygems'
 
 #require 'rutest_utils'
 
-
 require 'fei_test'
 require 'wfid_test'
 require 'wi_test'
