@@ -85,31 +85,25 @@ module OpenWFE
     # Stores an object with its FlowExpressionId instance as its key.
     #
     def []= (fei, object)
-      #synchronize do
 
       #linfo { "[]= #{fei}" }
 
-      fei_path = compute_file_path fei
+      fei_path = compute_file_path(fei)
 
-      fei_parent_path = File.dirname fei_path
+      fei_parent_path = File.dirname(fei_path)
 
       FileUtils.makedirs(fei_parent_path) \
         unless File.exist?(fei_parent_path)
 
-      File.open(fei_path, "w") do |file|
-        YAML.dump object, file
-      end
-      #end
+      File.open(fei_path, "w") { |file| YAML.dump object, file }
     end
 
     #
     # Deletes the whole storage directory... beware...
     #
     def purge
-      #synchronize do
 
       FileUtils.remove_dir @basepath
-      #end
     end
 
     #
@@ -127,7 +121,7 @@ module OpenWFE
     #
     def delete (fei)
 
-      fei_path = compute_file_path fei
+      fei_path = compute_file_path(fei)
 
       ldebug { "delete() for #{fei.to_debug_s} at #{fei_path}" }
 

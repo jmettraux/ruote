@@ -26,7 +26,9 @@ class FlowTest31 < Test::Unit::TestCase
     end
   end
 
-  def test_flowname_0
+  def test_0
+
+    log_level_to_debug
 
     dotest(TestDefinition0, "ok")
   end

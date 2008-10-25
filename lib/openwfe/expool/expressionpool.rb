@@ -433,7 +433,11 @@ module OpenWFE
     #
     def reply_to_parent (exp, workitem, remove=true)
 
-      ldebug { "reply_to_parent() for #{exp.fei.to_debug_s}" }
+      #puts
+      #p "reply_to_parent() for #{exp.fei.to_debug_s}"
+      #puts caller.join("\n")
+      #puts
+      #ldebug { "reply_to_parent() for #{exp.fei.to_debug_s}" }
 
       workitem.last_expression_id = exp.fei
 
@@ -829,8 +833,6 @@ module OpenWFE
             # I uncomment that sometimes to see how the stack
             # grows (wfids and expids)
 
-          ldebug { ":#{direction} target #{fei.to_debug_s}" }
-
           if not exp
 
             #raise "apply() cannot apply missing #{_fei.to_debug_s}"
@@ -981,9 +983,18 @@ module OpenWFE
       #
       def new_fei (h)
 
-        FlowExpressionId.new_fei({
-          :engine_id => OpenWFE::stu(get_engine.engine_name)
-        }.merge(h))
+        h[:engine_id] = OpenWFE::stu(get_engine.engine_name)
+
+        %w{ url name revision }.each { |k| stu(h, k) }
+
+        FlowExpressionId.new_fei(h)
+      end
+
+      def stu (h, key)
+
+        key = "workflow_definition_#{key}".intern
+        v = h[key]
+        h[key] = OpenWFE::stu(v.to_s) if v
       end
 
       #

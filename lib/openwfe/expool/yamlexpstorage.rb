@@ -78,9 +78,9 @@ module OpenWFE
 
       wfid_prefix = options[:wfid_prefix]
       wfid_regex = nil
-      wfid_regex = Regexp.new("^"+wfid_prefix) if wfid_prefix
+      wfid_regex = Regexp.new("^#{wfid_prefix}") if wfid_prefix
 
-      options.delete :wfid_prefix
+      options.delete(:wfid_prefix)
         # no need to check this in further does_match? calls
 
       result = []
@@ -171,24 +171,24 @@ module OpenWFE
 
       def compute_dir_path (wfid)
 
-        wfid = FlowExpressionId.to_parent_wfid wfid
+        wfid = FlowExpressionId.to_parent_wfid(wfid)
 
-        a_wfid = get_wfid_generator.split_wfid wfid
+        a_wfid = get_wfid_generator.split_wfid(wfid)
 
-        @basepath + a_wfid[-2] + "/" + a_wfid[-1] + "/"
+        "#{@basepath}#{a_wfid[-2]}/#{a_wfid[-1]}/"
       end
 
       def compute_file_path (fei)
 
-        return @basepath + "/engine_environment.yaml" \
-          if fei.workflow_instance_id == "0"
+        return "#{@basepath}/engine_environment.yaml" \
+          if fei.workflow_instance_id == '0'
 
         wfid = fei.parent_workflow_instance_id
 
         compute_dir_path(wfid) +
-        fei.workflow_instance_id + "__" +
-        fei.expression_id + "_" +
-        fei.expression_name + ".yaml"
+        fei.workflow_instance_id + '__' +
+        fei.expression_id + '_' +
+        fei.expression_name + '.yaml'
       end
 
       #--

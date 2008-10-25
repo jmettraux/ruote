@@ -16,12 +16,6 @@ require 'flowtestbase'
 class FlowTest2 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   # test_con_0 got moved to ft_2c_concurrence.rb
 
   def test_1
@@ -62,9 +56,9 @@ class FlowTest2 < Test::Unit::TestCase
       true)
   end
 
-  def test_con_3
+  def test_3
 
-    #log_level_to_debug
+    log_level_to_debug
 
     dotest(
 '''<process-definition name="ft_2_concurrence" revision="3">
@@ -73,11 +67,11 @@ class FlowTest2 < Test::Unit::TestCase
     <set variable="over" value="true" />
   </concurrence>
 </process-definition>''',
-      "a",
+      'a',
       true)
   end
 
-  def test_con_4
+  def test_4
 
     #log_level_to_debug
 
@@ -95,7 +89,7 @@ class FlowTest2 < Test::Unit::TestCase
       true)
   end
 
-  def test_con_5
+  def test_5
 
     #log_level_to_debug
 
@@ -126,7 +120,7 @@ class FlowTest2 < Test::Unit::TestCase
     end
   end
 
-  def test_con_6
+  def test_6
 
     #log_level_to_debug
 

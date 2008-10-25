@@ -322,16 +322,15 @@ module OpenWFE
       @unready_queue = nil
       synchable.store_itself
 
-      queue.each do |workitem|
-        break if do_reply(synchable, workitem)
-          #
-          # do_reply() will return 'true' as soon as the
-          # concurrence is over, if this is the case, the
-          # queue should not be treated anymore
-      end
+      queue.each { |workitem| break if do_reply(synchable, workitem) }
+        #
+        # do_reply() will return 'true' as soon as the
+        # concurrence is over, if this is the case, the
+        # queue should not be treated anymore
     end
 
     def add_child (child)
+
       @remaining_children << child
     end
 
@@ -349,7 +348,8 @@ module OpenWFE
         end
 
       else
-        do_reply synchable, workitem
+
+        do_reply(synchable, workitem)
       end
     end
 
@@ -368,13 +368,26 @@ module OpenWFE
 
         @remaining_children.delete(workitem.last_expression_id)
 
+        if @over #over
+          #
+          # sync is over, don't determine it again
+          #
+          synchable.store_itself
+          return true
+        end
+
         if @remaining_children.length <= 0
+
           reply_to_parent(synchable)
           return true
         end
 
         if @count > 0 and @reply_count >= @count
 
+          @over = true
+          synchable.store_itself
+
+          #treat_remaining_children(synchable)
           synchable.get_workqueue.push(
             self, :treat_remaining_children, synchable)
 
@@ -384,11 +397,12 @@ module OpenWFE
         #
         # over-if
 
-        conditional =
-          synchable.eval_condition("over-if", workitem, "over-unless")
+        if synchable.eval_condition('over-if', workitem, 'over-unless')
 
-        if conditional
+          @over = true
+          synchable.store_itself
 
+          #treat_remaining_children(synchable)
           synchable.get_workqueue.push(
             self, :treat_remaining_children, synchable)
 

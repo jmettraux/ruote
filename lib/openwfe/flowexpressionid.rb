@@ -326,15 +326,13 @@ module OpenWFE
 
       fei = FlowExpressionId.new
 
-      ss = string.split(" ")
+      ss = string.split
 
-      #require 'pp'; puts; pp ss
-
-      ss = ss[1..-1] if ss[0] == "("
+      ss = ss[1..-1] if ss[0] == '('
 
       fei.owfe_version = ss[1]
 
-      ssRawEngineId = ss[2].split("/")
+      ssRawEngineId = ss[2].split('/')
       fei.engine_id = ssRawEngineId[0]
       #fei.initial_engine_id = ssRawEngineId[1]
 
@@ -346,7 +344,7 @@ module OpenWFE
       fei.expression_id = ss[8][0..-2]
 
       fei.expression_id = fei.expression_id[0..-2] \
-        if fei.expression_id[-1, 1] == ")"
+        if fei.expression_id[-1, 1] == ')'
 
       fei
     end
@@ -356,7 +354,7 @@ module OpenWFE
     #
     def self.from_s (string)
 
-      to_fei string
+      to_fei(string)
     end
 
     #

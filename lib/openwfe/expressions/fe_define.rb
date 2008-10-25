@@ -129,8 +129,6 @@ module OpenWFE
 
         if child.is_a?(Array) && ( ! [ 'param', 'parameter'].include?(child[0]))
 
-            # don't do a thing
-
           if get_expression_map.get_class(child[0]) == DefineExpression
 
             name = child[1]['name'] || child[2].first

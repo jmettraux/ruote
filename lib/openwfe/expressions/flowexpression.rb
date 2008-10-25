@@ -60,7 +60,9 @@ module OpenWFE
   # It gathers all the methods for attributes and variable lookup.
   #
   class FlowExpression < ObjectWithMeta
-    include Contextual, Logging, OwfeServiceLocator
+    include Contextual
+    include Logging
+    include OwfeServiceLocator
 
     #
     # The 'flow expression id' the unique identifier within a
@@ -133,16 +135,6 @@ module OpenWFE
     #
     attr_accessor :updated_at
 
-
-    #
-    # The classical no-params constructors.
-    #
-    def initialize
-
-      super
-        #
-        # very necessary as this class includes the MonitorMixin
-    end
 
     #
     # Builds a new instance of an expression

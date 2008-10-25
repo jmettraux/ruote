@@ -10,7 +10,7 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
-if RAKEVERSION != "0.8.1"
+if RAKEVERSION != '0.8.1'
   require 'rote'
   require 'rote/filters'
   require 'rote/filters/redcloth'
@@ -32,20 +32,20 @@ CLEAN.include("pkg", "html", "rdoc", "work", "logs")
 
 spec = Gem::Specification.new do |s|
 
-  s.name        = "ruote"
-  s.version       = OpenWFE::OPENWFERU_VERSION
-  s.authors       = [ "John Mettraux", "Alain Hoang" ]
-  s.email       = "john at openwfe dot org"
-  s.homepage      = "http://openwferu.rubyforge.org"
-  s.platform      = Gem::Platform::RUBY
-  s.summary       = "an open source ruby workflow and bpm engine"
+  s.name = "ruote"
+  s.version = OpenWFE::OPENWFERU_VERSION
+  s.authors = [ "John Mettraux", "Alain Hoang" ]
+  s.email = "john at openwfe dot org"
+  s.homepage = "http://openwferu.rubyforge.org"
+  s.platform = Gem::Platform::RUBY
+  s.summary = "an open source ruby workflow and bpm engine"
 
-  s.require_path    = "lib"
+  s.require_path = "lib"
   s.rubyforge_project = "openwferu"
-  #s.autorequire     = "ruote"
-  s.test_file     = "test/rake_qtest.rb"
-  s.has_rdoc      = true
-  s.extra_rdoc_files  = [ 'README.txt' ]
+  #s.autorequire = "ruote"
+  s.test_file = "test/rake_qtest.rb"
+  s.has_rdoc = true
+  s.extra_rdoc_files = [ 'README.txt' ]
 
   [ 'builder',
     #'json_pure',
@@ -54,7 +54,6 @@ spec = Gem::Specification.new do |s|
     'rufus-lru',
     'rufus-scheduler',
     'rufus-dollar',
-    #'rufus-eval',
     'rufus-treechecker',
     'rufus-mnemo',
     'rufus-verbs' ].each do |d|

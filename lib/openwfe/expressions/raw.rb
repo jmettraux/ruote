@@ -70,8 +70,7 @@ module OpenWFE
       re
     end
 
-    def instantiate_real_expression (
-      workitem, exp_name=nil, exp_class=nil, attributes=nil)
+    def instantiate_real_expression (workitem, exp_name, exp_class, attributes)
 
       exp_name ||= expression_name
       exp_class ||= expression_class
@@ -112,7 +111,7 @@ module OpenWFE
       expression.apply_time = Time.now
       expression.store_itself
 
-      expression.apply workitem
+      expression.apply(workitem)
     end
 
     #
@@ -123,9 +122,7 @@ module OpenWFE
     #
     def check_parameters (workitem)
 
-      extract_parameters.each do |param|
-        param.check(workitem)
-      end
+      extract_parameters.each { |param| param.check(workitem) }
     end
 
     #--
@@ -221,9 +218,11 @@ module OpenWFE
         var_value = exp_name \
           if (not exp_class and not var_value)
 
+        updated = true
+
         if var_value.is_a?(String)
 
-          participant_name = lookup_participant var_value
+          participant_name = lookup_participant(var_value)
 
           if participant_name
             exp_name = participant_name
@@ -241,10 +240,12 @@ module OpenWFE
           exp_class = SubProcessRefExpression
           attributes['ref'] = exp_name
 
+        else
+          # else, it's a standard expression
+          updated = false
         end
-        # else, it's a standard expression
 
-        [ exp_name, exp_class, attributes ]
+        [ exp_name, exp_class, attributes, updated ]
       end
 
       def extract_parameters

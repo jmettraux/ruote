@@ -16,12 +16,6 @@ require 'openwfe/def'
 class FlowTest26c < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   #
   # Test 0
   #
@@ -113,14 +107,6 @@ class FlowTest26c < Test::Unit::TestCase
   # 10_000 in 23.845
   #
   # after the initial work on "no raw expression children"
-  #
-
-  #
-  # Fri Oct 24 09:12:44 JST 2008
-  #
-  # 10_000 in 26.72
-  #
-  # final phase of the "no raw expression children" rework
   #
 
 end

@@ -128,7 +128,7 @@ module OpenWFE
 
     def apply (workitem)
 
-      conditional = eval_condition :if, workitem, :unless
+      conditional = eval_condition(:if, workitem, :unless)
 
       return super_reply_to_parent(workitem) \
         if conditional == false

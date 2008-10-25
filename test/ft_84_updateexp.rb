@@ -187,7 +187,6 @@ class FlowTest84 < Test::Unit::TestCase
 
     sleep 0.350
 
-    #ps = @engine.process_stack(fei.wfid, true)
     ps = @engine.process_stack(fei.wfid)
 
     #puts
