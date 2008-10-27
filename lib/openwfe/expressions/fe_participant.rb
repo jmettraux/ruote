@@ -130,24 +130,18 @@ module OpenWFE
 
       conditional = eval_condition(:if, workitem, :unless)
 
-      return super_reply_to_parent(workitem) \
-        if conditional == false
-          #
-          # skip expression
-          # <participant ref="x" if="y" /> (where y evals to false)
+      return super_reply_to_parent(workitem) if conditional == false
+        #
+        # skip expression
+        # <participant ref="x" if="y" /> (where y evals to false)
 
-      @participant_name = lookup_ref workitem
+      @participant_name = lookup_ref(workitem) || fetch_text_content(workitem)
 
-      @participant_name = fetch_text_content workitem \
-        unless @participant_name
+      participant = get_participant_map.lookup_participant(@participant_name)
 
-      participant =
-        get_participant_map.lookup_participant @participant_name
+      raise "No participant named '#{@participant_name}'" unless participant
 
-      raise "No participant named '#{@participant_name}'" \
-        unless participant
-
-      remove_timedout_flag workitem
+      remove_timedout_flag(workitem)
 
       @applied_workitem = workitem.dup
 
@@ -187,7 +181,7 @@ module OpenWFE
 
     def reply_to_parent (workitem)
 
-      get_participant_map.onotify @participant_name, :reply, workitem
+      get_participant_map.onotify(@participant_name, :reply, workitem)
         #
         # for 'listen' expressions waiting for replies
 
@@ -230,9 +224,9 @@ module OpenWFE
 
         cancel_participant
 
-        set_timedout_flag @applied_workitem
+        set_timedout_flag(@applied_workitem)
 
-        reply_to_parent @applied_workitem
+        reply_to_parent(@applied_workitem)
 
       rescue
 

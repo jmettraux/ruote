@@ -113,44 +113,30 @@ module OpenWFE
 
       conditional = eval_condition(:if, workitem, :unless)
 
-      return reply_to_parent(workitem) \
-        if conditional == false
+      return reply_to_parent(workitem) if conditional == false
 
-      ref = lookup_ref workitem
+      ref = lookup_ref(workitem)
 
       raise "'subprocess' expression misses a 'ref', 'field-ref' or 'variable-ref' attribute" unless ref
 
-      template_uri = OpenWFE::parse_known_uri ref
+      template_uri = OpenWFE::parse_known_uri(ref)
 
       template = template_uri || lookup_variable(ref)
 
-      raise "did not find any subprocess named '#{ref}'" \
-        if not template
+      raise "did not find any subprocess named '#{ref}'" unless template
 
-      forget = lookup_boolean_attribute :forget, workitem
+      forget = lookup_boolean_attribute(:forget, workitem)
 
-      params = lookup_attributes workitem
+      params = lookup_attributes(workitem)
 
-      text = fetch_text_content workitem, false
-      params["0"] = text if text
-
-      #puts
-      #puts " ... params are #{params.keys.join(', ')}"
-      #puts " ... values are #{params.values.join(', ')}"
-
-      #requester = if forget
-      #  @fei.workflow_instance_id
-      #else
-      #  @fei
-      #end
-      #sub_fei = get_expression_pool.launch_template(
-      #  requester, nil, get_next_sub_id, template, workitem, params)
+      text = fetch_text_content(workitem, false)
+      params['0'] = text if text
 
       sub_fei = get_expression_pool.launch_subprocess(
         self, template, forget, workitem, params)
 
       if forget
-        reply_to_parent workitem.dup
+        reply_to_parent(workitem.dup)
       else
         @subprocess_fei = sub_fei.dup
         store_itself # to keep track of @subprocess_fei
@@ -163,7 +149,7 @@ module OpenWFE
     def cancel
 
       return nil unless @subprocess_fei
-      get_expression_pool.cancel @subprocess_fei
+      get_expression_pool.cancel(@subprocess_fei)
     end
   end
 
