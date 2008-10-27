@@ -213,6 +213,8 @@ module OpenWFE
 
         @all_expressions << item
 
+        # TODO : store applied workitems as well
+
       else
 
         @errors[item.fei] = item

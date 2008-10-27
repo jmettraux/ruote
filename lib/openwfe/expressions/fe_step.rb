@@ -137,10 +137,8 @@ module OpenWFE
 
     def reply (workitem)
 
-      outcome = workitem.fields.delete 'outcome'
+      outcome = workitem.fields.delete('outcome')
       outcome = outcome.to_s if outcome
-
-      #p [ outcome, @outcomes, @default ]
 
       outcome = @default \
         if @outcomes and (not @outcomes.include?(outcome))
@@ -154,7 +152,7 @@ module OpenWFE
         [], # children
       ]
 
-      get_expression_pool.substitute_and_apply self, template, workitem
+      get_expression_pool.substitute_and_apply(self, template, workitem)
     end
   end
 

@@ -1040,6 +1040,8 @@ module OpenWFE
 
         parent = fetch_expression(fexp.parent_id)
 
+        #p [ :storing, fexp.raw_representation, fexp.fei.to_short_s ]
+
         parent.raw_children[fexp.fei.child_id.to_i] = fexp.raw_representation
 
         parent.store_itself

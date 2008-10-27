@@ -70,33 +70,6 @@ module OpenWFE
       re
     end
 
-    def instantiate_real_expression (workitem, exp_name, exp_class, attributes)
-
-      exp_name ||= expression_name
-      exp_class ||= expression_class
-
-      raise "unknown expression '#{exp_name}'" unless exp_class
-
-      attributes ||= raw_representation[1]
-
-      exp = exp_class.new
-      exp.fei = @fei
-      exp.parent_id = @parent_id
-      exp.environment_id = @environment_id
-      exp.application_context = @application_context
-      exp.attributes = attributes
-
-      exp.raw_representation = raw_representation
-      exp.raw_rep_updated = raw_rep_updated
-        #
-        # keeping track of how the expression look at apply /
-        # instantiation time
-
-      consider_tag(workitem, exp)
-
-      exp
-    end
-
     #
     # When a raw expression is applied, it gets turned into the
     # real expression which then gets applied.
@@ -203,22 +176,19 @@ module OpenWFE
         exp_name = expression_name()
         exp_class = expression_class()
         var_value = lookup_variable(exp_name)
-        attributes = extract_attributes
+        attributes = extract_attributes()
 
         unless var_value
           #
           # accomodating "sub_process_name" and "sub-process-name"
           #
-          alt = OpenWFE::to_underscore exp_name
+          alt = OpenWFE::to_underscore(exp_name)
           var_value = lookup_variable(alt) if alt != exp_name
 
           exp_name = alt if var_value
         end
 
-        var_value = exp_name \
-          if (not exp_class and not var_value)
-
-        updated = true
+        var_value = exp_name if (not exp_class and not var_value)
 
         if var_value.is_a?(String)
 
@@ -230,22 +200,43 @@ module OpenWFE
             attributes['ref'] = participant_name
           end
 
-        #elsif var_value.is_a?(FlowExpressionId) \
-        #  or var_value.is_a?(RawExpression)
-        #
-        #  raise 'old style !'
-
         elsif var_value.is_a?(Array)
 
           exp_class = SubProcessRefExpression
           attributes['ref'] = exp_name
 
-        else
-          # else, it's a standard expression
-          updated = false
         end
+        # else, it's a standard expression
 
-        [ exp_name, exp_class, attributes, updated ]
+        [ exp_name, exp_class, attributes ]
+      end
+
+      def instantiate_real_expression (
+        workitem, exp_name, exp_class, attributes)
+
+        exp_name ||= expression_name
+        exp_class ||= expression_class
+
+        raise "unknown expression '#{exp_name}'" unless exp_class
+
+        attributes ||= @raw_representation[1]
+
+        exp = exp_class.new
+        exp.fei = @fei
+        exp.parent_id = @parent_id
+        exp.environment_id = @environment_id
+        exp.application_context = @application_context
+        exp.attributes = attributes
+
+        exp.raw_representation = @raw_representation
+        exp.raw_rep_updated = @raw_rep_updated
+
+          # keeping track of how the expression look at apply /
+          # instantiation time
+
+        consider_tag(workitem, exp)
+
+        exp
       end
 
       def extract_parameters
@@ -253,8 +244,6 @@ module OpenWFE
         r = []
         raw_representation.last.each do |child|
 
-          #next unless child.is_a?(SimpleExpRepresentation)
-          #next unless child.is_a?(Array)
           next if OpenWFE::ExpressionTree.is_not_a_node?(child)
 
           name = child.first.to_sym
@@ -277,17 +266,17 @@ module OpenWFE
       #
       def consider_tag (workitem, new_expression)
 
-        tagname = new_expression.lookup_string_attribute :tag, workitem
+        tagname = new_expression.lookup_string_attribute(:tag, workitem)
 
         return unless tagname
 
         ldebug { "consider_tag() tag is '#{tagname}'" }
 
-        set_variable tagname, Tag.new(self, workitem)
+        set_variable(tagname, Tag.new(self, workitem))
           #
           # keep copy of raw expression and workitem as applied
 
-        new_expression.attributes["tag"] = tagname
+        new_expression.attributes['tag'] = tagname
           #
           # making sure that the value of tag doesn't change anymore
       end
@@ -325,10 +314,10 @@ module OpenWFE
 
         def initialize (field, match, default, type)
 
-          @field = to_s field
-          @match = to_s match
-          @default = to_s default
-          @type = to_s type
+          @field = to_s(field)
+          @match = to_s(match)
+          @default = to_s(default)
+          @type = to_s(type)
         end
 
         #
@@ -337,20 +326,18 @@ module OpenWFE
         #
         def check (workitem)
 
-          unless @field
-            raise \
-              OpenWFE::ParameterException,
-              "'parameter'/'param' without a 'field' attribute"
-          end
+          raise(
+            OpenWFE::ParameterException,
+            "'parameter'/'param' without a 'field' attribute"
+          ) unless @field
 
           field_value = workitem.attributes[@field]
           field_value = @default unless field_value
 
-          unless field_value
-            raise \
-              OpenWFE::ParameterException,
-              "field '#{@field}' is missing" \
-          end
+          raise(
+            OpenWFE::ParameterException,
+            "field '#{@field}' is missing"
+          ) unless field_value
 
           check_match(field_value)
 
@@ -363,8 +350,7 @@ module OpenWFE
           # Used in the constructor to flatten everything to strings.
           #
           def to_s (o)
-            return nil unless o
-            o.to_s
+            o ? o.to_s : nil
           end
 
           #
@@ -375,11 +361,11 @@ module OpenWFE
 
             value = if not @type
               value
-            elsif @type == "string"
+            elsif @type == 'string'
               value.to_s
-            elsif @type == "int" or @type == "integer"
+            elsif @type == 'int' or @type == 'integer'
               Integer(value)
-            elsif @type == "float"
+            elsif @type == 'float'
               Float(value)
             else
               raise
@@ -393,11 +379,10 @@ module OpenWFE
 
             return unless @match
 
-            unless value.to_s.match(@match)
-              raise \
-                OpenWFE::ParameterException,
-                "value of field '#{@field}' doesn't match"
-            end
+            raise(
+              OpenWFE::ParameterException,
+              "value of field '#{@field}' doesn't match"
+            ) unless value.to_s.match(@match)
           end
       end
   end
@@ -425,16 +410,14 @@ module OpenWFE
 
       method_name = OpenWFE::to_underscore(method_name)
 
-      return "_" + method_name \
-        if KEYWORDS.include? eval(":"+method_name)
-
-      method_name
+      KEYWORDS.include?(
+        eval(":#{method_name}")) ? "_#{method_name}" : method_name
     end
 
     def OpenWFE.to_expression_name (method_name)
 
       method_name = method_name.to_s
-      method_name = method_name[1..-1] if method_name[0, 1] == "_"
+      method_name = method_name[1..-1] if method_name[0, 1] == '_'
       method_name = OpenWFE::to_dash(method_name)
       method_name
     end

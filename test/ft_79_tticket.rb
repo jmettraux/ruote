@@ -20,15 +20,15 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
   #
   sequence do
 
-  #
-  # the first activity, customer support
-  #
-  cs :activity => "enter details"
+    #
+    # the first activity, customer support
+    #
+    cs :activity => "enter details"
 
-  #
-  # initiating the first step
-  #
-  step :part => "qa", :desc => "reproduce problem"
+    #
+    # initiating the first step
+    #
+    step :part => "qa", :desc => "reproduce problem"
   end
 
   #
@@ -36,16 +36,16 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
   # the 'step' subprocess
   #
   process_definition :name => "step" do
-  sequence do
+    sequence do
 
-    # participant performs activity
-    participant(
-    :ref => "${part}", :activity => "${desc}")
+      # participant performs activity
+      participant(
+      :ref => "${part}", :activity => "${desc}")
 
-    # then, call next step (via a subprocess)
-    subprocess :ref => "${f:next}"
+      # then, call next step (via a subprocess)
+      subprocess :ref => "${f:next}"
 
-  end
+    end
   end
 
   #
@@ -55,40 +55,40 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
   # QA 'reproduce problem' outputs
 
   process_definition :name => "out:cannot_reproduce" do
-  step :part => "cs", :desc => "correct report"
+    step :part => "cs", :desc => "correct report"
   end
   process_definition :name => "out:known_solution" do
-  finalsteps
+    finalsteps
   end
   process_definition :name => "out:duplicate" do
-  step :part => "qa", :desc => "verify"
+    step :part => "qa", :desc => "verify"
   end
   process_definition :name => "out:reproduced" do
-  step :part => "dev", :desc => "resolution"
+    step :part => "dev", :desc => "resolution"
   end
 
   # Customer Support 'correct report' outputs
 
   process_definition :name => "out:submit" do
-  step :part => "qa", :desc => "reproduce problem"
+    step :part => "qa", :desc => "reproduce problem"
   end
   process_definition :name => "out:give_up" do
-  finalsteps
+    finalsteps
   end
 
   # QA 'verify' outputs
 
   process_definition :name => "out:qa_fixed" do
-  finalsteps
+    finalsteps
   end
   process_definition :name => "out:not_fixed" do
-  step :part => "dev", :desc => "resolution"
+    step :part => "dev", :desc => "resolution"
   end
 
   # dev 'resolution' outputs
 
   process_definition :name => "out:dev_fixed" do
-  step :part => "qa", :desc => "verify"
+    step :part => "qa", :desc => "verify"
   end
 
   set :var => "out:not_a_bug", :variable_value => "out:dev_fixed"
@@ -97,10 +97,10 @@ class TroubleTicket01 < OpenWFE::ProcessDefinition
   # the final steps
 
   process_definition :name => "finalsteps" do
-  concurrence do
-    cs :activity => "communicate results"
-    qa :activity => "audit"
-  end
+    concurrence do
+      cs :activity => "communicate results"
+      qa :activity => "audit"
+    end
   end
 
 end
@@ -171,9 +171,9 @@ class FlowTest79 < Test::Unit::TestCase
     @engine.register_participant :qa, p
     @engine.register_participant :dev, p
 
-    fei = launch TroubleTicket01
+    fei = launch(TroubleTicket01)
 
-    @engine.wait_for fei
+    @engine.wait_for(fei)
 
     assert_equal expected_trace, p.trace
 
@@ -181,7 +181,7 @@ class FlowTest79 < Test::Unit::TestCase
 
     assert(
       (@engine.process_status(fei) == nil),
-      "process not over, check the [error] log")
+      'process not over, check the [error] log')
   end
 end
 

@@ -20,15 +20,15 @@ class TroubleTicket02 < OpenWFE::ProcessDefinition
   #
   sequence do
 
-  #
-  # the first activity, customer support
-  #
-  cs :activity => "enter details"
+    #
+    # the first activity, customer support
+    #
+    cs :activity => "enter details"
 
-  #
-  # initiating the first step
-  #
-  step "qa", :desc => "reproduce problem"
+    #
+    # initiating the first step
+    #
+    step "qa", :desc => "reproduce problem"
   end
 
   #
@@ -38,40 +38,40 @@ class TroubleTicket02 < OpenWFE::ProcessDefinition
   # QA 'reproduce problem' outputs
 
   process_definition :name => "out:cannot_reproduce" do
-  step "cs", :desc => "correct report"
+    step "cs", :desc => "correct report"
   end
   process_definition :name => "out:known_solution" do
-  finalsteps
+    finalsteps
   end
   process_definition :name => "out:duplicate" do
-  step "qa", :desc => "verify"
+    step "qa", :desc => "verify"
   end
   process_definition :name => "out:reproduced" do
-  step "dev", :desc => "resolution"
+    step "dev", :desc => "resolution"
   end
 
   # Customer Support 'correct report' outputs
 
   process_definition :name => "out:submit" do
-  step "qa", :desc => "reproduce problem"
+    step "qa", :desc => "reproduce problem"
   end
   process_definition :name => "out:give_up" do
-  finalsteps
+    finalsteps
   end
 
   # QA 'verify' outputs
 
   process_definition :name => "out:qa_fixed" do
-  finalsteps
+    finalsteps
   end
   process_definition :name => "out:not_fixed" do
-  step "dev", :desc => "resolution"
+    step "dev", :desc => "resolution"
   end
 
   # dev 'resolution' outputs
 
   process_definition :name => "out:dev_fixed" do
-  step "qa", :desc => "verify"
+    step "qa", :desc => "verify"
   end
 
   set :var => "out:not_a_bug", :variable_value => "out:dev_fixed"
@@ -80,10 +80,10 @@ class TroubleTicket02 < OpenWFE::ProcessDefinition
   # the final steps
 
   process_definition :name => "finalsteps" do
-  concurrence do
-    cs :activity => "communicate results"
-    qa :activity => "audit"
-  end
+    concurrence do
+      cs :activity => "communicate results"
+      qa :activity => "audit"
+    end
   end
 
 end
@@ -137,6 +137,8 @@ class FlowTest79b < Test::Unit::TestCase
       @trace << workitem.participant_name
         # Kilroy was here
 
+      #p [ workitem.participant_name, @path ]
+
       workitem.outcome = "out:#{@path.delete_at(0)}" if @path.size > 0
         # stating what should happen next (activity conclusion)
 
@@ -156,9 +158,9 @@ class FlowTest79b < Test::Unit::TestCase
     @engine.register_participant :qa, p
     @engine.register_participant :dev, p
 
-    fei = launch TroubleTicket02
+    fei = launch(TroubleTicket02)
 
-    @engine.wait_for fei
+    @engine.wait_for(fei)
 
     assert_equal expected_trace, p.trace
 
