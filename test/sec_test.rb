@@ -17,12 +17,6 @@ require 'openwfe/engine/engine'
 
 class SecTest < Test::Unit::TestCase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   def test_sec_0
 
     engine = OpenWFE::Engine.new

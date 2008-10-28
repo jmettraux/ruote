@@ -32,25 +32,23 @@ CLEAN.include("pkg", "html", "rdoc", "work", "logs")
 
 spec = Gem::Specification.new do |s|
 
-  s.name = "ruote"
+  s.name = 'ruote'
   s.version = OpenWFE::OPENWFERU_VERSION
-  s.authors = [ "John Mettraux", "Alain Hoang" ]
-  s.email = "john at openwfe dot org"
-  s.homepage = "http://openwferu.rubyforge.org"
+  s.authors = [ 'John Mettraux', 'Alain Hoang' ]
+  s.email = 'john at openwfe dot org'
+  s.homepage = 'http://openwferu.rubyforge.org'
   s.platform = Gem::Platform::RUBY
-  s.summary = "an open source ruby workflow and bpm engine"
+  s.summary = 'an open source ruby workflow and bpm engine'
 
-  s.require_path = "lib"
-  s.rubyforge_project = "openwferu"
-  #s.autorequire = "ruote"
-  s.test_file = "test/rake_qtest.rb"
+  s.require_path = 'lib'
+  s.rubyforge_project = 'openwferu'
+  #s.autorequire = 'ruote'
+  s.test_file = 'test/rake_qtest.rb'
   s.has_rdoc = true
   s.extra_rdoc_files = [ 'README.txt' ]
 
   [ 'builder',
     #'json_pure',
-    #'ruby_parser',
-    'rogue_parser',
     'rufus-lru',
     'rufus-scheduler',
     'rufus-dollar',
@@ -62,9 +60,9 @@ spec = Gem::Specification.new do |s|
     s.add_dependency d
   end
 
-  files = FileList[ "{bin,docs,lib,test,examples}/**/*" ]
-  files.exclude "rdoc"
-  #files.exclude "extras"
+  files = FileList[ '{bin,docs,lib,test,examples}/**/*' ]
+  files.exclude 'rdoc'
+  #files.exclude 'extras'
   s.files = files.to_a
 end
 
@@ -75,11 +73,11 @@ task :default => [ :clean, :repackage ]
 #
 Rake::RDocTask.new do |rd|
 
-  rd.main = "README.txt"
-  #rd.rdoc_dir = "html/rdoc"
-  rd.rdoc_dir = "rdoc"
-  rd.rdoc_files.include("README.txt", "RELEASE.txt", "lib/**/*.rb")
-  rd.title = "OpenWFEru rdoc"
+  rd.main = 'README.txt'
+  #rd.rdoc_dir = 'html/rdoc'
+  rd.rdoc_dir = 'rdoc'
+  rd.rdoc_files.include('README.txt', 'RELEASE.txt', 'lib/**/*.rb')
+  rd.title = 'OpenWFEru rdoc'
   rd.options << '-N' # line numbers
   rd.options << '-S' # inline source
 
@@ -91,7 +89,7 @@ Rake::RDocTask.new do |rd|
     # for it :(
 end
 
-if RAKEVERSION != "0.8.1"
+if RAKEVERSION != '0.8.1'
   #
   # Create a task to build the static docs (html)
   #
@@ -119,7 +117,7 @@ if RAKEVERSION != "0.8.1"
   #
   # Add rdoc deps to doc task
   #
-  task :doc => [:rdoc]
+  task :doc => [ :rdoc ]
 end
 
 
@@ -127,8 +125,8 @@ end
 # Builds the website and uploads it to Rubyforge.org
 #
 task :upload_website => [:doc] do
-  upload_website "openwferu"
-  #upload_website "rufus"
+  upload_website 'openwferu'
+  #upload_website 'rufus'
 end
 
 def upload_website (target)
@@ -136,7 +134,7 @@ def upload_website (target)
   target = "jmettraux@rubyforge.org:/var/www/gforge-projects/#{target}/"
 
   rso = nil
-  #rso = "-n" # blank run
+  #rso = '-n' # blank run
 
   sh """
 rsync -azv #{rso} -e ssh \
@@ -182,16 +180,16 @@ Rake::PackageTask.new('ruote', OpenWFE::OPENWFERU_VERSION) do |pkg|
 
   pkg.need_zip = true
   pkg.package_files = FileList[
-    "Rakefile",
-    "*.txt",
-    "bin/**/*",
-    "doc/**/*",
-    "examples/**/*",
-    "lib/**/*",
-    "test/**/*"
+    'Rakefile',
+    '*.txt',
+    'bin/**/*',
+    'doc/**/*',
+    'examples/**/*',
+    'lib/**/*',
+    'test/**/*'
   ].to_a
-  pkg.package_files.delete("rc.txt")
-  pkg.package_files.delete("MISC.txt")
+  pkg.package_files.delete('rc.txt')
+  pkg.package_files.delete('MISC.txt')
   class << pkg
     def package_name
       "#{@name}-#{@version}-src"
@@ -204,25 +202,25 @@ end
 # TEST TASKS
 
 task :clean_work_dir do
-  FileUtils.rm_rf("work") if File.exist?("work")
-  FileUtils.rm_rf("logs") if File.exist?("logs")
-  FileUtils.rm_rf("target") if File.exist?("target")
+  FileUtils.rm_rf('work') if File.exist?('work')
+  FileUtils.rm_rf('logs') if File.exist?('logs')
+  FileUtils.rm_rf('target') if File.exist?('target')
 end
 
 task :setup_p_persistence do
-  ENV["__persistence__"] = "pure-persistence"
+  ENV['__persistence__'] = 'pure-persistence'
 end
 
 task :setup_c_persistence do
-  ENV["__persistence__"] = "cached-persistence"
+  ENV['__persistence__'] = 'cached-persistence'
 end
 
 task :setup_D_persistence do
-  ENV["__persistence__"] = "db-persistence"
+  ENV['__persistence__'] = 'db-persistence'
 end
 
 task :setup_d_persistence do
-  ENV["__persistence__"] = "cached-db-persistence"
+  ENV['__persistence__'] = 'cached-db-persistence'
 end
 
 #
@@ -232,7 +230,7 @@ end
 # whereas "rake test" will trigger all the tests.
 #
 Rake::TestTask.new(:qtest) do |t|
-  t.libs << "test"
+  t.libs << 'test'
   t.test_files = FileList['test/rake_qtest.rb']
   t.verbose = true
 end
@@ -271,7 +269,7 @@ task :dtest => :qtest
 # The 'long' tests
 #
 Rake::TestTask.new(:ltest) do |t|
-  t.libs << "test"
+  t.libs << 'test'
   t.test_files = FileList['test/rake_ltest.rb']
   t.verbose = true
 end
