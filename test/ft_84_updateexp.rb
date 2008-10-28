@@ -197,7 +197,7 @@ class FlowTest84 < Test::Unit::TestCase
     #puts
 
     assert_equal(
-      ["process-definition", {"name"=>"Test", "revision"=>"2"}, [["sequence", {}, [["participant", {}, ["alpha"]], ["bravo", {"ref"=>"bravo"}, []], ["participant", {}, ["charly"]]]]]],
+      ["process-definition", {"name"=>"Test", "revision"=>"2"}, [["sequence", {}, [["participant", {}, ["alpha"]], ["bravo", {}, []], ["participant", {}, ["charly"]]]]]],
       ps.tree)
 
     # just to be sure

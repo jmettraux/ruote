@@ -89,8 +89,7 @@ module OpenWFE
 
       if not participant
 
-        raise "please provide a participant instance or a block" \
-          if not block
+        raise "please provide a participant instance or a block" unless block
 
         participant = BlockParticipant.new block
       end
@@ -124,8 +123,8 @@ module OpenWFE
       unless regex.kind_of?(Regexp)
 
         regex = regex.to_s
-        regex = "^" + regex unless regex[0, 1] == "^"
-        regex = regex  + "$" unless regex[-1, 1] == "$"
+        regex = "^" + regex unless regex[0, 1] == '^'
+        regex = regex  + "$" unless regex[-1, 1] == '$'
 
         ldebug { "register_participant() '#{regex}'" }
 
@@ -146,7 +145,7 @@ module OpenWFE
 
       index = (position == :first) ? 0 : -1
 
-      @participants.insert index, entry
+      @participants.insert(index, entry)
 
       participant
     end
@@ -156,8 +155,6 @@ module OpenWFE
     # Will return the first participant whose name matches.
     #
     def lookup_participant (participant_name)
-
-      #ldebug { "lookup_participant() '#{participant_name}'" }
 
       participant_name = participant_name.to_s
 
@@ -199,7 +196,7 @@ module OpenWFE
 
       unless participant
 
-        participant = lookup_participant participant_name
+        participant = lookup_participant(participant_name)
 
         raise "there is no participant named '#{participant_name}'" \
           unless participant
@@ -214,9 +211,9 @@ module OpenWFE
 
       workitem.dispatch_time = Time.now
 
-      participant.consume workitem
+      participant.consume(workitem)
 
-      onotify :dispatch, :after_consume, workitem
+      onotify(:dispatch, :after_consume, workitem)
     end
 
     #

@@ -86,15 +86,19 @@ class FlowTest38b < Test::Unit::TestCase
 
   def test_6
 
+    @tags = []
+
     @engine.register_participant :peek do |fexp, wi|
 
       wfid = fexp.fei.parent_workflow_instance_id
 
       #puts @engine.get_variables(wfid).keys.inspect
-      @tracer << @engine.process_status(wfid).tags.to_s
+      @tags += @engine.process_status(wfid).tags
     end
 
-    dotest TestTag6, [ 'AAB', 'BAB', 'ABAB' ]
+    dotest TestTag6, ''
+
+    assert_equal [ 'A', 'B' ], @tags.uniq
   end
 
   #

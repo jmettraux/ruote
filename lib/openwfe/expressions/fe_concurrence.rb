@@ -454,11 +454,10 @@ module OpenWFE
 
       def determine_count (synchable_expression, workitem)
 
-        c = synchable_expression.lookup_attribute :count, workitem
+        c = synchable_expression.lookup_attribute(:count, workitem)
         return -1 if not c
         i = c.to_i
-        return -1 if i < 1
-        i
+        i < 1 ? -1 : i
       end
 
       #
@@ -497,16 +496,12 @@ module OpenWFE
 
         def push (synchable, wi)
 
-          #synchable.ldebug do
-          #  "push() isolate? #{isolate?}"
-          #end
-
           if isolate?
-            push_in_isolation wi
+            push_in_isolation(wi)
           elsif last? or first?
-            push_by_position wi
+            push_by_position(wi)
           else
-            push_by_arrival wi
+            push_by_arrival(wi)
           end
         end
 
@@ -569,10 +564,6 @@ module OpenWFE
             next unless wi
             result = merge_workitems result, wi, override?
           end
-
-          #puts "___ result :"
-          #puts result.to_s
-          #puts
 
           result
         end

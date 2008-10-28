@@ -49,7 +49,7 @@ class PsRepresentationTest < Test::Unit::TestCase
     #p ps.representation
 
     assert_equal(
-      ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
+      ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {}, []], ["bravo", {}, []]]]]],
       ps.tree)
 
     #
@@ -64,7 +64,7 @@ class PsRepresentationTest < Test::Unit::TestCase
     ps = @engine.process_stack(fei)
 
     assert_equal(
-      ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
+      ["process-definition", {"name"=>"Test", "revision"=>"0"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []]]]]],
       ps.tree)
   end
 
@@ -92,7 +92,7 @@ class PsRepresentationTest < Test::Unit::TestCase
     ps = @engine.process_stack(fei)
 
     assert_equal(
-      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
+      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {}, []], ["bravo", {}, []]]]]],
       ps.tree)
 
     #
@@ -105,7 +105,7 @@ class PsRepresentationTest < Test::Unit::TestCase
     ps = @engine.process_stack(fei)
 
     assert_equal(
-      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []], ["charly", {}, []]]]]],
+      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {}, []], ["charly", {}, []]]]]],
       ps.tree)
 
     #
@@ -121,11 +121,11 @@ class PsRepresentationTest < Test::Unit::TestCase
     #p ps.representation
 
     assert_equal(
-      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
+      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {}, []]]]]],
       ps.tree)
 
     assert_equal(
-      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]]]],
+      ["process-definition", {"name"=>"Test", "revision"=>"1"}, [["description", {}, ["interference of the description"]], ["sequence", {}, [["alpha", {}, []]]]]],
       @engine.process_tree(fei.wfid))
   end
 

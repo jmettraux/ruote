@@ -16,12 +16,6 @@ require 'flowtestbase'
 class FlowTest80 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   #
   # Test 0
   #

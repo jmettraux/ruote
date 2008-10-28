@@ -54,7 +54,7 @@ def get_test_filename
   c = caller
   l = c.find do |l|
     l.match(/test\//) and
-    (not l.match(/test\/unit/)) and
+    #(not l.match(/test\/unit/)) and
     (not l.match(/test\/flowtestbase/))
   end
   "#{l} (#{c.size} lines)"
@@ -126,12 +126,13 @@ module FlowTestBase
     @engine.application_context[:definition_in_launchitem_allowed] = true
 
     @tracer = Tracer.new
-    @engine.application_context["__tracer"] = @tracer
+    @engine.application_context['__tracer'] = @tracer
 
     @engine.register_participant('pp-workitem') do |workitem|
 
       puts
-      require 'pp'; pp workitem
+      #require 'pp'; pp workitem
+      p workitem
       puts
     end
 
@@ -313,7 +314,7 @@ module FlowTestBase
       size = exp_storage.size
 
       if size != 1
-        sleep 0.350
+        sleep 0.400
         view = exp_storage.to_s
         size = exp_storage.size
       end

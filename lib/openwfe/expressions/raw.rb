@@ -76,10 +76,9 @@ module OpenWFE
     #
     def apply (workitem)
 
-      exp_name, exp_class, attributes = determine_real_expression
+      exp_class, val = determine_real_expression_class
 
-      expression = instantiate_real_expression(
-        workitem, exp_name, exp_class, attributes)
+      expression = instantiate_real_expression(workitem, exp_class, val)
 
       expression.apply_time = Time.now
       expression.store_itself
@@ -149,92 +148,74 @@ module OpenWFE
     protected
 
       #
-      # looks up a participant in the participant map, considers
-      # "my-participant" and "my_participant" as the same
-      # (by doing two lookups).
+      # Looks up a key as a variable or a participant.
       #
-      def lookup_participant (name)
+      def lookup (kind, key, underscore=false)
 
-        p = get_participant_map.lookup_participant(name)
+        val = (kind == :variable) ?
+          lookup_variable(key) : get_participant_map.lookup_participant(key)
 
-        unless p
-          name = OpenWFE::to_underscore(name)
-          p = get_participant_map.lookup_participant(name)
-        end
+        return lookup(:participant, val) || lookup(:variable, val) \
+          if kind == :variable and val.is_a?(String) # alias lookup
 
-        return name if p
+        return val, key if val
 
-        nil
+        return nil if underscore
+
+        lookup(kind, OpenWFE::to_underscore(key), true)
       end
 
       #
       # Determines if this raw expression points to a classical
       # expression, a participant or a subprocess, or nothing at all...
       #
-      def determine_real_expression
+      def determine_real_expression_class
 
         exp_name = expression_name()
-        exp_class = expression_class()
-        var_value = lookup_variable(exp_name)
-        attributes = extract_attributes()
 
-        unless var_value
-          #
-          # accomodating "sub_process_name" and "sub-process-name"
-          #
-          alt = OpenWFE::to_underscore(exp_name)
-          var_value = lookup_variable(alt) if alt != exp_name
+        val, key = lookup(:variable, exp_name) || lookup(:participant, exp_name)
+          # priority to variables
 
-          exp_name = alt if var_value
+        exp_class = if val.is_a?(Array)
+
+          SubProcessRefExpression
+
+        elsif val.respond_to?(:consume)
+
+          val = key
+          ParticipantExpression
+
+        else
+
+          val = nil # no hint to transmit
+          expression_class()
         end
 
-        var_value = exp_name if (not exp_class and not var_value)
-
-        if var_value.is_a?(String)
-
-          participant_name = lookup_participant(var_value)
-
-          if participant_name
-            exp_name = participant_name
-            exp_class = ParticipantExpression
-            attributes['ref'] = participant_name
-          end
-
-        elsif var_value.is_a?(Array)
-
-          exp_class = SubProcessRefExpression
-          attributes['ref'] = exp_name
-
-        end
-        # else, it's a standard expression
-
-        [ exp_name, exp_class, attributes ]
+        [ exp_class, val ]
       end
 
-      def instantiate_real_expression (
-        workitem, exp_name, exp_class, attributes)
+      def instantiate_real_expression (workitem, exp_class, val)
 
-        exp_name ||= expression_name
-        exp_class ||= expression_class
-
-        raise "unknown expression '#{exp_name}'" unless exp_class
-
-        attributes ||= @raw_representation[1]
+        raise "unknown expression '#{expression_name}'" unless exp_class
 
         exp = exp_class.new
         exp.fei = @fei
         exp.parent_id = @parent_id
         exp.environment_id = @environment_id
         exp.application_context = @application_context
-        exp.attributes = attributes
+        exp.attributes = extract_attributes()
 
         exp.raw_representation = @raw_representation
         exp.raw_rep_updated = @raw_rep_updated
 
-          # keeping track of how the expression look at apply /
-          # instantiation time
-
         consider_tag(workitem, exp)
+
+        if val
+          class << exp
+            attr_accessor :hint
+          end
+          exp.hint = val
+        end # later sparing a variable/participant lookup
 
         exp
       end

@@ -115,13 +115,18 @@ module OpenWFE
 
       return reply_to_parent(workitem) if conditional == false
 
-      ref = lookup_ref(workitem)
+      template = if self.respond_to?(:hint)
 
-      raise "'subprocess' expression misses a 'ref', 'field-ref' or 'variable-ref' attribute" unless ref
+        hint
 
-      template_uri = OpenWFE::parse_known_uri(ref)
+      else
 
-      template = template_uri || lookup_variable(ref)
+        ref = lookup_ref(workitem)
+
+        raise "'subprocess' expression misses a 'ref', 'field-ref' or 'variable-ref' attribute" unless ref
+
+        OpenWFE::parse_known_uri(ref) || lookup_variable(ref)
+      end
 
       raise "did not find any subprocess named '#{ref}'" unless template
 
