@@ -13,12 +13,6 @@ require 'flowtestbase'
 class FlowTest0e < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   def test_multi_body
 
     #log_level_to_debug

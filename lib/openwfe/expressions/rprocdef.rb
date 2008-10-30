@@ -78,7 +78,9 @@ module OpenWFE
 
     def method_missing (m, *args, &block)
 
-      #puts "__i_method_missing >>>#{m}<<<<"
+      #p [ :method_missing, m ]
+
+      return nil if m == :make
 
       ProcessDefinition.make_expression(
         @context,
@@ -338,12 +340,13 @@ module OpenWFE
         #
         def top_expression
 
-          return nil if @top_expressions.size > 1
-
           exp = @top_expressions.first
 
-          return exp if exp.first == "process-definition"
-          nil
+          return nil unless exp
+
+          exp_name = OpenWFE::to_underscore(exp[0])
+
+          DefineExpression.expression_names.include?(exp_name) ? exp : nil
         end
       end
   end

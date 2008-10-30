@@ -16,12 +16,6 @@ require 'openwfe/def'
 class FlowTest11 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   #
   # Test 0
   #
@@ -43,7 +37,7 @@ class FlowTest11 < Test::Unit::TestCase
     end
   end
 
-  def test_ppd_0
+  def test_0
 
     #log_level_to_debug
 
@@ -70,7 +64,7 @@ class FlowTest11 < Test::Unit::TestCase
     end
   end
 
-  def test_ppd_1
+  def test_1
 
     dotest(
       TestDefinition1,
@@ -101,7 +95,7 @@ ftoto:_nada__321
     end
   end
 
-  def test_ppd_2
+  def test_2
 
     dotest(
       TestDefinition2,
@@ -128,7 +122,7 @@ ftoto:_nada__321
     end
   end
 
-  def test_ppd_3
+  def test_3
 
     #puts
     #puts TestDefinition3.do_make(ExpressionMap.new(nil, nil)).to_code_s
@@ -171,7 +165,7 @@ process_definition :name => \"test4\", :revision => \"0\" do
 end
   """.strip
 
-  def test_ppd_4
+  def test_4
 
     s = OpenWFE::ExpressionTree.to_code_s TestDefinition4.do_make
 
@@ -220,7 +214,7 @@ process_definition :name => 'test5', :revision => '0' do
 end
   EOS
 
-  def test_ppd_5
+  def test_5
 
     s = OpenWFE::ExpressionTree.to_code_s(TestDefinition5.do_make)
 
@@ -252,7 +246,7 @@ end
     end
   end
 
-  def test_ppd_6
+  def test_6
 
     dotest(
       TestDefinition6.new(3),
@@ -275,7 +269,7 @@ end
     end
   end
 
-  def test_ppd_7
+  def test_7
 
     dotest(
       TestDefinition7,
@@ -298,7 +292,7 @@ end
     end
   end
 
-  def test_ppd_8
+  def test_8
 
     dotest TestDefinition8, "toto"
   end
@@ -319,7 +313,7 @@ end
     end
   end
 
-  def test_ppd_9
+  def test_9
 
     dotest TestDefinition9, "toto"
   end
@@ -341,7 +335,7 @@ end
     end
   end
 
-  def test_ppd_10
+  def test_10
 
     @engine.register_participant(:toto_underscore) do |workitem|
       @tracer << "toto\n"
@@ -366,7 +360,7 @@ end
     end
   end
 
-  def test_ppd_11
+  def test_11
 
     @engine.register_participant(:b) do |workitem|
       @tracer << "b\n"
@@ -389,7 +383,7 @@ end
     end
   end
 
-  def test_prog_12
+  def test_12
 
     dotest TestDefinition12, "main\nsub"
   end
@@ -402,9 +396,20 @@ end
   class TestDefinition13 < OpenWFE::ProcessDefinition
   end
 
-  def _test_prog_13
+  def test_13
 
-    dotest TestDefinition13, ""
+    dotest TestDefinition13, ''
+  end
+
+  #
+  # Test 14
+  #
+  def test_14
+
+    dotest(
+      %{<process-definition name="ft_11" revision="t14">
+        </process-definition>},
+      '')
   end
 
 end
