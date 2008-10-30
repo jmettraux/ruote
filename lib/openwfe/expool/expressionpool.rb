@@ -301,6 +301,8 @@ module OpenWFE
     # The raw_representation will be the template.
     # Stores and then apply the "cuckoo" expression.
     #
+    # Used by 'exp' and 'eval'.
+    #
     def substitute_and_apply (fexp, template, workitem)
 
       re = RawExpression.new_raw(

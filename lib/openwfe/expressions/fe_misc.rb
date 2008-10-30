@@ -253,12 +253,9 @@ module OpenWFE
 
       ldebug { "apply() def is >#{df}<" }
 
-      procdef = get_expression_pool.determine_rep(df)
+      tree = get_expression_pool.determine_rep(df)
 
-      raw_expression = RawExpression.new_raw(
-        fei, parent_id, environment_id, application_context, procdef)
-
-      raw_expression.apply(workitem)
+      get_expression_pool.substitute_and_apply(self, tree, workitem)
     end
   end
 
