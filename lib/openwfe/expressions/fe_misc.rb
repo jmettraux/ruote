@@ -162,7 +162,17 @@ module OpenWFE
   #   end
   #
   # Don't embed too much Ruby into your process definitions, it might
-  # hurt...
+  # hurt... It's probably better to embed some ruby code in a BlockParticipant,
+  # like in
+  #
+  #   engine.register_participant :compute_total do |workitem|
+  #     sum = workitem.items.inject(0) do |sum, item|
+  #       sum += item['count'] * item['price']
+  #     end
+  #   end
+  #
+  # 2 advantages : not too much ruby code in the process definition, and the
+  # participant can be reused for another process.
   #
   # Reval can also be used with the 'code' attribute (or 'field-code' or
   # 'variable-code') :
@@ -170,6 +180,11 @@ module OpenWFE
   #   <reval field-code="f0" />
   #
   # to eval the Ruby code held in the field named "f0".
+  #
+  # Note that currently, the actual evaluation of the ruby code is done in
+  # the work thread, so while this ruby code is executing, there is no
+  # chance for other process instances to progress. Using a block participant
+  # (like explained a few paragraphs up here) avoids this problem altogether.
   #
   class RevalExpression < FlowExpression
     include ValueMixin

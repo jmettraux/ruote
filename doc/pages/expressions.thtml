@@ -533,7 +533,7 @@ This expression is used to 'listen' on participant events (apply or reply, by de
     </concurrence>
 #:code#
 
-Each time a workitem will be dispatched to participant "alpha" (applied), a copy of the workitem will be used to run an instance of the subprocess named "send-memail-notification".
+Each time a workitem will be dispatched to participant "alpha" (applied), a copy of the workitem will be used to run an instance of the subprocess named "send-email-notification".
 
 #:code#ruby#
     listen :to => "^customer_.*", :upon => "reply", :where => "${f:customer_name} == Acme" do
