@@ -41,8 +41,8 @@ class SecTest < Test::Unit::TestCase
 
     assert(
       OpenWFE::grep(
-        "exception : .:call, .:const, :File.. is excluded",
-        "logs/openwferu.log").size > 0)
+        'exception : .:call, .:const, :File.. is excluded',
+        'logs/ruote.log').size > 0)
 
     def2 =
 '''<process-definition name="" revision="0">
@@ -73,7 +73,7 @@ class SecTest < Test::Unit::TestCase
     dotest(engine, def3)
 
     assert OpenWFE::grep(
-      "evaluation of ruby code is not allowed", "logs/openwferu.log")
+      'evaluation of ruby code is not allowed', 'logs/ruote.log')
 
     engine.stop
   end
@@ -105,12 +105,12 @@ class SecTest < Test::Unit::TestCase
       2, # now and previously
       OpenWFE::grep(
         'is forbidden',
-        "logs/openwferu.log").size)
+        'logs/ruote.log').size)
     #assert_equal(
     #  1,
     #  OpenWFE::grep(
     #    "Insecure: can't set constant",
-    #    "logs/openwferu.log").size)
+    #    "logs/ruote.log").size)
       #
       # level 4 is too much (can't modify hashes)...
   end
@@ -131,7 +131,7 @@ class SecTest < Test::Unit::TestCase
 
     engine.register_participant(:toto) do |workitem|
 
-      workitem.attributes.delete("___map_type")
+      workitem.attributes.delete('___map_type')
         #
         # if the xmlencoder was used in previous, this field
         # might be set, removing it.
@@ -143,7 +143,7 @@ class SecTest < Test::Unit::TestCase
 
     sleep 0.350
 
-    assert_equal "3_", value
+    assert_equal '3_', value
 
     engine.stop
   end

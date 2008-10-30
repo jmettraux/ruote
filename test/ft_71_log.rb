@@ -36,20 +36,20 @@ class FlowTest71 < Test::Unit::TestCase
     log_level_to_debug
       # required for the test ;)
 
-    File.open 'logs/openwferu.log', 'w' do
+    File.open 'logs/ruote.log', 'w' do
       print ''
     end
 
     dotest Test0, ''
 
-    #assert_equal 1, OpenWFE.grep("DEBUG .*log:0", "logs/openwferu.log").size
-    assert_equal 1, OpenWFE.grep('log:0', 'logs/openwferu.log').size
+    #assert_equal 1, OpenWFE.grep("DEBUG .*log:0", "logs/ruote.log").size
+    assert_equal 1, OpenWFE.grep('log:0', 'logs/ruote.log').size
 
-    assert_equal 1, OpenWFE.grep('log:1', 'logs/openwferu.log').size
-    assert_equal 4, OpenWFE.grep('log:.$', 'logs/openwferu.log').size
+    assert_equal 1, OpenWFE.grep('log:1', 'logs/ruote.log').size
+    assert_equal 4, OpenWFE.grep('log:.$', 'logs/ruote.log').size
 
-    #assert_equal 1, OpenWFE.grep("INFO .*log:3", "logs/openwferu.log").size
-    assert_equal 1, OpenWFE.grep('log:3', 'logs/openwferu.log').size
+    #assert_equal 1, OpenWFE.grep("INFO .*log:3", "logs/ruote.log").size
+    assert_equal 1, OpenWFE.grep('log:3', 'logs/ruote.log').size
   end
 
 end

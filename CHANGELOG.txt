@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22517 : logs/openwferu.log -> logs/ruote.log
 - bug   #10049 : empty ruby ProcessDefinition broke (instead of exiting). Fixed.
 - todo  #22584 : huge rework 'no_raw_children'
 - todo  #22004 : now stamping workitem with timeout info '__timeouts__' and

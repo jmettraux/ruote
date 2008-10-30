@@ -95,7 +95,7 @@ module OpenWFE
     #
     # The engine itself uses one param :logger, used to define
     # where all the log output for OpenWFEru should go.
-    # By default, this output goes to logs/openwferu.log
+    # By default, this output goes to logs/ruote.log
     #
     def initialize (application_context={})
 
@@ -106,9 +106,8 @@ module OpenWFE
       $OWFE_LOG = application_context[:logger]
 
       unless $OWFE_LOG
-        #puts "Creating logs in " + FileUtils.pwd
-        FileUtils.mkdir("logs") unless File.exist?("logs")
-        $OWFE_LOG = Logger.new "logs/openwferu.log", 10, 1024000
+        FileUtils.mkdir('logs') unless File.exist?('logs')
+        $OWFE_LOG = Logger.new('logs/ruote.log', 10, 1024000)
         $OWFE_LOG.level = Logger::INFO
       end
 

@@ -350,7 +350,7 @@ module OpenWFE
 
   #
   # This expression simply emits a message to the application
-  # log (by default logs/openwferu.log).
+  # log (by default logs/ruote.log).
   #
   #   <sequence>
   #     <log>before participant alpha</log>
