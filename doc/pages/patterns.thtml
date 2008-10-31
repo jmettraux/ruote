@@ -23,17 +23,17 @@ h2. <a name="pat_a"></a>Basic Control Flow Patterns
 h3. <a name="pat_1_seqence"></a>Sequence
 
 #:code#xml#
-    <sequence>
-        <participant ref="alpha" />
-        <participant ref="bravo" />
-    </sequence>
+  <sequence>
+    <participant ref="alpha" />
+    <participant ref="bravo" />
+  </sequence>
 #:code#
 
 #:code#ruby#
-    sequence do
-        alpha
-        bravo
-    end
+  sequence do
+    alpha
+    bravo
+  end
 #:code#
 
 (OpenWFEru finding no expression and no subprocess definition for 'alpha' and 'bravo', it automatically maps them to their participants).
@@ -48,17 +48,17 @@ h3. <a name="pat_2_parallel"></a>Parallel Split
 Splitting the process instance into two parallel path of execution.
 
 #:code#xml#
-    <concurrence>
-        <participant ref="alpha" />
-        <participant ref="bravo" />
-    </concurrence>
+  <concurrence>
+    <participant ref="alpha" />
+    <participant ref="bravo" />
+  </concurrence>
 #:code#
 
 #:code#ruby#
-    concurrence do
-        alpha
-        bravo
-    end
+  concurrence do
+    alpha
+    bravo
+  end
 #:code#
 
 "concurrence expression":expressions.html#exp_concurrence
@@ -82,57 +82,57 @@ Exclusive 'routing' within the process : the flow will go one way or the other, 
 Two expressions in OpenWFEru are used to implement this pattern : 'if' and 'case'.
 
 #:code#xml#
-    <if>
-        <equals field-value="x" other-value="y" />
-        <!-- then -->
-        <participant ref="theodor" />
-        <!-- else -->
-        <participant ref="emma" />
-    </if>
+  <if>
+    <equals field-value="x" other-value="y" />
+    <!-- then -->
+    <participant ref="theodor" />
+    <!-- else -->
+    <participant ref="emma" />
+  </if>
 #:code#
 
 #:code#ruby#
-    _if do
-        equals :field_value => :x, :other-value => "y"
-        # then
-        participant :theodor
-        # else
-        participant :emma
-    end
+  _if do
+    equals :field_value => :x, :other-value => "y"
+    # then
+    participant :theodor
+    # else
+    participant :emma
+  end
 #:code#
 
 (not to collide with Ruby's 'if', OpenWFEru's 'if' is escaped with a "_" prefix in the Ruby process definition, same thing for 'case')
 
 #:code#xml#
-    <case>
+  <case>
 
-        <equals field-value="x" other-value="y" />
-        <participant ref="alpha" />
+    <equals field-value="x" other-value="y" />
+    <participant ref="alpha" />
 
-        <if test="${field:price} > 12.0" />
-        <participant ref="bravo" />
+    <if test="${field:price} > 12.0" />
+    <participant ref="bravo" />
 
-        <!-- optional else -->
-        <participant ref="emma" />
+    <!-- optional else -->
+    <participant ref="emma" />
 
-    </case>
+  </case>
 #:code#
 
 (note here the usage of 'if' without children as a simple condition expression)
 
 #:code#ruby#
-    _case do
+  _case do
 
-        equals :field_value => "x", :other_value => "y"
-        alpha
+    equals :field_value => "x", :other_value => "y"
+    alpha
 
-        _if :test => "${field:price} > 12.0"
-        bravo
+    _if :test => "${field:price} > 12.0"
+    bravo
 
-        # optional else :
-        emma
+    # optional else :
+    emma
 
-    end
+  end
 #:code#
 
 (In this Ruby process definition, the participants, have simple one word names are directly referenced using those, no 'participant ref="alpha"' construct)
@@ -161,35 +161,35 @@ h3. <a name="pat_6_multi_choice"></a>Multi-Choice
 The straightforward way for implementing this pattern with OpenWFE[ru] is to use a set of 'if' nested within a 'concurrence' :
 
 #:code#xml#
-    <concurrence>
-        <if test="${field:price} > 12.0" >
-            <participant ref="alpha" />
-        </if>
-        <if>
-            <equals field="price" value="0">
-            <participant ref="bravo" />
-        </if>
-        <if test="${f:price} > 100.0" >
-            <participant ref="charly" />
-        </if>
-    </concurrence>
+  <concurrence>
+    <if test="${field:price} > 12.0" >
+      <participant ref="alpha" />
+    </if>
+    <if>
+      <equals field="price" value="0">
+      <participant ref="bravo" />
+    </if>
+    <if test="${f:price} > 100.0" >
+      <participant ref="charly" />
+    </if>
+  </concurrence>
 #:code#
 
 Not that if the price is superior to 100, both the participant alpha and the participant charly will 'receive the flow'.
 
 #:code#ruby#
-    concurrence do
-        _if :test => "${field:price} > 12.0" do
-            participant :alpha
-        end
-        _if do
-            _equals :field => "price", :value => "0"
-            participant :ref => :bravo
-        end
-        _if :test => "${f:price} > 100.0" do
-            participant :ref => "charly"
-        end
-    end
+ concurrence do
+   _if :test => "${field:price} > 12.0" do
+     participant :alpha
+   end
+   _if do
+     _equals :field => "price", :value => "0"
+     participant :ref => :bravo
+   end
+   _if :test => "${f:price} > 100.0" do
+     participant :ref => "charly"
+   end
+ end
 #:code#
 
 (note here that the participant expression is very flexible, pick the way to use it that is the more readable for you)
@@ -197,11 +197,11 @@ Not that if the price is superior to 100, both the participant alpha and the par
 The short version :
 
 #:code#ruby#
-    concurrence do
-        alpha :if => "${f:price} > 12.0"
-        bravo :if => "${f:price} == 0"
-        charly :if => "${f:price} > 100.0"
-    end
+  concurrence do
+    alpha :if => "${f:price} > 12.0"
+    bravo :if => "${f:price} == 0"
+    charly :if => "${f:price} > 100.0"
+  end
 #:code#
 
 (both the 'participant' and the 'subprocess' support this 'if' (and 'unless') attribute.
@@ -228,75 +228,75 @@ The "merge" after the "multi-choice" in that pattern is not synchronized. In the
 Here's how you can implement that with OpenWFE[ru] :
 
 #:code#xml#
-    <process-definition name="pat8multimerge" revision="2">
+  <process-definition name="pat8multimerge" revision="2">
 
-        <concurrence>
-            <if test="${field:price} > 12.0" >
-                <sequence>
-                    <participant ref="alpha" />
-                    <after/>
-                </sequence>
-            </if>
-            <if>
-                <equals field="price" value="0">
-                <sequence>
-                    <participant ref="bravo" />
-                    <after/>
-                </sequence>
-            </if>
-            <if test="${f:price} > 100.0" >
-                <sequence>
-                    <participant ref="charly" />
-                    <after/>
-                </sequence>
-            </if>
-        </concurrence>
+    <concurrence>
+      <if test="${field:price} > 12.0" >
+        <sequence>
+          <participant ref="alpha" />
+          <after/>
+        </sequence>
+      </if>
+      <if>
+        <equals field="price" value="0">
+        <sequence>
+          <participant ref="bravo" />
+          <after/>
+        </sequence>
+      </if>
+      <if test="${f:price} > 100.0" >
+        <sequence>
+          <participant ref="charly" />
+          <after/>
+        </sequence>
+      </if>
+    </concurrence>
 
-        <process-definition name="after">
-            <sequence>
-                <participant ref="delta" />
-                <participant ref="echo" />
-            </sequence>
-        </process-definition>
+    <process-definition name="after">
+      <sequence>
+        <participant ref="delta" />
+        <participant ref="echo" />
+      </sequence>
     </process-definition>
+  </process-definition>
 #:code#
 
 Each concurrent workitem will make its way to its own instance of the 'after' subprocess.
 
 #:code#ruby#
-    require 'openwfe/def'
+  require 'openwfe/def'
 
-    class Pat8MultiMerge2 < OpenWFE::ProcessDefinition
+  class Pat8MultiMerge2 < OpenWFE::ProcessDefinition
 
-        concurrence do
-            _if :test => "${field:price} > 12.0" do
-                sequence do
-                    alpha
-                    after
-                end
-            end
-            _if do
-                equals :field => "price", :value => "0"
-                sequence do
-                    bravo
-                    after
-                end
-            end
-            _if :test => "${f:price} > 100.0" do
-                sequence do
-                    charly
-                    after
-                end
-            end
+    concurrence do
+      _if :test => "${field:price} > 12.0" do
+        sequence do
+          alpha
+          after
         end
-
-        process_definition :name => "after" do
-            sequence do
-                delta
-                echo
-            end
+      end
+      _if do
+        equals :field => "price", :value => "0"
+        sequence do
+          bravo
+          after
         end
+      end
+      _if :test => "${f:price} > 100.0" do
+        sequence do
+          charly
+          after
+        end
+      end
     end
+
+    process_definition :name => "after" do
+      sequence do
+        delta
+        echo
+      end
+    end
+  end
 #:code#
 
 "original pattern explanation":http://workflowpatterns.com/patterns/control/advanced_branching/wcp8.php
@@ -307,28 +307,28 @@ h3. <a name="pat_9_structured_discriminator"></a>Structured Discriminator
 As soon as a concurrent branch terminates, the concurrence expression resumes the flow.
 
 #:code#xml#
-    <sequence>
-        <participant ref="alpha" />
-        <concurrence count="1" remaining="forget">
-            <participant ref="bravo" />
-            <participant ref="charly" />
-        </concurrence>
-        <participant ref="delta" />
-    </sequence>
+  <sequence>
+    <participant ref="alpha" />
+    <concurrence count="1" remaining="forget">
+      <participant ref="bravo" />
+      <participant ref="charly" />
+    </concurrence>
+    <participant ref="delta" />
+  </sequence>
 #:code#
 
 The attributes "count" and "remaining" state that the concurrence is over when 1 branch has replied and that remaining branches should simply get forgotten (their reply will simply get discarded).
 
 #:code#ruby#
-    sequence do
-        alpha
-        concurrence :count => "2", :remaining => "forget" do
-            bravo
-            charly
-            delta
-        end
-        echo
+  sequence do
+    alpha
+    concurrence :count => "2", :remaining => "forget" do
+      bravo
+      charly
+      delta
     end
+    echo
+  end
 #:code#
 
 In this example expressed in Ruby, as soon as two branches replied, the flow will resume to 'echo'.
@@ -349,74 +349,74 @@ The "cursor expression":expressions.html#exp_cursor expression is used for imple
 The process represented as "flash animation":http://workflowpatterns.com/patterns/control/structural/wcp10_animation.php on the Workflow Patterns site may be implemented as :
 
 #:code#xml#
-    <cursor>
-        <participant ref="alpha" />
-        <participant ref="bravo" />
-        <participant ref="charly" />
-        <if test="${condition}">
-            <back step="2" />
-        </if>
-        <participant ref="delta" />
-        <if test="${condition}">
-            <back step="3" />
-        </if>
-        <participant ref="echo" />
-    </cursor>
+  <cursor>
+    <participant ref="alpha" />
+    <participant ref="bravo" />
+    <participant ref="charly" />
+    <if test="${condition}">
+      <back step="2" />
+    </if>
+    <participant ref="delta" />
+    <if test="${condition}">
+      <back step="3" />
+    </if>
+    <participant ref="echo" />
+  </cursor>
 #:code#
 
 but that doesn't put any emphasis on the _more than one entry point_ aspect, this could :
 
 #:code#ruby#
-    class Pat10Definition < OpenWFE::ProcessDefinition
+  class Pat10Definition < OpenWFE::ProcessDefinition
 
-        sequence do
-            jump :step => "1"
-            sub # will enter subprocess 'sub' at participant 'bravo'
+    sequence do
+      jump :step => "1"
+      sub # will enter subprocess 'sub' at participant 'bravo'
 
-            jump :step => "0"
-            sub # will enter subprocess 'sub' at participant 'alpha' (useless)
+      jump :step => "0"
+      sub # will enter subprocess 'sub' at participant 'alpha' (useless)
 
-            jump 2
-            sub # will enter subprocess 'sub' at participant 'charly'
+      jump 2
+      sub # will enter subprocess 'sub' at participant 'charly'
 
-            #
-            # as jump is used in a sequence, it has no direct effect, but as soon
-            # as a cursor spots it (here, when entering the 'sub'), the jump
-            # is performed
-        end
-
-        process_definition :name => "sub" do
-            cursor do
-                participant "alpha"
-                participant "bravo"
-                participant "charly"
-            end
-        end
+      #
+      # as jump is used in a sequence, it has no direct effect, but as soon
+      # as a cursor spots it (here, when entering the 'sub'), the jump
+      # is performed
     end
+
+    process_definition :name => "sub" do
+      cursor do
+        participant "alpha"
+        participant "bravo"
+        participant "charly"
+      end
+    end
+  end
 #:code#
 
 that could be refined into
 
 #:code#ruby#
-    class Pat10Definition < OpenWFE::ProcessDefinition
+  class Pat10Definition < OpenWFE::ProcessDefinition
 
-        sequence do
-            sub :step => "1"
-            sub :step => "0"
-            sub :step => "2"
-        end
-
-        process_definition :name => "sub" do
-            sequence do
-                jump "${step}"
-                cursor do
-                    participant "alpha"
-                    participant "bravo"
-                    participant "charly"
-                end
-            end
-        end
+    sequence do
+      sub :step => "1"
+      sub :step => "0"
+      sub :step => "2"
     end
+
+    process_definition :name => "sub" do
+      sequence do
+        jump "${step}"
+        cursor do
+          participant "alpha"
+          participant "bravo"
+          participant "charly"
+        end
+      end
+    end
+  end
 #:code#
 
 (subprocess call attributes get saved as variables...)
@@ -429,19 +429,19 @@ h3. <a name="pat_11_implicit_termination"></a>Implicit Termination
 Replicating the "flash animation of the pattern":http://workflowpatterns.com/patterns/control/structural/wcp11_animation.php, we obtain :
 
 #:code#xml#
-    <sequence>
-        <participant ref="alpha" />
-        <concurrence>
-            <sequence>
-                <participant ref="bravo" />
-                <participant ref="delta" />
-            </sequence>
-            <sequence>
-                <participant ref="charly" />
-                <participant ref="echo" />
-            </sequence>
-        <concurrence/>
-    </sequence>
+  <sequence>
+    <participant ref="alpha" />
+    <concurrence>
+      <sequence>
+        <participant ref="bravo" />
+        <participant ref="delta" />
+      </sequence>
+      <sequence>
+        <participant ref="charly" />
+        <participant ref="echo" />
+      </sequence>
+    <concurrence/>
+  </sequence>
 #:code#
 
 Our 'implicit termination' sits at the end of the concurrence and the sequence.
@@ -449,19 +449,19 @@ Our 'implicit termination' sits at the end of the concurrence and the sequence.
 With a Ruby process definition, it would look like :
 
 #:code#ruby#
-    sequence do
-        alpha
-        concurrence do
-            sequence do
-                bravo
-                delta
-            end
-            sequence do
-                charly
-                echo
-            end
-        end
+  sequence do
+    alpha
+    concurrence do
+      sequence do
+        bravo
+        delta
+      end
+      sequence do
+        charly
+        echo
+      end
     end
+  end
 #:code#
 
 One should be able to write OpenWFE[ru] process definitions without using an "explicit termination sink".
@@ -478,29 +478,29 @@ h3. <a name="pat_12_multiple_instances_without_synchronization"></a>Multiple ins
 The description says : "within a given process instance, multiple instances of an activity can be created. These instances are independent of each other and run concurrently. There is no requirement to synchronize them upon completion."
 
 #:code#xml#
-    <sequence>
-        <participant ref="alpha" />
-        <concurrent-iterator on-field="count" to-field="f" >
-            <forget>
-                <participant ref="bravo" />
-            </forget>
-        </concurrent-iterator>
-        <participant ref="charly" />
-    </sequence>
+  <sequence>
+    <participant ref="alpha" />
+    <concurrent-iterator on-field="count" to-field="f" >
+      <forget>
+        <participant ref="bravo" />
+      </forget>
+    </concurrent-iterator>
+    <participant ref="charly" />
+  </sequence>
 #:code#
 
 With a Ruby process definition, that would look like :
 
 #:code#ruby#
-    sequence do
-        alpha
-        concurrent_iterator :on_field => "count", :to_field => "f" do
-            forget do
-                bravo
-            end
-        end
-        charly
+  sequence do
+    alpha
+    concurrent_iterator :on_field => "count", :to_field => "f" do
+      forget do
+        bravo
+      end
     end
+    charly
+  end
 #:code#
 
 The participant bravo is wrapped within a 'forget' expression as "there is no requirement to synchronize them upon completion". The flow will continue directly to participant "charly".
@@ -515,15 +515,15 @@ h3. <a name="pat_13_multiple_instances_with_a_priori_design_time_knowledge"></a>
 A 'plain' implementation of that might be :
 
 #:code#xml#
-    <sequence>
-        <participant ref="alpha" />
-        <concurrence>
-            <participant ref="bravo" />
-            <participant ref="bravo" />
-            <participant ref="bravo" />
-        </concurrence>
-        <participant ref="charly" />
-    </sequence>
+  <sequence>
+    <participant ref="alpha" />
+    <concurrence>
+      <participant ref="bravo" />
+      <participant ref="bravo" />
+      <participant ref="bravo" />
+    </concurrence>
+    <participant ref="charly" />
+  </sequence>
 #:code#
 
 We know at design time that the activity / participant 'bravo' has to be run 3 times concurrently.
@@ -531,13 +531,13 @@ We know at design time that the activity / participant 'bravo' has to be run 3 t
 A bit lighter :
 
 #:code#xml#
-    <sequence>
-        <participant ref="alpha" />
-        <concurrent-iterator on-value="a, b, c" to-field="index">
-            <participant ref="bravo" />
-        </concurrent-iterator>
-        <participant ref="charly" />
-    </sequence>
+  <sequence>
+    <participant ref="alpha" />
+    <concurrent-iterator on-value="a, b, c" to-field="index">
+      <participant ref="bravo" />
+    </concurrent-iterator>
+    <participant ref="charly" />
+  </sequence>
 #:code#
 
 With a Ruby process definition it would look like :
@@ -546,13 +546,13 @@ With a Ruby process definition it would look like :
 require 'openwfe/def'
 
 class Pattern13 < OpenWFE::ProcessDefinition
-    sequence do
-        participant :ref => "alpha"
-        concurrent_iterator :on_value => "a, b, c", :to_field => "index"
-            participant :ref => "bravo"
-        end
-        participant :ref => "charly"
+  sequence do
+    participant :ref => "alpha"
+    concurrent_iterator :on_value => "a, b, c", :to_field => "index"
+      participant :ref => "bravo"
     end
+    participant :ref => "charly"
+  end
 end
 #:code#
 
@@ -566,15 +566,15 @@ h3. <a name="pat_14_multiple_instances_with_a_priori_run_time_knowledge"></a>Mul
 It's again a job for a "concurrent-iterator". In this example, a comma separated list of activities in kept in the variable named "activity_list" (maybe something like "sort, wash, dry"). The iterated value, stored in the variable "index" is passed to each 'activity' participant as a task parameter.
 
 #:code#xml#
-    <concurrent-iterator on-variable-value="activity_list" to-variable="index">
-        <participant ref="machine" task="${index}" />
-    </concurrent-iterator>
+  <concurrent-iterator on-variable-value="activity_list" to-variable="index">
+    <participant ref="machine" task="${index}" />
+  </concurrent-iterator>
 #:code#
 
 #:code#ruby#
-    concurrent_iterator :on-variable-value => "activity_list", :to-variable => "index" do
-        participant :ref => "machine", :task => "${index}"
-    end
+  concurrent_iterator :on-variable-value => "activity_list", :to-variable => "index" do
+    participant :ref => "machine", :task => "${index}"
+  end
 #:code#
 
 "original pattern explanation":http://workflowpatterns.com/patterns/control/multiple_instance/wcp14.php
@@ -587,26 +587,26 @@ Basically the number of activity is known at runtime and may change at any point
 A loop or a cursor could be used to implement that pattern :
 
 #:code#xml#
-    <loop>
-        <concurrent-iterator on-variable-value="activity_list" to-variable="index">
-            <participant ref="machine" task="${index}" />
-        </concurrent-iterator>
-        <break if="${activity_list} == ''" />
-    </loop>
+  <loop>
+    <concurrent-iterator on-variable-value="activity_list" to-variable="index">
+      <participant ref="machine" task="${index}" />
+    </concurrent-iterator>
+    <break if="${activity_list} == ''" />
+  </loop>
 #:code#
 
 But it doesn't quite reflect the "at any time" requirement. Maybe something like that :
 
 #:code#ruby#
-    loop do
-        concurrence :merge-type => "mix", :merge => "lowest" do
-            concurrent_iterator :on_value => "${activity_list}", :to_variable => "index" do
-                participant :ref => "machine", :task => "${index}"
-            end
-            participant :ref => "decision_taker"
-        end
-        _break :if => "${activity_list} == ''"
+  loop do
+    concurrence :merge-type => "mix", :merge => "lowest" do
+      concurrent_iterator :on_value => "${activity_list}", :to_variable => "index" do
+        participant :ref => "machine", :task => "${index}"
+      end
+      participant :ref => "decision_taker"
     end
+    _break :if => "${activity_list} == ''"
+  end
 #:code#
 
 This implementation (as a Ruby process definition) assumes that the activity list will be filled by the participant "decision_taker" (which is given a priority (it's the lowest child) in the concurrence mix merge).
@@ -655,37 +655,37 @@ h3. <a name="pat_17_interleaved_parallel_routing"></a>Interleaved Parallel Routi
 OpenWFEja has an "interleaved" expression supposed to directly implement this pattern. OpenWFEru doesn't reproduce it but makes use of the "reserve" expression (also used for "critical section").
 
 #:code#xml#
-   <concurrence>
-       <reserve mutex="toto">
-           <participant ref="test_b" />
-       </reserve>
-       <sequence>
-           <reserve mutex="toto">
-               <participant ref="test_c" />
-           </reserve>
-           <reserve mutex="toto">
-               <participant ref="test_d" />
-           </reserve>
-       </sequence>
-   </concurrence>
+ <concurrence>
+   <reserve mutex="toto">
+     <participant ref="test_b" />
+   </reserve>
+   <sequence>
+     <reserve mutex="toto">
+       <participant ref="test_c" />
+     </reserve>
+     <reserve mutex="toto">
+       <participant ref="test_d" />
+     </reserve>
+   </sequence>
+ </concurrence>
 #:code#
 
 The 'reserve' expression is a named mutex, the name is a variable name. Thus if the name begins with '//' (double-slash), the mutex will be stored at the engine level and the 'critical section' may span multiple business processes. The examples here have their scope limited to their process. A mutex name prefixed with '/' (one slash) indicates that the variable should be bound at process level, this is useful for mutexes shared among subprocesses (not putting a slash prefix would create mutex locally / at the subprocess level, defeating the exclusivity purpose).
 
 #:code#ruby#
-   concurrence do
-       reserve :mutex => :toto do
-           test_b
-       end
-       sequence do
-           reserve :mutex => :toto do
-               test_c
-           end
-           reserve :mutex => :toto do
-               test_d
-           end
-       end
+ concurrence do
+   reserve :mutex => :toto do
+     test_b
    end
+   sequence do
+     reserve :mutex => :toto do
+       test_c
+     end
+     reserve :mutex => :toto do
+       test_d
+     end
+   end
+ end
 #:code#
 
 "reserve expression":expressions.html#exp_reserve
@@ -697,17 +697,17 @@ h3. <a name="pat_18_milestone"></a>Milestone
 This pattern is about enabling activities only when the process reaches a certain state.
 
 #:code#ruby#
-    concurrence do
-        sequence do
-            participant :ref => "A"
-            participant :ref => "B", :tag => "milestone"
-            participant :ref => "C"
-        end
-        sequence do
-            wait :until => "'${milestone}' != ''", :frequency => "300"
-            participant :ref => "D"
-        end
+  concurrence do
+    sequence do
+      participant :ref => "A"
+      participant :ref => "B", :tag => "milestone"
+      participant :ref => "C"
     end
+    sequence do
+      wait :until => "'${milestone}' != ''", :frequency => "300"
+      participant :ref => "D"
+    end
+  end
 #:code#
 
 In this segment of process, the participant 'D' will be activated (applied) only when the parallel branch reaches participant 'B'.
@@ -720,29 +720,29 @@ Since OpenWFEru 0.9.17, the condition can be expressed as :
 
 #:code#ruby#
 
-    #wait :until => "'${milestone}' != ''", :frequency => "300"
-        # before OpenWFEru 0.9.17
+  #wait :until => "'${milestone}' != ''", :frequency => "300"
+    # before OpenWFEru 0.9.17
 
-    wait :until => "${milestone} is set", :frequency => "300"
-        # since OpenWFEru 0.9.17
+  wait :until => "${milestone} is set", :frequency => "300"
+    # since OpenWFEru 0.9.17
 #:code#
 
 To conclude with an XML example, the 'when' expression can be used as well :
 
 #:code#xml#
-    <concurrence>
-        <sequence>
-            <participant ref="A" />
-            <sequence tag="milestone">
-                <participant ref="B" />
-                <participant ref="C" />
-            </sequence>
-            <participant ref="D" />
-        </sequence>
-        <when test="'${milestone}' != ''">
-            <participant ref="E" />
-        </when>
-    </concurrence>
+  <concurrence>
+    <sequence>
+      <participant ref="A" />
+      <sequence tag="milestone">
+        <participant ref="B" />
+        <participant ref="C" />
+      </sequence>
+      <participant ref="D" />
+    </sequence>
+    <when test="'${milestone}' != ''">
+      <participant ref="E" />
+    </when>
+  </concurrence>
 #:code#
 
 Here, the participant 'E' is 'activated' when the sequence 'B - C' is reached (in the previous (Ruby) example, a single participant was tagged 'milestone').
