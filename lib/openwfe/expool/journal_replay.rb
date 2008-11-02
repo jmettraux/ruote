@@ -294,9 +294,8 @@ module OpenWFE
 
         def to_s
 
-          s = " ===== offset : #{@offset}  #{@date} =====\n"
+          s = "=== offset : #{@offset}  #{@date} ===\n"
 
-          s << "\n"
           s << "static :\n"
           @static.each do |e|
             s << " - #{e[0]}   #{extract_fei(e[2]).to_short_s}\n"
@@ -308,7 +307,8 @@ module OpenWFE
             s << " - #{e[0]}   #{extract_fei(e[2]).to_short_s}\n"
           end
 
-          #s << "\n"
+          s << "=== . ===\n\n"
+
           #s <<  "participants :\n"
           #@participants.each do |fei, v|
           #  s << " - #{fei.to_short_s}\n"

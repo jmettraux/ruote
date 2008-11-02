@@ -30,7 +30,7 @@ class FlowTest32 < Test::Unit::TestCase
     end
   end
 
-  def test_journal_0
+  def test_0
 
     @engine.application_context[:keep_journals] = true
 
@@ -49,13 +49,15 @@ class FlowTest32 < Test::Unit::TestCase
 
     fn = journal_service.donedir + "/" + result[2].wfid + ".journal"
 
-    #puts journal_service.analyze fn
+    #puts journal_service.analyze(fn)
 
     assert_equal 1, @engine.get_expression_storage.size
 
-    journal_service.replay(fn, 19)
+    off = 20
+
+    journal_service.replay(fn, off)
       #
-      # replay at offset 19 without "refiring"
+      # replay at offset X without "refiring"
       #
       # flow waits
 
@@ -64,11 +66,11 @@ class FlowTest32 < Test::Unit::TestCase
     #puts @engine.get_expression_storage.to_s
     assert_equal 5, @engine.get_expression_storage.size
 
-    log_level_to_debug
+    #log_level_to_debug
 
-    journal_service.replay(fn, 19, true)
+    journal_service.replay(fn, off, true)
       #
-      # replay at offset 19 with "refiring"
+      # replay at offset X with "refiring"
       #
       # flow resumes
 

@@ -18,12 +18,6 @@ require 'flowtestbase'
 class FlowTest34 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
   #
   # TEST 0
 
@@ -40,14 +34,16 @@ class FlowTest34 < Test::Unit::TestCase
       "store_participant", OpenWFE::HashParticipant)
 
     fei = launch TestCancelWfid0
+    #puts fei.to_s
 
     sleep 0.300
 
     @engine.cancel_process(fei.wfid)
 
-    sleep 0.350
+    sleep 0.400
 
     l = @engine.list_processes
+    #l.each { |ps| p ps.fei.to_s }
 
     assert_equal 0, l.size
 

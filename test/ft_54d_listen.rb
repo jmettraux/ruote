@@ -60,6 +60,10 @@ z #{fei0.wfid}
 l #{fei0.wfid}
       }.strip,
       @tracer.to_s)
+
+    #@engine.cancel_process(fei0b)
+    #@engine.cancel_process(fei0)
+    #sleep 0.4
   end
 
 end
