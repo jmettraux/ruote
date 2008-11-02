@@ -314,13 +314,7 @@ module OpenWFE
     #
     def set_variable (varname, value)
 
-      env, var = lookup_environment varname
-
-      ldebug do
-        "set_variable() '#{varname}' to '#{value}' " +
-        "in  #{env.fei.to_debug_s}"
-      end
-
+      env, var = lookup_environment(varname)
       env[var] = value
     end
 
@@ -336,7 +330,7 @@ module OpenWFE
     #
     def lookup_variable (varname)
 
-      env, var = lookup_environment varname
+      env, var = lookup_environment(varname)
       env[var]
     end
 
@@ -350,8 +344,8 @@ module OpenWFE
     #
     def delete_variable (varname)
 
-      env, var = lookup_environment varname
-      env.delete var
+      env, var = lookup_environment(varname)
+      env.delete(var)
     end
 
     alias :unset_variable :delete_variable

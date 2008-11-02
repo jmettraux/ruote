@@ -95,9 +95,9 @@ module OpenWFE
       #puts "value is '#{value}'"
 
       if vkey
-        set_variable vkey, value
+        set_variable(vkey, value)
       elsif fkey
-        workitem.set_attribute fkey, value
+        workitem.set_attribute(fkey, value)
       else
         raise "'variable' or 'field' attribute missing from 'set' expression"
       end
@@ -126,12 +126,12 @@ module OpenWFE
       if vkey
         delete_variable(vkey)
       elsif fkey
-        workitem.unset_attribute fkey
+        workitem.unset_attribute(fkey)
       else
         raise "attribute 'variable' or 'field' is missing for 'unset' expression"
       end
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
   end
 

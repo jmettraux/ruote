@@ -16,12 +16,6 @@ require 'flowtestbase'
 class FlowTest25 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
   #
   # TEST 0
 
@@ -61,10 +55,7 @@ class FlowTest25 < Test::Unit::TestCase
 
   def test_1
 
-    dotest(
-      TestDefinition1,
-      "before",
-      0.500)
+    dotest(TestDefinition1, 'before', 0.500)
   end
 
 

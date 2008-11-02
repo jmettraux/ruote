@@ -435,12 +435,6 @@ module OpenWFE
     #
     def reply_to_parent (exp, workitem, remove=true)
 
-      #puts
-      #p "reply_to_parent() for #{exp.fei.to_debug_s}"
-      #puts caller.join("\n")
-      #puts
-      #ldebug { "reply_to_parent() for #{exp.fei.to_debug_s}" }
-
       workitem.last_expression_id = exp.fei
 
       onotify(:reply_to_parent, exp, workitem)
@@ -509,16 +503,9 @@ module OpenWFE
 
       flow_expression.updated_at = Time.now
 
-      ldebug { "update() for #{flow_expression.fei.to_debug_s}" }
+      #ldebug { "update() for #{flow_expression.fei.to_debug_s}" }
 
-      #t = Timer.new
-
-      onotify :update, flow_expression.fei, flow_expression
-
-      #ldebug do
-      #  "update() took #{t.duration} ms  " +
-      #  "#{flow_expression.fei.to_debug_s}"
-      #end
+      onotify(:update, flow_expression.fei, flow_expression)
 
       flow_expression
     end
@@ -798,7 +785,7 @@ module OpenWFE
       #
       def read_uri (uri)
 
-        uri = URI.parse uri.to_s
+        uri = URI.parse(uri.to_s)
 
         raise ":remote_definitions_allowed is set to false" \
           if (ac[:remote_definitions_allowed] != true and
@@ -807,7 +794,7 @@ module OpenWFE
 
         #open(uri.to_s).read
 
-        f = Rufus::Verbs.fopen uri
+        f = Rufus::Verbs.fopen(uri)
         result = f.read
         f.close if f.respond_to?(:close)
 

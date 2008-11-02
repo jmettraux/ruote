@@ -73,8 +73,7 @@ module OpenWFE
       @variables = {}
     end
 
-    def self.new_env (
-      fei, parent_id, environment_id, app_context, attributes)
+    def self.new_env (fei, parent_id, environment_id, app_context, attributes)
 
       env = self.new
 
@@ -107,29 +106,17 @@ module OpenWFE
     #
     def []= (key, value)
 
-      #ldebug do
-      #  "#{fei.to_debug_s} []= "+
-      #  "'#{key}' => '#{value}' (#{value.class.name})"
-      #end
-
-      #synchronize do
-
       @variables[key] = value
       store_itself
-      #end
     end
 
     #
     # Removes a variable from this environment.
     #
     def delete (key)
-      #synchronize do
-
-      ldebug { "#{fei.to_debug_s} delete() '#{key}'" }
 
       @variables.delete key
       store_itself
-      #end
     end
 
     #
@@ -140,11 +127,7 @@ module OpenWFE
     #
     def unbind
 
-      #ldebug { "unbind() for #{fei.to_s}" }
-
       @variables.each do |key, value|
-
-        #ldebug { "unbind() '#{key}' => #{value.class}" }
 
         if value.kind_of?(FlowExpressionId)
 
@@ -236,7 +219,7 @@ module OpenWFE
         @application_context,
         OpenWFE::fulldup(@attributes))
 
-      env.variables = OpenWFE::fulldup self.variables
+      env.variables = OpenWFE::fulldup(self.variables)
 
       env
     end

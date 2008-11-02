@@ -43,10 +43,6 @@ require 'openwfe/expressions/timeout'
 require 'openwfe/expressions/condition'
 
 
-#
-# 'when' and 'wait'
-#
-
 module OpenWFE
 
   #
@@ -102,25 +98,19 @@ module OpenWFE
 
     def apply (workitem)
 
-      return reply_to_parent(workitem) \
-        if raw_children.size < 1
+      return reply_to_parent(workitem) if has_no_expression_child
 
       @condition_sub_id = -1
       @consequence_triggered = false
 
-      super workitem
+      super(workitem)
     end
 
     def reply (workitem)
 
-      #ldebug do
-      #  "reply() @consequence_triggered is '#{@consequence_triggered}'"
-      #end
+      return reply_to_parent(workitem) if @consequence_triggered
 
-      return reply_to_parent(workitem) \
-        if @consequence_triggered
-
-      super workitem
+      super(workitem)
     end
 
     protected
@@ -134,7 +124,7 @@ module OpenWFE
         i = 1
         i = 0 if @children.size == 1
 
-        get_expression_pool.apply @children[i], workitem
+        get_expression_pool.apply(@children[i], workitem)
       end
   end
 

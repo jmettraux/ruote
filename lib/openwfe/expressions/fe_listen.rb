@@ -118,7 +118,7 @@ module OpenWFE
   # method) workitems that don't belong to a process intance (ie workitems
   # that have a nil flow_expression_id). So it's entirely feasible to
   # send 'notifications only' workitems to the OpenWFEru engine.
-  # (see http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/test/ft_54b_listen.rb)
+  # (see http://github.com/jmettraux/ruote/tree/master/test/ft_54b_listen.rb)
   #
   # This expression has been aliased 'intercept'
   # and 'receive'. It also accepts the 'on' parameter as an alias parameter
@@ -135,8 +135,6 @@ module OpenWFE
     include MergeMixin
 
     names :listen, :intercept, :receive
-
-    #uses_template
 
     #
     # the channel on which this expression 'listens'
@@ -241,7 +239,7 @@ module OpenWFE
     #
     def trigger (params)
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
 
     #
@@ -257,7 +255,7 @@ module OpenWFE
 
       workitem = args[1].dup
 
-      conditional = eval_condition :where, workitem
+      conditional = eval_condition(:where, workitem)
         #
         # note that the values if the incoming workitem (not the
         # workitem at apply time) are used for the evaluation
@@ -283,7 +281,7 @@ module OpenWFE
       #
       # eventual merge
 
-      workitem = merge_workitems @applied_workitem.dup, workitem \
+      workitem = merge_workitems(@applied_workitem.dup, workitem) \
         if @applied_workitem
 
       #

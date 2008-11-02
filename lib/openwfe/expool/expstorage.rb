@@ -60,12 +60,10 @@ module OpenWFE
     def observe_expool
 
       get_expression_pool.add_observer(:update) do |channel, fei, fe|
-        ldebug { ":update  for #{fei}" }
         self[fei] = fe
       end
       get_expression_pool.add_observer(:remove) do |channel, fei|
-        ldebug { ":remove  for #{fei}" }
-        self.delete fei
+        self.delete(fei)
       end
     end
 
@@ -138,7 +136,7 @@ module OpenWFE
         if wfrevision and fei.wfrevision != wfrevision
 
       return false \
-        if cs and fei.sub_instance_id != ""
+        if cs and fei.sub_instance_id != ''
       return false \
         if wfid and fei.wfid != wfid
       return false \
@@ -231,8 +229,7 @@ module OpenWFE
 
     def []= (fei, fe)
 
-      ldebug { "[]= caching #{fei}" }
-
+      #ldebug { "[]= caching #{fei}" }
       @cache[fei.hash] = fe
     end
 

@@ -96,7 +96,7 @@ class FlowTest26c < Test::Unit::TestCase
   #
   # Thu Oct 16 22:58:15 JST 2008
   #
-  # 10_000 in 31.939
+  # 10_000 in 31.939s
   #
   # 2GB RAM -> 4GB RAM, well...
   #
@@ -104,9 +104,22 @@ class FlowTest26c < Test::Unit::TestCase
   #
   # Mon Oct 20 10:30:47 JST 2008
   #
-  # 10_000 in 23.845
+  # 10_000 in 23.845s
   #
   # after the initial work on "no raw expression children"
+  #
+
+  #
+  # Sun Nov  2 14:58:19 JST 2008
+  #
+  # 10_000 in 22.006s
+  #
+  # ruby 1.8.6 (2008-03-03 patchlevel 114) [universal-darwin9.0]
+  # on 2.4GHz Intel Core duo, 4GB Memory
+  #
+  # 10_000 in 15.282s
+  #
+  # commented some ldebugs out of the critical path
   #
 
 end

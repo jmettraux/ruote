@@ -89,7 +89,7 @@ module OpenWFE
 
       return reply_to_parent(workitem) if has_no_expression_child
 
-      @mutex_name = lookup_string_attribute :mutex, workitem
+      @mutex_name = lookup_string_attribute(:mutex, workitem)
 
       mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
 
@@ -111,7 +111,7 @@ module OpenWFE
 
       super
 
-      lookup_variable(@mutex_name).release self
+      lookup_variable(@mutex_name).release(self)
     end
 
     #
