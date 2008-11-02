@@ -207,7 +207,7 @@ module OpenWFE
       return cancel(participant, workitem) \
         if workitem.is_a?(CancelItem)
 
-      onotify :dispatch, :before_consume, workitem
+      onotify(:dispatch, :before_consume, workitem)
 
       workitem.dispatch_time = Time.now
 
@@ -234,7 +234,7 @@ module OpenWFE
         participant.cancel(cancel_item) \
           if participant.respond_to?(:cancel)
 
-        onotify :dispatch, :cancel, cancel_item
+        onotify(:dispatch, :cancel, cancel_item)
           #
           # maybe it'd be better to specifically log that
           # a participant has no cancel() method, but it's OK

@@ -46,17 +46,8 @@ require 'openwfe/expressions/flowexpression'
 module OpenWFE
 
   #
-  # The "listen" expression can be viewed in two ways :
-  #
-  # 1)
-  # It's a hook into the participant map to intercept apply or reply
-  # operations on participants.
-  #
-  # 2)
-  # It allows OpenWFE[ru] to be a bit closer to the 'ideal' process-calculus
-  # world (http://en.wikipedia.org/wiki/Process_calculi)
-  #
-  # Anyway...
+  # An expression for listening to participant activity in the engine
+  # (across process instances).
   #
   #   <listen to="alice">
   #     <subprocess ref="notify_bob" />
@@ -129,6 +120,10 @@ module OpenWFE
   # with a copy of the workitem that 'applied' (activated) the listen
   # expression.
   #
+  # Since Ruote 0.9.20, a 'wfid' attribute is available. When set to :current
+  # or 'current', it indicates that the listen is only concerned with the
+  # current process instance. It's handy for defining intra process listens.
+  #
   class ListenExpression < FlowExpression
     include TimeoutMixin
     include ConditionMixin
@@ -176,15 +171,21 @@ module OpenWFE
       #return reply_to_parent(workitem) if has_no_expression_child
         # 'listen' blocks if there is no children
 
-      @participant_regex = lookup_string_attribute(:to, workitem)
+      #
+      # participant regex
 
-      @participant_regex = lookup_string_attribute(:on, workitem) \
-        unless @participant_regex
+      @participant_regex =
+        lookup_string_attribute(:to, workitem) ||
+        lookup_string_attribute(:on, workitem)
 
       raise "attribute 'to' is missing for expression 'listen'" \
         unless @participant_regex
 
-      ldebug { "apply() listening to '#{@participant_regex}'" }
+      #
+      # wfid
+
+      @wfid_regex =
+        lookup_string_attribute(:wfid, workitem).to_s.strip == 'current'
 
       #
       # once
@@ -193,14 +194,10 @@ module OpenWFE
         has_no_expression_child ||
         lookup_boolean_attribute(:once, workitem, true)
 
-      #ldebug { "apply() @once is #{@once}" }
-
       #
       # merge
 
       merge = lookup_boolean_attribute(:merge, workitem, false)
-
-      #ldebug { "apply() merge is #{@merge}" }
 
       @applied_workitem = workitem.dup if merge
 
@@ -209,8 +206,6 @@ module OpenWFE
 
       @upon = lookup_sym_attribute(:upon, workitem, :default => :apply)
       @upon = (@upon == :reply) ? :reply : :apply
-
-      ldebug { "apply() @upon is #{@upon}" }
 
       @call_count = 0
 
@@ -254,6 +249,17 @@ module OpenWFE
       return if upon != @upon
 
       workitem = args[1].dup
+
+      if @wfid_regex
+
+        wfid = workitem.fei.wfid(true)
+
+        if @wfid_regex == true
+          return if wfid != self.fei.wfid(true)
+        else
+          return unless wfid.match(@wfid_regex)
+        end
+      end
 
       conditional = eval_condition(:where, workitem)
         #

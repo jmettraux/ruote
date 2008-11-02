@@ -13,12 +13,6 @@ require 'openwfe/participants/participants'
 class FlowTest54c < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
 
   #
   # Test 0

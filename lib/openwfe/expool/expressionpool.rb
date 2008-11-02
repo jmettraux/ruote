@@ -105,7 +105,7 @@ module OpenWFE
 
       @stopped = true
 
-      onotify :stop
+      onotify(:stop)
     end
 
     #
@@ -609,9 +609,9 @@ module OpenWFE
 
         linfo { "reschedule() for  #{fexp.fei.to_s}..." }
 
-        onotify :reschedule, fexp.fei
+        onotify(:reschedule, fexp.fei)
 
-        fexp.reschedule get_scheduler
+        fexp.reschedule(get_scheduler)
       end
 
       linfo { "reschedule() done. (took #{t.duration} ms)" }
@@ -639,24 +639,21 @@ module OpenWFE
     # expressions (even those not yet applied) that compose the process
     # instance will be returned. Environments will be returned as well.
     #
-    #def process_stack (wfid, unapplied=false)
     def process_stack (wfid)
 
       #raise "please provide a non-nil workflow instance id" \
       #  unless wfid
 
-      wfid = extract_wfid wfid, true
+      wfid = extract_wfid(wfid, true)
 
       params = {
         #:exclude_classes => [ Environment, RawExpression ],
         #:exclude_classes => [ Environment ],
         :parent_wfid => wfid
       }
-      #params[:applied] = true if (not unapplied)
 
       stack = get_expression_storage.find_expressions params
 
-      #stack.extend(RepresentationMixin) if unapplied
       stack.extend(RepresentationMixin)
 
       stack

@@ -518,30 +518,30 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 This expression is used to 'listen' on participant events (apply or reply, by default, at apply time) and triggers a piece of process.
 
 #:code#xml#
-    <concurrence>
+  <concurrence>
 
-        <listen to="alpha">
-            <subprocess ref="send-email-notification" />
-        </listen>
+    <listen to="alpha">
+      <subprocess ref="send-email-notification" />
+    </listen>
 
-        <sequence>
-            <participant ref="alpha" />
-            <participant ref="bravo" />
-            <participant ref="alpha" />
-        </sequence>
+    <sequence>
+      <participant ref="alpha" />
+      <participant ref="bravo" />
+      <participant ref="alpha" />
+    </sequence>
 
-    </concurrence>
+  </concurrence>
 #:code#
 
 Each time a workitem will be dispatched to participant "alpha" (applied), a copy of the workitem will be used to run an instance of the subprocess named "send-email-notification".
 
 #:code#ruby#
-    listen :to => "^customer_.*", :upon => "reply", :where => "${f:customer_name} == Acme" do
-        concurrence do
-            participant :ref => "operational_sales"
-            participant :ref => "strategic_sales"
-        end
+  listen :to => "^customer_.*", :upon => "reply", :where => "${f:customer_name} == Acme" do
+    concurrence do
+      participant :ref => "operational_sales"
+      participant :ref => "strategic_sales"
     end
+  end
 #:code#
 
 Makes sure that when the next workitem coming back from any participant whose name begins with "customer_" and where the field customer_name is set to "Acme", a copy of this workitem is used to trigger a small concurrence between two sales units.
@@ -551,24 +551,30 @@ The 'listen' expression is not limited to its own process instance, it listens t
 Since OpenWFEru 0.9.16, listen expressions without children are possible, then simply block, waiting for a 'message' and when it comes in, they let their process instance resume.
 
 #:code#ruby#
-    sequence do
-        listen :to => "^customer_.*", :upon => "reply"
-        subprocess :ref => "order_items"
-    end
+  sequence do
+    listen :to => "^customer_.*", :upon => "reply"
+    subprocess :ref => "order_items"
+  end
 #:code#
 
 Listen expressions without children only work 'once'.
 
-OpenWFEru 0.9.16 introduces as well the 'intercept' and 'receive' aliases for the 'listen' expression. The concept behind this expression being "listen to", an 'on' attribute as been introduced has a alias to 'to', think "receive on" or "intercept on".
+The 'intercept' and 'receive' aliases for the 'listen' expression are available. The concept behind this expression being "listen to", an 'on' attribute as been introduced has a alias to 'to', think "receive on" or "intercept on".
 
 #:code#ruby#
-    receive :on => "^customer_.*"
+  receive :on => "^customer_.*"
 #:code#
 
-0.9.16 also introduces a "merge" attribute, the default value is 'false'. When set to true, the workitem used to trigger the listen expression's nested child will be a merge of the original workitem (the one that activated the listen expression) and the incoming (the listened for) workitem.
+The "merge" attribute has a default value of 'false'. When set to true, the workitem used to trigger the listen expression's nested child will be a merge of the original workitem (the one that activated the listen expression) and the incoming (the listened for) workitem.
 
 #:code#ruby#
-    listen :to => "^customer_.*", :merge => true
+  listen :to => "^customer_.*", :merge => true
+#:code#
+
+(Ruote 0.9.20) When the attribute 'wfid' is set to 'current' or :current, only participant events in the same process instance will be listened to.
+
+#:code#ruby#
+  listen :to => "^customer_.*", :wfid => 'current'
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/ListenExpression.html for more information

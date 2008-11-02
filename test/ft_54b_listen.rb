@@ -13,12 +13,6 @@ require 'openwfe/participants/participants'
 class FlowTest54b < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
 
   #
   # Test 0
@@ -53,7 +47,7 @@ class FlowTest54b < Test::Unit::TestCase
     # "post test", checking that engine replies 'false' when
     # nobody consumed the message
 
-    assert_equal @tracer.to_s, "ok"
+    assert_equal @tracer.to_s, 'ok'
 
     wi = OpenWFE::InFlowWorkItem.new
     wi.participant_name = "channel_unknown"
