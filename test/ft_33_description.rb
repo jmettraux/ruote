@@ -97,5 +97,18 @@ class FlowTest33 < Test::Unit::TestCase
       "String\nnothing\nnothing\nnada")
   end
 
+  #
+  # TEST 5
+
+  class Test5 < OpenWFE::ProcessDefinition
+    description "nada"
+    _print "${r:fei.expname} ${r:fei.expid}"
+  end
+
+  def test_5
+
+    dotest(Test5, 'print 0.1')
+  end
+
 end
 
