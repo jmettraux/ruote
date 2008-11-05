@@ -70,7 +70,7 @@ module OpenWFE
       #
       def build_error_journal
 
-        init_service :s_error_journal, YamlErrorJournal
+        init_service(:s_error_journal, YamlErrorJournal)
       end
   end
 
@@ -94,9 +94,6 @@ module OpenWFE
           :s_expression_storage,
           CacheExpressionStorage)
 
-        #init_service(
-        #  :s_expression_storage__1,
-        #  YamlFileExpressionStorage)
         init_service(
           :s_expression_storage__1,
           ThreadedYamlFileExpressionStorage)

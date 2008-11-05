@@ -93,9 +93,11 @@ module OpenWFE
     #
     # A pointer to the body expression of this process definition.
     #
-    ##attr_accessor :body_fei
     attr_accessor :body_index
 
+    #
+    # keeping track of whether the body of the process got started or not
+    #
     attr_accessor :applied_body
 
     #

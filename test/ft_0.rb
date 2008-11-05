@@ -49,13 +49,22 @@ class FlowTest0 < Test::Unit::TestCase
 </process-definition>''', 'y y')
   end
 
-  def test_dollar_notation_2
+  def test_4
     dotest(
 '''<process-definition name="n" revision="0">
   <sequence>
     <print>${f:x}X${field:x}</print>
   </sequence>
 </process-definition>''', 'X')
+  end
+
+  def test_5
+    dotest(
+'''<process-definition name="n" revision="0">
+  <sequence>
+    <print>${r:fei.expid}</print>
+  </sequence>
+</process-definition>''', '0.0.0')
   end
 
 end

@@ -49,6 +49,8 @@ module OpenWFE
   # A very simple directory of participants
   #
   class ParticipantMap < Service
+
+    include OwfeServiceLocator
     include OwfeObservable
 
     attr_accessor :participants
