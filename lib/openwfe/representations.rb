@@ -196,7 +196,7 @@ module OpenWFE
   #
   def Xml.workitem_from_xml (xml)
 
-    root = to_element xml, 'workitem'
+    root = to_element(xml, 'workitem')
 
     wi = InFlowWorkItem.new
 
@@ -206,7 +206,7 @@ module OpenWFE
     wi.fei = fei_from_xml root.elements['flow_expression_id']
 
     wi.last_modified = from_httpdate(text(root, 'last_modified'))
-    wi.participant_name = text root, 'participant_name'
+    wi.participant_name = text(root, 'participant_name')
     wi.dispatch_time = from_httpdate(text(root, 'dispatch_time'))
 
     wi.attributes = object_from_xml(
@@ -220,10 +220,10 @@ module OpenWFE
   #
   def Xml.workitems_from_xml (xml)
 
-    root = to_element xml, 'workitems'
+    root = to_element(xml, 'workitems')
 
     root.owfe_elt_children.collect do |elt|
-      workitem_from_xml elt
+      workitem_from_xml(elt)
     end
   end
 

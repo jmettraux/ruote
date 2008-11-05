@@ -138,6 +138,7 @@ module Extras
   #     # name is 'toto'.
   #
   #   owi = awi.as_owfe_workitem
+  #   #owi = awi.to_owfe_workitem
   #     #
   #     # Now we have a copy of the reference as a OpenWFEru
   #     # InFlowWorkItem instance.
@@ -239,9 +240,9 @@ module Extras
     end
 
     #
-    # Turns the densha Workitem into an OpenWFEru InFlowWorkItem.
+    # Turns the 'active' Workitem into an OpenWFEru InFlowWorkItem.
     #
-    def as_owfe_workitem
+    def to_owfe_workitem
 
       wi = OpenWFE::InFlowWorkItem.new
 
@@ -253,9 +254,12 @@ module Extras
       wi.last_modified = last_modified
 
       wi.db_id = self.id
+        # groumpf, what about just the URI...
 
       wi
     end
+
+    alias :as_owfe_workitem :to_owfe_workitem
 
     #
     # Returns a hash version of the 'fields' of this workitem.
