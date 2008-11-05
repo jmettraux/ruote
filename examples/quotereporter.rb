@@ -6,9 +6,8 @@
 require 'rubygems'
 
 require 'openwfe/engine/engine'
-require 'openwfe/expressions/raw_prog'
 require 'openwfe/participants/soapparticipants'
-require 'openwfe/participants/atomparticipants'
+require 'openwfe/extras/participants/atomfeed_participants'
 
 
 #
@@ -18,50 +17,42 @@ require 'openwfe/participants/atomparticipants'
 # define the flow as a Ruby class
 
 class QuoteLookupFlow < OpenWFE::ProcessDefinition
-  def make
-    process_definition :name => "quote_lookup", :revision => "0.1" do
-      sequence do
+ sequence do
 
-        #
-        # lookup quotes
+   #
+   # lookup quotes
 
-        iterator :on_field_value => "symbols", :to_field => "symbol" do
-          sequence do
+   iterator :on_field_value => "symbols", :to_field => "symbol" do
+     sequence do
 
-            set \
-              :field => "quote_${f:__ip__}_name",
-              :field_value => "symbol"
+       set :field => "quote_${f:__ip__}_name", :field_value => "symbol"
 
-            participant :quote_service
+       participant :quote_service
 
-            set \
-              :field => "quote_${f:__ip__}_value",
-              :field_value => "__result__"
-          end
-        end
+       set :field => "quote_${f:__ip__}_value", :field_value => "__result__"
+     end
+   end
 
-        #
-        # update feed
+   #
+   # update feed
 
-        set :field => "atom_entry_title" do
-          "quote feed at ${r:Time.now}"
-        end
-          #
-          # wrapping some ruby code for eval at runtime
-          # with ${r: ruby code ... }
+   set :field => "atom_entry_title" do
+     "quote feed at ${r:Time.now}"
+   end
+     #
+     # wrapping some ruby code for eval at runtime
+     # with ${r: ruby code ... }
 
-        participant :feed
+   participant :feed
 
-        #participant :ref => "puts_workitem"
-        #participant :ref => :puts_workitem
-        #participant "puts_workitem"
-        #participant :puts_workitem
-        puts_workitem
-          #
-          # the five notations are equivalent
-      end
-    end
-  end
+   #participant :ref => "puts_workitem"
+   #participant :ref => :puts_workitem
+   #participant "puts_workitem"
+   #participant :puts_workitem
+   puts_workitem
+     #
+     # the five notations are equivalent
+ end
 end
 
 #
@@ -69,7 +60,7 @@ end
 #
 # a simple in memory engine, no persistence whatsoever for now.
 
-engine = OpenWFE::Engine.new
+engine = OpenWFE::Engine.new({ :definition_in_launchitem_allowed  => true })
 
 #
 # The Participants
@@ -95,7 +86,7 @@ engine.register_participant("quote_service", quote_service)
 #
 # The feed is outputted in the current working directory ./atom_feed.xml
 #
-feed = OpenWFE::AtomParticipant.new(10) do
+feed = OpenWFE::Extras::AtomFeedParticipant.new(10) do
   | flow_expression, participant, workitem |
 
   #
@@ -134,7 +125,7 @@ end
 #
 # launching (not lunching)
 
-launchitem = LaunchItem.new(QuoteLookupFlow)
+launchitem = OpenWFE::LaunchItem.new(QuoteLookupFlow)
   #
   # Passing the process definition class as the unique
   # LaunchItem parameter
@@ -154,4 +145,6 @@ engine.launch(launchitem)
 #   engine.launch(launchitem)
 #   sleep (3600) # one hour
 # end
+
+engine.join
 

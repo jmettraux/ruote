@@ -126,6 +126,25 @@ end}}, li.attributes)
     #p wi1.fei
   end
 
+  def test_2c
+
+    wis = []
+
+    2.times { |i|
+      wi = OpenWFE::InFlowWorkItem.new
+      wi.fei = new_fei
+      wi.uri = "/workitems/#{i}"
+      wis << wi
+    }
+
+    xml = OpenWFE::Xml.workitems_to_xml(wis, :indent => 2)
+
+    puts xml
+    assert xml.match(/workitems/)
+    assert xml.match(/workitem href="\/workitems\/0"/)
+    assert xml.match(/workitem href="\/workitems\/1"/)
+  end
+
   def test_3
 
     li = OpenWFE::LaunchItem.new

@@ -412,7 +412,7 @@ module OpenWFE
     #
     def unset_result
 
-      @attributes.delete FIELD_RESULT
+      @attributes.delete(FIELD_RESULT)
     end
 
     #

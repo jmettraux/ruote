@@ -192,6 +192,25 @@ module OpenWFE
   end
 
   #
+  # Turns a list of workitems into a XML document (String)
+  #
+  def Xml.workitems_to_xml (wis, options={})
+
+    builder(options) do |xml|
+
+      p options[:self]
+      p OpenWFE::href(options, :workitems)
+
+      xml.workitems(
+        :href => options[:self] || OpenWFE::href(options, :workitems),
+        :count => wis.size
+      ) do
+        wis.each { |wi| workitem_to_xml(wi, options) }
+      end
+    end
+  end
+
+  #
   # Extracts an [InFlow]WorkItem instance from some XML.
   #
   def Xml.workitem_from_xml (xml)
@@ -248,7 +267,10 @@ module OpenWFE
   def Xml.processes_to_xml (ps, options={ :indent => 2 })
 
     builder(options) do |xml|
-      xml.processes :href => OpenWFE::href(options, :processes), :count => ps.size do
+      xml.processes(
+        :href => options[:self] || OpenWFE::href(options, :processes),
+        :count => ps.size
+      ) do
         ps.each do |fei, process_status|
           process_to_xml(process_status, options)
         end
@@ -293,7 +315,9 @@ module OpenWFE
           end
         end
 
-        xml.active_expressions :href => OpenWFE::href(options, [ :expressions, p.wfid ]) do
+        xml.active_expressions(
+          :href => OpenWFE::href(options, [ :expressions, p.wfid ])
+        ) do
 
           p.expressions.each do |fexp|
 

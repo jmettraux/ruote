@@ -67,8 +67,8 @@ module OpenWFE
   class SoapParticipant
     include LocalParticipant
 
-    def initialize \
-      (endpoint_url, namespace, method_name, params, param_prefix="")
+    def initialize (
+      endpoint_url, namespace, method_name, params, param_prefix='')
 
       super()
 
@@ -105,7 +105,7 @@ module OpenWFE
     def prepare_call_params (workitem)
 
       @params.collect do |param|
-        get_param workitem, param
+        get_param(workitem, param)
       end
     end
 
@@ -117,7 +117,7 @@ module OpenWFE
     #
     def handle_call_result (result, workitem)
 
-      workitem.attributes["__result__"] = result
+      workitem.set_result(result)
     end
 
     protected
