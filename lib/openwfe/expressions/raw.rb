@@ -173,25 +173,24 @@ module OpenWFE
 
         exp_name = expression_name()
 
-        val, key = lookup(:variable, exp_name) || lookup(:participant, exp_name)
-          # priority to variables
+        val, key =
+          lookup(:variable, exp_name) ||
+          expression_class() ||
+          lookup(:participant, exp_name)
+            # priority to variables
 
-        exp_class = if val.is_a?(Array)
+        if val.is_a?(Array)
 
-          SubProcessRefExpression
+          [ SubProcessRefExpression, val ]
 
         elsif val.respond_to?(:consume)
 
-          val = key
-          ParticipantExpression
+          [ ParticipantExpression, key ]
 
         else
 
-          val = nil # no hint to transmit
-          expression_class()
+          [ val, nil ]
         end
-
-        [ exp_class, val ]
       end
 
       def instantiate_real_expression (workitem, exp_class, val)
