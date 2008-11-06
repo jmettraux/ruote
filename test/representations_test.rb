@@ -139,7 +139,7 @@ end}}, li.attributes)
 
     xml = OpenWFE::Xml.workitems_to_xml(wis, :indent => 2)
 
-    puts xml
+    #puts xml
     assert xml.match(/workitems/)
     assert xml.match(/workitem href="\/workitems\/0"/)
     assert xml.match(/workitem href="\/workitems\/1"/)

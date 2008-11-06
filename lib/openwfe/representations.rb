@@ -198,9 +198,6 @@ module OpenWFE
 
     builder(options) do |xml|
 
-      p options[:self]
-      p OpenWFE::href(options, :workitems)
-
       xml.workitems(
         :href => options[:self] || OpenWFE::href(options, :workitems),
         :count => wis.size
