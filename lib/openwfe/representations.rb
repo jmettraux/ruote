@@ -65,7 +65,8 @@ module OpenWFE
         "#{@request.scheme}://" : @request.protocol
     end
     def href (*args)
-      @request ? "#{scheme}#{host}:#{port}/#{args.join('/')}" : nil
+      tail = "/#{args.join('/')}"
+      @request ? "#{scheme}#{host}:#{port}#{tail}" : tail
     end
   end
 
@@ -279,7 +280,7 @@ module OpenWFE
 
     builder(options) do |xml|
 
-      xml.process :href => OpenWFE::href(options, [ :processes, p.wfid ]) do
+      xml.process(:href => OpenWFE::href(options, [ :processes, p.wfid ])) do
 
         xml.wfid p.wfid
         xml.wfname p.wfname
@@ -327,7 +328,10 @@ module OpenWFE
           end
         end
 
-        xml.errors :href => OpenWFE::href(options, [ :errors, p.wfid ]), :count => p.errors.size do
+        xml.errors(
+          :href => OpenWFE::href(options, [ :errors, p.wfid ]),
+          :count => p.errors.size
+        ) do
           p.errors.each do |k, v|
             xml.error do
               #xml.stacktrace do

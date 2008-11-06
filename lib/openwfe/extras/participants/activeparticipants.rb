@@ -242,7 +242,7 @@ module Extras
     #
     # Turns the 'active' Workitem into an OpenWFEru InFlowWorkItem.
     #
-    def to_owfe_workitem
+    def to_owfe_workitem (options={})
 
       wi = OpenWFE::InFlowWorkItem.new
 
@@ -253,8 +253,8 @@ module Extras
       wi.dispatch_time = dispatch_time
       wi.last_modified = last_modified
 
-      wi.db_id = self.id
-        # groumpf, what about just the URI...
+      #wi.db_id = self.id
+      wi.uri = OpenWFE::href(options, [ :workitems, self.id ])
 
       wi
     end

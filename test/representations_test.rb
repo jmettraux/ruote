@@ -187,7 +187,7 @@ end}}, li.attributes)
       OpenWFE::Xml.process_to_xml(ps, options))
 
     assert_equal(
-      nil,
+     '/processes/20080919-equestribus',
       ps.to_h['href'])
     assert_equal(
      'http://www.example.com:80/processes/20080919-equestribus',
