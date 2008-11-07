@@ -59,7 +59,8 @@ class PsRepresentationTest < Test::Unit::TestCase
 
     esequence = ps.find { |fexp| fexp.fei.expid == '0.0' }
 
-    @engine.update_raw_expression esequence.fei, ['charly', {}, []], 1
+    #@engine.update_raw_expression esequence.fei, ['charly', {}, []], 1
+    @engine.update_expression_tree(esequence.fei, ['charly', {}, []], 1)
 
     ps = @engine.process_stack(fei)
 
@@ -100,7 +101,8 @@ class PsRepresentationTest < Test::Unit::TestCase
 
     esequence = ps.find { |fexp| fexp.fei.expid == '0.1' }
 
-    @engine.update_raw_expression(esequence.fei, ['charly', {}, []], 1)
+    #@engine.update_raw_expression(esequence.fei, ['charly', {}, []], 1)
+    @engine.update_expression_tree(esequence.fei, ['charly', {}, []], 1)
 
     ps = @engine.process_stack(fei)
 
@@ -111,8 +113,8 @@ class PsRepresentationTest < Test::Unit::TestCase
     #
     # nuke participant charly
 
-    #@engine.update_raw_expression(esequence.fei, nil, 1)
-    @engine.update_raw_expression(esequence.fei, ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]])
+    #@engine.update_raw_expression(esequence.fei, ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]])
+    @engine.update_expression_tree(esequence.fei, ["sequence", {}, [["alpha", {"ref"=>"alpha"}, []]]])
 
     #sleep 0.350
 

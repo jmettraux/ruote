@@ -166,7 +166,8 @@ class FlowTest84 < Test::Unit::TestCase
 
     # update happens here
 
-    @engine.update_raw_expression(esequence.fei, [ "bravo", {}, [] ], 1)
+    #@engine.update_raw_expression(esequence.fei, [ "bravo", {}, [] ], 1)
+    @engine.update_expression_tree(esequence.fei, [ "bravo", {}, [] ], 1)
 
     #ps = @engine.process_stack(fei.wfid, true)
     ps = @engine.process_stack(fei.wfid)

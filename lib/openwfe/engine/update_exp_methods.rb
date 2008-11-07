@@ -75,14 +75,14 @@ module OpenWFE
 
     #
     # A variant of update_expression() that directly replaces
-    # the raw representation stored within a RawExpression.
+    # the raw representation stored within an expression
     #
     # Useful for modifying [not yet reached] segments of processes.
     #
     # If the index argument is set, only the raw child pointed by the index
     # will get updated.
     #
-    def update_raw_expression (fei, representation, index=nil)
+    def update_expression_tree (fei, representation, index=nil)
 
       fexp = fetch_exp(fei)
 
@@ -110,6 +110,8 @@ module OpenWFE
 
       get_expression_pool.update(fexp)
     end
+
+    alias :update_raw_expression :update_expression_tree
 
     #
     # Replaces an expression in the pool with a newer version of it.
