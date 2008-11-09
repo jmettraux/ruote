@@ -93,7 +93,7 @@ module OpenWFE
     #
     def dump_to_file (file_name, workitem)
 
-      File.open(file_name, "w") do |file|
+      File.open(file_name, 'w') do |file|
         file.print encode_workitem(workitem)
       end
     end
@@ -122,7 +122,7 @@ module OpenWFE
       # (of course you can override this method).
       #
       def encode_workitem (wi)
-        YAML.dump wi
+        YAML.dump(wi)
       end
   end
 
@@ -157,25 +157,24 @@ module OpenWFE
     include LocalParticipant
 
     def initialize (block0=nil, &block1)
+
       @block = if block1
         block1
       else
         block0
       end
-      raise "Missing a block parameter" \
-        unless @block
+
+      raise "Missing a block parameter" unless @block
     end
 
     def consume (workitem)
 
-      result = call_block @block, workitem
+      result = call_block(@block, workitem)
 
-      workitem.set_result(result) \
-        if result and result != workitem
+      workitem.set_result(result) if result and result != workitem
 
-      reply_to_engine(workitem) \
-        if workitem.kind_of? InFlowWorkItem
-      # else it's a cancel ite
+      reply_to_engine(workitem) if workitem.kind_of?(InFlowWorkItem)
+        # else it's a cancel item
     end
   end
 
@@ -337,7 +336,7 @@ module OpenWFE
 
       super()
 
-      template_uri = OpenWFE::parse_known_uri object
+      template_uri = OpenWFE::parse_known_uri(object)
 
       @template = template_uri || object
     end
@@ -348,13 +347,6 @@ module OpenWFE
     #
     def consume (workitem)
 
-      #get_expression_pool.launch_template(
-      #  get_flow_expression(workitem),
-      #  nil, # new environment
-      #  0, # sub_id
-      #  @template,
-      #  workitem)
-      #  #params)
       get_expression_pool.launch_subprocess(
         get_flow_expression(workitem),
         @template,
@@ -378,11 +370,11 @@ module OpenWFE
     #
     def eval_template (workitem)
 
-      fe = get_flow_expression workitem
+      fe = get_flow_expression(workitem)
 
       template = if @block_template
 
-        call_block @block_template, workitem
+        call_block(@block_template, workitem)
 
       elsif @template
 
@@ -399,7 +391,7 @@ module OpenWFE
 
       return "(no template given)" unless template
 
-      OpenWFE::dosub template, fe, workitem
+      OpenWFE::dosub(template, fe, workitem)
     end
   end
 
