@@ -18,12 +18,6 @@ require 'flowtestbase'
 class FlowTest59 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   #
   # TEST 0
 
@@ -47,7 +41,11 @@ class FlowTest59 < Test::Unit::TestCase
     #puts ps
 
     assert_equal 2, ps[fei.wfid].expressions.size
+    assert_equal 2, ps[fei.wfid].applied_workitems.size
     assert_equal 0, ps[fei.wfid].errors.size
+
+    wis = ps[fei.wfid].applied_workitems
+    assert_not_equal wis[0].fei, wis[1].fei
 
     @engine.cancel_process fei
   end

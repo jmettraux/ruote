@@ -4,6 +4,8 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22550 : introduced applied_workitems in process_status and moved the
+                 engine lookup[_stuff] methods in a LookupMethods module
 - todo  #22699 : engine.update_raw_expression() becomes update_expression_tree()
 - todo  #22691 : implemented Xml.workitems_to_xml()
 - todo  #22682 : expressions now have priority over participants in lookup

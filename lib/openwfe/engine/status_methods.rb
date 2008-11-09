@@ -68,6 +68,13 @@ module OpenWFE
     attr_reader :all_expressions
 
     #
+    # A list of all the applied workitems found in the process
+    # (participant expressions, for example, do keep a copy of the workitem
+    # they dispatched to the actual participant.
+    #
+    attr_reader :applied_workitems
+
+    #
     # A hash whose values are ProcessError instances, the keys
     # are FlowExpressionId instances (fei) (identifying the expressions
     # that are concerned with the error)
@@ -109,6 +116,7 @@ module OpenWFE
       @wfid = nil
       @expressions = nil
       @all_expressions = []
+      @applied_workitems = []
       @errors = {}
       @launch_time = nil
       @variables = nil
@@ -213,7 +221,9 @@ module OpenWFE
 
         @all_expressions << item
 
-        # TODO : store applied workitems as well
+        wi = nil
+        wi = item.applied_workitem if item.respond_to?(:applied_workitem)
+        @applied_workitems << wi if wi
 
       else
 
@@ -363,7 +373,7 @@ module OpenWFE
 
         get_error_journal.get_error_log(ps.wfid).each { |er| ps << er }
 
-        ps.send :pack_expressions # letting it protected
+        ps.send(:pack_expressions) # letting it protected
 
         ps.scheduled_jobs = get_scheduler.find_jobs(ps.wfid)
       end
