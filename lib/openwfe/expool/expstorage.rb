@@ -200,8 +200,6 @@ module OpenWFE
 
       @cache = LruHash.new(size)
 
-      @real_storage = nil
-
       observe_expool
     end
 
@@ -210,7 +208,7 @@ module OpenWFE
       #ldebug { "[] size is #{@cache.size}" }
       #ldebug { "[] (sz #{@cache.size}) for #{fei.to_debug_s}" }
 
-      fe = @cache[fei.hash]
+      fe = @cache[fei.short_hash]
       return fe if fe
 
       #ldebug { "[] (reload) for #{fei.to_debug_s}" }
@@ -222,22 +220,23 @@ module OpenWFE
         return nil
       end
 
-      @cache[fei.hash] = fe
-
-      fe
+      @cache[fei.short_hash] = fe
     end
 
     def []= (fei, fe)
 
       #ldebug { "[]= caching #{fei}" }
-      @cache[fei.hash] = fe
+      @cache[fei.short_hash] = fe
     end
 
     def delete (fei)
 
-      @cache.delete fei.hash
+      @cache.delete(fei.short_hash)
     end
 
+    #
+    # returns the count of expressions currently cached here
+    #
     def length
 
       @cache.length
@@ -258,7 +257,9 @@ module OpenWFE
     #
     def find_expressions (options={})
 
-      get_real_storage.find_expressions options
+      options[:cache] = self
+
+      get_real_storage.find_expressions(options)
     end
 
     #
@@ -267,16 +268,19 @@ module OpenWFE
     #
     def fetch_root (wfid)
 
-      #
-      # at first, look in the cache
+      @cache.values.find { |fexp|
+        fexp.fei.wfid == wfid and fexp.is_a?(DefineExpression)
+      } || get_real_storage.fetch_root(wfid)
+    end
 
-      @cache.each do |hashed_fei, fexp|
+    #
+    # Returns the expression corresponding to the fei if cached.
+    # Does not lookup in the underlying "real" storage (will therefore
+    # return nil if the expression is not cached.
+    #
+    def fetch (fei)
 
-        return fexp \
-          if fexp.fei.wfid == wfid and fexp.is_a?(DefineExpression)
-      end
-
-      get_real_storage.fetch_root wfid
+      @cache[fei.short_hash]
     end
 
     protected
@@ -292,8 +296,10 @@ module OpenWFE
   end
 
   #
-  # Memory consuming in-memory storage.
+  # [memory consuming] in-memory storage.
   # No memory limit, puts everything in a Hash
+  #
+  # USE ONLY FOR TESTS
   #
   class InMemoryExpressionStorage < Hash
     include ServiceMixin
@@ -302,20 +308,24 @@ module OpenWFE
 
     def initialize (service_name, application_context)
 
-      service_init service_name, application_context
+      service_init(service_name, application_context)
 
       observe_expool
     end
 
     alias :purge :clear
 
-    def []= (k, v)
-      super
-    end
-
-    def delete (k)
-      super
-    end
+    #--
+    #def [] (k)
+    #  super(k.short_hash)
+    #end
+    #def []= (k, v)
+    #  super(k.short_hash, v)
+    #end
+    #def delete (k)
+    #  super(k.short_hash)
+    #end
+    #++
 
     #
     # Finds expressions matching the given criteria (returns a list
@@ -358,9 +368,7 @@ module OpenWFE
     #
     def find_expressions (options={})
 
-      values.find_all do |fexp|
-        does_match? options, fexp
-      end
+      values.find_all { |fexp| does_match?(options, fexp) }
     end
 
     #
@@ -369,9 +377,7 @@ module OpenWFE
     #
     def fetch_root (wfid)
 
-      find_expressions(
-        :wfid => wfid,
-        :include_classes => DefineExpression)[0]
+      find_expressions(:wfid => wfid, :include_classes => DefineExpression)[0]
     end
 
   end

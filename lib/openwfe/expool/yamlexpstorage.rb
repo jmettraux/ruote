@@ -83,25 +83,33 @@ module OpenWFE
       options.delete(:wfid_prefix)
         # no need to check this in further does_match? calls
 
+      cache = options[:cache]
+
       result = []
 
       each_object_path do |path|
 
-        unless path[-23..-1] == 'engine_environment.yaml'
+        next if path[-23..-1] == 'engine_environment.yaml'
 
-          a = self.class.split_file_path path
+        a = self.class.split_file_path(path)
 
-          next unless a
-            # not an expression file
+        next unless a
+          # not an expression file
 
-          wfid = a[0]
+        wfid = a[0]
 
-          next if wfid_regex and (not wfid_regex.match(wfid))
-        end
+        next if wfid_regex and (not wfid_regex.match(wfid))
 
-        fexp = load_object path
+        fexp = cache ?
+          cache.fetch(FlowExpressionId.new_fei(
+            { :wfid => a[0], :expid => a[1], :expname => a[2] })) :
+          nil
+
+        fexp = load_object(path) unless fexp
 
         next unless does_match?(options, fexp)
+
+        # OK, we have a match
 
         result << fexp
       end
@@ -111,26 +119,27 @@ module OpenWFE
 
     def fetch_root (wfid)
 
+      # at first, try a direct hit...
+
       fei = FlowExpressionId.new
       fei.wfid = wfid
-      fei.expid = "0"
-      fei.expression_name = "process-definition"
+      fei.expid = '0'
+      fei.expression_name = 'process-definition'
 
       root = self[fei]
 
       return root if root
 
-      #
       # direct hit missed, scanning...
 
       each_object_path(compute_dir_path(wfid)) do |p|
 
-        a = self.class.split_file_path p
+        a = self.class.split_file_path(p)
         next unless a
 
         next unless a[0] == wfid
 
-        fexp = load_object p
+        fexp = load_object(p)
 
         return fexp if fexp.is_a?(DefineExpression)
       end

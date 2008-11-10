@@ -77,52 +77,91 @@ module OpenWFE
     end
 
     #
-    # Returns an array of wfid (workflow instance ids) whose root
-    # environment contains the given variable
+    # TODO : finish this comment
     #
-    # If there are no matches, an empty array will be returned.
+    # Returns an array of wfid (workflow instance ids)
     #
-    # Regular expressions are accepted as values.
+    # :value or :val ::
+    #   blah blah blah
+    # :name ::
+    #   blah blah blah
+    # :variable_name or :var_name or :v_name ::
+    #   blah blah blah
+    # :field_name or :f_name ::
+    #   blah blah blah
+    # :wfid_prefix ::
+    #   blah blah blah
+    # :wfid ::
+    #   blah blah blah
     #
-    # If no value is given, all processes with the given variable name
-    # set will be returned.
-    #
-    def lookup_processes (var_name, value=nil)
+    def lookup_processes (options)
 
-      regexp = value.is_a?(Regexp) ? value : nil
+      val = options[:value] || options[:val]
 
-      envs = get_expression_storage.find_expressions(
-        :include_classes => Environment)
+      vf = options[:vf]
+      var = options[:variable] || options[:var] || options[:v] || vf
+      field = options[:field] || options[:f] || vf
 
-      envs = envs.find_all do |env|
+      raise "specify at least :variable or :field" \
+        if (var == nil) and (field == nil)
 
-        val = env.variables[var_name]
+      opts = {
+        :wfid => options[:wfid],
+        :wfid_prefix => options[:wfid_prefix]
+      }
 
-        #(val and ((not regexp) or (regexp.match(val))))
-        if val != nil
-          if regexp
-            regexp.match(val)
-          elsif value
-            val == value
-          else
-            true
-          end
-        else
-          false
-        end
+      # do look up...
+
+      opts[:include_classes] = Environment if field == nil
+
+      exps = get_expression_storage.find_expressions(opts)
+
+      result = exps.find_all do |exp|
+        v_match?(exp, var, val) || f_match?(exp, field, val)
       end
 
-      envs.collect { |env| env.fei.wfid }
-
-      #envs.inject([]) do |r, env|
-      #  val = env.variables[var_name]
-      #  r << env.fei.wfid \
-      #    if (val and ((not regexp) or (regexp.match(val))))
-      #  r
-      #end
-        # seems slower...
+      result.collect { |exp| exp.fei.wfid }
     end
-  end
 
+    protected
+
+      def f_match? (exp, field, value)
+
+        return false unless field
+        return false unless exp.respond_to?(:applied_workitem)
+
+        h_match?(exp.applied_workitem.attributes, field, value, true)
+      end
+
+      def v_match? (exp, var, value)
+
+        return false unless var
+        return false unless exp.is_a?(Environment)
+        return false if exp.fei.wfid == '0' # (engine environment)
+
+        h_match?(exp.variables, var, value)
+      end
+
+      def h_match? (h, k, v, recursive=false)
+
+        val = h[k]
+
+        if val != nil
+          case v
+            when nil then return true
+            when Regexp then return true if v.match(val)
+            else return true if v == val
+          end
+        end
+
+        return false unless recursive
+
+        h.values.each do |val|
+          return true if val.is_a?(Hash) and h_match?(val, k, v, true)
+        end
+
+        false
+      end
+  end
 end
 

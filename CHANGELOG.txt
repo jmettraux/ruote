@@ -4,6 +4,8 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22722 : upgraded lookup_processes() (can now look for variables and
+                 workitem fields (applied_workitem))
 - todo  #22550 : introduced applied_workitems in process_status and moved the
                  engine lookup[_stuff] methods in a LookupMethods module
 - todo  #22699 : engine.update_raw_expression() becomes update_expression_tree()

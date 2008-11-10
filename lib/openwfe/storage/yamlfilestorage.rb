@@ -62,7 +62,6 @@ module OpenWFE
   #
   class YamlFileStorage
     include ServiceMixin
-    #include MonitorMixin
 
     #
     # The root path for this file persistence mecha.
@@ -76,7 +75,7 @@ module OpenWFE
       service_init(service_name, application_context)
 
       @basepath = get_work_directory + path
-      @basepath += "/" unless @basepath[-1, 1] == "/"
+      @basepath += "/" if @basepath[-1, 1] != "/"
 
       FileUtils.makedirs @basepath
     end
@@ -95,7 +94,7 @@ module OpenWFE
       FileUtils.makedirs(fei_parent_path) \
         unless File.exist?(fei_parent_path)
 
-      File.open(fei_path, "w") { |file| YAML.dump object, file }
+      File.open(fei_path, 'w') { |file| YAML.dump(object, file) }
     end
 
     #
@@ -103,7 +102,7 @@ module OpenWFE
     #
     def purge
 
-      FileUtils.remove_dir @basepath
+      FileUtils.remove_dir(@basepath)
     end
 
     #
@@ -123,7 +122,7 @@ module OpenWFE
 
       fei_path = compute_file_path(fei)
 
-      ldebug { "delete() for #{fei.to_debug_s} at #{fei_path}" }
+      #ldebug { "delete() for #{fei.to_debug_s} at #{fei_path}" }
 
       File.delete(fei_path)
     end
@@ -164,7 +163,7 @@ module OpenWFE
         object = YAML.load_file(path)
 
         object.application_context = @application_context \
-          if object.respond_to? :application_context=
+          if object.respond_to?(:application_context=)
 
         object
       end
@@ -181,7 +180,7 @@ module OpenWFE
           next unless File.exist? path
           next if File.stat(path).directory?
 
-          count += 1 if OpenWFE::ends_with(path, ".yaml")
+          count += 1 if path[-5..-1] == '.yaml'
         end
 
         count
@@ -191,18 +190,17 @@ module OpenWFE
       # Passes each object path to the given block
       #
       def each_object_path (path=@basepath, &block)
-        #synchronize do
 
         Find.find(path) do |p|
 
           next unless File.exist?(p)
           next if File.stat(p).directory?
-          next unless OpenWFE::ends_with(p, ".yaml")
+          #next unless OpenWFE::ends_with(p, '.yaml')
+          next if p[-5..-1] != '.yaml'
 
-          ldebug { "each_object_path() considering #{p}" }
-          block.call p
+          #ldebug { "each_object_path() considering #{p}" }
+          block.call(p)
         end
-        #end
       end
 
       #
@@ -211,7 +209,7 @@ module OpenWFE
       def each_object (&block)
 
         each_object_path do |path|
-          block.call load_object(path)
+          block.call(load_object(path))
         end
       end
 

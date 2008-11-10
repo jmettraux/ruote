@@ -13,20 +13,13 @@ require 'openwfe/participants/storeparticipants'
 class FlowTest72 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-
   #
   # Test 0
   #
 
   class Test0 < OpenWFE::ProcessDefinition
     sequence do
-      _set :variable => "/toto", :value => "${f:toto}"
+      _set :variable => "/toto", :value => "${f:foto}"
       participant :alpha
     end
   end
@@ -38,34 +31,62 @@ class FlowTest72 < Test::Unit::TestCase
     sa = @engine.register_participant :alpha, OpenWFE::HashParticipant
 
     li = OpenWFE::LaunchItem.new Test0
-    li.toto = 'toto_zero'
-    fei0 = launch li
+    li.foto = 'toto_zero'
+    fei0 = launch(li)
 
     li = OpenWFE::LaunchItem.new Test0
-    li.toto = 'toto_one'
-    fei1 = launch li
+    li.foto = 'toto_one'
+    fei1 = launch(li)
 
     sleep 0.350
 
-    wfids = @engine.lookup_processes('nada')
+    # variables...
+
+    wfids = @engine.lookup_processes(:var => 'nada')
     assert_equal 0, wfids.size
 
-    wfids = @engine.lookup_processes('toto')
+    wfids = @engine.lookup_processes(:var => 'toto')
     assert_equal 2, wfids.size
     assert wfids.include?(fei0.wfid)
     assert wfids.include?(fei1.wfid)
 
-    wfids = @engine.lookup_processes('toto', 'smurf')
+    wfids = @engine.lookup_processes(:var => 'toto', :val => 'smurf')
     assert_equal 0, wfids.size
 
-    wfids = @engine.lookup_processes('toto', 'toto_.*')
+    wfids = @engine.lookup_processes(:var => 'toto', :val => 'toto_.*')
     assert_equal 0, wfids.size
 
-    wfids = @engine.lookup_processes('toto', /toto_.*/)
+    wfids = @engine.lookup_processes(:var => 'toto', :val => /toto_.*/)
     assert_equal 2, wfids.size
 
-    wfids = @engine.lookup_processes('toto', Regexp.compile('toto_one'))
+    wfids = @engine.lookup_processes(:var => 'toto', :val => Regexp.compile('toto_one'))
     assert_equal wfids, [ fei1.wfid ]
+
+    # fields...
+
+    wfids = @engine.lookup_processes(:f => 'toto')
+    assert_equal 0, wfids.size
+
+    wfids = @engine.lookup_processes(:f => 'foto')
+    assert_equal 2, wfids.size
+
+    wfids = @engine.lookup_processes(:f => 'foto', :val => 'toto_zero')
+    assert_equal 1, wfids.size
+
+    # field or var...
+
+    wfids = @engine.lookup_processes(:vf => 'foto')
+    assert_equal 2, wfids.size
+
+    wfids = @engine.lookup_processes(:vf => 'toto')
+    assert_equal 2, wfids.size
+
+    wfids = @engine.lookup_processes(:vf => 'toto', :wfid => fei1.wfid)
+    assert_equal 1, wfids.size
+
+    wfids = @engine.lookup_processes(
+      :vf => 'toto', :wfid_prefix => fei1.wfid[0, 8])
+    assert_equal 2, wfids.size
 
     # over.
 

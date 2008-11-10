@@ -152,9 +152,20 @@ module OpenWFE
       }.merge(h))
     end
 
+    #
+    # full blown hash
+    #
     def hash
 
       to_s.hash
+    end
+
+    #
+    # short hash (used by the cached expression storage among others)
+    #
+    def short_hash
+
+      "#{wfid} #{expid} #{expname}".hash
     end
 
     def == (other)
