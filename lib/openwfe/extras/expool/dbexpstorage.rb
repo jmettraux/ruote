@@ -63,6 +63,7 @@ module OpenWFE::Extras
 
         t.column :fei, :string, :null => false
         t.column :wfid, :string, :null => false
+        t.column :expid, :string, :null => false
         #t.column :wfname, :string, :null => false
         t.column :exp_class, :string, :null => false
 
@@ -76,6 +77,7 @@ module OpenWFE::Extras
       end
       add_index :expressions, :fei
       add_index :expressions, :wfid
+      add_index :expressions, :expid
       #add_index :expressions, :wfname
       add_index :expressions, :exp_class
     end
@@ -134,6 +136,7 @@ module OpenWFE::Extras
           e = Expression.new
           e.fei = fei.to_s
           e.wfid = fei.wfid
+          e.expid = fei.expid
           #e.wfname = fei.wfname
         end
 
@@ -149,12 +152,10 @@ module OpenWFE::Extras
     #
     def [] (fei)
 
-      #synchronize do
-      e = Expression.find_by_fei fei.to_s
+      e = Expression.find_by_fei(fei.to_s)
       return nil unless e
 
-      as_owfe_expression e
-      #end
+      as_owfe_expression(e)
     end
 
     #
@@ -171,7 +172,7 @@ module OpenWFE::Extras
     def delete (fei)
 
       synchronize do
-        Expression.delete_all ["fei = ?", fei.to_s]
+        Expression.delete_all(["fei = ?", fei.to_s])
       end
     end
 
@@ -198,23 +199,23 @@ module OpenWFE::Extras
     #
     def find_expressions (options={})
 
-      conditions = determine_conditions options
+      conditions = determine_conditions(options)
         # note : this call modifies the options hash...
 
       #
       # maximize usage of SQL querying
 
-      exps = Expression.find :all, :conditions => conditions
+      exps = Expression.find(:all, :conditions => conditions)
 
       #
       # do the rest of the filtering
 
       exps = exps.collect do |exp|
-        as_owfe_expression exp
+        as_owfe_expression(exp)
       end
 
       exps.find_all do |fexp|
-        does_match? options, fexp
+        does_match?(options, fexp)
       end
     end
 
@@ -226,7 +227,7 @@ module OpenWFE::Extras
       params = {}
 
       params[:conditions] = [
-        "wfid = ? AND exp_class = ?",
+        'wfid = ? AND exp_class = ?',
         wfid,
         OpenWFE::DefineExpression.to_s
       ]
@@ -237,7 +238,7 @@ module OpenWFE::Extras
         #
         # find the one with the smallest expid
 
-      as_owfe_expression e
+      as_owfe_expression(e)
     end
 
     protected
@@ -273,7 +274,7 @@ module OpenWFE::Extras
         if conditions.size < 1
           nil
         else
-          conditions.insert 0, query.join(" AND ")
+          conditions.insert(0, query.join(' AND '))
         end
       end
 
@@ -288,8 +289,8 @@ module OpenWFE::Extras
         ec = options.delete :exclude_classes
         ec = Array(ec)
 
-        acc ic, query, conditions, "OR"
-        acc ec, query, conditions, "AND"
+        acc ic, query, conditions, 'OR'
+        acc ec, query, conditions, 'AND'
       end
 
       def acc (classes, query, conditions, join)
@@ -305,15 +306,15 @@ module OpenWFE::Extras
         cond = []
         classes.each do |cl|
 
-          quer << if join == "AND"
-            "exp_class != ?"
+          quer << if join == 'AND'
+            'exp_class != ?'
           else
-            "exp_class = ?"
+            'exp_class = ?'
           end
 
           cond << cl.to_s
         end
-        quer = quer.join " #{join} "
+        quer = quer.join(" #{join} ")
 
         query << "(#{quer})"
         conditions << cond

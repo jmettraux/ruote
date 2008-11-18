@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22872 : added column 'expid' to 'expressions' table as well
 - todo  #22865 : added column 'expid' to 'workitems' and 'errors' tables
 - todo  #22834 : 'href' -> 'link' and upgraded lib/openwfe/representations.rb
 - todo  #22722 : upgraded lookup_processes() (can now look for variables and
