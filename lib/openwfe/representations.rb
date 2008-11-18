@@ -135,6 +135,16 @@ module OpenWFE
       def errors (item)
         gen_links('errors', item)
       end
+
+      def expression (item)
+        gen_links('expressions', item) { |i|
+          "#{i.fei.wfid}/#{i.fei.expid}"+
+          i.is_a?(OpenWFE::Environment} ? 'e' : ''
+        }
+      end
+      def expressions (item)
+        gen_links('expressions', item)
+      end
   end
 
   #
