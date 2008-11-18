@@ -46,6 +46,20 @@ require 'openwfe/util/json'
 module OpenWFE
 
   #
+  # Swaps from dots to underscores
+  #
+  #   swapdots "0_0_1" # => "0.0.1"
+  #
+  #   swapdots "0.0.1" # => "0_0_1"
+  #
+  def self.swapdots (s)
+
+    s.index('.') ?
+      s.gsub(/\./, '_') :
+      s.gsub(/\_/, '.')
+  end
+
+  #
   # a 'plain' implementation of a link generator
   #
   class PlainLinkGenerator
@@ -86,7 +100,7 @@ module OpenWFE
       #
       def link (rel, res, id=nil)
         href = "/#{res}"
-        href = "#{href}/#{id}" if id
+        href = "#{href}/#{OpenWFE.swapdots(id)}" if id
         [ href, rel ]
       end
 

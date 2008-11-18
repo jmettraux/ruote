@@ -142,21 +142,21 @@ end}}, li.attributes)
 
     #puts xml
     assert xml.match(/workitems/)
-    assert xml.match(/link href="\/workitems\/20080919-equestris\/0\.0"/)
-    assert xml.match(/link href="\/workitems\/20080919-equestris\/0\.1"/)
+    assert xml.match(/link href="\/workitems\/20080919-equestris\/0_0"/)
+    assert xml.match(/link href="\/workitems\/20080919-equestris\/0_1"/)
 
     workitems = OpenWFE::Xml.workitems_from_xml(xml)
 
     assert_equal 2, workitems.size
-    assert_equal '/workitems/20080919-equestris/0.0', workitems.first.uri
-    assert_equal '/workitems/20080919-equestris/0.1', workitems.last.uri
+    assert_equal '/workitems/20080919-equestris/0_0', workitems.first.uri
+    assert_equal '/workitems/20080919-equestris/0_1', workitems.last.uri
   end
 
   def test_3
 
     li = OpenWFE::LaunchItem.new
-    li.wfdurl = "http://toto"
-    li.customer_name = "toto"
+    li.wfdurl = 'http://toto'
+    li.customer_name = 'toto'
 
     xml = OpenWFE::Xml.launchitem_to_xml li, :indent => 2
 
