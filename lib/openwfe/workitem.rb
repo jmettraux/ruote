@@ -39,7 +39,6 @@
 #
 
 require 'openwfe/utils'
-require 'openwfe/representations'
 
 
 module OpenWFE

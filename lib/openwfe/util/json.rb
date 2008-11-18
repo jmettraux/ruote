@@ -32,13 +32,13 @@
 #
 
 #
-# "made in Japan"
+# "made in Japan" as opposed to "swiss made"
 #
 
 module OpenWFE
 
   #
-  # a container for the from_json() method
+  # A container for the from_json() method
   #
   module Json
 
@@ -51,6 +51,14 @@ module OpenWFE
         if defined?(ActiveSupport::JSON)
 
       nil
+    end
+
+    #
+    # Makes sure the input is turned into a hash
+    #
+    def self.as_h (h_or_json)
+
+      h_or_json.is_a?(Hash) ? h_or_json : from_json(h_or_json)
     end
   end
 end

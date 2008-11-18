@@ -231,20 +231,14 @@ module OpenWFE
       end
     end
 
-    #
+    #--
     # A lighter version
     #
-    def to_h (options={})
-      {
-        'href' => OpenWFE::href(options, [ :processes, wfid ]),
-        'timestamp' => timestamp.to_s,
-        'wfid' => wfid,
-        'launch_time' => launch_time,
-        'paused' => paused,
-        'variables' => variables,
-        'tags' => tags
-      }
-    end
+    #def to_h
+    #end
+    #
+    #  moved to lib/openwfe/representations.rb
+    #++
 
     protected
 

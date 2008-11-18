@@ -117,6 +117,7 @@ module Extras
   class OpenWFE::InFlowWorkItem
 
     attr_accessor :db_id
+      # deprecated !
   end
 
   #
@@ -254,7 +255,7 @@ module Extras
       wi.last_modified = last_modified
 
       #wi.db_id = self.id
-      wi.uri = OpenWFE::href(options, [ :workitems, self.id ])
+      #wi.uri = OpenWFE::href(options, [ :workitems, self.id ])
 
       wi
     end

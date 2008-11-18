@@ -202,11 +202,11 @@ module OpenWFE
         tagname = options.delete(:tag) || 'hash'
 
         builder(options) do |xml|
-          xml.tag! tagname do
+          xml.tag!(tagname) do
             h.each do |k, v|
               xml.entry do
-                object_to_xml k, options
-                object_to_xml v, options
+                object_to_xml(k, options)
+                object_to_xml(v, options)
               end
             end
           end

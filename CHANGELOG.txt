@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22834 : 'href' -> 'link' and upgraded lib/openwfe/representations.rb
 - todo  #22722 : upgraded lookup_processes() (can now look for variables and
                  workitem fields (applied_workitem))
 - todo  #22550 : introduced applied_workitems in process_status and moved the

@@ -133,16 +133,23 @@ end}}, li.attributes)
     2.times { |i|
       wi = OpenWFE::InFlowWorkItem.new
       wi.fei = new_fei
-      wi.uri = "/workitems/#{i}"
+      #wi.uri = "/workitems/#{i}"
+      wi.fei.expid = "0.#{i}"
       wis << wi
     }
 
-    xml = OpenWFE::Xml.workitems_to_xml(wis, :indent => 2)
+    xml = OpenWFE::Xml.workitems_to_xml(wis, :indent => 2, :linkgen => :plain)
 
     #puts xml
     assert xml.match(/workitems/)
-    assert xml.match(/workitem href="\/workitems\/0"/)
-    assert xml.match(/workitem href="\/workitems\/1"/)
+    assert xml.match(/link href="\/workitems\/20080919-equestris\/0\.0"/)
+    assert xml.match(/link href="\/workitems\/20080919-equestris\/0\.1"/)
+
+    workitems = OpenWFE::Xml.workitems_from_xml(xml)
+
+    assert_equal 2, workitems.size
+    assert_equal '/workitems/20080919-equestris/0.0', workitems.first.uri
+    assert_equal '/workitems/20080919-equestris/0.1', workitems.last.uri
   end
 
   def test_3
@@ -159,39 +166,23 @@ end}}, li.attributes)
     assert_equal li.customer_name, li1.customer_name
   end
 
-  def test_request_adapter
-
-    rkr = Struct::RackRequest.new('http', 'www.example.com', 80)
-    rlr = Struct::RailsRequest.new('http://', 'www.example.com', 80)
-    rka = OpenWFE::RequestAdapter.new(rkr)
-    rla = OpenWFE::RequestAdapter.new(rlr)
-
-    assert_equal(
-      'http://www.example.com:80/processes/2005-toto',
-      rka.href(:processes, '2005-toto'))
-    assert_equal(
-      'http://www.example.com:80/processes/2005-toto',
-      rla.href(:processes, '2005-toto'))
-  end
-
   def test_pstatus_to_xml_and_json
-
-    rkr = Struct::RackRequest.new('http', 'www.example.com', 80)
 
     ps = new_process_status('20080919-equestribus')
 
-    options = { :indent => 2, :request => rkr }
+    options = { :indent => 2, :linkgen => :plain }
     #puts OpenWFE::Xml.process_to_xml(ps, options)
     assert_match(
-      /http:\/\/www.example.com:80\/processes\/20080919-equestribus\//,
+      /\/processes\/20080919-equestribus\//,
       OpenWFE::Xml.process_to_xml(ps, options))
 
     assert_equal(
-     '/processes/20080919-equestribus',
-      ps.to_h['href'])
-    assert_equal(
-     'http://www.example.com:80/processes/20080919-equestribus',
-     ps.to_h(options)['href'])
+      [
+        { 'href' => '/processes', 'rel' => 'via' },
+        { 'href' => '/processes/20080919-equestribus', 'rel' => 'self' },
+        { 'href' => '/processes/20080919-equestribus/tree', 'rel' => 'related' }
+      ],
+      OpenWFE::Json.process_to_h(ps, :linkgen => :plain)['links'])
   end
 
   def test_pstatuses_to_xml_and_json
@@ -202,17 +193,14 @@ end}}, li.attributes)
       r[wfid] = new_process_status(wfid); r
     end
 
-    options = { :indent => 2, :request => rlr }
+    options = { :indent => 2, :request => rlr, :linkgen => :plain }
 
     xml = OpenWFE::Xml.processes_to_xml(ps, options)
-    assert_match(
-      /"http:\/\/www.example.com:80\/processes"/, xml)
-    assert_match(
-      /count="2"/, xml)
-    assert_match(
-      /"http:\/\/www.example.com:80\/processes\/20080919-victrix"/, xml)
-    assert_match(
-      /"http:\/\/www.example.com:80\/processes\/20070909-gemina"/, xml)
+    #puts xml
+    assert_match(/"\/processes"/, xml)
+    assert_match(/count="2"/, xml)
+    assert_match(/"\/processes\/20080919-victrix"/, xml)
+    assert_match(/"\/processes\/20070909-gemina"/, xml)
   end
 
   protected
