@@ -138,8 +138,8 @@ module OpenWFE
 
       def expression (item)
         gen_links('expressions', item) { |i|
-          "#{i.fei.wfid}/#{i.fei.expid}"+
-          i.is_a?(OpenWFE::Environment} ? 'e' : ''
+          "#{i.fei.wfid}/#{i.fei.expid}" +
+          i.is_a?(OpenWFE::Environment) ? 'e' : ''
         }
       end
       def expressions (item)
