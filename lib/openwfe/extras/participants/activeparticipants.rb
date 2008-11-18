@@ -171,10 +171,6 @@ module Extras
       @full_fei ||= OpenWFE::FlowExpressionId.from_s(fei)
     end
 
-    def expid
-      full_fei.expid
-    end
-
     #
     # Making sure last_modified is set to Time.now before each save.
     #
@@ -256,7 +252,7 @@ module Extras
       wi.dispatch_time = dispatch_time
       wi.last_modified = last_modified
 
-      #wi.db_id = self.id
+      wi.db_id = self.id
       #wi.uri = OpenWFE::href(options, [ :workitems, self.id ])
 
       wi
