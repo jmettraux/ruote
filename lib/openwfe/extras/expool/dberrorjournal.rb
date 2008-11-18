@@ -61,11 +61,13 @@ module OpenWFE::Extras
       create_table :process_errors do |t|
 
         t.column :wfid, :string, :null => false
+        t.column :expid, :string, :null => false
         t.column :svalue, :text, :null => false
           # 'value' could be reserved, using 'svalue' instead
           # It stands for 'serialized value'.
       end
       add_index :process_errors, :wfid
+      add_index :process_errors, :expid
     end
 
     def self.down
@@ -121,7 +123,7 @@ module OpenWFE::Extras
     def get_error_log (wfid)
 
       wfid = extract_wfid wfid, true
-      errors = ProcessError.find_all_by_wfid wfid, :order => "id asc"
+      errors = ProcessError.find_all_by_wfid wfid, :order => 'id asc'
       errors.collect { |e| e.owfe_error }
     end
 
@@ -178,6 +180,7 @@ module OpenWFE::Extras
         e = ProcessError.new
 
         e.wfid = process_error.wfid
+        e.expid = process_error.expid
         e.svalue = process_error
 
         e.save!

@@ -10,11 +10,13 @@ require 'openwfe/extras/expool/dberrorjournal'
 class FakeProcessError
 
   attr_accessor :wfid
+  attr_accessor :expid
   attr_accessor :message
 
-  def initialize (wfid, message)
+  def initialize (wfid, expid, message)
 
     @wfid = wfid
+    @expid = expid
     @message = message
   end
 end
@@ -29,7 +31,7 @@ class DbErrorJournalUnitTest < Test::Unit::TestCase
     expool.expects(:add_observer).at_least(2).at_most(2)
 
     ac = {}
-    ac['expressionPool'] = expool
+    ac[:s_expression_pool] = expool
 
     @journal = OpenWFE::Extras::DbErrorJournal.new 'ejournal', ac
     class << @journal
@@ -44,7 +46,7 @@ class DbErrorJournalUnitTest < Test::Unit::TestCase
   def test_0
 
     @journal.record_error(
-      FakeProcessError.new('wfid0', [ 'it', 'failed', '!' ]))
+      FakeProcessError.new('wfid0', '0.0', [ 'it', 'failed', '!' ]))
 
     l = @journal.get_error_log 'wfid0'
 
@@ -54,9 +56,9 @@ class DbErrorJournalUnitTest < Test::Unit::TestCase
     assert_equal l[0].message.size, 3
 
     @journal.record_error(
-      FakeProcessError.new('wfid0', "it failed again"))
+      FakeProcessError.new('wfid0', '0.0', "it failed again"))
     @journal.record_error(
-      FakeProcessError.new('wfid1', "it failed too"))
+      FakeProcessError.new('wfid1', '0.0', "it failed too"))
 
     l0 = @journal.get_error_log 'wfid0'
     l1 = @journal.get_error_log 'wfid1'

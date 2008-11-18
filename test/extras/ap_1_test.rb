@@ -38,7 +38,7 @@ class Active1Test < Test::Unit::TestCase
 
         wi.fields << f
 
-        print "\n/// added #{f.id} #{f.fkey}, #{f.svalue}"
+        #print "\n/// added #{f.id} #{f.fkey}, #{f.svalue}"
       end
     end
 

@@ -73,6 +73,7 @@ module Extras
       create_table :workitems do |t|
         t.column :fei, :string
         t.column :wfid, :string
+        t.column :expid, :string
         t.column :wf_name, :string
         t.column :wf_revision, :string
         t.column :participant_name, :string
@@ -86,6 +87,7 @@ module Extras
       add_index :workitems, :fei, :unique => true
         # with sqlite3, comment out this :unique => true on :fei :(
       add_index :workitems, :wfid
+      add_index :workitems, :expid
       add_index :workitems, :wf_name
       add_index :workitems, :wf_revision
       add_index :workitems, :participant_name

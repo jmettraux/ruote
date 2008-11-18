@@ -52,8 +52,8 @@ class DbExpressionStorageUnitTest < Test::Unit::TestCase
     expool.expects(:add_observer).times(2)
 
     ac = {}
-    ac['expressionPool'] = expool
-    ac['expressionMap'] = FakeExpressionMap.new
+    ac[:s_expression_pool] = expool
+    ac[:s_expression_map] = FakeExpressionMap.new
 
     @storage = OpenWFE::Extras::DbExpressionStorage.new 'expstorage', ac
   end
