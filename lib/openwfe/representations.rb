@@ -98,6 +98,8 @@ module OpenWFE
       #
       # Override me (message to ruote-rest and ruote-web2)
       #
+      # (Warning : this method turns dots to underscores in the id)
+      #
       def link (rel, res, id=nil)
         href = "/#{res}"
         href = "#{href}/#{OpenWFE.swapdots(id)}" if id

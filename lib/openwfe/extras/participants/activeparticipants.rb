@@ -193,6 +193,7 @@ module Extras
       i = Workitem.new
       i.fei = wi.fei.to_s
       i.wfid = wi.fei.wfid
+      i.expid = wi.fei.expid
       i.wf_name = wi.fei.workflow_definition_name
       i.wf_revision = wi.fei.workflow_definition_revision
       i.participant_name = wi.participant_name
@@ -216,18 +217,15 @@ module Extras
       # before calling this method.
       # the default behavior is "use field method"
 
-      if wi.attributes["compact_workitems"]
+      if wi.attributes['compact_workitems']
 
-        wi.attributes.delete("compact_workitems")
+        wi.attributes.delete('compact_workitems')
         i.yattributes = wi.attributes
 
       else
 
         i.yattributes = nil
-
-        wi.attributes.each do |k, v|
-          i.fields << Field.new_field(k, v)
-        end
+        wi.attributes.each { |k, v| i.fields << Field.new_field(k, v) }
       end
 
       i.save!
@@ -267,12 +265,7 @@ module Extras
     #
     def field_hash
 
-      return self.yattributes if self.yattributes
-
-      fields.inject({}) do |r, f|
-        r[f.fkey] = f.value
-        r
-      end
+      self.yattributes || fields.inject({}) { |r, f| r[f.fkey] = f.value; r }
     end
 
     alias :fields_hash :field_hash
@@ -314,11 +307,9 @@ module Extras
     #
     def field (key)
 
-      if self.yattributes
-        return self.yattributes[key.to_s]
-      end
+      return self.yattributes[key.to_s] if self.yattributes
 
-      fields.find_by_fkey key.to_s
+      fields.find_by_fkey(key.to_s)
     end
 
     #
@@ -330,7 +321,7 @@ module Extras
     #
     def reply (engine)
 
-      engine.reply self.as_owfe_workitem
+      engine.reply(self.as_owfe_workitem)
       self.destroy
     end
 

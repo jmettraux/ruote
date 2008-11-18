@@ -75,6 +75,7 @@ class WithEngineTest < Test::Unit::TestCase
     wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
 
     assert_not_nil wi
+    assert_not_nil wi.expid
 
     f = OpenWFE::Extras::Field.find_by_svalue "was here"
 

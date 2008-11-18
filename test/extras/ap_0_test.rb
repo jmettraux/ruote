@@ -43,7 +43,7 @@ class Active0Test < Test::Unit::TestCase
 
   def test_1
 
-    wi = new_wi "participant x"
+    wi = new_wi 'participant x'
 
     wi.fields << OpenWFE::Extras::Field.new_field("toto", "a")
     wi.fields << OpenWFE::Extras::Field.new_field("list", [ 1, 2, "trois" ])
