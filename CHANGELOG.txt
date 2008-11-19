@@ -4,6 +4,8 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #22868 : representations.rb : added error[s]_to_xml()
+- todo  #22864 : representations.rb : added expression[s]_to_xml()
 - todo  #22872 : added column 'expid' to 'expressions' table as well
 - todo  #22865 : added column 'expid' to 'workitems' and 'errors' tables
 - todo  #22834 : 'href' -> 'link' and upgraded lib/openwfe/representations.rb

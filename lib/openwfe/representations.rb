@@ -74,7 +74,13 @@ module OpenWFE
       end
       content = content.class if content
       content = hint if hint and (not content)
+
+      key = flatten_fexp_class(key)
+      content = flatten_fexp_class(content)
+
       key = [ key, content ] if content
+
+      #p [ key, GENS[key] ]
 
       method = GENS[key] || (return [])
 
@@ -82,6 +88,14 @@ module OpenWFE
     end
 
     protected
+
+      def flatten_fexp_class (c)
+
+        return nil unless c
+
+        c.ancestors.include?(OpenWFE::FlowExpression) ?
+          OpenWFE::FlowExpression : c
+      end
 
       #
       # some kind of 'case'
@@ -92,7 +106,10 @@ module OpenWFE
         OpenWFE::ProcessStatus => 'process',
         [ Array, OpenWFE::ProcessStatus ] => 'processes',
         OpenWFE::FlowExpression => 'expression',
-        [ Hash, OpenWFE::FlowExpression ] => 'expressions'
+        [ Array, OpenWFE::FlowExpression ] => 'expressions',
+        #[ Hash, OpenWFE::FlowExpression ] => 'expressions',
+        OpenWFE::ProcessError => 'error',
+        [ Hash, OpenWFE::ProcessError ] => 'errors'
       }
 
       #
@@ -107,9 +124,9 @@ module OpenWFE
       end
 
       def gen_links (res, item, &block)
-        if block
+        if block # unique element
           [ link('via', res), link('self', res, block.call(item)) ]
-        else
+        else # collection
           [ link('via', ''), link('self', res) ]
         end
       end
@@ -139,7 +156,7 @@ module OpenWFE
       def expression (item)
         gen_links('expressions', item) { |i|
           "#{i.fei.wfid}/#{i.fei.expid}" +
-          i.is_a?(OpenWFE::Environment) ? 'e' : ''
+          (i.is_a?(OpenWFE::Environment) ? 'e' : '')
         }
       end
       def expressions (item)
@@ -178,6 +195,34 @@ module OpenWFE
   def Json.rep_insert_links (item, options, h, hint=nil)
 
     OpenWFE.rep_insert_links(item, options, h, hint, false)
+  end
+
+  #
+  # (don't use directly)
+  #
+  def Json.collection_to_h (col, opts, hint, &block)
+
+    elts = col.collect(&block)
+
+    return elts if opts[:nometa]
+
+    rep_insert_links(col, opts, { 'elements' => elts }, hint)
+  end
+
+  #
+  # (don't use directly)
+  #
+  def Xml.collection_to_xml (tag, col, opts, hint, &block)
+
+    builder(opts) do |xml|
+
+      xml.tag!(tag, :count => col.size) do
+
+        rep_insert_links(col, opts, xml, hint)
+
+        col.each(&block)
+      end
+    end
   end
 
   #--
@@ -255,10 +300,10 @@ module OpenWFE
     builder(options) do |xml|
       xml.flow_expression_id do
         FlowExpressionId::FIELDS.each do |f|
-          xml.tag! f.to_s, fei.send(f)
+          xml.tag!(f.to_s, fei.send(f))
         end
 
-        xml.fei_short fei.to_s
+        xml.fei_short(fei.to_s)
           # a short, 1 string version of the fei
       end
     end
@@ -268,13 +313,9 @@ module OpenWFE
 
     xml = to_element(xml, 'flow_expression_id')
 
-    fei = FlowExpressionId.new
-
-    FlowExpressionId::FIELDS.each do |f|
-      fei.send "#{f}=", text(xml, f.to_s)
+    FlowExpressionId::FIELDS.inject(FlowExpressionId.new) do |fei, f|
+      fei.send("#{f}=", text(xml, f.to_s)); fei
     end
-
-    fei
   end
 
   #--
@@ -299,7 +340,6 @@ module OpenWFE
         xml.participant_name wi.participant_name
 
         xml.dispatch_time to_httpdate(wi.dispatch_time)
-        #xml.filter ...
         xml.store wi.store
 
         xml.attributes do
@@ -314,18 +354,11 @@ module OpenWFE
   #
   def Xml.workitems_to_xml (wis, options={})
 
-    builder(options) do |xml|
-
-      xml.workitems(
-        #:href => options[:self] || OpenWFE::href(options, :workitems),
-        :count => wis.size
-      ) do
-
-        rep_insert_links(wis, options, xml, OpenWFE::InFlowWorkItem)
-
-        wis.each { |wi| workitem_to_xml(wi, options) }
-      end
-    end
+    collection_to_xml(
+      options[:tag] || 'workitems', wis, options, OpenWFE::InFlowWorkItem
+    ) { |wi|
+      workitem_to_xml(wi, options)
+    }
   end
 
   #
@@ -371,9 +404,12 @@ module OpenWFE
   #
   def Json.workitems_to_h (wis, opts={})
 
-    h = { 'elements' =>  wis.collect { |wi| workitem_to_json(wi, opts) } }
+    #h = { 'elements' =>  wis.collect { |wi| workitem_to_json(wi, opts) } }
+    #rep_insert_links(wis, opts, h, OpenWFE::InFlowWorkItem)
 
-    rep_insert_links(wis, opts, h, OpenWFE::InFlowWorkItem)
+    collection_to_h(wis, opts, OpenWFE::InFlowWorkitem) { |wi|
+      workitem_to_json(wi, opts)
+    }
   end
 
   #
@@ -386,77 +422,66 @@ module OpenWFE
 
   #--
   # cancelitems
+  #
+  #def Xml.cancelitem_to_xml (ci)
+  #end
+  #def Xml.cancelitem_from_xml (xml)
+  #end
+  #def Json.cancelitem_to_h (ci)
+  #end
+  #def Json.cancelitem_from_h (h)
+  #end
   #++
-
-  def Xml.cancelitem_to_xml (ci)
-
-    raise NotImplementedError.new('cancelitem_to_xml')
-  end
-
-  def Xml.cancelitem_from_xml (xml)
-
-    raise NotImplementedError.new('cancelitem_from_xml')
-  end
-
-  def Json.cancelitem_to_h (ci)
-
-    raise NotImplementedError.new('cancelitem_to_h')
-  end
-
-  def Json.cancelitem_from_h (h)
-
-    raise NotImplementedError.new('cancelitem_from_h')
-  end
 
   #--
   # processes (instances of ProcessStatus)
   #++
 
-  def Xml.processes_to_xml (ps, options={ :indent => 2 })
+  def Xml.processes_to_xml (pss, options={ :indent => 2 })
 
-    builder(options) do |xml|
-      xml.processes(
-        #:href => options[:self] || OpenWFE::href(options, :processes),
-        :count => ps.size
-      ) do
-
-        rep_insert_links(ps, options, xml, OpenWFE::ProcessStatus)
-
-        ps.each do |fei, process_status|
-          process_to_xml(process_status, options)
-        end
-      end
-    end
+    collection_to_xml(
+      'processes', pss, options, OpenWFE::ProcessStatus
+    ) { |fei, ps|
+      process_to_xml(ps, options.merge(:short => true))
+    }
   end
 
-  def Xml.process_to_xml (p, options={ :indent => 2 })
+  def Xml.process_to_xml (pr, options={ :indent => 2 })
 
     builder(options) do |xml|
 
       xml.process do
 
-        rep_insert_links(p, options, xml)
+        rep_insert_links(pr, options, xml)
 
-        xml.wfid p.wfid
-        xml.wfname p.wfname
-        xml.wfrevision p.wfrevision
+        xml.wfid pr.wfid
+        xml.wfname pr.wfname
+        xml.wfrevision pr.wfrevision
 
-        xml.launch_time p.launch_time
-        xml.paused p.paused
+        xml.launch_time pr.launch_time
+        xml.paused pr.paused
 
-        xml.timestamp p.timestamp.to_s
+        xml.timestamp pr.timestamp.to_s
 
         xml.tags do
-          p.tags.each { |t| xml.tag t }
+          pr.tags.each { |t| xml.tag t }
         end
 
-        xml.branches p.branches
+        xml.branches pr.branches
 
-        options[:tag] = 'variables'
-        hash_to_xml(p.variables, options)
+        unless options[:short]
+
+          hash_to_xml(
+            pr.variables, options.merge(:tag => 'variables'))
+
+          #workitems_to_xml(
+          #  pr.applied_workitems, options.merge(:tag => 'applied_workitems'))
+        end
+
+        xml.applied_workitems :count => pr.applied_workitems.size
 
         xml.scheduled_jobs do
-          p.scheduled_jobs.each do |j|
+          pr.scheduled_jobs.each do |j|
             xml.job do
               xml.type j.class.name
               xml.schedule_info j.schedule_info
@@ -468,40 +493,11 @@ module OpenWFE
           end
         end
 
-        xml.active_expressions(:count => p.expressions.size) do
+        expressions_to_xml(pr.expressions, options.merge(:short => true))
 
-          rep_insert_links(
-            p.expressions, options, xml, OpenWFE::FlowExpression)
+        errors_to_xml(pr.errors, options.merge(:short => true))
 
-          p.expressions.each do |fexp|
-
-            rep_insert_links(fexp, options, xml)
-
-            fei = fexp.fei
-
-            xml.expression(fei.to_s, :short => fei.to_web_s)
-          end
-        end
-
-        xml.errors(:count => p.errors.size) do
-
-          rep_insert_links(p.errors, options, xml)
-
-          p.errors.each do |k, v|
-            xml.error do
-
-              rep_insert_links(v, options, xml)
-
-              #xml.stacktrace do
-              #  xml.cdata! "\n#{v.stacktrace}\n"
-              #end
-              xml.fei v.fei.to_s
-              xml.message v.stacktrace.split("\n")[0]
-            end
-          end
-        end
-
-        tree = p.all_expressions.tree
+        tree = pr.all_expressions.tree
         tree = tree.respond_to?(:to_json) ? tree.to_json : tree.inspect
 
         xml.tree(tree)
@@ -514,31 +510,28 @@ module OpenWFE
   #
   def Json.processes_to_h (pss, opts={})
 
-    h = { 'elements' =>  pss.values.collect { |ps| process_to_h(wi, opts) } }
-
-    rep_insert_links(pss, opts, h, OpenWFE::ProcessStatus)
+    collection_to_h(wis, opts, OpenWFE::InFlowWorkitem) { |wi|
+      workitem_to_json(wi, opts.merge(:short => true))
+    }
   end
 
   #
   # Turns a process [status] into a JSON string.
   #
-  def Json.process_to_h (p, opts={})
+  def Json.process_to_h (pr, opts={})
 
-    h = rep_insert_links(p, opts, {})
+    h = rep_insert_links(pr, opts, {})
 
     %w{
       wfid wfname wfrevision launch_time paused timestamp branches
     }.inject(h) { |r, m|
-      r[m] = p.send(m).to_s; r
+      r[m] = pr.send(m).to_s; r
     }
 
-    %w{
-      tags variables
-    }.inject(h) { |r, m|
-      r[m] = p.send(m); r
-    }
+    h['tags'] = pr.tags
+    h['variables'] = pr.variables unless opts[:short]
 
-    h['scheduled_jobs'] = p.scheduled_jobs.collect { |job|
+    h['scheduled_jobs'] = pr.scheduled_jobs.collect { |job|
       {
         'type' => job.class.name,
         'schedule_info' => job.schedule_info,
@@ -547,22 +540,15 @@ module OpenWFE
       }
     }
 
-    h['active_expressions'] = rep_insert_links(
-      p.expressions, opts, {}, OpenWFE::FlowExpression)
-    h['active_expressions']['elements'] = p.expressions.collect { |fexp|
-      rep_insert_links(fexp, opts, { 'fei' => fexp.fei.to_s })
-    }
+    h['expressions'] = expressions_to_h(
+      pr.expressions, opts.merge(:short => true))
 
-    h['errors'] = rep_insert_links(
-      p.errors, opts, {}, OpenWFE::ProcessError)
-    h['errors']['elements'] = p.expressions.collect { |k, err|
-      rep_insert_links(err, opts, {
-        'fei' => err.fei.to_s,
-        'message' => err.stacktrace.split("\n").first
-      })
-    }
+    h['applied_workitem_count'] = pr.applied_workitems.size
 
-    tree = p.all_expressions.tree
+    h['errors'] = errors_to_h(
+      pr.errors, opts.merge(:short => true))
+
+    tree = pr.all_expressions.tree
     tree = tree.respond_to?(:to_json) ? tree.to_json : tree.inspect
     h['tree'] = tree
 
@@ -570,7 +556,114 @@ module OpenWFE
   end
 
   #--
-  # nothing about from json (not needed for now)
+  # expressions
   #++
+
+  def Xml.expressions_to_xml (exps, opts={})
+
+    collection_to_xml('expressions', exps, opts, OpenWFE::FlowExpression) { |e|
+      expression_to_xml(e, opts)
+    }
+  end
+
+  def Xml.expression_to_xml (exp, opts={})
+
+    builder(opts) do |xml|
+      xml.expression do
+
+        rep_insert_links(exp, opts, xml)
+
+        xml.fei exp.fei.to_s
+
+        unless opts[:short]
+
+          xml.apply_time exp.apply_time.to_s
+          xml.raw exp.raw_representation
+          xml.raw_updated exp.raw_rep_updated
+        end
+      end
+    end
+  end
+
+  def Json.expressions_to_h (exps, opts={})
+
+    collection_to_h(exps, opts, OpenWFE::FlowExpression) { |e|
+      expression_to_h(e, opts)
+    }
+  end
+
+  def Json.expression_to_h (exp, opts={})
+
+    h = {}
+
+    h['fei'] = exp.fei.to_s
+
+    rep_insert_links(exp, opts, h)
+
+    return h if opts[:short]
+
+    h['apply_time'] = exp.apply_time.to_s
+    h['raw'] = exp.raw_representation
+    h['raw_updated'] = exp.raw_rep_updated
+    h
+  end
+
+  #--
+  # errors
+  #++
+
+  def Xml.errors_to_xml (errs, opts={})
+
+    collection_to_xml('errors', errs, opts, OpenWFE::ProcessError) { |k, err|
+      error_to_xml(err, opts)
+    }
+  end
+
+  def Xml.error_to_xml (err, options={})
+
+    builder(options) do |xml|
+      xml.error do
+
+        rep_insert_links(err, options, xml)
+
+        xml.date err.date # when
+        xml.fei err.fei.to_s # what
+        xml.call err.message.to_s # how
+        xml.message err.stacktrace.split("\n")[0] # how
+
+        unless options[:short]
+
+          xml.wfid err.wfid
+          xml.expid err.expid
+          #xml.stacktrace do
+          #  xml.cdata! "\n#{v.stacktrace}\n"
+          #end
+        end
+      end
+    end
+  end
+
+  def Json.errors_to_h (errs, opts={})
+
+    collection_to_h(errs, opts, OpenWFE::ProcessError) { |k, err|
+      error_to_h(err, opts)
+    }
+  end
+
+  def Json.error_to_h (err, opts={})
+
+    h = {}
+    h['date'] = err.date
+    h['fei'] = err.fei.to_s
+    h['message'] = err.stacktrace.split("\n")[0]
+
+    rep_insert_links(err, opts, h)
+
+    return h if opts[:short]
+
+    h['wfid'] = err.wfid
+    h['expid'] = err.expid
+    h
+  end
 end
 
