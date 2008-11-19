@@ -109,6 +109,7 @@ module OpenWFE
         [ Array, OpenWFE::FlowExpression ] => 'expressions',
         #[ Hash, OpenWFE::FlowExpression ] => 'expressions',
         OpenWFE::ProcessError => 'error',
+        [ Array, OpenWFE::ProcessError ] => 'errors',
         [ Hash, OpenWFE::ProcessError ] => 'errors'
       }
 
@@ -615,7 +616,7 @@ module OpenWFE
   def Xml.errors_to_xml (errs, opts={})
 
     collection_to_xml('errors', errs, opts, OpenWFE::ProcessError) { |k, err|
-      error_to_xml(err, opts)
+      error_to_xml(err || k, opts)
     }
   end
 
@@ -634,7 +635,7 @@ module OpenWFE
         unless options[:short]
 
           xml.wfid err.wfid
-          xml.expid err.expid
+          xml.expid err.fei.expid
           #xml.stacktrace do
           #  xml.cdata! "\n#{v.stacktrace}\n"
           #end
@@ -646,7 +647,7 @@ module OpenWFE
   def Json.errors_to_h (errs, opts={})
 
     collection_to_h(errs, opts, OpenWFE::ProcessError) { |k, err|
-      error_to_h(err, opts)
+      error_to_h(err || k, opts)
     }
   end
 
@@ -662,7 +663,7 @@ module OpenWFE
     return h if opts[:short]
 
     h['wfid'] = err.wfid
-    h['expid'] = err.expid
+    h['expid'] = err.fei.expid
     h
   end
 end
