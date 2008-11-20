@@ -77,11 +77,11 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 Among the first expressions in the alphabetical order... When the workflow engine encounters this expression, it cancels completely the process instance to which it belongs.
 
 #:code#xml#
-    <sequence>
-        <participant ref="before" />
-        <cancel-process />
-        <participant ref="after" />
-    </sequence>
+  <sequence>
+    <participant ref="before" />
+    <cancel-process />
+    <participant ref="after" />
+  </sequence>
 #:code#
 
 It this example, the participant named "after" is never reached.
@@ -89,18 +89,18 @@ It this example, the participant named "after" is never reached.
 Most of the time, "cancel-process" is used as a consequence to an "if" expression or uses its own 'if' attribute, like in :
 
 #:code#ruby#
-    require 'openwfe/def'
+  require 'openwfe/def'
 
-    class TestDefinition1 < OpenWFE::ProcessDefinition
-        sequence do
-            participant "customer"
-            _cancel_process :if => "${f:no_thanks} == true"
-            concurrence do
-                participant "accounting"
-                participant "logistics"
-            end
-        end
+  class TestDefinition1 < OpenWFE::ProcessDefinition
+    sequence do
+      participant "customer"
+      _cancel_process :if => "${f:no_thanks} == true"
+      concurrence do
+        participant "accounting"
+        participant "logistics"
+      end
     end
+  end
 #:code#
 
 If the participant "customer" set the field "no_thanks" to "true", the flow will never resume to the concurrence.
@@ -115,21 +115,21 @@ The 'case' expression is an extended 'if'. It accepts a list of children and exp
 If the first child evaluates to false, it will jump to the third child. If there is none, it will exit, if there is one, it will evaluate it (and if it's a condition...) (this is boring to explain).
 
 #:code#ruby#
-    require 'openwfe/def'
+  require 'openwfe/def'
 
-    class DefinitionWithCase < OpenWFE::ProcessDefinition
-        case do
-            equals :field => "customer", :val => "El Wasabi"
-            participant :ref => "salesman_1"
-            equals :field => "customer", :val => "Rio Coffee"
-            participant :ref => "salesman_2"
-            participant :ref => "salesman_3"
-        end
-            #
-            # attributing customers to salesmen.
-            # salesman number 3 handles anything that is not 'El Wasabi' or
-            # 'Rio Coffee'
+  class DefinitionWithCase < OpenWFE::ProcessDefinition
+    case do
+      equals :field => "customer", :val => "El Wasabi"
+      participant :ref => "salesman_1"
+      equals :field => "customer", :val => "Rio Coffee"
+      participant :ref => "salesman_2"
+      participant :ref => "salesman_3"
     end
+      #
+      # attributing customers to salesmen.
+      # salesman number 3 handles anything that is not 'El Wasabi' or
+      # 'Rio Coffee'
+  end
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/CaseExpression.html
@@ -140,33 +140,33 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 Divides the process flow into two or more concurrent lanes.
 
 #:code#xml#
-    <process-definition name="exp_mydef" revision="0.1">
-        <concurrence>
-            <participant ref="alice" />
-            <participant ref="bob" />
-            <sequence>
-                <participant ref="charlie" />
-                <participant ref="doug" />
-            </sequence>
-        </concurrence>
-    </process-definition>
+  <process-definition name="exp_mydef" revision="0.1">
+    <concurrence>
+      <participant ref="alice" />
+      <participant ref="bob" />
+      <sequence>
+        <participant ref="charlie" />
+        <participant ref="doug" />
+      </sequence>
+    </concurrence>
+  </process-definition>
 #:code#
 
 With OpenWFEru you could also write :
 
 #:code#ruby#
-    require 'openwfe/def'
+  require 'openwfe/def'
 
-    class MyProcessDefinition01 < OpenWFE::ProcessDefinition
-        _concurrence do
-            _participant :ref => "alice"
-            _participant "bob"
-            _sequence do
-                charlie
-                doug
-            end
-        end
+  class MyProcessDefinition01 < OpenWFE::ProcessDefinition
+    _concurrence do
+      _participant :ref => "alice"
+      _participant "bob"
+      _sequence do
+        charlie
+        doug
+      end
     end
+  end
 #:code#
 
 Note that in this example, three different ways of 'invoking' a participant have been displayed.
@@ -189,21 +189,21 @@ See it in action in the "workflow pattern 13, 14 and 15":patterns.html#pat_13_mu
 Some snippets, in XML :
 
 #:code#xml#
-    <concurrent-iterator on-value="sales, logistics, lob2" to-field="p">
-        <participant field-ref="p" />
-    </concurrent-iterator>
+  <concurrent-iterator on-value="sales, logistics, lob2" to-field="p">
+    <participant field-ref="p" />
+  </concurrent-iterator>
 #:code#
 
 In Ruby :
 
 #:code#ruby#
-    sequence do
-      set :field => f, :value => %w{ Alan, Bob, Clarence }
-      #... 
-      concurrent_iterator :on_field => "f", :to_field => "p" do
-        participant "${p}"
-      end
+  sequence do
+    set :field => f, :value => %w{ Alan, Bob, Clarence }
+    #... 
+    concurrent_iterator :on_field => "f", :to_field => "p" do
+      participant "${p}"
     end
+  end
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/ConcurrentIteratorExpression.html
@@ -218,22 +218,22 @@ A 'cron' expression will trigger its child expression (a new copy each time) at 
 This frequency can be either specified with a classical cron tab string (see <a href="http://www.google.com/search?num=100&hl=en&safe=off&q=man+5+crontab&btnG=Search">man 5 crontab</a>) or with an 'every' frequency, something like "every 2 hours" or "every 5 minutes and 2 seconds".
 
 #:code#xml#
-    <!--
-        trigger the subprocess 'send-reminder' once per hour from nine to
-        five, from Monday to Friday.
-    -->
-    <cron tab="0 9-17 * * mon-fri">
-        <send-reminder />
-    </cron>
+  <!--
+      trigger the subprocess 'send-reminder' once per hour from nine to
+      five, from Monday to Friday.
+  -->
+  <cron tab="0 9-17 * * mon-fri">
+    <send-reminder />
+  </cron>
 #:code#
 
 #:code#ruby#
-    #
-    # trigger the subprocess named 'send_reminder' every ten seconds.
-    #
-    cron :every => "10s"
-        send_reminder
-    end
+  #
+  # trigger the subprocess named 'send_reminder' every ten seconds.
+  #
+  cron :every => "10s"
+    send_reminder
+  end
 #:code#
 
 The 'cron' expression never replies to its parent expression, thus, used a process whose body is simply a cron expression will never terminate (unless cancelled).
@@ -241,12 +241,12 @@ The 'cron' expression never replies to its parent expression, thus, used a proce
 The classical usage scenario involves wrapping the cron in a concurrence not expecting its reply.
 
 #:code#ruby#
-    concurrence :count => 1 do
-        participant :toto
-        cron :every => "10m" do
-            subprocess :ref => "send_reminder" :target => "toto@headlost.org.uk"
-        end
+  concurrence :count => 1 do
+    participant :toto
+    cron :every => "10m" do
+      subprocess :ref => "send_reminder" :target => "toto@headlost.org.uk"
     end
+  end
 #:code#
 
 where the subprocess "send_reminder" is triggered every 10 minutes until participant toto is done with his activity. Note that the 'concurrence' is set to wait for only 1 reply (it will then cancel the branch that didn't reply, hence cancel the cron expression, which will get descheduled).
@@ -271,17 +271,17 @@ It understands the following commands :
 Cursor commands accept condition attributes like in :
 
 #:code#xml#
-    <cursor>
-        <participant field-ref="reference_1"
-        <participant field-ref="reference_2"
+  <cursor>
+    <participant field-ref="reference_1"
+    <participant field-ref="reference_2"
 
-        <break if="${field:do_not_hire} == true" />
-            <!-- do not hire if one of the references set the field
-                 'do_not_hire' to true -->
+    <break if="${field:do_not_hire} == true" />
+      <!-- do not hire if one of the references set the field
+           'do_not_hire' to true -->
 
-        <participant ref="faculty" />
-        <participant ref="hr_department" />
-    </cursor>
+    <participant ref="faculty" />
+    <participant ref="hr_department" />
+  </cursor>
 #:code#
 
 More documentation of those conditions in the "cursor command rdoc":rdoc/classes/OpenWFE/CursorCommandExpression.html
@@ -299,22 +299,22 @@ The 'cursor' expression is used for example in the workflow control pattern 10 :
 h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="exp_defined"></a>defined
 
 #:code#xml#
-    <if>
-        <defined field="customer">
-        <!-- then -->
-        <subprocess ref="call_customer" />
-    </if>
+  <if>
+    <defined field="customer">
+    <!-- then -->
+    <subprocess ref="call_customer" />
+  </if>
 #:code#
 
 Note that since OpenWFEru 0.9.17, it's possible to write :
 
 #:code#ruby#
-    _if :test => "${field:customer} is set" do
-        sequence do
-            participant "A"
-            participant "B"
-        end
+  _if :test => "${field:customer} is set" do
+    sequence do
+      participant "A"
+      participant "B"
     end
+  end
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/DefinedExpression.html
@@ -340,25 +340,25 @@ The 'exp' expression allows to choose at apply time, which expression (or partic
 
 #:code#ruby#
 
-    sequence do
+  sequence do
 
-        my_activity :variant => "sequence"
-            # 
-            # B works after A
+    my_activity :variant => "sequence"
+      # 
+      # B works after A
 
-        my_activity :variant => "concurrence"
-            # 
-            # A and B work in parallel
+    my_activity :variant => "concurrence"
+      # 
+      # A and B work in parallel
+  end
+
+  process_definition :name => "my_activity" do
+
+    exp :name => "${variant}", :default => "sequence" do
+
+      participant "A"
+      participant "B"
     end
-
-    process_definition :name => "my_activity" do
-
-        exp :name => "${variant}", :default => "sequence" do
-
-            participant "A"
-            participant "B"
-        end
-    end
+  end
 #:code#
 
 The 'name' (and the 'default') attribute(s) can refer to an expression, a subprocess name or a participant name, indifferently. See the following rdoc link for a more detailed example.
@@ -383,31 +383,31 @@ The "participant":#exp_participant expression has a 'filter' attribute for filte
 There is a also a 'filter' expression for filtering data in and out of process segments.
 
 #:code#ruby#
-    class MyProcessDefinition001 < ProcessDefinition
-        sequence do
+  class MyProcessDefinition001 < ProcessDefinition
+    sequence do
 
-            set :field => "readable", :value => "bible"
-            set :field => "writable", :value => "sand"
-            set :field => "randw", :value => "notebook"
-            set :field => "hidden", :value => "playboy"
+      set :field => "readable", :value => "bible"
+      set :field => "writable", :value => "sand"
+      set :field => "randw", :value => "notebook"
+      set :field => "hidden", :value => "playboy"
 
-            alice
+      alice
 
-            filter :name => "filter0" do
-                sequence
-                    bob
-                    charly
-                end
-            end
+      filter :name => "filter0" do
+        sequence
+          bob
+          charly
         end
-
-        filter_definition :name => "filter0" do
-            field :regex => "readable", :permissions => "r"
-            field :regex => "writable", :permissions => "w"
-            field :regex => "randw", :permissions => "rw"
-            field :regex => "hidden", :permissions => ""
-        end
+      end
     end
+
+    filter_definition :name => "filter0" do
+      field :regex => "readable", :permissions => "r"
+      field :regex => "writable", :permissions => "w"
+      field :regex => "randw", :permissions => "rw"
+      field :regex => "hidden", :permissions => ""
+    end
+  end
 #:code#
 
 In that example, participant 'alice' will see and be able to modify all the fields of the workitem, whereas, participants 'bob' and 'charly' will be restricted to read the fields 'readable' and 'randw' and to write to the fields 'sand' and 'randw'.
@@ -424,12 +424,12 @@ A filter definition builds and then binds a filter to an OpenWFE variable. A fil
 Filter definition takes place within a process definition. They may be set directly in the process body or outside of it (still within the process definition).
 
 #:code#ruby#
-    filter_definition :name => "filter0" do
-        field :regex => "readable", :permissions => "r"
-        field :regex => "writable", :permissions => "w"
-        field :regex => "randw", :permissions => "rw"
-        field :regex => "hidden", :permissions => ""
-    end
+  filter_definition :name => "filter0" do
+    field :regex => "readable", :permissions => "r"
+    field :regex => "writable", :permissions => "w"
+    field :regex => "randw", :permissions => "rw"
+    field :regex => "hidden", :permissions => ""
+  end
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/FilterDefinitionExpression.html
@@ -442,16 +442,16 @@ The 'forget' expression is used to set up dead ends.
 It triggers its child expression and then immediately replies to its own parent expression, not caring about any potential reply from the child.
 
 #:code#ruby#
-    sequence do
-        participant :a
-        forget do
-            sequence do
-                participant :a0
-                participant :a1
-            end
-        end
-        participant :b
+  sequence do
+    participant :a
+    forget do
+      sequence do
+        participant :a0
+        participant :a1
+      end
     end
+    participant :b
+  end
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/ForgetExpression.html
@@ -469,44 +469,44 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 Given a list and a child expression (one unique child is expected), 'iterator' will execute the child expression once per element in the list.
 
 #:code#xml#
-    <iterator 
-        on-value="alice, bob, charly"
-        to-variable="next_participant"
-    >
-        <participant ref="${next_participant}" />
-    </iterator>
+  <iterator 
+    on-value="alice, bob, charly"
+    to-variable="next_participant"
+  >
+    <participant ref="${next_participant}" />
+  </iterator>
 #:code#
 
 is thus equivalent to
 
 #:code#xml#
-    <sequence>
-        <participant ref="alice" />
-        <participant ref="bob" />
-        <participant ref="charly" />
-    </sequence>
+  <sequence>
+    <participant ref="alice" />
+    <participant ref="bob" />
+    <participant ref="charly" />
+  </sequence>
 #:code#
 
 Of course, the list could be a bit more dynamic :
 
 #:code#ruby#
-    iterator :on_value => "${f:participant_list}", :to_variable => "p" do
-        participant "${p}"
-    end
+  iterator :on_value => "${f:participant_list}", :to_variable => "p" do
+    participant "${p}"
+  end
 #:code#
 
 and since OpenWFEru 0.9.13, 'iterator' understands the same commands as '"cursor":#exp_cursor' (break/cancel, rewind/continue, skip, jump) :
 
 #:code#ruby#
-    iterator :on_value => "${f:participant_list}", :to_variable => "p" do
-        sequence do
-            participant "${p}"
-            _break :if => "${f:participant_reply} == cancel_meeting"
-                #
-                # if one participant wishes to cancel the meeting, no need
-                # to notify the others
-        end
+  iterator :on_value => "${f:participant_list}", :to_variable => "p" do
+    sequence do
+      participant "${p}"
+      _break :if => "${f:participant_reply} == cancel_meeting"
+        #
+        # if one participant wishes to cancel the meeting, no need
+        # to notify the others
     end
+  end
 #:code#
 
 "iterator rdoc":rdoc/classes/OpenWFE/IteratorExpression.html
@@ -601,21 +601,21 @@ Loses a process segment. The 'lose' expression applies its child expression, but
 May be useful in concurrence cases where a certain number of answers are expected.
 
 #:code#xml#
-    <concurrence count="1">
-        <!-- this concurrence expects two answers -->
+  <concurrence count="1">
+    <!-- this concurrence expects two answers -->
 
-        <lose>
-            <!-- will be applied, but 'lose' will never reply 
-                 to the concurrence -->
-            <participant ref="alice" />
-        </lose>
+    <lose>
+      <!-- will be applied, but 'lose' will never reply 
+           to the concurrence -->
+      <participant ref="alice" />
+    </lose>
 
-        <participant ref="bob" />
-        <participant ref="charly" />
-            <!-- the concurrence will be over as soon as bob or charly
-                 will have replied -->
+    <participant ref="bob" />
+    <participant ref="charly" />
+      <!-- the concurrence will be over as soon as bob or charly
+           will have replied -->
 
-    </concurrence>
+  </concurrence>
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/LoseExpression.html
@@ -628,28 +628,28 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 #:code#xml#
 <process-definition name="exp_x" revision="0">
 
-    <!-- required workitem fields -->
+ <!-- required workitem fields -->
 
-    <parameter field="customer" />
-    <parameter field="address" default="" />
-    <parameter field="zip" type="integer" />
-    <parameter field="town" />
-    <parameter field="phone" match="^[0-9]{3}-[0-9]{7}$" />
-    <parameter field="customer_type" default="2" type="int"/>
+  <parameter field="customer" />
+  <parameter field="address" default="" />
+  <parameter field="zip" type="integer" />
+  <parameter field="town" />
+  <parameter field="phone" match="^[0-9]{3}-[0-9]{7}$" />
+  <parameter field="customer_type" default="2" type="int"/>
 
-    <!-- the body of the process definition -->
+  <!-- the body of the process definition -->
 
-    <sequence>
-        <participant ref="service0" />
-        <participant ref="service1" />
-        <play-the-music/>
-    </sequence>
+  <sequence>
+    <participant ref="service0" />
+    <participant ref="service1" />
+    <play-the-music/>
+  </sequence>
 
-    <!-- subprocesses -->
+  <!-- subprocesses -->
 
-    <process-definition name="exp_play-the-music">
-        <participant ref="musician" />
-    </process-definition>
+  <process-definition name="exp_play-the-music">
+    <participant ref="musician" />
+  </process-definition>
 
 </process-definition>
 #:code#
@@ -665,36 +665,36 @@ If the field 'customer_type' is not explicitely given, its value will be the int
 In a ruby process definition, it looks like :
 
 #:code#ruby#
-    require 'openwfe/def'
+  require 'openwfe/def'
 
-    class MyProcessDefinition_01 < OpenWFE::ProcessDefinition
+  class MyProcessDefinition_01 < OpenWFE::ProcessDefinition
 
-        #
-        # required fields in the launchitem
+    #
+    # required fields in the launchitem
 
-        param :field => "customer"
-        param :field => "address", default => ""
-        param :field => "zip", type => "integer"
-        param :field => "town"
-        param :field => "phone", match => "^[0-9]{3}-[0-9]{7}$"
-        param :field => "customer_type", default => 2, type => :int
+    param :field => "customer"
+    param :field => "address", default => ""
+    param :field => "zip", type => "integer"
+    param :field => "town"
+    param :field => "phone", match => "^[0-9]{3}-[0-9]{7}$"
+    param :field => "customer_type", default => 2, type => :int
 
-        #
-        # process definition body
+    #
+    # process definition body
 
-        sequence do
-            service0
-            service1
-            play_the_music
-        end
-
-        #
-        # subprocesses
-
-        process_definition :name => "play_the_music"
-            musician
-        end
+    sequence do
+      service0
+      service1
+      play_the_music
     end
+
+    #
+    # subprocesses
+
+    process_definition :name => "play_the_music"
+      musician
+    end
+  end
 #:code#
 
 
@@ -720,45 +720,45 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 Usually the "process_definition" name is used for this expression, but "define" and "workflow_definition" are usable as well.
 
 #:code#ruby#
-    process_definition :name => "my_process", :revision => "y"
-        sequence do
-            participant "alpha"
-            participant "bravo"
-        end
+  process_definition :name => "my_process", :revision => "y"
+    sequence do
+      participant "alpha"
+      participant "bravo"
     end
+  end
 #:code#
 
 The same definition, in XML :
 
 #:code#xml#
-    <process-definition name="my_process" revision="y">
-        <sequence>
-            <participant ref="alpha" />
-            <participant ref="bravo" />
-        </sequence>
-    </process-definition>
+  <process-definition name="my_process" revision="y">
+    <sequence>
+      <participant ref="alpha" />
+      <participant ref="bravo" />
+    </sequence>
+  </process-definition>
 #:code#
 
 In a Ruby process definition, this is also OK :
 
 #:code#ruby#
-    class MyDef0 < OpenWFE::ProcessDefinition
-        sequence do
-            sub0
-            sub1
-        end
-
-        process_definition :name => "sub0" do
-            participant "cold"
-        end
-        
-        definition "sub1" do
-            #
-            # ':name => ' not used
-
-            participant "not cold"
-        end
+  class MyDef0 < OpenWFE::ProcessDefinition
+    sequence do
+      sub0
+      sub1
     end
+
+    process_definition :name => "sub0" do
+      participant "cold"
+    end
+    
+    definition "sub1" do
+      #
+      # ':name => ' not used
+
+      participant "not cold"
+    end
+  end
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/DefineExpression.html
@@ -788,16 +788,16 @@ Every expression accepts an implicit 'tag' attribute which defines a name under 
 The name (the tag) can then be used by a 'redo' or an '<a href="#exp_undo">undo</a>' expression.
 
 #:code#ruby#
-    sequence do
-        sequence :tag => "core_job" do
-            participant "alice"
-            participant "bob"
-        end
-        participant "charly"
-        _if :test => "${f:charly_not_happy} == true" do
-            _redo :ref => "core_job"
-        end
+  sequence do
+    sequence :tag => "core_job" do
+      participant "alice"
+      participant "bob"
     end
+    participant "charly"
+    _if :test => "${f:charly_not_happy} == true" do
+      _redo :ref => "core_job"
+    end
+  end
 #:code#
 
 Maybe this example should be 'implemented' with a 
@@ -814,24 +814,24 @@ This expression ensures that segments of a process instance are not run simultan
 It uses a mutex variable. A variable bound at engine level (prefixed with "//") can be used to prevent segments of totally different processes to execute simultaneously.
 
 #:code#ruby#
-   concurrence do
-       sequence do
-           activity_a
-           reserve :mutex => :m do
-               activity_b
-           end
-           activity_c
-       end
-       sequence do
-           activity_d
-           reserve :mutex => :m do
-               sequence do
-                   activity_e
-                   activity_f
-               end
-           end
-       end
+ concurrence do
+   sequence do
+     activity_a
+     reserve :mutex => :m do
+       activity_b
+     end
+     activity_c
    end
+   sequence do
+     activity_d
+     reserve :mutex => :m do
+       sequence do
+         activity_e
+         activity_f
+       end
+     end
+   end
+ end
 #:code#
 
 In this example, the while the activity_b is performed, the sequence of activities e and f cannot be performed.
@@ -841,25 +841,25 @@ Note that for short, a symbol :m was used instead of the string "m". OpenWFEru t
 #:code#xml#
 <!-- process A -->
 
-    <process_definition name="A" revision="0.0">
-        <sequence>
-           <participant ref="alice" />
-           <reserve mutex="//guard0">
-               <participant ref="alfred" />
-           </reserve>
-        </sequence>
-    </process_definition>
+  <process_definition name="A" revision="0.0">
+    <sequence>
+     <participant ref="alice" />
+     <reserve mutex="//guard0">
+       <participant ref="alfred" />
+     </reserve>
+    </sequence>
+  </process_definition>
 
 <!-- process B -->
 
-    <process_definition name="B" revision="0.0">
-        <sequence>
-           <participant ref="bob" />
-           <reserve mutex="//guard0">
-               <participant ref="berthe" />
-           </reserve>
-        </sequence>
-    </process_definition>
+  <process_definition name="B" revision="0.0">
+    <sequence>
+     <participant ref="bob" />
+     <reserve mutex="//guard0">
+       <participant ref="berthe" />
+     </reserve>
+    </sequence>
+  </process_definition>
 #:code#
 
 In this XML example, the engine will prevent 'alfred' and 'berthe' from performing their task simultaneously, in processes A and B respectively. This is achieved by registering the mutex at the engine level (prefix "//").
@@ -879,27 +879,27 @@ Since OpenWFEru 0.9.17, 'restore' has a 'set-fields' alias. It can be quite conv
 
 #:code#ruby#
 class Registration < OpenWFE::ProcessDefinition
-    set_fields :value => {
-        "name" => "",
-        "address" => "",
-        "email" => ""
-    }
-    sequence do
-        approve_registration
-        perform_registration :if => "${approved} == true"
-        notify_customer
-    end
+  set_fields :value => {
+    "name" => "",
+    "address" => "",
+    "email" => ""
+  }
+  sequence do
+    approve_registration
+    perform_registration :if => "${approved} == true"
+    notify_customer
+  end
 end
 #:code#
 
 (The usual technique for pre-filling a workitem is by providing a launchitem when launching the business process
 
 #:code#ruby#
-    li = OpenWFE::LaunchItem.new "http://process.server.com/definitions/xyz.xml"
-    li.customer = { "name" => "Toto", "age" => 34 }
-    li.request_type = "credit"
+  li = OpenWFE::LaunchItem.new "http://process.server.com/definitions/xyz.xml"
+  li.customer = { "name" => "Toto", "age" => 34 }
+  li.request_type = "credit"
 
-    openwferu_engine.launch li
+  openwferu_engine.launch li
 #:code#
 )
 
@@ -911,35 +911,35 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 This expression evals the Ruby code nested within it.
 
 #:code#xml#
-    <sequence>
-        <reval>$i = 0</reval>
-        <loop>
-            <participant ref="toto" />
-            <reval>$i = $i + 1</reval>
-            <break if="${r:$i == 10}" />
-            <!-- a variant :
-            <break rif="$i == 10" />
-            -->
-        </loop>
-    </sequence>
+  <sequence>
+    <reval>$i = 0</reval>
+    <loop>
+      <participant ref="toto" />
+      <reval>$i = $i + 1</reval>
+      <break if="${r:$i == 10}" />
+      <!-- a variant :
+      <break rif="$i == 10" />
+      -->
+    </loop>
+  </sequence>
 #:code#
 
 Within a 'reval' piece of code, the two principal hooks within the engine 'bowels' are <tt>self</tt> which points to the RawExpression instance itself and <tt>workitem</tt>
 
 #:code#ruby#
-    class Reval4 < OpenWFE::ProcessDefinition
-        sequence do
-            reval """
-                engine = self.application_context['__tracer']
+  class Reval4 < OpenWFE::ProcessDefinition
+    sequence do
+      reval """
+        engine = self.application_context['__tracer']
 
-                workitem.currently_active_processes =
-                    engine.list_processes.join('\n')
+        workitem.currently_active_processes =
+            engine.list_processes.join('\n')
 
-                'done' # will be placed in the workitem field '__result__'
-            """
-            participant :toto
-        end
+        'done' # will be placed in the workitem field '__result__'
+      """
+      participant :toto
     end
+  end
 #:code#
 
 The result of 'reval' is placed in the field named <pre>__result__</pre> as a String.
@@ -949,7 +949,7 @@ The code is evaluated at a SAFE level of 3 (see "http://www.rubycentral.com/book
 You have to explicitely set the <tt>:ruby_eval_allowed</tt> param to true in the application context of the engine else the 'reval' expression will raise an exception.
 
 #:code#ruby#
-    engine.application_context[:ruby_eval_allowed] = true
+  engine.application_context[:ruby_eval_allowed] = true
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/RevalExpression.html
@@ -969,27 +969,27 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 Simply chaining other flow expressions.
 
 #:code#xml#
-    <process-definition name="exp_my_definition" revision="0">
-        <sequence>
-            <participant ref="alpha" />
-            <participant ref="bravo" />
-            <participant ref="charly" />
-        </sequence>
-    </process-definition>
+  <process-definition name="exp_my_definition" revision="0">
+    <sequence>
+      <participant ref="alpha" />
+      <participant ref="bravo" />
+      <participant ref="charly" />
+    </sequence>
+  </process-definition>
 #:code#
 
 In Ruby :
 
 #:code#ruby#
-    require 'openwfe/def'
+  require 'openwfe/def'
 
-    class MyDefinition0 < OpenWFE::ProcessDefinition
-        sequence do
-            participant "alpha"
-            participant "bravo"
-            participant "charly"
-        end
+  class MyDefinition0 < OpenWFE::ProcessDefinition
+    sequence do
+      participant "alpha"
+      participant "bravo"
+      participant "charly"
     end
+  end
 #:code#
 
 "pattern":patterns.html#pat_1_sequence
@@ -1003,16 +1003,16 @@ Is used to set the value of a variable or the value of a workitem field (attribu
 It may placed outside of the body of a process definition, it will be evaluated before the body gets applied (executed).
 
 #:code#ruby#
-    require 'openwfe/def'
+  require 'openwfe/def'
 
-    class MyDefinition0 < OpenWFE::ProcessDefinition
-        sequence do
-            participant "alpha"
-        end
-
-        set :field => "city", :value => "Kyoto"
-        set :field => "country", :value => "Japan"
+  class MyDefinition0 < OpenWFE::ProcessDefinition
+    sequence do
+      participant "alpha"
     end
+
+    set :field => "city", :value => "Kyoto"
+    set :field => "country", :value => "Japan"
+  end
 #:code#
 
 The participant 'alpha' will recevive a workitem with fields 'city' and 'country' set to 'Kyoto' and 'Japan' respectively. This technique is useful for keeping long settings out of the process 'logic' itself.
@@ -1022,20 +1022,20 @@ The "unset":#exp_unset cannot be placed outside of a process body. "Filter defin
 Shorter version of the attributes are OK :
 
 #:code#ruby#
-    require 'openwfe/def'
+  require 'openwfe/def'
 
-    class MyDefinition0 < OpenWFE::ProcessDefinition
-        sequence do
-            set :f => "customer_name", :val => "(fill this field)"
-            participant "alpha"
-        end
+  class MyDefinition0 < OpenWFE::ProcessDefinition
+    sequence do
+      set :f => "customer_name", :val => "(fill this field)"
+      participant "alpha"
     end
+  end
 #:code#
 
 The 'set' expression accepts an 'escape' attribute to prevent dollar substituation from occurring.
 
 #:code#ruby#
-    set :v => "v0", :val => "my ${template} thing", escape => true
+  set :v => "v0", :val => "my ${template} thing", escape => true
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/SetValueExpression.html
@@ -1053,30 +1053,30 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 Makes a process segment sleep for a while.
 
 #:code#xml#
-    <sequence>
+  <sequence>
 
-        <sleep for="3d" />
-            <!-- sleeping for 3 days -->
+    <sleep for="3d" />
+      <!-- sleeping for 3 days -->
 
-        <sleep until="Mon Dec 03 10:48:03 +0900 2007" />
+    <sleep until="Mon Dec 03 10:48:03 +0900 2007" />
 
-    </sequence>
+  </sequence>
 #:code#
 
 In a Ruby process definition :
 
 #:code#ruby#
-    sequence do
+  sequence do
 
-        sleep :for => "3m10s"
-            # sleeping for 3 minutes and 10 seconds
+    sleep :for => "3m10s"
+      # sleeping for 3 minutes and 10 seconds
 
-        sleep :until => "Mon Dec 03 10:48:03 +0900 2007"
-            # sleeping until some point in time
+    sleep :until => "Mon Dec 03 10:48:03 +0900 2007"
+      # sleeping until some point in time
 
-        sleep "3M10d"
-            # sleeping for 3 months and 10 days
-    end
+    sleep "3M10d"
+      # sleeping for 3 months and 10 days
+  end
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/SleepExpression.html
@@ -1187,13 +1187,13 @@ Here is the "trouble ticket" example implemented with the "step" expression (not
 The "step" expression also accepts two attributes : "outcomes" and "default". "outcomes" accepts a list of transition names, while "default" names one default transition to use.
 
 #:code#xml#
-    <step ref="one" outcomes="two, three" default="two" />
+  <step ref="one" outcomes="two, three" default="two" />
 #:code#
 
 In Ruby :
 
 #:code#xml#
-    step :one, :outcomes => [ :two, :three ], :default => :two
+  step :one, :outcomes => [ :two, :three ], :default => :two
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/StepExpression.html
@@ -1204,61 +1204,61 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 This expression is used to trigger a subprocess.
 
 #:code#xml#
-    <process-definition name="chores" revision="0">
+  <process-definition name="chores" revision="0">
 
-        <sequence>
-            <subprocess ref="take_out_garbage" />
-            <subprocess ref="do_the_laundry" type="white" />
-            <subprocess ref="do_the_laundry" type="colors" />
-        </sequence>
+    <sequence>
+      <subprocess ref="take_out_garbage" />
+      <subprocess ref="do_the_laundry" type="white" />
+      <subprocess ref="do_the_laundry" type="colors" />
+    </sequence>
 
-        <process-definition name="take_out_garbage">
-            <concurrence>
-                <participant ref="al" activity="take out old paper" />
-                <participant ref="bob" activity="take out garbage" />
-            </concurrence>
-        </process-definition>
-
-        <process-definition name="do_the_laundry">
-            <sequence>
-                <participant ref="al" activity="sort ${type}" />
-                <participant ref="bob" activity="clean ${type}" />
-                <sleep for="1h30m" />
-                <participant ref="al" activity="hang ${type}" />
-                <participant ref="al" activity="iron ${type}" />
-            </sequence>
-        </process-definition>
+    <process-definition name="take_out_garbage">
+      <concurrence>
+        <participant ref="al" activity="take out old paper" />
+        <participant ref="bob" activity="take out garbage" />
+      </concurrence>
     </process-definition>
+
+    <process-definition name="do_the_laundry">
+      <sequence>
+        <participant ref="al" activity="sort ${type}" />
+        <participant ref="bob" activity="clean ${type}" />
+        <sleep for="1h30m" />
+        <participant ref="al" activity="hang ${type}" />
+        <participant ref="al" activity="iron ${type}" />
+      </sequence>
+    </process-definition>
+  </process-definition>
 #:code#
 
 Note how the variable 'type' was set to 'white' and then 'colors' and used within the "do_the_laundry" subprocess.
 
 #:code#ruby#
-    class Chores0 < OpenWFE::ProcessDefinition
+  class Chores0 < OpenWFE::ProcessDefinition
 
-        sequence do
-            subprocess :ref => "take_out_garbage"
-            do_the_laundry :type => "white"
-            subprocess :ref => "do_the_laundry", :type => "colors"
-        end
-
-        process_definition :name => "take_out_garbage" do
-            concurrence do
-                participant :ref => "al", :activity => "take out old paper"
-                bob :activity => "take out garbage"
-            end
-        end
-
-        process_definition :name => "do_the_laundry" do
-            sequence do
-                participant :ref => "al", :activity => "sort ${type}"
-                participant :ref => "bob", :activity => "clean ${type}"
-                sleep :for => "1h30m"
-                al :activity => "hang ${type}"
-                al :activity => "iron ${type}"
-            end
-        end
+    sequence do
+      subprocess :ref => "take_out_garbage"
+      do_the_laundry :type => "white"
+      subprocess :ref => "do_the_laundry", :type => "colors"
     end
+
+    process_definition :name => "take_out_garbage" do
+      concurrence do
+        participant :ref => "al", :activity => "take out old paper"
+        bob :activity => "take out garbage"
+      end
+    end
+
+    process_definition :name => "do_the_laundry" do
+      sequence do
+        participant :ref => "al", :activity => "sort ${type}"
+        participant :ref => "bob", :activity => "clean ${type}"
+        sleep :for => "1h30m"
+        al :activity => "hang ${type}"
+        al :activity => "iron ${type}"
+      end
+    end
+  end
 #:code#
 
 Note how the subprocess name (and the participant names) can be used as expression names for a shorter syntax. Of course names with white spaces and other niceties won't work for this shorter syntax.
@@ -1267,10 +1267,10 @@ If the engine <tt>:remote_definition_allowed</tt> parameter has been set to true
 OK to reference process definitions via their URL :
 
 #:code#ruby#
-    sequence do
-        participant "al"
-        subprocess :ref => "http://company.process.server/defs/defXYZ.xml"
-    end
+  sequence do
+    participant "al"
+    subprocess :ref => "http://company.process.server/defs/defXYZ.xml"
+  end
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/SubProcessRefExpression.html
@@ -1281,24 +1281,24 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 A generic timeout mechanism : sets a timeout for a whole process segment, not just a single participant or when expression.
 
 #:code#xml#
-    <timeout after="1w">
-        <concurrence>
-            <participant ref="alpha" />
-            <subprocess ref="do_the_homework" />
-        </concurrence>
-    </timeout>
+  <timeout after="1w">
+    <concurrence>
+      <participant ref="alpha" />
+      <subprocess ref="do_the_homework" />
+    </concurrence>
+  </timeout>
 #:code#
 
 #:code#ruby#
-    _timeout :after => "2d" do
-        sequence do
+  _timeout :after => "2d" do
+    sequence do
 
-            participant :ref => "alpha", :timeout => "1d"
-                # of course individal timeout settings are still ok
+      participant :ref => "alpha", :timeout => "1d"
+        # of course individal timeout settings are still ok
 
-            participant :ref => "bravo"
-        end
+      participant :ref => "bravo"
     end
+  end
 #:code#
 
 Note that when using a Ruby process definition, you'd better escape the 'timeout' expression with an underscore at the front to avoid collisions with the 'timeout' method provided by the timeout.rb standard Ruby library.
@@ -1309,22 +1309,22 @@ Note that when using a Ruby process definition, you'd better escape the 'timeout
 h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="exp_undefined"></a>undefined
 
 #:code#xml#
-    <if>
-        <undefined field="customer">
-        <!-- then -->
-        <subprocess ref="determine_customer" />
-    </if>
+  <if>
+    <undefined field="customer">
+    <!-- then -->
+    <subprocess ref="determine_customer" />
+  </if>
 #:code#
 
 Note that since OpenWFEru 0.9.17, it's possible to write :
 
 #:code#ruby#
-    _if :test => "${field:customer} is not set" do
-        sequence do
-            participant "A"
-            participant "B"
-        end
+  _if :test => "${field:customer} is not set" do
+    sequence do
+      participant "A"
+      participant "B"
     end
+  end
 #:code#
 
 "rdoc":rdoc/classes/OpenWFE/DefinedExpression.html
@@ -1337,16 +1337,16 @@ Every expression accepts an implicit 'tag' attribute which defines a name under 
 The name (the tag) can then be used by a 'redo' or an 'undo' expression.
 
 #:code#ruby#
-    concurrence do
-        sequence :tag => "side_job" do
-            participant "alice"
-            participant "bob"
-        end
-        sequence do
-            participant "charly"
-            _undo :ref => "side_job"
-        end
+  concurrence do
+    sequence :tag => "side_job" do
+      participant "alice"
+      participant "bob"
     end
+    sequence do
+      participant "charly"
+      _undo :ref => "side_job"
+    end
+  end
 #:code#
 
 In this example, after participant 'charly' did his job, the first sequence (tagged 'side_job') will get cancelled (and its reply to the parent 'concurrence' will get triggered).
@@ -1378,13 +1378,13 @@ h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.p
 The 'when' expression polls a conditional statement and triggers the nested process segment when the condition evaluates to true.
 
 #:code#xml#
-    <concurrence>
-        <participant ref="alpha" />
-        <when test="${for_bravo} == true">
-            <participant ref="bravo" />
-        </when>
-        <participant ref="charly" />
-    </concurrence>
+  <concurrence>
+    <participant ref="alpha" />
+    <when test="${for_bravo} == true">
+      <participant ref="bravo" />
+    </when>
+    <participant ref="charly" />
+  </concurrence>
 #:code#
 
 When the variable "for_bravo" will contain the value "true", participant "bravo" will receive a workitem.
@@ -1392,13 +1392,13 @@ When the variable "for_bravo" will contain the value "true", participant "bravo"
 By default 'when' evaluates the condition until true every 10 seconds.
 
 #:code#ruby#
-    concurrence do
-        alpha
-        when :test => "${for_bravo} == true", :frequency => "1h", :timeout => "13d4h" do
-            bravo
-        end
-        charly
+  concurrence do
+    alpha
+    when :test => "${for_bravo} == true", :frequency => "1h", :timeout => "13d4h" do
+      bravo
     end
+    charly
+  end
 #:code#
 
 In this Ruby process definition (where all the participant expressions where simplified to just their names), the when condition is checked only every hour and after thirteen days and four hours, the 'when' is cancelled (and participant bravo will not receive a workitem).
