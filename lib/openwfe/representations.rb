@@ -606,6 +606,7 @@ module OpenWFE
         OpenWFE.rep_insert_links(exp, opts, xml)
 
         xml.fei exp.fei.to_s
+        xml.name exp.fei.expname
         xml.tag! 'class', exp.class.name
         xml.apply_time OpenWFE::Xml.to_httpdate(exp.apply_time)
 
@@ -621,7 +622,7 @@ module OpenWFE
           rep = rep.respond_to?(:to_json) ? rep.to_json : rep.inspect
 
           xml.raw rep
-          xml.raw_updated exp.raw_rep_updated
+          xml.raw_updated (exp.raw_rep_updated == true)
 
           # TODO : variables ?
         end
@@ -641,6 +642,7 @@ module OpenWFE
     h = OpenWFE.rep_insert_links(exp, opts, {})
 
     h['fei'] = exp.fei.to_s
+    h['name'] = exp.fei.expname
     h['class'] = exp.class.to_s
     h['apply_time'] = exp.apply_time.to_s
 
@@ -653,7 +655,7 @@ module OpenWFE
     end
 
     h['raw'] = exp.raw_representation
-    h['raw_updated'] = exp.raw_rep_updated
+    h['raw_updated'] = (exp.raw_rep_updated == true)
 
     # TODO : variables ?
 
