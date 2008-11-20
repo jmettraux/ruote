@@ -95,6 +95,7 @@ require 'ft_56_timeout'
 require 'ft_57_a'
 require 'ft_58_ejournal'
 require 'ft_58b_ejournal'
+require 'ft_58c_representations'
 require 'ft_59_ps'
 
 require 'ft_60_ecancel'

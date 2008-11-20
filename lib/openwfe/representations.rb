@@ -66,6 +66,8 @@ module OpenWFE
 
     def links (item, hint)
 
+      #p [ 0, item.class, hint ]
+
       key = item.class
       content = if item.respond_to?(:first)
         item.first
@@ -80,18 +82,54 @@ module OpenWFE
 
       key = [ key, content ] if content
 
-      #p [ key, GENS[key] ]
+      #p [ 1, key, GENS[key] ]
 
       method = GENS[key] || (return [])
 
       send(method, item)
     end
 
+    #
+    # Override me (message to ruote-rest and ruote-web2)
+    #
+    # (Warning : this method turns dots to underscores in the id)
+    #
+    def link (rel, res, id=nil)
+
+      href = "/#{res}"
+      href = "#{href}/#{OpenWFE.swapdots(id)}" if id
+
+      [ href, rel ]
+    end
+
+    def insert_links (item, options, target, hint)
+
+      links(item, hint).each do |href, rel|
+
+        do_insert_link(target, options, href, rel)
+      end
+
+      target
+    end
+
     protected
+
+      def do_insert_link (target, options, href, rel)
+
+        atts = { 'href' => href, 'rel' => rel }
+
+        if options[:builder] # target is xml
+          target.link(atts)
+        else # target is a Hash
+          (target['links'] ||= []) << atts
+        end
+
+        target
+      end
 
       def flatten_fexp_class (c)
 
-        return nil unless c
+        return c unless c.is_a?(Class)
 
         c.ancestors.include?(OpenWFE::FlowExpression) ?
           OpenWFE::FlowExpression : c
@@ -110,19 +148,12 @@ module OpenWFE
         #[ Hash, OpenWFE::FlowExpression ] => 'expressions',
         OpenWFE::ProcessError => 'error',
         [ Array, OpenWFE::ProcessError ] => 'errors',
-        [ Hash, OpenWFE::ProcessError ] => 'errors'
-      }
+        [ Hash, OpenWFE::ProcessError ] => 'errors',
 
-      #
-      # Override me (message to ruote-rest and ruote-web2)
-      #
-      # (Warning : this method turns dots to underscores in the id)
-      #
-      def link (rel, res, id=nil)
-        href = "/#{res}"
-        href = "#{href}/#{OpenWFE.swapdots(id)}" if id
-        [ href, rel ]
-      end
+        [ OpenWFE::FlowExpressionId, :environment ] => 'to_environment',
+        [ OpenWFE::FlowExpressionId, :child ] => 'to_child',
+        [ OpenWFE::FlowExpressionId, :parent ] => 'to_parent'
+      }
 
       def gen_links (res, item, &block)
         if block # unique element
@@ -154,48 +185,51 @@ module OpenWFE
         gen_links('errors', item)
       end
 
+      # all about expressions...
+
+      def expression_id (item)
+
+        fei = item.fei
+
+        e = (
+          item.is_a?(OpenWFE::Environment) ||
+          OpenWFE::Environment.expression_names.include?(fei.expname)) ?
+          'e' : ''
+
+        "#{fei.wfid}/#{fei.expid}#{e}"
+      end
+
       def expression (item)
-        gen_links('expressions', item) { |i|
-          "#{i.fei.wfid}/#{i.fei.expid}" +
-          (i.is_a?(OpenWFE::Environment) ? 'e' : '')
-        }
+        gen_links('expressions', item) { |fexp| expression_id(fexp) }
       end
       def expressions (item)
         gen_links('expressions', item)
       end
-  end
 
-  #
-  # Insert some links (if found under options[:linkgen])
-  #
-  def self.rep_insert_links (item, options, target, hint, is_xml)
-
-    linkgen = options[:linkgen] || (return target)
-    linkgen = OpenWFE::PlainLinkGenerator.new if linkgen == :plain
-
-    linkgen.links(item, hint).each do |l|
-
-      atts = { 'href' => l[0], 'rel' => l[1] }
-      atts['type'] = l[2] if l[2]
-
-      if is_xml
-        target.link(atts)
-      else # Hash
-        (target['links'] ||= []) << atts
+      def to_environment (env)
+        [ link('environment_expression', 'expressions', expression_id(env)) ]
       end
-    end
-
-    target
+      def to_parent (par)
+        [ link('parent_expression', 'expressions', expression_id(par)) ]
+      end
+      def to_child (child)
+        [ link('child_expression', 'expressions', expression_id(child)) ]
+      end
   end
 
-  def Xml.rep_insert_links (item, options, xml, hint=nil)
+  def self.rep_insert_link (item, options, target, rel_symbol)
 
-    OpenWFE.rep_insert_links(item, options, xml, hint, true)
+    rep.insert_links(item, options, target, rel_symbol)
   end
 
-  def Json.rep_insert_links (item, options, h, hint=nil)
+  def self.rep_insert_links (item, options, target, hint=nil)
 
-    OpenWFE.rep_insert_links(item, options, h, hint, false)
+    return target unless item
+
+    lgen = options[:linkgen] || (return target)
+    lgen = PlainLinkGenerator.new if lgen == :plain
+
+    lgen.insert_links(item, options, target, hint)
   end
 
   #
@@ -207,7 +241,7 @@ module OpenWFE
 
     return elts if opts[:nometa]
 
-    rep_insert_links(col, opts, { 'elements' => elts }, hint)
+    OpenWFE.rep_insert_links(col, opts, { 'elements' => elts }, hint)
   end
 
   #
@@ -219,7 +253,7 @@ module OpenWFE
 
       xml.tag!(tag, :count => col.size) do
 
-        rep_insert_links(col, opts, xml, hint)
+        OpenWFE.rep_insert_links(col, opts, xml, hint)
 
         col.each(&block)
       end
@@ -332,7 +366,7 @@ module OpenWFE
 
       xml.workitem do
 
-        rep_insert_links(wi, options, xml)
+        OpenWFE.rep_insert_links(wi, options, xml)
 
         fei_to_xml(wi.fei, options)
 
@@ -405,9 +439,6 @@ module OpenWFE
   #
   def Json.workitems_to_h (wis, opts={})
 
-    #h = { 'elements' =>  wis.collect { |wi| workitem_to_json(wi, opts) } }
-    #rep_insert_links(wis, opts, h, OpenWFE::InFlowWorkItem)
-
     collection_to_h(wis, opts, OpenWFE::InFlowWorkitem) { |wi|
       workitem_to_json(wi, opts)
     }
@@ -418,7 +449,7 @@ module OpenWFE
   #
   def Json.workitem_to_h (wi, opts={})
 
-    rep_insert_links(wi, opts, wi.to_h)
+    OpenWFE.rep_insert_links(wi, opts, wi.to_h)
   end
 
   #--
@@ -453,7 +484,7 @@ module OpenWFE
 
       xml.process do
 
-        rep_insert_links(pr, options, xml)
+        OpenWFE.rep_insert_links(pr, options, xml)
 
         xml.wfid pr.wfid
         xml.wfname pr.wfname
@@ -521,7 +552,7 @@ module OpenWFE
   #
   def Json.process_to_h (pr, opts={})
 
-    h = rep_insert_links(pr, opts, {})
+    h = OpenWFE.rep_insert_links(pr, opts, {})
 
     %w{
       wfid wfname wfrevision launch_time paused timestamp branches
@@ -572,14 +603,24 @@ module OpenWFE
     builder(opts) do |xml|
       xml.expression do
 
-        rep_insert_links(exp, opts, xml)
+        OpenWFE.rep_insert_links(exp, opts, xml)
 
         xml.fei exp.fei.to_s
+        xml.tag! 'class', exp.class.name
+        xml.apply_time OpenWFE::Xml.to_httpdate(exp.apply_time)
 
         unless opts[:short]
 
-          xml.apply_time exp.apply_time.to_s
-          xml.raw exp.raw_representation
+          OpenWFE.rep_insert_links(exp.parent_id, opts, xml, :parent)
+          OpenWFE.rep_insert_links(exp.environment_id, opts, xml, :environment)
+          (exp.children || []).each do |cfei|
+            OpenWFE.rep_insert_links(cfei, opts, xml, :child)
+          end
+
+          rep = exp.raw_representation
+          rep = rep.respond_to?(:to_json) ? rep.to_json : rep.inspect
+
+          xml.raw rep
           xml.raw_updated exp.raw_rep_updated
         end
       end
@@ -599,7 +640,7 @@ module OpenWFE
 
     h['fei'] = exp.fei.to_s
 
-    rep_insert_links(exp, opts, h)
+    OpenWFE.rep_insert_links(exp, opts, h)
 
     return h if opts[:short]
 
@@ -625,7 +666,7 @@ module OpenWFE
     builder(options) do |xml|
       xml.error do
 
-        rep_insert_links(err, options, xml)
+        OpenWFE.rep_insert_links(err, options, xml)
 
         xml.date err.date # when
         xml.fei err.fei.to_s # what
@@ -658,7 +699,7 @@ module OpenWFE
     h['fei'] = err.fei.to_s
     h['message'] = err.stacktrace.split("\n")[0]
 
-    rep_insert_links(err, opts, h)
+    OpenWFE.rep_insert_links(err, opts, h)
 
     return h if opts[:short]
 

@@ -19,7 +19,7 @@ require 'openwfe/representations'
 
 
 
-class FlowTest58 < Test::Unit::TestCase
+class FlowTest58b < Test::Unit::TestCase
   include FlowTestBase
 
   #
@@ -68,44 +68,6 @@ class FlowTest58 < Test::Unit::TestCase
     assert_equal(
       'error inside of block participant',
       errors.first.stacktrace.split("\n").first)
-
-    purge_engine
-  end
-
-  #
-  # checking to_xml and to_json
-  #
-  def test_1
-
-    ejournal = @engine.get_error_journal
-
-    @engine.register_participant(:alpha) do |wi|
-      raise 'something went wrong Major Tom'
-    end
-
-    fei = launch Test0
-
-    sleep 0.350
-
-    ps = @engine.process_status(fei)
-
-    xml = OpenWFE::Xml.process_to_xml(ps, :indent => 2, :linkgen => :plain)
-    #puts xml
-    xml = REXML::Document.new(xml)
-
-    assert_equal(
-      'something went wrong Major Tom', xml.root.elements['//message'].text)
-
-    h = OpenWFE::Json.process_to_h(ps, :linkgen => :plain)
-    #puts h.inspect
-
-    errs = h['errors']
-
-    assert_equal 2, errs.size
-    assert_equal 1, errs['elements'].size
-
-    assert_equal(
-      'something went wrong Major Tom', errs['elements'].first['message'])
 
     purge_engine
   end

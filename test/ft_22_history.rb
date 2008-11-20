@@ -15,33 +15,23 @@ require 'openwfe/def'
 class FlowTest22 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-  #
-  # Test 0
-  #
-
   class TestDefinition0 < OpenWFE::ProcessDefinition
     sequence do
-      _print "a"
-      _print "b"
-      participant "c"
+      _print 'a'
+      _print 'b'
+      participant 'c'
     end
   end
 
-  def test_history_0
+  def test_0
 
     @engine.register_participant 'c' do
       @tracer << "c\n"
     end
 
-    @engine.init_service "history", OpenWFE::InMemoryHistory
+    @engine.init_service 'history', OpenWFE::InMemoryHistory
 
-    history = @engine.application_context["history"]
+    history = @engine.application_context['history']
 
     dotest TestDefinition0, %w{ a b c }.join("\n")
 
@@ -55,7 +45,7 @@ class FlowTest22 < Test::Unit::TestCase
     assert_equal 4, history.entries.size
   end
 
-  def test_history_1
+  def test_1
 
     @engine.register_participant 'c' do
       @tracer << "c\n"
