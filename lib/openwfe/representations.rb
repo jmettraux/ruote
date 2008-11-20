@@ -622,6 +622,8 @@ module OpenWFE
 
           xml.raw rep
           xml.raw_updated exp.raw_rep_updated
+
+          # TODO : variables ?
         end
       end
     end
@@ -636,17 +638,25 @@ module OpenWFE
 
   def Json.expression_to_h (exp, opts={})
 
-    h = {}
+    h = OpenWFE.rep_insert_links(exp, opts, {})
 
     h['fei'] = exp.fei.to_s
-
-    OpenWFE.rep_insert_links(exp, opts, h)
+    h['class'] = exp.class.to_s
+    h['apply_time'] = exp.apply_time.to_s
 
     return h if opts[:short]
 
-    h['apply_time'] = exp.apply_time.to_s
+    OpenWFE.rep_insert_links(exp.parent_id, opts, h, :parent)
+    OpenWFE.rep_insert_links(exp.environment_id, opts, h, :environment)
+    (exp.children || []).each do |cfei|
+      OpenWFE.rep_insert_links(cfei, opts, h, :child)
+    end
+
     h['raw'] = exp.raw_representation
     h['raw_updated'] = exp.raw_rep_updated
+
+    # TODO : variables ?
+
     h
   end
 
