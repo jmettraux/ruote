@@ -622,7 +622,7 @@ module OpenWFE
           rep = rep.respond_to?(:to_json) ? rep.to_json : rep.inspect
 
           xml.raw rep
-          xml.raw_updated (exp.raw_rep_updated == true)
+          xml.raw_updated(exp.raw_rep_updated == true)
 
           # TODO : variables ?
         end
