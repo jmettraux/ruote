@@ -145,6 +145,9 @@ end}}, li.attributes)
     assert_equal 2, workitems.size
     assert_equal '/workitems/20080919-equestris/0_0', workitems.first.uri
     assert_equal '/workitems/20080919-equestris/0_1', workitems.last.uri
+
+    h = OpenWFE::Json.workitems_to_h(wis, :indent => 2, :linkgen => :plain)
+    assert_equal 2, h['elements'].size
   end
 
   def test_3
