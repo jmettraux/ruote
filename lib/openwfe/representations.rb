@@ -439,8 +439,8 @@ module OpenWFE
   #
   def Json.workitems_to_h (wis, opts={})
 
-    collection_to_h(wis, opts, OpenWFE::InFlowWorkitem) { |wi|
-      workitem_to_json(wi, opts)
+    collection_to_h(wis, opts, OpenWFE::InFlowWorkItem) { |wi|
+      workitem_to_h(wi, opts)
     }
   end
 
