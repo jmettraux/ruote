@@ -542,8 +542,8 @@ module OpenWFE
   #
   def Json.processes_to_h (pss, opts={})
 
-    collection_to_h(wis, opts, OpenWFE::InFlowWorkitem) { |wi|
-      workitem_to_json(wi, opts.merge(:short => true))
+    collection_to_h(pss, opts, OpenWFE::InFlowWorkItem) { |fei, ps|
+      process_to_h(ps, opts.merge(:short => true))
     }
   end
 

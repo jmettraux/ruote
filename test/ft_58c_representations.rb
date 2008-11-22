@@ -60,6 +60,7 @@ class FlowTest58c < Test::Unit::TestCase
     #puts h.inspect
 
     errs = h['errors']
+    #p h['errors']
 
     assert_equal 2, errs.size
     assert_equal 1, errs['elements'].size
@@ -72,6 +73,14 @@ class FlowTest58c < Test::Unit::TestCase
       ps.all_expressions, :indent => 2, :linkgen => :plain)
     #puts xml
     assert_match "<link href=\"/expressions/#{fei.wfid}/0e\" rel=\"environment_expression\"/>", xml
+
+    #
+    # checking processes_to_h
+
+    pss = @engine.list_process_status
+
+    a = OpenWFE::Json.processes_to_h(pss, :linkgen => :plain)
+    assert_equal 1, a['elements'].size
 
     purge_engine
   end

@@ -20,12 +20,7 @@ require 'openwfe/engine/status_methods'
 require 'rutest_utils'
 
 
-class UtilXmlTest < Test::Unit::TestCase
-
-  #def setup
-  #end
-  #def teardown
-  #end
+class RepresentationsTest < Test::Unit::TestCase
 
   Struct.new('RackRequest', :scheme, :host, :port)
   Struct.new('RailsRequest', :protocol, :host, :port)
