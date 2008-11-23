@@ -62,6 +62,8 @@ module OpenWFE
   #
   # a 'plain' implementation of a link generator
   #
+  # TODO : what about inserting service links (main menu) ?
+  #
   class PlainLinkGenerator
 
     def links (item, hint)
@@ -100,6 +102,16 @@ module OpenWFE
       href = "#{href}/#{OpenWFE.swapdots(id)}" if id
 
       [ href, rel ]
+    end
+
+    #
+    # Calls link() and converts its result from array to hash
+    # { 'href' => x, 'rel' => y }
+    #
+    def hlink (rel, res, id=nil)
+
+      l = link(rel, res, id)
+      { 'href' => l[0], 'rel' => l[1] }
     end
 
     def insert_links (item, options, target, hint)
@@ -362,6 +374,8 @@ module OpenWFE
   #
   def Xml.workitem_to_xml (wi, options={})
 
+    wi = wi.to_owfe_workitem if wi.respond_to?(:to_owfe_workitem)
+
     builder(options) do |xml|
 
       xml.workitem do
@@ -448,6 +462,8 @@ module OpenWFE
   # Turns a workitem into a hash
   #
   def Json.workitem_to_h (wi, opts={})
+
+    wi = wi.to_owfe_workitem if wi.respond_to?(:to_owfe_workitem)
 
     OpenWFE.rep_insert_links(wi, opts, wi.to_h)
   end
