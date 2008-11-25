@@ -144,5 +144,27 @@ a|b|3
 
     dotest Test4, "123falsetotoToTo"
   end
+
+  #
+  # Test 4b
+  #
+
+  DEF4B = %{
+    <process-definition name="a_test" revision="4b">
+      <sequence>
+        <set field="f0">
+          <a>{ "action": "PUT", "resource_id": 77 }</a>
+        </set>
+        <print>${r:wi.f0.inspect}</print>
+      </sequence>
+    </process-definition>
+  }
+
+  def test_4b
+
+    require 'json'
+
+    dotest DEF4B, '{"action"=>"PUT", "resource_id"=>77}'
+  end
 end
 

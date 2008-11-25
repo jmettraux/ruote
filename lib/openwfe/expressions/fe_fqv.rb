@@ -209,7 +209,7 @@ module OpenWFE
 
         begin
 
-          YAML.load text
+          YAML.load(text)
 
         rescue Exception => e
           linfo { "from_yaml() failed : #{e}" }
@@ -221,7 +221,7 @@ module OpenWFE
 
         begin
 
-          OpenWFE::Xml.from_xml text
+          OpenWFE::Xml.from_xml(text)
 
         rescue Exception => e
           linfo { "from_xml() failed : #{e}" }
