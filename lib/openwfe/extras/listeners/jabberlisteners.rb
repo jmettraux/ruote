@@ -39,8 +39,9 @@
 
 require 'yaml'
 require 'xmpp4r-simple'
-require 'json'
 
+require 'openwfe/util/xml'
+require 'openwfe/util/json'
 require 'openwfe/service'
 require 'openwfe/listeners/listener'
 
@@ -144,6 +145,8 @@ module OpenWFE
       
       # Complicated guesswork that needs to happen here to detect the format
       def decode_workitem( msg )
+        ldebug { "decoding workitem from: #{msg}" }
+        
         # YAML?
         if msg.index('ruby/object:OpenWFE::InFlowWorkItem')
           YAML.load( msg )
@@ -153,8 +156,7 @@ module OpenWFE
         # Assume JSON encoded Hash
         else
           hash = defined?(ActiveSupport::JSON) ? ActiveSupport::JSON.decode(msg) : JSON.parse(msg)
-          wi = InFlowWorkItem.new
-          wi.from_h( hash )
+          OpenWFE.workitem_from_h( hash )
         end
       end
       

@@ -39,11 +39,22 @@
 
 require 'yaml'
 require 'xmpp4r-simple'
-require 'json'
 
 require 'openwfe/util/xml'
 require 'openwfe/util/json'
 
+if defined?( ActiveSupport )
+  # Fix broken ActiveSupport Time#to_json notation
+  class Time
+    def to_json(*a)
+      if ActiveSupport.use_standard_json_time_format
+        xmlschema.inspect
+      else
+        %("#{strftime("%Y/%m/%d %H:%M:%S")} #{formatted_offset(false)}")
+      end
+    end
+  end
+end
 
 module OpenWFE
   module Extras
@@ -118,13 +129,11 @@ module OpenWFE
           # Sensible defaults
           workitem.attributes.reverse_merge!({ 'format' => 'JSON' })
 
-          busy do
-            ldebug { "sending workitem to jid: #{target_jid}" }
-            self.connection.deliver( 
-              target_jid, 
-              encode_workitem( workitem, workitem.attributes['format'] ) 
-            )
-          end
+          ldebug { "sending workitem to jid: #{target_jid}" }
+          self.connection.deliver( 
+            target_jid, 
+            encode_workitem( workitem, workitem.attributes['format'] ) 
+          )
           
         else
           lerror { "no target_jid in workitem attributes!" }
@@ -173,13 +182,6 @@ module OpenWFE
         
       end
       
-      # Change status to 'busy' while performing a command, and back to 'chat'
-      # afterwards
-      def busy(&block)
-        self.connection.status( :dnd, "Working..." )
-        yield
-        self.connection.status( :chat, "JabberParticipant waiting for instructions" )
-      end
     end
   end
 end
