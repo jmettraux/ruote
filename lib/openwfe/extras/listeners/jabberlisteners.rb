@@ -50,6 +50,8 @@ module OpenWFE
     #
     # Use Jabber (XMPP) during a workflow to communicate with people/processes
     # outside the running engine in an asynchrous fashion.
+    # 
+    # 
     #
     class JabberListener < Service
       include MonitorMixin
@@ -64,6 +66,10 @@ module OpenWFE
       @@password = nil
       cattr_accessor :password
       
+      # Jabber resource
+      @@resource = 'listener'
+      cattr_accessor :resource
+      
       # Contacts that are always included in the participants roster
       @@contacts = []
       cattr_accessor :contacts
@@ -77,6 +83,7 @@ module OpenWFE
         self.class.jabber_id = options.delete(:jabber_id) if options.has_key?(:jabber_id)
         self.class.password  = options.delete(:password)  if options.has_key?(:password)
         self.class.contacts  = options.delete(:contacts)  if options.has_key?(:contacts)
+        self.class.resource  = options.delete(:resource)  if options.has_key?(:resource)
         
         # MonitorMixin
         service_name = "#{self.class}::#{self.class.jabber_id}"
@@ -111,7 +118,8 @@ module OpenWFE
       protected
       
       def connect!
-        @connection = Jabber::Simple.new( self.class.jabber_id + '/listener', self.class.password )
+        jid = self.class.jabber_id + '/' + self.class.resource
+        @connection = Jabber::Simple.new( jid, self.class.password )
         @connection.status( :chat, "JabberListener waiting for instructions" )
       end
       
@@ -134,8 +142,20 @@ module OpenWFE
         end
       end
       
+      # Complicated guesswork that needs to happen here to detect the format
       def decode_workitem( msg )
-        YAML.load( msg )
+        # YAML?
+        if msg.index('ruby/object:OpenWFE::InFlowWorkItem')
+          YAML.load( msg )
+        # XML?
+        elsif msg =~ /^<.*>$/m
+          OpenWFE::Xml.workitem_from_xml msg
+        # Assume JSON encoded Hash
+        else
+          hash = defined?(ActiveSupport::JSON) ? ActiveSupport::JSON.decode(msg) : JSON.parse(msg)
+          wi = InFlowWorkItem.new
+          wi.from_h( hash )
+        end
       end
       
       # Change status to 'busy' while performing a command, and back to 'chat'

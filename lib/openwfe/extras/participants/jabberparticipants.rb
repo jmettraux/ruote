@@ -41,12 +41,37 @@ require 'yaml'
 require 'xmpp4r-simple'
 require 'json'
 
+require 'openwfe/util/xml'
+require 'openwfe/util/json'
+
+
 module OpenWFE
   module Extras
     
     #
     # Use Jabber (XMPP) during a workflow to communicate with people/processes
     # outside the running engine in an asynchrous fashion.
+    # 
+    # The JabberParticipant will send a JSON encoded InFlowWorkItem to a Jabber 
+    # ID specified in the 'target_id' attribute of the workitem's attributes.
+    # To change the format sent, use the 'message_format' attribute of the
+    # workitem, and set it to either 'XML' or 'YAML' (defaults to 'JSON').
+    # 
+    # You can specify the JID, password and JID resource names on class level
+    # or by passing the :jabber_id, :password, or :resource keys to the 
+    # construct. By default the 'participant' resoure is used.
+    # 
+    # The roster management is currently dynamic as well. It will clear the
+    # roster when it starts, except for a hard coded list of contacts. As
+    # messages are sent out the roster will be populated with those JID's,
+    # making sure that the listener will respond to replies.
+    # 
+    # A small example:
+    # 
+    #   engine.register_participant( 
+    #     :jabber,
+    #     OpenWFE::Extras::JabberParticipant.new( :jabber_id => 'ruote@devbox', :password => 'secret', :contacts => ['kenneth@devbox'] )
+    #   )
     #
     class JabberParticipant
       include LocalParticipant
@@ -59,6 +84,10 @@ module OpenWFE
       @@password = nil
       cattr_accessor :password
       
+      # Jabber resource
+      @@resource = 'participant'
+      cattr_accessor :resource
+      
       # Contacts that are always included in the participants roster
       @@contacts = []
       cattr_accessor :contacts
@@ -70,6 +99,7 @@ module OpenWFE
         self.class.jabber_id = options.delete(:jabber_id) if options.has_key?(:jabber_id)
         self.class.password  = options.delete(:password)  if options.has_key?(:password)
         self.class.contacts  = options.delete(:contacts)  if options.has_key?(:contacts)
+        self.class.resource  = options.delete(:resource)  if options.has_key?(:resource)
         
         connect!
         setup_roster!
@@ -84,10 +114,16 @@ module OpenWFE
             self.connection.add( target_jid )
             self.connection.roster.accept_subscription( target_jid )
           end
+          
+          # Sensible defaults
+          workitem.attributes.reverse_merge!({ 'format' => 'JSON' })
 
           busy do
             ldebug { "sending workitem to jid: #{target_jid}" }
-            self.connection.deliver( target_jid, encode_workitem( workitem ) )
+            self.connection.deliver( 
+              target_jid, 
+              encode_workitem( workitem, workitem.attributes['format'] ) 
+            )
           end
           
         else
@@ -100,7 +136,8 @@ module OpenWFE
       def connect!
         ldebug { "setting up Jabber connection" }
         
-        @connection = Jabber::Simple.new( self.class.jabber_id + '/participant', self.class.password )
+        jid = self.class.jabber_id + '/' + self.class.resource
+        @connection = Jabber::Simple.new( jid, self.class.password )
         @connection.status( :chat, "JabberParticipant waiting for instructions" )
       end
       
@@ -125,8 +162,15 @@ module OpenWFE
         end
       end
       
-      def encode_workitem( wi )
-        YAML.dump( wi )
+      def encode_workitem( wi, format = 'JSON' )
+        if format.downcase == 'xml'
+          OpenWFE::Xml.workitem_to_xml( wi )
+        elsif format.downcase == 'yaml'
+          YAML.dump( wi )
+        else
+          OpenWFE::Json.workitem_to_h( wi ).to_json
+        end
+        
       end
       
       # Change status to 'busy' while performing a command, and back to 'chat'
