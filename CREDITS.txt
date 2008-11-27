@@ -2,18 +2,17 @@
 CREDITS
 =======
 
-OpenWFEru is an open source Ruby workflow and BPM engine.
+Ruote (OpenWFEru) is an open source Ruby workflow (and sometimes BPM) engine.
 
 
 The main project team
 ---------------------
 
 John Mettraux ( project lead ( john >at< openwfe.org ) )
+Kenneth Kalmer (jabber participant/listener, ruote-rest enhancements)
 Tomaso Tosolini - database persisted engine implementation and patches
 Alain Hoang ( configuration managaer )
 Matt Zukowski (senior developer)
-Nicolas Modrzyk ( senior developer )
-David Lee ( senior developer )
 
 Frederic Piccand
 Richard Jennings
@@ -26,6 +25,8 @@ Maarten Oelering - bug reports and test cases
 Nick Petrella - socket listener issues and Python interactivity, dollar patch
 Sakaguchi Masa - japanese website and articles in Japanese magazines
 Patrice Cappelaere - lots of feedback and ideas
+Nicolas Modrzyk ( senior developer )
+David Lee ( senior developer )
 
 
 Sponsors
