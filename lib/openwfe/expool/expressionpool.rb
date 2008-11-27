@@ -683,14 +683,14 @@ module OpenWFE
     # class and the do_process_workelement method of this ExpressionPool
     # class.
     #
+    # TODO : insert error handling here.
+    #
     def notify_error (error, fei, message, workitem)
 
-      fei = extract_fei fei
-        # densha requires that... :(
+      fei = extract_fei(fei)
 
-      se = OpenWFE::exception_to_s error
+      se = OpenWFE::exception_to_s(error)
 
-      #onotify :error, fei, message, workitem, error.class.name, se
       onotify(:error, fei, message, workitem, error.class.name, error.to_s)
 
       if error.is_a?(PausedError)

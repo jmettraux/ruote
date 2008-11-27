@@ -54,28 +54,11 @@ module OpenWFE
       #
       # Makes sure to return a FlowExpressionId instance.
       #
-      def extract_fei (object)
+      def extract_fei (o)
 
-        if object.is_a?(FlowExpressionId)
-
-          object
-
-        #elsif object.is_a?(FlowExpression) or
-        #  object.is_a?(InFlowItem)
-        elsif object.respond_to?(:fei)
-
-          object.fei
-
-        elsif object.is_a?(String)
-
-          FlowExpressionId.to_fei object
-
-        else
-
-          raise \
-            "cannot extract FlowExpressionId "+
-            "out of #{object.inspect}"
-        end
+        return o.fei if o.respond_to?(:fei)
+        return FlowExpressionId.to_fei(o) if o.is_a?(String)
+        raise "cannot extract FlowExpressionId out of #{o.inspect} (#{o.class})"
       end
 
       #
