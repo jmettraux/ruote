@@ -293,8 +293,9 @@ module OpenWFE
 
         handlers = lookup_variable('error_handlers') || {}
 
-        # TODO : continue here
-        #        probably store fei => handler_name
+        handlers[fei.dup] = on_error
+
+        set_variable('error_handlers', handlers)
 
         new_expression.attributes['on-error'] = on_error
           #
@@ -305,8 +306,8 @@ module OpenWFE
       # Encapsulating
       #   <parameter field="x" default="y" type="z" match="m" />
       #
-      # Somehow I have that : OpenWFEru is not a strongly typed language
-      # ... Anyway I implemented that to please Pat.
+      # Somehow I hate that param thing, Ruote is not a strongly typed language
+      # ... Anyway Pat seems to use it.
       #
       class Parameter
 

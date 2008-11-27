@@ -324,6 +324,19 @@ module OpenWFE
     alias :lv :lookup_variable
 
     #
+    # Returns a stack of variable values, from here down to the engine
+    # environment.
+    #
+    # A stack is simply an array whose first value is the local value and
+    # the last value, the value registered in the engine env (if any is
+    # registered there).
+    #
+    def lookup_variable_stack (varname)
+
+      get_environment.lookup_variable_stack(varname)
+    end
+
+    #
     # Unsets a variable in the current environment.
     #
     # The variable name may be prefixed by / to indicate process level scope

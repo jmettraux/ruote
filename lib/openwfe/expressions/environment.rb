@@ -91,12 +91,15 @@ module OpenWFE
     #
     def [] (key)
 
-      value = @variables[key]
-
-      return value \
+      return @variables[key] \
         if @variables.has_key?(key) or is_engine_environment?
 
-      return get_parent[key] if @parent_id
+      # else look in parent environment
+
+      return get_parent[key] \
+        if @parent_id
+
+      # finally look in engine (global) environment
 
       get_expression_pool.fetch_engine_environment[key]
     end
@@ -199,13 +202,21 @@ module OpenWFE
       get_parent.get_root_environment
     end
 
-    #--
-    #def get_subprocess_environment
-    #  return self if not @parent_id
-    #  return self if @parent_id.sub_instance_id != @fei.sub_instance_id
-    #  get_parent.get_subprocess_environment
-    #end
-    #++
+    #
+    # Fetches in an array (stack) all the values for a given variable from
+    # this environment up to the engine environement (parent chain).
+    #
+    def lookup_variable_stack (varname, stack=[])
+
+      val = self[varname]
+      stack << val unless val.nil?
+
+      return stack if is_engine_environment?
+      return get_parent.lookup_variable_stack(varname, stack) if @parent_id
+
+      get_expression_pool.fetch_engine_environment.lookup_variable_stack(
+        varname, stack)
+    end
 
     #
     # Returns a deep copy of this environment.

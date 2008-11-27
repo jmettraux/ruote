@@ -682,15 +682,12 @@ module OpenWFE
     # class and the do_process_workelement method of this ExpressionPool
     # class.
     #
-    # TODO : insert error handling here.
+    # Error handling is done here, if no handler was found, the error simply
+    # generate a notification (generally caught by an error journal).
     #
     def handle_error (error, fei, message, workitem)
 
-      fei = extract_fei(fei)
-
-      se = OpenWFE::exception_to_s(error)
-
-      onotify(:error, fei, message, workitem, error.class.name, error.to_s)
+      fei = extract_fei(fei) # just to be sure
 
       if error.is_a?(PausedError)
         lwarn do
@@ -702,9 +699,15 @@ module OpenWFE
         lwarn do
           "#{self.service_name} " +
           "operation :#{message.to_s} on #{fei.to_s} " +
-          "failed with\n" + se
+          "failed with\n" + OpenWFE::exception_to_s(error)
         end
       end
+
+      # notify or really handle ?
+
+      # TODO : insert error handling here
+
+      onotify(:error, fei, message, workitem, error.class.name, error.to_s)
     end
 
     #
