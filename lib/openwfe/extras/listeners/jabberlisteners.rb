@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2008, Kenneth Kalmer, opensourcery.co.za
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
