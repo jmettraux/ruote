@@ -24,17 +24,10 @@ require 'openwfe/expressions/expressionmap'
 
 class MiscTest < Test::Unit::TestCase
 
-  #def setup
+  #def test_starts_with
+  #  assert OpenWFE::starts_with("//a", "//")
+  #  assert (not OpenWFE::starts_with("/a", "//"))
   #end
-
-  #def teardown
-  #end
-
-  def test_starts_with
-
-    assert OpenWFE::starts_with("//a", "//")
-    assert (not OpenWFE::starts_with("/a", "//"))
-  end
 
   def test_ends_with
 

@@ -180,19 +180,20 @@ module OpenWFE
     nil
   end
 
-  #
+  #--
   # Returns true if the given string starts with the 'start' string.
   #
-  def OpenWFE.starts_with (string, start)
-    #
-    # my favourite way of doing that would be by adding this
-    # method to the String class, but that could be intrusive
-    # (as OpenWFE is meant at first as an embeddable workflow engine).
-    #
-    return false unless string
-    return false if string.length < start.length
-    string[0, start.length] == start
-  end
+  #def OpenWFE.starts_with (string, start)
+  #  #
+  #  # my favourite way of doing that would be by adding this
+  #  # method to the String class, but that could be intrusive
+  #  # (as OpenWFE is meant at first as an embeddable workflow engine).
+  #  #
+  #  return false unless string
+  #  return false if string.length < start.length
+  #  string[0, start.length] == start
+  #end
+  #++
 
   #
   # Returns true if the given string ends with the '_end' string.

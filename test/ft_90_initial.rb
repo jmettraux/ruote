@@ -10,7 +10,7 @@
 require 'flowtestbase'
 
 
-class FlowTest89 < Test::Unit::TestCase
+class FlowTest90 < Test::Unit::TestCase
   include FlowTestBase
 
   #

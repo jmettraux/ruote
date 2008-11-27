@@ -208,6 +208,7 @@ module OpenWFE
         exp.raw_rep_updated = @raw_rep_updated
 
         consider_tag(workitem, exp)
+        consider_on_error(workitem, exp)
 
         if val
           class << exp
@@ -267,9 +268,7 @@ module OpenWFE
       #
       class Tag
 
-        attr_reader \
-          :raw_expression,
-          :workitem
+        attr_reader :raw_expression, :workitem
 
         def flow_expression_id
           @raw_expression.fei
@@ -281,6 +280,25 @@ module OpenWFE
           @raw_expression = raw_expression.dup
           @workitem = workitem.dup
         end
+      end
+
+      #
+      # manages 'on-error' expression tags
+      #
+      def consider_on_error (workitem, new_expression)
+
+        on_error = new_expression.lookup_string_attribute(:on_error, workitem)
+
+        return unless on_error
+
+        handlers = lookup_variable('error_handlers') || {}
+
+        # TODO : continue here
+        #        probably store fei => handler_name
+
+        new_expression.attributes['on-error'] = on_error
+          #
+          # making sure that the value of tag doesn't change anymore
       end
 
       #

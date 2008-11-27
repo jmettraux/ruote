@@ -132,8 +132,7 @@ module OpenWFE
     def self.from_h (h)
 
       FIELDS.inject(FlowExpressionId.new) do |fei, f|
-        fei.instance_variable_set("@#{f}", h[f] || h[f.to_s])
-        fei
+        fei.instance_variable_set("@#{f}", h[f] || h[f.to_s]); fei
       end
     end
 
@@ -141,6 +140,7 @@ module OpenWFE
     # Builds a new FlowExpressionId out of a hash (overriding some defaults)
     #
     def self.new_fei (h={})
+
       from_h({
         :owfe_version => OPENWFERU_VERSION,
         :workflow_definition_url => 'no-url',
@@ -170,7 +170,7 @@ module OpenWFE
 
     def == (other)
 
-      return false if not other.kind_of?(FlowExpressionId)
+      return false unless other.is_a?(FlowExpressionId)
 
       #return self.to_s == other.to_s
         # no perf gain
@@ -204,10 +204,9 @@ module OpenWFE
       o = other_fei.dup
       o.expression_name = @expression_name
       o.expression_id = @expression_id
-
       return false unless self == o
 
-      OpenWFE::starts_with other_fei.expression_id, @expression_id
+      other_fei.expid[0, @expression_id.length] == @expression_id
     end
 
     #
@@ -239,8 +238,8 @@ module OpenWFE
     #
     def to_web_s
 
-      wid = wfid.gsub("\.", "_")
-      eid = expid.gsub("\.", "_")
+      wid = wfid.gsub("\.", '_')
+      eid = expid.gsub("\.", '_')
 
       URI.escape("#{wid}__#{eid}")
     end
@@ -251,9 +250,9 @@ module OpenWFE
     #
     def self.split_web_s (s)
 
-      i = s.rindex("__")
+      i = s.rindex('__')
 
-      [ s[0..i-1].gsub("\_", "."), s[i+2..-1].gsub("\_", ".") ]
+      [ s[0..i-1].gsub("\_", '.'), s[i+2..-1].gsub("\_", '.') ]
     end
 
     #
@@ -278,15 +277,15 @@ module OpenWFE
     alias :parent_wfid :parent_workflow_instance_id
 
     #
-    # Returns "" if this expression id belongs to a top process,
+    # Returns '' if this expression id belongs to a top process,
     # returns something like ".0" or ".1.3" if this exp id belongs to
     # an expression in a subprocess.
     # (Only used in some unit tests for now)
     #
     def sub_instance_id
 
-      i = workflow_instance_id.index(".")
-      return "" unless i
+      i = workflow_instance_id.index('.')
+      return '' unless i
       workflow_instance_id[i..-1]
     end
 
@@ -302,7 +301,7 @@ module OpenWFE
     #
     def last_sub_instance_id
 
-      i = workflow_instance_id.rindex(".")
+      i = workflow_instance_id.rindex('.')
       return nil unless i
       workflow_instance_id[i+1..-1]
     end
@@ -313,7 +312,7 @@ module OpenWFE
     #
     def is_in_parent_process?
 
-      (sub_instance_id == "")
+      (sub_instance_id == '')
     end
 
     #

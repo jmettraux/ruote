@@ -173,8 +173,7 @@ module OpenWFE
 
         rescue Exception => e
 
-          get_expression_pool.notify_error(
-            e, fei, :apply, workitem)
+          get_expression_pool.handle_error(e, fei, :apply, workitem)
         end
       end
     end
@@ -250,13 +249,11 @@ module OpenWFE
           # if there is an applied workitem, it means there
           # is a participant to cancel...
 
-        participant =
-          get_participant_map.lookup_participant(@participant_name)
+        participant = get_participant_map.lookup_participant(@participant_name)
 
         cancelitem = CancelItem.new(@applied_workitem)
 
-        get_participant_map.dispatch(
-          participant, @participant_name, cancelitem)
+        get_participant_map.dispatch(participant, @participant_name, cancelitem)
       end
   end
 

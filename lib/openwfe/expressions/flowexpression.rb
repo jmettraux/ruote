@@ -273,12 +273,6 @@ module OpenWFE
     #
     def owns_its_environment?
 
-      #ldebug do
-      #  "owns_its_environment?()\n" +
-      #  "  #{@fei.to_debug_s}\n" +
-      #  "  #{@environment_id.to_debug_s}"
-      #end
-
       return false if not @environment_id
 
       ei = @fei.dup
@@ -286,12 +280,6 @@ module OpenWFE
 
       ei.expression_name = 'neutral'
       vi.expression_name = 'neutral'
-
-      #ldebug do
-      #  "owns_its_environment?()\n"+
-      #  "   exp  #{ei.to_debug_s}\n"+
-      #  "   env  #{vi.to_debug_s}"
-      #end
 
       (ei == vi)
     end
@@ -301,7 +289,6 @@ module OpenWFE
     #
     def paused?
 
-      #(lookup_variable(VAR_PAUSED) == true)
       get_expression_pool.is_paused?(self)
     end
 
@@ -437,7 +424,7 @@ module OpenWFE
     #
     def lookup_boolean_attribute (attname, workitem, default=false)
 
-      result = lookup_downcase_attribute attname, workitem
+      result = lookup_downcase_attribute(attname, workitem)
       return default if result == nil
 
       (result == 'true')
@@ -450,13 +437,13 @@ module OpenWFE
     #
     def lookup_array_attribute (attname, workitem, options={})
 
-      tostring = options.delete :to_s
+      tostring = options.delete(:to_s)
 
-      v = lookup_attribute attname, workitem, options
+      v = lookup_attribute(attname, workitem, options)
 
       return nil unless v
 
-      v = v.to_s.split(",").collect { |e| e.strip } \
+      v = v.to_s.split(',').collect { |e| e.strip } \
         unless v.is_a?(Array)
 
       v = v.collect { |e| e.to_s } \
@@ -471,8 +458,7 @@ module OpenWFE
     #
     def has_attribute (attname)
 
-      attname = OpenWFE::symbol_to_name(attname) \
-        if attname.kind_of?(Symbol)
+      attname = OpenWFE::symbol_to_name(attname) if attname.is_a?(Symbol)
 
       (@attributes[attname] != nil)
     end
@@ -528,9 +514,9 @@ module OpenWFE
           # keeping track of the raw representation
           # of the top expression (for top recursion)
 
-      ldebug do
-        "new_environment() for #{@fei.to_debug_s} is #{env.fei.to_debug_s}"
-      end
+      #ldebug do
+      #  "new_environment() for #{@fei.to_debug_s} is #{env.fei.to_debug_s}"
+      #end
 
       env.store_itself
 
@@ -595,21 +581,6 @@ module OpenWFE
       binding()
     end
 
-    #--
-    # Used like the classical Ruby synchronize, but as the OpenWFE
-    # expression pool manages its own set of monitors, it's one of those
-    # monitors that is used. But the synchronize code looks like the class
-    # just included the MonitorMixin. No hassle.
-    #
-    #def synchronize
-    #  #ldebug { "synchronize() ---in--- for  #{@fei.to_debug_s}" }
-    #  get_expression_pool.get_monitor(@fei).synchronize do
-    #    yield
-    #  end
-    #  #ldebug { "synchronize() --out--  for  #{@fei.to_debug_s}" }
-    #end
-    #++
-
     #
     # Returns the text stored among the children
     #
@@ -664,7 +635,7 @@ module OpenWFE
       prefix = options[:prefix] || ''
       prefix = prefix.to_s
 
-      dash = (att_name.size > 0 and prefix.size > 0) ? "-" : ""
+      dash = (att_name.size > 0 and prefix.size > 0) ? '-' : ''
 
       v = lookup_attribute(
         "#{prefix}#{dash}#{att_name}", workitem, options)
@@ -811,7 +782,7 @@ module OpenWFE
     end
 
     #
-    # returns true if the expression class is a 'definition'.
+    # Returns true if the expression class is a 'definition'.
     #
     def self.is_definition?
       false
@@ -822,19 +793,20 @@ module OpenWFE
       end
     end
 
-    #--
-    # returns true if the expression class 'uses a template'
-    # (children will not immediately get expanded at 'parse' time)
     #
-    #def self.uses_template?
-    #  false
-    #end
-    #def self.uses_template
-    #  meta_def :uses_template? do
-    #    true
-    #  end
-    #end
-    #++
+    # Returns true if the expression with the given fei is an ancestor
+    # of this expression.
+    #
+    def descendant_of? (fei)
+
+      #p [ :d_of?, "#{@fei.wfid} #{@fei.expid}", "#{fei.wfid} #{fei.expid}" ]
+
+      return false if @parent_id == nil
+      return true if @parent_id == fei
+      return true if fei.ancestor_of?(@fei) # shortcut
+
+      get_expression_pool.fetch_expression(@parent_id).descendant_of?(fei)
+    end
 
     protected
 
@@ -875,19 +847,13 @@ module OpenWFE
       #
       def lookup_environment (varname)
 
-        if varname[0, 2] == '//'
-          return [
-            get_expression_pool.fetch_engine_environment,
-            varname[2..-1]
-          ]
-        end
+        return [
+          get_expression_pool.fetch_engine_environment, varname[2..-1]
+        ] if varname[0, 2] == '//'
 
-        if varname[0, 1] == '/'
-          return [
-            get_environment.get_root_environment,
-            varname[1..-1]
-          ]
-        end
+        return [
+          get_environment.get_root_environment, varname[1..-1]
+        ] if varname[0, 1] == '/'
 
         [ get_environment, varname ]
       end

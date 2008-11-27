@@ -158,13 +158,9 @@ module OpenWFE
 
     def initialize (block0=nil, &block1)
 
-      @block = if block1
-        block1
-      else
-        block0
-      end
+      @block = block1 ? block1 : block0
 
-      raise "Missing a block parameter" unless @block
+      raise 'Missing a block parameter' unless @block
     end
 
     def consume (workitem)

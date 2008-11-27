@@ -543,8 +543,7 @@ module OpenWFE
     #
     def fetch_expression (exp)
 
-      exp, fei = fetch(exp)
-      exp
+      fetch(exp)[0]
     end
 
     #
@@ -685,7 +684,7 @@ module OpenWFE
     #
     # TODO : insert error handling here.
     #
-    def notify_error (error, fei, message, workitem)
+    def handle_error (error, fei, message, workitem)
 
       fei = extract_fei(fei)
 
@@ -839,7 +838,7 @@ module OpenWFE
 
         rescue Exception => e
 
-          notify_error(e, fei, direction, workitem)
+          handle_error(e, fei, direction, workitem)
         end
       end
 
