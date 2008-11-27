@@ -296,19 +296,6 @@ module OpenWFE
 
     names :exp
 
-    #--
-    #def initialize (fei, parent_id, env_id, app_context, att)
-    #  #
-    #  # this responds to the FlowExpression constructor...
-    #  super fei, parent_id, env_id, app_context, nil
-    #    #
-    #    # but this triggers the RawExpression constructor :)
-    #  @attributes = att
-    #    #
-    #    # as this is not done by the RawExpression constructor
-    #end
-    #++
-
     def apply (workitem)
 
       @applied_workitem = workitem

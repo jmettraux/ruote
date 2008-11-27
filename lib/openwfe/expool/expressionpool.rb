@@ -709,7 +709,30 @@ module OpenWFE
       onotify(:error, fei, message, workitem, error.class.name, error.to_s)
     end
 
-      # TODO : move to 'protected'
+    #
+    # Gets the process definition (if necessary) and turns into
+    # into an expression tree (for storing into a RawExpression).
+    #
+    def determine_rep (param)
+
+      param = read_uri(param) if param.is_a?(URI)
+
+      get_def_parser.parse(param)
+    end
+
+    #
+    # Returns true if the process instance to which the expression
+    # belongs is currently paused.
+    #
+    def is_paused? (expression)
+
+      (@paused_instances[expression.fei.parent_wfid] != nil)
+    end
+
+    protected
+
+      #
+      # Checks if there is an event handler available
       #
       def do_handle_error (fei, workitem)
 
@@ -739,28 +762,6 @@ module OpenWFE
 
         return false # no error handler found
       end
-
-    #
-    # Gets the process definition (if necessary) and turns into
-    # into an expression tree (for storing into a RawExpression).
-    #
-    def determine_rep (param)
-
-      param = read_uri(param) if param.is_a?(URI)
-
-      get_def_parser.parse(param)
-    end
-
-    #
-    # Returns true if the process instance to which the expression
-    # belongs is currently paused.
-    #
-    def is_paused? (expression)
-
-      (@paused_instances[expression.fei.parent_wfid] != nil)
-    end
-
-    protected
 
       #
       # If the launch option :wait_for is set to true, this method
