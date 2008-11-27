@@ -291,13 +291,17 @@ module OpenWFE
 
         return unless on_error
 
-        handlers = lookup_variable('error_handlers') || {}
+        on_error = on_error.to_s
 
-        handlers[fei.dup] = on_error
+        handlers = lookup_variable('error_handlers') || []
+
+        handlers << [ fei.dup, on_error ]
+          # not using a hash to preserve insertion order
+          # "deeper last"
 
         set_variable('error_handlers', handlers)
 
-        new_expression.attributes['on-error'] = on_error
+        new_expression.attributes['on_error'] = on_error
           #
           # making sure that the value of tag doesn't change anymore
       end

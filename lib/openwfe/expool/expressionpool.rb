@@ -705,10 +705,40 @@ module OpenWFE
 
       # notify or really handle ?
 
-      # TODO : insert error handling here
-
+      do_handle_error(fei, workitem) ||
       onotify(:error, fei, message, workitem, error.class.name, error.to_s)
     end
+
+      # TODO : move to 'protected'
+      #
+      def do_handle_error (fei, workitem)
+
+        fexp = fetch_expression(fei)
+
+        eh_stack = fexp.lookup_variable_stack('error_handlers')
+
+        return false if eh_stack.empty?
+
+        eh_stack.each do |ehandlers|
+          ehandlers.reverse.each do |fei, on_error|
+
+            next unless fexp.descendant_of?(fei)
+
+            #p [ :on_error, on_error ]
+
+            tryexp = fetch_expression(fei)
+            cancel(tryexp)
+            reply_to_parent(tryexp, workitem, false)
+
+            #if on_error == ''
+            #else
+            #end
+            return true
+          end
+        end
+
+        return false # no error handler found
+      end
 
     #
     # Gets the process definition (if necessary) and turns into
