@@ -749,18 +749,43 @@ module OpenWFE
 
             #p [ :on_error, on_error ]
 
-            tryexp = fetch_expression(fei)
-            cancel(tryexp)
-            reply_to_parent(tryexp, workitem, false)
+            return false if on_error == ''
+              #
+              # blanking the 'on_error' makes the block behave like if there
+              # were no error handler at all (error is then passed to error
+              # journal usually (if there is one listening))
 
-            #if on_error == ''
-            #else
-            #end
+            tryexp = fetch_expression(fei)
+
+            if on_error == 'undo'
+              #
+              # block with 'undo' error handler simply gets undone in case of
+              # error
+              #
+              cancel(tryexp)
+              reply_to_parent(tryexp, workitem, false)
+              return true
+            end
+
+            # redo ?
+
+            # launch error handling subprocess
+
+            cancel(tryexp)
+
+            #template = on_error.is_a?(Array) ?
+            #  on_error : [ on_error.to_s, {}, [] ]
+            template = [ on_error, {}, [] ]
+              #
+              # error handler might be a subprocess or a participant
+
+            substitute_and_apply(tryexp, template, workitem)
+
             return true
           end
         end
 
-        return false # no error handler found
+        false # no error handler found
       end
 
       #

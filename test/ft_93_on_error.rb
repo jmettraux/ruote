@@ -16,10 +16,13 @@ class FlowTest93 < Test::Unit::TestCase
   #
   # TEST 0
 
+  # a block with on_error => 'undo' (or :undo)
+  # will simply get undone in case of error
+
   class Test0 < OpenWFE::ProcessDefinition
     sequence do
       _print '0'
-      sequence :on_error => '' do
+      sequence :on_error => :undo do
         alpha
         _print '1'
       end
@@ -55,11 +58,13 @@ class FlowTest93 < Test::Unit::TestCase
 
   def test_1
 
+    #log_level_to_debug
+
     @engine.register_participant :alpha do |fexp, workitem|
       raise 'houston, we have a problem'
     end
 
-    dotest Test0, "0\nfailed\n2"
+    dotest Test1, "0\nfailed\n2"
   end
 end
 

@@ -21,6 +21,7 @@ Richard Jennings
 Contributors
 ------------
 
+Raphael Simon - error handling mechanism design
 Maarten Oelering - bug reports and test cases
 Nick Petrella - socket listener issues and Python interactivity, dollar patch
 Sakaguchi Masa - japanese website and articles in Japanese magazines
