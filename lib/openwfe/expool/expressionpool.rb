@@ -53,7 +53,7 @@ require 'openwfe/expool/expool_pause_methods'
 require 'openwfe/expressions/environment'
 require 'openwfe/expressions/raw'
 
-require 'rufus/verbs' # gem 'rufus-lru'
+require 'rufus/verbs' # gem 'rufus-verbs'
 
 
 module OpenWFE
@@ -376,7 +376,7 @@ module OpenWFE
 
       wi = cancel(exp)
 
-      # ( remember that in case of error, no wi could get returned...)
+      # (remember that in case of error, no wi can get returned...)
 
       if wi
 
@@ -453,10 +453,14 @@ module OpenWFE
       #
       # manage tag, have to remove it so it can get 'redone' or 'undone'
       # (preventing abuse)
+      #
+      # do the same for the on_error handler if any
 
-      tagname = exp.attributes['tag'] if exp.attributes
-
+      tagname = exp.attributes['tag'] #if exp.attributes
       exp.delete_variable(tagname) if tagname
+
+      on_error = exp.attributes['on_error'] #if exp.attributes
+      exp.delete_variable(on_error) if on_error
 
       #
       # has raw_expression been updated ?
@@ -519,18 +523,7 @@ module OpenWFE
     #
     def fetch (exp)
 
-      fei = if exp.is_a?(FlowExpression)
-
-        exp.fei
-
-      elsif not exp.is_a?(FlowExpressionId)
-
-        raise "Cannot fetch expression with key : '#{fei}' (#{fei.class})"
-
-      else
-
-        exp
-      end
+      fei = extract_fei(exp)
 
       [ get_expression_storage[fei], fei ]
     end
@@ -747,8 +740,6 @@ module OpenWFE
 
             next unless fexp.descendant_of?(fei)
 
-            #p [ :on_error, on_error ]
-
             return false if on_error == ''
               #
               # blanking the 'on_error' makes the block behave like if there
@@ -757,27 +748,26 @@ module OpenWFE
 
             tryexp = fetch_expression(fei)
 
+            cancel(tryexp)
+
             if on_error == 'undo'
               #
               # block with 'undo' error handler simply gets undone in case of
               # error
               #
-              cancel(tryexp)
               reply_to_parent(tryexp, workitem, false)
               return true
             end
 
-            # redo ?
-
             # launch error handling subprocess
-
-            cancel(tryexp)
 
             #template = on_error.is_a?(Array) ?
             #  on_error : [ on_error.to_s, {}, [] ]
-            template = [ on_error, {}, [] ]
               #
               # error handler might be a subprocess or a participant
+
+            template = (on_error == 'redo') ?
+              tryexp.raw_representation : [ on_error, {}, [] ]
 
             substitute_and_apply(tryexp, template, workitem)
 

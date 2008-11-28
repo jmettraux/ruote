@@ -561,8 +561,8 @@ module OpenWFE
       return unless @children
 
       @children.each do |child_fei|
-        get_expression_pool.remove(child_fei) \
-          if child_fei.kind_of?(FlowExpressionId)
+        #next unless child.is_a?(FlowExpressionId)
+        get_expression_pool.remove(child_fei)
       end
     end
 
@@ -571,15 +571,12 @@ module OpenWFE
     #
     def remove_child (child_fei)
 
-      #fei = @children.delete child_fei
-      #store_itself if fei
-
-      i = @children.index child_fei
+      i = @children.index(child_fei)
 
       return unless i
 
-      @children.delete_at i
-      raw_children.delete_at i
+      @children.delete_at(i)
+      raw_children.delete_at(i)
       @raw_rep_updated = true
 
       store_itself
@@ -601,18 +598,10 @@ module OpenWFE
 
       text = (children || raw_children).inject('') do |r, child|
 
-        #if child.is_a?(RawExpression)
-        #  r << child.fei.to_s
-        #elsif child.is_a?(FlowExpressionId)
-        #  r << get_expression_pool\
-        #    .fetch_expression(child).raw_representation.to_s
-        #else
-        #  r << child.to_s
-        #end
         r << child.to_s
       end
 
-      return nil if text == ""
+      return nil if text == ''
 
       escape ? text : OpenWFE::dosub(text, self, workitem)
     end
@@ -633,9 +622,8 @@ module OpenWFE
     #
     def lookup_ref (workitem, prefix='')
 
-      ref = lookup_vf_attribute workitem, 'ref', :prefix => prefix
-      return ref.to_s if ref
-      nil
+      ref = lookup_vf_attribute(workitem, 'ref', :prefix => prefix)
+      ref ? ref.to_s : nil
     end
 
     #
@@ -650,8 +638,7 @@ module OpenWFE
 
       dash = (att_name.size > 0 and prefix.size > 0) ? '-' : ''
 
-      v = lookup_attribute(
-        "#{prefix}#{dash}#{att_name}", workitem, options)
+      v = lookup_attribute("#{prefix}#{dash}#{att_name}", workitem, options)
 
       att_name = "-#{att_name}" if att_name.size > 0
       prefix = "#{prefix}-" if prefix.size > 0
@@ -672,9 +659,7 @@ module OpenWFE
         lookup_attribute(
         "#{prefix}f#{att_name}", workitem, options)
 
-      return workitem.attributes[f.to_s] if f
-
-      nil
+      f ? workitem.attributes[f.to_s] : nil
     end
 
     #
