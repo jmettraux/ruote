@@ -83,16 +83,13 @@ module OpenWFE
     #
     def register_participant (regex, participant=nil, &block)
 
-      #get_participant_map.register_participant(
-      #  regex, participant, &block)
-
       params = if participant.class == Hash
         participant
       else
         { :participant => participant }
       end
 
-      get_participant_map.register_participant regex, params, &block
+      get_participant_map.register_participant(regex, params, &block)
     end
 
     #
@@ -102,7 +99,7 @@ module OpenWFE
     #
     def get_participant (participant_name)
 
-      get_participant_map.lookup_participant participant_name
+      get_participant_map.lookup_participant(participant_name)
     end
 
     #
@@ -114,7 +111,7 @@ module OpenWFE
     #
     def unregister_participant (participant_name)
 
-      get_participant_map.unregister_participant participant_name
+      get_participant_map.unregister_participant(participant_name)
     end
 
     #
@@ -123,10 +120,11 @@ module OpenWFE
     #
     # Returns a list of [ regex, participant ] pairs.
     #
-    def list_participants
+    def participants
 
       get_participant_map.participants
     end
+    alias :list_participants :participants
   end
 
 end
