@@ -60,6 +60,7 @@ require 'openwfe/expressions/fe_iterator'
 require 'openwfe/expressions/fe_fqv'
 require 'openwfe/expressions/fe_cancel'
 require 'openwfe/expressions/fe_do'
+require 'openwfe/expressions/fe_error'
 require 'openwfe/expressions/fe_save'
 require 'openwfe/expressions/fe_filter_definition'
 require 'openwfe/expressions/fe_filter'
@@ -136,6 +137,8 @@ module OpenWFE
 
       register UndoExpression
       register RedoExpression
+
+      register ErrorExpression
 
       register SaveWorkItemExpression
       register RestoreWorkItemExpression

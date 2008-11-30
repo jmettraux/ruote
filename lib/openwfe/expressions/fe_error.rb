@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2008, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,41 +37,48 @@
 # John Mettraux at openwfe.org
 #
 
+#require 'openwfe/expressions/flowexpression'
+#require 'openwfe/expressions/value'
+
+
 module OpenWFE
 
   #
-  # This error is raised when an expression belonging to a paused
-  # process is applied or replied to.
+  # TODO : rdoc me
   #
-  class PausedError < RuntimeError
+  class ErrorExpression < FlowExpression
+    include ValueMixin
+    include ConditionMixin
 
-    attr_reader :wfid
-
-    def initialize (wfid)
-
-      super "process '#{wfid}' is paused"
-      @wfid = wfid
-    end
+    #names :error, :exception
+    names :error
 
     #
-    # Returns a hash for this PausedError instance.
-    # (simply returns the hash of the paused process' wfid).
+    # is set to true when the expression got applied once (and raised
+    # its error).
     #
-    def hash
+    attr_accessor :applied
 
-      @wfid.hash
-    end
 
-    #
-    # Returns true if the other is a PausedError issued for the
-    # same process instance (wfid).
-    #
-    def == (other)
+    def reply (workitem)
 
-      return false unless other.is_a?(PausedError)
+      reply_to_parent(workitem) if @applied
+        #
+        # when error is 'replayed' simply reply to parent to let flow resume
 
-      (@wfid == other.wfid)
+      conditional = eval_condition(:if, workitem, :unless)
+
+      return reply_to_parent(workitem) if conditional == false
+
+      text = workitem.get_result.to_s
+
+      @applied = true
+
+      store_itself # making sure @applied is saved
+
+      raise(ForcedError.new(text))
     end
   end
+
 end
 

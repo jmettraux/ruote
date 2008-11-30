@@ -110,14 +110,9 @@ module OpenWFE
         return do_eval(rconditional, workitem) \
           if rconditional and not conditional
 
-        return nil \
-          unless conditional
+        return nil if conditional.nil?
 
-        ldebug { "do_eval_condition() 0 for  >#{conditional}<" }
-
-        conditional = unescape conditional
-
-        ldebug { "do_eval_condition() 1 for  >#{conditional}<" }
+        conditional = unescape(conditional)
 
         r = eval_set(conditional)
         return r if r != nil
@@ -130,8 +125,6 @@ module OpenWFE
         end
 
         conditional = do_quote(conditional)
-
-        ldebug { "do_eval_condition() 2 for  >#{conditional}<" }
 
         to_boolean(do_eval(conditional, workitem))
       end
@@ -184,7 +177,7 @@ module OpenWFE
       #
       def unescape (s)
 
-        s.gsub("&amp;", "&").gsub("&gt;", ">").gsub("&lt;", "<")
+        s.to_s.gsub('&amp;', '&').gsub('&gt;', '>').gsub('&lt;', '<')
       end
 
       #
@@ -215,10 +208,9 @@ module OpenWFE
       #
       def find_operator (string)
 
-        [ "==", "!=", "<=", ">=", "<", ">" ].each do |op|
-          i = string.index op
-          next unless i
-          return [ op, i ]
+        %w{ == != <= >= < > }.each do |op|
+          i = string.index(op)
+          return [ op, i ] if i
         end
 
         nil

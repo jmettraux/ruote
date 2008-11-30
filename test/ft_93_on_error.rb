@@ -161,7 +161,7 @@ class FlowTest93 < Test::Unit::TestCase
 
   def test_4
 
-    log_level_to_debug
+    #log_level_to_debug
 
     @engine.register_participant :alpha do |fexp, workitem|
       raise 'houston, we have a problem'
