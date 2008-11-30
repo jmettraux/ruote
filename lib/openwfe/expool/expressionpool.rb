@@ -356,6 +356,7 @@ module OpenWFE
       wi = exp.cancel
 
       remove(exp)
+        # will remove owned environment if any
 
       wi
     end
@@ -735,8 +736,10 @@ module OpenWFE
 
         return false if eh_stack.empty?
 
-        eh_stack.each do |ehandlers|
-          ehandlers.reverse.each do |fei, on_error|
+        eh_stack.each do |env, ehandlers|
+          ehandlers.reverse.each do |ehandler|
+
+            fei, on_error = ehandler
 
             next unless fexp.descendant_of?(fei)
 
@@ -748,7 +751,16 @@ module OpenWFE
 
             tryexp = fetch_expression(fei)
 
+            # remove error handler before consuming it
+
+            ehandlers.delete(ehandler)
+            env.store_itself
+
+            # cancel block that is adorned with 'on_error'
+
             cancel(tryexp)
+
+            ldebug { "do_handle_error() on_error : '#{on_error}'" }
 
             if on_error == 'undo'
               #
@@ -759,7 +771,7 @@ module OpenWFE
               return true
             end
 
-            # launch error handling subprocess
+            # switch to error handling subprocess
 
             #template = on_error.is_a?(Array) ?
             #  on_error : [ on_error.to_s, {}, [] ]

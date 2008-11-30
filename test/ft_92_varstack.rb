@@ -33,7 +33,9 @@ class FlowTest92 < Test::Unit::TestCase
   def test_0
 
     @engine.register_participant :alpha do |fexp, workitem|
-      @tracer << fexp.lookup_variable_stack('toto').inspect
+      @tracer << fexp.lookup_variable_stack('toto').collect { |env, val|
+        val
+      }.inspect
     end
 
     dotest Test0, '[2, 1, 0]'

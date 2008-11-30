@@ -134,5 +134,43 @@ class FlowTest93 < Test::Unit::TestCase
 
     dotest Test3, %w{ 0 1 1 2 3 }.join("\n")
   end
+
+  #
+  # TEST 4
+
+  class Test4 < OpenWFE::ProcessDefinition
+    sequence :on_error => 'parent_rescue' do
+      _print '0'
+      sequence :on_error => 'rescue' do
+        _print '1'
+        alpha
+        _print '2'
+      end
+    end
+    define 'rescue' do
+      sequence do
+        _print 'rescue'
+        bravo
+        _print '3'
+      end
+    end
+    define 'parent_rescue' do
+      _print 'parent_rescue'
+    end
+  end
+
+  def test_4
+
+    log_level_to_debug
+
+    @engine.register_participant :alpha do |fexp, workitem|
+      raise 'houston, we have a problem'
+    end
+    @engine.register_participant :bravo do |fexp, workitem|
+      raise "houston, we've had a problem"
+    end
+
+    dotest Test4, %w{ 0 1 rescue parent_rescue }.join("\n")
+  end
 end
 

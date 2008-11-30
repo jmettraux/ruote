@@ -58,7 +58,8 @@ module OpenWFE
     #
     def add_observer (channel, observer=nil, &callback)
 
-      observer = callback unless observer
+      #observer = callback unless observer
+      observer ||= callback
       (@observers[channel] ||= []) << observer
       observer
     end
@@ -71,15 +72,9 @@ module OpenWFE
     #
     def remove_observer (observer, channel=nil)
 
-      channels = if channel
-        [ channel ]
-      else
-        @observers.keys
-      end
+      channels = channel ? [ channel ] : @observers.keys
 
-      channels.each do |c|
-        do_remove_observer observer, c
-      end
+      channels.each { |c| do_remove_observer(observer, c) }
     end
 
     protected
@@ -127,7 +122,7 @@ module OpenWFE
 
         return false unless observers
 
-        observers.each { |obs| obs.call channel, *args }
+        observers.each { |obs| obs.call(channel, *args) }
 
         (observers.size > 0)
           #

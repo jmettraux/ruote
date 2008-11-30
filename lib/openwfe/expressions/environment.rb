@@ -118,7 +118,7 @@ module OpenWFE
     #
     def delete (key)
 
-      @variables.delete key
+      @variables.delete(key)
       store_itself
     end
 
@@ -209,7 +209,7 @@ module OpenWFE
     def lookup_variable_stack (varname, stack=[])
 
       val = self[varname]
-      stack << val unless val.nil?
+      stack << [ self, val ] unless val.nil?
 
       return stack if is_engine_environment?
       return get_parent.lookup_variable_stack(varname, stack) if @parent_id
