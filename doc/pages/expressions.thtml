@@ -367,6 +367,35 @@ This XML example will route the process (in fact the whole 'sequence' block, the
 
 h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="exp_eval"></a>eval
 
+A dangerous expression, it takes the value of a field or a variable and evaluates it as a segment of process definition.
+
+At some point in this example, the workitem field 'code' is filled with a segment of [Ruby] process definition, that gets executed later :
+
+#:code#xml#
+  <process-definition name="myprocess" revision="0">
+    <sequence>
+
+      <set field="code">
+        concurrence do
+          participant 'alpha'
+          participant 'toto'
+        end
+      </set>
+
+      <!-- a bit later... -->
+
+      <eval field-def="code" />
+
+    </sequence>
+  </process-definition>
+#:code#
+
+One could think about many scenarii, for instance, evaluating fragments of process definitions coming back from a participant (if it's trusted).
+
+This expression will raise an error if the configuration parameter <tt>:dynamic_eval_allowed</tt> isn't set to 'true'. You have to explicitely set this parameter, it defaults to 'false'.
+
+Eval works with fields and variables (or nested values).
+
 "rdoc":rdoc/classes/OpenWFE/EvalExpression.html
 
 
