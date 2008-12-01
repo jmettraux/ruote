@@ -188,6 +188,7 @@ body, td, select, input, li
     margin: 20px 0 30px 18%;
     */
     margin: 30px 0px 20px 0px;
+    padding-bottom: 10px;
     font-size: x-small;
     width: 100%;
 }

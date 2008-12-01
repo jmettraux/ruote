@@ -107,10 +107,7 @@ module OpenWFE
     def self.make_expression (context, exp_name, params, &block)
 
       string_child = nil
-      #attributes = OpenWFE::SymbolHash.new
       attributes = Hash.new
-
-      #puts " ... params.class is #{params.class}"
 
       if params.kind_of?(Hash)
 
@@ -271,7 +268,7 @@ module OpenWFE
 
       def self.extract_name_and_revision (s)
 
-        i = s.rindex("::")
+        i = s.rindex('::')
         s = s[i+2..-1] if i
 
         m = ProcessNameAndDefRex.match s
@@ -291,7 +288,7 @@ module OpenWFE
 
       def self.as_revision (s)
 
-        s.gsub("_", ".")
+        s.gsub('_', '.')
       end
 
       class Context
