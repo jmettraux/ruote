@@ -101,9 +101,9 @@ unless RAKEVERSION.match(/^0\.8\./)
     site.pages.include('**/*.thtml')
 
     site.ext_mapping(/thtml|textile/, 'html') do |page|
-      page.extend Format::HTML
-      page.page_filter Filters::RedCloth.new
-      page.page_filter Filters::Syntax.new
+      page.extend Rote::Format::HTML
+      page.page_filter Rote::Filters::RedCloth.new
+      page.page_filter Rote::Filters::Syntax.new
     end
 
     site.res.dir = 'doc/res'

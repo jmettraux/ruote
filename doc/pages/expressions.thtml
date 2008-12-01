@@ -48,6 +48,7 @@ Expressions are enumerated in the alphabetical order, but here is some kind of '
 * <a href="#exp_timeout">timeout</a>  - putting a timeout on a process segment
 * <a href="#exp_undefined">undefined</a>  - checking whether a process variable or a workitem is defined
 * <a href="#exp_undo">undo</a>  - undoing a process segment
+* <a href="#exp_error">error</a>  - forcing a process error (to interrupt flow or redirect it to error handler)
 * <a href="#exp_unset">unset</a>  - unsetting a process variable or a workitem field
 * <a href="#exp_variable">variable / v</a>  - getting the value of a process variable
 * <a href="#exp_when">when</a>  - executing a piece of process only when a condition realizes
@@ -327,6 +328,41 @@ The 'equals' expression is mainly used nested within an "if":#exp_if expression.
 Read more in the rdoc link that follows.
 
 "rdoc":rdoc/classes/OpenWFE/EqualsExpression.html
+
+
+h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="exp_error"></a>error
+
+The 'error' expression is used to trigger/force an error in a process instance. The error will thus interrupt the process or 'redirect' it to an error handler if one is present.
+
+This example process will get interrupted if the field customer is empty or not present. Note the usage of the optional :if attribute :
+
+#:code#ruby#
+  sequence do
+    participant :ref => 'unit1'
+    error 'missing info', :if => "${f:customer} == ''"
+    participant :ref => 'unit2'
+  end
+#:code#
+
+This XML example will route the process (in fact the whole 'sequence' block, the one adorned with an 'on_error' attribute) to an "fail_path" subprocess :
+
+#:code#xml#
+  <process-definition name="myprocess" revision="0">
+
+    <sequence on-error="fail_path">
+      <participant ref="unit1" />
+      <error unless="${f:customer}">missing field customer</error>
+      <participant ref="unit2" />
+    </sequence>
+
+    <process-definition name="fail_path">
+      <participant ref="special_cases_unit" />
+    </process-definition>
+
+  </process-definition>
+#:code#
+
+"rdoc":rdoc/classes/OpenWFE/ErrorExpression.html
 
 
 h3. <a href="#top" title="back to top of page"><img src="images/ru-light-small.png" border="0" align="right"/></a> <a name="exp_eval"></a>eval

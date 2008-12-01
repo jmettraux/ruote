@@ -63,6 +63,28 @@ class FlowTest94 < Test::Unit::TestCase
     dotest Test1, "1\n2\n3"
   end
 
-  # TODO : add test for 'error replay'
+  #
+  # TEST 2
+
+  def test_2
+
+    #log_level_to_debug
+
+    fei = @engine.launch Test0
+
+    sleep 0.350
+
+    assert_equal '1', @tracer.to_s
+
+    err = @engine.process_status(fei).errors.values.first
+
+    @engine.replay_at_error(err)
+
+    sleep 0.350
+
+    assert_equal "1\n2", @tracer.to_s
+
+    assert_nil @engine.process_status(fei)
+  end
 end
 

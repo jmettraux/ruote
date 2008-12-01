@@ -37,14 +37,48 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'openwfe/expressions/flowexpression'
-#require 'openwfe/expressions/value'
-
 
 module OpenWFE
 
   #
-  # TODO : rdoc me
+  # The 'error' expression provokes an error to occur in a process instance.
+  # The error might then be treated by an error handler ('on_error' attribute)
+  # or simply registered in the error journal and manually replayed.
+  #
+  #   sequence do
+  #     participant :ref => 'unit1'
+  #     error 'missing info', :if => "${f:customer} == ''"
+  #     participant :ref => 'unit2'
+  #   end
+  #
+  # In this hypothetical example, the error is triggered if the field customer
+  # is empty.
+  #
+  # == replaying
+  #
+  # The error expression can be replayed without further ado (though it is
+  # expected that the problem it raised attention to has be fixed). At replay
+  # the expression will simply let the process instance resume.
+  #
+  # == on_error
+  #
+  # This expression can be used to let a process interrupt itself (replay case)
+  # or to force the process into a 'fail path' (out of the 'happy path')
+  #
+  #   class MyDef0 < OpenWFE::ProcessDefinition
+  #
+  #     sequence :on_error => 'fail_path' do
+  #
+  #       participant :ref => 'unit1'
+  #       error 'missing info', :if => "${f:customer} == ''"
+  #       participant :ref => 'unit2'
+  #     end
+  #
+  #     process_definition :name => 'fail_path' do
+  #       # ... problem resolution subprocess ...
+  #     end
+  #   end
+  #
   #
   class ErrorExpression < FlowExpression
     include ValueMixin
@@ -57,12 +91,12 @@ module OpenWFE
     # is set to true when the expression got applied once (and raised
     # its error).
     #
-    attr_accessor :applied
+    attr_accessor :triggered
 
 
     def reply (workitem)
 
-      reply_to_parent(workitem) if @applied
+      return reply_to_parent(workitem) if @triggered
         #
         # when error is 'replayed' simply reply to parent to let flow resume
 
@@ -72,9 +106,9 @@ module OpenWFE
 
       text = workitem.get_result.to_s
 
-      @applied = true
+      @triggered = true
 
-      store_itself # making sure @applied is saved
+      store_itself # making sure @triggered is saved
 
       raise(ForcedError.new(text))
     end

@@ -96,19 +96,6 @@ module OpenWFE
       lookup [ 'field', 'fld', 'f' ], workitem
     end
 
-    #protected
-      #def handle_child (child, workitem)
-      #  raw_child, _fei = get_expression_pool.fetch(child)
-      #  if raw_child.is_definition?
-      #    workitem.attributes[FIELD_RESULT] = raw_child
-      #      #
-      #      # storing the child raw expression
-      #    reply workitem
-      #  else
-      #    get_expression_pool.apply(raw_child, workitem)
-      #  end
-      #end
-
     private
 
       def lookup (name_array, workitem)
