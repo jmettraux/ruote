@@ -17,6 +17,7 @@ For each pattern, an example is given in XML and in Ruby. There is also a link t
 
 
 <a href="#top" title="back to top of page"><img src="images/ru-light.png" border="0" align="right"/></a>
+
 h2. <a name="pat_a"></a>Basic Control Flow Patterns
 
 
@@ -153,6 +154,7 @@ The 'simple merge' is implicitely supported by the 'if' and 'case' expressions.
 
 
 <a href="#top" title="back to top of page"><img src="images/ru-light.png" border="0" align="right"/></a>
+
 h2. <a name="pat_b"></a>Advanced Branching and Synchronization Patterns
 
 
@@ -337,6 +339,7 @@ In this example expressed in Ruby, as soon as two branches replied, the flow wil
 
 
 <a href="#top" title="back to top of page"><img src="images/ru-light.png" border="0" align="right"/></a>
+
 h2. <a name="pat_c"></a>Structural Patterns
 
 
@@ -470,6 +473,7 @@ One should be able to write OpenWFE[ru] process definitions without using an "ex
 
 
 <a href="#top" title="back to top of page"><img src="images/ru-light.png" border="0" align="right"/></a>
+
 h2. <a name="pat_d"></a>Multiple Instance Patterns
 
 
@@ -615,6 +619,7 @@ This implementation (as a Ruby process definition) assumes that the activity lis
 
 
 <a href="#top" title="back to top of page"><img src="images/ru-light.png" border="0" align="right"/></a>
+
 h2. <a name="pat_e"></a>State-based Patterns
 
 
@@ -755,6 +760,7 @@ Of course, tag names other than 'milestone' can be used.
 
 
 <a href="#top" title="back to top of page"><img src="images/ru-light.png" border="0" align="right"/></a>
+
 h2. <a name="pat_f"></a>Cancellation Patterns
 
 h3. <a name="pat_19_cancel_task"></a>Cancel Task
@@ -767,5 +773,6 @@ h3. <a name="pat_20_cancel_case"></a>Cancel Case
 
 
 <a href="#top" title="back to top of page"><img src="images/ru-light.png" border="0" align="right"/></a>
+
 h2. <a name="pat_g"></a>New Control Flow Patterns
 
