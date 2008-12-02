@@ -33,7 +33,7 @@ class DbHistory0Test < Test::Unit::TestCase
 
   def test_0
 
-    @engine.launch <<-EOS
+    fei = @engine.launch <<-EOS
       class TDef < OpenWFE::ProcessDefinition
         sequence do
           alpha
@@ -45,7 +45,7 @@ class DbHistory0Test < Test::Unit::TestCase
       end
     EOS
 
-    sleep 0.350
+    @engine.wait_for(fei)
 
     hes = OpenWFE::Extras::HistoryEntry.find(:all)
 

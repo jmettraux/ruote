@@ -26,23 +26,22 @@ class Active1Test < Test::Unit::TestCase
 
   def test_0
 
-    wi = new_wi "participant alpha"
+    wi = new_wi 'participant alpha'
 
-    (1..100).to_a.each do |i|
-      Thread.new do
+    threads = (1..100).to_a.inject([]) do |a, i|
+      a << Thread.new do
 
         sleep rand()
 
-        f = OpenWFE::Extras::Field.new_field(
-          "some_field_#{i}", "val_#{i}")
+        f = OpenWFE::Extras::Field.new_field("some_field_#{i}", "val_#{i}")
 
         wi.fields << f
 
         #print "\n/// added #{f.id} #{f.fkey}, #{f.svalue}"
       end
+      a
     end
-
-    sleep 2
+    threads.each { |t| t.join }
 
     wi.save!
 

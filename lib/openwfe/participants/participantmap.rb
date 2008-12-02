@@ -180,12 +180,12 @@ module OpenWFE
 
       participant_name = participant_name.to_s
 
-      p = @participants.find do |tuple|
+      par = @participants.find do |tuple|
         tuple[0].original_string == participant_name
       end
-      @participants.delete(p) if p
+      @participants.delete(par) if par
 
-      (p != nil)
+      (par != nil)
     end
 
     #

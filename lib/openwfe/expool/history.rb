@@ -106,7 +106,7 @@ module OpenWFE
 
       # ok, do log now
 
-      log source, event, *args
+      log(source, event, *args)
     end
 
     #

@@ -81,7 +81,7 @@ module OpenWFE::Extras
   #
   class HistoryEntry < ActiveRecord::Base
 
-    set_table_name "history"
+    set_table_name 'history'
 
     #
     # returns a FlowExpressionId instance if the entry has a 'fei' or
@@ -101,7 +101,7 @@ module OpenWFE::Extras
 
     def log (source, event, *args)
 
-      fei = get_fei args
+      fei = get_fei(args)
 
       he = HistoryEntry.new
 
@@ -121,7 +121,7 @@ module OpenWFE::Extras
       begin
         he.save!
       rescue Exception => e
-        lerror { "history logging failure" }
+        lerror { 'history logging failure' }
       end
     end
   end

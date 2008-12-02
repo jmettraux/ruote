@@ -11,12 +11,13 @@ require 'active_record'
 
 
 ActiveRecord::Base.establish_connection(
-  :adapter => "mysql",
-  :database => "test",
-  :encoding => "utf8")
+  :adapter => 'mysql',
+  #:pool => 5,
+  :database => 'test',
+  :encoding => 'utf8')
 #ActiveRecord::Base.establish_connection(
-#  :adapter => "sqlite3",
-#  :dbfile => "test.db")
+#  :adapter => 'sqlite3',
+#  :dbfile => 'test.db')
 
 if "./#{ENV['TEST']}" == __FILE__
 

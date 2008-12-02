@@ -71,8 +71,9 @@ class WithEngineTest < Test::Unit::TestCase
     @engine.get_participant(:active0).reply_to_engine(wi)
 
     sleep 1
+    sleep 5 # the activerecord 2.2.2 tax
 
-    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name('active1')
 
     assert_not_nil wi
     assert_not_nil wi.expid
