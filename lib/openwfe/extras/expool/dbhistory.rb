@@ -101,48 +101,64 @@ module OpenWFE::Extras
 
     def log (source, event, *args)
 
-      fei = get_fei(args)
-
-      he = HistoryEntry.new
-
-      he.source = source.to_s
-      he.event = event.to_s
-
-      if fei
-        he.wfid = fei.parent_wfid
-        he.fei = fei.to_s
-      end
-
-      he.message = get_message(source, event, args)
-
-      wi = get_workitem(args)
-
-      he.participant = wi.participant_name \
-        if wi.respond_to?(:participant_name)
-
-      #p he.connection
-      #class << he.connection
-      #  def execute (sql, name=nil)
-      #    p [ :exec, self.object_id, sql ]
-      #    super
-      #  end
-      #end
-
-      begin
-        #puts ' saving...'
-        he.save!
-        #puts "    saved.\n"
-      rescue Exception => e
-        #p e
-        lerror { "dbhistory logging failure : #{e}" }
-      end
+      do_log(source, event, args)
     end
+
+    protected
+
+      def do_log (source, event, *args)
+
+        fei = get_fei(args)
+
+        he = HistoryEntry.new
+
+        he.source = source.to_s
+        he.event = event.to_s
+
+        if fei
+          he.wfid = fei.parent_wfid
+          he.fei = fei.to_s
+        end
+
+        he.message = get_message(source, event, args)
+
+        wi = get_workitem(args)
+
+        he.participant = wi.participant_name \
+          if wi.respond_to?(:participant_name)
+
+        #class << he.connection
+        #  def execute (sql, name=nil)
+        #    t = Time.now.to_f
+        #    super
+        #    p [ :x, self.object_id, sql[0, 40], Time.now.to_f - t ]
+        #  end
+        #end
+
+        begin
+          he.save!
+        rescue Exception => e
+          #p e
+          lerror { "dbhistory logging failure : #{e}" }
+        end
+      end
   end
 
-  #--
-  #class ThreadedDbHistory < History
-  #end
-  #++
+  #
+  # An extension of the DbHistory that uses the engine's workqueue. Insertions
+  # into database are queued (as well as expool events).
+  #
+  # Seems to be slightly faster (0.8s gain for a 11s test).
+  #
+  # Currently in use in ruote-rest.
+  #
+  class QueuedDbHistory < DbHistory
+
+    def log (source, event, *args)
+
+      get_workqueue.push(self, :do_log, event, *args)
+    end
+  end
 
 end
 
