@@ -41,7 +41,7 @@
 #require_gem 'activerecord'
 gem 'activerecord'; require 'active_record'
 
-require 'monitor'
+#require 'monitor'
 
 require 'openwfe/service'
 require 'openwfe/rudefinitions'
@@ -100,7 +100,7 @@ module OpenWFE::Extras
   # Storing OpenWFE flow expressions in a database.
   #
   class DbExpressionStorage
-    include MonitorMixin
+    #include MonitorMixin
     include OpenWFE::ServiceMixin
     include OpenWFE::OwfeServiceLocator
     include OpenWFE::ExpressionStorageBase
@@ -126,25 +126,28 @@ module OpenWFE::Extras
     #
     def []= (fei, flow_expression)
 
-      ldebug { "[]= storing #{fei.to_s}" }
+      #ldebug { "[]= storing #{fei.to_s}" }
 
-      synchronize do
+      #synchronize do
 
-        e = Expression.find_by_fei fei.to_s
+      e = Expression.find_by_fei fei.to_s
 
-        unless e
-          e = Expression.new
-          e.fei = fei.to_s
-          e.wfid = fei.wfid
-          e.expid = fei.expid
-          #e.wfname = fei.wfname
-        end
-
-        e.exp_class = flow_expression.class.name
-        e.svalue = flow_expression
-
-        e.save!
+      unless e
+        e = Expression.new
+        e.fei = fei.to_s
+        e.wfid = fei.wfid
+        e.expid = fei.expid
+        #e.wfname = fei.wfname
       end
+
+      e.exp_class = flow_expression.class.name
+      e.svalue = flow_expression
+
+      #p [ Thread.current.object_id,
+      #    e.connection.instance_variable_get(:@connection) ]
+
+      e.save!
+      #end
     end
 
     #
@@ -171,9 +174,9 @@ module OpenWFE::Extras
     #
     def delete (fei)
 
-      synchronize do
+      #synchronize do
         Expression.delete_all(["fei = ?", fei.to_s])
-      end
+      #end
     end
 
     #

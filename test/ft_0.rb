@@ -13,6 +13,11 @@ require 'flowtestbase'
 class FlowTest0 < Test::Unit::TestCase
   include FlowTestBase
 
+  #def setup
+  #  p :new_test
+  #  super
+  #end
+
   def test_0
     #log_level_to_debug
     dotest(

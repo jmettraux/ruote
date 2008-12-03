@@ -69,6 +69,7 @@ class FlowTest45b < Test::Unit::TestCase
       # signal which is not emitted when a process gets cancelled
 
     sleep 0.400
+    sleep 0.400 # when running with D
 
     assert_equal %w{ alpha alpha stop alpha }.join("\n"), @tracer.to_s
   end

@@ -116,12 +116,25 @@ module OpenWFE::Extras
       he.message = get_message(source, event, args)
 
       wi = get_workitem(args)
-      he.participant = wi.participant_name if wi.respond_to?(:participant_name)
+
+      he.participant = wi.participant_name \
+        if wi.respond_to?(:participant_name)
+
+      #p he.connection
+      #class << he.connection
+      #  def execute (sql, name=nil)
+      #    p [ :exec, self.object_id, sql ]
+      #    super
+      #  end
+      #end
 
       begin
+        #puts ' saving...'
         he.save!
+        #puts "    saved.\n"
       rescue Exception => e
-        lerror { 'history logging failure' }
+        #p e
+        lerror { "dbhistory logging failure : #{e}" }
       end
     end
   end
