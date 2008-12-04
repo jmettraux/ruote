@@ -233,7 +233,7 @@ module OpenWFE
     #
     def consume (workitem)
 
-      reply_to_engine workitem
+      reply_to_engine(workitem)
     end
   end
 
