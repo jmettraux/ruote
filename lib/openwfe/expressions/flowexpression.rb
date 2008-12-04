@@ -211,6 +211,12 @@ module OpenWFE
     end
 
     #
+    # TODO : continue me
+    #
+    def trigger_on_cancel
+    end
+
+    #
     # some convenience methods
 
     #

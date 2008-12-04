@@ -342,6 +342,13 @@ module OpenWFE
     #
     def cancel (exp)
 
+      # TODO : insert on_cancel stuff here
+      #
+      # exp.trigger_on_cancel() is OK, but then... the on_cancel subprocess
+      # could take a looong time, it could fall into an exception...
+      #
+      # ...
+
       exp, fei = fetch(exp)
 
       unless exp
