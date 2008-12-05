@@ -30,10 +30,12 @@ class FlowTest95 < Test::Unit::TestCase
       # receives workitems, discards them, does not reply to the engine
 
     @engine.register_participant :decommission do |workitem|
-      @tracer << "decom\n"
+      @tracer << "#{workitem.fei.wfid} decom\n"
     end
 
     fei = @engine.launch Test0
+
+    #p fei.wfid
 
     sleep 0.350
 
@@ -46,7 +48,7 @@ class FlowTest95 < Test::Unit::TestCase
 
     sleep 0.350
 
-    assert_equal 'decom', @tracer.to_s
+    assert_equal "#{fei.wfid}.0 decom", @tracer.to_s
 
     assert_nil @engine.process_status(fei)
   end

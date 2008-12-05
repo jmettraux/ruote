@@ -95,6 +95,8 @@ module OpenWFE
 
       unschedule_timeout(nil)
 
+      trigger_on_cancel # if any
+
       #super
       @applied_workitem
     end

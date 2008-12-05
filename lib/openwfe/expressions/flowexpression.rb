@@ -189,31 +189,35 @@ module OpenWFE
     end
 
     #
-    # a default implementation for cancel :
-    # cancels all the children
+    # A default implementation for cancel :
+    # triggers any registered 'on_cancel' and then cancels all the children
+    #
     # Attempts to return an InFlowWorkItem
     #
     def cancel
 
-      return nil unless @children
+      trigger_on_cancel
 
-      wi = nil
+      (@children || []).inject(nil) do |workitem, child|
 
-      @children.each do |child|
-
-        next if child.is_a?(String)
-
-        i = get_expression_pool.cancel(child)
-        wi ||= i
+        #wi = child.is_a?(String) ? nil : get_expression_pool.cancel(child)
+        wi = get_expression_pool.cancel(child)
+        workitem ||= wi
       end
-
-      wi
     end
 
     #
-    # TODO : continue me
+    # triggers the on_cancel attribute of the expression, if any, and forgets
+    # it...
     #
     def trigger_on_cancel
+
+      on_cancel = (self.attributes || {})['on_cancel'] || return
+
+      on_cancel, workitem = on_cancel
+
+      get_expression_pool.launch_subprocess(
+        self, [ on_cancel, {}, [] ], true, workitem, {})
     end
 
     #

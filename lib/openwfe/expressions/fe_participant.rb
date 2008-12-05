@@ -206,6 +206,8 @@ module OpenWFE
 
       cancel_participant
 
+      trigger_on_cancel # if any
+
       @applied_workitem
     end
 
