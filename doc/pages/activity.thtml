@@ -1,12 +1,13 @@
+
+<SCRIPT type='text/javascript' language='JavaScript' src='/scripts/pilatus.js'></SCRIPT>
+
 h2. activity level
 
-Since April 2008, the OpenWFEru source code moved to "http://github.com/jmettraux/ruote":http://github.com/jmettraux/ruote
+Displaying the activity happening in "ruote":http://github.com/jmettraux/ruote, "ruote-web":http://github.com/jmettraux/ruote-web, "ruote-rest":http://github.com/jmettraux/ruote-rest and "ruote-fluo":http://github.com/jmettraux/ruote-fluo plus on the "mailing lists":http://groups.google.com/group/openwferu-users
 
-"Ruote" is the nickname of the OpenWFEru workflow engine.
+(the content of this page is created via a "Yahoo Pipe":http://pipes.yahoo.com/pipes/pipe.info?_id=XGwyd_LA3RGNSAMs6icw5g and rendered via the "Pilatus js library":http://github.com/jmettraux/pilatus)
 
-"commit log":http://github.com/jmettraux/ruote/commits
+h3. pieces of activity
 
-"change log":http://github.com/jmettraux/ruote/tree/master/CHANGELOG.txt
-
-View the "Ohloh Profile":http://www.ohloh.net/projects/4749 for OpenWFEru. (<SCRIPT type='text/javascript' language='JavaScript' src='http://www.ohloh.net/projects/4749/badge_js'></SCRIPT>)
+<SCRIPT type='text/javascript' language='JavaScript' src='/scripts/activity.js'></SCRIPT>
 

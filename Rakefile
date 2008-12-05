@@ -112,6 +112,7 @@ unless RAKEVERSION.match(/^0\.8\./)
     site.res.include('**/*.jpg')
     site.res.include('**/*.css')
     site.res.include('**/*.xml')
+    site.res.include('**/*.js')
   end
 
   #
