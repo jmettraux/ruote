@@ -4,7 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
-- todo  #23102 : implemented on_cancel attribute
+- todo  #23102 : implemented on_cancel attribute with Kenneth Kalmer
 - todo  #23083 : implemented QueuedDbHistory (used in ruote-rest)
 - todo  #23015 : implemented on_error mecha as designed with Raphael Simon
 - todo  #23014 : added Jabber participant and listener (Kenneth Kalmer)
