@@ -77,22 +77,26 @@ module OpenWFE
     end
 
     #
-    # TODO : finish this comment
+    # A method for looking up process instances. It expects some options /
+    # parameters. The scope is rather wide, it may look among fields
+    # (attributes) of workitems and variables of processes.
     #
     # Returns an array of wfid (workflow instance ids)
     #
     # :value or :val ::
-    #   blah blah blah
+    #   matches processes with a field or variable with the given value
     # :name ::
-    #   blah blah blah
+    #   matches processes containing a field or a variable with that name
     # :variable_name or :var_name or :v_name ::
-    #   blah blah blah
+    #   matches processes with a variable with that name
     # :field_name or :f_name ::
-    #   blah blah blah
+    #   matches processes with a workitem field named like this
     # :wfid_prefix ::
-    #   blah blah blah
+    #   matches processes whose wfid (process instance id) begins with the given
+    #   value
     # :wfid ::
-    #   blah blah blah
+    #   matches the process instance whose wfid (process instance id) is given
+    #   here
     #
     def lookup_processes (options)
 

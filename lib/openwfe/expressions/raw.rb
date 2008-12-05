@@ -209,6 +209,7 @@ module OpenWFE
 
         consider_tag(workitem, exp)
         consider_on_error(workitem, exp)
+        consider_on_cancel(workitem, exp)
 
         if val
           class << exp
@@ -304,6 +305,22 @@ module OpenWFE
         new_expression.attributes['on_error'] = on_error
           #
           # making sure that the value of tag doesn't change anymore
+      end
+
+      #
+      # manages 'on-cancel'
+      #
+      def consider_on_cancel (workitem, new_expression)
+
+        on_cancel = new_expression.lookup_string_attribute(:on_cancel, workitem)
+
+        return unless on_cancel
+
+        new_expression.attributes['on_cancel'] = [ on_cancel, workitem.dup ]
+          #
+          # storing the on_cancel value (a participant name or a subprocess
+          # name along with a copy of the workitem as applied among the
+          # attributes of the new expression)
       end
 
       #

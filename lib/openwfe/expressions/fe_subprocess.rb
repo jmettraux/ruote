@@ -153,6 +153,8 @@ module OpenWFE
     #
     def cancel
 
+      trigger_on_cancel # if any
+
       return nil unless @subprocess_fei
       get_expression_pool.cancel(@subprocess_fei)
     end
