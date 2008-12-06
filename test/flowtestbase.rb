@@ -11,12 +11,16 @@
 require 'rubygems'
 require 'test/unit'
 
+# ensure we don't load an installed gem
+$:.unshift( File.dirname(__FILE__) + '/../lib' ) unless \
+  $:.include?( File.dirname(__FILE__) + '/../lib' )
+
 require 'openwfe/workitem'
 require 'openwfe/engine/engine'
 require 'openwfe/rudefinitions'
 require 'openwfe/participants/participants'
 
-require 'rutest_utils'
+require File.dirname(__FILE__) + '/rutest_utils'
 
 
 $WORKFLOW_ENGINE_CLASS = OpenWFE::Engine
