@@ -13,7 +13,7 @@ require 'openwfe/def'
 require 'openwfe/workitem'
 require 'openwfe/participants/storeparticipants'
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest35 < Test::Unit::TestCase
@@ -31,44 +31,35 @@ class FlowTest35 < Test::Unit::TestCase
   #
   # TEST 0
 
-  def test_local_0
+  def test_0
 
     #log_level_to_debug
 
     li = OpenWFE::LaunchItem.new
-    li.wfdurl = "file:doc/res/defs/testdef.rb"
+    li.wfdurl = 'file:test/_testdef.rb'
 
-    dotest(
-      li,
-      """a
-b
-c""")
+    dotest(li, %w(a b c).join("\n"))
   end
 
 
   #
   # TEST 1
 
-  #def xxxx_local_1
-  def test_local_1
+  def test_1
 
     li = OpenWFE::LaunchItem.new
-    li.wfdurl = "doc/res/defs/testdef.rb"
+    li.wfdurl = "test/_testdef.rb"
 
-    dotest(
-      li,
-      """a
-b
-c""")
+    dotest(li, %w(a b c).join("\n"))
   end
 
 
   #
   # TEST 2
 
-  def test_local_2
+  def test_2
 
-    launch "file:doc/res/defs/testdef.rb"
+    launch 'file:test/_testdef.rb'
     sleep 0.300
     assert_equal @tracer.to_s, "a\nb\nc"
   end
