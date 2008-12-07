@@ -10,7 +10,7 @@
 require 'rubygems'
 
 require 'openwfe/def'
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 require 'openwfe/expool/journal'
 
 

@@ -7,7 +7,7 @@
 # Thu Jan  3 23:05:37 JST 2008
 #
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 #

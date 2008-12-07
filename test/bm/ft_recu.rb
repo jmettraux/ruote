@@ -9,7 +9,7 @@
 
 require 'openwfe/def'
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTestRecursion < Test::Unit::TestCase

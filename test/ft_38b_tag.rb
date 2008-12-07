@@ -12,7 +12,7 @@ require 'rubygems'
 require 'openwfe/def'
 require 'openwfe/participants'
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest38b < Test::Unit::TestCase

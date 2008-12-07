@@ -11,7 +11,7 @@ require 'rubygems'
 
 require 'openwfe/def'
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 require 'openwfe/engine/file_persisted_engine'
 require 'openwfe/expool/errorjournal'

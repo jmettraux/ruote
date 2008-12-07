@@ -13,7 +13,7 @@ require 'openwfe/def'
 require 'openwfe/workitem'
 require 'openwfe/participants/storeparticipants'
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest29 < Test::Unit::TestCase

@@ -7,7 +7,7 @@
 # Thu Nov 27 16:30:23 JST 2008
 #
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest93 < Test::Unit::TestCase

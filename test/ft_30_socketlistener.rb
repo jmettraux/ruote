@@ -18,7 +18,7 @@ require 'openwfe/def'
 require 'openwfe/listeners/socketlisteners'
 require 'openwfe/participants/socketparticipants'
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest30 < Test::Unit::TestCase

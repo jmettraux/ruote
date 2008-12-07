@@ -7,7 +7,7 @@
 # Thu Sep 13 09:50:29 JST 2007
 #
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/../flowtestbase'
 require 'openwfe/def'
 require 'openwfe/extras/participants/activeparticipants'
 require 'extras/active_connection'

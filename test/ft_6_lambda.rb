@@ -8,7 +8,7 @@
 # Narita terminal 1
 #
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest6 < Test::Unit::TestCase

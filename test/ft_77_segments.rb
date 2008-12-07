@@ -5,7 +5,7 @@
 # John Mettraux at openwfe.org
 #
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest77 < Test::Unit::TestCase

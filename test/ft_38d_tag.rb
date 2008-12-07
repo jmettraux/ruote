@@ -7,7 +7,7 @@
 # Thu Jul 24 17:44:11 JST 2008
 #
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 require 'openwfe/def'
 

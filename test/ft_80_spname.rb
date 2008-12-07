@@ -10,7 +10,7 @@
 # http://rubyforge.org/tracker/index.php?func=detail&aid=16791&group_id=2609&atid=10023
 #
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest80 < Test::Unit::TestCase

@@ -12,7 +12,7 @@ require 'rubygems'
 require 'openwfe/def'
 require 'openwfe/expool/journal'
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest32c < Test::Unit::TestCase

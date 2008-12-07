@@ -6,7 +6,7 @@
 # Pat at geobliki.com
 #
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 require 'openwfe/def'
 require 'openwfe/orest/xmlcodec'
 require 'rutest_utils'

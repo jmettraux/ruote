@@ -8,7 +8,7 @@
 #
 
 
-require 'flowtestbase'
+require File.dirname(__FILE__) + '/flowtestbase'
 
 require 'openwfe/def'
 require 'openwfe/expool/journal'
