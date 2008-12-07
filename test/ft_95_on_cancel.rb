@@ -52,7 +52,7 @@ class FlowTest95 < Test::Unit::TestCase
 
     assert_nil @engine.process_status(fei)
 
-    purge_engine
+    #purge_engine
   end
 
   #
@@ -65,7 +65,7 @@ class FlowTest95 < Test::Unit::TestCase
       alpha
     end
 
-    process_definition :tag => 'decommission' do
+    process_definition :name => 'decommission' do
       sequence do
         decommission_agent
       end
@@ -74,8 +74,8 @@ class FlowTest95 < Test::Unit::TestCase
 
   def test_1
 
-#    log_level_to_debug
-    
+    #log_level_to_debug
+
     @engine.register_participant :alpha, OpenWFE::NullParticipant
       # receives workitems, discards them, does not reply to the engine
 
@@ -85,7 +85,7 @@ class FlowTest95 < Test::Unit::TestCase
 
     fei = @engine.launch Test1
 
-    # p fei.wfid
+    #p fei.wfid
 
     sleep 0.3350
 
@@ -102,7 +102,7 @@ class FlowTest95 < Test::Unit::TestCase
 
     assert_nil @engine.process_status(fei)
 
-    purge_engine
+    #purge_engine
   end
 
   #
@@ -124,7 +124,7 @@ class FlowTest95 < Test::Unit::TestCase
 
   def test_2
 
-#    log_level_to_debug
+    #log_level_to_debug
 
     @engine.register_participant :alpha, OpenWFE::NullParticipant
       # receives workitems, discards them, does not reply to the engine
@@ -135,7 +135,7 @@ class FlowTest95 < Test::Unit::TestCase
 
     fei = @engine.launch Test2
 
-    # p fei.wfid
+    #p fei.wfid
 
     sleep 0.3350
 
@@ -152,7 +152,7 @@ class FlowTest95 < Test::Unit::TestCase
 
     assert_nil @engine.process_status(fei)
 
-    purge_engine
+    #purge_engine
   end
 end
 

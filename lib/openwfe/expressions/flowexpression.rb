@@ -216,8 +216,9 @@ module OpenWFE
 
       on_cancel, workitem = on_cancel
 
-      get_expression_pool.launch_subprocess(
-        self, [ on_cancel, {}, [] ], true, workitem, {})
+      template = lookup_variable(on_cancel) || [ on_cancel, {}, [] ]
+
+      get_expression_pool.launch_subprocess(self, template, true, workitem, {})
     end
 
     #
