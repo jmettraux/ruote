@@ -1,11 +1,16 @@
 
 #
-# Testing OpenWFE
+# Testing Ruote (OpenWFEru)
 #
 # John Mettraux at openwfe.org
 #
 # Mon Oct  9 22:19:44 JST 2006
 #
+
+
+# ensure we don't load an installed gem
+$:.unshift( File.dirname(__FILE__) + '/../lib' ) unless \
+  $:.include?( File.dirname(__FILE__) + '/../lib' )
 
 require 'rubygems'
 
@@ -16,19 +21,14 @@ require 'openwfe/expool/parser'
 
 class RawProgTest < Test::Unit::TestCase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-  XML_DEF =
-    "<process-definition name='test0' revision='0'>"+
-    "<sequence>"+
-    "<participant ref='a'/>"+
-    "<participant ref='b'/>"+
-    "</sequence>"+
-    "</process-definition>"
+  XML_DEF = %(
+<process-definition name='test0' revision='0'>
+<sequence>
+<participant ref='a'/>
+<participant ref='b'/>
+</sequence>
+</process-definition>
+  ).strip.gsub(/\n/, '')
 
   #
   # TEST 0
@@ -425,6 +425,14 @@ end},
     assert_equal(
       %{<process-definition name='Test' revision='10'><set-fields><hash><entry><string>type</string><string>horse</string></entry></hash></set-fields></process-definition>},
       OpenWFE::ExpressionTree.to_xml(TestDefinition10.do_make).to_s)
+  end
+
+  def test_11
+
+    assert_equal(
+      "error 'sthing went wrong', :if => \"${f:surf}\"",
+      OpenWFE::ExpressionTree.to_code_s(
+        [ 'error', { 'if' => '${f:surf}' }, [ 'sthing went wrong' ] ]))
   end
 
 end

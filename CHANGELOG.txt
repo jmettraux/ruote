@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- bug   #23164 : ExpressionTree.to_code_s broken for 1 string child exps. Fixed.
 - todo  #23125 : moved website src to http://github.com/jmettraux/ruote_website
 - todo  #23102 : implemented on_cancel attribute with Kenneth Kalmer
 - todo  #23083 : implemented QueuedDbHistory (used in ruote-rest)
