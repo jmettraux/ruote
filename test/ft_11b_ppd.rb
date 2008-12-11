@@ -48,20 +48,12 @@ class FlowTest11b < Test::Unit::TestCase
   # Test 2
   #
 
-  #Test2 = OpenWFE.process_definition :name => 'ft_11b', :revision => '2' do
-  #  _print '${r:fei.wfname}'
-  #end
   Test2 = OpenWFE.process_definition :name => 'ft_11b', :revision => '2' do
-    sequence do
-      participant 'alpha'
-      _sleep '3d'
-      participant 'bravo'
-    end
+    _print '${r:fei.wfname}'
   end
 
   def test_2
 
-p Test2
     dotest Test2, 'ft_11b'
   end
 
