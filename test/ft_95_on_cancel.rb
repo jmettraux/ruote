@@ -154,5 +154,39 @@ class FlowTest95 < Test::Unit::TestCase
 
     #purge_engine
   end
+
+  #
+  # TEST 3
+
+  class Test3 < OpenWFE::ProcessDefinition
+    process_definition(
+      :name => 'ft_95_test', :revision => '3', :on_cancel => :decommission
+    ) do
+      sequence do
+        _print '0'
+        alpha
+        _print '1'
+      end
+      define 'decommission' do
+        _print 'd'
+      end
+    end
+  end
+
+  def test_3
+
+    @engine.register_participant(:alpha, OpenWFE::NullParticipant)
+
+    fei = @engine.launch(Test3)
+
+    sleep 0.350
+
+    @engine.cancel_process(fei)
+
+    sleep 0.350
+
+    assert_equal "0\nd", @tracer.to_s
+    assert_equal 1, @engine.get_expression_storage.size
+  end
 end
 

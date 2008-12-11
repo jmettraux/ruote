@@ -176,9 +176,6 @@ class FlowTest93 < Test::Unit::TestCase
   #
   # TEST 5
 
-  # a block with on_error => 'undo' (or :undo)
-  # will simply get undone in case of error
-
   class Test5 < OpenWFE::ProcessDefinition
     process_definition(
       :name => 'a', :revision => '0', :on_error => :emergency
@@ -218,6 +215,7 @@ class FlowTest93 < Test::Unit::TestCase
       # and dotest detects the end of it at the moment of the on_error handling
 
     assert_equal "0\ne", @tracer.to_s
+    assert_equal 1, @engine.get_expression_storage.size
   end
 end
 
