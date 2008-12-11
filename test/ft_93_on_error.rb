@@ -172,5 +172,52 @@ class FlowTest93 < Test::Unit::TestCase
 
     dotest Test4, %w{ 0 1 rescue parent_rescue }.join("\n")
   end
+
+  #
+  # TEST 5
+
+  # a block with on_error => 'undo' (or :undo)
+  # will simply get undone in case of error
+
+  class Test5 < OpenWFE::ProcessDefinition
+    process_definition(
+      :name => 'a', :revision => '0', :on_error => :emergency
+    ) do
+      sequence do
+        _print '0'
+        alpha
+        _print '1'
+      end
+      define 'emergency' do
+        _print 'e'
+      end
+    end
+  end
+  #Test5 = %{
+  #  <process-definition name="a" revision="0" on-error="emergency">
+  #    <sequence>
+  #      <print>0</print>
+  #      <alpha />
+  #      <print>1</print>
+  #    </sequence>
+  #    <process-definition name="emergency">
+  #      <print>e</print>
+  #    </process-definition>
+  #  </process-definition>
+  #}
+
+  def test_5
+
+    @engine.register_participant :alpha do |fexp, workitem|
+      raise 'houston, we have a problem'
+    end
+
+    @engine.launch Test5
+    sleep 0.350
+      # have to use launch+sleep as the on_error is on the process itself
+      # and dotest detects the end of it at the moment of the on_error handling
+
+    assert_equal "0\ne", @tracer.to_s
+  end
 end
 

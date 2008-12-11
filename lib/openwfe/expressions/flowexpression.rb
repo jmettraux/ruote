@@ -242,7 +242,7 @@ module OpenWFE
     #
     def store_itself
 
-      ldebug { "store_itself() for  #{@fei.to_debug_s}" }
+      #ldebug { "store_itself() for  #{@fei.to_debug_s}" }
       #ldebug { "store_itself() \n#{OpenWFE::caller_to_s(0, 6)}" }
 
       get_expression_pool.update(self)
