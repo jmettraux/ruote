@@ -16,12 +16,6 @@ require 'openwfe/def'
 class FlowTest11b < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   #
   # Test 0
   #
@@ -30,12 +24,12 @@ class FlowTest11b < Test::Unit::TestCase
 
   class TestDefinition0 < OpenWFE::ProcessDefinition
     def make
-      _print "ok"
+      _print 'ok'
     end
   end
 
   def test_0
-    dotest TestDefinition0.new, "ok"
+    dotest TestDefinition0.new, 'ok'
   end
 
   #
@@ -47,7 +41,43 @@ class FlowTest11b < Test::Unit::TestCase
   end
 
   def test_1
-    dotest TestDefinition1, "ok"
+    dotest TestDefinition1, 'ok'
+  end
+
+  #
+  # Test 2
+  #
+
+  #Test2 = OpenWFE.process_definition :name => 'ft_11b', :revision => '2' do
+  #  _print '${r:fei.wfname}'
+  #end
+  Test2 = OpenWFE.process_definition :name => 'ft_11b', :revision => '2' do
+    sequence do
+      participant 'alpha'
+      _sleep '3d'
+      participant 'bravo'
+    end
+  end
+
+  def test_2
+
+p Test2
+    dotest Test2, 'ft_11b'
+  end
+
+  #
+  # Test 3
+  #
+
+  def test_3
+
+    dotest(
+      %{
+        OpenWFE::process_definition :name => 'ft_11b', :revision => '3' do
+          _print '${r:fei.wfname}'
+        end
+      },
+      'ft_11b')
   end
 
 end
