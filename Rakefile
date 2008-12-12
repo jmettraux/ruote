@@ -10,18 +10,6 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
-unless RAKEVERSION.match(/^0\.8\./)
-  require 'rote'
-  require 'rote/filters'
-  require 'rote/filters/redcloth'
-  require 'rote/filters/tidy'
-  require 'rote/format/html'
-  require 'rote/extratasks'
-  #include Rote
-#else
-#  puts "rake version #{RAKEVERSION} doesn't play well with 'rote'..."
-end
-
 
 load 'lib/openwfe/version.rb'
   #
@@ -54,8 +42,8 @@ spec = Gem::Specification.new do |s|
     'rufus-dollar',
     'rufus-treechecker',
     'rufus-mnemo',
-    'rufus-verbs' ].each do |d|
-
+    'rufus-verbs'
+  ].each do |d|
     s.requirements << d
     s.add_dependency d
   end
@@ -88,84 +76,6 @@ Rake::RDocTask.new do |rd|
     # Allison is nice but classes names plus namespaces are too long
     # for it :(
 end
-
-unless RAKEVERSION.match(/^0\.8\./)
-  #
-  # Create a task to build the static docs (html)
-  #
-  ws = Rote::DocTask.new(:doc) do |site|
-
-    site.output_dir = 'html'
-    site.layout_dir = 'doc/layouts'
-    site.pages.dir = 'doc/pages'
-    site.pages.include('**/*.thtml')
-
-    site.ext_mapping(/thtml|textile/, 'html') do |page|
-      page.extend Rote::Format::HTML
-      page.page_filter Rote::Filters::RedCloth.new
-      page.page_filter Rote::Filters::Syntax.new
-    end
-
-    site.res.dir = 'doc/res'
-    site.res.include('**/*.png')
-    site.res.include('**/*.gif')
-    site.res.include('**/*.jpg')
-    site.res.include('**/*.css')
-    site.res.include('**/*.xml')
-    site.res.include('**/*.js')
-  end
-
-  #
-  # Add rdoc deps to doc task
-  #
-  task :doc => [ :rdoc ]
-end
-
-
-#
-# Builds the website and uploads it to Rubyforge.org
-#
-task :upload_website => [:doc] do
-  upload_website 'openwferu'
-  #upload_website 'rufus'
-end
-
-def upload_website (target)
-
-  target = "jmettraux@rubyforge.org:/var/www/gforge-projects/#{target}/"
-
-  rso = nil
-  #rso = '-n' # blank run
-
-  sh """
-rsync -azv #{rso} -e ssh \
-html/ \
-#{target}
-  """
-#  sh """
-#rsync -azv #{rso} -e ssh \
-#rdoc \
-##{target}
-#  """
-  sh """
-scp \
-doc/res/images/favicon.ico \
-#{target}
-  """
-  sh """
-rsync -azv #{rso} -e ssh \
---exclude='.svn' --delete-excluded \
-doc/res/defs \
-#{target}
-  """
-  sh """
-rsync -azv #{rso} -e ssh \
---exclude='.svn' --delete-excluded \
-examples \
-#{target}
-  """
-end
-
 
 #
 # Create the various openwferu[-.*] gems
