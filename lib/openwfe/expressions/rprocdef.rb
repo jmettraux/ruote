@@ -68,7 +68,11 @@ module OpenWFE
 
     [
       'process-definition',
-      args.first.inject({}) { |h, (k, v)| h[k.to_s] = v; h },
+      lambda() { |a|
+        atts = a.last.is_a?(Hash) ? a.last : {}
+        atts['name'] = a.first unless a.first.is_a?(Hash)
+        atts.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+      }.call(args),
       [ ProcessDefinition.new.instance_eval(&block) ]
     ]
   end

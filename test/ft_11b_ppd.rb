@@ -49,7 +49,7 @@ class FlowTest11b < Test::Unit::TestCase
   #
 
   #Test2 = OpenWFE.process_definition :name => 'ft_11b', :revision => '2' do
-  Test2 = OpenWFE.process_definition :name => 'ft_11b' do
+  Test2 = OpenWFE.process_definition 'ft_11b' do
     _print '${r:fei.wfname} ${r:fei.wfrevision}'
   end
 
