@@ -50,19 +50,19 @@ module OpenWFE
 
     protected
 
-      A_COMMAND_FIELD = "command-field"
-      F_COMMAND = "__cursor_command__"
-      A_DISALLOW = "disallow"
+      A_COMMAND_FIELD = 'command-field'
+      F_COMMAND = '__cursor_command__'
+      A_DISALLOW = 'disallow'
 
-      C_BACK = "back"
-      C_SKIP = "skip"
-      C_BREAK = "break"
-      C_CANCEL = "cancel"
-      C_REWIND = "rewind"
-      C_CONTINUE = "continue"
-      C_JUMP = "jump"
+      C_BACK = 'back'
+      C_SKIP = 'skip'
+      C_BREAK = 'break'
+      C_CANCEL = 'cancel'
+      C_REWIND = 'rewind'
+      C_CONTINUE = 'continue'
+      C_JUMP = 'jump'
 
-      A_STEP = "step"
+      A_STEP = 'step'
   end
 
   #
@@ -72,16 +72,28 @@ module OpenWFE
   #
   module CommandMixin
     include CommandConstants
+    include ConditionMixin
 
     protected
 
       def determine_command_and_step (workitem)
 
-        command_field = lookup_command_field workitem
+        #
+        # at first, look at the condition attribute
 
-        command, step = lookup_command command_field, workitem
+        %w{ break rewind }.each do |cmd|
+          return [ cmd, 0] \
+            if eval_condition("#{cmd}-if", workitem, "#{cmd}-unless")
+        end
 
-        disallow_list = lookup_disallow workitem
+        #
+        # then look at the command field
+
+        command_field = lookup_command_field(workitem)
+
+        command, step = lookup_command(command_field, workitem)
+
+        disallow_list = lookup_disallow(workitem)
 
         command = nil \
           if disallow_list and disallow_list.include?(command)
@@ -233,7 +245,7 @@ module OpenWFE
         workitem.attributes[F_COMMAND] = command
       end
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
   end
 

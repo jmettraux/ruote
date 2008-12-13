@@ -27,6 +27,7 @@ require 'ft_7b_lose'
 require 'ft_8_forget'
 require 'ft_9_cursor'
 require 'ft_9b_cursor'
+require 'ft_9c_cursor'
 
 require 'ft_10_loop'
 require 'ft_11_ppd'

@@ -9,20 +9,13 @@
 
 require 'rubygems'
 
-require 'openwfe/def'
 require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest9 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-  def test_cursor_0
+  def test_0
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <cursor>
@@ -32,7 +25,7 @@ class FlowTest9 < Test::Unit::TestCase
 </process-definition>''', "a\nb")
   end
 
-  def test_cursor_1
+  def test_1
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <cursor>
@@ -44,7 +37,7 @@ class FlowTest9 < Test::Unit::TestCase
 </process-definition>''', "a\nb")
   end
 
-  def test_cursor_2
+  def test_2
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <cursor>
@@ -56,7 +49,7 @@ class FlowTest9 < Test::Unit::TestCase
 </process-definition>''', "a\nb")
   end
 
-  def test_cursor_2b
+  def test_2b
     #
     # ZigZag test
     #
@@ -73,7 +66,7 @@ class FlowTest9 < Test::Unit::TestCase
 </process-definition>''', "a\nb\nc")
   end
 
-  def test_cursor_3
+  def test_3
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <cursor>
@@ -85,7 +78,7 @@ class FlowTest9 < Test::Unit::TestCase
 </process-definition>''', "a\nc")
   end
 
-  def test_cursor_4
+  def test_4
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <sequence>
@@ -100,7 +93,7 @@ class FlowTest9 < Test::Unit::TestCase
 </process-definition>''', "a\nc\nd")
   end
 
-  def test_cursor_5
+  def test_5
     dotest(
 '<process-definition name="'+name_of_test+'''" revision="0">
   <cursor>
@@ -130,7 +123,7 @@ class FlowTest9 < Test::Unit::TestCase
   class Test7 < OpenWFE::ProcessDefinition
     cursor do
       alpha
-      rewind :if => "${f:rewind} == true"
+      rewind :if => '${f:rewind} == true'
     end
   end
 
@@ -147,7 +140,7 @@ class FlowTest9 < Test::Unit::TestCase
       @tracer << wi.rewind.to_s
     end
 
-    dotest Test7, "truefalse"
+    dotest Test7, 'truefalse'
   end
 
 end

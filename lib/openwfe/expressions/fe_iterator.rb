@@ -92,12 +92,12 @@ module OpenWFE
 
       return reply_to_parent(workitem) if @iterator.size < 1
 
-      reply workitem
+      reply(workitem)
     end
 
     def reply (workitem)
 
-      command, step = determine_command_and_step workitem
+      command, step = determine_command_and_step(workitem)
 
       vars = if not command
 

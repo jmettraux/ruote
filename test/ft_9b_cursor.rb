@@ -14,26 +14,20 @@ require 'openwfe/def'
 class FlowTest9b < Test::Unit::TestCase
   include FlowTestBase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
   #
   # Test 0
   #
 
   class Test0 < OpenWFE::ProcessDefinition
     cursor do
-      set :v => "v0", :val => "x"
-      _print "${v0}"
+      set :v => 'v0', :val => 'x'
+      _print '${v0}'
     end
   end
 
   def test_0
 
-    dotest Test0, "x"
+    dotest Test0, 'x'
   end
 
   #
