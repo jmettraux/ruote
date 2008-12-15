@@ -135,7 +135,7 @@ module OpenWFE
         # skip expression
         # <participant ref="x" if="y" /> (where y evals to false)
 
-      @participant_name = self.respond_to?(:hint) ? hint : nil
+      @participant_name ||= self.respond_to?(:hint) ? hint : nil
       @participant_name ||= lookup_ref(workitem) || fetch_text_content(workitem)
 
       participant = get_participant_map.lookup_participant(@participant_name)
