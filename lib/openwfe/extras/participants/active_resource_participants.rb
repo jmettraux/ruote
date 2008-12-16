@@ -56,6 +56,7 @@ module OpenWFE
     # with ActiveResource and its usage.
     #
     # ==Using it
+    #
     # The participant should be registered in the engine in a way like this:
     #
     #   engine.register_participant(
@@ -98,19 +99,31 @@ module OpenWFE
     #     <concurrence count="1">
     #       <participant ref="qa" />
     #       <cron every="1m">
-    #         <participant ref="reminder" site="http://localhost:7000" resource_name="story" method="put" action="send_reminder" resource_id="${field:story_id}" />
+    #         <participant
+    #           ref="reminder"
+    #           site="http://localhost:7000"
+    #           resource_name="story"
+    #           method="put"
+    #           action="send_reminder"
+    #           resource_id="${field:story_id}" />
     #       </cron>
     #     </concurrence>
     #
-    # Here, the RestCallParticipant is used to send a reminder.
+    # Here, the ActiveResourceParticipant is used to send a reminder.
+    #
+    # Note : prefer configuration of the participant at registration time,
+    # information like 'method', 'site' and 'resource_name' may clutter
+    # the process definition.
     #
     class ActiveResourceParticipant
       include OpenWFE::LocalParticipant
 
       #
-      # ==options hash
+      # == options hash
+      #
       # You have to set some default options by passing an options hash to the
       # new method. It should contain the following keys:
+      #
       # <tt>:site</tt>:: The URI (as string) of the site where your REST
       #   interface sits. See <tt>site</tt> parameter in ActiveResource::Base.
       # <tt>:resource_name</tt>:: The name of the resource you like to access.
@@ -148,9 +161,6 @@ module OpenWFE
         @options[:method] ||= :get
 
         @block = block
-
-        @workitem = nil
-
       end
 
       #
@@ -158,13 +168,12 @@ module OpenWFE
       # calls the requested ActiveResource method, calls the response handling
       # code if present and then immediatly replies to the engine.
       #
-      def consume(workitem)
-        @workitem = workitem
+      def consume (workitem)
 
         # use block to determine the method's arguments if given
         args = if @block
           call_block(@block, workitem)
-        elsif a = param(:arg) || param(:argument)
+        elsif a = param(workitem, :arg) || param(workitem, :argument)
           Array(a)
         else
           [] # no arguments
@@ -172,13 +181,13 @@ module OpenWFE
 
         # create new subclass of ActiveResource::Base
         active_resource_class = Class.new(ActiveResource::Base)
-        active_resource_class.site = param(:site) # set site parameter
-        active_resource_class.element_name = param(:resource_name) # set element name
+        active_resource_class.site = param(workitem, :site) # set site parameter
+        active_resource_class.element_name = param(workitem, :resource_name) # set element name
 
         # Do we work on a single or on a set of resources? If resource_id is nil
         # or negative, it's a set of resources.
 
-        resource_id = param(:resource_id)
+        resource_id = param(workitem, :resource_id)
 
         active_resource = if (!resource_id) || (resource_id.to_i < 0)
           # set of resources
@@ -188,23 +197,22 @@ module OpenWFE
           active_resource_class.new(:id => resource_id)
         end
 
-        response = active_resource.send(param(:method), *args)
+        response = active_resource.send(param(workitem, :method), args)
 
         # we got our response, but what to do with it?
-        if (h = param(:response_handling)).is_a?(Proc)
+        if (h = param(workitem, :response_handling)).is_a?(Proc)
           h.call(response, workitem)
         end
 
         # reply to the engine
         reply_to_engine(workitem)
-
       end
 
       protected
 
-      def param (key)
-        @workitem.params[key] || @options[key]
-      end
+        def param (workitem, key)
+          workitem.params[key] || @options[key]
+        end
     end
 
   end

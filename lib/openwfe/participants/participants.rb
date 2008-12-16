@@ -67,7 +67,7 @@ module OpenWFE
     #
     def initialize (context_or_dir=nil)
 
-      @workdir = get_work_directory(context_or_dir) + "/out/"
+      @workdir = get_work_directory(context_or_dir) + '/out/'
 
       @reply_anyway = false
     end
