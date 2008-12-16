@@ -1,5 +1,5 @@
 #
-# #--
+#--
 # Copyright (c) 2008, Torsten Schönebaum, John Mettraux (OpenWFE.org)
 # All rights reserved.
 #
@@ -26,7 +26,8 @@
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. #++
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#++
 #
 
 #
@@ -49,7 +50,7 @@ module OpenWFE
     # Ruote participant which does a REST call. It's using ActiveResource to do
     # the actual magic. You can call every class and instance method
     # ActiveResource::Base and its mixins provide. You can also process the
-    # response of the REST request and save some of it's data into the workitem
+    # response of the REST request and save some of its data into the workitem
     # for example.
     #
     # Before using this participant you *really* should make yourself familiar
@@ -66,7 +67,11 @@ module OpenWFE
     #         :site => 'http://localhost:7000',
     #         :resource_name => 'story',
     #         :method => 'put', # we will use ActiveResource::CustomMethods::InstanceMethods#put
-    #         :argument => 'send_reminder', # put is happy with just one parameter: The action to be called. So we won't have to use a block to set the arguments of the ActiveResource method to call.
+    #         :argument => 'send_reminder', # put is happy with just one
+    #                                       # parameter: The action to be
+    #                                       # called. So we won't have to use a
+    #                                       # block to set the arguments of the
+    #                                       # ActiveResource method to call.
     #       }
     #     )
     #   )
@@ -74,14 +79,18 @@ module OpenWFE
     # Let's try a more complex example:
     #
     #   engine.register_participant(
-    #     'complex_ar',
+    #     'complex_ares',
     #     ActiveResourceParticipant.new(
     #       {
     #         :site => 'http://localhost:7000',
     #         :resource_name => 'story',
-    #         :method => 'find', # yes, even ActiveResource::Base#find method may be used...
-    #         :response_handling => proc do |response, workitem| # define response handling block
-    #           workitem.set_attribute('title', response.attributes['title']) # The type of the response object depends on the method you use!
+    #         :method => 'find', # yes, even ActiveResource::Base#find method
+    #                            # may be used...
+    #         :response_handling => proc do |response, workitem| # define response
+    #                                                            # handling block
+    #           workitem.set_attribute('title', response.attributes['title'])
+    #                            # The type of the response object depends on
+    #                            # the method you use!
     #         end
     #       }
     #     ) do |workitem| # define arguments to use with the find method
@@ -111,9 +120,9 @@ module OpenWFE
     #
     # Here, the ActiveResourceParticipant is used to send a reminder.
     #
-    # Note : prefer configuration of the participant at registration time,
-    # information like 'method', 'site' and 'resource_name' may clutter
-    # the process definition.
+    # *Note:* prefer configuration of the participant at registration time,
+    # information like 'method', 'site' and 'resource_name' may clutter the
+    # process definition.
     #
     class ActiveResourceParticipant
       include OpenWFE::LocalParticipant
@@ -138,7 +147,7 @@ module OpenWFE
       #   will be called on the complete set of resources instead of on a single
       #   resource determined by its ID.
       # <tt>:response_handling</tt>:: A proc object / block which gets called
-      #   after the request is done. It get's called with to arguments: The
+      #   after the request is done. It gets called with to arguments: The
       #   response of the ActiveResource method called and the workitem.
       #
       # The new method also takes a block. It may be used to set the arguments
@@ -210,9 +219,9 @@ module OpenWFE
 
       protected
 
-        def param (workitem, key)
-          workitem.params[key] || @options[key]
-        end
+      def param (workitem, key)
+        workitem.params[key] || @options[key]
+      end
     end
 
   end
