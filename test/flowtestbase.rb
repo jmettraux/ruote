@@ -1,4 +1,5 @@
-#_
+
+#
 # Testing OpenWFE
 #
 # John Mettraux at openwfe.org
@@ -11,40 +12,42 @@
 require 'rubygems'
 require 'test/unit'
 
-# ensure we don't load an installed gem
-$:.unshift( File.dirname(__FILE__) + '/../lib' ) unless \
-  $:.include?( File.dirname(__FILE__) + '/../lib' )
+%w{ lib test }.each do |path|
+  path = File.expand_path(File.dirname(__FILE__) + '/../' + path)
+  $:.unshift(path) unless $:.include?(path)
+end
 
 require 'openwfe/workitem'
 require 'openwfe/engine/engine'
 require 'openwfe/rudefinitions'
 require 'openwfe/participants/participants'
 
-require File.dirname(__FILE__) + '/rutest_utils'
+require 'rutest_utils'
 
 
 $WORKFLOW_ENGINE_CLASS = OpenWFE::Engine
 
-persistence = ENV["__persistence__"]
+pers = ARGV.find { |a| a.match(/^-p.$/) }
+pers = pers ? pers[2, 1] : ENV['__persistence__']
 
 
-if persistence == "pure-persistence"
+if %w{ pure-persistence p f }.include?(pers)
 
-  require "openwfe/engine/file_persisted_engine"
+  require 'openwfe/engine/file_persisted_engine'
   $WORKFLOW_ENGINE_CLASS = OpenWFE::FilePersistedEngine
 
-elsif persistence == "cached-persistence"
+elsif %w{ cached-persistence c }.include?(pers)
 
-  require "openwfe/engine/file_persisted_engine"
+  require 'openwfe/engine/file_persisted_engine'
   $WORKFLOW_ENGINE_CLASS = OpenWFE::CachedFilePersistedEngine
 
-elsif persistence == "db-persistence"
+elsif %w{ db-persistence D }.include?(pers)
 
   require 'extras/active_connection'
   require 'openwfe/extras/engine/db_persisted_engine'
   $WORKFLOW_ENGINE_CLASS = OpenWFE::Extras::DbPersistedEngine
 
-elsif persistence == "cached-db-persistence"
+elsif %w{ cached-db-persistence d }.include?(pers)
 
   require 'extras/active_connection'
   require 'openwfe/extras/engine/db_persisted_engine'

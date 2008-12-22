@@ -25,12 +25,12 @@ class Active0Test < Test::Unit::TestCase
   #
   # tests
 
-  def test_0
+  def _test_0 # disabled for now
 
-    wi = new_wi "participant x"
+    wi = new_wi 'participant x'
 
-    wi.fields << OpenWFE::Extras::Field.new_field("toto", "a")
-    wi.fields << OpenWFE::Extras::Field.new_field("toto", "b")
+    wi.fields << OpenWFE::Extras::Field.new_field('toto', 'a')
+    wi.fields << OpenWFE::Extras::Field.new_field('toto', 'b')
 
     assert_raise ActiveRecord::StatementInvalid do
       wi.save
@@ -45,10 +45,10 @@ class Active0Test < Test::Unit::TestCase
 
     wi = new_wi 'participant x'
 
-    wi.fields << OpenWFE::Extras::Field.new_field("toto", "a")
-    wi.fields << OpenWFE::Extras::Field.new_field("list", [ 1, 2, "trois" ])
-    wi.fields << OpenWFE::Extras::Field.new_field("smurf", "")
-    wi.fields << OpenWFE::Extras::Field.new_field("grand schtroumpf", " ")
+    wi.fields << OpenWFE::Extras::Field.new_field('toto', 'a')
+    wi.fields << OpenWFE::Extras::Field.new_field('list', [ 1, 2, 'trois' ])
+    wi.fields << OpenWFE::Extras::Field.new_field('smurf', '')
+    wi.fields << OpenWFE::Extras::Field.new_field('grand schtroumpf', ' ')
 
     wi.save
 
@@ -56,10 +56,10 @@ class Active0Test < Test::Unit::TestCase
 
     assert_equal 1, wis.size
 
-    assert_equal "a", wi.field(:toto).value
-    assert_equal [ 1, 2, "trois" ], wi.field(:list).value
-    assert_equal " ", wi.field("grand schtroumpf").value
-    assert_equal "", wi.field(:smurf).value
+    assert_equal 'a', wi.field(:toto).value
+    assert_equal [ 1, 2, 'trois' ], wi.field(:list).value
+    assert_equal ' ', wi.field('grand schtroumpf').value
+    assert_equal '', wi.field(:smurf).value
   end
 
   def test_2
@@ -168,7 +168,7 @@ class Active0Test < Test::Unit::TestCase
     wi = OpenWFE::InFlowWorkItem.new
     wi.fei = new_fei
 
-    wi.name = "Maarten"
+    wi.name = 'Maarten'
     wi.start_date = Date.today
 
     awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
@@ -242,19 +242,19 @@ class Active0Test < Test::Unit::TestCase
     wi = OpenWFE::InFlowWorkItem.new
     wi.fei = new_fei
 
-    wi.attributes["compact_workitems"] = true
-    wi.participant_name = "part x"
-    wi.attributes = { "toto" => "a" }
+    wi.attributes['compact_workitems'] = true
+    wi.participant_name = 'part x'
+    wi.attributes = { 'toto' => 'a' }
 
     awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
       #
       # in flow workitem to workitem(see activeparticipants)
 
-    awi.replace_fields({ "toto" => "nada", "tada" => { 1 => 10 } })
+    awi.replace_fields({ 'toto' => 'nada', 'tada' => { 1 => 10 } })
 
-    awi = OpenWFE::Extras::Workitem.find_by_participant_name "part x"
+    awi = OpenWFE::Extras::Workitem.find_by_participant_name('part x')
 
-    assert_equal({ "toto"=>"nada", "tada"=> {1 => 10} }, awi.fields_hash)
+    assert_equal({ 'toto' => 'nada', 'tada' => { 1 => 10 } }, awi.fields_hash)
   end
 
   #
@@ -262,7 +262,7 @@ class Active0Test < Test::Unit::TestCase
   #
   def test_9
 
-    t = (0..700).to_a.inject("") { |r, i| r << i.to_s } + " red"
+    t = (0..700).to_a.inject('') { |r, i| r << i.to_s } + ' red'
 
     wi = OpenWFE::InFlowWorkItem.new
     wi.fei = new_fei
