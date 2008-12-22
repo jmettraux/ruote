@@ -155,6 +155,7 @@ module OpenWFE
         [ Array, OpenWFE::InFlowWorkItem ] => 'workitems',
         OpenWFE::ProcessStatus => 'process',
         [ Array, OpenWFE::ProcessStatus ] => 'processes',
+        [ Hash, OpenWFE::ProcessStatus ] => 'processes',
         OpenWFE::FlowExpression => 'expression',
         [ Array, OpenWFE::FlowExpression ] => 'expressions',
         #[ Hash, OpenWFE::FlowExpression ] => 'expressions',
@@ -235,8 +236,6 @@ module OpenWFE
   end
 
   def self.rep_insert_links (item, options, target, hint=nil)
-
-    return target unless item
 
     lgen = options[:linkgen] || (return target)
     lgen = PlainLinkGenerator.new if lgen == :plain

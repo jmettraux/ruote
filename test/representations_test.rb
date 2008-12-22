@@ -7,9 +7,12 @@
 # Sun Apr 13 19:03:31 JST 2008
 #
 
+require 'test/unit'
+
 require 'rubygems'
 
-require 'test/unit'
+$:.unshift( File.dirname(__FILE__) + '/../lib' ) unless \
+  $:.include?( File.dirname(__FILE__) + '/../lib' )
 
 require 'openwfe/workitem'
 require 'openwfe/flowexpressionid'
@@ -17,7 +20,7 @@ require 'openwfe/representations'
 require 'openwfe/expool/representation'
 require 'openwfe/engine/status_methods'
 
-require 'rutest_utils'
+require File.dirname(__FILE__) + '/rutest_utils'
 
 
 class RepresentationsTest < Test::Unit::TestCase
@@ -164,7 +167,7 @@ end}}, li.attributes)
     assert_equal li.customer_name, li1.customer_name
   end
 
-  def test_pstatus_to_xml_and_json
+  def test_4
 
     ps = new_process_status('20080919-equestribus')
 
@@ -183,15 +186,13 @@ end}}, li.attributes)
       OpenWFE::Json.process_to_h(ps, :linkgen => :plain)['links'])
   end
 
-  def test_pstatuses_to_xml_and_json
-
-    rlr = Struct::RailsRequest.new('http://', 'www.example.com', 80)
+  def test_5
 
     ps = [ '20080919-victrix', '20070909-gemina' ].inject({}) do |r, wfid|
       r[wfid] = new_process_status(wfid); r
     end
 
-    options = { :indent => 2, :request => rlr, :linkgen => :plain }
+    options = { :indent => 2, :linkgen => :plain }
 
     xml = OpenWFE::Xml.processes_to_xml(ps, options)
     #puts xml
@@ -199,6 +200,24 @@ end}}, li.attributes)
     assert_match(/count="2"/, xml)
     assert_match(/"\/processes\/20080919-victrix"/, xml)
     assert_match(/"\/processes\/20070909-gemina"/, xml)
+  end
+
+  def test_6
+
+    ps = {}
+
+    options = { :indent => 2, :linkgen => :plain }
+
+    xml = OpenWFE::Xml.processes_to_xml(ps, options)
+    assert_equal(
+      %{
+<?xml version="1.0" encoding="UTF-8"?>
+<processes count="0">
+  <link href="/" rel="via"/>
+  <link href="/processes" rel="self"/>
+</processes>
+      }.strip,
+      xml.strip)
   end
 
   protected
