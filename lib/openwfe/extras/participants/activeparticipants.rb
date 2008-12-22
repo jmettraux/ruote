@@ -100,7 +100,8 @@ module Extras
         t.column :yvalue, :text
         t.column :workitem_id, :integer, :null => false
       end
-      add_index :fields, [ :workitem_id, :fkey ], :unique => true
+      #add_index :fields, [ :workitem_id, :fkey ], :unique => true
+      #add_index :fields, :workitem_id
       add_index :fields, :fkey
       add_index :fields, :vclass
       add_index :fields, :svalue
@@ -190,50 +191,36 @@ module Extras
     #
     def Workitem.from_owfe_workitem (wi, store_name=nil)
 
-      i = Workitem.new
-      i.fei = wi.fei.to_s
-      i.wfid = wi.fei.wfid
-      i.expid = wi.fei.expid
-      i.wf_name = wi.fei.workflow_definition_name
-      i.wf_revision = wi.fei.workflow_definition_revision
-      i.participant_name = wi.participant_name
-      i.dispatch_time = wi.dispatch_time
-      i.last_modified = nil
+      transaction do # impacting two tables (workitems / fields)
 
-      i.store_name = store_name
+        i = Workitem.new
+        i.fei = wi.fei.to_s
+        i.wfid = wi.fei.wfid
+        i.expid = wi.fei.expid
+        i.wf_name = wi.fei.workflow_definition_name
+        i.wf_revision = wi.fei.workflow_definition_revision
+        i.participant_name = wi.participant_name
+        i.dispatch_time = wi.dispatch_time
+        i.last_modified = nil
 
-      i.save!
-        # save workitem before adding any field
-        # making sure it has an id...
+        i.store_name = store_name
 
-      i = Workitem.find_by_fei(wi.fei.to_s) if i.id == 0
-        # sometimes, the saved workitem id wasn't updated, was remaining at 0
-        # thus finding if necessary...
+        if wi.attributes['compact_workitems']
 
-      #i.fields.delete_all
-        # why do I need that ??? fields were getting recycled...
+          wi.attributes.delete('compact_workitems')
+          i.yattributes = wi.attributes
 
-      # This is a field set by the active participant immediately
-      # before calling this method.
-      # the default behavior is "use field method"
+        else
 
-      if wi.attributes['compact_workitems']
+          i.yattributes = nil
+          wi.attributes.each { |k, v| i.fields << Field.new_field(k, v) }
+        end
 
-        wi.attributes.delete('compact_workitems')
-        i.yattributes = wi.attributes
+        i.save!
+          # making sure to throw an exception in case of trouble
 
-      else
-
-        i.yattributes = nil
-        wi.attributes.each { |k, v| i.fields << Field.new_field(k, v) }
+        i
       end
-
-      i.save!
-        # making sure to throw an exception in case of trouble
-        #
-        # damn, insert then update :(
-
-      i
     end
 
     #
