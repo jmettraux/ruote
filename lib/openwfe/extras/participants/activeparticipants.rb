@@ -161,7 +161,7 @@ module Extras
 
 
     #
-    # Returns the flow expression id of this work (its unique OpenWFEru
+    # Returns the flow expression id of this work (its unique OpenWFEru (Ruote)
     # identifier) as a FlowExpressionId instance.
     # (within the Workitem it's just stored as a String).
     #
@@ -176,6 +176,14 @@ module Extras
     def before_save
 
       touch
+    end
+
+    #
+    # ActiveRecord 2.2.2 made me do it :(
+    #
+    def destroy
+      super
+      ActiveRecord::Base.connection.commit_db_transaction
     end
 
     #
@@ -333,8 +341,8 @@ module Extras
 
         if workitem.is_a?(Workitem)
 
-          oldreply(workitem.as_owfe_workitem)
           workitem.destroy
+          oldreply(workitem.as_owfe_workitem)
         else
 
           oldreply(workitem)
