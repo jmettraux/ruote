@@ -38,8 +38,6 @@
 # Tomaso Tosolini
 #
 
-#require 'rubygems'
-
 #require_gem 'activerecord'
 gem 'activerecord'; require 'active_record'
 
@@ -238,7 +236,6 @@ module Extras
       wi.last_modified = last_modified
 
       wi.db_id = self.id
-      #wi.uri = OpenWFE::href(options, [ :workitems, self.id ])
 
       wi
     end
@@ -264,25 +261,25 @@ module Extras
     #
     def replace_fields (fhash)
 
-      if self.yattributes
+      transaction do # impacting workitems + fields tables
 
-        self.yattributes = fhash
+        if self.yattributes
 
-      else
+          self.yattributes = fhash
 
-        fields.delete_all
+        else
 
-        fhash.each do |k, v|
-          fields << Field.new_field(k, v)
+          fields.delete_all
+          fhash.each { |k, v| fields << Field.new_field(k, v) }
         end
+
+        #f = Field.new_field("___map_type", "smap")
+          #
+          # an old trick for backward compatibility with OpenWFEja
+
+        save!
+          # making sure to throw an exception in case of trouble
       end
-
-      #f = Field.new_field("___map_type", "smap")
-        #
-        # an old trick for backward compatibility with OpenWFEja
-
-      save!
-        # making sure to throw an exception in case of trouble
     end
 
     #
