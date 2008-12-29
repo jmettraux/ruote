@@ -51,14 +51,16 @@ module OpenWFE
   #
   # It's initialized in this way :
   #
-  #   p = MailParticipant.new(
+  #   require 'openwfe/participants/enoparticipants'
+  #
+  #   p = OpenWFE::MailParticipant.new(
   #     :smtp_server => "mailhost.ourcompany.co.jp",
   #     :from_address => "bpms@our.ourcompany.co.jp",
   #     :template => "Dear ${f:name}, you've got mail")
   #
   # or
   #
-  #   p = MailParticipant.new(
+  #   p = OpenWFE::MailParticipant.new(
   #     :smtp_server => "mailhost.ourcompany.co.jp",
   #     :smtp_port => 25,
   #     :from_address => "bpms@our.ourcompany.co.jp"
@@ -144,9 +146,11 @@ module OpenWFE
   # It's perhaps better to use MailParticipant which is simpler to
   # initialize. This class is anyway an extension of MailParticipant.
   #
+  #   require 'openwfe/participants/enoparticipants'
+  #
   #   @engine.register_participant(
   #     'eno',
-  #     EmailNotificationParticipant.new(
+  #     OpenWFE::EmailNotificationParticipant.new(
   #       "googlemail.l.google.com",
   #       25,
   #       "eno@outoftheblue.co.jp",
@@ -159,18 +163,14 @@ module OpenWFE
   # And then, from the process definition :
   #
   #   class TestDefinition0 < OpenWFE::ProcessDefinition
-  #     def make
-  #       process_definition :name => "test0", :revision => "0" do
-  #         sequence do
-  #           set :field => 'email_target' do
-  #             "whatever56x56@gmail.com"
-  #           end
-  #           set :field => 'customer_name' do
-  #             "Monsieur Toto"
-  #           end
-  #           participant :ref => 'eno'
-  #         end
+  #     sequence do
+  #       set :field => 'email_target' do
+  #         "whatever56x56@gmail.com"
   #       end
+  #       set :field => 'customer_name' do
+  #         "Monsieur Toto"
+  #       end
+  #       participant :ref => 'eno'
   #     end
   #   end
   #
@@ -179,7 +179,7 @@ module OpenWFE
   #
   #   @engine.register_participant(
   #     'eno',
-  #     EmailNotificationParticipant.new(
+  #     OpenWFE::EmailNotificationParticipant.new(
   #       "googlemail.l.google.com",
   #       25,
   #       "eno@outoftheblue.co.jp",
