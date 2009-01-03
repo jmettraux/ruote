@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, Tomaso Tosolini OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, Tomaso Tosolini OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -400,8 +400,8 @@ module Extras
 
       # search in fields
 
-      fields = Field.search search_string, storename_list
-      merge_search_results ids, result, fields
+      fields = Field.search(search_string, storename_list)
+      merge_search_results(ids, result, fields)
 
       #puts "... took #{t.duration} ms"
 
@@ -425,6 +425,24 @@ module Extras
           "#{wfid}%",
           participant_name ])
     end
+
+    #
+    # Grumpf... ActiveRecord 2.2.2 here we come...
+    #
+    # taking inspiration from
+    # http://www.williambharding.com/blog/rants/rails-22-connection-pools-mongrel-handlers-bloodbath/
+    #
+    def self.find (a, opts={})
+      r = super
+      ActiveRecord::Base.connection_pool.release_connection
+      r
+    end
+
+    #def create_or_update
+    #  r = super
+    #  ActiveRecord::Base.connection_pool.release_connection
+    #  r
+    #end
 
     protected
 
