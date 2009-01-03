@@ -432,17 +432,23 @@ module Extras
     # taking inspiration from
     # http://www.williambharding.com/blog/rants/rails-22-connection-pools-mongrel-handlers-bloodbath/
     #
+    # had to set the number of connection in the pool to 30 anyway. Maybe
+    # activerecord 2.2.3 will be easier on us...
+    #
     def self.find (a, opts={})
       r = super
       ActiveRecord::Base.connection_pool.release_connection
       r
     end
 
-    #def create_or_update
-    #  r = super
-    #  ActiveRecord::Base.connection_pool.release_connection
-    #  r
-    #end
+    #
+    # Grumpf... ActiveRecord 2.2.2 here we come...
+    #
+    def create_or_update
+      r = super
+      ActiveRecord::Base.connection_pool.release_connection
+      r
+    end
 
     protected
 
