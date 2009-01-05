@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -140,7 +140,7 @@ module OpenWFE
       args.inject([]) { |r, a|
         r << a if a.is_a?(Symbol) or a.is_a?(String)
         r
-      }.join(" ")
+      }.join(' ')
     end
 
     #
@@ -219,7 +219,7 @@ module OpenWFE
     # Returns all the entries as a String.
     #
     def to_s
-      @output.inject("") { |r, entry| r << entry.to_s }
+      @output.inject('') { |r, entry| r << entry.to_s }
     end
   end
 

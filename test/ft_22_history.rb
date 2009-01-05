@@ -51,13 +51,13 @@ class FlowTest22 < Test::Unit::TestCase
       @tracer << "c\n"
     end
 
-    @engine.init_service "history", OpenWFE::FileHistory
+    @engine.init_service 'history', OpenWFE::FileHistory
 
     dotest TestDefinition0, %w{ a b c }.join("\n")
 
-    @engine.ac["history"].output_file.flush
+    @engine.ac['history'].output_file.flush
 
-    linecount = File.open("work/history.log") do |f|
+    linecount = File.open('work/history.log') do |f|
       f.readlines.size
     end
 

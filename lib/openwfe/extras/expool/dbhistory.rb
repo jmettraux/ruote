@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2008-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -81,7 +81,7 @@ module OpenWFE::Extras
   #
   class HistoryEntry < ActiveRecord::Base
 
-    set_table_name 'history'
+    set_table_name('history')
 
     #
     # returns a FlowExpressionId instance if the entry has a 'fei' or
@@ -108,6 +108,7 @@ module OpenWFE::Extras
 
       def do_log (source, event, *args)
 
+
         fei = get_fei(args)
 
         he = HistoryEntry.new
@@ -126,14 +127,6 @@ module OpenWFE::Extras
 
         he.participant = wi.participant_name \
           if wi.respond_to?(:participant_name)
-
-        #class << he.connection
-        #  def execute (sql, name=nil)
-        #    t = Time.now.to_f
-        #    super
-        #    p [ :x, self.object_id, sql[0, 40], Time.now.to_f - t ]
-        #  end
-        #end
 
         begin
           he.save!
@@ -156,7 +149,7 @@ module OpenWFE::Extras
 
     def log (source, event, *args)
 
-      get_workqueue.push(self, :do_log, event, *args)
+      get_workqueue.push(self, :do_log, source, event, *args)
     end
   end
 
