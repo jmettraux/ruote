@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #23441 : tracking rel=prev/next in representations.rb (ruote-rest/web).
 - bug   #23438 : QueuedDbHistory was losing the :source information. Fixed.
 - todo  #23200 : added rewind-if/break-if attributes to cursor/loop
 - todo  #23187 : OpenWFE.process_definition :name => x, ... as a shortcut

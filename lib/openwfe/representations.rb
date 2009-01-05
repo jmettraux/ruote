@@ -107,8 +107,11 @@ module OpenWFE
       end
 
       href = "/#{res}"
+
       href = "#{href}/#{OpenWFE.swapdots(id)}" if id
-      href = "#{href}?#{}" if opts.size > 0
+
+      href = "#{href}?#{opts.collect { |k, v| "#{k}=#{v}" }.join('&')}" \
+        if opts.size > 0
 
       [ href, rel ]
     end
@@ -177,12 +180,29 @@ module OpenWFE
         [ OpenWFE::FlowExpressionId, :parent ] => 'to_parent'
       }
 
+      #
+      # generate the links for a given item
+      #
       def gen_links (res, item, &block)
+
         if block # unique element
+
           [ link('via', res), link('self', res, block.call(item)) ]
-        #elsif item.respond_to?(:current_page)
-        #  [ link('via', ''), link('self', res) ]
+
+        elsif item.respond_to?(:current_page)
+
+          a = [
+            link('via', ''),
+            link('self', res, 'page' => item.current_page)
+          ]
+          a << link('prev', res, 'page' => item.current_page - 1) \
+            if item.current_page > 1
+          a << link('next', res, 'page' => item.current_page + 1) \
+            if item.current_page < item.total_pages
+          a
+
         else # collection
+
           [ link('via', ''), link('self', res) ]
         end
       end

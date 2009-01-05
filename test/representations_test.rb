@@ -227,6 +227,34 @@ end}}, li.attributes)
       xml.strip)
   end
 
+  def test_7
+
+    ps = [ '20080919-victrix', '20070909-gemina' ].collect do |wfid|
+      new_process_status(wfid)
+    end
+
+    class << ps
+      def current_page
+        2
+      end
+      def total_pages
+        3
+      end
+    end
+
+    options = { :indent => 2, :linkgen => :plain }
+
+    xml = OpenWFE::Xml.processes_to_xml(ps, options)
+    #puts xml
+    assert_match(/"\/processes"/, xml)
+    assert_match(/count="2"/, xml)
+    assert_match(/"\/processes\/20080919-victrix"/, xml)
+    assert_match(/"\/processes\/20070909-gemina"/, xml)
+    assert_match(/"\/processes\?page=2" rel="self"/, xml)
+    assert_match(/"\/processes\?page=1" rel="prev"/, xml)
+    assert_match(/"\/processes\?page=3" rel="next"/, xml)
+  end
+
   protected
 
     def new_process_status (wfid)
