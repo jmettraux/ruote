@@ -31,7 +31,7 @@ class RepresentationsTest < Test::Unit::TestCase
   def test_0
 
     li = OpenWFE::LaunchItem.new
-    li.attributes.delete "___map_type"
+    li.attributes.delete('___map_type')
     xml = OpenWFE::Xml.launchitem_to_xml li
 
     assert_equal(
@@ -85,7 +85,7 @@ end}}, li.attributes)
   def test_1
 
     li = OpenWFE::LaunchItem.new
-    li.attributes = { "a" => 1, "b" => 2, "c" => [ 1, 2, 3 ]}
+    li.attributes = { 'a' => 1, 'b' => 2, 'c' => [ 1, 2, 3 ]}
 
     xml = OpenWFE::Xml.launchitem_to_xml li
 
@@ -95,7 +95,7 @@ end}}, li.attributes)
 
     li = OpenWFE::Xml.launchitem_from_xml xml
 
-    assert_equal({ "a" => 1, "b" => 2, "c" => [ 1, 2, 3 ] }, li.attributes)
+    assert_equal({ 'a' => 1, 'b' => 2, 'c' => [ 1, 2, 3 ] }, li.attributes)
   end
 
   def test_2
@@ -195,6 +195,13 @@ end}}, li.attributes)
     options = { :indent => 2, :linkgen => :plain }
 
     xml = OpenWFE::Xml.processes_to_xml(ps, options)
+    #puts xml
+    assert_match(/"\/processes"/, xml)
+    assert_match(/count="2"/, xml)
+    assert_match(/"\/processes\/20080919-victrix"/, xml)
+    assert_match(/"\/processes\/20070909-gemina"/, xml)
+
+    xml = OpenWFE::Xml.processes_to_xml(ps.values, options)
     #puts xml
     assert_match(/"\/processes"/, xml)
     assert_match(/count="2"/, xml)

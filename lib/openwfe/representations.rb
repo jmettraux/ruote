@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2008 John Mettraux, OpenWFE.org
+# Copyright (c) 2008-2009 John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -96,10 +96,19 @@ module OpenWFE
     #
     # (Warning : this method turns dots to underscores in the id)
     #
-    def link (rel, res, id=nil)
+    def link (rel, res, opts={})
+
+      id = nil
+      if opts.is_a?(Hash)
+        id = opts.delete(:id)
+      else
+        id = opts
+        opts = {}
+      end
 
       href = "/#{res}"
       href = "#{href}/#{OpenWFE.swapdots(id)}" if id
+      href = "#{href}?#{}" if opts.size > 0
 
       [ href, rel ]
     end
@@ -171,6 +180,8 @@ module OpenWFE
       def gen_links (res, item, &block)
         if block # unique element
           [ link('via', res), link('self', res, block.call(item)) ]
+        #elsif item.respond_to?(:current_page)
+        #  [ link('via', ''), link('self', res) ]
         else # collection
           [ link('via', ''), link('self', res) ]
         end
@@ -489,6 +500,7 @@ module OpenWFE
     collection_to_xml(
       'processes', pss, options, OpenWFE::ProcessStatus
     ) { |fei, ps|
+      ps = ps || fei # accomodating arrays and hashes
       process_to_xml(ps, options.merge(:short => true))
     }
   end
@@ -558,6 +570,7 @@ module OpenWFE
   def Json.processes_to_h (pss, opts={})
 
     collection_to_h(pss, opts, OpenWFE::InFlowWorkItem) { |fei, ps|
+      ps = ps || fei # accomodating arrays and hashes
       process_to_h(ps, opts.merge(:short => true))
     }
   end
