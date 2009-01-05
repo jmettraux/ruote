@@ -189,7 +189,7 @@ module OpenWFE
 
           [ link('via', res), link('self', res, block.call(item)) ]
 
-        elsif item.respond_to?(:current_page)
+        elsif item.respond_to?(:current_page) and item.total_pages > 1
 
           a = [
             link('via', ''),
