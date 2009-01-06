@@ -79,8 +79,8 @@ module OpenWFE
       content = content.class if content
       content = hint if hint and (not content)
 
-      key = flatten_fexp_class(key)
-      content = flatten_fexp_class(content)
+      key = flatten_class(key)
+      content = flatten_class(content)
 
       key = [ key, content ] if content
 
@@ -151,12 +151,15 @@ module OpenWFE
         target
       end
 
-      def flatten_fexp_class (c)
+      def flatten_class (c)
 
         return c unless c.is_a?(Class)
 
-        c.ancestors.include?(OpenWFE::FlowExpression) ?
-          OpenWFE::FlowExpression : c
+        c.ancestors.each do |a|
+          return a if [ Array, Hash, OpenWFE::FlowExpression ].include?(a)
+        end
+
+        c
       end
 
       #
