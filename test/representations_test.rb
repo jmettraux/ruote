@@ -281,6 +281,25 @@ end}}, li.attributes)
     assert_match(/"\/processes" rel="self"/, xml)
   end
 
+  def test_9
+
+    # empty process list/hash ?
+
+    h = OpenWFE::Json.processes_to_h([], :linkgen => :plain)
+    #p h
+
+    assert_equal(
+      [{'href'=>'/', 'rel'=>'via'}, {'href'=>'/processes', 'rel'=>'self'}],
+      h['links'])
+
+    h = OpenWFE::Json.processes_to_h({}, :linkgen => :plain)
+    #p h
+
+    assert_equal(
+      [{'href'=>'/', 'rel'=>'via'}, {'href'=>'/processes', 'rel'=>'self'}],
+      h['links'])
+  end
+
   protected
 
     def new_process_status (wfid)
