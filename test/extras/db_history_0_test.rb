@@ -1,4 +1,12 @@
 
+#
+# Testing Ruote
+#
+# John Mettraux at openwfe.org
+#
+# Mon Oct  9 22:19:44 JST 2006
+#
+
 require 'test/unit'
 require 'extras/active_connection'
 require 'openwfe/engine'
@@ -53,6 +61,10 @@ class DbHistory0Test < Test::Unit::TestCase
 
     assert_equal 2, hes.select { |he| he.event == 'reply' }.size
     assert_equal 1, hes.collect { |he| he.wfid }.uniq.size
+
+    assert_equal(
+      [ nil, 'alpha', 'alpha', 'bravo', 'bravo', 'bravo' ],
+      hes.collect { |he| he.participant })
   end
 end
 

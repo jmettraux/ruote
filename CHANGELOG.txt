@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #23500 : added a HistoryEvent#log! for direct history logging (rw2)
 - todo  #23441 : tracking rel=prev/next in representations.rb (ruote-rest/web).
 - bug   #23438 : QueuedDbHistory was losing the :source information. Fixed.
 - todo  #23200 : added rewind-if/break-if attributes to cursor/loop

@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, Tomaso Tosolini, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, Tomaso Tosolini, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -122,7 +122,7 @@ module OpenWFE::Extras
     #
     def get_error_log (wfid)
 
-      wfid = extract_wfid wfid, true
+      wfid = extract_wfid(wfid, true)
       errors = ProcessError.find_all_by_wfid wfid, :order => 'id asc'
       errors.collect { |e| e.owfe_error }
     end
@@ -132,7 +132,7 @@ module OpenWFE::Extras
     #
     def remove_error_log (wfid)
 
-      ProcessError.destroy_all ["wfid = ?", wfid]
+      ProcessError.destroy_all([ 'wfid = ?', wfid ])
     end
 
     #
@@ -141,15 +141,9 @@ module OpenWFE::Extras
     #
     def get_error_logs
 
-      errors = ProcessError.find :all
-
-      result = {}
-
-      errors.each do |e|
-        (result[e.wfid] ||= []) << e.owfe_error
+      ProcessError.find(:all).inject({}) do |h, e|
+        (h[e.wfid] ||= []) << e.owfe_error; h
       end
-
-      result
     end
 
     #
@@ -158,10 +152,8 @@ module OpenWFE::Extras
     #
     def remove_errors (wfid, errors)
 
-      errors = Array(errors)
-
-      errors.each do |e|
-        ProcessError.delete e.db_id
+      Array(errors).each do |e|
+        ProcessError.delete(e.db_id)
       end
     end
 

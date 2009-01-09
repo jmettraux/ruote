@@ -91,6 +91,21 @@ module OpenWFE::Extras
 
       self.fei ? OpenWFE::FlowExpressionId.from_s(self.fei) : nil
     end
+
+    #
+    # Directly logs an event (may throw an exception)
+    #
+    def self.log! (source, event, opts={})
+
+      fei = opts[:fei]
+      opts[:wfid] ||= fei ? fei.parent_wfid : nil
+      opts[:fei] = fei.to_s if fei
+
+      opts[:source] = source.to_s
+      opts[:event] = event.to_s
+
+      self.new(opts).save!
+    end
   end
 
   class DbHistory < OpenWFE::History
@@ -101,7 +116,7 @@ module OpenWFE::Extras
 
     def log (source, event, *args)
 
-      do_log(source, event, args)
+      do_log(source, event, *args)
     end
 
     protected
@@ -109,26 +124,17 @@ module OpenWFE::Extras
       def do_log (source, event, *args)
 
         fei = get_fei(args)
-
-        he = HistoryEntry.new
-
-        he.source = source.to_s
-        he.event = event.to_s
-
-        if fei
-          he.wfid = fei.parent_wfid
-          he.fei = fei.to_s
-        end
-
-        he.message = get_message(source, event, args)
-
         wi = get_workitem(args)
 
-        he.participant = wi.participant_name \
-          if wi.respond_to?(:participant_name)
-
         begin
-          he.save!
+
+          HistoryEntry.log!(
+            source, event,
+            :fei => fei,
+            :message => get_message(source, event, args),
+            :participant => wi.respond_to?(:participant_name) ?
+              wi.participant_name : nil)
+
         rescue Exception => e
           #p e
           lerror { "dbhistory logging failure : #{e}" }
