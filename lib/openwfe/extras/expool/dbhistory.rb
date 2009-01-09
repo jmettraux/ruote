@@ -108,7 +108,6 @@ module OpenWFE::Extras
 
       def do_log (source, event, *args)
 
-
         fei = get_fei(args)
 
         he = HistoryEntry.new

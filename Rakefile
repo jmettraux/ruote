@@ -78,7 +78,7 @@ Rake::RDocTask.new do |rd|
 end
 
 #
-# Create the various openwferu[-.*] gems
+# Create the various ruote[-.*] gems
 #
 Rake::GemPackageTask.new(spec) do |pkg|
   #pkg.need_tar = true
