@@ -70,23 +70,23 @@ module OpenWFE
 
       #p [ 0, item.class, hint ]
 
-      key = item.class
+      key_class = item.class
       content = if item.respond_to?(:first)
         item.first
       elsif item.respond_to?(:values)
         item.values.first
       end
-      content = content.class if content
-      content = hint if hint and (not content)
 
-      key = flatten_class(key)
-      content = flatten_class(content)
+      content_class = content ? content.class : hint
 
-      key = [ key, content ] if content
+      key_class = flatten_class(key_class)
+      content_class = flatten_class(content_class)
 
-      #p [ 1, key, GENS[key] ]
+      key_class = [ key_class, content_class ] if content_class
 
-      method = GENS[key] || (return [])
+      #p [ 1, key_class, GENS[key_class] ]
+
+      method = GENS[key_class] || (return [])
 
       send(method, item)
     end
@@ -158,6 +158,9 @@ module OpenWFE
         c.ancestors.each do |a|
           return a if [ Array, Hash, OpenWFE::FlowExpression ].include?(a)
         end
+
+        return OpenWFE::InFlowWorkItem if c.to_s.downcase.match(/workitem/)
+          # OpenWFE::Extras::Workitem...
 
         c
       end
