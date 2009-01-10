@@ -25,9 +25,6 @@ require File.dirname(__FILE__) + '/rutest_utils'
 
 class RepresentationsTest < Test::Unit::TestCase
 
-  Struct.new('RackRequest', :scheme, :host, :port)
-  Struct.new('RailsRequest', :protocol, :host, :port)
-
   def test_0
 
     li = OpenWFE::LaunchItem.new
@@ -131,7 +128,6 @@ end}}, li.attributes)
     2.times { |i|
       wi = OpenWFE::InFlowWorkItem.new
       wi.fei = new_fei
-      #wi.uri = "/workitems/#{i}"
       wi.fei.expid = "0.#{i}"
       wis << wi
     }
@@ -140,6 +136,8 @@ end}}, li.attributes)
 
     #puts xml
     assert xml.match(/workitems/)
+    assert xml.match(/link href="\/" rel="via"/)
+    assert xml.match(/link href="\/workitems" rel="self"/)
     assert xml.match(/link href="\/workitems\/20080919-equestris\/0_0"/)
     assert xml.match(/link href="\/workitems\/20080919-equestris\/0_1"/)
 
@@ -150,7 +148,9 @@ end}}, li.attributes)
     assert_equal '/workitems/20080919-equestris/0_1', workitems.last.uri
 
     h = OpenWFE::Json.workitems_to_h(wis, :indent => 2, :linkgen => :plain)
+    #p h
     assert_equal 2, h['elements'].size
+    assert_equal 2, h['links'].size
   end
 
   def test_3
