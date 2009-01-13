@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing Ruote (OpenWFEru)
 #
 # John Mettraux at openwfe.org
 #

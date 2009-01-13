@@ -1,43 +1,41 @@
 
 #
-# Testing OpenWFE
+# Testing Ruote (OpenWFEru)
 #
 # John Mettraux at openwfe.org
 #
 
 require 'test/unit'
+require 'yaml'
+
+$:.unshift( File.dirname(__FILE__) + '/../lib' ) unless \
+  $:.include?( File.dirname(__FILE__) + '/../lib' )
 
 require 'openwfe/filterdef'
 
 
 class FilterTest < Test::Unit::TestCase
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-  def test_filter_in
+  def test_0
 
     f0 = OpenWFE::FilterDefinition.new
     f0.closed = true
-    f0.add_field("a", "r")
-    f0.add_field("b", "rw")
-    f0.add_field("c", "")
+    f0.add_field('a', 'r')
+    f0.add_field('b', 'rw')
+    f0.add_field('c', '')
 
     m0 = {
-      "a" => "A",
-      "b" => "B",
-      "c" => "C",
-      "d" => "D",
+      'a' => 'A',
+      'b' => 'B',
+      'c' => 'C',
+      'd' => 'D',
     }
 
     m1 = f0.filter_in m0
 
     #require 'pp'; pp m0
     #require 'pp'; pp m1
-    assert_equal m1, { "a" => "A", "b" => "B" }
+    assert_equal m1, { 'a' => 'A', 'b' => 'B' }
 
     f0.closed = false
 
@@ -45,37 +43,37 @@ class FilterTest < Test::Unit::TestCase
 
     #require 'pp'; pp m0
     #require 'pp'; pp m2
-    assert_equal m2, { "a" => "A", "b" => "B", "d" => "D" }
+    assert_equal m2, { 'a' => 'A', 'b' => 'B', 'd' => 'D' }
   end
 
-  def test_filter_out_0
+  def test_1
 
     f0 = OpenWFE::FilterDefinition.new
     f0.closed = false
     f0.add_ok = true
     f0.remove_ok = true
-    f0.add_field("a", "r")
-    f0.add_field("b", "rw")
-    f0.add_field("c", "")
+    f0.add_field('a', 'r')
+    f0.add_field('b', 'rw')
+    f0.add_field('c', '')
 
     m0 = {
-      "a" => "A",
-      "b" => "B",
-      "c" => "C",
-      "d" => "D",
+      'a' => 'A',
+      'b' => 'B',
+      'c' => 'C',
+      'd' => 'D',
     }
 
     #
     # 0
 
     m1 = {
-      "z" => "Z"
+      'z' => 'Z'
     }
 
     m2 = f0.filter_out m0, m1
 
     #require 'pp'; pp m2
-    assert_equal m2, {"z"=>"Z"}
+    assert_equal m2, {'z'=>'Z'}
 
     #
     # 1
@@ -85,7 +83,7 @@ class FilterTest < Test::Unit::TestCase
     m2 = f0.filter_out m0, m1
 
     #require 'pp'; pp m2
-    assert_equal m2, {"a"=>"A", "b"=>"B", "c"=>"C", "z"=>"Z", "d"=>"D"}
+    assert_equal m2, {'a'=>'A', 'b'=>'B', 'c'=>'C', 'z'=>'Z', 'd'=>'D'}
 
     #
     # 2
@@ -93,16 +91,35 @@ class FilterTest < Test::Unit::TestCase
     f0.remove_allowed = true
 
     m1 = {
-      "a" => 0,
-      "b" => 1,
-      "c" => 2,
-      "d" => 3
+      'a' => 0,
+      'b' => 1,
+      'c' => 2,
+      'd' => 3
     }
 
     m2 = f0.filter_out m0, m1
 
     #require 'pp'; pp m2
-    assert_equal m2, {"a"=>"A", "b"=>1, "c"=>"C", "d"=>3}
+    assert_equal m2, {'a'=>'A', 'b'=>1, 'c'=>'C', 'd'=>3}
+  end
+
+  def test_2
+
+    f0 = OpenWFE::FilterDefinition.new
+    f0.closed = true
+    f0.add_field('a', 'r')
+    f0.add_field('b', 'rw')
+    f0.add_field('c', '')
+
+    h = f0.to_h
+
+    assert_equal(
+      {"class"=>"OpenWFE::FilterDefinition", "fields"=>[{"regex"=>"--- a\n", "class"=>"OpenWFE::FilterDefinition::Field", "permissions"=>"r"}, {"regex"=>"--- b\n", "class"=>"OpenWFE::FilterDefinition::Field", "permissions"=>"rw"}, {"regex"=>"--- c\n", "class"=>"OpenWFE::FilterDefinition::Field", "permissions"=>""}], "add_ok"=>true, "remove_ok"=>true, "closed"=>true},
+      h)
+
+    f1 = OpenWFE::FilterDefinition.from_h(h)
+
+    assert_equal(h, f1.to_h)
   end
 
 end

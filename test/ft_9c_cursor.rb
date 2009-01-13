@@ -1,6 +1,6 @@
 
 #
-# Testing OpenWFE
+# Testing Ruote (OpenWFEru)
 #
 # John Mettraux at openwfe.org
 #
@@ -16,7 +16,7 @@ class FlowTest9c < Test::Unit::TestCase
   include FlowTestBase
 
   Test0 = OpenWFE.process_definition :name => 'ft_9c', :revision => '0' do
-    cursor :rewind_if => "${f:has_error}" do
+    cursor :rewind_if => '${f:has_error}' do
       alpha
       bravo
     end
