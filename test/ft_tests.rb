@@ -141,4 +141,5 @@ require 'ft_92_varstack'
 require 'ft_93_on_error'
 require 'ft_94_error'
 require 'ft_95_on_cancel'
+require 'ft_96_owprocdef'
 

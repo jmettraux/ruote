@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,9 @@ module OpenWFE
   #
   def self.process_definition (*args, &block)
 
+    pd = ProcessDefinition.new
+    pd.instance_eval(&block)
+
     [
       'process-definition',
       lambda() { |a|
@@ -73,7 +76,8 @@ module OpenWFE
         atts['name'] = a.first unless a.first.is_a?(Hash)
         atts.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
       }.call(args),
-      [ ProcessDefinition.new.instance_eval(&block) ]
+      #[ ProcessDefinition.new.instance_eval(&block) ]
+      pd.context.top_expressions
     ]
   end
 
