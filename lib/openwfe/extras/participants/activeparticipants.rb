@@ -198,6 +198,20 @@ module Extras
     def Workitem.from_owfe_workitem (wi, store_name=nil)
 
       transaction do # impacting two tables (workitems / fields)
+        #
+        # busted on me recently (2009/01/14) :(
+        #
+        #  You have a nil object when you didn't expect it!
+        #  You might have expected an instance of Array.
+        #  The error occurred while evaluating nil.-
+        #  /Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/connection_adap
+        #  ters/abstract_adapter.rb:159:in `decrement_open_transactions'
+        #  /Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/transactions.rb
+        #  :131:in `transaction'
+        #  /Users/jmettraux/ruote/lib/openwfe/extras/participants/activeparticipants.rb:200
+        #  :in `from_owfe_workitem'
+        #  /Users/jmettraux/ruote/lib/openwfe/extras/participants/activeparticipants.rb:744
+        #  :in `consume'
 
         i = Workitem.new
         i.fei = wi.fei.to_s

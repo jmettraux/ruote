@@ -143,6 +143,7 @@ module OpenWFE
       raise "No participant named #{@participant_name.inspect}" \
         unless participant
 
+      workitem.unset_result
       remove_timedout_flag(workitem)
 
       @applied_workitem = workitem.dup

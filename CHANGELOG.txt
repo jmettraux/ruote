@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #23553 : don't present the __result__ field to participants
 - todo  #23541 : implemented json safe serialization for FilterDefinition
 - todo  #23500 : added a HistoryEvent#log! for direct history logging (rw2)
 - todo  #23441 : tracking rel=prev/next in representations.rb (ruote-rest/web).

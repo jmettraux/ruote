@@ -1,15 +1,21 @@
 
 #
-# Testing OpenWFE
+# Testing Ruote (OpenWFEru)
 #
 # John Mettraux at openwfe.org
 #
 # Tue Jan  2 13:14:37 JST 2007
 #
 
-require 'rubygems'
 
 require 'test/unit'
+
+require 'rubygems'
+
+%w{ lib test }.each do |path|
+  path = File.expand_path(File.dirname(__FILE__) + '/../' + path)
+  $:.unshift(path) unless $:.include?(path)
+end
 
 require 'openwfe/workitem'
 require 'openwfe/engine/engine'
@@ -143,7 +149,7 @@ class SecTest < Test::Unit::TestCase
 
     sleep 0.350
 
-    assert_equal '3_', value
+    assert_equal '2_', value
 
     engine.stop
   end
@@ -171,7 +177,7 @@ class SecTest < Test::Unit::TestCase
 
     sleep 0.350
 
-    assert_equal "3_35", value
+    assert_equal '2_35', value
 
     engine.stop
   end
