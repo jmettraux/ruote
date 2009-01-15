@@ -1,8 +1,7 @@
 
-
 require 'test/unit'
 
-require 'extras/ap_test_base'
+require File.dirname(__FILE__) + '/ap_test_base'
 
 require 'openwfe/extras/participants/activeparticipants'
 

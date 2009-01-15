@@ -1,9 +1,8 @@
 
 require 'test/unit'
 
-require 'extras/ap_test_base'
+require File.dirname(__FILE__) + '/ap_test_base'
 
-#require 'openwfe/workitem'
 require 'openwfe/extras/participants/activeparticipants'
 require 'test/rutest_utils'
 
@@ -49,6 +48,7 @@ class Active0Test < Test::Unit::TestCase
     wi.fields << OpenWFE::Extras::Field.new_field('list', [ 1, 2, 'trois' ])
     wi.fields << OpenWFE::Extras::Field.new_field('smurf', '')
     wi.fields << OpenWFE::Extras::Field.new_field('grand schtroumpf', ' ')
+    wi.fields << OpenWFE::Extras::Field.new_field('granted', false)
 
     wi.save
 
@@ -60,6 +60,7 @@ class Active0Test < Test::Unit::TestCase
     assert_equal [ 1, 2, 'trois' ], wi.field(:list).value
     assert_equal ' ', wi.field('grand schtroumpf').value
     assert_equal '', wi.field(:smurf).value
+    assert_equal false, wi.field(:granted).value
   end
 
   def test_2

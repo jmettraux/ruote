@@ -500,7 +500,7 @@ module Extras
   # A workaround is in place for some classes when then have to get
   # serialized. The names of thoses classes are listed in this array.
   #
-  SPECIAL_FIELD_CLASSES = [ 'Time', 'Date', 'DateTime' ]
+  SPECIAL_FIELD_CLASSES = %w{ Time Date DateTime TrueClass FalseClass }
 
   #
   # A Field (Attribute) of a Workitem.
@@ -525,11 +525,12 @@ module Extras
     #
     def self.new_field (key, value)
 
-      f = Field.new
-      f.fkey = key
-      f.vclass = value.class.to_s
-      f.value = value
-      f
+      #f = Field.new
+      #f.fkey = key
+      #f.vclass = value.class.to_s
+      #f.value = value
+      #f
+      Field.new(:fkey => key, :vclass => value.class.to_s, :value => value)
     end
 
     def value= (v)

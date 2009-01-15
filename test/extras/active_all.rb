@@ -3,8 +3,10 @@
 # all the "Active" tests
 #
 
-$:.unshift(File.dirname(__FILE__) + '/../../lib')
-$:.unshift(File.dirname(__FILE__) + '/../../test')
+%w{ lib test }.each do |path|
+  path = File.expand_path(File.dirname(__FILE__) + '/../../' + path)
+  $:.unshift(path) unless $:.include?(path)
+end
 
 require 'extras/ap_0_test'
 require 'extras/ap_1_test'

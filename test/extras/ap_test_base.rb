@@ -1,4 +1,9 @@
 
+%w{ lib test }.each do |path|
+  path = File.expand_path(File.dirname(__FILE__) + '/../../' + path)
+  $:.unshift(path) unless $:.include?(path)
+end
+
 require 'extras/active_connection'
 
 module ApTestBase
@@ -22,3 +27,4 @@ module ApTestBase
       wi
     end
 end
+
