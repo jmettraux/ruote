@@ -1,6 +1,11 @@
 
 require 'test/unit'
 
+%w{ lib test }.each do |path|
+  path = File.expand_path(File.dirname(__FILE__) + '/../../' + path)
+  $:.unshift(path) unless $:.include?(path)
+end
+
 require 'extras/active_connection'
 
 require 'openwfe/def'

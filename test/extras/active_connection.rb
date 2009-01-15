@@ -12,7 +12,7 @@ require 'active_record'
 
 ActiveRecord::Base.establish_connection(
   :adapter => 'mysql',
-  #:pool => 5,
+  :pool => 30,
   :database => 'test',
   :encoding => 'utf8')
 #ActiveRecord::Base.establish_connection(
