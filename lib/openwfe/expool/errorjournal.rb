@@ -129,7 +129,7 @@ module OpenWFE
     # same error as this one.
     #
     def == (other)
-      return false unless other.is_a?(ProcessError)
+      return false unless other.is_a?(OpenWFE::ProcessError)
       return to_s == other.to_s
         #
         # a bit costly but as it's only used by resume_process()...
@@ -149,17 +149,17 @@ module OpenWFE
 
       super
 
-      get_expression_pool.add_observer :error do |event, *args|
+      get_expression_pool.add_observer(:error) do |event, *args|
         #
         # logs each error occurring in the expression pool
 
         begin
 
-          record_error(ProcessError.new(*args))
+          record_error(OpenWFE::ProcessError.new(*args))
 
         rescue Exception => e
-          lwarn { "(failed to record error : #{e})" }
-          lwarn { "*** process error : \n" + args.join("\n") }
+          lwarn { "(failed to record error : #{e})\n#{e.backtrace.join("\n")}" }
+          lwarn { "*** process error : \n#{args.join("\n")}" }
         end
       end
 
@@ -169,8 +169,7 @@ module OpenWFE
 
         fei = args[0].fei
 
-        remove_error_log fei.wfid \
-          if fei.is_in_parent_process?
+        remove_error_log(fei.wfid) if fei.is_in_parent_process?
       end
     end
 
@@ -212,18 +211,12 @@ module OpenWFE
     #
     def ErrorJournal.reduce_error_list (errors)
 
-      h = {}
-
-      errors.each do |e|
-        h[e.fei] = e
-          #
-          # last errors do override previous errors for the
-          # same fei
-      end
-
-      h.values.sort do |error_a, error_b|
+      errors.inject({}) { |h, e|
+        h[e.fei] = e; h
+          # last errors do override previous errors for the same fei
+      }.values.sort { |error_a, error_b|
         error_a.date <=> error_b.date
-      end
+      }
     end
   end
 

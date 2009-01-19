@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, Nicolas Modrzyk OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, Nicolas Modrzyk OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ module OpenWFE
     #
     def lookup (key)
 
-      if key.kind_of? Class
+      if key.kind_of?(Class)
         @application_context.each do |k, value|
           return value if value.class == key
         end
@@ -75,7 +75,9 @@ module OpenWFE
     #
     def init_service (service_name, service_class)
 
-      s = service_class.new service_name, @application_context
+      p [ :init_service, service_name, service_class ]
+
+      s = service_class.new(service_name, @application_context)
 
       unless service_name
         s.service_name = "#{service_class.name}::#{s.object_id}"

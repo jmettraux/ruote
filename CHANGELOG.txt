@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- bug   #23609 : db_errorjournal.rb broken. Fixed.
 - todo  #23607 : added created_at timestamp to OpenWFE::Extras::ProcessError
 - todo  #23600 : file renaming among listeners and participants
 - bug   #23560 : ActiveParticipant turning value false to '0'. Fixed.

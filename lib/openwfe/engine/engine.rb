@@ -341,7 +341,7 @@ module OpenWFE
 
       if listener.kind_of?(Class)
 
-        listener = init_service nil, listener
+        listener = init_service(nil, listener)
 
         name = listener.service_name
       else

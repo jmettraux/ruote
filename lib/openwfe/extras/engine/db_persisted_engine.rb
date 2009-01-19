@@ -59,7 +59,7 @@ module OpenWFE::Extras
       #
       def build_expression_storage
 
-        init_service :s_expression_storage, DbExpressionStorage
+        init_service(:s_expression_storage, DbExpressionStorage)
       end
 
       #
@@ -67,7 +67,7 @@ module OpenWFE::Extras
       #
       def build_error_journal
 
-        init_service :s_error_journal, DbErrorJournal
+        init_service(:s_error_journal, DbErrorJournal)
       end
   end
 

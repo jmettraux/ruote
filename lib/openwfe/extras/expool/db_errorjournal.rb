@@ -171,10 +171,10 @@ module OpenWFE::Extras
       #
       def record_error (process_error)
 
-        e = ProcessError.new
+        e = OpenWFE::Extras::ProcessError.new
 
         e.wfid = process_error.wfid
-        e.expid = process_error.expid
+        e.expid = process_error.fei.expid
         e.svalue = process_error
 
         e.save!
