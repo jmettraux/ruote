@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@
 
 require 'openwfe/utils'
 require 'openwfe/omixins'
-require 'openwfe/storage/yamlfilestorage'
+require 'openwfe/storage/yaml_filestorage'
 require 'openwfe/participants/participant'
 
 
@@ -63,6 +63,7 @@ module OpenWFE
   #
   #
   module StoreParticipantMixin
+
     include LocalParticipant
     include FeiMixin
 

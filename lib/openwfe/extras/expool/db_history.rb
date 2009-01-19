@@ -137,7 +137,7 @@ module OpenWFE::Extras
 
         rescue Exception => e
           #p e
-          lerror { "dbhistory logging failure : #{e}" }
+          lerror { "db_history logging failure : #{e}" }
         end
       end
   end

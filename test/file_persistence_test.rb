@@ -3,9 +3,12 @@ require 'test/unit'
 
 require 'rubygems'
 
+$:.unshift( File.dirname(__FILE__) + '/../lib' ) unless \
+  $:.include?( File.dirname(__FILE__) + '/../lib' )
+
 require 'openwfe/engine/engine'
 require 'openwfe/expool/expstorage'
-require 'openwfe/expool/yamlexpstorage'
+require 'openwfe/expool/yaml_expstorage'
 
 
 class FilePersistenceTest < Test::Unit::TestCase

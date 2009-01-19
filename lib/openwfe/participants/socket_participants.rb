@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,8 @@
 require 'yaml'
 require 'socket'
 require 'timeout'
+
+# TODO : get rid of 'orest'
 
 require 'openwfe/orest/xmlcodec'
 require 'openwfe/participants/participant'
@@ -134,7 +136,7 @@ module OpenWFE
       #
       def fetch_reply (socket)
 
-        reply = ""
+        reply = ''
 
         begin
 

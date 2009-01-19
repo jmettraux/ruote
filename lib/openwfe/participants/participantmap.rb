@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -125,8 +125,8 @@ module OpenWFE
       unless regex.kind_of?(Regexp)
 
         regex = regex.to_s
-        regex = "^" + regex unless regex[0, 1] == '^'
-        regex = regex  + "$" unless regex[-1, 1] == '$'
+        regex = '^' + regex unless regex[0, 1] == '^'
+        regex = regex  + '$' unless regex[-1, 1] == '$'
 
         ldebug { "register_participant() '#{regex}'" }
 

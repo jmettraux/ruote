@@ -6,8 +6,9 @@
 #
 
 require File.dirname(__FILE__) + '/flowtestbase'
+
 require 'openwfe/def'
-require 'openwfe/participants/storeparticipants'
+require 'openwfe/participants/store_participants'
 
 
 class FlowTest63 < Test::Unit::TestCase

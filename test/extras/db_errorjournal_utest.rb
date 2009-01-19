@@ -4,7 +4,7 @@ require 'rubygems'
 require 'mocha'
 
 require 'extras/active_connection'
-require 'openwfe/extras/expool/dberrorjournal'
+require 'openwfe/extras/expool/db_errorjournal'
 
 
 class FakeProcessError

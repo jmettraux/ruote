@@ -6,8 +6,9 @@
 #
 
 require File.dirname(__FILE__) + '/../flowtestbase'
+
 require 'openwfe/def'
-require 'openwfe/extras/participants/csvparticipants'
+require 'openwfe/extras/participants/decision_participants'
 
 
 class FlowTest19 < Test::Unit::TestCase
@@ -36,10 +37,10 @@ cloudy,   ,     no
 
   class TestDefinition0 < OpenWFE::ProcessDefinition
     sequence do
-      set :field => "weather", :value => "cloudy"
-      set :field => "month", :value => "may"
+      set :field => 'weather', :value => 'cloudy'
+      set :field => 'month', :value => 'may'
       decision
-      _print "${f:take_umbrella?}"
+      _print '${f:take_umbrella?}'
     end
   end
 
@@ -47,11 +48,9 @@ cloudy,   ,     no
 
     csvParticipant = OpenWFE::Extras::CsvParticipant.new(CSV0)
 
-    @engine.register_participant("decision", csvParticipant)
+    @engine.register_participant('decision', csvParticipant)
 
-    dotest(
-      TestDefinition0,
-      "yes")
+    dotest(TestDefinition0, 'yes')
   end
 
 end

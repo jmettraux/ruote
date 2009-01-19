@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, Nicolas Modryzk and John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, Nicolas Modryzk and John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,12 +39,11 @@
 #
 
 require 'openwfe/utils'
-require 'openwfe/storage/yamlcustom'
-require 'openwfe/storage/yamlfilestorage'
-require 'openwfe/expool/threadedexpstorage'
+require 'openwfe/storage/yaml_custom'
+require 'openwfe/storage/yaml_filestorage'
+require 'openwfe/expool/threaded_expstorage'
 
 require 'openwfe/expressions/flowexpression'
-#require 'openwfe/expressions/raw_xml'
   #--
   # making sure classes in those files are loaded
   # before their yaml persistence is tuned
@@ -65,7 +64,7 @@ module OpenWFE
 
     def initialize (service_name, application_context)
 
-      super service_name, application_context, '/expool'
+      super(service_name, application_context, '/expool')
 
       observe_expool
     end

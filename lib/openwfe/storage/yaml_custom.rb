@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -56,10 +56,10 @@ module OpenWFE
 
       l = super
 
-      l.delete("@application_context")
+      l.delete('@application_context')
 
-      #l.delete("@timeout_job_id")
-      #l.delete("@scheduler_job_id")
+      #l.delete('@timeout_job_id')
+      #l.delete('@scheduler_job_id')
         # scheduler ids should not get persisted
 
       l
@@ -87,14 +87,14 @@ module OpenWFE
 
       YAML::quick_emit(self.object_id, opts) do |out|
         out.map(taguri) do |map|
-          map.add "s", to_s
+          map.add('s', to_s)
         end
       end
     end
 
     def FlowExpressionId.yaml_new (klass, tag, val)
 
-      s = val["s"]
+      s = val['s']
       begin
         FlowExpressionId.to_fei s
       rescue Exception => e

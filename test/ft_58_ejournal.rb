@@ -21,12 +21,6 @@ require 'openwfe/expool/errorjournal'
 class FlowTest58 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
 
   #
   # TEST 0

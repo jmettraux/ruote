@@ -10,7 +10,7 @@
 require 'test/unit'
 require 'extras/active_connection'
 require 'openwfe/engine'
-require 'openwfe/extras/expool/dbhistory'
+require 'openwfe/extras/expool/db_history'
 
 
 class DbHistory0Test < Test::Unit::TestCase

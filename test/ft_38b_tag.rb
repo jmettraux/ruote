@@ -9,20 +9,14 @@
 
 require 'rubygems'
 
+require File.dirname(__FILE__) + '/flowtestbase'
+
 require 'openwfe/def'
 require 'openwfe/participants'
-
-require File.dirname(__FILE__) + '/flowtestbase'
 
 
 class FlowTest38b < Test::Unit::TestCase
   include FlowTestBase
-
-  #def teardown
-  #end
-
-  #def setup
-  #end
 
 
   #
@@ -96,9 +90,9 @@ class FlowTest38b < Test::Unit::TestCase
       @tags += @engine.process_status(wfid).tags
     end
 
-    dotest TestTag6, ''
+    dotest(TestTag6, '')
 
-    assert_equal [ 'A', 'B' ], @tags.uniq
+    assert_equal %w{ A B }, @tags.uniq
   end
 
   #

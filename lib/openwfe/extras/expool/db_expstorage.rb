@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, Tomaso Tosolini, John Mettraux OpenWFE.org
+# Copyright (c) 2007-2009, Tomaso Tosolini, John Mettraux OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,12 +41,10 @@
 #require_gem 'activerecord'
 gem 'activerecord'; require 'active_record'
 
-#require 'monitor'
-
 require 'openwfe/service'
 require 'openwfe/rudefinitions'
 require 'openwfe/expool/expstorage'
-require 'openwfe/expool/threadedexpstorage'
+require 'openwfe/expool/threaded_expstorage'
 
 
 module OpenWFE::Extras
@@ -100,7 +98,7 @@ module OpenWFE::Extras
   # Storing OpenWFE flow expressions in a database.
   #
   class DbExpressionStorage
-    #include MonitorMixin
+
     include OpenWFE::ServiceMixin
     include OpenWFE::OwfeServiceLocator
     include OpenWFE::ExpressionStorageBase
@@ -110,13 +108,13 @@ module OpenWFE::Extras
     #
     def initialize (service_name, application_context)
 
-      require 'openwfe/storage/yamlcustom'
+      require 'openwfe/storage/yaml_custom'
         # making sure this file has been required at this point
         # this yamlcustom thing prevents the whole OpenWFE ecosystem
         # to get serialized :)
 
-      super() # absolutely necessary as we include MonitorMixin
-      service_init service_name, application_context
+      super()
+      service_init(service_name, application_context)
 
       observe_expool
     end
@@ -127,8 +125,6 @@ module OpenWFE::Extras
     def []= (fei, flow_expression)
 
       #ldebug { "[]= storing #{fei.to_s}" }
-
-      #synchronize do
 
       e = Expression.find_by_fei fei.to_s
 
@@ -147,7 +143,6 @@ module OpenWFE::Extras
       #    e.connection.instance_variable_get(:@connection) ]
 
       e.save!
-      #end
     end
 
     #
@@ -174,9 +169,7 @@ module OpenWFE::Extras
     #
     def delete (fei)
 
-      #synchronize do
-        Expression.delete_all(["fei = ?", fei.to_s])
-      #end
+      Expression.delete_all([ 'fei = ?', fei.to_s ])
     end
 
     #
@@ -263,10 +256,10 @@ module OpenWFE::Extras
         conditions = []
 
         if wfid
-          query << "wfid = ?"
+          query << 'wfid = ?'
           conditions << wfid
         elsif wfid_prefix
-          query << "wfid LIKE ?"
+          query << 'wfid LIKE ?'
           conditions << "#{wfid_prefix}%"
         end
 

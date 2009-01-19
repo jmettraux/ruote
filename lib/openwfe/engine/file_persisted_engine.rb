@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, Nicolas Modryzk and John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, Nicolas Modryzk and John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,8 @@
 #
 
 require 'openwfe/engine/engine'
-require 'openwfe/expool/yamlexpstorage'
+require 'openwfe/expool/yaml_expstorage'
+require 'openwfe/expool/yaml_errorjournal'
 
 
 module OpenWFE
@@ -62,7 +63,7 @@ module OpenWFE
       #
       def build_expression_storage
 
-        init_service :s_expression_storage, YamlFileExpressionStorage
+        init_service(:s_expression_storage, YamlFileExpressionStorage)
       end
 
       #

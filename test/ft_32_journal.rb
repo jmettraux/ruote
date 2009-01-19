@@ -47,7 +47,7 @@ class FlowTest32 < Test::Unit::TestCase
 
     journal_service = @engine.get_journal
 
-    fn = journal_service.donedir + "/" + result[2].wfid + ".journal"
+    fn = journal_service.donedir + '/' + result[2].wfid + '.journal'
 
     #puts journal_service.analyze(fn)
 

@@ -9,25 +9,25 @@
 
 require 'rubygems'
 
+require File.dirname(__FILE__) + '/flowtestbase'
+
 require 'openwfe/def'
 require 'openwfe/workitem'
-require 'openwfe/participants/storeparticipants'
-
-require File.dirname(__FILE__) + '/flowtestbase'
+require 'openwfe/participants/store_participants'
 
 
 class FlowTest29 < Test::Unit::TestCase
   include FlowTestBase
-
-  #def teardown
-  #end
 
   def setup
     super
     @engine.ac[:remote_definitions_allowed] = true
   end
 
-  DEFHOST = "http://openwferu.rubyforge.org/defs"
+  #def teardown
+  #end
+
+  DEFHOST = 'http://openwferu.rubyforge.org/defs'
 
   #
   # TEST 0
@@ -64,9 +64,9 @@ class FlowTest29 < Test::Unit::TestCase
   class MainDefinition2 < OpenWFE::ProcessDefinition
     def make
       sequence do
-        _print "-1"
+        _print '-1'
         subprocess :ref => "#{DEFHOST}/testdef.xml"
-        _print "3"
+        _print '3'
       end
     end
   end
@@ -99,7 +99,7 @@ class FlowTest29 < Test::Unit::TestCase
     #puts e
 
     assert_not_nil e
-    assert_equal e.to_s, ":remote_definitions_allowed is set to false"
+    assert_equal e.to_s, ':remote_definitions_allowed is set to false'
   end
 
 end

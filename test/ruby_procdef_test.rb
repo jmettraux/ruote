@@ -7,14 +7,19 @@
 # Tue Aug 21 10:22:18 JST 2007
 #
 
-require 'rubygems'
 
 require 'test/unit'
-
 require 'find'
 
+require 'rubygems'
+
+%w{ lib test }.each do |path|
+  path = File.expand_path(File.dirname(__FILE__) + '/../' + path)
+  $:.unshift(path) unless $:.include?(path)
+end
+
 require 'openwfe/engine/file_persisted_engine'
-require 'openwfe/participants/storeparticipants'
+require 'openwfe/participants/store_participants'
 
 
 #

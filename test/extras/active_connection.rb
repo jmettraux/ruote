@@ -21,10 +21,10 @@ ActiveRecord::Base.establish_connection(
 
 if "./#{ENV['TEST']}" == __FILE__
 
-  require 'openwfe/extras/participants/activeparticipants'
-  require 'openwfe/extras/expool/dberrorjournal'
-  require 'openwfe/extras/expool/dbexpstorage'
-  require 'openwfe/extras/expool/dbhistory'
+  require 'openwfe/extras/participants/active_participants'
+  require 'openwfe/extras/expool/db_errorjournal'
+  require 'openwfe/extras/expool/db_expstorage'
+  require 'openwfe/extras/expool/db_history'
 
   def bring_down (migration)
     begin

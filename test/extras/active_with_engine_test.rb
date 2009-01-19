@@ -14,7 +14,7 @@ require 'openwfe/flowexpressionid'
 require 'openwfe/engine/engine'
 require 'openwfe/participants/participant'
 
-require 'openwfe/extras/participants/activeparticipants'
+require 'openwfe/extras/participants/active_participants'
 
 #Thread.abort_on_exception = true
 
@@ -66,12 +66,12 @@ class WithEngineTest < Test::Unit::TestCase
     #puts @engine.get_expression_storage.to_s
     #p @engine.get_error_journal.get_error_logs
 
-    wi = OpenWFE::Extras::Workitem.find_by_participant_name "active0"
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name 'active0'
 
     assert_not_nil wi
 
-    wi.fields << OpenWFE::Extras::Field.new_field("active0", "was here")
-    wi.fields << OpenWFE::Extras::Field.new_field("active1", [ 1, 2, 4 ])
+    wi.fields << OpenWFE::Extras::Field.new_field('active0', "was here")
+    wi.fields << OpenWFE::Extras::Field.new_field('active1', [ 1, 2, 4 ])
 
     @engine.get_participant(:active0).reply_to_engine(wi)
 
@@ -83,12 +83,12 @@ class WithEngineTest < Test::Unit::TestCase
     assert_not_nil wi
     assert_not_nil wi.expid
 
-    f = OpenWFE::Extras::Field.find_by_svalue "was here"
+    f = OpenWFE::Extras::Field.find_by_svalue 'was here'
 
     assert_not_nil f
     assert_equal wi, f.workitem
 
-    f = OpenWFE::Extras::Field.find_by_fkey "active1"
+    f = OpenWFE::Extras::Field.find_by_fkey 'active1'
 
     assert_equal f.value, [ 1, 2, 4 ]
 
@@ -100,7 +100,7 @@ class WithEngineTest < Test::Unit::TestCase
 
     sleep 1
 
-    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name('active1')
 
     assert_nil wi
 
@@ -118,7 +118,7 @@ class WithEngineTest < Test::Unit::TestCase
 
     sleep 1
 
-    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active0")
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name('active0')
 
     assert_not_nil wi.dispatch_time
 
@@ -126,7 +126,7 @@ class WithEngineTest < Test::Unit::TestCase
 
     sleep 0.5
 
-    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name('active1')
 
     #wi.reply(@engine)
     @engine.reply(wi)
@@ -136,10 +136,10 @@ class WithEngineTest < Test::Unit::TestCase
 
     sleep 0.5
 
-    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active0")
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name('active0')
     assert_nil wi
 
-    wi = OpenWFE::Extras::Workitem.find_by_participant_name("active1")
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name('active1')
     assert_nil wi
   end
 

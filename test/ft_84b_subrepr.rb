@@ -10,8 +10,8 @@
 require File.dirname(__FILE__) + '/flowtestbase'
 
 require 'openwfe/def'
-require 'openwfe/participants/storeparticipants'
-require 'openwfe/storage/yamlcustom'
+require 'openwfe/participants/store_participants'
+require 'openwfe/storage/yaml_custom'
 
 
 class FlowTest84b < Test::Unit::TestCase

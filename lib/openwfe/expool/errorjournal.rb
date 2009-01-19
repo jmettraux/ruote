@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,9 +36,6 @@
 #
 # John Mettraux at openwfe.org
 #
-
-require 'find'
-require 'fileutils'
 
 require 'openwfe/service'
 require 'openwfe/omixins'
@@ -252,8 +249,8 @@ module OpenWFE
     #
     def get_error_log (wfid)
 
-      wfid = extract_wfid wfid, true
-      @per_processes[wfid] or []
+      wfid = extract_wfid(wfid, true)
+      @per_processes[wfid] || []
     end
 
     #
@@ -261,7 +258,7 @@ module OpenWFE
     #
     def remove_error_log (wfid)
 
-      wfid = extract_wfid wfid, true
+      wfid = extract_wfid(wfid, true)
       @per_processes.delete(wfid)
     end
 
@@ -274,10 +271,10 @@ module OpenWFE
 
       errors = Array(errors)
 
-      log = get_error_log wfid
+      log = get_error_log(wfid)
 
       errors.each do |e|
-        log.delete e
+        log.delete(e)
       end
     end
 
@@ -296,167 +293,6 @@ module OpenWFE
 
         (@per_processes[error.wfid] ||= []) << error
           # not that unreadable after all...
-      end
-  end
-
-  #
-  # A Journal that only keep track of error in process execution.
-  #
-  class YamlErrorJournal < ErrorJournal
-
-    attr_reader :workdir
-
-    def initialize (service_name, application_context)
-
-      require 'openwfe/storage/yamlcustom'
-        # making sure this file has been required at this point
-        # this yamlcustom thing prevents the whole OpenWFE ecosystem
-        # to get serialized :)
-
-      super
-
-      @workdir = get_work_directory + "/ejournal"
-      #@workdir = File.expand_path @workdir
-
-      FileUtils.makedirs(@workdir) unless File.exist?(@workdir)
-    end
-
-    #
-    # Returns a list (older first) of the errors for a process
-    # instance identified by its fei or wfid.
-    #
-    # Will return an empty list if there a no errors for the process
-    # instances.
-    #
-    def get_error_log (wfid)
-
-      path = get_path wfid
-
-      return [] unless File.exist?(path)
-
-      read_error_log_from path
-    end
-
-    #
-    # Copies the error log of a process instance to a give path (and
-    # filename).
-    #
-    # Could be useful when one has to perform replay operations and wants
-    # to keep a copy of the original error[s].
-    #
-    def copy_error_log_to (wfid, path)
-
-      original_path = get_path wfid
-      FileUtils.copy_file original_path, path
-    end
-
-    #
-    # Reads an error log from a specific file (possibly as copied over
-    # via copy_error_log_to()).
-    #
-    def read_error_log_from (path)
-
-      raise "no error log file at #{path}" unless File.exist?(path)
-
-      File.open(path) do |f|
-        s = YAML.load_stream f
-        s.documents
-      end
-    end
-
-    #
-    # Removes the error log of a specific process instance.
-    # Could be a good idea after a succesful replay operation.
-    #
-    # 'wfid' may be either a workflow instance id (String) either
-    # a FlowExpressionId instance.
-    #
-    def remove_error_log (wfid)
-
-      path = get_path wfid
-
-      File.delete(path) if File.exist?(path)
-    end
-
-    #
-    # Removes a list of errors from this error journal.
-    #
-    def remove_errors (wfid, errors)
-
-      errors = Array(errors)
-
-      # load all errors
-
-      log = get_error_log wfid
-
-      # remove the given errors
-
-      errors.each do |e|
-        log.delete e
-      end
-
-      # rewrite error file
-
-      path = get_path wfid
-
-      if log.size > 0
-
-        File.open(path, "w") do |f|
-          log.each do |e|
-            f.puts e.to_yaml
-          end
-        end
-      else
-
-        File.delete path
-      end
-    end
-
-    #
-    # Reads all the error logs currently stored.
-    # Returns a hash wfid --> error list.
-    #
-    def get_error_logs
-
-      result = {}
-
-      Find.find(@workdir) do |path|
-
-        next unless path.match(/\.ejournal$/)
-
-        log = read_error_log_from path
-        result[log.first.fei.wfid] = log
-      end
-
-      result
-    end
-
-    protected
-
-      #
-      # logs the error as a yaml string in an error log file
-      # (there is one error log file per workflow instance).
-      #
-      def record_error (error)
-
-        path = get_path error.fei
-
-        dirpath = File.dirname path
-
-        FileUtils.mkdir_p(dirpath) unless File.exist?(dirpath)
-
-        File.open path, "a+" do |f|
-          f.puts error.to_yaml
-        end
-      end
-
-      #
-      # Returns the path to the error log file of a specific process
-      # instance.
-      #
-      def get_path (fei_or_wfid)
-
-        @workdir + "/" + extract_wfid(fei_or_wfid, true) + ".ejournal"
       end
   end
 end

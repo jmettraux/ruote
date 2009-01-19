@@ -3,7 +3,7 @@ require 'test/unit'
 
 require File.dirname(__FILE__) + '/ap_test_base'
 
-require 'openwfe/extras/participants/activeparticipants'
+require 'openwfe/extras/participants/active_participants'
 require 'test/rutest_utils'
 
 
@@ -65,29 +65,30 @@ class Active0Test < Test::Unit::TestCase
 
   def test_2
 
-    wi = new_wi "participant y"
+    wi = new_wi 'participant y'
     wi.fei = 'fei0'
-    wi.fields << OpenWFE::Extras::Field.new_field("toto", "a")
-    wi.store_name = "store_a"
+    wi.fields << OpenWFE::Extras::Field.new_field('toto', 'a')
+    wi.store_name = 'store_a'
     wi.save
 
-    wi = new_wi "participant y"
+    wi = new_wi 'participant y'
     wi.fei = 'fei1'
-    wi.fields << OpenWFE::Extras::Field.new_field("toto", "b")
-    wi.store_name = "store_b"
+    wi.fields << OpenWFE::Extras::Field.new_field('toto', 'b')
+    wi.store_name = 'store_b'
     wi.save
 
-    wi = new_wi "participant z"
+    wi = new_wi 'participant z'
     wi.fei = 'fei2'
-    wi.fields << OpenWFE::Extras::Field.new_field("toto", "c")
-    wi.store_name = "store_c"
+    wi.fields << OpenWFE::Extras::Field.new_field('toto', 'c')
+    wi.store_name = 'store_c'
     wi.save
 
     wis = OpenWFE::Extras::Workitem.find :all
 
     assert_equal 3, wis.size
 
-    wl = OpenWFE::Extras::Workitem.find_all_by_participant_name "participant y"
+    wl = OpenWFE::Extras::Workitem.find_all_by_participant_name(
+      'participant y')
 
     assert_equal 2, wl.size
 
@@ -97,69 +98,71 @@ class Active0Test < Test::Unit::TestCase
 
     assert_equal(
       2,
-      OpenWFE::Extras::Workitem.find_in_stores([ "store_a", "store_b" ]).size)
+      OpenWFE::Extras::Workitem.find_in_stores([ 'store_a', 'store_b' ]).size)
     assert_equal(
       1,
-      OpenWFE::Extras::Workitem.find_in_stores([ "store_a", "store_b" ])["store_a"].size)
+      OpenWFE::Extras::Workitem.find_in_stores([ 'store_a', 'store_b' ])['store_a'].size)
     assert_equal(
       1,
-      OpenWFE::Extras::Workitem.find_in_stores([ "store_a", "store_b" ])["store_b"].size)
+      OpenWFE::Extras::Workitem.find_in_stores([ 'store_a', 'store_b' ])['store_b'].size)
     assert_equal(
       nil,
-      OpenWFE::Extras::Workitem.find_in_stores([ "store_a", "store_b" ])["store_c"])
+      OpenWFE::Extras::Workitem.find_in_stores([ 'store_a', 'store_b' ])['store_c'])
   end
 
   def test_3
 
-    wi = new_wi "participant 3", { "toto" => "a" }
+    wi = new_wi 'participant 3', { 'toto' => 'a' }
     wi.save!
 
-    wi.replace_fields({ "toto" => "nada", "tada" => { 1 => 10 } })
+    wi.replace_fields({ 'toto' => 'nada', 'tada' => { 1 => 10 } })
     wi.save!
 
-    wi = OpenWFE::Extras::Workitem.find_by_participant_name "participant 3"
+    wi = OpenWFE::Extras::Workitem.find_by_participant_name('participant 3')
 
-    assert_equal({ "toto"=>"nada", "tada"=> {1 => 10} }, wi.fields_hash)
+    assert_equal(
+      { 'toto' => 'nada', 'tada' => { 1 => 10 } },
+      wi.fields_hash)
   end
 
   def test_4
 
-    wi = new_wi "paetrus", { "message" => "hello world!" }
+    wi = new_wi 'paetrus', { 'message' => 'hello world!' }
     wi.save!
-    wi = new_wi "philippe", { "color" => "blue" }
+    wi = new_wi 'philippe', { 'color' => 'blue' }
     wi.save!
-    wi = new_wi "peter", { "color" => "red" }
+    wi = new_wi 'peter', { 'color' => 'red' }
     wi.save!
-    wi = new_wi "petra", { "color" => "yellow" }
+    wi = new_wi 'petra', { 'color' => 'yellow' }
     wi.save!
 
-    assert_equal 1, OpenWFE::Extras::Workitem.search("blue").size
-    assert_equal 0, OpenWFE::Extras::Workitem.search("lu").size
+    assert_equal 1, OpenWFE::Extras::Workitem.search('blue').size
+    assert_equal 0, OpenWFE::Extras::Workitem.search('lu').size
 
-    assert_equal 3, OpenWFE::Extras::Workitem.search("color").size
-    assert_equal 2, OpenWFE::Extras::Workitem.search("pet%").size
-    assert_equal 0, OpenWFE::Extras::Workitem.search("pet").size
+    assert_equal 3, OpenWFE::Extras::Workitem.search('color').size
+    assert_equal 2, OpenWFE::Extras::Workitem.search('pet%').size
+    assert_equal 0, OpenWFE::Extras::Workitem.search('pet').size
 
-    assert_equal 1, OpenWFE::Extras::Workitem.search("hello").size
+    assert_equal 1, OpenWFE::Extras::Workitem.search('hello').size
   end
 
   def test_5
 
-    wi = new_wi "philippe", { "color" => "blue" }
-    wi.store_name = "s1"
+    wi = new_wi 'philippe', { 'color' => 'blue' }
+    wi.store_name = 's1'
     wi.save!
-    wi = new_wi "peter", { "color" => "red" }
-    wi.store_name = "s1"
+    wi = new_wi 'peter', { 'color' => 'red' }
+    wi.store_name = 's1'
     wi.save!
-    wi = new_wi "petra", { "color" => "yellow" }
-    wi.store_name = "s2"
+    wi = new_wi 'petra', { 'color' => 'yellow' }
+    wi.store_name = 's2'
     wi.save!
 
-    assert_equal 1, OpenWFE::Extras::Workitem.search("blue").size
-    assert_equal 2, OpenWFE::Extras::Workitem.search("color", "s1").size
-    assert_equal 1, OpenWFE::Extras::Workitem.search("pet%", [ "s2" ]).size
-    assert_equal 2, OpenWFE::Extras::Workitem.search("pet%", [ "s1", "s2" ]).size
-    assert_equal 0, OpenWFE::Extras::Workitem.search("pet").size
+    assert_equal 1, OpenWFE::Extras::Workitem.search('blue').size
+    assert_equal 2, OpenWFE::Extras::Workitem.search('color', 's1').size
+    assert_equal 1, OpenWFE::Extras::Workitem.search('pet%', [ 's2' ]).size
+    assert_equal 2, OpenWFE::Extras::Workitem.search('pet%', [ 's1', 's2' ]).size
+    assert_equal 0, OpenWFE::Extras::Workitem.search('pet').size
   end
 
   def test_6
@@ -225,7 +228,7 @@ class Active0Test < Test::Unit::TestCase
 
     awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
       #
-      # in flow workitem to workitem(see activeparticipants)
+      # in flow workitem to workitem (see active_participants)
 
     awi = OpenWFE::Extras::Workitem.find awi.id
       #
@@ -249,7 +252,7 @@ class Active0Test < Test::Unit::TestCase
 
     awi = OpenWFE::Extras::Workitem.from_owfe_workitem wi
       #
-      # in flow workitem to workitem(see activeparticipants)
+      # in flow workitem to workitem(see active_participants)
 
     awi.replace_fields({ 'toto' => 'nada', 'tada' => { 1 => 10 } })
 

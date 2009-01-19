@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -385,7 +385,7 @@ module OpenWFE
         nil
       end
 
-      return "(no template given)" unless template
+      return '(no template given)' unless template
 
       OpenWFE::dosub(template, fe, workitem)
     end

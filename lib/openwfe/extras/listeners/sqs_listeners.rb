@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,6 @@ require 'monitor'
 require 'openwfe/service'
 require 'openwfe/listeners/listener'
 
-#require 'rubygems'
 require 'rufus/sqs' # gem 'rufus-sqs'
 
 
@@ -134,9 +133,9 @@ module Extras
     #
     def decode_object (message)
 
-      o = Base64.decode64 message.message_body
-      o = YAML.load o
-      o = OpenWFE::workitem_from_h o
+      o = Base64.decode64(message.message_body)
+      o = YAML.load(o)
+      o = OpenWFE::workitem_from_h(o)
       o
     end
   end

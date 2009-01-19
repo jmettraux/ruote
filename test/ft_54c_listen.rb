@@ -6,6 +6,7 @@
 #
 
 require File.dirname(__FILE__) + '/flowtestbase'
+
 require 'openwfe/def'
 require 'openwfe/participants/participants'
 
@@ -55,7 +56,7 @@ class FlowTest54c < Test::Unit::TestCase
 
   class Test1 < OpenWFE::ProcessDefinition
     concurrence do
-      listen :to => "channel9", :once => false do
+      listen :to => 'channel9', :once => false do
         listen9
       end
       sequence do
@@ -69,19 +70,22 @@ class FlowTest54c < Test::Unit::TestCase
 
     #log_level_to_debug
 
-    @engine.register_participant "channel9", OpenWFE::NullParticipant
-    @engine.register_participant "listen9", OpenWFE::NullParticipant
+    @engine.register_participant 'channel9', OpenWFE::NullParticipant
+    @engine.register_participant 'listen9', OpenWFE::NullParticipant
 
-    fei = launch Test1
+    fei = launch(Test1)
 
     sleep 0.750
 
     #puts @engine.get_expression_storage
-    assert_equal 8, @engine.get_expression_storage.size
+    assert_equal(
+      8,
+      @engine.get_expression_storage.size,
+      "expected 8 expressions...\n" + @engine.get_expression_storage.to_s)
 
     #puts @engine.get_expression_storage
 
-    @engine.cancel_process fei
+    @engine.cancel_process(fei)
 
     sleep 0.750
 

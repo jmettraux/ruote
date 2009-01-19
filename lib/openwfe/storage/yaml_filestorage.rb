@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, Nicolas Modryzk and John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, Nicolas Modryzk and John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -75,7 +75,7 @@ module OpenWFE
       service_init(service_name, application_context)
 
       @basepath = get_work_directory + path
-      @basepath += "/" if @basepath[-1, 1] != "/"
+      @basepath += '/' if @basepath[-1, 1] != '/'
 
       FileUtils.makedirs @basepath
     end
@@ -227,6 +227,7 @@ module OpenWFE
         # be provided by extending classes.
         #
         def compute_file_path (object)
+
           raise NotImplementedError.new
         end
 

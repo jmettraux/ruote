@@ -3,7 +3,7 @@ require 'test/unit'
 
 require File.dirname(__FILE__) + '/ap_test_base'
 
-require 'openwfe/extras/participants/activeparticipants'
+require 'openwfe/extras/participants/active_participants'
 
 
 class Active1Test < Test::Unit::TestCase
@@ -25,7 +25,7 @@ class Active1Test < Test::Unit::TestCase
 
   def test_0
 
-    wi = new_wi 'participant alpha'
+    wi = new_wi('participant alpha')
 
     threads = (1..100).to_a.inject([]) do |a, i|
       a << Thread.new do

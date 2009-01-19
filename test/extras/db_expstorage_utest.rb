@@ -6,7 +6,7 @@ require 'mocha'
 require 'rutest_utils'
 require 'extras/active_connection'
 require 'openwfe/flowexpressionid'
-require 'openwfe/extras/expool/dbexpstorage'
+require 'openwfe/extras/expool/db_expstorage'
 
 
 class FakeExpression

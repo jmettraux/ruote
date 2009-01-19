@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, Tomaso Tosolini and John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, Tomaso Tosolini and John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,8 +39,8 @@
 #
 
 require 'openwfe/engine/engine'
-require 'openwfe/extras/expool/dbexpstorage'
-require 'openwfe/extras/expool/dberrorjournal'
+require 'openwfe/extras/expool/db_expstorage'
+require 'openwfe/extras/expool/db_errorjournal'
 
 
 module OpenWFE::Extras

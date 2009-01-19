@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, Alain Hoang and John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, Alain Hoang and John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -91,6 +91,7 @@ module OpenWFE
   # The smtp server and host default to "127.0.0.1" / 25.
   #
   class MailParticipant
+
     include LocalParticipant
     include TemplateMixin
 

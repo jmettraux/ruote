@@ -8,6 +8,7 @@
 #
 
 require File.dirname(__FILE__) + '/flowtestbase'
+
 require 'openwfe/def'
 require 'openwfe/participants/participants'
 
@@ -23,8 +24,8 @@ class FlowTest54d < Test::Unit::TestCase
   class Test0 < OpenWFE::ProcessDefinition
     concurrence do
 
-      listen :to => "channel_z", :wfid => :current do
-        _print "l ${r:fei.wfid}"
+      listen :to => 'channel_z', :wfid => :current do
+        _print 'l ${r:fei.wfid}'
       end
 
       sequence do

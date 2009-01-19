@@ -6,8 +6,15 @@
 #
 
 require 'test/unit'
+require 'rubygems'
+
+%w{ lib test }.each do |path|
+  path = File.expand_path(File.dirname(__FILE__) + '/../' + path)
+  $:.unshift(path) unless $:.include?(path)
+end
+
 require 'openwfe/worklist/storelocks'
-require 'openwfe/participants/storeparticipants'
+require 'openwfe/participants/store_participants'
 
 
 class MockItem

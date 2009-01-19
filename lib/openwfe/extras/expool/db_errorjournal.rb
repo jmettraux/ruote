@@ -108,7 +108,7 @@ module OpenWFE::Extras
 
     def initialize (service_name, application_context)
 
-      require 'openwfe/storage/yamlcustom'
+      require 'openwfe/storage/yaml_custom'
         # making sure this file has been required at this point
         # this yamlcustom thing prevents the whole OpenWFE ecosystem
         # to get serialized :)
@@ -123,7 +123,7 @@ module OpenWFE::Extras
     def get_error_log (wfid)
 
       wfid = extract_wfid(wfid, true)
-      errors = ProcessError.find_all_by_wfid wfid, :order => 'id asc'
+      errors = ProcessError.find_all_by_wfid(wfid, :order => 'id asc')
       errors.collect { |e| e.owfe_error }
     end
 

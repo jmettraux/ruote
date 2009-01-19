@@ -9,10 +9,10 @@
 
 require 'rubygems'
 
-require 'openwfe/def'
-require 'openwfe/participants/storeparticipants'
-
 require File.dirname(__FILE__) + '/flowtestbase'
+
+require 'openwfe/def'
+require 'openwfe/participants/store_participants'
 
 
 class FlowTest27 < Test::Unit::TestCase

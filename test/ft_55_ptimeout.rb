@@ -6,6 +6,7 @@
 #
 
 require File.dirname(__FILE__) + '/flowtestbase'
+
 require 'pending'
 require 'openwfe/def'
 
@@ -14,13 +15,6 @@ class FlowTest55 < Test::Unit::TestCase
   include FlowTestBase
   include PendingJobsMixin
 
-  #def setup
-  #end
-
-  #def teardown
-  #end
-
-
   #
   # Test 0
   #
@@ -28,10 +22,10 @@ class FlowTest55 < Test::Unit::TestCase
   class Test0 < OpenWFE::ProcessDefinition
     concurrence :count => 1 do
       sequence do
-        participant :ref => "channel_z", :timeout => "1s"
-        _print "cancelled?"
+        participant :ref => 'channel_z', :timeout => '1s'
+        _print 'cancelled?'
       end
-      _print "concurrence done"
+      _print 'concurrence done'
     end
   end
 
@@ -45,7 +39,7 @@ class FlowTest55 < Test::Unit::TestCase
     #p scheduler.at_job_count
     assert_no_jobs_left
 
-    dotest Test0, "concurrence done"
+    dotest(Test0, 'concurrence done')
 
     sleep 0.370 # give some time for the timeout unschedule
 

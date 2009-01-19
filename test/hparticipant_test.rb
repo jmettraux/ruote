@@ -11,21 +11,26 @@
 
 require 'test/unit'
 
+require 'rubygems'
+
+%w{ lib }.each do |path|
+  path = File.expand_path(File.dirname(__FILE__) + '/../' + path)
+  $:.unshift(path) unless $:.include?(path)
+end
+
 require 'openwfe/flowexpressionid'
 require 'openwfe/engine/engine'
 require 'openwfe/def'
-require 'openwfe/participants/storeparticipants'
+require 'openwfe/participants/store_participants'
 
 
 class HParticipantTest < Test::Unit::TestCase
 
   def setup
-
     @engine = OpenWFE::Engine.new :definition_in_launchitem_allowed => true
   end
 
   def teardown
-
     @engine.stop if @engine
   end
 

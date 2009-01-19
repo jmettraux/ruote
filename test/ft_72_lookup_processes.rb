@@ -6,8 +6,9 @@
 #
 
 require File.dirname(__FILE__) + '/flowtestbase'
+
 require 'openwfe/def'
-require 'openwfe/participants/storeparticipants'
+require 'openwfe/participants/store_participants'
 
 
 class FlowTest72 < Test::Unit::TestCase
@@ -19,7 +20,7 @@ class FlowTest72 < Test::Unit::TestCase
 
   class Test0 < OpenWFE::ProcessDefinition
     sequence do
-      _set :variable => "/toto", :value => "${f:foto}"
+      _set :variable => '/toto', :value => '${f:foto}'
       participant :alpha
     end
   end

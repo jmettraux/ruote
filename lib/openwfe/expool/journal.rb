@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ require 'openwfe/service'
 require 'openwfe/omixins'
 require 'openwfe/rudefinitions'
 require 'openwfe/flowexpressionid'
-require 'openwfe/storage/yamlcustom'
+require 'openwfe/storage/yaml_custom'
 require 'openwfe/expool/journal_replay'
 
 
@@ -54,6 +54,7 @@ module OpenWFE
   # Keeping a replayable track of the events in an OpenWFEru engine
   #
   class Journal < Service
+
     include MonitorMixin
     include OwfeServiceLocator
     include JournalReplay
@@ -61,18 +62,18 @@ module OpenWFE
 
     attr_reader :workdir, :donedir
 
-    FREQ = "1m"
+    FREQ = '1m'
       #
       # once per minute, makes sure the buckets are flushed
 
     def initialize (service_name, application_context)
 
-      super
+      super # necessary since we're extending MonitorMixin
 
       @buckets = {}
 
-      @workdir = get_work_directory + "/journal"
-      @donedir = @workdir + "/done"
+      @workdir = get_work_directory + '/journal'
+      @donedir = @workdir + '/done'
 
       FileUtils.makedirs(@donedir) unless File.exist?(@donedir)
 
@@ -183,7 +184,7 @@ module OpenWFE
       end
 
       def get_path (wfid)
-        @workdir + "/" + wfid.to_s + ".journal"
+        "#{@workdir}/#{wfid.to_s}.journal"
       end
 
       #
@@ -210,7 +211,7 @@ module OpenWFE
         alias :length :size
 
         def flush
-          File.open(@path, "a+") do |f|
+          File.open(@path, 'a+') do |f|
             @events.each do |e|
               f.puts e
             end

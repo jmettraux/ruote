@@ -9,30 +9,24 @@
 
 require File.dirname(__FILE__) + '/../flowtestbase'
 require 'openwfe/def'
-require 'openwfe/extras/participants/activeparticipants'
+require 'openwfe/extras/participants/active_participants'
 require 'extras/active_connection'
 
 
 class FlowTest71 < Test::Unit::TestCase
   include FlowTestBase
 
-  #def teardown
-  #end
-
-  #def setup
-  #end
-
   #
   # TEST 0
 
   class Travel < OpenWFE::ProcessDefinition
 
-    set :v => "manager",   :value => "alpha"
-    set :v => "budget",  :value => "bravo"
-    set :v => "todo",    :value => "bravo"
+    set :v => 'manager',   :value => 'alpha'
+    set :v => 'budget',  :value => 'bravo'
+    set :v => 'todo',    :value => 'bravo'
 
-    set :f => "type",    :value => "travel"
-    set :f => "request_id", :value => "1234"
+    set :f => 'type',    :value => 'travel'
+    set :f => 'request_id', :value => '1234'
 
     sequence do
       concurrence do
@@ -47,7 +41,7 @@ class FlowTest71 < Test::Unit::TestCase
 
     #log_level_to_debug
 
-    @engine.register_participant ".*" do |wi|
+    @engine.register_participant '.*' do |wi|
       assert_equal wi.attributes['type'], 'travel'
       assert_equal wi.attributes['request_id'], '1234'
     end
@@ -66,14 +60,14 @@ class FlowTest71 < Test::Unit::TestCase
 
     OpenWFE::Extras::Workitem.delete(:all)
 
-    @engine.register_participant ".*", OpenWFE::Extras::ActiveParticipant
+    @engine.register_participant '.*', OpenWFE::Extras::ActiveParticipant
 
     fei = nil
     50.times do
       fei = @engine.launch(Travel)
       sleep 0.200
 
-      wi = OpenWFE::Extras::Workitem.find_by_participant_name("alpha")
+      wi = OpenWFE::Extras::Workitem.find_by_participant_name('alpha')
       assert_equal wi.field('type').svalue, 'travel'
       assert_equal wi.field('request_id').svalue, '1234'
 
