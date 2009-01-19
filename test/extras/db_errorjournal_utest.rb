@@ -3,7 +3,7 @@ require 'test/unit'
 require 'rubygems'
 require 'mocha'
 
-require 'extras/active_connection'
+require File.dirname(__FILE__) + '/active_connection'
 require 'openwfe/extras/expool/db_errorjournal'
 
 
@@ -72,6 +72,9 @@ class DbErrorJournalUnitTest < Test::Unit::TestCase
     assert_equal 1, OpenWFE::Extras::ProcessError.count
     assert_equal 1, OpenWFE::Extras::ProcessError.find(:all).size
     assert_equal 1, @journal.get_error_logs.size
+
+    e = OpenWFE::Extras::ProcessError.find(:all)[0]
+    assert_not_nil e.created_at
   end
 end
 

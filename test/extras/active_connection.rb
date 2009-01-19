@@ -3,6 +3,11 @@
 # establishing the activerecord connection for all the tests
 #
 
+%w{ lib test }.each do |path|
+  path = File.expand_path(File.dirname(__FILE__) + '/../../' + path)
+  $:.unshift(path) unless $:.include?(path)
+end
+
 require 'rubygems'
 
 #require_gem 'activerecord'
@@ -19,7 +24,7 @@ ActiveRecord::Base.establish_connection(
 #  :adapter => 'sqlite3',
 #  :dbfile => 'test.db')
 
-if "./#{ENV['TEST']}" == __FILE__
+if "./#{ENV['TEST']}" == __FILE__ or __FILE__ == 'test/extras/active_connection.rb'
 
   require 'openwfe/extras/participants/active_participants'
   require 'openwfe/extras/expool/db_errorjournal'

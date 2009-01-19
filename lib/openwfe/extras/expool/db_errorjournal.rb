@@ -60,12 +60,14 @@ module OpenWFE::Extras
 
       create_table :process_errors do |t|
 
+        t.column :created_at, :timestamp
         t.column :wfid, :string, :null => false
         t.column :expid, :string, :null => false
         t.column :svalue, :text, :null => false
           # 'value' could be reserved, using 'svalue' instead
           # It stands for 'serialized value'.
       end
+      add_index :process_errors, :created_at
       add_index :process_errors, :wfid
       add_index :process_errors, :expid
     end
