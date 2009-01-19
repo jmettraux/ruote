@@ -8,6 +8,7 @@
 #
 
 require File.dirname(__FILE__) + '/flowtestbase'
+
 require 'openwfe/expool/history'
 require 'openwfe/def'
 
@@ -37,6 +38,7 @@ class FlowTest22 < Test::Unit::TestCase
 
     #puts history.to_s
     #puts history.entries.size()
+    #p history.entries
 
     #f = File.open("history.log", "w")
     #f.write(history.to_s)

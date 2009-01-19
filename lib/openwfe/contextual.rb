@@ -75,7 +75,7 @@ module OpenWFE
     #
     def init_service (service_name, service_class)
 
-      p [ :init_service, service_name, service_class ]
+      #p [ :init_service, service_name, service_class ]
 
       s = service_class.new(service_name, @application_context)
 

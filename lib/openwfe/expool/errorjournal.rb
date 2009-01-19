@@ -142,6 +142,7 @@ module OpenWFE
   # or YamlErrorJournal.
   #
   class ErrorJournal < Service
+
     include OwfeServiceLocator
     include FeiMixin
 
@@ -149,7 +150,9 @@ module OpenWFE
 
       super
 
-      get_expression_pool.add_observer(:error) do |event, *args|
+      @observers = []
+
+      @observers << get_expression_pool.add_observer(:error) do |evt, *args|
         #
         # logs each error occurring in the expression pool
 
@@ -163,7 +166,7 @@ module OpenWFE
         end
       end
 
-      get_expression_pool.add_observer :terminate do |event, *args|
+      @observers << get_expression_pool.add_observer(:terminate) do |evt, *args|
         #
         # removes error log when a process terminates
 
@@ -171,6 +174,16 @@ module OpenWFE
 
         remove_error_log(fei.wfid) if fei.is_in_parent_process?
       end
+    end
+
+    #
+    # Stops this journal, takes care of 'unobserving' the expression pool
+    #
+    def stop
+
+      super
+
+      @observers.each { |o| get_expression_pool.remove_observer(o) }
     end
 
     #

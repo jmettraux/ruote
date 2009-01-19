@@ -74,12 +74,22 @@ module OpenWFE
 
       super
 
-      get_expression_pool.add_observer(:all) do |event, *args|
-        handle :expool, event, *args
+      @expool_observer = get_expression_pool.add_observer(:all) do |evt, *args|
+        handle(:expool, evt, *args)
       end
-      get_participant_map.add_observer(:all) do |event, *args|
-        handle :pmap, event, *args
+      @pmap_observer = get_participant_map.add_observer(:all) do |evt, *args|
+        handle(:pmap, evt, *args)
       end
+    end
+
+    #
+    # Mainly, stops observing the expool and the participant map
+    #
+    def stop
+
+      super
+
+      stop_observing
     end
 
     #
@@ -150,12 +160,26 @@ module OpenWFE
 
       args.find { |a| a.is_a?(WorkItem) }
     end
+
+    protected
+
+      #
+      # Removes the observers on the expool and the participant map
+      #
+      # (called by stop())
+      #
+      def stop_observing
+
+        get_expression_pool.remove_observer(@expool_observer)
+        get_participant_map.remove_observer(@pmap_observer)
+      end
   end
 
   #
   # A base implementation for InMemoryHistory and FileHistory.
   #
   class History
+
     include HistoryMixin
 
     def initialize (service_name, application_context)
@@ -253,7 +277,13 @@ module OpenWFE
       @output
     end
 
+    #
+    # Stops observing the expool and close the output file
+    #
     def stop
+
+      stop_observing
+
       @output.close
     end
   end
