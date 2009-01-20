@@ -71,7 +71,7 @@ module OpenWFE
   #
   class FlowExpressionId
 
-    yaml_as "tag:ruby.yaml.org,2002:#{self}"
+    yaml_as("tag:ruby.yaml.org,2002:#{self}")
 
     #--
     #def to_yaml (opts={})
@@ -86,9 +86,7 @@ module OpenWFE
     def to_yaml (opts={})
 
       YAML::quick_emit(self.object_id, opts) do |out|
-        out.map(taguri) do |map|
-          map.add('s', to_s)
-        end
+        out.map(taguri) { |map| map.add('s', to_s) }
       end
     end
 
@@ -96,9 +94,9 @@ module OpenWFE
 
       s = val['s']
       begin
-        FlowExpressionId.to_fei s
+        FlowExpressionId.to_fei(s)
       rescue Exception => e
-        raise "failed to decode FlowExpressionId out of '#{s}'"
+        raise "failed to decode FlowExpressionId out of '#{s}', #{e}"
       end
     end
   end

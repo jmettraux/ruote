@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2005-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2005-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -143,6 +143,7 @@ module OpenWFE
 
       from_h({
         :owfe_version => OPENWFERU_VERSION,
+        :engine_id => 'engine',
         :workflow_definition_url => 'no-url',
         :workflow_definition_name => 'no-name',
         :workflow_definition_revision => '0',

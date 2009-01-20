@@ -729,6 +729,8 @@ module OpenWFE
 
   def Xml.error_to_xml (err, options={})
 
+    err = err.as_owfe_error if err.respond_to?(:as_owfe_error)
+
     builder(options) do |xml|
       xml.error do
 

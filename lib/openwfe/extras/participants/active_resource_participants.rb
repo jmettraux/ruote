@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2008, Torsten Schönebaum, John Mettraux (OpenWFE.org)
+# Copyright (c) 2008-2009, Torsten Schönebaum, John Mettraux (OpenWFE.org)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

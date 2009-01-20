@@ -87,10 +87,11 @@ module OpenWFE::Extras
   end
 
   #
-  # The ActiveRecord wrapper for an OpenWFEru FlowExpression instance.
+  # The ActiveRecord wrapper for a ruote FlowExpression instance
   #
   class Expression < ActiveRecord::Base
 
+    #serialize :svalue, OpenWFE::FlowExpression # not working :( (ar2.2.2)
     serialize :svalue
   end
 
@@ -126,7 +127,7 @@ module OpenWFE::Extras
 
       #ldebug { "[]= storing #{fei.to_s}" }
 
-      e = Expression.find_by_fei fei.to_s
+      e = Expression.find_by_fei(fei.to_s)
 
       unless e
         e = Expression.new
@@ -150,10 +151,7 @@ module OpenWFE::Extras
     #
     def [] (fei)
 
-      e = Expression.find_by_fei(fei.to_s)
-      return nil unless e
-
-      as_owfe_expression(e)
+      (e = Expression.find_by_fei(fei.to_s)) ? as_owfe_expression(e) : nil
     end
 
     #

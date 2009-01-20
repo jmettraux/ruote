@@ -63,6 +63,7 @@ module OpenWFE::Extras
         t.column :created_at, :timestamp
         t.column :wfid, :string, :null => false
         t.column :expid, :string, :null => false
+
         t.column :svalue, :text, :null => false
           # 'value' could be reserved, using 'svalue' instead
           # It stands for 'serialized value'.
@@ -83,13 +84,13 @@ module OpenWFE::Extras
   #
   class ProcessError < ActiveRecord::Base
 
-    serialize :svalue
+    serialize :svalue, OpenWFE::ProcessError
 
     #
     # Returns the OpenWFE process error, as serialized
     # (but takes care of setting its db_id)
     #
-    def owfe_error
+    def as_owfe_error
 
       result = svalue
       class << result
@@ -98,6 +99,8 @@ module OpenWFE::Extras
       result.db_id = id
       result
     end
+
+    alias :owfe_error :as_owfe_error
   end
 
   #
@@ -126,7 +129,7 @@ module OpenWFE::Extras
 
       wfid = extract_wfid(wfid, true)
       errors = ProcessError.find_all_by_wfid(wfid, :order => 'id asc')
-      errors.collect { |e| e.owfe_error }
+      errors.collect { |e| e.as_owfe_error }
     end
 
     #
@@ -144,7 +147,7 @@ module OpenWFE::Extras
     def get_error_logs
 
       ProcessError.find(:all).inject({}) do |h, e|
-        (h[e.wfid] ||= []) << e.owfe_error; h
+        (h[e.wfid] ||= []) << e.as_owfe_error; h
       end
     end
 
@@ -172,6 +175,9 @@ module OpenWFE::Extras
       def record_error (process_error)
 
         e = OpenWFE::Extras::ProcessError.new
+
+        e.created_at = process_error.date
+          # making sure they are, well, in sync
 
         e.wfid = process_error.wfid
         e.expid = process_error.fei.expid

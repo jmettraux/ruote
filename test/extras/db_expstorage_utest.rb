@@ -3,42 +3,65 @@ require 'test/unit'
 require 'rubygems'
 require 'mocha'
 
+require File.dirname(__FILE__) + '/active_connection'
+
 require 'rutest_utils'
-require 'extras/active_connection'
 require 'openwfe/flowexpressionid'
+require 'openwfe/expressions/flowexpression'
 require 'openwfe/extras/expool/db_expstorage'
 
 
-class FakeExpression
+#class ActiveRecord::Base
+#  def unserialize_attribute(attr_name)
+#    p attr_name
+#    p @attributes
+#    unserialized_object = object_from_yaml(@attributes[attr_name])
+#    if unserialized_object.is_a?(self.class.serialized_attributes[attr_name]) || unserialized_object.nil?
+#      @attributes.frozen? ? unserialized_object : @attributes[attr_name] = unserialized_object
+#    else
+#      raise(
+#        SerializationTypeMismatch,
+#        "#{attr_name} was supposed to be a #{self.class.serialized_attributes[attr_name]}, but was a #{unserialized_object.class.to_s}")
+#    end
+#  end
+#  def object_from_yaml (s)
+#    p s
+#    return s unless s.is_a?(String) && s =~ /^---/
+#    begin
+#      YAML::load(s)
+#    rescue Exception => e
+#      p e
+#      return s
+#    end
+#  end
+#end
+  #
+  # peeking at the deYAMLisation problems
 
-  attr_accessor :fei
-  attr_accessor :message
-  attr_accessor :application_context
+
+class OpenWFE::FlowExpression
 
   def self.create (exp_id, wfid, msg)
 
-    fei = new_fei
-    fei.expression_id = exp_id
-    fei.wfid = wfid
-
-    fe = self.new
-    fe.fei = fei
-    fe.message = msg
-
-    fe
+    new_exp(
+      OpenWFE::FlowExpressionId.new_fei(
+        :workflow_instance_id => wfid, :expression_id => exp_id),
+      nil,
+      nil,
+      {},
+      { 'message' => msg })
   end
 end
 
-class VeryFakeExpression < FakeExpression
+class OpenWFE::OtherExpression < OpenWFE::FlowExpression
 end
 
 class FakeExpressionMap
-
   def get_expression_classes (kind)
-    if kind == VeryFakeExpression
-      [ VeryFakeExpression ]
+    if kind == OpenWFE::OtherExpression
+      [ OpenWFE::OtherExpression ]
     else
-      [ VeryFakeExpression, FakeExpression ]
+      [ OpenWFE::OtherExpression, OpenWFE::FlowExpression ]
     end
   end
 end
@@ -79,7 +102,7 @@ class DbExpressionStorageUnitTest < Test::Unit::TestCase
 
     fe = @storage[fei]
 
-    assert_equal 'kthxbai', fe.message
+    assert_equal 'kthxbai', fe.attributes['message']
 
     @storage.delete fei
 
@@ -104,9 +127,9 @@ class DbExpressionStorageUnitTest < Test::Unit::TestCase
 
     count = 0
     @storage.find_expressions(
-      :include_classes => FakeExpression).each do |fexp|
+      :include_classes => OpenWFE::FlowExpression).each do |fexp|
 
-      assert_kind_of FakeExpression, fexp
+      assert_kind_of OpenWFE::FlowExpression, fexp
       count += 1
     end
     assert_equal 2, count
@@ -116,18 +139,18 @@ class DbExpressionStorageUnitTest < Test::Unit::TestCase
 
     count = 0
     @storage.find_expressions(
-      :include_classes => FakeExpression).each do |fexp|
+      :include_classes => OpenWFE::FlowExpression).each do |fexp|
 
-      assert_kind_of FakeExpression, fexp
+      assert_kind_of OpenWFE::FlowExpression, fexp
       count += 1
     end
     assert_equal 4, count
 
     count = 0
     @storage.find_expressions(
-      :include_classes => VeryFakeExpression).each do |fexp|
+      :include_classes => OpenWFE::OtherExpression).each do |fexp|
 
-      assert_kind_of VeryFakeExpression, fexp
+      assert_kind_of OpenWFE::OtherExpression, fexp
       count += 1
     end
     assert_equal 2, count
@@ -160,7 +183,7 @@ class DbExpressionStorageUnitTest < Test::Unit::TestCase
 
     def store_fake (exp_id, wfid, msg, other_class=false)
 
-      clazz = other_class ? VeryFakeExpression : FakeExpression
+      clazz = other_class ? OpenWFE::OtherExpression : OpenWFE::FlowExpression
       fe = clazz.create exp_id, wfid, msg
 
       @storage[fe.fei] = fe

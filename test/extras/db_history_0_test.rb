@@ -8,7 +8,9 @@
 #
 
 require 'test/unit'
-require 'extras/active_connection'
+
+require File.dirname(__FILE__) + '/active_connection'
+
 require 'openwfe/engine'
 require 'openwfe/extras/expool/db_history'
 
