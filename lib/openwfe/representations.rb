@@ -762,6 +762,8 @@ module OpenWFE
 
   def Json.error_to_h (err, opts={})
 
+    err = err.as_owfe_error if err.respond_to?(:as_owfe_error)
+
     h = {}
     h['date'] = err.date
     h['fei'] = err.fei.to_s
