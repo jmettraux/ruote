@@ -70,6 +70,8 @@ module OpenWFE
 
       @application_context[@service_name] = self \
         if @service_name and @application_context
+          #
+          # don't register if it's not needed
     end
 
     #

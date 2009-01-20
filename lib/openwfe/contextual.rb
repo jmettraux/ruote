@@ -77,9 +77,23 @@ module OpenWFE
 
       #p [ :init_service, service_name, service_class ]
 
+      if service_name
+        #
+        # if there is a service previously registered under the same name,
+        # make sure to stop before it gets 'overriden' in the
+        # application context
+
+        s = @application_context[service_name]
+        s.stop if s.respond_to?(:stop)
+      end
+
       s = service_class.new(service_name, @application_context)
 
       unless service_name
+        #
+        # making sure to register the service. service#new doesn't
+        # register when there is no service_name
+
         s.service_name = "#{service_class.name}::#{s.object_id}"
         @application_context[s.service_name.to_s] = s
       end
