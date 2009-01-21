@@ -201,6 +201,8 @@ module OpenWFE
     #
     def replay_at_error (error)
 
+      error = error.as_owfe_error if error.respond_to?(:as_owfe_error)
+
       remove_errors(
         error.fei.parent_wfid,
         error)
