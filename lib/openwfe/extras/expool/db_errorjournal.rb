@@ -84,7 +84,8 @@ module OpenWFE::Extras
   #
   class ProcessError < ActiveRecord::Base
 
-    serialize :svalue, OpenWFE::ProcessError
+    #serialize :svalue, OpenWFE::ProcessError
+    serialize :svalue
 
     #
     # Returns the OpenWFE process error, as serialized
