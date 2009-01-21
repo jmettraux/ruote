@@ -159,6 +159,9 @@ module OpenWFE
           return a if [ Array, Hash, OpenWFE::FlowExpression ].include?(a)
         end
 
+        return OpenWFE::ProcessError if c.to_s.downcase.match(/processerror/)
+          # OpenWFE::Extras::ProcessError...
+
         return OpenWFE::InFlowWorkItem if c.to_s.downcase.match(/workitem/)
           # OpenWFE::Extras::Workitem...
 
