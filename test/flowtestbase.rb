@@ -52,6 +52,11 @@ elsif %w{ cached-db-persistence d }.include?(pers)
   require 'extras/active_connection'
   require 'openwfe/extras/engine/db_persisted_engine'
   $WORKFLOW_ENGINE_CLASS = OpenWFE::Extras::CachedDbPersistedEngine
+
+elsif %w{ tokyo-persistence t }.include?(pers)
+
+  require 'openwfe/engine/tc_engine'
+  $WORKFLOW_ENGINE_CLASS = OpenWFE::TokyoPersistedEngine
 end
 
 #
