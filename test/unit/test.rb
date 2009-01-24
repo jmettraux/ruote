@@ -7,10 +7,13 @@
 
 dirpath = File.dirname(__FILE__)
 
-entries = Dir.new(dirpath).entries.select { |e| e.match(/ut\_.*\.rb$/) }.sort
+uts = Dir.new(dirpath).entries.select { |e| e.match(/ut\_.*\.rb$/) }.sort
+huts = Dir.new(dirpath).entries.select { |e| e.match(/hut\_.*\.rb$/) }.sort
 
-entries.each { |e| load "#{dirpath}/#{e}" }
+tests = uts + huts
 
-#entries.each { |e| puts `ruby #{dirpath}/#{e}` }
+tests.each { |e| load "#{dirpath}/#{e}" }
+
+#tests.each { |e| puts `ruby #{dirpath}/#{e}` }
   # making sure that each test is runnable standalone
 
