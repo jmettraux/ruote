@@ -43,7 +43,8 @@
 require 'openwfe/flowexpressionid'
 require 'openwfe/storage/yaml_custom'
 require 'openwfe/expool/expstorage'
-require 'rufus/tokyo'
+
+require 'rufus/tokyo' # sudo gem install rufus-tokyo
 
 
 module OpenWFE

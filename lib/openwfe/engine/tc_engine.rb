@@ -57,7 +57,10 @@ module OpenWFE
     #
     def build_expression_storage
 
-      init_service(:s_expression_storage, TokyoExpressionStorage)
+      @application_context[:expression_cache_size] ||= 1000
+
+      init_service(:s_expression_storage, CacheExpressionStorage)
+      init_service(:s_expression_storage__1, TokyoExpressionStorage)
     end
 
     #def build_error_journal
