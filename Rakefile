@@ -118,71 +118,15 @@ task :clean_work_dir do
   FileUtils.rm_rf('target') if File.exist?('target')
 end
 
-task :setup_p_persistence do
-  ENV['__persistence__'] = 'pure-persistence'
-end
-
-task :setup_c_persistence do
-  ENV['__persistence__'] = 'cached-persistence'
-end
-
-task :setup_D_persistence do
-  ENV['__persistence__'] = 'db-persistence'
-end
-
-task :setup_d_persistence do
-  ENV['__persistence__'] = 'cached-db-persistence'
-end
-
 #
 # Create a task for handling "quick unit tests"
 #
 # is triggered by "rake qtest"
 # whereas "rake test" will trigger all the tests.
 #
-Rake::TestTask.new(:qtest) do |t|
+Rake::TestTask.new(:test => :clean_work_dir) do |t|
   t.libs << 'test'
-  t.test_files = FileList['test/rake_qtest.rb']
+  t.test_files = FileList['test/test.rb']
   t.verbose = true
 end
-task :qtest => :clean_work_dir
-
-#
-# The default 'test'
-#
-task :test => :qtest
-
-#
-# pure persistence tests
-#
-task :ptest => :setup_p_persistence
-task :ptest => :qtest
-
-#
-# cached persistence tests
-#
-task :ctest => :setup_c_persistence
-task :ctest => :qtest
-
-#
-# uncached db persistence tests
-#
-task :Dtest => :setup_D_persistence
-task :Dtest => :qtest
-
-#
-# cached db persistence tests
-#
-task :dtest => :setup_d_persistence
-task :dtest => :qtest
-
-#
-# The 'long' tests
-#
-Rake::TestTask.new(:ltest) do |t|
-  t.libs << 'test'
-  t.test_files = FileList['test/rake_ltest.rb']
-  t.verbose = true
-end
-task :ltest => :clean_work_dir
 
