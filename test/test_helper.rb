@@ -40,7 +40,7 @@ end
 #
 # Returns true when on JRuby
 #
-#def on_jruby?
-#  (defined?(JRUBY_VERSION) != nil)
-#end
+def on_jruby?
+  (defined?(JRUBY_VERSION) != nil)
+end
 
