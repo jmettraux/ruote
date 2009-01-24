@@ -10,22 +10,18 @@
 require File.dirname(__FILE__) + '/base'
 
 
-class Eft0Test < Test::Unit::TestCase
+class Ft0Test < Test::Unit::TestCase
   include FunctionalBase
 
   class Test0 < OpenWFE::ProcessDefinition
-    _print 'a'
+    _print '${var0}'
   end
 
   def test_0
-    assert_trace(Test0, 'a')
-  end
-
-  def test_1
-    assert_trace(%{
-<process-definition name="test"><print>b</print></process-definition>
-      },
-      'b')
+    assert_trace(
+      Test0,
+      'val0',
+      :launch_opts => { :variables => { 'var0' => 'val0' } })
   end
 end
 
