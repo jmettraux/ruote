@@ -15,3 +15,6 @@ fts = Dir.new(dirpath).entries.select { |e| e.match(/ft\_.*\.rb$/) }.sort
 
 (ets + fts).each { |e| load "#{dirpath}/#{e}" }
 
+#(ets + fts).each { |e| puts `ruby #{dirpath}/#{e}` }
+  # making sure that each test is runnable standalone
+

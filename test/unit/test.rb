@@ -11,3 +11,6 @@ entries = Dir.new(dirpath).entries.select { |e| e.match(/ut\_.*\.rb$/) }.sort
 
 entries.each { |e| load "#{dirpath}/#{e}" }
 
+#entries.each { |e| puts `ruby #{dirpath}/#{e}` }
+  # making sure that each test is runnable standalone
+

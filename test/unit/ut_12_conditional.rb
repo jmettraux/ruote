@@ -9,10 +9,8 @@
 
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
-#require 'rutest_utils'
-
-#require 'openwfe/rudefinitions'
-#require 'openwfe/expressions/rprocdef'
+require 'openwfe/rudefinitions'
+require 'openwfe/expressions/rprocdef'
 require 'openwfe/expressions/condition'
 
 

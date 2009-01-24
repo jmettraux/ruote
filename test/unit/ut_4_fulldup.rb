@@ -12,6 +12,7 @@ require File.dirname(__FILE__) + '/../test_helper.rb'
 require 'rexml/document'
 
 require 'openwfe/utils'
+require 'openwfe/workitem'
 
 
 class FullDupTest < Test::Unit::TestCase
