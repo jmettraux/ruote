@@ -5,17 +5,10 @@
 # since Mon Oct  9 22:19:44 JST 2006
 #
 
-# making sure the tests see ruote
-
-ruotelib = File.expand_path(File.dirname(__FILE__) + '/../lib')
-$:.unshift(ruotelib) unless $:.include?(ruotelib)
+require File.dirname(__FILE__) + '/path_helper'
 
 require 'test/unit'
 require 'rubygems'
-
-
-#
-# MISC
 
 #
 # Returns a new FlowExpressionId, for testing purposes
@@ -41,6 +34,7 @@ end
 # Returns true when on JRuby
 #
 def on_jruby?
+
   (defined?(JRUBY_VERSION) != nil)
 end
 

@@ -10,7 +10,7 @@
 require File.dirname(__FILE__) + '/base'
 
 
-class Eft0Test < Test::Unit::TestCase
+class EftPrintTest < Test::Unit::TestCase
   include FunctionalBase
 
   class Test0 < OpenWFE::ProcessDefinition

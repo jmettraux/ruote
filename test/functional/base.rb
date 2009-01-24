@@ -8,6 +8,7 @@
 #
 
 require File.dirname(__FILE__) + '/../test_helper.rb'
+require File.dirname(__FILE__) + '/engine_helper.rb'
 
 require 'openwfe/engine'
 
@@ -16,34 +17,13 @@ module FunctionalBase
 
   def setup
 
-    ENV['TOKYO_CABINET_LIB'] = File.expand_path(
-      '~/tmp/tokyo-cabinet/libtokyocabinet.dylib'
-    ) if ARGV.include?('--tc-latest')
-
-    engine_class = if $ruote_engine_class
-      $ruote_engine_class
-    else
-      if ARGV.include?('--fp')
-        require 'openwfe/engine/file_persisted_engine'
-        OpenWFE::FilePersistedEngine
-      elsif ARGV.include?('--cfp')
-        require 'openwfe/engine/file_persisted_engine'
-        OpenWFE::CachedFilePersistedEngine
-      elsif ARGV.include?('--tp')
-        require 'openwfe/engine/tc_engine'
-        OpenWFE::TokyoPersistedEngine
-      else
-        OpenWFE::Engine
-      end
-    end
-
     @tracer = Tracer.new
 
     ac = {}
     ac['__tracer'] = @tracer
     ac[:definition_in_launchitem_allowed] = true
 
-    @engine = engine_class.new(ac)
+    @engine = determine_engine_class.new(ac)
 
     @terminated_processes = []
     @engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|
