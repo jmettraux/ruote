@@ -52,6 +52,8 @@ module FunctionalBase
     check_remaining_expressions(opts)
 
     assert_equal(expected_trace, @tracer.to_s) if expected_trace
+
+    purge_engine
   end
 
   protected
@@ -75,6 +77,11 @@ module FunctionalBase
   def check_remaining_expressions (opts)
 
     assert_equal 1, @engine.get_expression_storage.size
+  end
+
+  def purge_engine
+
+    FileUtils.rm_rf('work')
   end
 end
 
