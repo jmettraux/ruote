@@ -15,7 +15,7 @@ class EftEqualsTest < Test::Unit::TestCase
 
   def test_0
 
-    pdef = OpenWFE.process_definition :name => 'test_0' do
+    pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
         equals :value => 'a', :other_value => 'a'
         _print '${f:__result__}'
@@ -27,7 +27,7 @@ class EftEqualsTest < Test::Unit::TestCase
 
   def test_1
 
-    pdef = OpenWFE.process_definition :name => 'test_0' do
+    pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
         equals :value => 'a', :other_value => 'b'
         _print '${f:__result__}'
@@ -39,11 +39,10 @@ class EftEqualsTest < Test::Unit::TestCase
 
   def test_2
 
-    pdef = OpenWFE.process_definition :name => 'test_0' do
+    pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
 
         set :variable => 'v0', :value => 'v'
-        set :field => 'f0', :value => 'f'
 
         equals :variable_value => 'v0', :other_value => 'v'
         _print '${f:__result__}'
@@ -58,6 +57,35 @@ class EftEqualsTest < Test::Unit::TestCase
         _print '${f:__result__}'
 
         equals :v => 'v0', :val => 'v'
+        _print '${f:__result__}'
+      end
+    end
+
+    assert_trace(
+      pdef,
+      ([ 'true' ] * 5).join("\n"))
+  end
+
+  def test_3
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      sequence do
+
+        set :field => 'f0', :value => 'val0'
+
+        equals :field_value => 'f0', :other_value => 'val0'
+        _print '${f:__result__}'
+
+        equals :f_value => 'f0', :other_value => 'val0'
+        _print '${f:__result__}'
+
+        equals :field => 'f0', :other_value => 'val0'
+        _print '${f:__result__}'
+
+        equals :field => 'f0', :value => 'val0'
+        _print '${f:__result__}'
+
+        equals :f => 'f0', :other_value => 'val0'
         _print '${f:__result__}'
       end
     end
