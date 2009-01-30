@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2009,John Mettraux, OpenWFE.org
+# Copyright (c) 2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -59,8 +59,9 @@ module OpenWFE
 
       @application_context[:expression_cache_size] ||= 1000
 
-      init_service(:s_expression_storage, CacheExpressionStorage)
-      init_service(:s_expression_storage__1, TokyoExpressionStorage)
+      #init_service(:s_expression_storage, CacheExpressionStorage)
+      #init_service(:s_expression_storage__1, TokyoExpressionStorage)
+      init_service(:s_expression_storage, TokyoExpressionStorage)
     end
 
     #def build_error_journal
