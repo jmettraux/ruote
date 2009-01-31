@@ -63,6 +63,8 @@ module OpenWFE
       #
       def build_expression_storage
 
+        #init_service(:s_expression_storage, CacheExpressionStorage)
+        #init_service(:s_expression_storage__1, YamlFileExpressionStorage)
         init_service(:s_expression_storage, YamlFileExpressionStorage)
       end
 

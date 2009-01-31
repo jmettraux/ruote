@@ -272,7 +272,7 @@ module OpenWFE
     #
     def parent_workflow_instance_id
 
-      FlowExpressionId.to_parent_wfid workflow_instance_id
+      FlowExpressionId.to_parent_wfid(workflow_instance_id)
     end
 
     alias :parent_wfid :parent_workflow_instance_id

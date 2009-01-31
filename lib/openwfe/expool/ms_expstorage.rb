@@ -37,50 +37,76 @@
 # John Mettraux at openwfe.org
 #
 
-require 'openwfe/engine/engine'
-require 'openwfe/expool/tc_expstorage'
-require 'openwfe/expool/yaml_errorjournal'
+require 'fileutils'
+require 'openwfe/expool/expstorage'
 
 
 module OpenWFE
 
-  #
-  # An engine persisted to a Tokyo Cabinet database
-  #
-  class TokyoPersistedEngine < Engine
+  class MarshalFileExpressionStorage
+    include ServiceMixin
+    include OwfeServiceLocator
+    include ExpressionStorageBase
+
+    def initialize (service_name, application_context)
+
+      service_init(service_name, application_context)
+
+      @basepath = 'work/expool'
+
+      observe_expool
+    end
+
+    def []= (fei, fexp)
+
+      d, fn = filename_for(fei)
+
+      FileUtils.mkdir_p(d) unless File.exist?(d)
+
+      File.open("#{d}/#{fn}", 'w') { |f| f.write(Marshal.dump(fexp)) }
+    end
+
+    def [] (fei)
+
+      fn = filename_for(fei, true)
+      return nil unless File.exist?(fn)
+      fexp = File.open(fn, 'r') { |f| Marshal.load(f.read) }
+      fexp.application_context = @application_context
+      fexp
+    end
+
+    def delete (fei)
+
+      fn = filename_for(fei, true)
+      FileUtils.rm_f(fn)
+    end
+
+    # TODO : what about reload ?
 
     protected
 
-    #
-    # Overrides the method already found in Engine with a persisted
-    # expression storage
-    #
-    def build_expression_storage
+    def dir_for (wfid)
 
-      @application_context[:expression_cache_size] ||= 1000
+      wfid = FlowExpressionId.to_parent_wfid(wfid)
+      a_wfid = get_wfid_generator.split_wfid(wfid)
 
-      init_service(:s_expression_storage, CacheExpressionStorage)
-      init_service(:s_expression_storage__1, TokyoExpressionStorage)
-      #init_service(:s_expression_storage, TokyoExpressionStorage)
+      "#{@basepath}/#{a_wfid[-2]}/#{a_wfid[-1]}/"
     end
 
-    def build_error_journal
-      init_service(:s_error_journal, YamlErrorJournal)
+    def filename_for (fei, join=false)
+
+      r = if fei.wfid == '0'
+        [ @basepath, 'engine_environment.ms' ]
+      else
+        [
+          dir_for(fei.wfid),
+          "#{fei.workflow_instance_id}__#{fei.expression_id}_#{fei.expression_name}.ms"
+        ]
+      end
+
+      join ? "#{r.first}/#{r.last}" : r
     end
+
   end
-
-  #class CachedTokyoPersistedEngine < FilePersistedEngine
-  #  protected
-  #  def build_expression_storage
-  #    @application_context[:expression_cache_size] ||= 1000
-  #    init_service(
-  #      :s_expression_storage,
-  #      CacheExpressionStorage)
-  #    init_service(
-  #      :s_expression_storage__1,
-  #      ThreadedYamlFileExpressionStorage)
-  #  end
-  #end
-    #
-    # it's fast enough... no need for that trick
 end
+

@@ -191,9 +191,7 @@ module OpenWFE
         return "#{@basepath}/engine_environment.yaml" \
           if fei.workflow_instance_id == '0'
 
-        wfid = fei.parent_workflow_instance_id
-
-        compute_dir_path(wfid) +
+        compute_dir_path(fei.workflow_instance_id) +
         fei.workflow_instance_id + '__' +
         fei.expression_id + '_' +
         fei.expression_name + '.yaml'

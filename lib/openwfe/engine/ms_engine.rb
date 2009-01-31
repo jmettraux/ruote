@@ -38,7 +38,7 @@
 #
 
 require 'openwfe/engine/engine'
-require 'openwfe/expool/tc_expstorage'
+require 'openwfe/expool/ms_expstorage'
 require 'openwfe/expool/yaml_errorjournal'
 
 
@@ -47,7 +47,7 @@ module OpenWFE
   #
   # An engine persisted to a Tokyo Cabinet database
   #
-  class TokyoPersistedEngine < Engine
+  class MarshalFilePersistedEngine < Engine
 
     protected
 
@@ -60,27 +60,12 @@ module OpenWFE
       @application_context[:expression_cache_size] ||= 1000
 
       init_service(:s_expression_storage, CacheExpressionStorage)
-      init_service(:s_expression_storage__1, TokyoExpressionStorage)
-      #init_service(:s_expression_storage, TokyoExpressionStorage)
+      init_service(:s_expression_storage__1, MarshalFileExpressionStorage)
+      #init_service(:s_expression_storage, MarshalFileExpressionStorage)
     end
 
     def build_error_journal
       init_service(:s_error_journal, YamlErrorJournal)
     end
   end
-
-  #class CachedTokyoPersistedEngine < FilePersistedEngine
-  #  protected
-  #  def build_expression_storage
-  #    @application_context[:expression_cache_size] ||= 1000
-  #    init_service(
-  #      :s_expression_storage,
-  #      CacheExpressionStorage)
-  #    init_service(
-  #      :s_expression_storage__1,
-  #      ThreadedYamlFileExpressionStorage)
-  #  end
-  #end
-    #
-    # it's fast enough... no need for that trick
 end

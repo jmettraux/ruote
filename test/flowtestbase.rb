@@ -57,6 +57,11 @@ elsif %w{ tokyo-persistence t }.include?(pers)
 
   require 'openwfe/engine/tc_engine'
   $WORKFLOW_ENGINE_CLASS = OpenWFE::TokyoPersistedEngine
+
+elsif %w{ marshal-persistence m }.include?(pers)
+
+  require 'openwfe/engine/ms_engine'
+  $WORKFLOW_ENGINE_CLASS = OpenWFE::MarshalFilePersistedEngine
 end
 
 #
