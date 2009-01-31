@@ -818,6 +818,16 @@ module OpenWFE
       get_expression_pool.fetch_expression(@parent_id).descendant_of?(fei)
     end
 
+    def marshal_dump #:nodoc#
+      iv = instance_variables
+      iv.delete('@application_context')
+      iv.inject({}) { |h, vn| h[vn] = instance_variable_get(vn); h }
+    end
+
+    def marshal_load (s) #:nodoc#
+      s.each { |k, v| instance_variable_set(k, v) }
+    end
+
     protected
 
       #

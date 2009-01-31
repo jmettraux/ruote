@@ -20,8 +20,8 @@ class FlowTest26c < Test::Unit::TestCase
   # Test 0
   #
 
-  N = 10_000
-  #N = 100
+  #N = 10_000
+  N = 1000
 
   class TestDefinition0 < OpenWFE::ProcessDefinition
     sequence do

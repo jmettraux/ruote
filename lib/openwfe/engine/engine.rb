@@ -101,7 +101,7 @@ module OpenWFE
     #
     def initialize (application_context={})
 
-      super :s_engine, application_context
+      super(:s_engine, application_context)
 
       @engine_name = (application_context[:engine_name] || 'engine').to_s
 

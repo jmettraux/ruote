@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2005-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2005-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,7 @@ module OpenWFE
   #
   def OpenWFE.fulldup (object)
 
-    return object.fulldup if object.respond_to?("fulldup")
+    return object.fulldup if object.respond_to?(:fulldup)
       # trusting client objects providing a fulldup() implementation
       # Tomaso Tosolini 2007.12.11
 
@@ -153,11 +153,10 @@ module OpenWFE
     return nil if string.split("\n").size > 1
 
     begin
-      return URI::parse(string)
+      URI::parse(string)
     rescue Exception => e
+      nil
     end
-
-    nil
   end
 
   #
@@ -208,10 +207,7 @@ module OpenWFE
   # Attempts at displaying a nice stack trace
   #
   def OpenWFE.exception_to_s (exception)
-    s = "exception : "
-    s << "#{exception}\n"
-    s << exception.backtrace.join("\n")
-    s
+    "exception : #{exception}\n#{exception.backtrace.join("\n")}"
   end
 
   #

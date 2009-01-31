@@ -59,9 +59,9 @@ module OpenWFE
 
       @application_context[:expression_cache_size] ||= 1000
 
-      #init_service(:s_expression_storage, CacheExpressionStorage)
-      #init_service(:s_expression_storage__1, TokyoExpressionStorage)
-      init_service(:s_expression_storage, TokyoExpressionStorage)
+      init_service(:s_expression_storage, CacheExpressionStorage)
+      init_service(:s_expression_storage__1, TokyoExpressionStorage)
+      #init_service(:s_expression_storage, TokyoExpressionStorage)
     end
 
     #def build_error_journal
@@ -81,4 +81,6 @@ module OpenWFE
   #      ThreadedYamlFileExpressionStorage)
   #  end
   #end
+    #
+    # it's fast enough... no need for that trick
 end

@@ -37,11 +37,9 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'fileutils'
-#require 'openwfe/service'
+require 'base64'
 
 require 'openwfe/flowexpressionid'
-require 'openwfe/storage/yaml_custom'
 require 'openwfe/expool/expstorage'
 
 require 'rufus/tokyo' # sudo gem install rufus-tokyo
@@ -99,13 +97,16 @@ module OpenWFE
 
       return nil unless v
 
-      fexp = YAML.load(v)
+      fexp = Marshal.load(Base64.decode64(v))
+
       fexp.application_context = @application_context
       fexp
     end
 
     def []= (fei, fexp)
-      @db[fei.as_tc_key] = fexp.to_yaml
+      #@db[fei.as_tc_key] = fexp.to_yaml
+      #@db[fei.as_tc_key] = Rufus::H.to_h(fexp, :except => :application_context).to_json
+      @db[fei.as_tc_key] = Base64.encode64(Marshal.dump(fexp))
     end
 
     def delete (fei)
@@ -157,9 +158,10 @@ module OpenWFE
     #
     def find_expressions (options={})
 
-      @db.values.inject([]) { |a, yaml|
+      @db.values.inject([]) { |a, v|
 
-        fexp = YAML.load(yaml)
+        fexp = Marshal.load(Base64.decode64(v))
+
         fexp.application_context = @application_context
 
         a << fexp if does_match?(options, fexp)
