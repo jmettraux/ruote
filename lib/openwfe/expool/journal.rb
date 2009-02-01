@@ -44,7 +44,6 @@ require 'openwfe/service'
 require 'openwfe/omixins'
 require 'openwfe/rudefinitions'
 require 'openwfe/flowexpressionid'
-require 'openwfe/storage/yaml_custom'
 require 'openwfe/expool/journal_replay'
 
 

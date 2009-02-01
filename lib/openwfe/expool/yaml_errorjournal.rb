@@ -54,11 +54,6 @@ module OpenWFE
 
     def initialize (service_name, application_context)
 
-      require 'openwfe/storage/yaml_custom'
-        # making sure this file has been required at this point
-        # this yamlcustom thing prevents the whole OpenWFE ecosystem
-        # to get serialized :)
-
       super
 
       @workdir = get_work_directory + '/ejournal'

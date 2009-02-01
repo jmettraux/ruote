@@ -828,6 +828,12 @@ module OpenWFE
       s.each { |k, v| instance_variable_set(k, v) }
     end
 
+    def to_yaml_properties #:nodoc#
+      l = super
+      l.delete('@application_context')
+      l
+    end
+
     protected
 
       #

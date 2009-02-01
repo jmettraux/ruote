@@ -39,7 +39,6 @@
 #
 
 require 'openwfe/utils'
-require 'openwfe/storage/yaml_custom'
 require 'openwfe/storage/yaml_filestorage'
 require 'openwfe/expool/threaded_expstorage'
 

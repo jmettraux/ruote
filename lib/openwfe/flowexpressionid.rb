@@ -374,7 +374,26 @@ module OpenWFE
     #
     def self.to_parent_wfid (wfid)
 
-      wfid.split(".").first
+      wfid.split('.').first
+    end
+
+    #
+    # custom yaml serialization
+
+    yaml_as("tag:ruby.yaml.org,2002:#{self}")
+
+    def to_yaml (opts={}) #:nodoc#
+      YAML::quick_emit(self.object_id, opts) do |out|
+        out.map(taguri) { |map| map.add('s', to_s) }
+      end
+    end
+
+    def self.yaml_new (klass, tag, val) #:nodoc#
+      begin
+        FlowExpressionId.to_fei(val['s'])
+      rescue Exception => e
+        raise "failed to decode FlowExpressionId out of '#{s}', #{e}"
+      end
     end
   end
 

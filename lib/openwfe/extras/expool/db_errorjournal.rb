@@ -112,16 +112,6 @@ module OpenWFE::Extras
   class DbErrorJournal < OpenWFE::ErrorJournal
     include OpenWFE::FeiMixin
 
-    def initialize (service_name, application_context)
-
-      require 'openwfe/storage/yaml_custom'
-        # making sure this file has been required at this point
-        # this yamlcustom thing prevents the whole OpenWFE ecosystem
-        # to get serialized :)
-
-      super
-    end
-
     #
     # Returns the error log for a given workflow/process instance,
     # the older error first.
