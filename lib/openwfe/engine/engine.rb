@@ -626,6 +626,22 @@ module OpenWFE
 
         li
       end
+
+      protected
+
+      #
+      # Whether the :no_expstorage_cache is set, a CacheExpressionStorage
+      # will be set or not.
+      #
+      def init_storage (storage_class)
+
+        if @application_context[:no_expstorage_cache]
+          init_service(:s_expression_storage, storage_class)
+        else
+          init_service(:s_expression_storage, CacheExpressionStorage)
+          init_service(:s_expression_storage__1, storage_class)
+        end
+      end
   end
 
 end

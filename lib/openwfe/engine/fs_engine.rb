@@ -37,76 +37,32 @@
 # John Mettraux at openwfe.org
 #
 
-require 'fileutils'
-require 'openwfe/expool/expstorage'
+require 'openwfe/engine/engine'
+require 'openwfe/expool/fs_expstorage'
+require 'openwfe/expool/yaml_errorjournal'
 
 
 module OpenWFE
 
-  class MarshalFileExpressionStorage
-    include ServiceMixin
-    include OwfeServiceLocator
-    include ExpressionStorageBase
-
-    def initialize (service_name, application_context)
-
-      service_init(service_name, application_context)
-
-      @basepath = 'work/expool'
-
-      observe_expool
-    end
-
-    def []= (fei, fexp)
-
-      d, fn = filename_for(fei)
-
-      FileUtils.mkdir_p(d) unless File.exist?(d)
-
-      File.open("#{d}/#{fn}", 'w') { |f| f.write(Marshal.dump(fexp)) }
-    end
-
-    def [] (fei)
-
-      fn = filename_for(fei, true)
-      return nil unless File.exist?(fn)
-      fexp = File.open(fn, 'r') { |f| Marshal.load(f.read) }
-      fexp.application_context = @application_context
-      fexp
-    end
-
-    def delete (fei)
-
-      fn = filename_for(fei, true)
-      FileUtils.rm_f(fn)
-    end
-
-    # TODO : what about reload ?
+  #
+  # An engine persisted to a Tokyo Cabinet database
+  #
+  class FsPersistedEngine < Engine
 
     protected
 
-    def dir_for (wfid)
+    #
+    # Overrides the method already found in Engine with a persisted
+    # expression storage
+    #
+    def build_expression_storage
 
-      wfid = FlowExpressionId.to_parent_wfid(wfid)
-      a_wfid = get_wfid_generator.split_wfid(wfid)
-
-      "#{@basepath}/#{a_wfid[-2]}/#{a_wfid[-1]}/"
+      init_storage(FsExpressionStorage)
     end
 
-    def filename_for (fei, join=false)
+    def build_error_journal
 
-      r = if fei.wfid == '0'
-        [ @basepath, 'engine_environment.ms' ]
-      else
-        [
-          dir_for(fei.wfid),
-          "#{fei.workflow_instance_id}__#{fei.expression_id}_#{fei.expression_name}.ms"
-        ]
-      end
-
-      join ? "#{r.first}/#{r.last}" : r
+      init_service(:s_error_journal, YamlErrorJournal)
     end
-
   end
 end
-

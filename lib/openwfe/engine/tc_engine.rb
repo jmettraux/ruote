@@ -57,30 +57,13 @@ module OpenWFE
     #
     def build_expression_storage
 
-      @application_context[:expression_cache_size] ||= 1000
-
-      init_service(:s_expression_storage, CacheExpressionStorage)
-      init_service(:s_expression_storage__1, TokyoExpressionStorage)
-      #init_service(:s_expression_storage, TokyoExpressionStorage)
+      init_storage(TokyoExpressionStorage)
     end
 
     def build_error_journal
+
       init_service(:s_error_journal, YamlErrorJournal)
     end
   end
-
-  #class CachedTokyoPersistedEngine < FilePersistedEngine
-  #  protected
-  #  def build_expression_storage
-  #    @application_context[:expression_cache_size] ||= 1000
-  #    init_service(
-  #      :s_expression_storage,
-  #      CacheExpressionStorage)
-  #    init_service(
-  #      :s_expression_storage__1,
-  #      ThreadedYamlFileExpressionStorage)
-  #  end
-  #end
-    #
-    # it's fast enough... no need for that trick
 end
+

@@ -57,24 +57,22 @@ module OpenWFE
 
     protected
 
-      #
-      # Overrides the method already found in Engine with a persisted
-      # expression storage
-      #
-      def build_expression_storage
+    #
+    # Overrides the method already found in Engine with a persisted
+    # expression storage
+    #
+    def build_expression_storage
 
-        #init_service(:s_expression_storage, CacheExpressionStorage)
-        #init_service(:s_expression_storage__1, YamlFileExpressionStorage)
-        init_service(:s_expression_storage, YamlFileExpressionStorage)
-      end
+      init_storage(YamlFileExpressionStorage)
+    end
 
-      #
-      # Uses a file persisted error journal.
-      #
-      def build_error_journal
+    #
+    # Uses a file persisted error journal.
+    #
+    def build_error_journal
 
-        init_service(:s_error_journal, YamlErrorJournal)
-      end
+      init_service(:s_error_journal, YamlErrorJournal)
+    end
   end
 
   #
@@ -89,17 +87,9 @@ module OpenWFE
 
     protected
 
-      def build_expression_storage
+    def build_expression_storage
 
-        @application_context[:expression_cache_size] ||= 1000
-
-        init_service(
-          :s_expression_storage,
-          CacheExpressionStorage)
-
-        init_service(
-          :s_expression_storage__1,
-          ThreadedYamlFileExpressionStorage)
-      end
+      init_storage(ThreadedYamlFileExpressionStorage)
+    end
   end
 end

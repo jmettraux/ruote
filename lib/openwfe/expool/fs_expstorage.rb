@@ -37,94 +37,57 @@
 # John Mettraux at openwfe.org
 #
 
-require 'base64'
-
-require 'openwfe/flowexpressionid'
+require 'fileutils'
 require 'openwfe/expool/expstorage'
-
-require 'rufus/tokyo/cabinet/table' # sudo gem install rufus-tokyo
 
 
 module OpenWFE
 
   #
-  # re-opening FlowExpression to add a method for determining
-  # a 'Tokyo Cabinet key'
+  # TODO : document :persist_as_yaml
   #
-  class FlowExpressionId
-    def as_tc_key
-      "#{@workflow_instance_id} #{@expression_name} #{@expression_id}"
-    end
-  end
-
-  #
-  # Tokyo Cabinet based expstorage.
-  #
-  # Places all the expressions under expstorage.tch in the work directory.
-  #
-  class TokyoExpressionStorage
+  class FsExpressionStorage
     include ServiceMixin
     include OwfeServiceLocator
     include ExpressionStorageBase
+
+    attr_accessor :persist_as_yaml
 
     def initialize (service_name, application_context)
 
       service_init(service_name, application_context)
 
-      #@db = Rufus::Tokyo::Cabinet.new(get_work_directory + '/expstorage.tch')
-      @db = Rufus::Tokyo::Table.new(
-        get_work_directory + '/expstorage.tdb', :create, :write)
+      @basepath = get_work_directory + '/expool'
+      @persist_as_yaml = (application_context[:persist_as_yaml] == true)
 
       observe_expool
     end
 
-    #
-    # Takes care of closing the cabinet
-    #
-    def stop
+    def []= (fei, fexp)
 
-      @db.close
+      d, fn = filename_for(fei)
 
-      super
+      FileUtils.mkdir_p(d) unless File.exist?(d)
+
+      File.open("#{d}/#{fn}", 'w') { |f| f.write(encode(fexp)) }
     end
-
-    def size
-      @db.size
-    end
-    alias :length :size
 
     def [] (fei)
 
-      v = @db[fei.as_tc_key]
-
-      return nil unless v
-
-      #fexp = Marshal.load(Base64.decode64(v))
-      fexp = Marshal.load(Base64.decode64(v['fexp']))
-
-      fexp.application_context = @application_context
+      fexp = load_fexp(filename_for(fei, true))
+      fexp.application_context = @application_context if fexp
       fexp
     end
 
-    def []= (fei, fexp)
-
-      #@db[fei.as_tc_key] = Base64.encode64(Marshal.dump(fexp))
-
-      @db[fei.as_tc_key] = {
-        'wfid' => fexp.fei.wfid,
-        'pwfid' => fexp.fei.parent_workflow_instance_id,
-        'class' => fexp.class.name,
-        'fexp' => Base64.encode64(Marshal.dump(fexp))
-      }
-    end
-
     def delete (fei)
-      @db.delete(fei.as_tc_key)
+
+      fn = filename_for(fei, true)
+      FileUtils.rm_f(fn)
     end
 
-    def purge
-      @db.clear
-    end
+    # TODO : what about reload ?
+    #
+    # Dir['expool/**/20090119-biji*.yaml']
 
     #
     # Finds expressions matching the given criteria (returns a list
@@ -165,43 +128,80 @@ module OpenWFE
     #   if this option is set to true, will only return the expressions
     #   that have been applied (exp.apply_time != nil).
     #
-    def find_expressions (options={})
+    def find_expressions (options)
 
-      values = if wfid = options.delete(:wfid)
-        @db.query { |q|
-          q.add('wfid', :equals, wfid)
-        }
-      elsif pwfid = options.delete(:parent_wfid)
-        @db.query { |q|
-          q.add('pwfid', :equals, pwfid)
-        }
-      elsif wfidp = options.delete(:wfid_prefix)
-        @db.query { |q|
-          q.add('wfid', :starts_with, wfidp)
-        }
+      dir = if wfid = options[:wfid]
+        dir_for(wfid)
       else
-        @db.values # everything
+        "#{@basepath}/**/" # brute force
       end
 
-      #@db.values.inject([]) { |a, v|
-      values.inject([]) { |a, v|
-        fexp = Marshal.load(Base64.decode64(v['fexp']))
+      Dir["#{dir}/*.ruote"].inject([]) do |a, path|
+        fexp = load_fexp(path)
         if does_match?(options, fexp)
           fexp.application_context = @application_context
           a << fexp
         end
         a
-      }
+      end
     end
 
     #
-    # Attempts at fetching the root expression of a given process
-    # instance.
+    # Dangerous ! Nukes the whole work/expool/ dir
     #
-    def fetch_root (wfid)
-
-      find_expressions(:wfid => wfid, :include_classes => DefineExpression)[0]
+    def purge
+      FileUtils.rm_f(@basepath)
     end
+
+    protected
+
+    #
+    # Encodes the flow expression (if the options :yaml_persistence is set
+    # to true in the application context or via #yaml= will save as
+    # YAML)
+    #
+    def encode (fexp)
+      @persist_as_yaml ? fexp.to_yaml : Marshal.dump(fexp)
+    end
+
+    #
+    # Loads the flow expression at the given path
+    #
+    def load_fexp (path)
+      return nil unless File.exist?(path)
+      File.open(path, 'r') { |f| decode(f.read) }
+    end
+
+    #
+    # Decodes the content of a file (reads YAML or Marshall binary
+    # indifferently)
+    #
+    def decode (s)
+      s[0, 5] == '--- ' ? YAML.load(s) : Marshal.load(s)
+    end
+
+    def dir_for (wfid)
+
+      wfid = FlowExpressionId.to_parent_wfid(wfid)
+      a_wfid = get_wfid_generator.split_wfid(wfid)
+
+      "#{@basepath}/#{a_wfid[-2]}/#{a_wfid[-1]}/"
+    end
+
+    def filename_for (fei, join=false)
+
+      r = if fei.wfid == '0'
+        [ @basepath, 'engine_environment.ruote' ]
+      else
+        [
+          dir_for(fei.wfid),
+          "#{fei.workflow_instance_id}__#{fei.expression_id}_#{fei.expression_name}.ruote"
+        ]
+      end
+
+      join ? "#{r.first}/#{r.last}" : r
+    end
+
   end
-
 end
+

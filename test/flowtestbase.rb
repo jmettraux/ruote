@@ -30,6 +30,8 @@ $WORKFLOW_ENGINE_CLASS = OpenWFE::Engine
 pers = ARGV.find { |a| a.match(/^-p.$/) }
 pers = pers ? pers[2, 1] : ENV['__persistence__']
 
+#p pers
+
 
 if %w{ pure-persistence p f }.include?(pers)
 
@@ -60,8 +62,8 @@ elsif %w{ tokyo-persistence t }.include?(pers)
 
 elsif %w{ marshal-persistence m }.include?(pers)
 
-  require 'openwfe/engine/ms_engine'
-  $WORKFLOW_ENGINE_CLASS = OpenWFE::MarshalFilePersistedEngine
+  require 'openwfe/engine/fs_engine'
+  $WORKFLOW_ENGINE_CLASS = OpenWFE::FsPersistedEngine
 end
 
 #
