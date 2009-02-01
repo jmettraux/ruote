@@ -23,7 +23,7 @@ module FunctionalBase
     ac['__tracer'] = @tracer
     ac[:definition_in_launchitem_allowed] = true
 
-    @engine = determine_engine_class.new(ac)
+    @engine = determine_engine_class(ac).new(ac)
 
     @terminated_processes = []
     @engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|

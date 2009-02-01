@@ -19,10 +19,11 @@ ac = {
   :definition_in_launchitem_allowed => true
 }
 
-engine = determine_engine_class.new(ac)
+engine = determine_engine_class(ac).new(ac)
 
 puts
 p engine.class
+puts
 
 #N = 10_000
 N = 100
@@ -34,11 +35,9 @@ engine.register_participant("count") do |workitem|
   #print '.'
 end
 
-Benchmark.benchmark(
-  "    user     system      total       real\n"
-) do |bench|
+Benchmark.benchmark(' ' * 20 + Benchmark::Tms::CAPTION, 20) do |bench|
 
-  bench.report('') do
+  bench.report('run') do
     engine.launch(
       OpenWFE.process_definition(:name => 'bm26c') {
         sequence do

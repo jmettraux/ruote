@@ -8,29 +8,52 @@
 #
 # Returns the class of the engine to use, based on the ARGV
 #
-def determine_engine_class
-
-  ENV['TOKYO_CABINET_LIB'] = File.expand_path(
-    '~/tmp/tokyo-cabinet/libtokyocabinet.dylib'
-  ) if ARGV.include?('--tc-latest')
+def determine_engine_class (application_context)
 
   require 'openwfe/engine'
 
-  if $ruote_engine_class
+  application_context[:persist_as_yaml] = true if ARGV.include?('-y')
+
+  klass = if $ruote_engine_class
+
     $ruote_engine_class
+
   else
-    if ARGV.include?('--fp')
+
+    if ARGV.include?('--fp') # very slow
+
       require 'openwfe/engine/file_persisted_engine'
       OpenWFE::FilePersistedEngine
-    elsif ARGV.include?('--cfp')
+
+    elsif ARGV.include?('--cfp') # fast but not 100% robust
+
       require 'openwfe/engine/file_persisted_engine'
       OpenWFE::CachedFilePersistedEngine
-    elsif ARGV.include?('--tp')
+
+    elsif ARGV.include?('--tp') # fast and robust, fastest
+
       require 'openwfe/engine/tc_engine'
       OpenWFE::TokyoPersistedEngine
-    else
+
+    elsif ARGV.include?('--fs') # fast and robust
+
+      require 'openwfe/engine/fs_engine'
+      OpenWFE::FsPersistedEngine
+
+    else # in-memory, use only for testing !
+
       OpenWFE::Engine
     end
   end
+
+  unless $advertised
+    yaml = application_context[:persist_as_yaml] ? ' (yaml)' : ''
+    puts
+    puts "  using engine of class #{klass}#{yaml}"
+    puts
+    $advertised = true
+  end
+
+  klass
 end
 
