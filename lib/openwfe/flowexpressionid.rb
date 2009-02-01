@@ -38,6 +38,8 @@
 # john.mettraux@openwfe.org
 #
 
+require 'yaml'
+
 
 module OpenWFE
 

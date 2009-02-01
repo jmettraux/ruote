@@ -21,12 +21,12 @@ ac = {
 
 engine = determine_engine_class(ac).new(ac)
 
-puts
-p engine.class
-puts
+#puts
+#p engine.class
+#puts
 
 #N = 10_000
-N = 100
+N = 1000
 
 $count = 0
 
@@ -50,6 +50,8 @@ Benchmark.benchmark(' ' * 20 + Benchmark::Tms::CAPTION, 20) do |bench|
   end
 
 end
+
+puts
 
 engine.stop
 

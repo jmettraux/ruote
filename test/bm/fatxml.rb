@@ -40,14 +40,12 @@ ac = {
   :definition_in_launchitem_allowed => true
 }
 
-engine = determine_engine_class.new(ac)
+engine = determine_engine_class(ac).new(ac)
 
 
-Benchmark.benchmark(
-  "    user     system      total       real\n"
-) do |bench|
+Benchmark.benchmark(' ' * 20 + Benchmark::Tms::CAPTION, 20) do |bench|
 
-  bench.report('') do
+  bench.report('fat xml test') do
 
     t = Thread.current
 
@@ -66,4 +64,7 @@ Benchmark.benchmark(
   end
 
 end
+
+puts
+
 

@@ -223,20 +223,6 @@ module OpenWFE
   end
 
   #
-  # Sets the name of the current thread (the attribute :name if it is
-  # a ruby thread, the java thread name if we're in JRuby)
-  #
-  def OpenWFE.set_current_thread_name (name)
-
-     if defined?(JRUBY_VERSION)
-       require 'java'
-       java.lang.Thread.current_thread.name = "#{name} (Ruby Thread)"
-     end
-
-     Thread.current[:name] = name
-  end
-
-  #
   # Some code for writing thinks like :
   #
   #   if async
@@ -251,12 +237,9 @@ module OpenWFE
   #
   def OpenWFE.call_in_thread (caller_name, caller_object=nil, &block)
 
-    return unless block
+    return nil unless block
 
-    Thread.new do
-
-      #Thread.current[:name] = caller_name
-      set_current_thread_name caller_name
+    t = Thread.new do
 
       begin
         #$SAFE = safe_level
@@ -276,7 +259,9 @@ module OpenWFE
         end
       end
     end
-    # returns the thread
+
+    t[:name] = caller_name
+    t
   end
 
   #
