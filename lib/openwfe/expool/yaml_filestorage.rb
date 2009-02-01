@@ -46,19 +46,14 @@ require 'fileutils'
 require 'openwfe/utils'
 require 'openwfe/service'
 
-require 'openwfe/expressions/flowexpression'
-  #--
-  # making sure classes in those files are loaded
-  # before their yaml persistence is tuned
-  # (else the reopening of the class is interpreted as
-  # a definition of the class...)
-  #++
 
 module OpenWFE
 
   #
   # Stores OpenWFEru related objects into yaml encoded files.
   # This storage is meant to look and feel like a Hash.
+  #
+  # DEPRECATED
   #
   class YamlFileStorage
     include ServiceMixin

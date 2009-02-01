@@ -62,7 +62,7 @@ module OpenWFE
   #
   # Places all the expressions under expstorage.tch in the work directory.
   #
-  class TokyoExpressionStorage
+  class TcExpressionStorage
     include ServiceMixin
     include OwfeServiceLocator
     include ExpressionStorageBase

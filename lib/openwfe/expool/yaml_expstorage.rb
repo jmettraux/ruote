@@ -39,16 +39,8 @@
 #
 
 require 'openwfe/utils'
-require 'openwfe/storage/yaml_filestorage'
+require 'openwfe/expool/yaml_filestorage'
 require 'openwfe/expool/threaded_expstorage'
-
-require 'openwfe/expressions/flowexpression'
-  #--
-  # making sure classes in those files are loaded
-  # before their yaml persistence is tuned
-  # (else the reopening of the class is interpreted as
-  # a definition of the class...)
-  #++
 
 
 module OpenWFE
@@ -56,6 +48,8 @@ module OpenWFE
   #
   # YAML expression storage. Expressions (atomic pieces of process instances)
   # are stored in a hierarchy of YAML files.
+  #
+  # DEPRECATED
   #
   class YamlFileExpressionStorage < YamlFileStorage
     include OwfeServiceLocator
@@ -215,6 +209,8 @@ module OpenWFE
   #
   # With this extension of YmalFileExpressionStorage, persistence occurs
   # in a separate thread, for a snappier response.
+  #
+  # DEPRECATED
   #
   class ThreadedYamlFileExpressionStorage < YamlFileExpressionStorage
     include ThreadedStorageMixin

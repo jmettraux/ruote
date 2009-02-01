@@ -45,9 +45,9 @@ require 'openwfe/expool/yaml_errorjournal'
 module OpenWFE
 
   #
-  # An engine persisted to a Tokyo Cabinet database
+  # An engine persisted to a Tokyo Cabinet table.
   #
-  class TokyoPersistedEngine < Engine
+  class TcPersistedEngine < Engine
 
     protected
 
@@ -57,7 +57,7 @@ module OpenWFE
     #
     def build_expression_storage
 
-      init_storage(TokyoExpressionStorage)
+      init_storage(TcExpressionStorage)
     end
 
     def build_error_journal

@@ -39,7 +39,7 @@
 
 require 'openwfe/utils'
 require 'openwfe/omixins'
-require 'openwfe/storage/yaml_filestorage'
+require 'openwfe/expool/yaml_filestorage'
 require 'openwfe/participants/participant'
 
 

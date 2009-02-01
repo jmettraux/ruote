@@ -63,6 +63,9 @@ module OpenWFE
       observe_expool
     end
 
+    #
+    # Stores an expression
+    #
     def []= (fei, fexp)
 
       d, fn = filename_for(fei)
@@ -72,6 +75,9 @@ module OpenWFE
       File.open("#{d}/#{fn}", 'w') { |f| f.write(encode(fexp)) }
     end
 
+    #
+    # Retrieves an expression
+    #
     def [] (fei)
 
       fexp = load_fexp(filename_for(fei, true))
@@ -79,15 +85,21 @@ module OpenWFE
       fexp
     end
 
+    #
+    # Removes the expression from the storage
+    #
     def delete (fei)
 
-      fn = filename_for(fei, true)
-      FileUtils.rm_f(fn)
+      FileUtils.rm_f(filename_for(fei, true))
     end
 
-    # TODO : what about reload ?
     #
-    # Dir['expool/**/20090119-biji*.yaml']
+    # Returns the count of expressions currently stored
+    #
+    def size
+
+      Dir["#{@basepath}/**/*.ruote"].size
+    end
 
     #
     # Finds expressions matching the given criteria (returns a list
@@ -150,6 +162,7 @@ module OpenWFE
     # Dangerous ! Nukes the whole work/expool/ dir
     #
     def purge
+
       FileUtils.rm_f(@basepath)
     end
 
@@ -177,9 +190,12 @@ module OpenWFE
     # indifferently)
     #
     def decode (s)
-      s[0, 5] == '--- ' ? YAML.load(s) : Marshal.load(s)
+      s[0, 5] == '--- !' ? YAML.load(s) : Marshal.load(s)
     end
 
+    #
+    # Returns the directory path for a given workflow instance id
+    #
     def dir_for (wfid)
 
       wfid = FlowExpressionId.to_parent_wfid(wfid)
@@ -188,6 +204,11 @@ module OpenWFE
       "#{@basepath}/#{a_wfid[-2]}/#{a_wfid[-1]}/"
     end
 
+    #
+    # Returns the pair dir / filename for an expression.
+    # If the optional arg join is set to true, will return the full path
+    # for the expression
+    #
     def filename_for (fei, join=false)
 
       r = if fei.wfid == '0'
