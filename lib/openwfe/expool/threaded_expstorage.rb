@@ -146,27 +146,13 @@ module OpenWFE
           if event == :update
             self[fei] = fexp
           else
-            safe_delete fei
+            self.delete(fei)
           end
         rescue Exception => e
           lwarn do
             "process_event() ':#{event}' exception\n" +
             OpenWFE::exception_to_s(e)
           end
-        end
-      end
-
-      #
-      # a call to delete that tolerates missing .yaml files
-      #
-      def safe_delete (fei)
-        begin
-          self.delete fei
-        rescue Exception => e
-        #  lwarn do
-        #    "safe_delete() exception\n" +
-        #    OpenWFE::exception_to_s(e)
-        #  end
         end
       end
 
@@ -179,12 +165,12 @@ module OpenWFE
       def observe_expool
 
         get_expression_pool.add_observer(:update) do |event, fei, fe|
-          ldebug { ":update  for #{fei.to_debug_s}" }
-          queue event, fei, fe
+          #ldebug { ":update  for #{fei.to_debug_s}" }
+          queue(event, fei, fe)
         end
         get_expression_pool.add_observer(:remove) do |event, fei|
-          ldebug { ":remove  for #{fei.to_debug_s}" }
-          queue event, fei
+          #ldebug { ":remove  for #{fei.to_debug_s}" }
+          queue(event, fei)
         end
       end
   end

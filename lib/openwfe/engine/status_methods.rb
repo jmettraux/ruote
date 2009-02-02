@@ -265,50 +265,11 @@ module OpenWFE
   end
 
   #
-  # just a nice to_s for the ProcessStatuses hash
+  # Simply adding a timestamp
   #
   module StatusesMixin
 
     attr_accessor :timestamp
-
-    #
-    # Renders a nice, terminal oriented, representation of an
-    # Engine.get_process_status() result.
-    #
-    # You usually directly benefit from this when doing
-    #
-    #   puts engine.get_process_status.to_s
-    #
-    def to_s
-
-      # TODO : include launch_time and why is process_id so long ?
-
-      s = ""
-      s << "process_id      | name        | rev   | brn | err | paused? \n"
-      s << "--------------------+-------------------+---------+-----+-----+---------\n"
-
-      self.keys.sort.each do |wfid|
-
-        status = self[wfid]
-        fexp = status.expressions.first
-        ffei = fexp.fei
-
-        s << "%-19s" % wfid[0, 19]
-        s << " | "
-        s << "%-17s" % ffei.workflow_definition_name[0, 17]
-        s << " | "
-        s << "%-7s" % ffei.workflow_definition_revision[0, 7]
-        s << " | "
-        s << "%3s" % status.expressions.size.to_s[0, 3]
-        s << " | "
-        s << "%3s" % status.errors.size.to_s[0, 3]
-        s << " | "
-        s << "%5s" % status.paused?.to_s
-        s << "\n"
-      end
-
-      s
-    end
   end
 
   #

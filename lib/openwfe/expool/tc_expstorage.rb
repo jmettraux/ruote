@@ -200,7 +200,10 @@ module OpenWFE
     #
     def fetch_root (wfid)
 
-      find_expressions(:wfid => wfid, :include_classes => DefineExpression)[0]
+      find_expressions(
+        :wfid => wfid,
+        :consider_subprocesses => false,
+        :include_classes => DefineExpression)[0]
     end
   end
 

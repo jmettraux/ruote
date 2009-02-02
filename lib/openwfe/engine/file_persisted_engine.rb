@@ -39,7 +39,7 @@
 #
 
 require 'openwfe/engine/engine'
-require 'openwfe/expool/yaml_expstorage'
+require 'openwfe/expool/fs_expstorage'
 require 'openwfe/expool/yaml_errorjournal'
 
 
@@ -52,6 +52,8 @@ module OpenWFE
   # engine, you should call its reload method, to reschedule expressions
   # like 'sleep', 'cron', ... But if you do it before registering the
   # participants you'll end up with broken processes.
+  #
+  # DEPRECATED, use FsEngine instead
   #
   class FilePersistedEngine < Engine
 
@@ -82,6 +84,8 @@ module OpenWFE
   # engine, you should call its reload method, to reschedule expressions
   # like 'sleep', 'cron', ... But if you do it before registering the
   # participants you'll end up with broken processes.
+  #
+  # DEPRECATED, use FsEngine instead
   #
   class CachedFilePersistedEngine < FilePersistedEngine
 

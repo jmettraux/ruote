@@ -39,6 +39,7 @@
 
 require 'fileutils'
 require 'openwfe/expool/expstorage'
+require 'openwfe/expool/threaded_expstorage'
 
 
 module OpenWFE
@@ -51,7 +52,7 @@ module OpenWFE
     include OwfeServiceLocator
     include ExpressionStorageBase
 
-    attr_accessor :persist_as_yaml
+    #attr_accessor :persist_as_yaml
 
     def initialize (service_name, application_context)
 
@@ -59,6 +60,7 @@ module OpenWFE
 
       @basepath = get_work_directory + '/expool'
       @persist_as_yaml = (application_context[:persist_as_yaml] == true)
+      @suffix = 'ruote'
 
       observe_expool
     end
@@ -98,7 +100,7 @@ module OpenWFE
     #
     def size
 
-      Dir["#{@basepath}/**/*.ruote"].size
+      Dir["#{@basepath}/**/*.#{@suffix}"].size
     end
 
     #
@@ -145,10 +147,10 @@ module OpenWFE
       dir = if wfid = options[:wfid]
         dir_for(wfid)
       else
-        "#{@basepath}/**/" # brute force
+        "#{@basepath}/**" # brute force
       end
 
-      Dir["#{dir}/*.ruote"].inject([]) do |a, path|
+      Dir["#{dir}/*.#{@suffix}"].inject([]) do |a, path|
         fexp = load_fexp(path)
         if does_match?(options, fexp)
           fexp.application_context = @application_context
@@ -164,6 +166,24 @@ module OpenWFE
     def purge
 
       FileUtils.rm_f(@basepath)
+    end
+
+    #
+    # Fetches the root expression of a process instance
+    #
+    def fetch_root (wfid)
+
+      dir = dir_for(wfid)
+
+      fexps = Dir["#{dir}/*.#{@suffix}"].collect { |path| load_fexp(path) }
+
+      root = fexps.find { |fexp|
+        fexp.fei.expid == '0' &&
+        fexp.fei.sub_instance_id == '' &&
+        fexp.is_a?(OpenWFE::DefineExpression)
+      }
+      root.application_context = @application_context
+      root
     end
 
     protected
@@ -212,11 +232,11 @@ module OpenWFE
     def filename_for (fei, join=false)
 
       r = if fei.wfid == '0'
-        [ @basepath, 'engine_environment.ruote' ]
+        [ @basepath, "engine_environment.#{@suffix}" ]
       else
         [
           dir_for(fei.wfid),
-          "#{fei.workflow_instance_id}__#{fei.expression_id}_#{fei.expression_name}.ruote"
+          "#{fei.workflow_instance_id}__#{fei.expression_id}_#{fei.expression_name}.#{@suffix}"
         ]
       end
 
@@ -224,5 +244,36 @@ module OpenWFE
     end
 
   end
+
+  #
+  # YAML expression storage. Expressions (atomic pieces of process instances)
+  # are stored in a hierarchy of YAML files.
+  #
+  # DEPRECATED, use the plain FsExpressionStorage instead.
+  #
+  class YamlFileExpressionStorage < FsExpressionStorage
+
+    def initialize (service_name, application_context)
+      super
+      @persist_as_yaml = true
+      @suffix = '.yaml'
+    end
+  end
+
+  #
+  # With this extension of YmalFileExpressionStorage, persistence occurs
+  # in a separate thread, for a snappier response.
+  #
+  # Will probably get deprecated soon.
+  #
+  class ThreadedYamlFileExpressionStorage < YamlFileExpressionStorage
+    include ThreadedStorageMixin
+
+    def initialize (service_name, application_context)
+      super
+      start_queue
+    end
+  end
+
 end
 
