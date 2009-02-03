@@ -185,8 +185,7 @@ module OpenWFE
 
       result = block.call
 
-      exp.last << result \
-        if result and result.is_a?(String)
+      exp.last << result if result and result.is_a?(String)
 
       context.pop_parent_expression
 

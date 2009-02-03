@@ -35,12 +35,15 @@ class EftPrintTest < Test::Unit::TestCase
         set :v => 'toto', :value => 'otot'
         _print '${toto}', :escape => 'true'
         _print '${toto}', :escape => true
+        _print :escape => true do
+          '${toto}'
+        end
       end
     end
 
     assert_trace(
       pdef,
-      %w{ ${toto} ${toto} }.join("\n"))
+      ([ '${toto}' ] * 3).join("\n"))
   end
 end
 

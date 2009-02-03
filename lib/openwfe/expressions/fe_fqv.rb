@@ -81,7 +81,7 @@ module OpenWFE
     def apply (workitem)
 
       name = @fei.expression_name[0, 1]
-      text = fetch_text_content workitem
+      text = fetch_text_content(workitem)
 
       method = MAP[name]
 

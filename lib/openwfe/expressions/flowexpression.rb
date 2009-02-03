@@ -385,10 +385,7 @@ module OpenWFE
       escape = options[:escape]
       tostring = options[:to_s]
 
-      attname = OpenWFE::symbol_to_name(attname) \
-        if attname.kind_of?(Symbol)
-
-      #ldebug { "lookup_attribute() '#{attname}' in #{@fei.to_debug_s}" }
+      attname = OpenWFE.symbol_to_name(attname) if attname.kind_of?(Symbol)
 
       text = @attributes[attname]
 
@@ -402,7 +399,7 @@ module OpenWFE
 
       else
 
-        OpenWFE::dosub text, self, workitem
+        OpenWFE.dosub(text, self, workitem)
       end
 
       text = text.to_s if text and tostring

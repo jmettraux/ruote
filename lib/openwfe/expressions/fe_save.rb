@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -71,23 +71,23 @@ module OpenWFE
 
     def apply (workitem)
 
-      field = lookup_string_attribute :to_field, workitem
-      variable = lookup_string_attribute :to_variable, workitem
+      field = lookup_string_attribute(:to_field, workitem)
+      variable = lookup_string_attribute(:to_variable, workitem)
 
       wi = workitem.dup
 
       if field
 
-        workitem.set_attribute field, wi.attributes
+        workitem.set_attribute(field, wi.attributes)
 
       elsif variable
 
-        set_variable variable, wi
+        set_variable(variable, wi)
       end
 
       # else, simply don't save
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
   end
 
@@ -197,7 +197,7 @@ module OpenWFE
 
       elsif from_variable
 
-        lookup_variable from_variable
+        lookup_variable(from_variable)
 
       elsif value
 
@@ -211,63 +211,63 @@ module OpenWFE
       if source
 
         workitem = if merge_lead
-          do_merge merge_lead, workitem, source
+          do_merge(merge_lead, workitem, source)
         else
-          do_overwrite workitem, source
+          do_overwrite(workitem, source)
         end
       end
       # else, don't restore anything
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
 
     protected
 
-      #
-      # The default case, restored values simply overwrite current
-      # values.
-      #
-      def do_overwrite (workitem, source)
+    #
+    # The default case, restored values simply overwrite current
+    # values.
+    #
+    def do_overwrite (workitem, source)
 
-        return workitem unless source
+      return workitem unless source
 
-        attributes = if source.kind_of?(WorkItem)
-          OpenWFE::fulldup source.attributes
-        else
-          source
-        end
-
-        to_field = lookup_string_attribute :to_field, workitem
-
-        if to_field
-          workitem.set_attribute to_field, attributes
-        else
-          workitem.attributes = attributes
-        end
-
-        workitem
+      attributes = if source.kind_of?(WorkItem)
+        OpenWFE::fulldup source.attributes
+      else
+        source
       end
 
-      #
-      # If the attribute 'merge-lead' (or 'merge_lead') is specified,
-      # the workitems get merged.
-      #
-      def do_merge (merge_lead, workitem, source)
+      to_field = lookup_string_attribute(:to_field, workitem)
 
-        if source.kind_of?(Hash)
-          wi = InFlowWorkItem.new
-          wi.attributes = source
-          source = wi
-        end
-
-        wiTarget, wiSource = if merge_lead == :current
-          [ source, workitem ]
-        else
-          [ workitem, source ]
-        end
-
-        merge_workitems wiTarget, wiSource
+      if to_field
+        workitem.set_attribute(to_field, attributes)
+      else
+        workitem.attributes = attributes
       end
+
+      workitem
+    end
+
+    #
+    # If the attribute 'merge-lead' (or 'merge_lead') is specified,
+    # the workitems get merged.
+    #
+    def do_merge (merge_lead, workitem, source)
+
+      if source.kind_of?(Hash)
+        wi = InFlowWorkItem.new
+        wi.attributes = source
+        source = wi
+      end
+
+      wi_target, wi_source = if merge_lead == :current
+        [ source, workitem ]
+      else
+        [ workitem, source ]
+      end
+
+      merge_workitems(wi_target, wi_source)
+    end
   end
 
 end
