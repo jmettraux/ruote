@@ -15,7 +15,7 @@ require 'openwfe/participants/store_participants'
 class FtProcessStatusTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_0
+  def test_process_status
 
     #log_level_to_debug
 

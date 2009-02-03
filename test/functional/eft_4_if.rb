@@ -13,65 +13,57 @@ require File.dirname(__FILE__) + '/base'
 class EftIfTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_0
+  def test_if_then
 
     pdef = OpenWFE.process_definition :name => 'test' do
-      sequence do
-        _if do
-          equals :value => 'a', :other_value => 'a'
-          _print 'ok'
-        end
+      _if do
+        equals :value => 'a', :other_value => 'a'
+        _print 'ok'
       end
     end
 
     assert_trace(pdef, 'ok')
   end
 
-  def test_1
+  def test_if_else
 
     pdef = OpenWFE.process_definition :name => 'test' do
-      sequence do
-        _if do
-          equals :value => 'a', :other_value => 'b'
-          _print 'ok'
-        end
+      _if do
+        equals :value => 'a', :other_value => 'b'
+        _print 'ok'
       end
     end
 
     assert_trace(pdef, '')
   end
 
-  def test_2
+  def test_if_not_else
 
     pdef = OpenWFE.process_definition :name => 'test' do
-      sequence do
-        _if do
-          equals :value => 'a', :other_value => 'a'
-          _print 'ok'
-          _print 'nok'
-        end
+      _if do
+        equals :value => 'a', :other_value => 'a'
+        _print 'ok'
+        _print 'nok'
       end
     end
 
     assert_trace(pdef, 'ok')
   end
 
-  def test_3
+  def test_if_not_then
 
     pdef = OpenWFE.process_definition :name => 'test' do
-      sequence do
-        _if do
-          equals :value => 'a', :other_value => 'b'
-          _print 'nok'
-          _print 'ok'
-        end
+      _if do
+        equals :value => 'a', :other_value => 'b'
+        _print 'nok'
+        _print 'ok'
       end
     end
 
     assert_trace(pdef, 'ok')
   end
 
-  def test_4
+  def test_if_misc
 
     assert_trace(%{
 <process-definition name="test">

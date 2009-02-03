@@ -17,11 +17,11 @@ class EftSequenceTest < Test::Unit::TestCase
     sequence do
     end
   end
-  def test_0
+  def test_empty_sequence
     assert_trace(Test0, '')
   end
 
-  def test_1
+  def test_a_b_sequence
     assert_trace(
       OpenWFE.process_definition(:name => 'test_1') {
         sequence do
@@ -32,7 +32,7 @@ class EftSequenceTest < Test::Unit::TestCase
       "a\nb")
   end
 
-  def test_2
+  def test_a_b_sequence_xml
     assert_trace(%{
 <process-definition name="test">
   <sequence>

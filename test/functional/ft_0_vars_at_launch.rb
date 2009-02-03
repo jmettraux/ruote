@@ -17,7 +17,7 @@ class FtVarsAtLaunchTest < Test::Unit::TestCase
     _print '${var0}'
   end
 
-  def test_0
+  def test_vars_at_launch
     assert_trace(
       Test0,
       'val0',

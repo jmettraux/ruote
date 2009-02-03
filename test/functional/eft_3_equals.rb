@@ -13,7 +13,7 @@ require File.dirname(__FILE__) + '/base'
 class EftEqualsTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_0
+  def test_equality
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
@@ -25,7 +25,7 @@ class EftEqualsTest < Test::Unit::TestCase
     assert_trace(pdef, 'true')
   end
 
-  def test_1
+  def test_non_equality
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
@@ -37,7 +37,7 @@ class EftEqualsTest < Test::Unit::TestCase
     assert_trace(pdef, 'false')
   end
 
-  def test_2
+  def test_variable_equals
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
@@ -66,7 +66,7 @@ class EftEqualsTest < Test::Unit::TestCase
       ([ 'true' ] * 5).join("\n"))
   end
 
-  def test_3
+  def test_field_equals
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do

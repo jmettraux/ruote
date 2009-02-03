@@ -15,15 +15,15 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
 
   class Test0 < OpenWFE::ProcessDefinition
   end
-  def test_0
+  def test_empty_procdef_0
     assert_trace(Test0, '')
   end
 
-  def test_1
+  def test_empty_procdef_1
     assert_trace(OpenWFE.process_definition(:name => 'test_1') { }, '')
   end
 
-  def test_2
+  def test_empty_procdef_xml
     assert_trace(%{
 <process-definition name="test">
 </process-definition>
