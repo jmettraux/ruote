@@ -8,11 +8,11 @@ implementations. It will exit as sooon as one of them fails.
 
 It can run all the functional tests :
 
-  ./test.rb --all
+  ./mtest.rb --all
 
 Or only one of them
 
-  ./test.rb test/functional/ft_1_process_status.rb
+  ./mtest.rb test/functional/ft_1_process_status.rb
 
   }
   exit 1
@@ -23,8 +23,11 @@ ARGV = [ 'test/functional/test.rb' ] \
 
 ruby = `which ruby`.strip
 
-[ '', '--fs -C', '--fs -C -y', '--cfp', '--tc', '--tc -C' ].each do |args|
-
+[
+  '', '--fs', '--tc',
+  '--cfp',
+  '--fs -y', '--fs -C', '--fs -C -y', '--tc -C'
+].each do |args|
 
   puts
   puts '=' * 80
