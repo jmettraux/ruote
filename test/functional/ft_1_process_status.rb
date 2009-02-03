@@ -27,7 +27,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     fei = @engine.launch(pdef)
 
-    sleep 0.350
+    sa.join # resumes as soon as a workitem reaches the participant
 
     ps = @engine.process_statuses
 

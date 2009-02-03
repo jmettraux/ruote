@@ -82,6 +82,8 @@ module OpenWFE
     def consume (workitem)
 
       self[workitem.flow_expression_id] = workitem
+
+      notify_waiting_threads
     end
     alias :push :consume
 
@@ -135,7 +137,7 @@ module OpenWFE
     #
     def delete (wi_or_fei)
 
-      super extract_fei(wi_or_fei)
+      super(extract_fei(wi_or_fei))
     end
 
     #
@@ -180,6 +182,27 @@ module OpenWFE
       end
 
       result
+    end
+
+    #
+    # Joins this participant, ie wait until a workitem arrives in it
+    #
+    def join (force_wait=false)
+      return if self.size > 0 && (not force_wait)
+      (@waiting_threads ||= []) << Thread.current
+      Thread.stop
+    end
+
+    protected
+
+    #
+    # This method is called each time a workitem comes in. Waiting threads
+    # get woken up.
+    #
+    def notify_waiting_threads
+      return unless @waiting_threads
+      @waiting_threads.each { |t| t.wakeup }
+      @waiting_threads.clear
     end
   end
 

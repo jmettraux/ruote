@@ -45,7 +45,7 @@ require 'openwfe/expool/threaded_expstorage'
 module OpenWFE
 
   #
-  # TODO : document :persist_as_yaml
+  # TODO : document me and :persist_as_yaml
   #
   class FsExpressionStorage
     include ServiceMixin
@@ -221,7 +221,7 @@ module OpenWFE
       wfid = FlowExpressionId.to_parent_wfid(wfid)
       a_wfid = get_wfid_generator.split_wfid(wfid)
 
-      "#{@basepath}/#{a_wfid[-2]}/#{a_wfid[-1]}/"
+      "#{@basepath}/#{a_wfid[-2]}/#{a_wfid[-1]}"
     end
 
     #

@@ -63,7 +63,7 @@ module FunctionalBase
     $OWFE_LOG.level = Logger::DEBUG
   end
 
-  def wait (fei, opts)
+  def wait (fei, opts={})
 
     #opts[:wait] ?
     #  @engine.wait_for(fei) :
