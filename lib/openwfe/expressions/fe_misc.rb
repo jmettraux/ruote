@@ -239,7 +239,6 @@ module OpenWFE
 
     names :eval
 
-
     def reply (workitem)
 
       raise "dynamic evaluation of process definitions is not allowed" \

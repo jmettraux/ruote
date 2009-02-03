@@ -99,8 +99,11 @@ module OpenWFE
       def lookup (name_array, workitem)
 
         name_array.each do |n|
+
           v = lookup_string_attribute(n, workitem)
-          return v if v
+
+          return v if v != nil
+            # covers v = false as well
         end
 
         nil
