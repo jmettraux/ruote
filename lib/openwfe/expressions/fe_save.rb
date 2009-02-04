@@ -186,7 +186,7 @@ module OpenWFE
 
       source = if from_field
 
-        att = workitem.lookup_attribute from_field
+        att = workitem.lookup_attribute(from_field)
 
         lwarn {
           "apply() field '#{from_field}' is NOT a hash, " +
@@ -232,7 +232,7 @@ module OpenWFE
       return workitem unless source
 
       attributes = if source.kind_of?(WorkItem)
-        OpenWFE::fulldup source.attributes
+        OpenWFE.fulldup(source.attributes)
       else
         source
       end

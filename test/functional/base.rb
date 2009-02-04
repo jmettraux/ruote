@@ -39,6 +39,14 @@ module FunctionalBase
   end
 
   #
+  # returns true when running on a Ruby 1.8.x like interpreter
+  #
+  def ruby18
+
+    RUBY_VERSION.match(/^1\.8\./)
+  end
+
+  #
   # launch_thing is a process definition or a launch item
   #
   def assert_trace (launch_thing, expected_trace, opts={})

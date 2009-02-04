@@ -43,7 +43,7 @@ class EftSetTest < Test::Unit::TestCase
       end
     end
 
-    assert_trace(pdef, '12')
+    assert_trace(pdef, ruby18 ? '12' : '[1, 2]')
   end
 
   def test_set_fields
@@ -73,7 +73,7 @@ class EftSetTest < Test::Unit::TestCase
       end
     end
 
-    assert_trace(pdef, '12')
+    assert_trace(pdef, ruby18 ? '12' : '[1, 2]')
   end
 
   def test_set_escaped

@@ -117,11 +117,11 @@ module OpenWFE
     def call_block (block, workitem)
 
       if block.arity == 1
-        block.call workitem
+        block.call(workitem)
       elsif block.arity == 2
-        block.call get_flow_expression(workitem), workitem
+        block.call(get_flow_expression(workitem), workitem)
       elsif block.arity == 3
-        block.call get_flow_expression(workitem), self, workitem
+        block.call(get_flow_expression(workitem), self, workitem)
       else
         block.call
       end
