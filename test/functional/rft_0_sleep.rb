@@ -15,19 +15,19 @@ class RftSleepTest < Test::Unit::TestCase
   include FunctionalBase
   include RestartBase
 
-  def test_sleep_restart
+  PDEF0 = OpenWFE.process_definition :name => 'test' do
+    sequence do
+      _print 'a'
+      _sleep '2s'
+      _print 'b'
+    end
+  end
+
+  def test_sleep_restarts_at_wakeup
 
     in_memory_engine && return
 
-    pdef = OpenWFE.process_definition :name => 'test' do
-      sequence do
-        _print 'a'
-        _sleep '2s'
-        _print 'b'
-      end
-    end
-
-    @engine.launch(pdef)
+    @engine.launch(PDEF0)
 
     sleep 1
 
@@ -48,19 +48,11 @@ class RftSleepTest < Test::Unit::TestCase
     assert_engine_clean
   end
 
-  def test_sleep_restart_b
+  def test_sleep_restarts_after_wakeup
 
     in_memory_engine && return
 
-    pdef = OpenWFE.process_definition :name => 'test' do
-      sequence do
-        _print 'a'
-        _sleep '2s'
-        _print 'b'
-      end
-    end
-
-    @engine.launch(pdef)
+    @engine.launch(PDEF0)
 
     sleep 0.500
 
