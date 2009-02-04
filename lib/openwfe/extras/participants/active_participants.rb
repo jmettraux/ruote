@@ -159,7 +159,6 @@ module Extras
 
     serialize :yattributes
 
-
     #
     # Returns the flow expression id of this work (its unique OpenWFEru (Ruote)
     # identifier) as a FlowExpressionId instance.
@@ -204,14 +203,31 @@ module Extras
         #  You have a nil object when you didn't expect it!
         #  You might have expected an instance of Array.
         #  The error occurred while evaluating nil.-
-        #  /Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/connection_adap
-        #  ters/abstract_adapter.rb:159:in `decrement_open_transactions'
-        #  /Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/transactions.rb
-        #  :131:in `transaction'
-        #  /Users/jmettraux/ruote/lib/openwfe/extras/participants/activeparticipants.rb:200
-        #  :in `from_owfe_workitem'
-        #  /Users/jmettraux/ruote/lib/openwfe/extras/participants/activeparticipants.rb:744
-        #  :in `consume'
+        #  /Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/
+        #    connection_adapters/abstract_adapter.rb:159:
+        #    in `decrement_open_transactions'
+        #  /Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/
+        #    transactions.rb:131:in `transaction'
+        #  /Users/jmettraux/ruote/lib/openwfe/extras/participants/
+        #    activeparticipants.rb:200:
+        #    in `from_owfe_workitem'
+        #  /Users/jmettraux/ruote/lib/openwfe/extras/participants/
+        #    activeparticipants.rb:744:
+        #    in `consume'
+        #
+        # this monkey patch may 'avoid' this issue :
+        #
+        #   class ActiveRecord::ConnectionAdapters::AbstractAdapter
+        #     # original :
+        #     #
+        #     #def decrement_open_transactions
+        #     #  @open_transactions -= 1
+        #     #end
+        #     def decrement_open_transactions
+        #       @open_transactions && @open_transactions -= 1
+        #     end
+        #   end
+        #
 
         i = Workitem.new
         i.fei = wi.fei.to_s
@@ -244,7 +260,7 @@ module Extras
     end
 
     #
-    # Turns the 'active' Workitem into an OpenWFEru InFlowWorkItem.
+    # Turns the 'active' Workitem into a ruote InFlowWorkItem.
     #
     def to_owfe_workitem (options={})
 
@@ -387,7 +403,7 @@ module Extras
     end
 
     #
-    # A kind of 'google search' among workitems
+    # Some kind of 'google search' among workitems
     #
     # == Note
     #
@@ -406,8 +422,8 @@ module Extras
       result = find(
         :all,
         :conditions => conditions(
-          "participant_name", search_string, storename_list),
-        :order => "participant_name")
+          'participant_name', search_string, storename_list),
+        :order => 'participant_name')
         # :limit => 10)
 
       ids = result.collect { |wi| wi.id }
@@ -508,6 +524,7 @@ module Extras
   class Field < ActiveRecord::Base
 
     belongs_to :workitem, :class_name => 'OpenWFE::Extras::Workitem'
+
     serialize :yvalue
 
     #
@@ -525,11 +542,6 @@ module Extras
     #
     def self.new_field (key, value)
 
-      #f = Field.new
-      #f.fkey = key
-      #f.vclass = value.class.to_s
-      #f.value = value
-      #f
       Field.new(:fkey => key, :vclass => value.class.to_s, :value => value)
     end
 
@@ -582,46 +594,46 @@ module Extras
 
     protected
 
-      #
-      # The search operates on the content of these columns
-      #
-      FIELDS_TO_SEARCH = %w{ svalue fkey yvalue }
+    #
+    # The search operates on the content of these columns
+    #
+    FIELDS_TO_SEARCH = %w{ svalue fkey yvalue }
 
-      #
-      # Builds the condition array for a pseudo text search
-      #
-      def self.build_search_conditions (text)
+    #
+    # Builds the condition array for a pseudo text search
+    #
+    def self.build_search_conditions (text)
 
-        has_percent = (text.index("%") != nil)
+      has_percent = (text.index('%') != nil)
 
-        conds = []
+      conds = []
 
-        conds << FIELDS_TO_SEARCH.collect { |key|
+      conds << FIELDS_TO_SEARCH.collect { |key|
 
-          count = has_percent ? 1 : 4
+        count = has_percent ? 1 : 4
 
-          s = ([ "#{key} LIKE ?" ] * count).join(" OR ")
+        s = ([ "#{key} LIKE ?" ] * count).join(" OR ")
 
-          s = "(vclass = ? AND (#{s}))" if key == 'yvalue'
+        s = "(vclass = ? AND (#{s}))" if key == 'yvalue'
 
-          s
-        }.join(" OR ")
+        s
+      }.join(' OR ')
 
-        FIELDS_TO_SEARCH.each do |key|
+      FIELDS_TO_SEARCH.each do |key|
 
-          conds << 'String' if key == 'yvalue'
+        conds << 'String' if key == 'yvalue'
 
-          conds << text
+        conds << text
 
-          unless has_percent
-            conds << "% #{text} %"
-            conds << "% #{text}"
-            conds << "#{text} %"
-          end
+        unless has_percent
+          conds << "% #{text} %"
+          conds << "% #{text}"
+          conds << "#{text} %"
         end
-
-        conds
       end
+
+      conds
+    end
   end
 
 
@@ -766,10 +778,10 @@ module Extras
 
       return unless block
 
-      wis = Workitem.find_by_store_name @store_name
+      wis = Workitem.find_by_store_name(@store_name)
 
       wis.each do |wi|
-        block.call wi
+        block.call(wi)
       end
     end
   end
