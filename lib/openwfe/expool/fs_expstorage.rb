@@ -256,7 +256,7 @@ module OpenWFE
     def initialize (service_name, application_context)
       super
       @persist_as_yaml = true
-      @suffix = '.yaml'
+      @suffix = 'yaml'
     end
   end
 
