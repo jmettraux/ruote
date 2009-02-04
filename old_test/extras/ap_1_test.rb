@@ -47,5 +47,22 @@ class Active1Test < Test::Unit::TestCase
     assert_equal 100, wi.fields.size
   end
 
+  def test_1
+
+    fields = { 'alpha' => '0', 'bravo' => 2, 'charly' => :two }
+
+    threads = (1..50).to_a.inject([]) do |a, i|
+      a << Thread.new do
+        sleep rand()
+        wi = new_wi "participant_#{i}"
+        wi.save!
+      end
+      a
+    end
+    threads.each { |t| t.join }
+
+    assert_equal 10, OpenWFE::Extras::Workitem.find(:all).size
+  end
+
 end
 
