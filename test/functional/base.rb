@@ -84,7 +84,7 @@ module FunctionalBase
     @engine.wait_for(fei)
   end
 
-  def check_for_errors (fei, opts)
+  def check_for_errors (fei, opts={})
 
     return if opts[:ignore_errors]
 
@@ -106,7 +106,7 @@ module FunctionalBase
     flunk 'caught process error(s)'
   end
 
-  def check_remaining_expressions (fei, opts)
+  def check_remaining_expressions (fei, opts={})
 
     expcount = @engine.get_expression_storage.size
 

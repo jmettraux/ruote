@@ -71,7 +71,6 @@ module OpenWFE
 
       service_init(service_name, application_context)
 
-      #@db = Rufus::Tokyo::Cabinet.new(get_work_directory + '/expstorage.tch')
       @db = Rufus::Tokyo::Table.new(
         get_work_directory + '/expstorage.tdb', :create, :write)
 
@@ -84,11 +83,16 @@ module OpenWFE
     def stop
 
       @db.close
+      @db = nil
 
       super
     end
 
+    #
+    # Returns the count of stored expressions
+    #
     def size
+
       @db.size
     end
     alias :length :size
@@ -99,7 +103,6 @@ module OpenWFE
 
       return nil unless v
 
-      #fexp = Marshal.load(Base64.decode64(v))
       fexp = Marshal.load(Base64.decode64(v['fexp']))
 
       fexp.application_context = @application_context
@@ -107,8 +110,6 @@ module OpenWFE
     end
 
     def []= (fei, fexp)
-
-      #@db[fei.as_tc_key] = Base64.encode64(Marshal.dump(fexp))
 
       @db[fei.as_tc_key] = {
         'wfid' => fexp.fei.wfid,
@@ -119,10 +120,12 @@ module OpenWFE
     end
 
     def delete (fei)
+
       @db.delete(fei.as_tc_key)
     end
 
     def purge
+
       @db.clear
     end
 
@@ -183,7 +186,6 @@ module OpenWFE
         @db.values # everything
       end
 
-      #@db.values.inject([]) { |a, v|
       values.inject([]) { |a, v|
         fexp = Marshal.load(Base64.decode64(v['fexp']))
         if does_match?(options, fexp)

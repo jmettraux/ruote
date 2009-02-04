@@ -75,8 +75,6 @@ module OpenWFE
     #
     def init_service (service_name, service_class)
 
-      #p [ :init_service, service_name, service_class ]
-
       if service_name
         #
         # if there is a service previously registered under the same name,

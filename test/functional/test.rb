@@ -7,10 +7,12 @@
 
 dirpath = File.dirname(__FILE__)
 
-efts = Dir.new(dirpath).entries.select { |e| e.match(/eft\_.*\.rb$/) }.sort
+# TODO : rft_ as well...
+
+efts = Dir.new(dirpath).entries.select { |e| e.match(/^eft\_.*\.rb$/) }.sort
   # functional tests targetting specifing expressions
 
-fts = Dir.new(dirpath).entries.select { |e| e.match(/ft\_.*\.rb$/) }.sort
+fts = Dir.new(dirpath).entries.select { |e| e.match(/^ft\_.*\.rb$/) }.sort
   # functional tests targetting features rather than expressions
 
 tests = efts + fts
