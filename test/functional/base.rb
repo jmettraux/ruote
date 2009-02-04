@@ -57,9 +57,7 @@ module FunctionalBase
 
     yield(engine) if block_given?
 
-    check_for_errors(fei, opts)
-
-    check_remaining_expressions(fei, opts)
+    check_engine_clean(fei, opts)
 
     assert_equal(expected_trace, @tracer.to_s) if expected_trace
 
@@ -84,14 +82,26 @@ module FunctionalBase
     @engine.wait_for(fei)
   end
 
-  def check_for_errors (fei, opts={})
+  def check_engine_clean (fei=nil, opts={})
+
+    check_for_errors(fei, opts)
+    check_remaining_expressions(fei, opts)
+  end
+
+  def check_for_errors (fei, opts)
 
     return if opts[:ignore_errors]
 
-    ps = @engine.process_status(fei.wfid)
+    ps = if fei
+      @engine.process_status(fei.wfid)
+    else
+      @engine.process_statuses.values.first
+    end
 
     return unless ps
     return if ps.errors.size == 0
+
+    # TODO : implement 'banner' function
 
     puts '-' * 80
     puts 'caught process error(s)'
@@ -106,7 +116,7 @@ module FunctionalBase
     flunk 'caught process error(s)'
   end
 
-  def check_remaining_expressions (fei, opts={})
+  def check_remaining_expressions (fei, opts)
 
     expcount = @engine.get_expression_storage.size
 
