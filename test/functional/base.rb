@@ -57,7 +57,7 @@ module FunctionalBase
 
     yield(engine) if block_given?
 
-    check_engine_clean(fei, opts)
+    assert_engine_clean(fei, opts)
 
     assert_equal(expected_trace, @tracer.to_s) if expected_trace
 
@@ -82,13 +82,13 @@ module FunctionalBase
     @engine.wait_for(fei)
   end
 
-  def check_engine_clean (fei=nil, opts={})
+  def assert_engine_clean (fei=nil, opts={})
 
-    check_for_errors(fei, opts)
-    check_remaining_expressions(fei, opts)
+    assert_no_errors(fei, opts)
+    assert_no_remaining_expressions(fei, opts)
   end
 
-  def check_for_errors (fei, opts)
+  def assert_no_errors (fei, opts)
 
     return if opts[:ignore_errors]
 
@@ -116,7 +116,7 @@ module FunctionalBase
     flunk 'caught process error(s)'
   end
 
-  def check_remaining_expressions (fei, opts)
+  def assert_no_remaining_expressions (fei, opts)
 
     expcount = @engine.get_expression_storage.size
 

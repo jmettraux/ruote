@@ -45,7 +45,7 @@ class RftSleepTest < Test::Unit::TestCase
 
     assert_equal "a\nb", @tracer.to_s
 
-    check_engine_clean
+    assert_engine_clean
   end
 
   def test_sleep_restart_b
@@ -78,7 +78,7 @@ class RftSleepTest < Test::Unit::TestCase
 
     assert_equal "a\nb", @tracer.to_s
 
-    check_engine_clean
+    assert_engine_clean
   end
 end
 

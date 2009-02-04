@@ -21,7 +21,7 @@ module RestartBase
     $in_memory_engine = true
 
     puts
-    puts "  skipping restart (rst_) tests : in-memory engine"
+    puts "  skipping restart (rft_) tests : in-memory engine"
     puts
 
     true
@@ -36,6 +36,7 @@ module RestartBase
     }
 
     @engine = @engine.class.new(ac)
+
     @engine.reload # very important
   end
 end
