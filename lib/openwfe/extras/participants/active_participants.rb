@@ -190,6 +190,9 @@ module Extras
 
       #p [ :workitem_in, Thread.current.object_id, Thread.current[:name] ]
 
+      ActiveRecord::Base.verify_active_connections!
+        # taking care of "server has gone away"...
+
       transaction do # impacting two tables (workitems / fields)
         #
         # busted on me recently (2009/01/14) :(
