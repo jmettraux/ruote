@@ -123,6 +123,9 @@ module OpenWFE::Extras
 
       def do_log (source, event, *args)
 
+        ActiveRecord::Base.verify_active_connections!
+          # taking care of "server has gone away"...
+
         fei = get_fei(args)
         wi = get_workitem(args)
 
