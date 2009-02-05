@@ -93,23 +93,19 @@ module OpenWFE
 
         raise "please provide a participant instance or a block" unless block
 
-        participant = BlockParticipant.new block
+        participant = BlockParticipant.new(block)
       end
 
-      ldebug do
-        "register_participant() "+
-        "participant class is #{participant.class}"
-      end
+      ldebug { "register_participant() participant.class #{participant.class}" }
 
       if participant.is_a?(Class)
-
-        ldebug { "register_participant() class #{participant}" }
 
         begin
 
           participant = participant.new(regex, @application_context)
 
         rescue Exception => e
+
           #ldebug do
           #  "register_participant() " +
           #  "falling back to no param constructor because of \n" +
@@ -136,7 +132,7 @@ module OpenWFE
       class << regex
         attr_reader :original_string
       end
-      regex.instance_variable_set '@original_string', original_string
+      regex.instance_variable_set('@original_string', original_string)
 
       participant.application_context = @application_context \
         if participant.respond_to?(:application_context=)
@@ -196,30 +192,23 @@ module OpenWFE
     #
     def dispatch (participant, participant_name, workitem)
 
-      unless participant
+      participant ||= lookup_participant(participant_name)
+        # participant may be null (AliasParticipant)
 
-        participant = lookup_participant(participant_name)
-
-        raise "there is no participant named '#{participant_name}'" \
-          unless participant
-      end
+      raise "pmap : no participant named '#{participant_name}'" \
+        unless participant
 
       workitem.participant_name = participant_name
 
-      return cancel(participant, workitem) \
-        if workitem.is_a?(CancelItem)
-
-      onotify(:dispatch, :before_consume, workitem)
-
-      workitem.dispatch_time = Time.now
-
-      participant.consume(workitem)
-
-      onotify(:dispatch, :after_consume, workitem)
+      if participant.do_not_thread
+        do_dispatch(participant, workitem)
+      else
+        Thread.new { do_dispatch(participant, workitem) }
+      end
     end
 
     #
-    # The method onotify (from Osbservable) is made public so that
+    # The method onotify (from Observable) is made public so that
     # ParticipantExpression instances may notify the pmap of applies
     # and replies.
     #
@@ -227,21 +216,43 @@ module OpenWFE
 
     protected
 
-      #
-      # Will call the cancel method of the participant if it has
-      # one, or will simply discard the cancel item else.
-      #
-      def cancel (participant, cancel_item)
+    #
+    # The actual dispatch work is here, along with error catching
+    #
+    def do_dispatch (participant, workitem)
 
-        participant.cancel(cancel_item) \
-          if participant.respond_to?(:cancel)
+      begin
 
-        onotify(:dispatch, :cancel, cancel_item)
-          #
-          # maybe it'd be better to specifically log that
-          # a participant has no cancel() method, but it's OK
-          # like that for now.
+        return do_cancel(participant, workitem) if workitem.is_a?(CancelItem)
+
+        onotify(:dispatch, :before_consume, workitem)
+
+        workitem.dispatch_time = Time.now
+
+        participant.consume(workitem)
+
+        onotify(:dispatch, :after_consume, workitem)
+
+      rescue Exception => e
+        #p e
+        get_expression_pool.handle_error(e, workitem.fei, :apply, workitem)
       end
+    end
+
+    #
+    # Will call the cancel method of the participant if it has
+    # one, or will simply discard the cancel item else.
+    #
+    def do_cancel (participant, cancel_item)
+
+      participant.cancel(cancel_item) if participant.respond_to?(:cancel)
+
+      onotify(:dispatch, :cancel, cancel_item)
+        #
+        # maybe it'd be better to specifically log that
+        # a participant has no cancel() method, but it's OK
+        # like that for now.
+    end
   end
 
 end

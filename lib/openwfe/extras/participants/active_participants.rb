@@ -178,14 +178,6 @@ module Extras
     end
 
     #
-    # ActiveRecord 2.2.2 made me do it :(
-    #
-    def destroy
-      super
-      ActiveRecord::Base.connection.commit_db_transaction
-    end
-
-    #
     # Generates a (new) Workitem from an OpenWFEru InFlowWorkItem instance.
     #
     # This is a 'static' method :
@@ -195,6 +187,8 @@ module Extras
     # (This method saves the 'ActiveWorkitem').
     #
     def Workitem.from_owfe_workitem (wi, store_name=nil)
+
+      #p [ :workitem_in, Thread.current.object_id, Thread.current[:name] ]
 
       transaction do # impacting two tables (workitems / fields)
         #
@@ -456,60 +450,68 @@ module Extras
           participant_name ])
     end
 
-    #
-    # Grumpf... ActiveRecord 2.2.2 here we come...
-    #
-    # taking inspiration from
-    # http://www.williambharding.com/blog/rants/rails-22-connection-pools-mongrel-handlers-bloodbath/
-    #
-    # had to set the number of connection in the pool to 30 anyway. Maybe
-    # activerecord 2.2.3 will be easier on us...
-    #
-    def self.find (a, opts={})
-      r = super
-      ActiveRecord::Base.connection_pool.release_connection
-      r
-    end
+    ##
+    ## Grumpf... ActiveRecord 2.2.2 here we come...
+    ##
+    ## taking inspiration from
+    ## http://www.williambharding.com/blog/rants/rails-22-connection-pools-mongrel-handlers-bloodbath/
+    ##
+    ## had to set the number of connection in the pool to 30 anyway. Maybe
+    ## activerecord 2.2.3 will be easier on us...
+    ##
+    #def self.find (a, opts={})
+    #  r = super
+    #  ActiveRecord::Base.connection_pool.release_connection
+    #  r
+    #end
+
+    ##
+    ## Grumpf... ActiveRecord 2.2.2 here we come...
+    ##
+    #def create_or_update
+    #  r = super
+    #  ActiveRecord::Base.connection_pool.release_connection
+    #  r
+    #end
 
     #
     # Grumpf... ActiveRecord 2.2.2 here we come...
     #
-    def create_or_update
-      r = super
-      ActiveRecord::Base.connection_pool.release_connection
-      r
+    def destroy
+      super
+      ActiveRecord::Base.connection.commit_db_transaction
     end
 
     protected
 
-      #
-      # builds the condition (the WHERE clause) for the
-      # search.
-      #
-      def self.conditions (keyname, search_string, storename_list)
+    #
+    # builds the condition (the WHERE clause) for the
+    # search.
+    #
+    def self.conditions (keyname, search_string, storename_list)
 
-        cs = [ "#{keyname} LIKE ?", search_string ]
+      cs = [ "#{keyname} LIKE ?", search_string ]
 
-        if storename_list
+      if storename_list
 
-          cs[0] = "#{cs[0]} AND workitems.store_name IN (?)"
-          cs << storename_list
-        end
-
-        cs
+        cs[0] = "#{cs[0]} AND workitems.store_name IN (?)"
+        cs << storename_list
       end
 
-      def self.merge_search_results (ids, wis, new_wis)
+      cs
+    end
 
-        return if new_wis.size < 1
+    def self.merge_search_results (ids, wis, new_wis)
 
-        new_wis.each do |wi|
-          wi = wi.workitem if wi.kind_of?(Field)
-          next if ids.include? wi.id
-          ids << wi.id
-          wis << wi
-        end
+      return if new_wis.size < 1
+
+      new_wis.each do |wi|
+        wi = wi.workitem if wi.kind_of?(Field)
+        next if ids.include? wi.id
+        ids << wi.id
+        wis << wi
       end
+    end
   end
 
   #
@@ -589,7 +591,7 @@ module Extras
         cs << storename_list
       end
 
-      find :all, :conditions => cs, :include => :workitem
+      find(:all, :conditions => cs, :include => :workitem)
     end
 
     protected
@@ -701,6 +703,13 @@ module Extras
     attr :compact_workitems, true
 
     #
+    # Forces ruote to not spawn a thread when dispatching to this participant.
+    #
+    def do_not_thread
+      true
+    end
+
+    #
     # This is the method called by the OpenWFEru engine to hand a
     # workitem to this participant.
     #
@@ -734,7 +743,7 @@ module Extras
     #
     def reply_to_engine (workitem)
 
-      super workitem.as_owfe_workitem
+      super(workitem.as_owfe_workitem)
         #
         # replies to the workflow engine
 
@@ -780,9 +789,7 @@ module Extras
 
       wis = Workitem.find_by_store_name(@store_name)
 
-      wis.each do |wi|
-        block.call(wi)
-      end
+      wis.each { |wi| block.call(wi) }
     end
   end
 

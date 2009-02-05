@@ -80,6 +80,17 @@ module OpenWFE
     #def cancel (cancelitem)
     #end
     #++
+
+    #
+    # By default, returns false. When returning true the dispatch to the
+    # participant will not be done in his own thread.
+    #
+    # Since ActiveRecord 2.2, ActiveParticipant returns true (well, this
+    # method was introduced for ActiveParticipant and AR 2.2)
+    #
+    def do_not_thread
+      false
+    end
   end
 
   #
