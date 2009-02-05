@@ -135,7 +135,7 @@ module OpenWFE
 
       participant = get_participant_map.lookup_participant(@participant_name)
 
-      raise "pexp : no participant named '#{@participant_name.inspect}'" \
+      raise "pexp : no participant named #{@participant_name.inspect}" \
         unless participant
 
       workitem.unset_result
