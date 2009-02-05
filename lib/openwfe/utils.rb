@@ -222,7 +222,7 @@ module OpenWFE
     s
   end
 
-  #
+  #--
   # Some code for writing thinks like :
   #
   #   if async
@@ -235,34 +235,29 @@ module OpenWFE
   #
   # Returns the new thread instance.
   #
-  def OpenWFE.call_in_thread (caller_name, caller_object=nil, &block)
-
-    return nil unless block
-
-    t = Thread.new do
-
-      begin
-        #$SAFE = safe_level
-          #
-          # (note)
-          # doesn't work : the block inherits the safety level
-          # of its surroundings, it's a closure, ne ?
-
-        block.call
-
-      rescue Exception => e
-        msg = "#{caller_name} caught an exception\n" + exception_to_s(e)
-        if caller_object and caller_object.respond_to? :lwarn
-          caller_object.lwarn { msg }
-        else
-          puts msg
-        end
-      end
-    end
-
-    t[:name] = caller_name
-    t
-  end
+  #def OpenWFE.call_in_thread (caller_name, caller_object=nil, &block)
+  #  return nil unless block
+  #  t = Thread.new do
+  #    begin
+  #      #$SAFE = safe_level
+  #        #
+  #        # (note)
+  #        # doesn't work : the block inherits the safety level
+  #        # of its surroundings, it's a closure, ne ?
+  #      block.call
+  #    rescue Exception => e
+  #      msg = "#{caller_name} caught an exception\n" + exception_to_s(e)
+  #      if caller_object and caller_object.respond_to? :lwarn
+  #        caller_object.lwarn { msg }
+  #      else
+  #        puts msg
+  #      end
+  #    end
+  #  end
+  #  t[:name] = caller_name
+  #  t
+  #end
+  #++
 
   #
   # A small Timer class for debug purposes.

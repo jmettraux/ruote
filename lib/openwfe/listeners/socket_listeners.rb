@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -89,9 +89,14 @@ module OpenWFE
 
       @server = TCPServer.new(iface, port)
 
-      @thread = OpenWFE.call_in_thread(@service_name, self) do
-        listen
+      @thread = Thread.new do
+        begin
+          listen
+        rescue Exception => e
+          lerror { "listening socket died\n#{e}" }
+        end
       end
+      @thread[:name] = @service_name
     end
 
     #
@@ -191,9 +196,14 @@ module OpenWFE
 
           return unless socket
 
-          OpenWFE.call_in_thread(@service_name, self) do
-            handle_socket(socket) if socket and is_allowed?(socket)
+          t = Thread.new do
+            begin
+              handle_socket(socket) if socket and is_allowed?(socket)
+            rescue Exception => e
+              lerror { "error while handling socket\n#{e}" }
+            end
           end
+          t[:name] = @service_name
         end
       end
 

@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -55,24 +55,35 @@ module OpenWFE
       super
 
       @queue = Queue.new
-
       @stopped = false
 
-      thread_name = "#{service_name} (engine #{get_engine.object_id})"
+      #thread_name = "#{service_name} (engine #{get_engine.object_id})"
+      #OpenWFE::call_in_thread(thread_name, self) do
+      #  loop do
+      #    work = @queue.pop
+      #    break if work == :stop
+      #    target, method_name, args = work
+      #    target.send(method_name, *args)
+      #  end
+      #end
 
-      OpenWFE::call_in_thread thread_name, self do
+      # the workqueue warns and immediately resumes in case of error.
 
+      t = Thread.new do
         loop do
-
-          work = @queue.pop
-
-          break if work == :stop
-
-          target, method_name, args = work
-
-          target.send(method_name, *args)
+          begin
+            work = @queue.pop
+            break if work == :stop
+            target, method_name, args = work
+            target.send(method_name, *args)
+          rescue Exception => e
+            lwarn {
+              "#{caller_name} caught an exception\n#{OpenWFE.exception_to_s(e)}"
+            }
+          end
         end
       end
+      t[:name] = "#{service_name} (engine #{get_engine.object_id})"
     end
 
     #

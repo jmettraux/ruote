@@ -156,6 +156,8 @@ module OpenWFE
 
       workitem.params = lookup_attributes(workitem)
 
+      # TODO : revise this threading thing...
+
       #
       # threading AFTER the store_itself()
       #
