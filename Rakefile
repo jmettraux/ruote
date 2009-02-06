@@ -77,6 +77,14 @@ Rake::RDocTask.new do |rd|
     # for it :(
 end
 
+task :upload_rdoc => :rdoc do
+  sh %{
+    rsync -azv -e ssh \
+      rdoc \
+      jmettraux@rubyforge.org:/var/www/gforge-projects/openwferu/
+  }
+end
+
 #
 # Create the various ruote[-.*] gems
 #
