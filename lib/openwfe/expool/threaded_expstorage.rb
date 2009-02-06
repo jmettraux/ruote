@@ -63,12 +63,12 @@ module OpenWFE
     # makes sure that the queue isn't actually preparing a batch
     # before returning a result.
     #
-    def find_expressions (options)
+    def find_expressions (options={})
 
       Thread.pass
 
       @mutex.synchronize do
-        super
+        super(options)
       end
     end
 

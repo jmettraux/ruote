@@ -93,7 +93,7 @@ module OpenWFE
 
     def initialize (service_name, application_context)
 
-      service_init service_name, application_context
+      service_init(service_name, application_context)
     end
   end
 

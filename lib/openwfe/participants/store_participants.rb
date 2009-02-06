@@ -93,9 +93,7 @@ module OpenWFE
     #
     def cancel (cancelitem)
 
-      ldebug do
-        "cancel() removing workitem  #{cancelitem.flow_expression_id}"
-      end
+      ldebug { "cancel() removing workitem  #{cancelitem.flow_expression_id}" }
 
       delete(cancelitem.flow_expression_id)
     end
@@ -119,7 +117,7 @@ module OpenWFE
     def forward (workitem)
 
       raise "Workitem not found in #{self.class}, cannot forward." \
-        unless self.has_key? workitem.flow_expression_id
+        unless self.has_key?(workitem.flow_expression_id)
 
       delete(workitem)
 
@@ -157,13 +155,9 @@ module OpenWFE
     #
     def list_workitems (workflow_instance_id=nil)
 
-      result = []
-      self.each_value do |workitem|
-        result << workitem \
-          if (not workflow_instance_id) or workitem.fei.parent_wfid == workflow_instance_id
-      end
-
-      result
+      workflow_instance_id ?
+        self.values.select { |wi| wi.fei.parent_wfid == workflow_instance_id } :
+        self.values
     end
 
     #
@@ -174,14 +168,7 @@ module OpenWFE
     #
     def first_workitem
 
-      result = nil
-
-      self.each_value do |workitem|
-        result = workitem
-        break
-      end
-
-      result
+      self.values.first
     end
 
     #

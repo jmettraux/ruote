@@ -142,7 +142,7 @@ module OpenWFE
     #   if this option is set to true, will only return the expressions
     #   that have been applied (exp.apply_time != nil).
     #
-    def find_expressions (options)
+    def find_expressions (options={})
 
       dir = if wfid = options[:wfid]
         dir_for(wfid)

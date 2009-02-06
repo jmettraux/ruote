@@ -39,67 +39,95 @@
 
 module OpenWFE
 
+  #
+  # Adding the register_listener method to the Engine.
+  #
   module ListenerMethods
 
     #
     # Adds a workitem listener to this engine.
     #
-    # The 'freq' parameters if present might indicate how frequently
+    # This method takes 2 arguments, a listener (or a listener Class) and an
+    # optional option list.
+    #
+    #   engine.register_listener(
+    #     OpenWFE::FileListener, :freq => "3m10s")
+    #
+    # or
+    #
+    #   engine.register_listener(
+    #     OpenWFE::Extras::JabberListener,
+    #     :jabber_id => 'jbot', :password => 'wyvern')
+    #
+    # It's OK to pass an instance of a listener instead of a class.
+    #
+    #   l = MyCustomListener.new(:a, :b, :c)
+    #   engine.register_listener(l)
+    #
+    # == frequency
+    #
+    # The :freq or :frequency option if present might indicate how frequently
     # the resource should be polled for incoming workitems.
     #
-    #   engine.add_workitem_listener(listener, "3m10s")
+    #   engine.add_workitem_listener(listener, :frequency => "3m10s")
     #    # every 3 minutes and 10 seconds
     #
-    #   engine.add_workitem_listener(listener, "0 22 * * 1-5")
+    #   engine.add_workitem_listener(listener, :freq => "0 22 * * 1-5")
     #    # every weekday at 10pm
+    #
+    # If the frequency is set, this method will return the job_id of the
+    # listener in the engine's scheduler. When no frequency is given, nil is
+    # returned.
     #
     # TODO : block handling...
     #
-    def add_workitem_listener (listener, freq=nil)
+    def register_listener (listener, opts={})
 
-      name = if listener.is_a?(Class)
+      l = listener.is_a?(Class) ?
+        listener.new(@application_context, opts) : listener
 
-        listener = init_service(nil, listener)
+      l.application_context = @application_context \
+        if l.respond_to?(:application_context=) # even if already set
 
-        listener.service_name
+      name = get_listener_name(l)
 
-      else
+      @application_context[name] = l
 
-        name = listener.name if listener.respond_to?(:name)
-        name = "#{listener.class}::#{listener.object_id}" unless name
-
-        @application_context[name] = listener
-
-        listener.application_context = @application_context \
-          if listener.respond_to?(:application_context=)
-
-        name
-      end
-
-      result = if freq
+      job_id = if freq = opts[:frequency] || opts[:freq]
 
         freq = freq.to_s.strip
 
-        if Rufus::Scheduler.is_cron_string(freq)
+        raise(
+          "cannot schedule listener of class '#{l.class}', "+
+          "it doesn't have a trigger() method"
+        ) unless l.respond_to?(:trigger)
 
-          get_scheduler.schedule(freq, listener)
-        else
-
-          get_scheduler.schedule_every(freq, listener)
-        end
+        m = Rufus::Scheduler.is_cron_string(freq) ? :cron : :every
+        get_scheduler.send(m, freq, l)
 
       else
 
         nil
       end
 
-      linfo { "add_workitem_listener() added '#{name}'" }
+      linfo { "register_listener() added '#{name}' (#{l.class})" }
 
-      result
+      job_id
     end
 
-    alias :add_listener :add_workitem_listener
-    alias :register_listener :add_workitem_listener
+    alias :add_workitem_listener :register_listener
+    alias :add_listener :register_listener
+
+    protected
+
+    def get_listener_name (listener) #:nodoc#
+
+      [ :service_name, :name ].each do |m|
+        return listener.send(m) if listener.respond_to?(m)
+      end
+
+      "#{listener.class}__#{@application_context.size}"
+    end
 
   end
 end

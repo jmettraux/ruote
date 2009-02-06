@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,6 @@
 # John Mettraux at openwfe.org
 #
 
-require 'find'
 require 'yaml'
 require 'fileutils'
 
@@ -78,7 +77,7 @@ module OpenWFE
 
       super
 
-      @workdir = get_work_directory + "/in/"
+      @workdir = get_work_directory + '/in/'
 
       linfo { "new() workdir is '#{@workdir}'" }
     end
@@ -88,17 +87,14 @@ module OpenWFE
     # extract the workitem in them and feed it back to the engine.
     #
     def trigger (params)
-      # no synchronization for now
 
-      ldebug { "trigger()" }
+      #ldebug { "trigger()" }
 
-      FileUtils.makedirs(@workdir) unless File.exist?(@workdir)
+      FileUtils.mkdir_p(@workdir) unless File.exist?(@workdir)
 
-      Find.find(@workdir) do |path|
+      Dir["#{@workdir}/*.yaml"].each do |path|
 
-        next if File.stat(path).directory?
-
-        ldebug { "trigger() considering file '#{path}'" }
+        #ldebug { "trigger() considering file '#{path}'" }
 
         begin
 
@@ -119,20 +115,18 @@ module OpenWFE
 
     protected
 
-      #
-      # Turns a file into a Ruby instance.
-      # This base implementation does it via YAML.
-      #
-      def load_object (path)
+    #
+    # Turns a file into a Ruby instance.
+    # This base implementation does it via YAML.
+    #
+    # (override at will)
+    #
+    def load_object (path)
 
-        return nil unless path.match ".*\.yaml$"
-
-        object = YAML.load_file path
-
-        File.delete path
-
-        object
-      end
+      o = YAML.load_file(path)
+      File.delete(path)
+      o
+    end
   end
 
 end

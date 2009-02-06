@@ -77,7 +77,7 @@ module OpenWFE
     #
     def consume (workitem)
 
-      FileUtils.makedirs(@workdir) unless File.exist?(@workdir)
+      FileUtils.mkdir_p(@workdir) unless File.exist?(@workdir)
 
       file_name = @workdir + determine_file_name(workitem)
 
@@ -94,7 +94,7 @@ module OpenWFE
     def dump_to_file (file_name, workitem)
 
       File.open(file_name, 'w') do |file|
-        file.print encode_workitem(workitem)
+        file.print(encode_workitem(workitem))
       end
     end
 
@@ -111,19 +111,19 @@ module OpenWFE
       OpenWFE::ensure_for_filename(
         "#{fei.wfid}_#{fei.expression_id}__" +
         "#{fei.workflow_definition_name}__" +
-        "#{fei.workflow_definition_revision}" +
+        "#{fei.workflow_definition_revision}__" +
         "#{workitem.participant_name}.yaml")
     end
 
     protected
 
-      #
-      # By default, uses YAML to serialize the workitem
-      # (of course you can override this method).
-      #
-      def encode_workitem (wi)
-        YAML.dump(wi)
-      end
+    #
+    # By default, uses YAML to serialize the workitem
+    # (of course you can override this method).
+    #
+    def encode_workitem (wi)
+      YAML.dump(wi)
+    end
   end
 
   #
