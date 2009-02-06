@@ -58,6 +58,7 @@ require 'openwfe/expool/errorjournal'
 require 'openwfe/engine/expool_methods'
 require 'openwfe/engine/status_methods'
 require 'openwfe/engine/lookup_methods'
+require 'openwfe/engine/listener_methods'
 require 'openwfe/engine/participant_methods'
 require 'openwfe/engine/update_exp_methods'
 require 'openwfe/expressions/environment'
@@ -79,6 +80,7 @@ module OpenWFE
     include ExpoolMethods
     include StatusMethods
     include LookupMethods
+    include ListenerMethods
     include ParticipantMethods
     include UpdateExpMethods
 
@@ -320,57 +322,6 @@ module OpenWFE
 
     alias :forward :reply
     alias :proceed :reply
-
-    #
-    # Adds a workitem listener to this engine.
-    #
-    # The 'freq' parameters if present might indicate how frequently
-    # the resource should be polled for incoming workitems.
-    #
-    #   engine.add_workitem_listener(listener, "3m10s")
-    #    # every 3 minutes and 10 seconds
-    #
-    #   engine.add_workitem_listener(listener, "0 22 * * 1-5")
-    #    # every weekday at 10pm
-    #
-    # TODO : block handling...
-    #
-    def add_workitem_listener (listener, freq=nil)
-
-      name = nil
-
-      if listener.kind_of?(Class)
-
-        listener = init_service(nil, listener)
-
-        name = listener.service_name
-      else
-
-        name = listener.name if listener.respond_to?(:name)
-        name = "#{listener.class}::#{listener.object_id}" unless name
-
-        @application_context[name] = listener
-      end
-
-      result = nil
-
-      if freq
-
-        freq = freq.to_s.strip
-
-        result = if Rufus::Scheduler.is_cron_string(freq)
-
-          get_scheduler.schedule(freq, listener)
-        else
-
-          get_scheduler.schedule_every(freq, listener)
-        end
-      end
-
-      linfo { "add_workitem_listener() added '#{name}'" }
-
-      result
-    end
 
     #
     # Makes the current thread join the engine's scheduler thread
