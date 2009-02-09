@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+#
+# testing the various storage engines
+#
+
 if ARGV.size < 1 or ARGV.include?('--help') or ARGV.include?('-h')
   puts %{
 
@@ -25,8 +29,10 @@ ruby = `which ruby`.strip
 
 [
   '', '--fs', '--tc',
+  #'', '--fs', '--tc', '--tt',
   '--cfp',
   '--fs -y', '--fs -C', '--fs -C -y', '--tc -C'
+  #'--fs -y', '--fs -C', '--fs -C -y', '--tc -C', '--tt -C'
 ].each do |args|
 
   puts

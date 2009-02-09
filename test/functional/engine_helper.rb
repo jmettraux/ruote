@@ -57,6 +57,11 @@ else uses the in-memory OpenWFE::Engine (fastest, but no persistence at all)
       require 'openwfe/engine/tc_engine'
       OpenWFE::TcPersistedEngine
 
+    elsif ARGV.include?('--tt') # not slow, robust, remote
+
+      require 'openwfe/engine/tt_engine'
+      OpenWFE::TtPersistedEngine
+
     elsif ARGV.include?('--fs') # fast and robust
 
       require 'openwfe/engine/fs_engine'

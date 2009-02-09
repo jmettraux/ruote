@@ -72,6 +72,7 @@ module OpenWFE
       service_init(service_name, application_context)
 
       @db = Rufus::Tokyo::Table.new(
+        #get_work_directory + '/expstorage.tdb)
         get_work_directory + '/expstorage.tdb', :create, :write)
 
       observe_expool
