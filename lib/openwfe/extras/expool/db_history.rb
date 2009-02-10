@@ -81,6 +81,11 @@ module OpenWFE::Extras
   #
   class HistoryEntry < ActiveRecord::Base
 
+    def connection
+      ActiveRecord::Base.verify_active_connections!
+      super
+    end
+
     set_table_name('history')
 
     #
@@ -122,9 +127,6 @@ module OpenWFE::Extras
     protected
 
       def do_log (source, event, *args)
-
-        ActiveRecord::Base.verify_active_connections!
-          # taking care of "server has gone away"...
 
         fei = get_fei(args)
         wi = get_workitem(args)

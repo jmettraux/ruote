@@ -152,6 +152,11 @@ module Extras
   #
   class Workitem < ActiveRecord::Base
 
+    def connection
+      ActiveRecord::Base.verify_active_connections!
+      super
+    end
+
     has_many(
       :fields,
       :dependent => :delete_all,
@@ -188,43 +193,7 @@ module Extras
     #
     def Workitem.from_owfe_workitem (wi, store_name=nil)
 
-      #p [ :workitem_in, Thread.current.object_id, Thread.current[:name] ]
-
-      ActiveRecord::Base.verify_active_connections!
-        # taking care of "server has gone away"...
-
       transaction do # impacting two tables (workitems / fields)
-        #
-        # busted on me recently (2009/01/14) :(
-        #
-        #  You have a nil object when you didn't expect it!
-        #  You might have expected an instance of Array.
-        #  The error occurred while evaluating nil.-
-        #  /Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/
-        #    connection_adapters/abstract_adapter.rb:159:
-        #    in `decrement_open_transactions'
-        #  /Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/
-        #    transactions.rb:131:in `transaction'
-        #  /Users/jmettraux/ruote/lib/openwfe/extras/participants/
-        #    activeparticipants.rb:200:
-        #    in `from_owfe_workitem'
-        #  /Users/jmettraux/ruote/lib/openwfe/extras/participants/
-        #    activeparticipants.rb:744:
-        #    in `consume'
-        #
-        # this monkey patch may 'avoid' this issue :
-        #
-        #   class ActiveRecord::ConnectionAdapters::AbstractAdapter
-        #     # original :
-        #     #
-        #     #def decrement_open_transactions
-        #     #  @open_transactions -= 1
-        #     #end
-        #     def decrement_open_transactions
-        #       @open_transactions && @open_transactions -= 1
-        #     end
-        #   end
-        #
 
         i = Workitem.new
         i.fei = wi.fei.to_s
@@ -300,7 +269,7 @@ module Extras
 
         if self.yattributes
 
-          self.yattributes = fhash
+          #self.yattributes = fhash
 
         else
 
@@ -453,38 +422,6 @@ module Extras
           participant_name ])
     end
 
-    ##
-    ## Grumpf... ActiveRecord 2.2.2 here we come...
-    ##
-    ## taking inspiration from
-    ## http://www.williambharding.com/blog/rants/rails-22-connection-pools-mongrel-handlers-bloodbath/
-    ##
-    ## had to set the number of connection in the pool to 30 anyway. Maybe
-    ## activerecord 2.2.3 will be easier on us...
-    ##
-    #def self.find (a, opts={})
-    #  r = super
-    #  ActiveRecord::Base.connection_pool.release_connection
-    #  r
-    #end
-
-    ##
-    ## Grumpf... ActiveRecord 2.2.2 here we come...
-    ##
-    #def create_or_update
-    #  r = super
-    #  ActiveRecord::Base.connection_pool.release_connection
-    #  r
-    #end
-
-    #
-    # Grumpf... ActiveRecord 2.2.2 here we come...
-    #
-    def destroy
-      super
-      ActiveRecord::Base.connection.commit_db_transaction
-    end
-
     protected
 
     #
@@ -527,6 +464,11 @@ module Extras
   # A Field (Attribute) of a Workitem.
   #
   class Field < ActiveRecord::Base
+
+    def connection
+      ActiveRecord::Base.verify_active_connections!
+      super
+    end
 
     belongs_to :workitem, :class_name => 'OpenWFE::Extras::Workitem'
 

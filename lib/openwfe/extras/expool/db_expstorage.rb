@@ -91,6 +91,11 @@ module OpenWFE::Extras
   #
   class Expression < ActiveRecord::Base
 
+    def connection
+      ActiveRecord::Base.verify_active_connections!
+      super
+    end
+
     #serialize :svalue, OpenWFE::FlowExpression # not working :( (ar2.2.2)
     serialize :svalue
   end

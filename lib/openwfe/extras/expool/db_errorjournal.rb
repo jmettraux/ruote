@@ -84,6 +84,11 @@ module OpenWFE::Extras
   #
   class ProcessError < ActiveRecord::Base
 
+    def connection
+      ActiveRecord::Base.verify_active_connections!
+      super
+    end
+
     #serialize :svalue, OpenWFE::ProcessError
     serialize :svalue
 
