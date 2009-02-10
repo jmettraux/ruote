@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #23869 : implement ProcessStatus#workitem_expids
 - todo  #23833 : engine#add_workitem_listener -> register_listener
 - todo  #23821 : participant impl can now decide if dispatches to them should
                  be done in a specific thread

@@ -158,6 +158,15 @@ module OpenWFE
     end
 
     #
+    # Returns a list of the expression ids of the workitem currently active
+    # for this process
+    #
+    def workitem_expids
+
+      @expressions.collect { |exp| exp.fei.expid }
+    end
+
+    #
     # Returns the tags currently set in this process.
     #
     def tags
