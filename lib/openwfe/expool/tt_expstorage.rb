@@ -39,7 +39,7 @@
 
 require 'openwfe/expool/tc_expstorage'
 
-require 'rufus/tokyo/tyrant/table' # sudo gem install rufus-tokyo
+require 'rufus/tokyo' # sudo gem install rufus-tokyo
 
 
 module OpenWFE

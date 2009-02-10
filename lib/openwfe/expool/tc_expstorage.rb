@@ -42,7 +42,7 @@ require 'base64'
 require 'openwfe/flowexpressionid'
 require 'openwfe/expool/expstorage'
 
-require 'rufus/tokyo/cabinet/table' # sudo gem install rufus-tokyo
+require 'rufus/tokyo' # sudo gem install rufus-tokyo
 
 
 module OpenWFE
