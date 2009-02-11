@@ -58,6 +58,8 @@ module OpenWFE::Extras
         t.column :source, :string, :null => false
         t.column :event, :string, :null => false
         t.column :wfid, :string
+        t.column :wfname, :string
+        t.column :wfrevision, :string
         t.column :fei, :string
         t.column :participant, :string
         t.column :message, :string # empty is ok
@@ -67,6 +69,8 @@ module OpenWFE::Extras
       add_index :history, :source
       add_index :history, :event
       add_index :history, :wfid
+      add_index :history, :wfname
+      add_index :history, :wfrevision
       add_index :history, :participant
     end
 
@@ -81,6 +85,9 @@ module OpenWFE::Extras
   #
   class HistoryEntry < ActiveRecord::Base
 
+    #
+    # making sure the connection hasn't gone away
+    #
     def connection
       ActiveRecord::Base.verify_active_connections!
       super
@@ -103,8 +110,13 @@ module OpenWFE::Extras
     def self.log! (source, event, opts={})
 
       fei = opts[:fei]
-      opts[:wfid] ||= fei ? fei.parent_wfid : nil
-      opts[:fei] = fei.to_s if fei
+
+      if fei
+        opts[:wfid] = fei.parent_wfid
+        opts[:wfname] = fei.wfname
+        opts[:wfrevision] = fei.wfrevision
+        opts[:fei] = fei.to_s
+      end
 
       opts[:source] = source.to_s
       opts[:event] = event.to_s
