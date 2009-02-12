@@ -193,36 +193,33 @@ module Extras
     #
     def Workitem.from_owfe_workitem (wi, store_name=nil)
 
-      transaction do # impacting two tables (workitems / fields)
+      i = Workitem.new
+      i.fei = wi.fei.to_s
+      i.wfid = wi.fei.wfid
+      i.expid = wi.fei.expid
+      i.wf_name = wi.fei.workflow_definition_name
+      i.wf_revision = wi.fei.workflow_definition_revision
+      i.participant_name = wi.participant_name
+      i.dispatch_time = wi.dispatch_time
+      i.last_modified = nil
 
-        i = Workitem.new
-        i.fei = wi.fei.to_s
-        i.wfid = wi.fei.wfid
-        i.expid = wi.fei.expid
-        i.wf_name = wi.fei.workflow_definition_name
-        i.wf_revision = wi.fei.workflow_definition_revision
-        i.participant_name = wi.participant_name
-        i.dispatch_time = wi.dispatch_time
-        i.last_modified = nil
+      i.store_name = store_name
 
-        i.store_name = store_name
+      if wi.attributes['compact_workitems']
 
-        if wi.attributes['compact_workitems']
+        wi.attributes.delete('compact_workitems')
+        i.yattributes = wi.attributes
 
-          wi.attributes.delete('compact_workitems')
-          i.yattributes = wi.attributes
+      else
 
-        else
-
-          i.yattributes = nil
-          wi.attributes.each { |k, v| i.fields << Field.new_field(k, v) }
-        end
-
-        i.save!
-          # making sure to throw an exception in case of trouble
-
-        i
+        i.yattributes = nil
+        wi.attributes.each { |k, v| i.fields << Field.new_field(k, v) }
       end
+
+      i.save!
+        # making sure to throw an exception in case of trouble
+
+      i
     end
 
     #
@@ -265,25 +262,22 @@ module Extras
     #
     def replace_fields (fhash)
 
-      transaction do # impacting workitems + fields tables
+      if self.yattributes
 
-        if self.yattributes
+        #self.yattributes = fhash
 
-          #self.yattributes = fhash
+      else
 
-        else
-
-          fields.delete_all
-          fhash.each { |k, v| fields << Field.new_field(k, v) }
-        end
-
-        #f = Field.new_field("___map_type", "smap")
-          #
-          # an old trick for backward compatibility with OpenWFEja
-
-        save!
-          # making sure to throw an exception in case of trouble
+        fields.delete_all
+        fhash.each { |k, v| fields << Field.new_field(k, v) }
       end
+
+      #f = Field.new_field("___map_type", "smap")
+        #
+        # an old trick for backward compatibility with OpenWFEja
+
+      save!
+        # making sure to throw an exception in case of trouble
     end
 
     #
