@@ -37,6 +37,7 @@
 # Kenneth Kalmer of opensourcery.co.za
 #
 
+require 'thread'
 require 'yaml'
 require 'xmpp4r-simple'
 
@@ -45,6 +46,7 @@ require 'openwfe/util/json'
 require 'openwfe/service'
 require 'openwfe/listeners/listener'
 
+
 module OpenWFE
   module Extras
 
@@ -52,10 +54,7 @@ module OpenWFE
     # Use Jabber (XMPP) during a workflow to communicate with people/processes
     # outside the running engine in an asynchrous fashion.
     #
-    #
-    #
     class JabberListener < Service
-      include MonitorMixin
       include WorkItemListener
       include Rufus::Schedulable
 
@@ -78,24 +77,24 @@ module OpenWFE
       # Jabber connection
       attr_reader :connection
 
-      def initialize( options, application_context )
-        raise ArgumentError, "options needs a hash" unless options.is_a?( Hash )
+      def initialize( service_name, options )
 
-        self.class.jabber_id = options.delete(:jabber_id) if options.has_key?(:jabber_id)
-        self.class.password  = options.delete(:password)  if options.has_key?(:password)
-        self.class.contacts  = options.delete(:contacts)  if options.has_key?(:contacts)
-        self.class.resource  = options.delete(:resource)  if options.has_key?(:resource)
+        @mutex = Mutex.new
 
-        # MonitorMixin
+        self.class.jabber_id = options.delete( :jabber_id )
+        self.class.password = options.delete( :password )
+        self.class.contacts = options.delete( :contacts )
+        self.class.resource = options.delete( :resource )
+
         service_name = "#{self.class}::#{self.class.jabber_id}"
-        super service_name, application_context
+        super( service_name, options )
 
         connect!
         setup_roster!
       end
 
       def trigger( params )
-        synchronize do
+        @mutex.synchronize do
 
           ldebug { "trigger()" }
 
@@ -152,7 +151,7 @@ module OpenWFE
           YAML.load( msg )
         # XML?
         elsif msg =~ /^<.*>$/m
-          OpenWFE::Xml.workitem_from_xml msg
+          OpenWFE::Xml.workitem_from_xml( msg )
         # Assume JSON encoded Hash
         else
           hash = defined?(ActiveSupport::JSON) ? ActiveSupport::JSON.decode(msg) : JSON.parse(msg)
@@ -162,7 +161,7 @@ module OpenWFE
 
       # Change status to 'busy' while performing a command, and back to 'chat'
       # afterwards
-      def busy(&block)
+      def busy( &block )
         self.connection.status( :dnd, "Working..." )
         yield
         self.connection.status( :chat, "JabberListener waiting for instructions" )

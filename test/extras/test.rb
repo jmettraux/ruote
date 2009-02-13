@@ -7,10 +7,7 @@
 
 dirpath = File.dirname(__FILE__)
 
-uts = Dir.new(dirpath).entries.select { |e| e.match(/^ut\_.*\.rb$/) }.sort
-huts = Dir.new(dirpath).entries.select { |e| e.match(/^hut\_.*\.rb$/) }.sort
-
-tests = uts + huts
+tests = Dir.new(dirpath).entries.select { |e| e.match(/^et\_.*\.rb$/) }.sort
 
 tests.each { |e| load "#{dirpath}/#{e}" }
 

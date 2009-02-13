@@ -8,3 +8,6 @@
 load File.dirname(__FILE__) + '/unit/test.rb'
 load File.dirname(__FILE__) + '/functional/test.rb'
 
+#load File.dirname(__FILE__) + '/extras/test.rb'
+  # special tests that require external stuff
+

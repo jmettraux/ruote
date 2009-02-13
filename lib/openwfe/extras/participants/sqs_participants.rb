@@ -79,7 +79,7 @@ module Extras
 
       @queue_name = queue_name
 
-      @queue_service = Rufus::SQS::QueueService.new host_name
+      @queue_service = Rufus::SQS::QueueService.new(host_name)
 
       @queue_service.create_queue @queue_name
         # make sure the queue exists
@@ -93,13 +93,11 @@ module Extras
     #
     def consume (workitem)
 
-      msg = encode_workitem workitem
+      msg = encode_workitem(workitem)
 
-      msg_id = @queue_service.put_message @queue, msg
+      msg_id = @queue_service.put_message(@queue, msg)
 
-      ldebug do
-        "consume() msg sent to queue #{@queue.path} id is #{msg_id}"
-      end
+      ldebug { "consume() msg sent to queue #{@queue.path} id is #{msg_id}" }
     end
 
     protected

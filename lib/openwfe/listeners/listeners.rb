@@ -59,25 +59,41 @@ module OpenWFE
   #
   #   require 'openwfe/listeners/listeners'
   #
-  #   engine.add_workitem_listener(OpenWFE::FileListener, "500")
+  #   engine.add_workitem_listener(
+  #     OpenWFE::FileListener,
+  #     :frequency => '500',
+  #     :folder => '/var/in')
   #
-  # In this example, the directory ./work/in/ will be polled every 500
+  # In this example, the directory /var/in/ will be polled every 500
   # milliseconds for incoming workitems (or launchitems).
+  #
+  # The default folder is ./work/in/
+  # The listener will make sure to create the folder if not present.
   #
   # You can override the load_object(path) method to manage other formats
   # then YAML.
   #
   class FileListener < Service
+
     include WorkItemListener
     include Rufus::Schedulable
 
     attr_reader :workdir
 
-    def initialize (service_name, application_context)
+    def initialize (service_name, options)
 
       super
 
-      @workdir = get_work_directory + '/in/'
+      @workdir = options[:folder] || 'in/'
+
+      @workdir = "#{get_work_directory}/#{@workdir}" \
+        unless @workdir.match(/^\//)
+
+      FileUtils.mkdir_p(@workdir) \
+        unless File.exist?(@workdir)
+
+      raise("workdir #{@workdir} is not a directory, cannot setup listener") \
+        unless File.directory?(@workdir)
 
       linfo { "new() workdir is '#{@workdir}'" }
     end

@@ -39,7 +39,7 @@
 
 require 'yaml'
 require 'base64'
-require 'monitor'
+require 'thread'
 
 require 'openwfe/service'
 require 'openwfe/listeners/listener'
@@ -66,7 +66,6 @@ module Extras
   #
   class SqsListener < Service
 
-    include MonitorMixin
     include WorkItemListener
     include Rufus::Schedulable
 
@@ -75,13 +74,13 @@ module Extras
     #
     attr_reader :queue_name
 
-    def initialize (queue_name, application_context)
+    def initialize (service_name, opts)
 
-      @queue_name = queue_name.to_s
+      @mutex = Mutex.new
 
-      service_name = "#{self.class}::#{@queue_name}"
+      @queue_name = opts[:queue_name] || service_name
 
-      super service_name, application_context
+      super(service_name, opts)
 
       linfo { "new() queue is '#{@queue_name}'" }
     end
@@ -90,34 +89,32 @@ module Extras
     # polls the SQS for incoming messages
     #
     def trigger (params)
-      synchronize do
+
+      @mutex.synchronize do
+        # making sure executions do not overlap
 
         ldebug { "trigger()" }
 
         qs = Rufus::SQS::QueueService.new
 
-        qs.create_queue @queue_name
+        qs.create_queue(@queue_name)
           # just to be sure it is there
 
-        while true
+        loop do
 
-          l = qs.get_messages(
-            @queue_name, :timeout => 0, :count => 255)
+          l = qs.get_messages(@queue_name, :timeout => 0, :count => 255)
 
           break if l.length < 1
 
           l.each do |msg|
 
-            o = decode_object msg
+            o = decode_object(msg)
 
-            handle_item o
+            handle_item(o)
 
             msg.delete
 
-            ldebug do
-              "trigger() " +
-              "handled successfully msg #{msg.message_id}"
-            end
+            ldebug { "trigger() handled successfully msg #{msg.message_id}" }
           end
         end
       end

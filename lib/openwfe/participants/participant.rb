@@ -98,7 +98,11 @@ module OpenWFE
   # further implementations of the Participant concept.
   #
   module LocalParticipant
-    include Participant, Contextual, Logging, OwfeServiceLocator
+
+    include Participant
+    include Contextual
+    include Logging
+    include OwfeServiceLocator
 
     #
     # Returns the FlowExpression instance that triggered this
@@ -107,7 +111,7 @@ module OpenWFE
     #
     def get_flow_expression (workitem)
 
-      return nil if not @application_context
+      return nil unless @application_context
 
       get_expression_pool.fetch_expression(workitem.flow_expression_id)
     end
