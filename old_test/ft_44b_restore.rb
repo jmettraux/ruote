@@ -257,5 +257,28 @@ class FlowTest44b < Test::Unit::TestCase
     dotest Test44b10, 'Zigue (34) false'
   end
 
+  #
+  # TEST 11
+  #
+
+  class Test44b11 < OpenWFE::ProcessDefinition
+    sequence :on_cancel => 'bailout' do
+      set :field => 'f0', :value => 'value_a'
+      save :to_variable => 'wi'
+      set :field => 'f0', :value => 'value_aa'
+      _print '${f:f0}'
+      cancel_process
+    end
+    process_definition :name => 'bailout' do
+      _print 'bailout'
+      restore :from_variable => 'wi'
+      _print "${f:f0}"
+    end
+  end
+
+  def test_11
+    
+    dotest Test44b11, "value_aa\nbailout\nvalue_a"
+  end
 end
 
