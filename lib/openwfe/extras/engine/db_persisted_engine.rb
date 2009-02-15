@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, Tomaso Tosolini and John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, Tomaso Tosolini and John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,8 +39,8 @@
 #
 
 require 'openwfe/engine/engine'
-require 'openwfe/extras/expool/dbexpstorage'
-require 'openwfe/extras/expool/dberrorjournal'
+require 'openwfe/extras/expool/db_expstorage'
+require 'openwfe/extras/expool/db_errorjournal'
 
 
 module OpenWFE::Extras
@@ -53,22 +53,22 @@ module OpenWFE::Extras
 
     protected
 
-      #
-      # Overrides the method already found in Engine with a persisted
-      # expression storage
-      #
-      def build_expression_storage
+    #
+    # Overrides the method already found in Engine with a persisted
+    # expression storage
+    #
+    def build_expression_storage
 
-        init_service :s_expression_storage, DbExpressionStorage
-      end
+      init_service(:s_expression_storage, DbExpressionStorage)
+    end
 
-      #
-      # Uses a file persisted error journal.
-      #
-      def build_error_journal
+    #
+    # Uses a file persisted error journal.
+    #
+    def build_error_journal
 
-        init_service :s_error_journal, DbErrorJournal
-      end
+      init_service(:s_error_journal, DbErrorJournal)
+    end
   end
 
   #
@@ -81,14 +81,9 @@ module OpenWFE::Extras
 
     protected
 
-      def build_expression_storage
+    def build_expression_storage
 
-        @application_context[:expression_cache_size] ||= 1000
-
-        init_service(:s_expression_storage, OpenWFE::CacheExpressionStorage)
-
-        #init_service(:s_expression_storage__1, DbExpressionStorage)
-        init_service(:s_expression_storage__1, ThreadedDbExpressionStorage)
-      end
+      init_storage(ThreadedDbExpressionStorage)
+    end
   end
 end

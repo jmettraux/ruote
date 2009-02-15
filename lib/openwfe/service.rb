@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -49,6 +49,7 @@ module OpenWFE
   # ServiceMixin, to compose an OpenWFEru service class.
   #
   module ServiceMixin
+
     include Contextual
     include Logging
 
@@ -69,6 +70,8 @@ module OpenWFE
 
       @application_context[@service_name] = self \
         if @service_name and @application_context
+          #
+          # don't register if it's not needed
     end
 
     #
@@ -90,7 +93,7 @@ module OpenWFE
 
     def initialize (service_name, application_context)
 
-      service_init service_name, application_context
+      service_init(service_name, application_context)
     end
   end
 

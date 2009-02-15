@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,7 @@ module OpenWFE
     #
     def initialize (context_or_dir=nil)
 
-      @workdir = get_work_directory(context_or_dir) + "/out/"
+      @workdir = get_work_directory(context_or_dir) + '/out/'
 
       @reply_anyway = false
     end
@@ -77,7 +77,7 @@ module OpenWFE
     #
     def consume (workitem)
 
-      FileUtils.makedirs(@workdir) unless File.exist?(@workdir)
+      FileUtils.mkdir_p(@workdir) unless File.exist?(@workdir)
 
       file_name = @workdir + determine_file_name(workitem)
 
@@ -94,7 +94,7 @@ module OpenWFE
     def dump_to_file (file_name, workitem)
 
       File.open(file_name, 'w') do |file|
-        file.print encode_workitem(workitem)
+        file.print(encode_workitem(workitem))
       end
     end
 
@@ -111,19 +111,19 @@ module OpenWFE
       OpenWFE::ensure_for_filename(
         "#{fei.wfid}_#{fei.expression_id}__" +
         "#{fei.workflow_definition_name}__" +
-        "#{fei.workflow_definition_revision}" +
+        "#{fei.workflow_definition_revision}__" +
         "#{workitem.participant_name}.yaml")
     end
 
     protected
 
-      #
-      # By default, uses YAML to serialize the workitem
-      # (of course you can override this method).
-      #
-      def encode_workitem (wi)
-        YAML.dump(wi)
-      end
+    #
+    # By default, uses YAML to serialize the workitem
+    # (of course you can override this method).
+    #
+    def encode_workitem (wi)
+      YAML.dump(wi)
+    end
   end
 
   #
@@ -385,7 +385,7 @@ module OpenWFE
         nil
       end
 
-      return "(no template given)" unless template
+      return '(no template given)' unless template
 
       OpenWFE::dosub(template, fe, workitem)
     end

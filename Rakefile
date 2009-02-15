@@ -10,18 +10,6 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
-unless RAKEVERSION.match(/^0\.8\./)
-  require 'rote'
-  require 'rote/filters'
-  require 'rote/filters/redcloth'
-  require 'rote/filters/tidy'
-  require 'rote/format/html'
-  require 'rote/extratasks'
-  #include Rote
-#else
-#  puts "rake version #{RAKEVERSION} doesn't play well with 'rote'..."
-end
-
 
 load 'lib/openwfe/version.rb'
   #
@@ -54,8 +42,8 @@ spec = Gem::Specification.new do |s|
     'rufus-dollar',
     'rufus-treechecker',
     'rufus-mnemo',
-    'rufus-verbs' ].each do |d|
-
+    'rufus-verbs'
+  ].each do |d|
     s.requirements << d
     s.add_dependency d
   end
@@ -89,86 +77,16 @@ Rake::RDocTask.new do |rd|
     # for it :(
 end
 
-unless RAKEVERSION.match(/^0\.8\./)
-  #
-  # Create a task to build the static docs (html)
-  #
-  ws = Rote::DocTask.new(:doc) do |site|
-
-    site.output_dir = 'html'
-    site.layout_dir = 'doc/layouts'
-    site.pages.dir = 'doc/pages'
-    site.pages.include('**/*.thtml')
-
-    site.ext_mapping(/thtml|textile/, 'html') do |page|
-      page.extend Rote::Format::HTML
-      page.page_filter Rote::Filters::RedCloth.new
-      page.page_filter Rote::Filters::Syntax.new
-    end
-
-    site.res.dir = 'doc/res'
-    site.res.include('**/*.png')
-    site.res.include('**/*.gif')
-    site.res.include('**/*.jpg')
-    site.res.include('**/*.css')
-    site.res.include('**/*.xml')
-    site.res.include('**/*.js')
-  end
-
-  #
-  # Add rdoc deps to doc task
-  #
-  task :doc => [ :rdoc ]
+task :upload_rdoc => :rdoc do
+  sh %{
+    rsync -azv -e ssh \
+      rdoc \
+      jmettraux@rubyforge.org:/var/www/gforge-projects/openwferu/
+  }
 end
 
-
 #
-# Builds the website and uploads it to Rubyforge.org
-#
-task :upload_website => [:doc] do
-  upload_website 'openwferu'
-  #upload_website 'rufus'
-end
-
-def upload_website (target)
-
-  target = "jmettraux@rubyforge.org:/var/www/gforge-projects/#{target}/"
-
-  rso = nil
-  #rso = '-n' # blank run
-
-  sh """
-rsync -azv #{rso} -e ssh \
-html/ \
-#{target}
-  """
-#  sh """
-#rsync -azv #{rso} -e ssh \
-#rdoc \
-##{target}
-#  """
-  sh """
-scp \
-doc/res/images/favicon.ico \
-#{target}
-  """
-  sh """
-rsync -azv #{rso} -e ssh \
---exclude='.svn' --delete-excluded \
-doc/res/defs \
-#{target}
-  """
-  sh """
-rsync -azv #{rso} -e ssh \
---exclude='.svn' --delete-excluded \
-examples \
-#{target}
-  """
-end
-
-
-#
-# Create the various openwferu[-.*] gems
+# Create the various ruote[-.*] gems
 #
 Rake::GemPackageTask.new(spec) do |pkg|
   #pkg.need_tar = true
@@ -208,71 +126,15 @@ task :clean_work_dir do
   FileUtils.rm_rf('target') if File.exist?('target')
 end
 
-task :setup_p_persistence do
-  ENV['__persistence__'] = 'pure-persistence'
-end
-
-task :setup_c_persistence do
-  ENV['__persistence__'] = 'cached-persistence'
-end
-
-task :setup_D_persistence do
-  ENV['__persistence__'] = 'db-persistence'
-end
-
-task :setup_d_persistence do
-  ENV['__persistence__'] = 'cached-db-persistence'
-end
-
 #
 # Create a task for handling "quick unit tests"
 #
 # is triggered by "rake qtest"
 # whereas "rake test" will trigger all the tests.
 #
-Rake::TestTask.new(:qtest) do |t|
+Rake::TestTask.new(:test => :clean_work_dir) do |t|
   t.libs << 'test'
-  t.test_files = FileList['test/rake_qtest.rb']
+  t.test_files = FileList['test/test.rb']
   t.verbose = true
 end
-task :qtest => :clean_work_dir
-
-#
-# The default 'test'
-#
-task :test => :qtest
-
-#
-# pure persistence tests
-#
-task :ptest => :setup_p_persistence
-task :ptest => :qtest
-
-#
-# cached persistence tests
-#
-task :ctest => :setup_c_persistence
-task :ctest => :qtest
-
-#
-# uncached db persistence tests
-#
-task :Dtest => :setup_D_persistence
-task :Dtest => :qtest
-
-#
-# cached db persistence tests
-#
-task :dtest => :setup_d_persistence
-task :dtest => :qtest
-
-#
-# The 'long' tests
-#
-Rake::TestTask.new(:ltest) do |t|
-  t.libs << 'test'
-  t.test_files = FileList['test/rake_ltest.rb']
-  t.verbose = true
-end
-task :ltest => :clean_work_dir
 

@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -56,8 +56,7 @@ module OpenWFE
 
       if raw_children.length < 1
 
-        workitem.attributes[FIELD_RESULT] =
-          lookup_value(workitem, :escape => escape)
+        workitem.set_result(lookup_value(workitem, :escape => escape))
 
         reply(workitem)
         return
@@ -69,7 +68,7 @@ module OpenWFE
 
         if get_expression_map.get_class(child[0]) == DefineExpression
 
-          workitem.attributes[FIELD_RESULT] = child # bind process
+          workitem.set_result(child) # bind process
 
           reply(workitem)
         else
@@ -79,8 +78,7 @@ module OpenWFE
 
       else # child is a piece of text
 
-        workitem.attributes[FIELD_RESULT] =
-          fetch_text_content(workitem, escape)
+        workitem.set_result(fetch_text_content(workitem, escape))
 
         reply(workitem)
       end
@@ -101,8 +99,11 @@ module OpenWFE
       def lookup (name_array, workitem)
 
         name_array.each do |n|
+
           v = lookup_string_attribute(n, workitem)
-          return v if v
+
+          return v if v != nil
+            # covers v = false as well
         end
 
         nil

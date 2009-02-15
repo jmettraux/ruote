@@ -73,7 +73,8 @@ module OpenWFE
       @variables = {}
     end
 
-    def self.new_env (fei, parent_id, environment_id, app_context, attributes)
+    def self.new_env (
+      fei, parent_id, environment_id, app_context, attributes, variables=nil)
 
       env = self.new
 
@@ -82,6 +83,7 @@ module OpenWFE
       env.environment_id = environment_id
       env.application_context = app_context
       env.attributes = attributes
+      env.variables = variables if variables
 
       env
     end
@@ -223,16 +225,13 @@ module OpenWFE
     #
     def dup
 
-      env = Environment.new_env(
+      Environment.new_env(
         @fei.dup,
         @parent_id,
         @environment_id,
         @application_context,
-        OpenWFE::fulldup(@attributes))
-
-      env.variables = OpenWFE::fulldup(self.variables)
-
-      env
+        OpenWFE::fulldup(@attributes),
+        OpenWFE::fulldup(self.variables))
     end
   end
 

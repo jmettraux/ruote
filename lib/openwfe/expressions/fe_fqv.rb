@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -81,7 +81,7 @@ module OpenWFE
     def apply (workitem)
 
       name = @fei.expression_name[0, 1]
-      text = fetch_text_content workitem
+      text = fetch_text_content(workitem)
 
       method = MAP[name]
 
@@ -115,7 +115,7 @@ module OpenWFE
 
   #
   # The 'a' or 'attribute' expression. Directly describing some
-  # variable or list content in XML or in YAML.
+  # variable or list content in XML, YAML or JSON.
   #
   #   _set :field => "list" do
   #     _a """
@@ -158,6 +158,17 @@ module OpenWFE
   #     a '[1,2,false,"my name"]'
   #   end
   #
+  # or
+  #
+  #   <process-definition name="test" revision="44b9">
+  #     <set-fields>
+  #       <a>{"customer":{"name":"Zigue","age":34},"approved":false}</a>
+  #     </set-fields>
+  #     <sequence>
+  #       <print>${f:customer.name} (${f:customer.age}) ${f:approved}</print>
+  #     </sequence>
+  #   </process-definition>
+  #
   #
   class AttributeExpression < FlowExpression
 
@@ -187,16 +198,16 @@ module OpenWFE
 
       result = if text[0, 3] == '---'
 
-        from_yaml text
+        from_yaml(text)
 
       elsif text.match(XML_REGEX)
 
-        from_xml text
+        from_xml(text)
       end
 
       result = OpenWFE::Json::from_json(text) if result == nil
-
-      #p [ :result, result, text ]
+        # warning : if 'json' or 'active_support' are not present
+        # from_json() will always return nil
 
       workitem.set_result(result) if result != nil
 

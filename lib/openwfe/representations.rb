@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2008 John Mettraux, OpenWFE.org
+# Copyright (c) 2008-2009 John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -70,23 +70,23 @@ module OpenWFE
 
       #p [ 0, item.class, hint ]
 
-      key = item.class
+      key_class = item.class
       content = if item.respond_to?(:first)
         item.first
       elsif item.respond_to?(:values)
         item.values.first
       end
-      content = content.class if content
-      content = hint if hint and (not content)
 
-      key = flatten_fexp_class(key)
-      content = flatten_fexp_class(content)
+      content_class = content ? content.class : hint
 
-      key = [ key, content ] if content
+      key_class = flatten_class(key_class)
+      content_class = flatten_class(content_class)
 
-      #p [ 1, key, GENS[key] ]
+      key_class = [ key_class, content_class ] if content_class
 
-      method = GENS[key] || (return [])
+      #p [ 1, key_class, GENS[key_class] ]
+
+      method = GENS[key_class] || (return [])
 
       send(method, item)
     end
@@ -96,10 +96,22 @@ module OpenWFE
     #
     # (Warning : this method turns dots to underscores in the id)
     #
-    def link (rel, res, id=nil)
+    def link (rel, res, opts={})
+
+      id = nil
+      if opts.is_a?(Hash)
+        id = opts.delete(:id)
+      else
+        id = opts
+        opts = {}
+      end
 
       href = "/#{res}"
+
       href = "#{href}/#{OpenWFE.swapdots(id)}" if id
+
+      href = "#{href}?#{opts.collect { |k, v| "#{k}=#{v}" }.join('&')}" \
+        if opts.size > 0
 
       [ href, rel ]
     end
@@ -139,12 +151,21 @@ module OpenWFE
         target
       end
 
-      def flatten_fexp_class (c)
+      def flatten_class (c)
 
         return c unless c.is_a?(Class)
 
-        c.ancestors.include?(OpenWFE::FlowExpression) ?
-          OpenWFE::FlowExpression : c
+        c.ancestors.each do |a|
+          return a if [ Array, Hash, OpenWFE::FlowExpression ].include?(a)
+        end
+
+        return OpenWFE::ProcessError if c.to_s.downcase.match(/processerror/)
+          # OpenWFE::Extras::ProcessError...
+
+        return OpenWFE::InFlowWorkItem if c.to_s.downcase.match(/workitem/)
+          # OpenWFE::Extras::Workitem...
+
+        c
       end
 
       #
@@ -155,6 +176,7 @@ module OpenWFE
         [ Array, OpenWFE::InFlowWorkItem ] => 'workitems',
         OpenWFE::ProcessStatus => 'process',
         [ Array, OpenWFE::ProcessStatus ] => 'processes',
+        [ Hash, OpenWFE::ProcessStatus ] => 'processes',
         OpenWFE::FlowExpression => 'expression',
         [ Array, OpenWFE::FlowExpression ] => 'expressions',
         #[ Hash, OpenWFE::FlowExpression ] => 'expressions',
@@ -167,10 +189,29 @@ module OpenWFE
         [ OpenWFE::FlowExpressionId, :parent ] => 'to_parent'
       }
 
+      #
+      # generate the links for a given item
+      #
       def gen_links (res, item, &block)
+
         if block # unique element
+
           [ link('via', res), link('self', res, block.call(item)) ]
+
+        elsif item.respond_to?(:current_page) and item.total_pages > 1
+
+          a = [
+            link('via', ''),
+            link('self', res, 'page' => item.current_page)
+          ]
+          a << link('prev', res, 'page' => item.current_page - 1) \
+            if item.current_page > 1
+          a << link('next', res, 'page' => item.current_page + 1) \
+            if item.current_page < item.total_pages
+          a
+
         else # collection
+
           [ link('via', ''), link('self', res) ]
         end
       end
@@ -235,8 +276,6 @@ module OpenWFE
   end
 
   def self.rep_insert_links (item, options, target, hint=nil)
-
-    return target unless item
 
     lgen = options[:linkgen] || (return target)
     lgen = PlainLinkGenerator.new if lgen == :plain
@@ -490,6 +529,7 @@ module OpenWFE
     collection_to_xml(
       'processes', pss, options, OpenWFE::ProcessStatus
     ) { |fei, ps|
+      ps = ps || fei # accomodating arrays and hashes
       process_to_xml(ps, options.merge(:short => true))
     }
   end
@@ -558,7 +598,8 @@ module OpenWFE
   #
   def Json.processes_to_h (pss, opts={})
 
-    collection_to_h(pss, opts, OpenWFE::InFlowWorkItem) { |fei, ps|
+    collection_to_h(pss, opts, OpenWFE::ProcessStatus) { |fei, ps|
+      ps = ps || fei # accomodating arrays and hashes
       process_to_h(ps, opts.merge(:short => true))
     }
   end
@@ -691,6 +732,8 @@ module OpenWFE
 
   def Xml.error_to_xml (err, options={})
 
+    err = err.as_owfe_error if err.respond_to?(:as_owfe_error)
+
     builder(options) do |xml|
       xml.error do
 
@@ -721,6 +764,8 @@ module OpenWFE
   end
 
   def Json.error_to_h (err, opts={})
+
+    err = err.as_owfe_error if err.respond_to?(:as_owfe_error)
 
     h = {}
     h['date'] = err.date

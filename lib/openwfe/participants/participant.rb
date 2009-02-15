@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -80,6 +80,17 @@ module OpenWFE
     #def cancel (cancelitem)
     #end
     #++
+
+    #
+    # By default, returns false. When returning true the dispatch to the
+    # participant will not be done in his own thread.
+    #
+    # Since ActiveRecord 2.2, ActiveParticipant returns true (well, this
+    # method was introduced for ActiveParticipant and AR 2.2)
+    #
+    def do_not_thread
+      false
+    end
   end
 
   #
@@ -87,7 +98,11 @@ module OpenWFE
   # further implementations of the Participant concept.
   #
   module LocalParticipant
-    include Participant, Contextual, Logging, OwfeServiceLocator
+
+    include Participant
+    include Contextual
+    include Logging
+    include OwfeServiceLocator
 
     #
     # Returns the FlowExpression instance that triggered this
@@ -96,7 +111,7 @@ module OpenWFE
     #
     def get_flow_expression (workitem)
 
-      return nil if not @application_context
+      return nil unless @application_context
 
       get_expression_pool.fetch_expression(workitem.flow_expression_id)
     end
@@ -117,11 +132,11 @@ module OpenWFE
     def call_block (block, workitem)
 
       if block.arity == 1
-        block.call workitem
+        block.call(workitem)
       elsif block.arity == 2
-        block.call get_flow_expression(workitem), workitem
+        block.call(get_flow_expression(workitem), workitem)
       elsif block.arity == 3
-        block.call get_flow_expression(workitem), self, workitem
+        block.call(get_flow_expression(workitem), self, workitem)
       else
         block.call
       end

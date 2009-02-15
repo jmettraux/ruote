@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -401,11 +401,11 @@ module OpenWFE
 
       ldebug { "cancel_process() '#{wfid}'" }
 
-      root = fetch_root wfid
+      root = fetch_root(wfid)
 
       raise "no process to cancel '#{wfid}'" unless root
 
-      cancel root
+      cancel(root)
     end
     alias :cancel_flow :cancel_process
 
@@ -594,7 +594,7 @@ module OpenWFE
 
       t = OpenWFE::Timer.new
 
-      linfo { "reschedule() initiating..." }
+      linfo { 'reschedule() initiating...' }
 
       options = { :include_classes => Rufus::Schedulable }
 
@@ -756,6 +756,12 @@ module OpenWFE
             ehandlers.delete(ehandler)
             env.store_itself
 
+            # fetch on_error template
+
+            template = (on_error == 'redo') ?
+              tryexp.raw_representation :
+              tryexp.lookup_variable(on_error) || [ on_error, {}, [] ]
+
             # cancel block that is adorned with 'on_error'
 
             cancel(tryexp)
@@ -772,14 +778,6 @@ module OpenWFE
             end
 
             # switch to error handling subprocess
-
-            #template = on_error.is_a?(Array) ?
-            #  on_error : [ on_error.to_s, {}, [] ]
-              #
-              # error handler might be a subprocess or a participant
-
-            template = (on_error == 'redo') ?
-              tryexp.raw_representation : [ on_error, {}, [] ]
 
             substitute_and_apply(tryexp, template, workitem)
 
@@ -997,7 +995,7 @@ module OpenWFE
       #
       def remove_environment (environment_id)
 
-        ldebug { "remove_environment()  #{environment_id.to_debug_s}" }
+        #ldebug { "remove_environment()  #{environment_id.to_debug_s}" }
 
         env, fei = fetch(environment_id)
 

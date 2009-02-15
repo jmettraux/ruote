@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -50,47 +50,50 @@ module OpenWFE
   # behaviours.
   #
   module WorkItemListener
-    include Contextual, Logging, OwfeServiceLocator
+
+    include Contextual
+    include Logging
+    include OwfeServiceLocator
 
     protected
 
-      #
-      # Simply considers the object as a workitem and feeds it to the
-      # engine.
-      #
-      def handle_item (item)
+    #
+    # Simply considers the object as a workitem and feeds it to the
+    # engine.
+    #
+    def handle_item (item)
 
-        filter_items(item)
+      filter_items(item)
 
-        get_engine.reply(item)
-      end
+      get_engine.reply(item)
+    end
 
-      #
-      # The base implementation is just empty, feel free to override it
-      # if you need to filter workitems.
-      #
-      # One example :
-      #
-      #   class MyListener
-      #     include WorkItemListener
-      #
-      #     protected
-      #
-      #       #
-      #       # MyListener doesn't accept launchitems
-      #       #
-      #       def filter_items (item)
-      #         raise "launchitems not allowed" \
-      #           if item.is_a?(OpenWFE::LaunchItem)
-      #       end
-      #   end
-      #
-      def filter_items (item)
+    #
+    # The base implementation is just empty, feel free to override it
+    # if you need to filter workitems.
+    #
+    # One example :
+    #
+    #   class MyListener
+    #     include WorkItemListener
+    #
+    #     protected
+    #
+    #       #
+    #       # MyListener doesn't accept launchitems
+    #       #
+    #       def filter_items (item)
+    #         raise "launchitems not allowed" \
+    #           if item.is_a?(OpenWFE::LaunchItem)
+    #       end
+    #   end
+    #
+    def filter_items (item)
 
-        #raise(
-        #  "listener of class '#{self.class.name}' "+
-        #  "doesn't accept launchitems")
-      end
+      #raise(
+      #  "listener of class '#{self.class.name}' "+
+      #  "doesn't accept launchitems")
+    end
   end
 
 end

@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2005-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2005-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -77,12 +77,11 @@ module OpenWFE
     end
 
     def to_h
-
-      h = {}
-      h['type'] = self.class.name
-      h['last_modified'] = @last_modified
-      h['attributes'] = @attributes
-      h
+      {
+        'type' => self.class.name,
+        'last_modified' => @last_modified,
+        'attributes' => @attributes.clone
+      }
     end
 
     def self.from_h (h)
@@ -284,7 +283,6 @@ module OpenWFE
   class InFlowWorkItem < InFlowItem
 
     attr_accessor :dispatch_time
-    attr_accessor :filter
 
     #
     # in some contexts (ruote-rest, ruote-web2, the web...) workitems
@@ -349,11 +347,11 @@ module OpenWFE
       s << "  - dispatch_time :    #{@dispatch_time}\n"
       s << "  - attributes :\n"
 
-      s << "  {\n"
+      s << '  {\n'
       @attributes.keys.sort.each do |k|
         s << "    #{k.inspect} => #{@attributes[k].inspect},\n"
       end
-      s << "  }"
+      s << '  }'
       s
     end
 
@@ -365,8 +363,7 @@ module OpenWFE
 
       h = super
       h['dispatch_time'] = @dispatch_time
-      #h[:history] = @history
-      h['filter'] = @filter
+      h['attributes']['__filter__'] &&= filter.to_h
       h
     end
 
@@ -375,9 +372,8 @@ module OpenWFE
     #
     def self.from_h (h)
 
-      wi = super
-      wi.dispatch_time = h['dispatch_time']
-      wi.filter = h['filter']
+      wi = super(h)
+      wi.filter &&= OpenWFE::FilterDefinition.from_h(wi.filter)
       wi
     end
 

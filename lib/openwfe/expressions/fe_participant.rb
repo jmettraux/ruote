@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -42,10 +42,6 @@ require 'openwfe/rudefinitions'
 require 'openwfe/expressions/filter'
 require 'openwfe/expressions/timeout'
 
-
-#
-# The participant expression, in its own file
-#
 
 module OpenWFE
 
@@ -125,7 +121,6 @@ module OpenWFE
     attr_accessor :participant_name
     attr_accessor :applied_workitem
 
-
     def apply (workitem)
 
       conditional = eval_condition(:if, workitem, :unless)
@@ -135,14 +130,15 @@ module OpenWFE
         # skip expression
         # <participant ref="x" if="y" /> (where y evals to false)
 
-      @participant_name = self.respond_to?(:hint) ? hint : nil
+      @participant_name ||= self.respond_to?(:hint) ? hint : nil
       @participant_name ||= lookup_ref(workitem) || fetch_text_content(workitem)
 
       participant = get_participant_map.lookup_participant(@participant_name)
 
-      raise "No participant named #{@participant_name.inspect}" \
+      raise "pexp : no participant named #{@participant_name.inspect}" \
         unless participant
 
+      workitem.unset_result
       remove_timedout_flag(workitem)
 
       @applied_workitem = workitem.dup
@@ -155,27 +151,13 @@ module OpenWFE
 
       workitem.params = lookup_attributes(workitem)
 
-      #
-      # threading AFTER the store_itself()
-      #
-      Thread.new do
-        begin
+      # after the store_itself()
 
-          # these two pmap calls were combined, but with the :reply
-          # notification in reply_to_parent() it feels more
-          # elegant like that
+      get_participant_map.dispatch(
+        participant, @participant_name, workitem)
 
-          get_participant_map.dispatch(
-            participant, @participant_name, workitem)
-
-          get_participant_map.onotify(
-            @participant_name, :apply, workitem)
-
-        rescue Exception => e
-
-          get_expression_pool.handle_error(e, fei, :apply, workitem)
-        end
-      end
+      get_participant_map.onotify(
+        @participant_name, :apply, workitem)
     end
 
     alias :super_reply_to_parent :reply_to_parent
@@ -241,22 +223,22 @@ module OpenWFE
 
     protected
 
-      #
-      # Have to cancel the workitem on the participant side
-      #
-      def cancel_participant
+    #
+    # Have to cancel the workitem on the participant side
+    #
+    def cancel_participant
 
-        return unless @applied_workitem
-          #
-          # if there is an applied workitem, it means there
-          # is a participant to cancel...
+      return unless @applied_workitem
+        #
+        # if there is an applied workitem, it means there
+        # is a participant to cancel...
 
-        participant = get_participant_map.lookup_participant(@participant_name)
+      participant = get_participant_map.lookup_participant(@participant_name)
 
-        cancelitem = CancelItem.new(@applied_workitem)
+      cancelitem = CancelItem.new(@applied_workitem)
 
-        get_participant_map.dispatch(participant, @participant_name, cancelitem)
-      end
+      get_participant_map.dispatch(participant, @participant_name, cancelitem)
+    end
   end
 
 end

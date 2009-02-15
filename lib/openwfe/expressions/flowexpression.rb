@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,7 @@ module OpenWFE
   # It gathers all the methods for attributes and variable lookup.
   #
   class FlowExpression < ObjectWithMeta
+
     include Contextual
     include Logging
     include OwfeServiceLocator
@@ -242,7 +243,7 @@ module OpenWFE
     #
     def store_itself
 
-      ldebug { "store_itself() for  #{@fei.to_debug_s}" }
+      #ldebug { "store_itself() for  #{@fei.to_debug_s}" }
       #ldebug { "store_itself() \n#{OpenWFE::caller_to_s(0, 6)}" }
 
       get_expression_pool.update(self)
@@ -384,10 +385,7 @@ module OpenWFE
       escape = options[:escape]
       tostring = options[:to_s]
 
-      attname = OpenWFE::symbol_to_name(attname) \
-        if attname.kind_of?(Symbol)
-
-      #ldebug { "lookup_attribute() '#{attname}' in #{@fei.to_debug_s}" }
+      attname = OpenWFE.symbol_to_name(attname) if attname.kind_of?(Symbol)
 
       text = @attributes[attname]
 
@@ -401,7 +399,7 @@ module OpenWFE
 
       else
 
-        OpenWFE::dosub text, self, workitem
+        OpenWFE.dosub(text, self, workitem)
       end
 
       text = text.to_s if text and tostring
@@ -815,6 +813,22 @@ module OpenWFE
       return true if fei.ancestor_of?(@fei) # shortcut
 
       get_expression_pool.fetch_expression(@parent_id).descendant_of?(fei)
+    end
+
+    def marshal_dump #:nodoc#
+      iv = instance_variables
+      iv.delete('@application_context')
+      iv.inject({}) { |h, vn| h[vn] = instance_variable_get(vn); h }
+    end
+
+    def marshal_load (s) #:nodoc#
+      s.each { |k, v| instance_variable_set(k, v) }
+    end
+
+    def to_yaml_properties #:nodoc#
+      l = super
+      l.delete('@application_context')
+      l
     end
 
     protected

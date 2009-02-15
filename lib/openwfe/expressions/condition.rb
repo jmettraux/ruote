@@ -65,7 +65,7 @@ module OpenWFE
     #
     def eval_condition (attname, workitem, nattname=nil)
 
-      positive = nil
+      #positive = nil
       negative = nil
 
       positive = do_eval_condition(attname, workitem)
@@ -89,7 +89,8 @@ module OpenWFE
     #
     def determine_condition_attribute (attname)
 
-      attname = [ attname ] unless attname.is_a?(Array)
+      #attname = [ attname ] unless attname.is_a?(Array)
+      attname = Array(attname)
 
       attname.each do |aname|
         aname = aname.intern if aname.is_a?(String)

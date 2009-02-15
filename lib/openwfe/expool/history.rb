@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -74,12 +74,22 @@ module OpenWFE
 
       super
 
-      get_expression_pool.add_observer(:all) do |event, *args|
-        handle :expool, event, *args
+      @expool_observer = get_expression_pool.add_observer(:all) do |evt, *args|
+        handle(:expool, evt, *args)
       end
-      get_participant_map.add_observer(:all) do |event, *args|
-        handle :pmap, event, *args
+      @pmap_observer = get_participant_map.add_observer(:all) do |evt, *args|
+        handle(:pmap, evt, *args)
       end
+    end
+
+    #
+    # Mainly, stops observing the expool and the participant map
+    #
+    def stop
+
+      super
+
+      stop_observing
     end
 
     #
@@ -140,7 +150,7 @@ module OpenWFE
       args.inject([]) { |r, a|
         r << a if a.is_a?(Symbol) or a.is_a?(String)
         r
-      }.join(" ")
+      }.join(' ')
     end
 
     #
@@ -150,12 +160,26 @@ module OpenWFE
 
       args.find { |a| a.is_a?(WorkItem) }
     end
+
+    protected
+
+      #
+      # Removes the observers on the expool and the participant map
+      #
+      # (called by stop())
+      #
+      def stop_observing
+
+        get_expression_pool.remove_observer(@expool_observer)
+        get_participant_map.remove_observer(@pmap_observer)
+      end
   end
 
   #
   # A base implementation for InMemoryHistory and FileHistory.
   #
   class History
+
     include HistoryMixin
 
     def initialize (service_name, application_context)
@@ -219,7 +243,7 @@ module OpenWFE
     # Returns all the entries as a String.
     #
     def to_s
-      @output.inject("") { |r, entry| r << entry.to_s }
+      @output.inject('') { |r, entry| r << entry.to_s }
     end
   end
 
@@ -253,7 +277,13 @@ module OpenWFE
       @output
     end
 
+    #
+    # Stops observing the expool and close the output file
+    #
     def stop
+
+      stop_observing
+
       @output.close
     end
   end

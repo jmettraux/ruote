@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,43 @@ require 'openwfe/expressions/raw'
 module OpenWFE
 
   #
+  # A shorthand for writing process definitions like :
+  #
+  #   Test2 = OpenWFE.process_definition :name => 'ft_11b', :revision => '2' do
+  #     sequence do
+  #       participant 'alpha'
+  #       sleep '3d'
+  #       participant 'bravo'
+  #     end
+  #   end
+  #
+  # This will store in the constant Test2 the process definition in its
+  # 'raw' (tree) form :
+  #
+  #   ["process-definition", {"name"=>"ft_11b", "revision"=>"2"}, [
+  #     ["sequence", {}, [
+  #       ["participant", {}, ["alpha"]],
+  #       ["sleep", {}, ["3d"]],
+  #       ["participant", {}, ["bravo"]]]]]]
+  #
+  def self.process_definition (*args, &block)
+
+    pd = ProcessDefinition.new
+    pd.instance_eval(&block)
+
+    [
+      'process-definition',
+      lambda() { |a|
+        atts = a.last.is_a?(Hash) ? a.last : {}
+        atts['name'] = a.first unless a.first.is_a?(Hash)
+        atts.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+      }.call(args),
+      #[ ProcessDefinition.new.instance_eval(&block) ]
+      pd.context.top_expressions
+    ]
+  end
+
+  #
   # Extend this class to create a programmatic process definition.
   #
   # A short example :
@@ -62,7 +99,6 @@ module OpenWFE
   #
   #   li = OpenWFE::LaunchItem.new(MyProcessDefinition)
   #   engine.launch(li)
-  #
   #
   class ProcessDefinition
 
@@ -145,12 +181,11 @@ module OpenWFE
 
       return exp unless block
 
-      context.push_parent_expression exp
+      context.push_parent_expression(exp)
 
       result = block.call
 
-      exp.last << result \
-        if result and result.kind_of?(String)
+      exp.last << result if result and result.is_a?(String)
 
       context.pop_parent_expression
 

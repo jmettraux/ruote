@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2005-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2005-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,8 @@
 #
 # john.mettraux@openwfe.org
 #
+
+require 'yaml'
 
 
 module OpenWFE
@@ -143,6 +145,7 @@ module OpenWFE
 
       from_h({
         :owfe_version => OPENWFERU_VERSION,
+        :engine_id => 'engine',
         :workflow_definition_url => 'no-url',
         :workflow_definition_name => 'no-name',
         :workflow_definition_revision => '0',
@@ -271,7 +274,7 @@ module OpenWFE
     #
     def parent_workflow_instance_id
 
-      FlowExpressionId.to_parent_wfid workflow_instance_id
+      FlowExpressionId.to_parent_wfid(workflow_instance_id)
     end
 
     alias :parent_wfid :parent_workflow_instance_id
@@ -373,7 +376,26 @@ module OpenWFE
     #
     def self.to_parent_wfid (wfid)
 
-      wfid.split(".").first
+      wfid.split('.').first
+    end
+
+    #
+    # custom yaml serialization
+
+    yaml_as("tag:ruby.yaml.org,2002:#{self}")
+
+    def to_yaml (opts={}) #:nodoc#
+      YAML::quick_emit(self.object_id, opts) do |out|
+        out.map(taguri) { |map| map.add('s', to_s) }
+      end
+    end
+
+    def self.yaml_new (klass, tag, val) #:nodoc#
+      begin
+        FlowExpressionId.to_fei(val['s'])
+      rescue Exception => e
+        raise "failed to decode FlowExpressionId out of '#{s}', #{e}"
+      end
     end
   end
 

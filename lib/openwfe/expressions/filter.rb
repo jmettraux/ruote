@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -56,11 +56,11 @@ module OpenWFE
     #
     def filter_in (workitem, filter_attribute_name=:filter)
 
-      @filter = get_filter filter_attribute_name, workitem
+      @filter = get_filter(filter_attribute_name, workitem)
 
       return unless @filter
 
-      workitem.attributes = @filter.filter_in workitem.attributes
+      workitem.attributes = @filter.filter_in(workitem.attributes)
       workitem.filter = @filter.dup
     end
 
@@ -88,11 +88,11 @@ module OpenWFE
       #
       def get_filter (filter_attribute_name, workitem)
 
-        filter_name = lookup_attribute filter_attribute_name, workitem
+        filter_name = lookup_attribute(filter_attribute_name, workitem)
 
         return nil unless filter_name
 
-        lookup_variable filter_name
+        lookup_variable(filter_name)
       end
   end
 

@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -53,30 +53,22 @@ module OpenWFE
     #
     # Returns the resulting (merged) workitem.
     #
-    def merge_workitems (wiTarget, wiSource, override=false)
+    def merge_workitems (wi_target, wi_source, override=false)
 
-      return wiSource unless wiTarget
-      return wiTarget unless wiSource
+      return wi_source unless wi_target
+      return wi_target unless wi_source
 
-      return wiSource if override
+      return wi_source if override
 
-      #puts "merge()"
-      #puts "merge() source : " + wiSource.attributes.inspect
-      #puts "merge() target : " + wiTarget.attributes.inspect
+      wi_source.attributes.each do |k, v|
 
-      wiSource.attributes.each do |k, v|
+        nk = OpenWFE.fulldup(k)
+        nv = OpenWFE.fulldup(v)
 
-        #puts "merge() '#{k}' => '#{v}'"
-
-        nk = OpenWFE::fulldup k
-        nv = OpenWFE::fulldup v
-
-        wiTarget.attributes[nk] = nv
+        wi_target.attributes[nk] = nv
       end
 
-      #puts "merge() target after : " + wiTarget.attributes.inspect
-
-      wiTarget
+      wi_target
     end
   end
 

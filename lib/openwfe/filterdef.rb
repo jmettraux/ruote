@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007, John Mettraux OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,8 +29,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
-#
-# $Id: definitions.rb 2725 2006-06-02 13:26:32Z jmettraux $
 #
 
 #
@@ -64,6 +62,31 @@ module OpenWFE
       @fields = []
     end
 
+    #
+    # Turning a FilterDefinition instance into a hash
+    #
+    def to_h
+      {
+        'class' => self.class.name,
+        'closed' => @closed,
+        'add_ok' => @add_ok,
+        'remove_ok' => @remove_ok,
+        'fields' => @fields.collect { |f| f.to_h }
+      }
+    end
+
+    #
+    # Rebuilding a FilterDefinition from a hash
+    #
+    def self.from_h (h)
+      fd = self.new
+      fd.closed = h['closed'] || false
+      fd.add_ok = h['add_ok'] || false
+      fd.remove_ok = h['remove_ok'] || false
+      fd.fields = (h['fields'] || []).collect { |hh| Field.from_h(hh) }
+      fd
+    end
+
     def add_allowed= (b)
       @add_ok = b
     end
@@ -72,20 +95,20 @@ module OpenWFE
     end
 
     def may_add?
-      return @add_ok
+      @add_ok
     end
     def may_remove?
-      return @remove_ok
+      @remove_ok
     end
 
     #
     # Adds a field to the filter definition
     #
-    #   filterdef.add_field("readonly", "r")
-    #   filterdef.add_field("hidden", nil)
-    #   filterdef.add_field("writable", :w)
-    #   filterdef.add_field("read_write", :rw)
-    #   filterdef.add_field("^toto_.*", :r)
+    #   filterdef.add_field('readonly', 'r')
+    #   filterdef.add_field('hidden", nil)
+    #   filterdef.add_field('writable', :w)
+    #   filterdef.add_field('read_write', :rw)
+    #   filterdef.add_field('^toto_.*', :r)
     #
     def add_field (regex, permissions)
       f = Field.new
@@ -103,24 +126,24 @@ module OpenWFE
     #
     #   f0 = OpenWFE::FilterDefinition.new
     #   f0.closed = true
-    #   f0.add_field("a", "r")
-    #   f0.add_field("b", "rw")
-    #   f0.add_field("c", "")
+    #   f0.add_field('a', 'r')
+    #   f0.add_field('b', 'rw')
+    #   f0.add_field('c', '')
     #
     #   m0 = {
-    #     "a" => "A",
-    #     "b" => "B",
-    #     "c" => "C",
-    #     "d" => "D",
+    #     'a' => 'A',
+    #     'b' => 'B',
+    #     'c' => 'C',
+    #     'd' => 'D',
     #   }
     #
     #   m1 = f0.filter_in m0
-    #   assert_equal m1, { "a" => "A", "b" => "B" }
+    #   assert_equal m1, { 'a' => 'A', 'b' => 'B' }
     #
     #   f0.closed = false
     #
     #   m2 = f0.filter_in m0
-    #   assert_equal m2, { "a" => "A", "b" => "B", "d" => "D" }
+    #   assert_equal m2, { 'a' => 'A', 'b' => 'B', 'd' => 'D' }
     #
     def filter_in (map)
 
@@ -208,7 +231,7 @@ module OpenWFE
     # Returns a deep copy of this filter instance.
     #
     def dup
-      OpenWFE::fulldup self
+      OpenWFE::fulldup(self)
     end
 
     protected
@@ -219,40 +242,49 @@ module OpenWFE
       def build_out_map (original_map, map)
 
         keys = {}
-        keys.merge! original_map
-        keys.merge! map
+        keys.merge!(original_map)
+        keys.merge!(map)
 
-        m = {}
-        keys.keys.each do |k|
-          m[k] = [ get_field(k), original_map[k], map[k] ]
-        end
-
-        #require 'pp'; pp m
-        m
+        keys.keys.inject({}) { |h, k|
+          h[k] = [ get_field(k), original_map[k], map[k] ]; h
+        }
       end
 
       #
       # Returns the first field mapping a given key
       #
       def get_field (key)
-        @fields.detect do |f|
-          key.match f.regex
-        end
+        @fields.detect { |f| key.match(f.regex) }
       end
 
       class Field
         attr_accessor :regex, :permissions
 
+        def to_h
+          {
+            'class' => self.class.name,
+            'regex' => YAML.dump(@regex),
+            'permissions' => @permissions
+          }
+        end
+
+        def self.from_h (h)
+          f = Field.new
+          f.regex = YAML.load(h['regex'])
+          f.permissions = h['permissions']
+          f
+        end
+
         def may_read?
-          @permissions.to_s.index("r") != nil
+          @permissions.to_s.index('r') != nil
         end
 
         def may_write?
-          @permissions.to_s.index("w") != nil
+          @permissions.to_s.index('w') != nil
         end
 
         def no_rights?
-          @permissions.to_s == ""
+          @permissions.to_s == ''
         end
       end
   end

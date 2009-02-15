@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -84,15 +84,12 @@ module OpenWFE
 
     names :set
 
-
     def reply (workitem)
 
       vkey = lookup_variable_attribute(workitem)
       fkey = lookup_field_attribute(workitem)
 
-      value = workitem.attributes[FIELD_RESULT]
-
-      #puts "value is '#{value}'"
+      value = workitem.get_result
 
       if vkey
         set_variable(vkey, value)
@@ -116,7 +113,6 @@ module OpenWFE
     include ValueMixin
 
     names :unset
-
 
     def apply (workitem)
 

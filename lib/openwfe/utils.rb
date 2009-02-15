@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2005-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2005-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,7 @@ module OpenWFE
   #
   def OpenWFE.fulldup (object)
 
-    return object.fulldup if object.respond_to?("fulldup")
+    return object.fulldup if object.respond_to?(:fulldup)
       # trusting client objects providing a fulldup() implementation
       # Tomaso Tosolini 2007.12.11
 
@@ -153,11 +153,10 @@ module OpenWFE
     return nil if string.split("\n").size > 1
 
     begin
-      return URI::parse(string)
+      URI::parse(string)
     rescue Exception => e
+      nil
     end
-
-    nil
   end
 
   #
@@ -208,10 +207,7 @@ module OpenWFE
   # Attempts at displaying a nice stack trace
   #
   def OpenWFE.exception_to_s (exception)
-    s = "exception : "
-    s << "#{exception}\n"
-    s << exception.backtrace.join("\n")
-    s
+    "exception : #{exception}\n#{exception.backtrace.join("\n")}"
   end
 
   #
@@ -226,21 +222,7 @@ module OpenWFE
     s
   end
 
-  #
-  # Sets the name of the current thread (the attribute :name if it is
-  # a ruby thread, the java thread name if we're in JRuby)
-  #
-  def OpenWFE.set_current_thread_name (name)
-
-     if defined?(JRUBY_VERSION)
-       require 'java'
-       java.lang.Thread.current_thread.name = "#{name} (Ruby Thread)"
-     end
-
-     Thread.current[:name] = name
-  end
-
-  #
+  #--
   # Some code for writing thinks like :
   #
   #   if async
@@ -253,35 +235,29 @@ module OpenWFE
   #
   # Returns the new thread instance.
   #
-  def OpenWFE.call_in_thread (caller_name, caller_object=nil, &block)
-
-    return unless block
-
-    Thread.new do
-
-      #Thread.current[:name] = caller_name
-      set_current_thread_name caller_name
-
-      begin
-        #$SAFE = safe_level
-          #
-          # (note)
-          # doesn't work : the block inherits the safety level
-          # of its surroundings, it's a closure, ne ?
-
-        block.call
-
-      rescue Exception => e
-        msg = "#{caller_name} caught an exception\n" + exception_to_s(e)
-        if caller_object and caller_object.respond_to? :lwarn
-          caller_object.lwarn { msg }
-        else
-          puts msg
-        end
-      end
-    end
-    # returns the thread
-  end
+  #def OpenWFE.call_in_thread (caller_name, caller_object=nil, &block)
+  #  return nil unless block
+  #  t = Thread.new do
+  #    begin
+  #      #$SAFE = safe_level
+  #        #
+  #        # (note)
+  #        # doesn't work : the block inherits the safety level
+  #        # of its surroundings, it's a closure, ne ?
+  #      block.call
+  #    rescue Exception => e
+  #      msg = "#{caller_name} caught an exception\n" + exception_to_s(e)
+  #      if caller_object and caller_object.respond_to? :lwarn
+  #        caller_object.lwarn { msg }
+  #      else
+  #        puts msg
+  #      end
+  #    end
+  #  end
+  #  t[:name] = caller_name
+  #  t
+  #end
+  #++
 
   #
   # A small Timer class for debug purposes.

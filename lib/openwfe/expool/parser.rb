@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2008-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -210,19 +210,21 @@ module OpenWFE
       s << ind
       s << OpenWFE::make_safe(tree.first)
 
-      sa = ''
-      tree[1].each do |k, v|
-        #v = "'#{v}'" if v.is_a?(String)
-        #v = ":#{v}" if v.is_a?(Symbol)
-        v = v.inspect
-        sa << ", :#{OpenWFE::to_underscore(k)} => #{v}"
+      if single_string_child = (
+        tree.last.size == 1 and tree.last.first.class == String
+      )
+        s << " '#{tree.last.first}'"
       end
-      s << sa[1..-1] if sa.length > 0
+
+      sa = tree[1].inject('') do |r, (k, v)|
+        r << ", :#{OpenWFE::to_underscore(k)} => #{v.inspect}"
+      end
+      sa = sa[1..-1] unless single_string_child
+      s << sa if sa
 
       if tree.last.length > 0
         if tree.last.size == 1 and tree.last.first.class == String
-          # maybe could work for things that are not string either...
-          s << " '#{tree.last.first}'"
+          # do nothing (already done)
         else
           s << " do\n"
           tree.last.each do |child|

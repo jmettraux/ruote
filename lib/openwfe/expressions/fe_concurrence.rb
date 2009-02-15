@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -138,7 +138,6 @@ module OpenWFE
 
     attr_accessor :sync_expression
 
-
     def apply (workitem)
 
       extract_children # initializes the @children array
@@ -153,32 +152,32 @@ module OpenWFE
 
     protected
 
-      def do_apply (workitem)
+    def do_apply (workitem)
 
-        sync = lookup_sym_attribute(:sync, workitem, :default => :generic)
+      sync = lookup_sym_attribute(:sync, workitem, :default => :generic)
 
-        @sync_expression =
-          get_expression_map.get_sync_class(sync).new(self, workitem)
+      @sync_expression =
+        get_expression_map.get_sync_class(sync).new(self, workitem)
 
-        @children.each do |child|
-          @sync_expression.add_child(child)
-        end
-
-        store_itself
-
-        @children.each_with_index do |child, index|
-
-          get_expression_pool.apply(child, get_workitem(workitem, index))
-        end
-
-        reloaded_self, _fei = get_expression_pool.fetch(@fei)
-        reloaded_self.sync_expression.ready(reloaded_self)
+      @children.each do |child|
+        @sync_expression.add_child(child)
       end
 
-      def get_workitem (workitem, index)
+      store_itself
 
-        workitem.dup
+      @children.each_with_index do |child, index|
+
+        get_expression_pool.apply(child, get_workitem(workitem, index))
       end
+
+      reloaded_self, _fei = get_expression_pool.fetch(@fei)
+      reloaded_self.sync_expression.ready(reloaded_self)
+    end
+
+    def get_workitem (workitem, index)
+
+      workitem.dup
+    end
   end
 
   #
@@ -205,7 +204,6 @@ module OpenWFE
   class ConcurrentIteratorExpression < ConcurrenceExpression
 
     names :concurrent_iterator
-
 
     def apply (workitem)
 
@@ -240,10 +238,10 @@ module OpenWFE
 
     protected
 
-      def get_workitem (wi, index)
+    def get_workitem (wi, index)
 
-        @workitems[index]
-      end
+      @workitems[index]
+    end
   end
 
   #
@@ -355,266 +353,259 @@ module OpenWFE
 
     protected
 
-      def do_reply (synchable, workitem)
+    def do_reply (synchable, workitem)
 
-        synchable.ldebug do
-          "#{self.class}.do_reply() from " +
-          "#{workitem.last_expression_id.to_debug_s}"
-        end
+      synchable.ldebug do
+        "#{self.class}.do_reply() from " +
+        "#{workitem.last_expression_id.to_debug_s}"
+      end
 
-        @merge_array.push(synchable, workitem)
+      @merge_array.push(synchable, workitem)
 
-        @reply_count = @reply_count + 1
+      @reply_count = @reply_count + 1
 
-        @remaining_children.delete(workitem.last_expression_id)
+      @remaining_children.delete(workitem.last_expression_id)
 
-        if @over #over
-          #
-          # sync is over, don't determine it again
-          #
-          synchable.store_itself
-          return true
-        end
-
-        if @remaining_children.length <= 0
-
-          reply_to_parent(synchable)
-          return true
-        end
-
-        if @count > 0 and @reply_count >= @count
-
-          @over = true
-          synchable.store_itself
-
-          #treat_remaining_children(synchable)
-          synchable.get_workqueue.push(
-            self, :treat_remaining_children, synchable)
-
-          return true
-        end
-
+      if @over #over
         #
-        # over-if
-
-        if synchable.eval_condition('over-if', workitem, 'over-unless')
-
-          @over = true
-          synchable.store_itself
-
-          #treat_remaining_children(synchable)
-          synchable.get_workqueue.push(
-            self, :treat_remaining_children, synchable)
-
-          return true
-        end
-
+        # sync is over, don't determine it again
         #
-        # not over, resuming
-
         synchable.store_itself
-
-        false
+        return true
       end
 
-      def reply_to_parent (synchable)
-
-        workitem = @merge_array.do_merge
-
-        synchable.reply_to_parent(workitem)
-      end
-
-      def treat_remaining_children (synchable)
-
-        @remaining_children.each do |child|
-
-          synchable.ldebug do
-            "#{self.class}.treat_remainining_children() " +
-            "#{child.to_debug_s} " +
-            "(cancel ? #{@cancel_remaining})"
-          end
-
-          if @cancel_remaining
-            synchable.get_expression_pool.cancel(child)
-          else
-            synchable.get_expression_pool.forget(synchable, child)
-          end
-        end
+      if @remaining_children.length <= 0
 
         reply_to_parent(synchable)
+        return true
       end
 
-      def cancel_remaining? (synchable_expression, workitem)
+      if @count > 0 and @reply_count >= @count
 
-        s = synchable_expression.lookup_sym_attribute(
-          :remaining, workitem, :default => :cancel)
+        @over = true
+        synchable.store_itself
 
-        (s == :cancel)
-      end
+        #treat_remaining_children(synchable)
+        synchable.get_workqueue.push(
+          self, :treat_remaining_children, synchable)
 
-      def determine_count (synchable_expression, workitem)
-
-        c = synchable_expression.lookup_attribute(:count, workitem)
-        return -1 if not c
-        i = c.to_i
-        i < 1 ? -1 : i
+        return true
       end
 
       #
-      # This inner class is used to gather workitems (via push()) before
-      # the final merge
-      # This final merge is triggered by calling the do_merge() method
-      # which will return the resulting, merged workitem.
+      # over-if
+
+      if synchable.eval_condition('over-if', workitem, 'over-unless')
+
+        @over = true
+        synchable.store_itself
+
+        #treat_remaining_children(synchable)
+        synchable.get_workqueue.push(
+          self, :treat_remaining_children, synchable)
+
+        return true
+      end
+
       #
-      class MergeArray
-        include MergeMixin
+      # not over, resuming
 
-        attr_accessor \
-          :synchable_fei,
-          :workitem,
-          :workitems_by_arrival,
-          :workitems_by_altitude,
-          :merge,
-          :merge_type
+      synchable.store_itself
 
-        def initialize (synchable_fei, merge, merge_type)
+      false
+    end
 
-          @synchable_fei = synchable_fei
+    def reply_to_parent (synchable)
 
-          @merge = merge
-          @merge_type = merge_type
+      workitem = @merge_array.do_merge
 
-          ensure_merge_settings
+      synchable.reply_to_parent(workitem)
+    end
 
-          @workitem = nil
+    def treat_remaining_children (synchable)
 
-          if highest? or lowest?
-            @workitems_by_arrival = []
-            @workitems_by_altitude = []
-          end
+      @remaining_children.each do |child|
+
+        synchable.ldebug do
+          "#{self.class}.treat_remainining_children() " +
+          "#{child.to_debug_s} " +
+          "(cancel ? #{@cancel_remaining})"
         end
 
-        def push (synchable, wi)
+        if @cancel_remaining
+          synchable.get_expression_pool.cancel(child)
+        else
+          synchable.get_expression_pool.forget(synchable, child)
+        end
+      end
 
-          if isolate?
-            push_in_isolation(wi)
-          elsif last? or first?
-            push_by_position(wi)
-          else
-            push_by_arrival(wi)
-          end
+      reply_to_parent(synchable)
+    end
+
+    def cancel_remaining? (synchable_expression, workitem)
+
+      s = synchable_expression.lookup_sym_attribute(
+        :remaining, workitem, :default => :cancel)
+
+      (s == :cancel)
+    end
+
+    def determine_count (synchable_expression, workitem)
+
+      c = synchable_expression.lookup_attribute(:count, workitem)
+      return -1 if not c
+      i = c.to_i
+      i < 1 ? -1 : i
+    end
+
+    #
+    # This inner class is used to gather workitems (via push()) before
+    # the final merge
+    # This final merge is triggered by calling the do_merge() method
+    # which will return the resulting, merged workitem.
+    #
+    class MergeArray
+      include MergeMixin
+
+      attr_accessor \
+        :synchable_fei,
+        :workitem,
+        :workitems_by_arrival,
+        :workitems_by_altitude,
+        :merge,
+        :merge_type
+
+      def initialize (synchable_fei, merge, merge_type)
+
+        @synchable_fei = synchable_fei
+
+        @merge = merge
+        @merge_type = merge_type
+
+        ensure_merge_settings
+
+        @workitem = nil
+
+        if highest? or lowest?
+          @workitems_by_arrival = []
+          @workitems_by_altitude = []
+        end
+      end
+
+      def push (synchable, wi)
+
+        if isolate?
+          push_in_isolation(wi)
+        elsif last? or first?
+          push_by_position(wi)
+        else
+          push_by_arrival(wi)
+        end
+      end
+
+      def push_by_position (wi)
+
+        source, target = if first?
+          [ @workitem, wi ]
+        else
+          [ wi, @workitem ]
+        end
+        @workitem = merge_workitems(target, source, override?)
+      end
+
+      def push_in_isolation (wi)
+
+        unless @workitem
+          @workitem = wi.dup
+          att = @workitem.attributes
+          @workitem.attributes = {}
         end
 
-        def push_by_position (wi)
+        key = get_child_id(wi)
 
-          source, target = if first?
-            [ @workitem, wi ]
-          else
-            [ wi, @workitem ]
-          end
-          @workitem = merge_workitems target, source, override?
+        @workitem.attributes[key.to_s] = OpenWFE.fulldup(wi.attributes)
+      end
+
+      def push_by_arrival (wi)
+
+        #index = synchable.children.index wi.last_expression_id
+        #index = Integer(wi.last_expression_id.child_id)
+        index = Integer(get_child_id(wi))
+
+        @workitems_by_arrival << wi
+        @workitems_by_altitude[index] = wi
+      end
+
+      #
+      # merges the workitems stored here
+      #
+      def do_merge
+
+        return @workitem if @workitem
+
+        list = if first?
+          @workitems_by_arrival.reverse
+        elsif last?
+          @workitems_by_arrival
+        elsif highest?
+          @workitems_by_altitude.reverse
+        elsif lowest?
+          @workitems_by_altitude
         end
 
-        def push_in_isolation (wi)
-
-          unless @workitem
-            @workitem = wi.dup
-            att = @workitem.attributes
-            @workitem.attributes = {}
-          end
-
-          #key = synchable.children.index wi.last_expression_id
-          #key = wi.last_expression_id.child_id
-          key = get_child_id wi
-
-          @workitem.attributes[key.to_s] =
-            OpenWFE::fulldup(wi.attributes)
-        end
-
-        def push_by_arrival (wi)
-
-          #index = synchable.children.index wi.last_expression_id
-          #index = Integer(wi.last_expression_id.child_id)
-          index = Integer(get_child_id(wi))
-
-          @workitems_by_arrival << wi
-          @workitems_by_altitude[index] = wi
-        end
-
-        #
-        # merges the workitems stored here
-        #
-        def do_merge
-
-          return @workitem if @workitem
-
-          list = if first?
-            @workitems_by_arrival.reverse
-          elsif last?
-            @workitems_by_arrival
-          elsif highest?
-            @workitems_by_altitude.reverse
-          elsif lowest?
-            @workitems_by_altitude
-          end
-
-          result = nil
-
-          list.each do |wi|
-            next unless wi
-            result = merge_workitems result, wi, override?
-          end
-
+        list.inject(nil) do |result, wi|
+          result = merge_workitems(result, wi, override?) if wi
           result
         end
-
-        protected
-
-          def first?
-            @merge == :first
-          end
-          def last?
-            @merge == :last
-          end
-          def highest?
-            @merge == :highest
-          end
-          def lowest?
-            @merge == :lowest
-          end
-
-          def mix?
-            @merge_type == :mix
-          end
-          def override?
-            @merge_type == :override
-          end
-          def isolate?
-            @merge_type == :isolate
-          end
-
-          #
-          # Returns the child id of the expression that just
-          # replied with the given workitem.
-          #
-          def get_child_id (workitem)
-
-            return workitem.fei.child_id \
-              if workitem.fei.wfid == @synchable_fei.wfid
-
-            workitem.fei.last_sub_instance_id
-          end
-
-          #
-          # Making sure @merge and @merge_type are set to
-          # appropriate values.
-          #
-          def ensure_merge_settings
-
-            @merge_type = :mix unless override? or isolate?
-            @merge = :first unless last? or highest? or lowest?
-          end
       end
+
+      protected
+
+      def first?
+        @merge == :first
+      end
+      def last?
+        @merge == :last
+      end
+      def highest?
+        @merge == :highest
+      end
+      def lowest?
+        @merge == :lowest
+      end
+
+      def mix?
+        @merge_type == :mix
+      end
+      def override?
+        @merge_type == :override
+      end
+      def isolate?
+        @merge_type == :isolate
+      end
+
+      #
+      # Returns the child id of the expression that just
+      # replied with the given workitem.
+      #
+      def get_child_id (workitem)
+
+        return workitem.fei.child_id \
+          if workitem.fei.wfid == @synchable_fei.wfid
+
+        workitem.fei.last_sub_instance_id
+      end
+
+      #
+      # Making sure @merge and @merge_type are set to
+      # appropriate values.
+      #
+      def ensure_merge_settings
+
+        @merge_type = :mix unless override? or isolate?
+        @merge = :first unless last? or highest? or lowest?
+      end
+    end
 
   end
 
