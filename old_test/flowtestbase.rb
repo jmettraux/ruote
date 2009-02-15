@@ -12,7 +12,7 @@
 require 'rubygems'
 require 'test/unit'
 
-%w{ lib test }.each do |path|
+%w{ lib old_test }.each do |path|
   path = File.expand_path(File.dirname(__FILE__) + '/../' + path)
   $:.unshift(path) unless $:.include?(path)
 end
