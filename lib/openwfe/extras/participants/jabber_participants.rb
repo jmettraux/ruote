@@ -38,10 +38,11 @@
 #
 
 require 'yaml'
-require 'xmpp4r-simple'
 
 require 'openwfe/util/xml'
 require 'openwfe/util/json'
+
+require 'openwfe/extras/misc/jabber_common'
 
 if defined?( ActiveSupport )
   # Fix broken ActiveSupport Time#to_json notation
@@ -77,41 +78,34 @@ module OpenWFE
     # messages are sent out the roster will be populated with those JID's,
     # making sure that the listener will respond to replies.
     #
-    # A small example:
+    # Configuration example:
     #
     #   engine.register_participant(
     #     :jabber,
     #     OpenWFE::Extras::JabberParticipant.new( :jabber_id => 'ruote@devbox', :password => 'secret', :contacts => ['kenneth@devbox'] )
     #   )
     #
+    # Process example:
+    #
+    #   class JabberProcess < OpenWFE::ProcessDefinition
+    #     sequence do
+    #       jabber :wait_for_reply => true
+    #     end
+    #
+    #     set :f => 'target_jid', :val => 'kenneth.kalmer@gmail.com'
+    #   end
+    #
+    # Passing the 'wait_for_reply' parameter to the participant
+    # prevents it from replying to the engine, and thus expects the
+    # JabberListener to pick up the reply and let the process
+    # continue. By default the JabberParticipant will send the message
+    # and reply to the engine, letting the workflow continue.
     class JabberParticipant
       include LocalParticipant
-
-      # JabberID to use
-      @@jabber_id = nil
-      cattr_accessor :jabber_id
-
-      # Jabber password
-      @@password = nil
-      cattr_accessor :password
-
-      # Jabber resource
-      @@resource = 'participant'
-      cattr_accessor :resource
-
-      # Contacts that are always included in the participants roster
-      @@contacts = []
-      cattr_accessor :contacts
-
-      # Jabber connection
-      attr_reader :connection
+      include OpenWFE::Extras::JabberCommon
 
       def initialize( options = {} )
-        self.class.jabber_id = options.delete(:jabber_id) if options.has_key?(:jabber_id)
-        self.class.password  = options.delete(:password)  if options.has_key?(:password)
-        self.class.contacts  = options.delete(:contacts)  if options.has_key?(:contacts)
-        self.class.resource  = options.delete(:resource)  if options.has_key?(:resource)
-
+        configure_jabber!( options )
         connect!
         setup_roster!
       end
@@ -126,58 +120,38 @@ module OpenWFE
             self.connection.roster.accept_subscription( target_jid )
           end
 
-          # Sensible defaults
-          workitem.attributes.reverse_merge!({ 'format' => 'JSON' })
+          # Message or workitem?
+          if message = ( workitem.attributes['message'] || workitem.params['message'] )
+            self.connection.deliver( target_jid, message )
+            
+          else
+            # Sensible defaults
+            workitem.attributes.reverse_merge!({ 'format' => 'JSON' })
 
-          ldebug { "sending workitem to jid: #{target_jid}" }
-          self.connection.deliver(
-            target_jid,
-            encode_workitem( workitem, workitem.attributes['format'] )
-          )
-
+            ldebug { "sending workitem to jid: #{target_jid}" }
+            self.connection.deliver(
+              target_jid,
+              encode_workitem( workitem, workitem.attributes['format'] )
+            )
+          end
         else
           lerror { "no target_jid in workitem attributes!" }
+        end
+        
+        unless workitem.params['wait-for-reply'] == true
+          reply_to_engine( workitem )
         end
       end
 
       protected
 
-      def connect!
-        ldebug { "setting up Jabber connection" }
-
-        jid = self.class.jabber_id + '/' + self.class.resource
-        @connection = Jabber::Simple.new( jid, self.class.password )
-        @connection.status( :chat, "JabberParticipant waiting for instructions" )
-      end
-
-      # Clear all contacts from the roster, and build up the roster again
-      def setup_roster!
-        ldebug { "cleaning up roster" }
-
-        # Clean the roster
-        self.connection.roster.items.each_pair do |jid, roster_item|
-          jid = jid.strip.to_s
-          unless self.class.contacts.include?( jid )
-            self.connection.remove( jid )
-          end
-        end
-
-        # Add missing contacts
-        self.class.contacts.each do |contact|
-          unless self.connection.subscribed_to?( contact )
-            self.connection.add( contact )
-            self.connection.roster.accept_subscription( contact )
-          end
-        end
-      end
-
       def encode_workitem( wi, format = 'JSON' )
         if format.downcase == 'xml'
-          OpenWFE::Xml.workitem_to_xml( wi )
+           wi.to_xml
         elsif format.downcase == 'yaml'
           YAML.dump( wi )
         else
-          OpenWFE::Json.workitem_to_h( wi ).to_json
+          wi.to_h.to_json
         end
 
       end
