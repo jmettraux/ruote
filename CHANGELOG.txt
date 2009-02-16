@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #23936 : made sure on_cancel blocks see variables (reported by Kenneth)
 - todo  #23858 : implemented Tokyo Tyrant persistence mechanism
 - todo  #23886 : added wfname and wfrevision to DbHistory
 - todo  #23869 : implement ProcessStatus#workitem_expids

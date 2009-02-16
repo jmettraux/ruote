@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -63,10 +63,8 @@ module OpenWFE
     # #expressions (even those not yet applied) that compose the process
     # #instance will be returned.
     #
-    #def process_stack (workflow_instance_id, unapplied=false)
     def process_stack (workflow_instance_id)
 
-      #get_expression_pool.process_stack(workflow_instance_id, unapplied)
       get_expression_pool.process_stack(workflow_instance_id)
     end
     alias :get_process_stack :process_stack
@@ -125,7 +123,7 @@ module OpenWFE
     #
     def cancel_process (exp_or_wfid)
 
-      get_expression_pool.cancel_process exp_or_wfid
+      get_expression_pool.cancel_process(exp_or_wfid)
     end
     alias :cancel_flow :cancel_process
     alias :abort_process :cancel_process
@@ -182,23 +180,23 @@ module OpenWFE
 
     protected
 
-      #
-      # In case of wfid, returns the root expression of the process,
-      # in case of fei, returns the expression itself.
-      #
-      def fetch_exp (fei_or_wfid)
+    #
+    # In case of wfid, returns the root expression of the process,
+    # in case of fei, returns the expression itself.
+    #
+    def fetch_exp (fei_or_wfid)
 
-        exp = if fei_or_wfid.is_a?(String)
+      exp = if fei_or_wfid.is_a?(String)
 
-          get_expression_pool.fetch_root(fei_or_wfid)
+        get_expression_pool.fetch_root(fei_or_wfid)
 
-        else
+      else
 
-          get_expression_pool.fetch_expression(fei_or_wfid)
-        end
-
-        exp or raise "no expression found for '#{fei_or_wfid.to_s}'"
+        get_expression_pool.fetch_expression(fei_or_wfid)
       end
+
+      exp or raise "no expression found for '#{fei_or_wfid.to_s}'"
+    end
   end
 end
 

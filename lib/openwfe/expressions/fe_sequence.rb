@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,6 @@ module OpenWFE
 
     names :sequence
 
-
     def apply (workitem)
 
       reply(workitem)
@@ -83,34 +82,34 @@ module OpenWFE
 
     protected
 
-      #
-      # Returns the child_index (in the raw_children array) of the next child
-      # to apply, or nil if the sequence is over.
-      #
-      def next_child_index (returning_fei)
+    #
+    # Returns the child_index (in the raw_children array) of the next child
+    # to apply, or nil if the sequence is over.
+    #
+    def next_child_index (returning_fei)
 
-        next_id = if returning_fei.is_a?(Integer)
-          returning_fei + 1
-        elsif returning_fei == self.fei
-          0
-        else
-          returning_fei.child_id.to_i + 1
-        end
-
-        loop do
-
-          break if next_id > raw_children.length
-
-          raw_child = raw_children[next_id]
-
-          return next_id \
-            if raw_child.is_a?(Array) or raw_child.is_a?(FlowExpressionId)
-
-          next_id += 1
-        end
-
-        nil
+      next_id = if returning_fei.is_a?(Integer)
+        returning_fei + 1
+      elsif returning_fei == self.fei
+        0
+      else
+        returning_fei.child_id.to_i + 1
       end
+
+      loop do
+
+        break if next_id > raw_children.length
+
+        raw_child = raw_children[next_id]
+
+        return next_id \
+          if raw_child.is_a?(Array) or raw_child.is_a?(FlowExpressionId)
+
+        next_id += 1
+      end
+
+      nil
+    end
   end
 
 end

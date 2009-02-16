@@ -175,7 +175,7 @@ module OpenWFE
     #
     def reply (workitem)
 
-      reply_to_parent workitem
+      reply_to_parent(workitem)
     end
 
     #
@@ -211,6 +211,9 @@ module OpenWFE
     # triggers the on_cancel attribute of the expression, if any, and forgets
     # it...
     #
+    # makes sure to pass a copy of the cancelled process's variables to the
+    # on_cancel process/participant if any
+    #
     def trigger_on_cancel
 
       on_cancel = (self.attributes || {})['on_cancel'] || return
@@ -219,7 +222,8 @@ module OpenWFE
 
       template = lookup_variable(on_cancel) || [ on_cancel, {}, [] ]
 
-      get_expression_pool.launch_subprocess(self, template, true, workitem, {})
+      get_expression_pool.launch_subprocess(
+        self,template, true, workitem, get_environment.lookup_all_variables)
     end
 
     #
@@ -528,17 +532,13 @@ module OpenWFE
       env = Environment.new_env(
         @environment_id, parent_fei, nil, @application_context, nil)
 
-      env.variables.merge! initial_vars if initial_vars
+      env.variables.merge!(initial_vars) if initial_vars
 
       env[@fei.wfname] = self.raw_representation \
         if (not @parent_id) and (self.is_a?(RawExpression))
           #
           # keeping track of the raw representation
           # of the top expression (for top recursion)
-
-      #ldebug do
-      #  "new_environment() for #{@fei.to_debug_s} is #{env.fei.to_debug_s}"
-      #end
 
       env.store_itself
 
@@ -833,53 +833,53 @@ module OpenWFE
 
     protected
 
-      #
-      # Initializes the @children member array.
-      #
-      # Used by 'concurrence' for example.
-      #
-      def extract_children
-        i = 0
-        @children = []
-        raw_representation.last.each do |child|
-          if OpenWFE::ExpressionTree.is_not_a_node?(child)
-            @children << child
-          else
-            cname = child.first.intern
-            next if cname == :param
-            next if cname == :parameter
-            #next if cname == :description
-            cfei = @fei.dup
-            cfei.expression_name = child.first
-            cfei.expression_id = "#{cfei.expression_id}.#{i}"
-            efei = @environment_id
-            rawexp = RawExpression.new_raw(
-              cfei, @fei, efei, @application_context, OpenWFE::fulldup(child))
-            get_expression_pool.update(rawexp)
-            i += 1
-            @children << rawexp.fei
-          end
+    #
+    # Initializes the @children member array.
+    #
+    # Used by 'concurrence' for example.
+    #
+    def extract_children
+      i = 0
+      @children = []
+      raw_representation.last.each do |child|
+        if OpenWFE::ExpressionTree.is_not_a_node?(child)
+          @children << child
+        else
+          cname = child.first.intern
+          next if cname == :param
+          next if cname == :parameter
+          #next if cname == :description
+          cfei = @fei.dup
+          cfei.expression_name = child.first
+          cfei.expression_id = "#{cfei.expression_id}.#{i}"
+          efei = @environment_id
+          rawexp = RawExpression.new_raw(
+            cfei, @fei, efei, @application_context, OpenWFE::fulldup(child))
+          get_expression_pool.update(rawexp)
+          i += 1
+          @children << rawexp.fei
         end
       end
+    end
 
-      #
-      # If the varname starts with '//' will return the engine
-      # environment and the truncated varname...
-      # If the varname starts with '/' will return the root environment
-      # for the current process instance and the truncated varname...
-      #
-      def lookup_environment (varname)
+    #
+    # If the varname starts with '//' will return the engine
+    # environment and the truncated varname...
+    # If the varname starts with '/' will return the root environment
+    # for the current process instance and the truncated varname...
+    #
+    def lookup_environment (varname)
 
-        return [
-          get_expression_pool.fetch_engine_environment, varname[2..-1]
-        ] if varname[0, 2] == '//'
+      return [
+        get_expression_pool.fetch_engine_environment, varname[2..-1]
+      ] if varname[0, 2] == '//'
 
-        return [
-          get_environment.get_root_environment, varname[1..-1]
-        ] if varname[0, 1] == '/'
+      return [
+        get_environment.get_root_environment, varname[1..-1]
+      ] if varname[0, 1] == '/'
 
-        [ get_environment, varname ]
-      end
+      [ get_environment, varname ]
+    end
   end
 
 end
