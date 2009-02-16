@@ -39,13 +39,12 @@
 
 require 'thread'
 require 'yaml'
-require 'xmpp4r-simple'
 
 require 'openwfe/util/xml'
 require 'openwfe/util/json'
 require 'openwfe/service'
 require 'openwfe/listeners/listener'
-
+require 'openwfe/extras/misc/jabber_common'
 
 module OpenWFE
   module Extras
@@ -57,34 +56,13 @@ module OpenWFE
     class JabberListener < Service
       include WorkItemListener
       include Rufus::Schedulable
-
-      # JabberID to use
-      @@jabber_id = nil
-      cattr_accessor :jabber_id
-
-      # Jabber password
-      @@password = nil
-      cattr_accessor :password
-
-      # Jabber resource
-      @@resource = 'listener'
-      cattr_accessor :resource
-
-      # Contacts that are always included in the participants roster
-      @@contacts = []
-      cattr_accessor :contacts
-
-      # Jabber connection
-      attr_reader :connection
+      include OpenWFE::Extras::JabberCommon
 
       def initialize( service_name, options )
 
         @mutex = Mutex.new
 
-        self.class.jabber_id = options.delete( :jabber_id )
-        self.class.password = options.delete( :password )
-        self.class.contacts = options.delete( :contacts )
-        self.class.resource = options.delete( :resource )
+        configure_jabber!( options )
 
         service_name = "#{self.class}::#{self.class.jabber_id}"
         super( service_name, options )
@@ -117,31 +95,6 @@ module OpenWFE
 
       protected
 
-      def connect!
-        jid = self.class.jabber_id + '/' + self.class.resource
-        @connection = Jabber::Simple.new( jid, self.class.password )
-        @connection.status( :chat, "JabberListener waiting for instructions" )
-      end
-
-      # Clear all contacts from the roster, and build up the roster again
-      def setup_roster!
-        # Clean the roster
-        self.connection.roster.items.each_pair do |jid, roster_item|
-          jid = jid.strip.to_s
-          unless self.class.contacts.include?( jid )
-            self.connection.remove( jid )
-          end
-        end
-
-        # Add missing contacts
-        self.class.contacts.each do |contact|
-          unless self.connection.subscribed_to?( contact )
-            self.connection.add( contact )
-            self.connection.roster.accept_subscription( contact )
-          end
-        end
-      end
-
       # Complicated guesswork that needs to happen here to detect the format
       def decode_workitem( msg )
         ldebug { "decoding workitem from: #{msg}" }
@@ -157,14 +110,6 @@ module OpenWFE
           hash = defined?(ActiveSupport::JSON) ? ActiveSupport::JSON.decode(msg) : JSON.parse(msg)
           OpenWFE.workitem_from_h( hash )
         end
-      end
-
-      # Change status to 'busy' while performing a command, and back to 'chat'
-      # afterwards
-      def busy( &block )
-        self.connection.status( :dnd, "Working..." )
-        yield
-        self.connection.status( :chat, "JabberListener waiting for instructions" )
       end
     end
   end
