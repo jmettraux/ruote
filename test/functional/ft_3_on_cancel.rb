@@ -9,11 +9,8 @@
 
 require File.dirname(__FILE__) + '/base'
 
-require 'openwfe/listeners/listeners'
-require 'openwfe/participants/participants'
 
-
-class FtFileListenerTest < Test::Unit::TestCase
+class FtOnCancelTest < Test::Unit::TestCase
   include FunctionalBase
 
   def test_on_cancel_participant
