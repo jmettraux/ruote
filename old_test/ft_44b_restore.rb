@@ -270,14 +270,16 @@ class FlowTest44b < Test::Unit::TestCase
       cancel_process
     end
     process_definition :name => 'bailout' do
-      _print 'bailout'
-      restore :from_variable => 'wi'
-      _print "${f:f0}"
+      sequence do
+        _print 'bailout'
+        #restore :from_variable => 'wi'
+        _print "${f:f0}"
+      end
     end
   end
 
   def test_11
-    
+
     dotest Test44b11, "value_aa\nbailout\nvalue_a"
   end
 end

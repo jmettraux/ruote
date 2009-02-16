@@ -31,7 +31,6 @@ class FtFileListenerTest < Test::Unit::TestCase
     @engine.register_listener(OpenWFE::FileListener, :freq => '300')
 
     fei = @engine.launch(pdef)
-
     sleep 0.350
 
     assert_equal '', @tracer.to_s
