@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -304,46 +304,46 @@ module OpenWFE
 
     protected
 
-      #
-      # Evaluates the 'name' attribute, if it's not present or empty,
-      # will return the value for the 'default' attribute.
-      #
-      def expression_name
+    #
+    # Evaluates the 'name' attribute, if it's not present or empty,
+    # will return the value for the 'default' attribute.
+    #
+    def expression_name
 
-        n = lookup_attribute(:name, @applied_workitem)
+      n = lookup_attribute(:name, @applied_workitem)
 
-        return lookup_attribute(:default, @applied_workitem) \
-          if (not n) or (n.strip == '')
-        n
-      end
+      return lookup_attribute(:default, @applied_workitem) \
+        if (not n) or (n.strip == '')
+      n
+    end
 
-      #
-      # If the 'attributes' attribute is present, will return its
-      # value. Else, will simply return the attributes of the 'exp'
-      # expression itself ('name' and 'default' included).
-      #
-      def extract_attributes
+    #
+    # If the 'attributes' attribute is present, will return its
+    # value. Else, will simply return the attributes of the 'exp'
+    # expression itself ('name' and 'default' included).
+    #
+    def extract_attributes
 
-        att = lookup_vf_attribute(@applied_workitem, :attributes)
-          # will currently only work with an attribute hash
-          # whose keys are strings... symbols :(
+      att = lookup_vf_attribute(@applied_workitem, :attributes)
+        # will currently only work with an attribute hash
+        # whose keys are strings... symbols :(
 
-        att || @attributes
-      end
+      att || @attributes
+    end
 
-      #--
-      #def extract_descriptions
-      #  []
-      #end
-      #++
+    #--
+    #def extract_descriptions
+    #  []
+    #end
+    #++
 
-      def extract_children
-        @children
-      end
+    def extract_children
+      @children
+    end
 
-      def extract_parameters
-        []
-      end
+    def extract_parameters
+      []
+    end
   end
 
   #

@@ -264,7 +264,7 @@ class FlowTest44b < Test::Unit::TestCase
   class Test44b11 < OpenWFE::ProcessDefinition
     sequence :on_cancel => 'bailout' do
       set :field => 'f0', :value => 'value_a'
-      save :to_variable => 'wi'
+      save :to_variable => '/wi'
       set :field => 'f0', :value => 'value_aa'
       _print '${f:f0}'
       cancel_process
@@ -272,15 +272,15 @@ class FlowTest44b < Test::Unit::TestCase
     process_definition :name => 'bailout' do
       sequence do
         _print 'bailout'
-        #restore :from_variable => 'wi'
-        _print "${f:f0}"
+        restore :from_variable => '/wi'
+        _print ">${f:f0}<"
       end
     end
   end
 
   def test_11
 
-    dotest Test44b11, "value_aa\nbailout\nvalue_a"
+    dotest Test44b11, "value_aa\nbailout\n>value_a<"
   end
 end
 

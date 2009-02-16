@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -60,16 +60,9 @@ module OpenWFE
     #
     attr_accessor :variables
 
-    #def initialize (
-    #  fei, parent, environment_id, application_context, attributes)
-    #  super(fei, parent, environment_id, application_context, attributes)
-    #  @variables = {}
-    #end
-
     def initialize
 
       super
-
       @variables = {}
     end
 
@@ -197,11 +190,15 @@ module OpenWFE
     #
     def get_root_environment
 
-      #ldebug { "get_root_environment\n#{self}" }
+      @parent_id ? get_parent.get_root_environment : self
+    end
 
-      return self unless @parent_id
+    #
+    # A shortcut to get_expression_pool.fetch_engine_environment
+    #
+    def get_engine_environment
 
-      get_parent.get_root_environment
+      get_expression_pool.fetch_engine_environment
     end
 
     #
@@ -216,8 +213,18 @@ module OpenWFE
       return stack if is_engine_environment?
       return get_parent.lookup_variable_stack(varname, stack) if @parent_id
 
-      get_expression_pool.fetch_engine_environment.lookup_variable_stack(
-        varname, stack)
+      get_engine_environment.lookup_variable_stack(varname, stack)
+    end
+
+    #
+    # Returns a brand new hash containing the variables as seen in the
+    # calling environment (doesn't include variables set at the engine level).
+    #
+    def lookup_all_variables
+
+      return @variables unless @parent_id
+
+      get_parent.lookup_all_variables.merge(@variables)
     end
 
     #

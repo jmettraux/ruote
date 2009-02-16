@@ -99,7 +99,38 @@ class FtFileListenerTest < Test::Unit::TestCase
       end
     end
 
-    assert_trace "a\ny\nz", pdef
+    fei = @engine.launch(pdef)
+
+    sleep 0.350
+
+    assert_equal "a\ny\nz", @tracer.to_s
+
+    assert_nil @engine.process_status(fei)
+  end
+
+  def test_on_cancel_and_variables
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      sequence :on_cancel => 'decommission' do
+        _print 'a'
+        _set :var => 'v0', :val => 'z'
+        cancel_process
+        _print 'b'
+      end
+      process_definition :name => 'decommission' do
+        sequence do
+          _print '${v0}'
+        end
+      end
+    end
+
+    fei = @engine.launch(pdef)
+
+    sleep 0.350
+
+    assert_equal "a\nz", @tracer.to_s
+
+    assert_nil @engine.process_status(fei)
   end
 end
 

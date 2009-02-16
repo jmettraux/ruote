@@ -272,10 +272,11 @@ module OpenWFE
     # Launches a subprocess.
     # The resulting wfid is a subid for the wfid of the firing expression.
     #
-    # (used by 'subprocess')
+    # (used by the 'subprocess' expression, the 'on_cancel' feature and the
+    # ProcessParticipant)
     #
     def launch_subprocess (
-      firing_exp, template, forget, workitem, params)
+      firing_exp, template, forget, workitem, initial_variables)
 
       raw_exp = build_raw_expression(template)
 
@@ -286,7 +287,7 @@ module OpenWFE
       raw_exp.fei.wfid =
         "#{firing_exp.fei.parent_wfid}.#{firing_exp.get_next_sub_id}"
 
-      raw_exp.new_environment(params)
+      raw_exp.new_environment(initial_variables)
 
       raw_exp.store_itself
 
