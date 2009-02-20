@@ -57,23 +57,26 @@ module OpenWFE
   #
   # In a Ruby process definition, that might look like :
   #
-  #   sleep :for => "3m"
-  #   sleep "3m"
+  #   _sleep :for => "3m"
+  #   _sleep "3m"
   #     #
   #     # both meaning 'sleep for 3 minutes'
   #
-  #   sleep :until => "Mon Dec 03 10:41:58 +0900 2007"
+  #   _sleep :until => "Mon Dec 03 10:41:58 +0900 2007"
   #     #
   #     # sleep until the given point in time
   #
   # If the 'until' attribute points to a time in the past, the sleep
   # expression will simply let the process resume.
   #
+  # _sleep needs to be used instead of 'sleep', so it doesn't conflict
+  # with Ruby's builtin sleep method.
+  #
   # === scheduler tags
   #
   # Scheduler tags can be set like this :
   #
-  #   sleep "10y", :scheduler_tags => "la_belle_au_bois_dormant"
+  #   _sleep "10y", :scheduler_tags => "la_belle_au_bois_dormant"
   #
   # This is an advanced feature that most users won't need.
   #
