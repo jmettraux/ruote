@@ -321,6 +321,9 @@ module OpenWFE
           # storing the on_cancel value (a participant name or a subprocess
           # name along with a copy of the workitem as applied among the
           # attributes of the new expression)
+          #
+          # (note 'on_cancel' and not 'on-cancel' as we're specifically storing
+          # more info and not just the initial string value of the attribute)
       end
 
       #
