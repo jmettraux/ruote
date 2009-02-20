@@ -167,9 +167,38 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal "0\nr", @tracer.to_s
   end
 
-  # ===========================================================================
-  # TODO : test on_error and variables (like it was done for on_cancel)
-  # ===========================================================================
+  def test_on_error_and_raise
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      sequence :on_error => 'fail_path' do
+        echo 'a'
+        error 'failing'
+        echo 'b'
+      end
+      define 'fail_path' do
+        echo 'failed.'
+      end
+    end
+
+    assert_trace pdef, "a\nfailed."
+  end
+
+  def test_on_error_failpath
+
+    # TODO : at the process level ?
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      sequence :on_error => 'fail_path' do
+        set :var => 'v0', :val => 'val0'
+        error 'fail'
+      end
+      define 'fail_path' do
+        echo 'v0:${v0}'
+      end
+    end
+
+    assert_trace pdef, "v0:val0"
+  end
 
 end
 
