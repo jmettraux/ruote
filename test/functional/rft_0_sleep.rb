@@ -17,9 +17,9 @@ class RftSleepTest < Test::Unit::TestCase
 
   PDEF0 = OpenWFE.process_definition :name => 'test' do
     sequence do
-      _print 'a'
+      echo 'a'
       _sleep '2s'
-      _print 'b'
+      echo 'b'
     end
   end
 

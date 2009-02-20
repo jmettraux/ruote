@@ -25,8 +25,8 @@ class EftSequenceTest < Test::Unit::TestCase
     assert_trace(
       OpenWFE.process_definition(:name => 'test_1') {
         sequence do
-          _print 'a'
-          _print 'b'
+          echo 'a'
+          echo 'b'
         end
       },
       "a\nb")
@@ -36,8 +36,8 @@ class EftSequenceTest < Test::Unit::TestCase
     assert_trace(%{
 <process-definition name="test">
   <sequence>
-    <print>a</print>
-    <print>b</print>
+    <echo>a</echo>
+    <echo>b</echo>
   </sequence>
 </process-definition>
       },

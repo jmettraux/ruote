@@ -14,7 +14,7 @@ class FtVarsAtLaunchTest < Test::Unit::TestCase
   include FunctionalBase
 
   class Test0 < OpenWFE::ProcessDefinition
-    _print '${var0}'
+    echo '${var0}'
   end
 
   def test_vars_at_launch

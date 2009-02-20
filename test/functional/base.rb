@@ -62,6 +62,8 @@ module FunctionalBase
     assert_equal(expected_trace, @tracer.to_s) if expected_trace
 
     purge_engine
+
+    fei
   end
 
   protected
@@ -117,6 +119,8 @@ module FunctionalBase
   end
 
   def assert_no_remaining_expressions (fei, opts)
+
+    return if opts[:ignore_errors]
 
     expcount = @engine.get_expression_storage.size
 

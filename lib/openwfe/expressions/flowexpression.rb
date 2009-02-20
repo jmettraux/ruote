@@ -416,7 +416,7 @@ module OpenWFE
     #
     def lookup_string_attribute (attname, workitem, options={})
 
-      result = lookup_attribute attname, workitem, options
+      result = lookup_attribute(attname, workitem, options)
       result = result.to_s if result
       result
     end
@@ -428,7 +428,7 @@ module OpenWFE
     #
     def lookup_downcase_attribute (attname, workitem, options={})
 
-      result = lookup_string_attribute attname, workitem, options
+      result = lookup_string_attribute(attname, workitem, options)
       result = result.strip.downcase if result
       result
     end
@@ -439,7 +439,7 @@ module OpenWFE
     #
     def lookup_sym_attribute (attname, workitem, options={})
 
-      result = lookup_downcase_attribute attname, workitem, options
+      result = lookup_downcase_attribute(attname, workitem, options)
       result = result.to_sym if result
       result
     end

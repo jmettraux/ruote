@@ -9,11 +9,8 @@
 
 require File.dirname(__FILE__) + '/base'
 
-require 'openwfe/listeners/listeners'
-require 'openwfe/participants/participants'
 
-
-class FtFileListenerTest < Test::Unit::TestCase
+class FtOnCancelTest < Test::Unit::TestCase
   include FunctionalBase
 
   def test_on_cancel_participant
@@ -59,8 +56,8 @@ class FtFileListenerTest < Test::Unit::TestCase
       end
       process_definition :name => 'decommission' do
         sequence do
-          _print 'decommission...'
-          _print 'decommissioned.'
+          echo 'decommission...'
+          echo 'decommissioned.'
         end
       end
     end
@@ -87,14 +84,14 @@ class FtFileListenerTest < Test::Unit::TestCase
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence :on_cancel => 'decommission' do
-        _print 'a'
+        echo 'a'
         cancel_process
-        _print 'b'
+        echo 'b'
       end
       process_definition :name => 'decommission' do
         sequence do
-          _print 'y'
-          _print 'z'
+          echo 'y'
+          echo 'z'
         end
       end
     end
@@ -112,14 +109,14 @@ class FtFileListenerTest < Test::Unit::TestCase
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence :on_cancel => 'decommission' do
-        _print 'a'
-        _set :var => 'v0', :val => 'z'
+        echo 'a'
+        set :var => 'v0', :val => 'z'
         cancel_process
-        _print 'b'
+        echo 'b'
       end
       process_definition :name => 'decommission' do
         sequence do
-          _print '${v0}'
+          echo '${v0}'
         end
       end
     end

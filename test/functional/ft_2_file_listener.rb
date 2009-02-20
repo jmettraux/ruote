@@ -21,7 +21,7 @@ class FtFileListenerTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
         participant :fp
-        _print 'done.'
+        echo 'done.'
       end
     end
 

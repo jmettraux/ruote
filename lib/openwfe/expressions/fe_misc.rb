@@ -111,7 +111,7 @@ module OpenWFE
   class PrintExpression < FlowExpression
     include ValueMixin
 
-    names :print
+    names :print, :echo
 
     def reply (workitem)
 
