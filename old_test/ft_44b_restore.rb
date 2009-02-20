@@ -279,7 +279,6 @@ class FlowTest44b < Test::Unit::TestCase
   end
 
   def test_11
-
     dotest Test44b11, "value_aa\nbailout\n>value_a<"
   end
 end

@@ -55,7 +55,7 @@ module FunctionalBase
 
     wait(fei, opts)
 
-    yield(engine) if block_given?
+    yield(@engine) if block_given?
 
     assert_engine_clean(fei, opts)
 
