@@ -74,7 +74,7 @@ module OpenWFE
       lambda() { |a|
         atts = a.last.is_a?(Hash) ? a.last : {}
         atts['name'] = a.first unless a.first.is_a?(Hash)
-        atts.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+        atts.inject({}) { |h, (k, v)| h[OpenWFE.symbol_to_name(k)] = v; h }
       }.call(args),
       #[ ProcessDefinition.new.instance_eval(&block) ]
       pd.context.top_expressions
