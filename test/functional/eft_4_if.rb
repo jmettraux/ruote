@@ -18,7 +18,7 @@ class EftIfTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       _if do
         equals :value => 'a', :other_value => 'a'
-        _print 'ok'
+        echo 'ok'
       end
     end
 
@@ -30,7 +30,7 @@ class EftIfTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       _if do
         equals :value => 'a', :other_value => 'b'
-        _print 'ok'
+        echo 'ok'
       end
     end
 
@@ -42,8 +42,8 @@ class EftIfTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       _if do
         equals :value => 'a', :other_value => 'a'
-        _print 'ok'
-        _print 'nok'
+        echo 'ok'
+        echo 'nok'
       end
     end
 
@@ -55,8 +55,8 @@ class EftIfTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       _if do
         equals :value => 'a', :other_value => 'b'
-        _print 'nok'
-        _print 'ok'
+        echo 'nok'
+        echo 'ok'
       end
     end
 
@@ -69,23 +69,23 @@ class EftIfTest < Test::Unit::TestCase
 <process-definition name="test">
   <sequence>
     <if test="3 > 2">
-      <print>ok0</print>
+      <echo>ok0</echo>
     </if>
     <if test="3 > a">
-      <print>bad</print>
-      <print>ok1</print>
+      <echo>bad</echo>
+      <echo>ok1</echo>
     </if>
     <if test="3>a">
-      <print>bad</print>
-      <print>ok2</print>
+      <echo>bad</echo>
+      <echo>ok2</echo>
     </if>
     <if test="3 &gt; 2">
-      <print>ok3</print>
-      <print>bad</print>
+      <echo>ok3</echo>
+      <echo>bad</echo>
     </if>
     <if test="1 &lt; 2.0">
-      <print>ok4</print>
-      <print>bad</print>
+      <echo>ok4</echo>
+      <echo>bad</echo>
     </if>
   </sequence>
 </process-definition>

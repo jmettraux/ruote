@@ -25,7 +25,7 @@ class EftSetTest < Test::Unit::TestCase
         set :v => 'v3', :val => 'd'
         set :var => 'v4', :v => 'e' # doesn't work, hence no 'e'
 
-        _print '${v0} ${v1} ${v2} ${v3} ${v4}'
+        echo '${v0} ${v1} ${v2} ${v3} ${v4}'
       end
     end
 
@@ -39,7 +39,7 @@ class EftSetTest < Test::Unit::TestCase
 
         set :v => 'v0', :value => [ 1, 2 ]
 
-        _print '${v0}'
+        echo '${v0}'
       end
     end
 
@@ -55,7 +55,7 @@ class EftSetTest < Test::Unit::TestCase
         set :fld => 'f1', :val => 'b'
         set :field => 'f2', :val => 'c'
 
-        _print '${f:f0} ${f:f1} ${f:f2}'
+        echo '${f:f0} ${f:f1} ${f:f2}'
       end
     end
 
@@ -69,7 +69,7 @@ class EftSetTest < Test::Unit::TestCase
 
         set :f => 'f0', :value => [ 1, 2 ]
 
-        _print '${f:f0}'
+        echo '${f:f0}'
       end
     end
 
@@ -103,7 +103,7 @@ class EftSetTest < Test::Unit::TestCase
           'a'
         end
 
-        _print '${f:f0}'
+        echo '${f:f0}'
       end
     end
 
@@ -122,7 +122,7 @@ class EftSetTest < Test::Unit::TestCase
         set :f => 'f2', :var_value => 'v0'
         set :v => 'v2', :f_value => 'f0'
 
-        _print '${f:f0} ${v0} ${f:f1} ${v1} ${f:f2} ${v2}'
+        echo '${f:f0} ${v0} ${f:f1} ${v1} ${f:f2} ${v2}'
       end
     end
 

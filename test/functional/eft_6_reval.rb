@@ -73,7 +73,7 @@ class EftRevalTest < Test::Unit::TestCase
         set :field => 'f0' do
           reval '1 + 2'
         end
-        _print '${f:f0}'
+        echo '${f:f0}'
       end
     end
 
@@ -87,7 +87,7 @@ class EftRevalTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
         set :field => 'f0', :value => '1 + 2'
-        _print do
+        echo do
           reval :field_code => 'f0'
         end
       end

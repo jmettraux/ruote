@@ -17,12 +17,12 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
-        _print '0'
+        echo '0'
         sequence :on_error => :undo do
           alpha
-          _print '1'
+          echo '1'
         end
-        _print '2'
+        echo '2'
       end
     end
 
@@ -37,15 +37,15 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
-        _print '0'
+        echo '0'
         sequence :on_error => 'fail_path' do
           alpha
-          _print '1'
+          echo '1'
         end
-        _print '2'
+        echo '2'
       end
       define 'fail_path' do
-        _print 'failed'
+        echo 'failed'
       end
     end
 
@@ -60,16 +60,16 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
-        _print '0'
+        echo '0'
         sequence :on_error => 'fail_path' do
-          _print '1'
+          echo '1'
           alpha :on_error => ''
-          _print '2'
+          echo '2'
         end
-        _print '3'
+        echo '3'
       end
       define 'fail_path' do
-        _print 'failed'
+        echo 'failed'
       end
     end
 
@@ -90,13 +90,13 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
-        _print '0'
+        echo '0'
         sequence :on_error => :redo do
-          _print '1'
+          echo '1'
           alpha
-          _print '2'
+          echo '2'
         end
-        _print '3'
+        echo '3'
       end
     end
 
@@ -114,22 +114,22 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence :on_error => 'parent_rescue' do
-        _print '0'
+        echo '0'
         sequence :on_error => 'rescue' do
-          _print '1'
+          echo '1'
           alpha
-          _print '2'
+          echo '2'
         end
       end
       define 'rescue' do
         sequence do
-          _print 'rescue'
+          echo 'rescue'
           bravo
-          _print '3'
+          echo '3'
         end
       end
       define 'parent_rescue' do
-        _print 'parent_rescue'
+        echo 'parent_rescue'
       end
     end
 
@@ -147,12 +147,12 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     pdef = OpenWFE.process_definition :name => 'test', :on_error => 'rescue' do
       sequence do
-        _print '0'
+        echo '0'
         alpha
-        _print '1'
+        echo '1'
       end
       define 'rescue' do
-        _print 'r'
+        echo 'r'
       end
     end
 
@@ -166,5 +166,10 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_equal "0\nr", @tracer.to_s
   end
+
+  # ===========================================================================
+  # TODO : test on_error and variables (like it was done for on_cancel)
+  # ===========================================================================
+
 end
 

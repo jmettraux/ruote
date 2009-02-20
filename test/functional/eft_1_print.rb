@@ -33,9 +33,9 @@ class EftPrintTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
         set :v => 'toto', :value => 'otot'
-        _print '${toto}', :escape => 'true'
-        _print '${toto}', :escape => true
-        _print :escape => true do
+        echo '${toto}', :escape => 'true'
+        echo '${toto}', :escape => true
+        echo :escape => true do
           '${toto}'
         end
       end
@@ -44,6 +44,14 @@ class EftPrintTest < Test::Unit::TestCase
     assert_trace(
       pdef,
       ([ '${toto}' ] * 3).join("\n"))
+  end
+
+  def test_echo
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      echo 'Prokofief'
+    end
+    assert_trace(pdef, 'Prokofief')
   end
 end
 

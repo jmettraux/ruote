@@ -17,8 +17,8 @@ class EftExpTest < Test::Unit::TestCase
 
     pdef = OpenWFE.process_definition :name => 'test' do
       exp :name => 'sequence' do
-        _print 'a'
-        _print 'b'
+        echo 'a'
+        echo 'b'
       end
     end
 
@@ -37,7 +37,7 @@ class EftExpTest < Test::Unit::TestCase
         exp :name => 'sub0'
       end
       process_definition :sub0 do
-        _print 'sub0'
+        echo 'sub0'
       end
     end
 

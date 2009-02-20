@@ -18,7 +18,7 @@ class EftEqualsTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
         equals :value => 'a', :other_value => 'a'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
       end
     end
 
@@ -30,7 +30,7 @@ class EftEqualsTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
         equals :value => 'a', :other_value => 'b'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
       end
     end
 
@@ -45,19 +45,19 @@ class EftEqualsTest < Test::Unit::TestCase
         set :variable => 'v0', :value => 'v'
 
         equals :variable_value => 'v0', :other_value => 'v'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
 
         equals :var_value => 'v0', :other_value => 'v'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
 
         equals :variable => 'v0', :other_value => 'v'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
 
         equals :var => 'v0', :other_value => 'v'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
 
         equals :v => 'v0', :val => 'v'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
       end
     end
 
@@ -74,19 +74,19 @@ class EftEqualsTest < Test::Unit::TestCase
         set :field => 'f0', :value => 'val0'
 
         equals :field_value => 'f0', :other_value => 'val0'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
 
         equals :f_value => 'f0', :other_value => 'val0'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
 
         equals :field => 'f0', :other_value => 'val0'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
 
         equals :field => 'f0', :value => 'val0'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
 
         equals :f => 'f0', :other_value => 'val0'
-        _print '${f:__result__}'
+        echo '${f:__result__}'
       end
     end
 
