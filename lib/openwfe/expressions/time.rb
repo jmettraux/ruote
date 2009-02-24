@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -99,20 +99,20 @@ module OpenWFE
 
     protected
 
-      #
-      # looks up potential scheduler tags in the expression
-      # attributes
-      #
-      def determine_scheduler_tags
+    #
+    # looks up potential scheduler tags in the expression
+    # attributes
+    #
+    def determine_scheduler_tags
 
-        @scheduler_tags = lookup_array_attribute(
-          :scheduler_tags, @applied_workitem) || []
+      @scheduler_tags = lookup_array_attribute(
+        :scheduler_tags, @applied_workitem) || []
 
-        @scheduler_tags << self.class.name
+      @scheduler_tags << self.class.name
 
-        @scheduler_tags << fei.to_short_s
-        @scheduler_tags << fei.parent_wfid
-      end
+      @scheduler_tags << fei.to_short_s
+      @scheduler_tags << fei.parent_wfid
+    end
   end
 
   #
@@ -133,7 +133,7 @@ module OpenWFE
     # By default, classes extending this class do poll for their
     # condition every 10 seconds.
     #
-    DEFAULT_FREQUENCY = "10s"
+    DEFAULT_FREQUENCY = '10s'
 
     #
     # Don't go under 300 milliseconds.
@@ -203,9 +203,9 @@ module OpenWFE
       result = workitem.get_result
 
       if result
-        apply_consequence workitem
+        apply_consequence(workitem)
       else
-        reschedule get_scheduler
+        reschedule(get_scheduler)
       end
     end
 
@@ -263,65 +263,65 @@ module OpenWFE
 
     protected
 
-      #
-      # The code for the condition evalution is here.
-      #
-      # This method is overriden by the WhenExpression.
-      #
-      def evaluate_condition
+    #
+    # The code for the condition evalution is here.
+    #
+    # This method is overriden by the WhenExpression.
+    #
+    def evaluate_condition
 
-        condition_attribute = determine_condition_attribute(
-          self.class.condition_attributes)
+      condition_attribute = determine_condition_attribute(
+        self.class.condition_attributes)
 
-        if condition_attribute
+      if condition_attribute
 
-          c = eval_condition condition_attribute, @applied_workitem
+        c = eval_condition condition_attribute, @applied_workitem
 
-          do_reply(c)
-          return
-        end
-
-        # else, condition is nested as a child
-
-        if has_no_expression_child
-          #
-          # no condition attribute and no child attribute,
-          # simply reply to parent
-          #
-          reply_to_parent(@applied_workitem)
-          return
-        end
-
-        # trigger the first child (the consequence child)
-
-        get_expression_pool.tlaunch_child(
-          self,
-          raw_children.first,
-          (Time.new.to_f * 1000).to_i,
-          @applied_workitem.dup,
-          :register_child => false)
+        do_reply(c)
+        return
       end
 
-      #
-      # Used when replying to self after an attribute condition
-      # got evaluated
-      #
-      def do_reply (result)
+      # else, condition is nested as a child
 
-        @applied_workitem.set_result(result)
-        reply(@applied_workitem)
+      if has_no_expression_child
+        #
+        # no condition attribute and no child attribute,
+        # simply reply to parent
+        #
+        reply_to_parent(@applied_workitem)
+        return
       end
 
-      #
-      # This method is overriden by WhenExpression. WaitExpression
-      # doesn't override it.
-      # This default implementation simply directly replies to
-      # the parent expression.
-      #
-      def apply_consequence (workitem)
+      # trigger the first child (the consequence child)
 
-        reply_to_parent(workitem)
-      end
+      get_expression_pool.tlaunch_child(
+        self,
+        raw_children.first,
+        (Time.new.to_f * 1000).to_i,
+        @applied_workitem.dup,
+        :register_child => false)
+    end
+
+    #
+    # Used when replying to self after an attribute condition
+    # got evaluated
+    #
+    def do_reply (result)
+
+      @applied_workitem.set_result(result)
+      reply(@applied_workitem)
+    end
+
+    #
+    # This method is overriden by WhenExpression. WaitExpression
+    # doesn't override it.
+    # This default implementation simply directly replies to
+    # the parent expression.
+    #
+    def apply_consequence (workitem)
+
+      reply_to_parent(workitem)
+    end
   end
 
 end
