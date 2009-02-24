@@ -18,7 +18,9 @@ ARGUMENTS for functional tests :
   --fs  : used OpenWFE::FsPersistedEngine (fast)
      -y : makes 'fs' store expressions as YAML (slow)
 
-  --tc  : used OpenWFE::TcPersistedEngine (fast)
+  --tc  : used OpenWFE::TcPersistedEngine (fast) (rufu/edo if possible)
+  --tt  : used OpenWFE::TtPersistedEngine (fast) (rufus/tokyo Tyrant)
+  --TC  : used OpenWFE::TcPersistedEngine (fast) (rufus/tokyo)
 
   --fp  : uses OpenWFE::FilePersistedEngine (slow and deprecated)
   --cfp : uses OpenWFE::CachedFilePersistedEngine (fast and deprecated)
@@ -52,7 +54,15 @@ else uses the in-memory OpenWFE::Engine (fastest, but no persistence at all)
       require 'openwfe/engine/file_persisted_engine'
       OpenWFE::CachedFilePersistedEngine
 
-    elsif ARGV.include?('--tc') # fast and robust, fastest
+    elsif ARGV.include?('--tc') # fast and robust
+
+      application_context[:use_rufus_tokyo] = true
+        # forces to use FFI based bindings (2 times slower)
+
+      require 'openwfe/engine/tc_engine'
+      OpenWFE::TcPersistedEngine
+
+    elsif ARGV.include?('--TC') # fast and robust, fastest
 
       require 'openwfe/engine/tc_engine'
       OpenWFE::TcPersistedEngine

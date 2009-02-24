@@ -44,6 +44,12 @@ require 'openwfe/expool/expstorage'
 
 require 'rufus/tokyo' # sudo gem install rufus-tokyo
 
+begin
+  require 'tokyocabinet' # attempting to load Hirabayashi-san's native bindings
+  require 'rufus/edo'
+rescue LoadError
+end
+
 
 module OpenWFE
 
@@ -71,7 +77,13 @@ module OpenWFE
 
       service_init(service_name, application_context)
 
-      @db = Rufus::Tokyo::Table.new(get_work_directory + '/expstorage.tdb')
+      klass = (defined?(TokyoCabinet) &&
+        ( ! application_context[:use_rufus_tokyo])) ?
+        Rufus::Edo::Table : Rufus::Tokyo::Table
+
+      @db = klass.new(get_work_directory + '/expstorage.tct')
+
+      #@db.set_index TODO set them !!!
 
       observe_expool
     end
