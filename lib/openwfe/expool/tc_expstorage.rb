@@ -73,6 +73,8 @@ module OpenWFE
     include OwfeServiceLocator
     include ExpressionStorageBase
 
+    attr_reader :db
+
     def initialize (service_name, application_context)
 
       service_init(service_name, application_context)
@@ -83,7 +85,7 @@ module OpenWFE
 
       @db = klass.new(get_work_directory + '/expstorage.tct')
 
-      #@db.set_index TODO set them !!!
+      set_indexes
 
       observe_expool
     end
@@ -217,6 +219,18 @@ module OpenWFE
         :wfid => wfid,
         :consider_subprocesses => false,
         :include_classes => DefineExpression)[0]
+    end
+
+    protected
+
+    #
+    # Sets the indexes for the Tokyo Cabinet/Tyrant table.
+    #
+    def set_indexes
+
+      @db.set_index(:pk, :lexical)
+      @db.set_index('wfid', :lexical)
+      @db.set_index('pwfid', :lexical)
     end
   end
 

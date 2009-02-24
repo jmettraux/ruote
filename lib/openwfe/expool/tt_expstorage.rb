@@ -46,8 +46,6 @@ module OpenWFE
 
   class TtExpressionStorage < TcExpressionStorage
 
-    attr_reader :db
-
     def initialize (service_name, application_context)
 
       service_init(service_name, application_context)
@@ -56,6 +54,8 @@ module OpenWFE
       port = application_context[:tyrant_expstorage_port] || 1978
 
       @db = Rufus::Tokyo::TyrantTable.new(host, port)
+
+      set_indexes
 
       observe_expool
     end
