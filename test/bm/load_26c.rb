@@ -25,8 +25,8 @@ engine = determine_engine_class(ac).new(ac)
 #p engine.class
 #puts
 
-#N = 10_000
-N = 1_000
+N = 10_000
+#N = 1_000
 
 $count = 0
 

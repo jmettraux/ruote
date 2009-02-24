@@ -148,25 +148,16 @@ module OpenWFE
     #
     def method_missing (m, *args)
 
-      methodname = m.to_s
+      method_name = m.to_s
 
       if args.length == 0
-        value = @attributes[methodname]
+        value = @attributes[method_name]
         return value if value != nil
-        raise "Missing attribute '#{methodname}' in workitem"
+        raise "Missing attribute '#{method_name}' in workitem"
       end
 
-      #if methodname == "[]" and args.length == 1
-      #  value = @attributes[args[0]]
-      #  return value if value
-      #  raise "Missing attribute '#{methodname}' in workitem"
-      #end
-      #if methodname == "[]=" and args.length == 2
-      #  return @attributes[args[0]] = args[1]
-      #end
-
-      if args.length == 1 and methodname[-1, 1] == '='
-        return @attributes[methodname[0..-2]] = args[0]
+      if args.length == 1 and method_name[-1, 1] == '='
+        return @attributes[method_name[0..-2]] = args[0]
       end
 
       super(m, args)

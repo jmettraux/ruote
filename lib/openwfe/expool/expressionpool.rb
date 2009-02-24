@@ -304,7 +304,7 @@ module OpenWFE
     #
     # Used by 'exp' and 'eval' and the do_handle_error method of the expool.
     #
-    def substitute_and_apply (fexp, template, workitem, variables=nil)
+    def substitute_and_apply (fexp, template, workitem)
 
       re = RawExpression.new_raw(
         fexp.fei,
@@ -765,6 +765,9 @@ module OpenWFE
 
           # cancel block that is adorned with 'on_error'
 
+          environment = tryexp.owns_its_environment? ?
+            tryexp.get_environment : nil
+
           cancel(tryexp)
 
           ldebug { "do_handle_error() on_error : '#{on_error}'" }
@@ -779,6 +782,11 @@ module OpenWFE
           end
 
           # switch to error handling subprocess
+
+          environment.store_itself if environment
+            #
+            # the point of error had variables, make sure they are available
+            # to the error handling block.
 
           substitute_and_apply(tryexp, template, workitem)
 

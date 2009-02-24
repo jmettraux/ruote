@@ -185,36 +185,32 @@ class FtOnErrorTest < Test::Unit::TestCase
 
   def test_on_error_failpath_and_variables
 
-    # TODO : at the process level ?
-
     pdef = OpenWFE.process_definition :name => 'test' do
-    #pdef = OpenWFE.process_definition :name => 'test', :on_error => 'fail_path' do
       sequence :on_error => 'fail_path' do
-      #sequence do
-        set :var => 'v0', :val => 'val0'
+        set :var => 'var0', :val => 'val0'
         error 'fail'
       end
       define 'fail_path' do
-        echo 'v0:${v0}'
+        echo 'var0:${var0}'
       end
     end
 
-    assert_trace pdef, "v0:val0"
+    assert_trace pdef, 'var0:val0'
   end
 
   def test_on_error_failpath_and_variables_at_the_process_level
 
     pdef = OpenWFE.process_definition :name => 't', :on_error => 'fail_path' do
       sequence do
-        set :var => 'v0', :val => 'val0'
+        set :var => 'var0', :val => 'val0'
         error 'fail'
       end
       define 'fail_path' do
-        echo 'v0:${v0}'
+        echo 'var0:${var0}'
       end
     end
 
-    assert_trace pdef, "v0:val0"
+    assert_trace pdef, 'var0:val0'
   end
 
 end
