@@ -77,7 +77,9 @@ class FtOnErrorTest < Test::Unit::TestCase
       raise 'Houston, we have a problem !'
     end
 
-    fei = assert_trace pdef, "0\n1", :ignore_errors => true
+    fei = @engine.launch(pdef)
+
+    sleep 0.350
 
     ps = @engine.process_status(fei)
 
@@ -210,7 +212,8 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    assert_trace pdef, 'var0:val0'
+    assert_trace(pdef, 'var0:val0') { sleep 0.100 }
+      # the sleep 0.100 is only useful for --fs -C
   end
 
 end

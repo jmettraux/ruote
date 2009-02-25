@@ -20,6 +20,16 @@ module FunctionalBase
     @tracer = Tracer.new
 
     ac = {}
+
+    class << ac
+      alias :old_put :[]=
+      def []= (k, v)
+        raise("!!!!! #{k.class}\n#{k.inspect}") \
+          if k.class != String and k.class != Symbol
+        old_put(k, v)
+      end
+    end
+
     ac['__tracer'] = @tracer
     ac[:definition_in_launchitem_allowed] = true
 

@@ -26,6 +26,7 @@ ARGV = [ 'test/functional/test.rb' ] \
   if ARGV.include?('--all') or ARGV.include?('-a')
 
 ruby = `which ruby`.strip
+ruby += ' -I~/rufus/rufus-tokyo/lib' # TODO : remove me later
 
 [
   '', '--fs', '--tc',

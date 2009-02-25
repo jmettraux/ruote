@@ -474,10 +474,7 @@ module OpenWFE
 
       if (not exp.parent_id) and (exp.fei.expid == '0')
 
-        ldebug do
-          "reply_to_parent() process " +
-          "#{exp.fei.workflow_instance_id} terminated"
-        end
+        ldebug { "reply_to_parent() process #{exp.fei.wfid} terminated" }
 
         onotify(:terminate, exp, workitem)
 
@@ -564,7 +561,7 @@ module OpenWFE
     #
     def fetch_root (wfid)
 
-      get_expression_storage.fetch_root wfid
+      get_expression_storage.fetch_root(wfid)
     end
 
     #
@@ -646,7 +643,7 @@ module OpenWFE
         :parent_wfid => wfid
       }
 
-      stack = get_expression_storage.find_expressions params
+      stack = get_expression_storage.find_expressions(params)
 
       stack.extend(RepresentationMixin)
 
@@ -811,7 +808,7 @@ module OpenWFE
       result = nil
 
       to = add_observer(:terminate) do |c, fe, wi|
-        if fe.fei.workflow_instance_id == wfid
+        if fe.fei.wfid == wfid
           result = [ :terminate, wi, fei_or_wfid ]
           t.wakeup
         end
@@ -858,7 +855,7 @@ module OpenWFE
 
       #open(uri.to_s).read
 
-      f = Rufus::Verbs.fopen(uri)
+      f = Rufus::Verbs.fopen(uri) # Rufus::Verbs is OK with redirections
       result = f.read
       f.close if f.respond_to?(:close)
 

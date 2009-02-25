@@ -151,11 +151,15 @@ module OpenWFE
       end
 
       Dir["#{dir}/*.#{@suffix}"].inject([]) do |a, path|
+
         fexp = load_fexp(path)
-        if does_match?(options, fexp)
+
+        if fexp and does_match?(options, fexp)
+
           fexp.application_context = @application_context
           a << fexp
         end
+
         a
       end
     end

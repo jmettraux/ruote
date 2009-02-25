@@ -83,15 +83,15 @@ module OpenWFE
     #
     def register_listener (listener, opts={})
 
-      l = listener.is_a?(Class) ?
-        listener.new(@application_context, opts) : listener
+      name = get_listener_name(opts)
+
+      l = listener.is_a?(Class) ? listener.new(name, opts) : listener
 
       l.application_context = @application_context \
         if l.respond_to?(:application_context=) # even if already set
 
-      name = get_listener_name(l)
-
       @application_context[name] = l
+        # just to be sure.
 
       job_id = if freq = opts[:frequency] || opts[:freq]
 
@@ -120,13 +120,21 @@ module OpenWFE
 
     protected
 
-    def get_listener_name (listener) #:nodoc#
+    def get_listener_name (opts) #:nodoc#
 
-      [ :service_name, :name ].each do |m|
-        return listener.send(m) if listener.respond_to?(m)
+      if name = opts[:name]
+        return name
       end
 
-      "#{listener.class}__#{@application_context.size}"
+      name = ''
+      i = 0
+
+      loop do
+        name = "listener_#{i}"
+        break unless @application_context[name]
+        i += 1
+      end
+      name
     end
 
   end

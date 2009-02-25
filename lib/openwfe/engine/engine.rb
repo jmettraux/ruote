@@ -392,14 +392,11 @@ module OpenWFE
 
         next if sname == self.service_name
 
-        #if service.kind_of?(ServiceMixin)
         if service.respond_to?(:stop)
 
           service.stop
 
-          linfo do
-            "stop() stopped service '#{sname}' (#{service.class})"
-          end
+          linfo { "stop() stopped service '#{sname}' (#{service.class})" }
         end
       end
 
@@ -432,167 +429,165 @@ module OpenWFE
 
     protected
 
-      #--
-      # the following methods may get overridden upon extension
-      # see for example file_persisted_engine.rb
-      #++
+    #--
+    # the following methods may get overridden upon extension
+    # see for example file_persisted_engine.rb
+    #++
 
-      #
-      # Builds the ExpressionMap (the mapping between expression names
-      # and expression implementations).
-      #
-      def build_expression_map
+    #
+    # Builds the ExpressionMap (the mapping between expression names
+    # and expression implementations).
+    #
+    def build_expression_map
 
-        @application_context[:s_expression_map] = ExpressionMap.new
-          #
-          # the expression map is not a Service anymore,
-          # it's a simple instance (that will be reused in other
-          # OpenWFEru components)
+      @application_context[:s_expression_map] = ExpressionMap.new
+        #
+        # the expression map is not a Service anymore,
+        # it's a simple instance (that will be reused in other
+        # OpenWFEru components)
+    end
+
+    #
+    # This implementation builds a KotobaWfidGenerator instance and
+    # binds it in the engine context.
+    # There are other WfidGeneration implementations available, like
+    # UuidWfidGenerator or FieldWfidGenerator.
+    #
+    def build_wfid_generator
+
+      #init_service(:s_wfid_generator, DefaultWfidGenerator)
+      #init_service(:s_wfid_generator, UuidWfidGenerator)
+      init_service(:s_wfid_generator, KotobaWfidGenerator)
+
+      #g = FieldWfidGenerator.new(
+      #  :s_wfid_generator, @application_context, "wfid")
+        #
+        # showing how to initialize a FieldWfidGenerator that
+        # will take as workflow instance id the value found in
+        # the field "wfid" of the LaunchItem.
+    end
+
+    #
+    # Builds the workqueue where apply/reply work is queued
+    # and processed.
+    #
+    def build_workqueue
+
+      init_service(:s_workqueue, WorkQueue)
+    end
+
+    #
+    # Builds the OpenWFEru expression pool (the core of the engine)
+    # and binds it in the engine context.
+    # There is only one implementation of the expression pool, so
+    # this method is usually never overriden.
+    #
+    def build_expression_pool
+
+      init_service(:s_expression_pool, ExpressionPool)
+    end
+
+    #
+    # The implementation here builds an InMemoryExpressionStorage
+    # instance.
+    #
+    # See FilePersistedEngine or CachedFilePersistedEngine for
+    # overrides of this method.
+    #
+    def build_expression_storage
+
+      init_service(:s_expression_storage, InMemoryExpressionStorage)
+    end
+
+    #
+    # The ParticipantMap is a mapping between participant names
+    # (well rather regular expressions) and participant implementations
+    # (see http://openwferu.rubyforge.org/participants.html)
+    #
+    def build_participant_map
+
+      init_service(:s_participant_map, ParticipantMap)
+    end
+
+    #
+    # There is only one Scheduler implementation, that's the one
+    # built and bound here.
+    #
+    def build_scheduler
+
+      @application_context[:s_scheduler] = Rufus::Scheduler.start_new(
+        :thread_name =>
+        "rufus scheduler for Ruote (engine #{self.object_id})")
+
+      @application_context[:s_scheduler].extend(Logging)
+
+      linfo { "build_scheduler() version is #{Rufus::Scheduler::VERSION}" }
+    end
+
+    #
+    # The default implementation of this method uses an
+    # InMemoryErrorJournal (do not use in production).
+    #
+    def build_error_journal
+
+      init_service(:s_error_journal, InMemoryErrorJournal)
+    end
+
+    #
+    # builds the tree checker (see lib/openwfe/util/treechecker.rb)
+    #
+    def build_tree_checker
+
+      init_service(:s_tree_checker, OpenWFE::TreeChecker)
+    end
+
+    #
+    # builds the service that turn process definitions into runnable
+    # expression trees...
+    #
+    def build_def_parser
+
+      init_service(:s_def_parser, DefParser)
+    end
+
+    #
+    # Turns the raw launch request info into a LaunchItem instance.
+    #
+    def to_launchitem (o)
+
+      return o if o.is_a?(OpenWFE::LaunchItem)
+      return OpenWFE::LaunchItem.new(o) unless o.is_a?(String)
+
+      li = OpenWFE::LaunchItem.new
+
+      if %w{ < [ - }.include?(o.strip[0, 1]) or o.match(/\s/)
+        #
+        # XML, JSON or YAML or not a URI
+        #
+        li.definition = o
+      else
+        #
+        # it's a URI
+        #
+        li.definition_url = o
       end
 
-      #
-      # This implementation builds a KotobaWfidGenerator instance and
-      # binds it in the engine context.
-      # There are other WfidGeneration implementations available, like
-      # UuidWfidGenerator or FieldWfidGenerator.
-      #
-      def build_wfid_generator
+      li
+    end
 
-        #init_service(:s_wfid_generator, DefaultWfidGenerator)
-        #init_service(:s_wfid_generator, UuidWfidGenerator)
-        init_service(:s_wfid_generator, KotobaWfidGenerator)
+    #
+    # Whether the :no_expstorage_cache is set, a CacheExpressionStorage
+    # will be set or not.
+    #
+    def init_storage (storage_class)
 
-        #g = FieldWfidGenerator.new(
-        #  :s_wfid_generator, @application_context, "wfid")
-          #
-          # showing how to initialize a FieldWfidGenerator that
-          # will take as workflow instance id the value found in
-          # the field "wfid" of the LaunchItem.
+      if @application_context[:no_expstorage_cache]
+        init_service(:s_expression_storage, storage_class)
+      else
+        init_service(:s_expression_storage, CacheExpressionStorage)
+        init_service(:s_expression_storage__1, storage_class)
       end
-
-      #
-      # Builds the workqueue where apply/reply work is queued
-      # and processed.
-      #
-      def build_workqueue
-
-        init_service(:s_workqueue, WorkQueue)
-      end
-
-      #
-      # Builds the OpenWFEru expression pool (the core of the engine)
-      # and binds it in the engine context.
-      # There is only one implementation of the expression pool, so
-      # this method is usually never overriden.
-      #
-      def build_expression_pool
-
-        init_service(:s_expression_pool, ExpressionPool)
-      end
-
-      #
-      # The implementation here builds an InMemoryExpressionStorage
-      # instance.
-      #
-      # See FilePersistedEngine or CachedFilePersistedEngine for
-      # overrides of this method.
-      #
-      def build_expression_storage
-
-        init_service(:s_expression_storage, InMemoryExpressionStorage)
-      end
-
-      #
-      # The ParticipantMap is a mapping between participant names
-      # (well rather regular expressions) and participant implementations
-      # (see http://openwferu.rubyforge.org/participants.html)
-      #
-      def build_participant_map
-
-        init_service(:s_participant_map, ParticipantMap)
-      end
-
-      #
-      # There is only one Scheduler implementation, that's the one
-      # built and bound here.
-      #
-      def build_scheduler
-
-        @application_context[:s_scheduler] = Rufus::Scheduler.start_new(
-          :thread_name =>
-          "rufus scheduler for Ruote (engine #{self.object_id})")
-
-        @application_context[:s_scheduler].extend(Logging)
-
-        linfo { "build_scheduler() version is #{Rufus::Scheduler::VERSION}" }
-      end
-
-      #
-      # The default implementation of this method uses an
-      # InMemoryErrorJournal (do not use in production).
-      #
-      def build_error_journal
-
-        init_service(:s_error_journal, InMemoryErrorJournal)
-      end
-
-      #
-      # builds the tree checker (see lib/openwfe/util/treechecker.rb)
-      #
-      def build_tree_checker
-
-        init_service(:s_tree_checker, OpenWFE::TreeChecker)
-      end
-
-      #
-      # builds the service that turn process definitions into runnable
-      # expression trees...
-      #
-      def build_def_parser
-
-        init_service(:s_def_parser, DefParser)
-      end
-
-      #
-      # Turns the raw launch request info into a LaunchItem instance.
-      #
-      def to_launchitem (o)
-
-        return o if o.is_a?(OpenWFE::LaunchItem)
-        return OpenWFE::LaunchItem.new(o) unless o.is_a?(String)
-
-        li = OpenWFE::LaunchItem.new
-
-        if %w{ < [ - }.include?(o.strip[0, 1]) or o.match(/\s/)
-          #
-          # XML, JSON or YAML or not a URI
-          #
-          li.definition = o
-        else
-          #
-          # it's a URI
-          #
-          li.definition_url = o
-        end
-
-        li
-      end
-
-      protected
-
-      #
-      # Whether the :no_expstorage_cache is set, a CacheExpressionStorage
-      # will be set or not.
-      #
-      def init_storage (storage_class)
-
-        if @application_context[:no_expstorage_cache]
-          init_service(:s_expression_storage, storage_class)
-        else
-          init_service(:s_expression_storage, CacheExpressionStorage)
-          init_service(:s_expression_storage__1, storage_class)
-        end
-      end
+    end
   end
 
 end
