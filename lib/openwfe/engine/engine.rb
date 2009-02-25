@@ -55,6 +55,7 @@ require 'openwfe/expool/wfidgen'
 require 'openwfe/expool/expressionpool'
 require 'openwfe/expool/expstorage'
 require 'openwfe/expool/errorjournal'
+require 'openwfe/engine/launch_methods'
 require 'openwfe/engine/expool_methods'
 require 'openwfe/engine/status_methods'
 require 'openwfe/engine/lookup_methods'
@@ -83,6 +84,7 @@ module OpenWFE
     include ListenerMethods
     include ParticipantMethods
     include UpdateExpMethods
+    include LaunchMethods
 
 
     #
@@ -188,84 +190,6 @@ module OpenWFE
     end
 
     alias :reload :reschedule
-
-    #
-    # When 'parameters' are used at the top of a process definition, this
-    # method can be used to assert a launchitem before launch.
-    # An expression will be raised if the parameters do not match the
-    # requirements.
-    #
-    # Note that the launch method will raise those exceptions as well.
-    # This method can be useful in some scenarii though.
-    #
-    def pre_launch_check (launchitem)
-
-      get_expression_pool.prepare_raw_expression(launchitem)
-    end
-
-    #
-    # Launches a [business] process.
-    # The 'launch_object' param may contain either a LaunchItem instance,
-    # either a String containing the URL of the process definition
-    # to launch (with an empty LaunchItem created on the fly).
-    #
-    # The launch object can also be a String containing the XML process
-    # definition or directly a class extending OpenWFE::ProcessDefinition
-    # (Ruby process definition).
-    #
-    # Returns the FlowExpressionId instance of the expression at the
-    # root of the newly launched process.
-    #
-    # Options for scheduled launches like :at, :in and :cron are accepted
-    # via the 'options' optional parameter.
-    # For example :
-    #
-    #   engine.launch(launch_item)
-    #     # will launch immediately
-    #
-    #   engine.launch(launch_item, :in => "1d20m")
-    #     # will launch in one day and twenty minutes
-    #
-    #   engine.launch(launch_item, :at => "Tue Sep 11 20:23:02 +0900 2007")
-    #     # will launch at that point in time
-    #
-    #   engine.launch(launch_item, :cron => "0 5 * * *")
-    #     # will launch that same process every day,
-    #     # five minutes after midnight (see "man 5 crontab")
-    #
-    # === :wait_for
-    #
-    # If you really need that, you can launch a process and wait for its
-    # termination (or cancellation or error) as in :
-    #
-    #   engine.launch(launch_item, :wait_for => true)
-    #     # will launch and return only when the process is over
-    #
-    # Note that if you set the option :wait_for to true, a triplet will
-    # be returned instead of just a FlowExpressionId.
-    #
-    # This triplet is composed of [ message, info, fei ]
-    # where message is :terminate, :error or :cancel and info contains
-    # either the workitem, the error or a wfid, respectively.
-    #
-    # See http://groups.google.com/group/openwferu-users/browse_frm/thread/ffd0589bdc877765 for more about this triplet.
-    #
-    # (Note that the current implementation of this :wait_for will return if
-    # any error was found. Thus, if an error occurs in a concurrent branch
-    # and the other branch goes on, the launch() will return, even if the
-    # rest of the process is continuing).
-    #
-    def launch (launch_object, options={})
-
-      fei = get_expression_pool.launch(to_launchitem(launch_object), options)
-
-      #linfo { "launch() #{fei.wfid} : #{fei.wfname} #{fei.wfrevision}" }
-
-      fei.dup
-        #
-        # so that users of this launch() method can play with their
-        # fei without breaking things
-    end
 
     #
     # This method is used to feed a workitem back to the engine (after
@@ -548,31 +472,6 @@ module OpenWFE
     def build_def_parser
 
       init_service(:s_def_parser, DefParser)
-    end
-
-    #
-    # Turns the raw launch request info into a LaunchItem instance.
-    #
-    def to_launchitem (o)
-
-      return o if o.is_a?(OpenWFE::LaunchItem)
-      return OpenWFE::LaunchItem.new(o) unless o.is_a?(String)
-
-      li = OpenWFE::LaunchItem.new
-
-      if %w{ < [ - }.include?(o.strip[0, 1]) or o.match(/\s/)
-        #
-        # XML, JSON or YAML or not a URI
-        #
-        li.definition = o
-      else
-        #
-        # it's a URI
-        #
-        li.definition_url = o
-      end
-
-      li
     end
 
     #

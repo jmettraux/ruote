@@ -109,103 +109,6 @@ module OpenWFE
     end
 
     #
-    # This method is called by the launch method. It's actually the first
-    # stage of that method.
-    # It may be interessant to use to 'validate' a launchitem and its
-    # process definition, as it will raise an exception in case
-    # of 'parameter' mismatch.
-    #
-    # There is a 'pre_launch_check' alias for this method in the
-    # Engine class.
-    #
-    def prepare_raw_expression (launchitem)
-
-      wfdurl = launchitem.workflow_definition_url
-
-      definition, in_launchitem = if (not wfdurl)
-
-        [ launchitem.attributes.delete('__definition'), true ]
-
-      elsif wfdurl[0, 6] == 'field:'
-
-        [ launchitem.attributes.delete(wfdurl[6..-1]), true ]
-
-      else
-
-        [ read_uri(wfdurl), false ]
-      end
-
-      raise(
-        "didn't find process definition at '#{wfdurl}'"
-      ) unless definition
-
-      raise(
-        ":definition_in_launchitem_allowed not set to true, cannot launch."
-      ) if in_launchitem and ac[:definition_in_launchitem_allowed] != true
-
-      raw_expression = build_raw_expression(definition, launchitem)
-
-      raw_expression.check_parameters(launchitem)
-        #
-        # will raise an exception if there are requirements
-        # and one of them is not met
-
-      raw_expression.store_itself
-
-      raw_expression
-    end
-
-    #
-    # Instantiates a workflow definition and launches it.
-    #
-    # This method call will return immediately, it could even return
-    # before the actual launch is completely over.
-    #
-    # Returns the FlowExpressionId instance of the root expression of
-    # the newly launched flow.
-    #
-    def launch (launchitem, options={})
-
-      wait = (options.delete(:wait_for) == true)
-      initial_variables = options.delete(:vars) || options.delete(:variables)
-
-      #
-      # prepare raw expression
-
-      raw_expression = prepare_raw_expression(launchitem)
-        #
-        # will raise an exception if there are requirements
-        # and one of them is not met
-
-      raw_expression.new_environment(initial_variables)
-        #
-        # as this expression is the root of a new process instance,
-        # it has to have an environment for all the variables of
-        # the process instance
-        #
-        # (new_environment() calls store_itself on the new env)
-
-      raw_expression = wrap_in_schedule(raw_expression, options) \
-        if (options.keys & [ :in, :at, :cron, :every ]).size > 0
-
-      fei = raw_expression.fei
-
-      #
-      # apply prepared raw expression
-
-      onotify(:launch, fei, launchitem)
-
-      wi = build_workitem(launchitem)
-
-      if wait
-        wait_for(fei) { apply(raw_expression, wi) }
-      else
-        apply(raw_expression, wi)
-        fei
-      end
-    end
-
-    #
     # This is the first stage of the tlaunch_child() method.
     #
     # (it's used by the concurrent iterator when preparing all its
@@ -316,6 +219,16 @@ module OpenWFE
       update(re)
 
       apply(re, workitem)
+    end
+
+    #
+    # Launches new process instance.
+    #
+    def launch (raw_exp, workitem)
+
+      onotify(:launch, raw_exp.fei, workitem)
+
+      apply(raw_exp, workitem)
     end
 
     #
@@ -721,6 +634,36 @@ module OpenWFE
       (@paused_instances[expression.fei.parent_wfid] != nil)
     end
 
+    #
+    # Builds the RawExpression instance at the root of the flow
+    # being launched.
+    #
+    # The param can be a template or a definition (anything
+    # accepted by the determine_representation() method).
+    #
+    def build_raw_expression (param, launchitem=nil)
+
+      procdef = determine_rep(param)
+      atts = procdef[1]
+
+      h = {
+        :workflow_instance_id =>
+          get_wfid_generator.generate(launchitem),
+        :workflow_definition_name =>
+          atts['name'] || procdef[2].first || 'no-name',
+        :workflow_definition_revision =>
+          atts['revision'] || '0',
+        :expression_name =>
+          procdef[0] }
+
+      h[:workflow_definition_url] = (
+        launchitem.workflow_definition_url || LaunchItem::FIELD_DEF
+      ) if launchitem
+
+      RawExpression.new_raw(
+        new_fei(h), nil, nil, @application_context, procdef)
+    end
+
     protected
 
     #
@@ -1015,19 +958,6 @@ module OpenWFE
     end
 
     #
-    # Prepares a new instance of InFlowWorkItem from a LaunchItem
-    # instance.
-    #
-    def build_workitem (launchitem)
-
-      wi = InFlowWorkItem.new
-
-      wi.attributes = launchitem.attributes.dup
-
-      wi
-    end
-
-    #
     # Builds a FlowExpressionId instance for a process being
     # launched.
     #
@@ -1045,36 +975,6 @@ module OpenWFE
       key = "workflow_definition_#{key}".intern
       v = h[key]
       h[key] = OpenWFE::stu(v.to_s) if v
-    end
-
-    #
-    # Builds the RawExpression instance at the root of the flow
-    # being launched.
-    #
-    # The param can be a template or a definition (anything
-    # accepted by the determine_representation() method).
-    #
-    def build_raw_expression (param, launchitem=nil)
-
-      procdef = determine_rep(param)
-      atts = procdef[1]
-
-      h = {
-        :workflow_instance_id =>
-          get_wfid_generator.generate(launchitem),
-        :workflow_definition_name =>
-          atts['name'] || procdef[2].first || 'no-name',
-        :workflow_definition_revision =>
-          atts['revision'] || '0',
-        :expression_name =>
-          procdef[0] }
-
-      h[:workflow_definition_url] = (
-        launchitem.workflow_definition_url || LaunchItem::FIELD_DEF
-      ) if launchitem
-
-      RawExpression.new_raw(
-        new_fei(h), nil, nil, @application_context, procdef)
     end
 
     #
