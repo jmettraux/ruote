@@ -53,7 +53,7 @@ module OpenWFE
   #
   # A process definition parser.
   #
-  # Currently supports XML, Ruby process pdefinitions, YAML and JSON.
+  # Currently supports XML, Ruby process definitions, YAML and JSON.
   #
   class DefParser < Service
     include OwfeServiceLocator
@@ -121,7 +121,7 @@ module OpenWFE
       #
       # else it's some ruby code to eval
 
-      get_tree_checker.check pdef
+      get_tree_checker.check(pdef)
 
       # green for eval...
 

@@ -331,12 +331,6 @@ module OpenWFE
       att || @attributes
     end
 
-    #--
-    #def extract_descriptions
-    #  []
-    #end
-    #++
-
     def extract_children
       @children
     end

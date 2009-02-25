@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,24 +37,26 @@
 # John Mettraux at openwfe.org
 #
 
-#
-# Gets included into the ExpressionPool class
-#
-module OpenWFE::ExpoolPauseMethods
+module OpenWFE
+
+  #
+  # Gets included into the ExpressionPool class
+  #
+  module ExpoolPauseMethods
 
     #
     # Pauses a process (sets its /__paused__ variable to true).
     #
     def pause_process (wfid)
 
-      wfid = extract_wfid wfid
+      wfid = extract_wfid(wfid)
 
-      root_expression = fetch_root wfid
+      root_expression = fetch_root(wfid)
 
       @paused_instances[wfid] = true
-      root_expression.set_variable OpenWFE::VAR_PAUSED, true
+      root_expression.set_variable(OpenWFE::VAR_PAUSED, true)
 
-      onotify :pause, root_expression.fei
+      onotify(:pause, root_expression.fei)
     end
 
     #
@@ -66,18 +68,18 @@ module OpenWFE::ExpoolPauseMethods
 
       wfid = extract_wfid wfid
 
-      root_expression = fetch_root wfid
+      root_expression = fetch_root(wfid)
 
       #
       # remove 'paused' flag
 
-      @paused_instances.delete wfid
-      root_expression.unset_variable OpenWFE::VAR_PAUSED
+      @paused_instances.delete(wfid)
+      root_expression.unset_variable(OpenWFE::VAR_PAUSED)
 
       #
       # notify ...
 
-      onotify :resume, root_expression.fei
+      onotify(:resume, root_expression.fei)
 
       #
       # replay
@@ -94,5 +96,6 @@ module OpenWFE::ExpoolPauseMethods
 
       paused_errors.each { |e| get_error_journal.replay_at_error e }
     end
+  end
 end
 

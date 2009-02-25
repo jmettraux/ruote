@@ -140,14 +140,14 @@ module OpenWFE
       get_expression_pool.cancel_expression(exp_or_fei)
     end
 
-    #
+    #--
     # Forgets the given expression (make it an orphan)
     # (warning : advanced method)
     #
-    def forget_expression (exp_or_fei)
-
-      get_expression_pool.forget(exp_or_fei)
-    end
+    #def forget_expression (exp_or_fei)
+    #  get_expression_pool.forget(exp_or_fei)
+    #end
+    #++
 
     #
     # Pauses a process instance.
@@ -195,7 +195,7 @@ module OpenWFE
         get_expression_pool.fetch_expression(fei_or_wfid)
       end
 
-      exp or raise "no expression found for '#{fei_or_wfid.to_s}'"
+      exp || raise("no expression found for '#{fei_or_wfid.to_s}'")
     end
   end
 end
