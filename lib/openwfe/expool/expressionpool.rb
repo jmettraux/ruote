@@ -654,6 +654,51 @@ module OpenWFE
         new_fei(h), nil, nil, @application_context, procdef)
     end
 
+    #
+    # If the launch option :wait_for is set to true, this method
+    # will be called to apply the raw_expression. It will only return
+    # when the launched process is over, which means it terminated, it
+    # had an error or it got cancelled.
+    #
+    def wait_for (fei_or_wfid)
+
+      wfid = extract_wfid(fei_or_wfid, false)
+
+      t = Thread.current
+      result = nil
+
+      to = add_observer(:terminate) do |c, fe, wi|
+        if fe.fei.wfid == wfid
+          result = [ :terminate, wi, fei_or_wfid ]
+          t.wakeup
+        end
+      end
+      te = add_observer(:error) do |c, fei, m, i, e|
+        if fei.parent_wfid == wfid
+          result = [ :error, e, fei_or_wfid ]
+          t.wakeup
+        end
+      end
+      tc = add_observer(:cancel) do |c, fe|
+        if fe.fei.wfid == wfid and fe.fei.expid == '0'
+          result = [ :cancel, wfid, fei_or_wfid ]
+          t.wakeup
+        end
+      end
+
+      yield if block_given?
+
+      Thread.stop unless result
+
+      linfo { "wait_for() '#{wfid}' is over" }
+
+      remove_observer(to, :terminate)
+      remove_observer(te, :error)
+      remove_observer(tc, :cancel)
+
+      result
+    end
+
     protected
 
     #
@@ -725,51 +770,6 @@ module OpenWFE
       end
 
       false # no error handler found
-    end
-
-    #
-    # If the launch option :wait_for is set to true, this method
-    # will be called to apply the raw_expression. It will only return
-    # when the launched process is over, which means it terminated, it
-    # had an error or it got cancelled.
-    #
-    def wait_for (fei_or_wfid)
-
-      wfid = extract_wfid(fei_or_wfid, false)
-
-      t = Thread.current
-      result = nil
-
-      to = add_observer(:terminate) do |c, fe, wi|
-        if fe.fei.wfid == wfid
-          result = [ :terminate, wi, fei_or_wfid ]
-          t.wakeup
-        end
-      end
-      te = add_observer(:error) do |c, fei, m, i, e|
-        if fei.parent_wfid == wfid
-          result = [ :error, e, fei_or_wfid ]
-          t.wakeup
-        end
-      end
-      tc = add_observer(:cancel) do |c, fe|
-        if fe.fei.wfid == wfid and fe.fei.expid == '0'
-          result = [ :cancel, wfid, fei_or_wfid ]
-          t.wakeup
-        end
-      end
-
-      yield if block_given?
-
-      Thread.stop unless result
-
-      linfo { "wait_for() '#{wfid}' is over" }
-
-      remove_observer(to, :terminate)
-      remove_observer(te, :error)
-      remove_observer(tc, :cancel)
-
-      result
     end
 
     #

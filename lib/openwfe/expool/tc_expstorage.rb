@@ -83,6 +83,8 @@ module OpenWFE
         ( ! application_context[:use_rufus_tokyo])) ?
         Rufus::Edo::Table : Rufus::Tokyo::Table
 
+      linfo { "using #{klass} to access TokyoCabinet" }
+
       @db = klass.new(get_work_directory + '/expstorage.tct')
 
       set_indexes

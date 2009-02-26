@@ -329,28 +329,6 @@ module OpenWFE
       nil
     end
 
-    #
-    # Waits for a given process instance to terminate.
-    # The method only exits when the flow terminates, but beware : if
-    # the process already terminated, the method will never exit.
-    #
-    # The parameter can be a FlowExpressionId instance, for example the
-    # one given back by a launch(), or directly a workflow instance id
-    # (String).
-    #
-    # This method is mainly used in utests.
-    #
-    def wait_for (fei_or_wfid)
-
-      wfid = if fei_or_wfid.kind_of?(FlowExpressionId)
-        fei_or_wfid.workflow_instance_id
-      else
-        fei_or_wfid
-      end
-
-      get_expression_pool.send(:wait_for, wfid)
-    end
-
     protected
 
     #--

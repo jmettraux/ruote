@@ -39,6 +39,10 @@
 
 module OpenWFE
 
+  #
+  # The methods for ordering an engine to read a process definition and
+  # turn it into a process instance (launching).
+  #
   module LaunchMethods
 
     #
@@ -128,7 +132,9 @@ module OpenWFE
       wi.attributes = launchitem.attributes.dup
 
       if wait
-        wait_for(fei) { get_expression_pool.launch(raw_expression, wi) }
+        get_expression_pool.wait_for(fei) {
+          get_expression_pool.launch(raw_expression, wi)
+        }
       else
         get_expression_pool.launch(raw_expression, wi)
         fei.dup # returns a copy, not the real one
@@ -147,6 +153,28 @@ module OpenWFE
     def pre_launch_check (launchitem)
 
       prepare_raw_expression(launchitem)
+    end
+
+    #
+    # Waits for a given process instance to terminate.
+    # The method only exits when the flow terminates, but beware : if
+    # the process already terminated, the method will never exit.
+    #
+    # The parameter can be a FlowExpressionId instance, for example the
+    # one given back by a launch(), or directly a workflow instance id
+    # (String).
+    #
+    # This method is mainly used in utests.
+    #
+    def wait_for (fei_or_wfid)
+
+      wfid = if fei_or_wfid.kind_of?(FlowExpressionId)
+        fei_or_wfid.workflow_instance_id
+      else
+        fei_or_wfid
+      end
+
+      get_expression_pool.wait_for(wfid)
     end
 
     protected
