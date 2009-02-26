@@ -10,7 +10,7 @@
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
 require 'openwfe/def'
-require 'openwfe/expool/parser'
+require 'openwfe/expool/def_parser'
 
 
 class ParserRubyTest < Test::Unit::TestCase

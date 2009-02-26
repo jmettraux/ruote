@@ -48,12 +48,11 @@ require 'openwfe/flowexpressionid'
 require 'openwfe/util/observable'
 require 'openwfe/expool/errors'
 require 'openwfe/expool/expool_pause_methods'
-require 'openwfe/expool/parser'
 require 'openwfe/expool/representation'
 require 'openwfe/expressions/environment'
 require 'openwfe/expressions/raw'
 
-require 'rufus/verbs' # gem 'rufus-verbs'
+require 'rufus/verbs' # sudo gem install 'rufus-verbs'
 
 
 module OpenWFE
@@ -615,17 +614,6 @@ module OpenWFE
     end
 
     #
-    # Gets the process definition (if necessary) and turns into
-    # into an expression tree (for storing into a RawExpression).
-    #
-    def determine_rep (param)
-
-      param = read_uri(param) if param.is_a?(URI)
-
-      get_def_parser.parse(param)
-    end
-
-    #
     # Returns true if the process instance to which the expression
     # belongs is currently paused.
     #
@@ -638,12 +626,14 @@ module OpenWFE
     # Builds the RawExpression instance at the root of the flow
     # being launched.
     #
-    # The param can be a template or a definition (anything
-    # accepted by the determine_representation() method).
+    # The param can be a template or a definition (or a URI).
     #
     def build_raw_expression (param, launchitem=nil)
 
-      procdef = determine_rep(param)
+      procdef = get_def_parser.determine_rep(param)
+
+      # procdef is a nested [ name, attributes, children ] structure now
+
       atts = procdef[1]
 
       h = {
@@ -778,29 +768,6 @@ module OpenWFE
       remove_observer(to, :terminate)
       remove_observer(te, :error)
       remove_observer(tc, :cancel)
-
-      result
-    end
-
-    #
-    # This is the only point in the expression pool where an URI
-    # is read, so this is where the :remote_definitions_allowed
-    # security check is enforced.
-    #
-    def read_uri (uri)
-
-      uri = URI.parse(uri.to_s)
-
-      raise ":remote_definitions_allowed is set to false" \
-        if (ac[:remote_definitions_allowed] != true and
-          uri.scheme and
-          uri.scheme != 'file')
-
-      #open(uri.to_s).read
-
-      f = Rufus::Verbs.fopen(uri) # Rufus::Verbs is OK with redirections
-      result = f.read
-      f.close if f.respond_to?(:close)
 
       result
     end

@@ -175,7 +175,7 @@ module OpenWFE
 
       else
 
-        [ read_uri(wfdurl), false ]
+        [ get_def_parser.read_uri(wfdurl), false ]
       end
 
       raise(
@@ -183,7 +183,7 @@ module OpenWFE
       ) unless definition
 
       raise(
-        ":definition_in_launchitem_allowed not set to true, cannot launch."
+        ':definition_in_launchitem_allowed not set to true, cannot launch.'
       ) if in_launchitem and ac[:definition_in_launchitem_allowed] != true
 
       raw_expression = get_expression_pool.build_raw_expression(

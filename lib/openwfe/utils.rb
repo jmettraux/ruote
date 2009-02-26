@@ -150,13 +150,10 @@ module OpenWFE
   #
   def OpenWFE.parse_uri (string)
 
-    return nil if string.split("\n").size > 1
+    return nil if string.index("\n")
+      # cheap initial test
 
-    begin
-      URI::parse(string)
-    rescue Exception => e
-      nil
-    end
+    URI.parse(string) rescue nil
   end
 
   #
@@ -166,7 +163,7 @@ module OpenWFE
   #
   def OpenWFE.parse_known_uri (ref)
 
-    uri = OpenWFE::parse_uri(ref.to_s)
+    uri = OpenWFE.parse_uri(ref.to_s)
 
     return nil unless uri
 

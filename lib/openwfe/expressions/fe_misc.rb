@@ -252,7 +252,7 @@ module OpenWFE
 
       ldebug { "apply() def is >#{df}<" }
 
-      tree = get_expression_pool.determine_rep(df)
+      tree = get_def_parser.determine_rep(df)
 
       get_expression_pool.substitute_and_apply(self, tree, workitem)
     end

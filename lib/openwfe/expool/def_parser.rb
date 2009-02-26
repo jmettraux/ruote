@@ -47,6 +47,8 @@ require 'openwfe/util/json'
 require 'openwfe/expressions/rprocdef'
 require 'openwfe/expressions/expressionmap'
 
+require 'rufus/verbs' # sudo gem install 'rufus-verbs'
+
 
 module OpenWFE
 
@@ -64,7 +66,6 @@ module OpenWFE
     #
     def self.parse (pdef, use_ruby_treechecker=true)
 
-      #
       # preparing a small ad-hoc env (app context) for this parsing
 
       ac = { :use_ruby_treechecker => use_ruby_treechecker }
@@ -81,6 +82,36 @@ module OpenWFE
     #
     def initialize (service_name, application_context)
       super
+    end
+
+    #
+    # This is the only point in the expression pool where an URI
+    # is read, so this is where the :remote_definitions_allowed
+    # security check is enforced.
+    #
+    def read_uri (uri)
+
+      u = URI.parse(uri.to_s)
+
+      raise(':remote_definitions_allowed is set to false') \
+        if (ac[:remote_definitions_allowed] != true and
+          u.scheme and
+          u.scheme != 'file')
+
+      f = Rufus::Verbs.fopen(u) # Rufus::Verbs is OK with redirections
+      result = f.read
+      f.close if f.respond_to?(:close)
+
+      result
+    end
+
+    #
+    # Returns the tree representation into behind the param (uri, string, ...)
+    #
+    def determine_rep (param)
+
+      param = param.is_a?(URI) ? read_uri(param) : param
+      parse(param)
     end
 
     #
@@ -123,7 +154,7 @@ module OpenWFE
 
       get_tree_checker.check(pdef)
 
-      # green for eval...
+      # no exception, green for eval...
 
       ProcessDefinition.eval_ruby_process_definition(pdef)
     end
