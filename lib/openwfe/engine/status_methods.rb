@@ -356,10 +356,17 @@ module OpenWFE
       result
     end
 
-    #
     # list_process_status() will be deprecated at release 1.0.0
+    #alias :list_process_status :process_statuses
+
     #
-    alias :list_process_status :process_statuses
+    # Like process_statuses, but returns an Array (of ProcessStatus instances)
+    # instead of a Hash.
+    #
+    def processes (options={})
+
+      process_statuses(options).values
+    end
 
     #
     # Returns the process status of one given process instance.
@@ -372,7 +379,8 @@ module OpenWFE
 
       wfid = extract_wfid(wfid, true)
 
-      process_statuses(:wfid_prefix => wfid).values.first
+      #process_statuses(:wfid_prefix => wfid).values.first
+      process_statuses(:wfid => wfid).values.first
     end
 
     #

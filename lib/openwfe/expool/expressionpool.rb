@@ -37,8 +37,6 @@
 # John Mettraux at openwfe.org
 #
 
-require 'uri'
-
 require 'openwfe/utils'
 require 'openwfe/service'
 require 'openwfe/logging'
@@ -51,8 +49,6 @@ require 'openwfe/expool/expool_pause_methods'
 require 'openwfe/expool/representation'
 require 'openwfe/expressions/environment'
 require 'openwfe/expressions/raw'
-
-require 'rufus/verbs' # sudo gem install 'rufus-verbs'
 
 
 module OpenWFE
@@ -534,7 +530,7 @@ module OpenWFE
         :expression_name => EN_ENVIRONMENT)
     end
 
-    #
+    #--
     # Returns the list of applied expressions belonging to a given
     # workflow instance.
     #
@@ -542,42 +538,30 @@ module OpenWFE
     # expressions (even those not yet applied) that compose the process
     # instance will be returned. Environments will be returned as well.
     #
-    def process_stack (wfid)
+    #def process_stack (wfid)
+    #  wfid = extract_wfid(wfid, true)
+    #  params = { :parent_wfid => wfid }
+    #  stack = get_expression_storage.find_expressions(params)
+    #  stack.extend(RepresentationMixin)
+    #  stack
+    #end
+    #++
 
-      #raise "please provide a non-nil workflow instance id" \
-      #  unless wfid
-
-      wfid = extract_wfid(wfid, true)
-
-      params = {
-        #:exclude_classes => [ Environment, RawExpression ],
-        #:exclude_classes => [ Environment ],
-        :parent_wfid => wfid
-      }
-
-      stack = get_expression_storage.find_expressions(params)
-
-      stack.extend(RepresentationMixin)
-
-      stack
-    end
-
-    #
+    #--
     # Lists all workflows (processes) currently in the expool (in
     # the engine).
     # This method will return a list of "process-definition" expressions
     # (root of flows).
     #
-    def list_processes (options={})
-
-      options[:include_classes] = DefineExpression
-        #
-        # Maybe it would be better to list root expressions instead
-        # so that expressions like 'sequence' can be used
-        # as root expressions. Later...
-
-      get_expression_storage.find_expressions(options)
-    end
+    #def list_processes (options={})
+    #  options[:include_classes] = DefineExpression
+    #    #
+    #    # Maybe it would be better to list root expressions instead
+    #    # so that expressions like 'sequence' can be used
+    #    # as root expressions. Later...
+    #  get_expression_storage.find_expressions(options)
+    #end
+    #++
 
     #
     # This method is called when apply() or reply() failed for
@@ -644,7 +628,8 @@ module OpenWFE
         :workflow_definition_revision =>
           atts['revision'] || '0',
         :expression_name =>
-          procdef[0] }
+          procdef[0]
+      }
 
       h[:workflow_definition_url] = (
         launchitem.workflow_definition_url || LaunchItem::FIELD_DEF

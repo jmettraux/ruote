@@ -16,7 +16,7 @@ require 'rubygems'
 
 require 'test/unit'
 require 'openwfe/def'
-require 'openwfe/expool/parser'
+require 'openwfe/expool/def_parser'
 
 
 class RawProgTest < Test::Unit::TestCase

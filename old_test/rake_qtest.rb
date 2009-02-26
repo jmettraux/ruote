@@ -6,6 +6,8 @@
 # Mon Oct  9 22:19:44 JST 2006
 #
 
+$:.unshift(File.dirname(__FILE__))
+
 require 'rubygems'
 
 #require 'rutest_utils'

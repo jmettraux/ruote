@@ -37,6 +37,7 @@
 # John Mettraux at openwfe.org
 #
 
+require 'uri'
 require 'yaml'
 require 'openwfe/rexml'
 require 'openwfe/service'
