@@ -18,6 +18,21 @@ class EftSleepTest < Test::Unit::TestCase
     pdef = OpenWFE.process_definition :name => 'test' do
       concurrence do
         sequence do
+          _sleep :for => '1s'
+          echo 'a'
+        end
+        echo 'b'
+      end
+    end
+
+    assert_trace(pdef, "b\na")
+  end
+
+  def test_sleep_for_implicit
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      concurrence do
+        sequence do
           _sleep '1s'
           echo 'a'
         end
@@ -53,7 +68,7 @@ class EftSleepTest < Test::Unit::TestCase
 
     sleep 0.350
 
-    jobs = @engine.get_scheduler.find_jobs(OpenWFE::SleepExpression.name)
+    jobs = @engine.get_scheduler.find_jobs(OpenWFE::WaitExpression.name)
 
     assert_equal 1, jobs.size
 

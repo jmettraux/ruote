@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,11 +37,16 @@
 # John Mettraux at openwfe.org
 #
 
-#require 'openwfe/expressions/fe_when'
-
 
 module OpenWFE
 
+  #
+  # Since Ruote 0.9.20, 'sleep' got merged into 'wait' (according to Kenneth
+  # 'wait' sounds less lazy than 'sleep')
+  #
+  # The expression names are interchangeable.
+  #
+  # = wait
   #
   # The 'wait' expression simply blocks/waits until the given condition
   # evaluates to true.
@@ -67,11 +72,119 @@ module OpenWFE
   # the wait ceases and the flow resumes. On a timeout, 'when' will not
   # execute its nested 'consequence' child.
   #
+  #
+  # = sleep
+  #
+  # The 'sleep' expression expects one attribute, either 'for', either
+  # 'until'.
+  #
+  #   <sequence>
+  #     <sleep for="10m12s" />
+  #     <participant ref="alpha" />
+  #   </sequence>
+  #
+  # will wait for 10 minutes and 12 seconds before sending a workitem
+  # to participant 'alpha'.
+  #
+  # In a Ruby process definition, that might look like :
+  #
+  #   _sleep :for => "3m"
+  #   _sleep "3m"
+  #     #
+  #     # both meaning 'sleep for 3 minutes'
+  #
+  #   _sleep :until => "Mon Dec 03 10:41:58 +0900 2007"
+  #     #
+  #     # sleep until the given point in time
+  #
+  # If the 'until' attribute points to a time in the past, the sleep
+  # expression will simply let the process resume.
+  #
+  # _sleep needs to be used instead of 'sleep', so it doesn't conflict
+  # with Ruby's builtin sleep method.
+  #
+  # === scheduler tags
+  #
+  # Scheduler tags can be set like this :
+  #
+  #   _sleep "10y", :scheduler_tags => "la_belle_au_bois_dormant"
+  #
+  # This is an advanced feature (that most users won't need).
+  #
+  #
   class WaitExpression < WaitingExpression
 
-    names :wait
+    names :wait, :sleep
     conditions :until
-  end
 
+    attr_accessor :until
+
+    def apply (workitem)
+
+      #
+      # is it a sleep ?
+
+      sfor = lookup_string_attribute(:for, workitem)
+      suntil = lookup_string_attribute(:until, workitem)
+
+      sfor = fetch_text_content(workitem) if sfor == nil and suntil == nil
+
+      @until = if suntil
+        Rufus.to_ruby_time(suntil) rescue nil
+      elsif sfor
+        (Time.new.to_f + Rufus::parse_time_string(sfor)) rescue nil
+      else
+        nil # just to be sure
+      end
+
+      @until ? apply_sleep(workitem) : super(workitem)
+    end
+
+    def reschedule (scheduler)
+
+      @until ? reschedule_sleep : super(scheduler)
+    end
+
+    def trigger (params={})
+
+      @until ? reply_to_parent(@applied_workitem) : super(params)
+    end
+
+    protected
+
+    def apply_sleep (workitem) #:nodoc#
+
+      @applied_workitem = workitem.dup
+
+      determine_scheduler_tags
+
+      reschedule(get_scheduler)
+    end
+
+    def reschedule_sleep #:nodoc#
+
+      ldebug do
+        "[re]schedule() " +
+        "will sleep until '#{@until}' " +
+        "(#{Rufus::to_iso8601_date(@until)})"
+      end
+
+      @scheduler_job_id = "sleep_#{self.fei.to_s}"
+
+      store_itself
+
+      get_scheduler.schedule_at(
+        @until,
+        {
+          :schedulable => self,
+          :job_id => @scheduler_job_id,
+          :tags => @scheduler_tags })
+
+      ldebug do
+        "[re]schedule() @scheduler_job_id is '#{@scheduler_job_id}' "+
+        " (scheduler #{scheduler.object_id})"
+      end
+    end
+  end
 end
 

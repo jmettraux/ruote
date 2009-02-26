@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2006-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ require 'openwfe/expressions/fe_sequence'
 require 'openwfe/expressions/fe_subprocess'
 require 'openwfe/expressions/fe_concurrence'
 require 'openwfe/expressions/fe_participant'
-require 'openwfe/expressions/fe_sleep'
+#require 'openwfe/expressions/fe_sleep'
 require 'openwfe/expressions/fe_cron'
 require 'openwfe/expressions/fe_when'
 require 'openwfe/expressions/fe_wait'
@@ -80,7 +80,7 @@ module OpenWFE
 
     def initialize
 
-      super
+      #super
 
       @expressions = {}
       @ancestors = {}
@@ -109,7 +109,7 @@ module OpenWFE
 
       register EqualsExpression
 
-      register SleepExpression
+      #register SleepExpression
       register CronExpression
       register WhenExpression
       register WaitExpression
@@ -163,10 +163,6 @@ module OpenWFE
         # only used by get_expression_names()
 
       register_ancestors RawExpression
-      #register_ancestors XmlRawExpression
-      #register_ancestors ProgRawExpression
-        #
-        # just register the ancestors for those two
     end
 
     #
@@ -209,11 +205,10 @@ module OpenWFE
       return expression_class.expression_names \
         if expression_class.method_defined?(:expression_names)
 
-      names = []
-      @expressions.each do |k, v|
-        names << k if v.ancestors.include? expression_class
+      @expressions.inject([]) do |names, (k, v)|
+        names << k if v.ancestors.include?(expression_class)
+        names
       end
-      names
     end
 
     #
@@ -225,12 +220,14 @@ module OpenWFE
       @ancestors[ancestor]
     end
 
+    #
+    # Returns a string representation for this expression map.
+    #
     def to_s
-      s = ""
-      @expressions.keys.sort.each do |name|
-        s << "- '#{name}' -> '#{@expressions[name].to_s}'\n"
+
+      @expressions.keys.sort.inject('') do |s, name|
+        s << "- '#{name}' -> '#{@expressions[name].to_s}'\n"; s
       end
-      s
     end
 
     #
@@ -245,20 +242,20 @@ module OpenWFE
         name = OpenWFE::to_dash(name)
         @expressions[name] = expression_class
       end
-      register_ancestors expression_class
+      register_ancestors(expression_class)
     end
 
     protected
 
-      #
-      # registers all the ancestors of an expression class
-      #
-      def register_ancestors (expression_class)
+    #
+    # registers all the ancestors of an expression class
+    #
+    def register_ancestors (expression_class)
 
-        expression_class.ancestors.each do |ancestor|
-          (@ancestors[ancestor] ||= []) << expression_class
-        end
+      expression_class.ancestors.each do |ancestor|
+        (@ancestors[ancestor] ||= []) << expression_class
       end
+    end
   end
 
 end

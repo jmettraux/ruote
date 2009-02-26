@@ -78,6 +78,8 @@ module OpenWFE
     #
     attr_reader :stacktrace
 
+    alias :backtrace :stacktrace
+
     #
     # The error class (String) of the top level error
     #

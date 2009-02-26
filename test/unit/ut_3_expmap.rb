@@ -21,7 +21,6 @@ class ExpmapTest < Test::Unit::TestCase
     assert_equal(
       [
         OpenWFE::ParticipantExpression,
-        OpenWFE::SleepExpression,
         OpenWFE::CronExpression,
         OpenWFE::WhenExpression,
         OpenWFE::WaitExpression,

@@ -1,6 +1,6 @@
 #
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
+# Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -53,9 +53,8 @@ module OpenWFE
   module TimeoutMixin
     include Rufus::Schedulable
 
-    attr_accessor \
-      :timeout_at,
-      :timeout_job_id
+    attr_accessor :timeout_at
+    attr_accessor :timeout_job_id
 
     #
     # Looks for the "timeout" attribute in its process definition
@@ -124,79 +123,79 @@ module OpenWFE
 
     protected
 
-      def stamp_workitem (wi, timeout)
+    def stamp_workitem (wi, timeout)
 
-        return unless wi
+      return unless wi
 
-        key = "#{@fei.wfid}__#{@fei.expid}"
+      key = "#{@fei.wfid}__#{@fei.expid}"
 
-        stamp = [
-          self.class.name, @fei.expname, Time.now.to_f, timeout, @timeout_at
-        ]
+      stamp = [
+        self.class.name, @fei.expname, Time.now.to_f, timeout, @timeout_at
+      ]
 
-        (wi.attributes['__timeouts__'] ||= {})[key] = stamp
+      (wi.attributes['__timeouts__'] ||= {})[key] = stamp
+    end
+
+    def unstamp_workitem (wi)
+
+      return unless wi
+
+      stamps = wi.attributes['__timeouts__']
+      return unless stamps
+
+      stamps.delete("#{@fei.wfid}__#{@fei.expid}")
+    end
+
+    #
+    # prefixed with "to_" for easy mix in
+    #
+    def to_reschedule (scheduler)
+
+      #return if @timeout_job_id
+        #
+        # already rescheduled
+
+      return unless @timeout_at
+        #
+        # no need for a timeout
+
+      @timeout_job_id = "timeout_#{self.fei.to_s}"
+
+      scheduler.schedule_at(
+        @timeout_at,
+        { :schedulable => self,
+          :job_id => @timeout_job_id,
+          :do_timeout! => true,
+          :tags => [ "timeout", self.class.name ] })
+
+      ldebug do
+        "to_reschedule() will timeout at " +
+        "#{Rufus::to_iso8601_date(@timeout_at)}" +
+        " @timeout_job_id is #{@timeout_job_id}" +
+        " (oid #{object_id})"
       end
 
-      def unstamp_workitem (wi)
+      #store_itself()
+        #
+        # done in the including expression
+    end
 
-        return unless wi
+    #
+    # Unschedules the timeout
+    #
+    def unschedule_timeout (workitem)
 
-        stamps = wi.attributes['__timeouts__']
-        return unless stamps
+      #ldebug do
+      #  "unschedule_timeout() " +
+      #  "@timeout_job_id is #{@timeout_job_id}" +
+      #  " (oid #{object_id})"
+      #end
 
-        stamps.delete("#{@fei.wfid}__#{@fei.expid}")
-      end
+      return unless @timeout_job_id
 
-      #
-      # prefixed with "to_" for easy mix in
-      #
-      def to_reschedule (scheduler)
-
-        #return if @timeout_job_id
-          #
-          # already rescheduled
-
-        return unless @timeout_at
-          #
-          # no need for a timeout
-
-        @timeout_job_id = "timeout_#{self.fei.to_s}"
-
-        scheduler.schedule_at(
-          @timeout_at,
-          { :schedulable => self,
-            :job_id => @timeout_job_id,
-            :do_timeout! => true,
-            :tags => [ "timeout", self.class.name ] })
-
-        ldebug do
-          "to_reschedule() will timeout at " +
-          "#{Rufus::to_iso8601_date(@timeout_at)}" +
-          " @timeout_job_id is #{@timeout_job_id}" +
-          " (oid #{object_id})"
-        end
-
-        #store_itself()
-          #
-          # done in the including expression
-      end
-
-      #
-      # Unschedules the timeout
-      #
-      def unschedule_timeout (workitem)
-
-        #ldebug do
-        #  "unschedule_timeout() " +
-        #  "@timeout_job_id is #{@timeout_job_id}" +
-        #  " (oid #{object_id})"
-        #end
-
-        return unless @timeout_job_id
-
-        get_scheduler.unschedule(@timeout_job_id)
-        unstamp_workitem(workitem)
-      end
+      get_scheduler.unschedule(@timeout_job_id)
+      unstamp_workitem(workitem)
+    end
   end
 
 end

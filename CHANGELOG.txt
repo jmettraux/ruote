@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #24016 : merged 'sleep' into 'wait'
 - todo  #24140 : merged process_stack into process_status
 - todo  #23937 : made sure on_error blocks see variables
 - todo  #23936 : made sure on_cancel blocks see variables (reported by Kenneth)
