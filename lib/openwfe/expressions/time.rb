@@ -275,7 +275,7 @@ module OpenWFE
 
       if condition_attribute
 
-        c = eval_condition condition_attribute, @applied_workitem
+        c = eval_condition(condition_attribute, @applied_workitem)
 
         do_reply(c)
         return

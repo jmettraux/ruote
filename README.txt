@@ -26,3 +26,6 @@ issue tracker :            http://rubyforge.org/tracker/?atid=10023&group_id=260
 
 irc :                      irc.freenode.net #ruote
 
+
+author : jmettraux@gmail.com
+
