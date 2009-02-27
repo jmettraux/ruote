@@ -15,6 +15,8 @@ class EftRevalTest < Test::Unit::TestCase
 
   def test_no_reval
 
+    @engine.application_context[:ruby_eval_allowed] = false
+
     pdef = OpenWFE.process_definition :name => 'test' do
       reval '1 + 1'
     end

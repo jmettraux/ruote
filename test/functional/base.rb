@@ -29,8 +29,11 @@ module FunctionalBase
         old_put(k, v)
       end
     end
+      #
+      # useful for tracking misuses of the application context
 
     ac['__tracer'] = @tracer
+    ac[:ruby_eval_allowed] = true
     ac[:definition_in_launchitem_allowed] = true
 
     @engine = determine_engine_class(ac).new(ac)

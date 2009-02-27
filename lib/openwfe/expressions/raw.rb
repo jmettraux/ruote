@@ -37,9 +37,8 @@
 # John Mettraux at openwfe.org
 #
 
-require 'openwfe/exceptions'
-require 'openwfe/expressions/flowexpression'
 require 'openwfe/rudefinitions'
+require 'openwfe/expressions/flowexpression'
 
 
 module OpenWFE
@@ -350,16 +349,14 @@ module OpenWFE
       def check (workitem)
 
         raise(
-          OpenWFE::ParameterException,
-          "'parameter'/'param' without a 'field' attribute"
+          ArgumentError.new("'parameter'/'param' without a 'field' attribute")
         ) unless @field
 
         field_value = workitem.attributes[@field]
         field_value ||= @default
 
         raise(
-          OpenWFE::ParameterException,
-          "field '#{@field}' is missing"
+          ArgumentError.new("field '#{@field}' is missing")
         ) unless field_value
 
         check_match(field_value)
@@ -403,8 +400,7 @@ module OpenWFE
         return unless @match
 
         raise(
-          OpenWFE::ParameterException,
-          "value of field '#{@field}' doesn't match"
+          ArgumentError.new("value of field '#{@field}' doesn't match")
         ) unless value.to_s.match(@match)
       end
     end
