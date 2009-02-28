@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -28,14 +27,9 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Made in Japan.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'openwfe/rudefinitions'
 require 'openwfe/expressions/flowexpression'
@@ -85,17 +79,6 @@ module OpenWFE
       expression.apply(workitem)
     end
 
-    #
-    # This method is called by the expression pool when it is about
-    # to launch a process, it will interpret the 'parameter' statements
-    # in the process definition and raise an exception if the requirements
-    # are not met.
-    #
-    def check_parameters (workitem)
-
-      extract_parameters.each { |param| param.check(workitem) }
-    end
-
     #--
     #def reply (workitem)
     # no implementation necessary
@@ -142,6 +125,18 @@ module OpenWFE
     def extract_attributes
 
       raw_representation[1]
+    end
+
+    #
+    # This method is called by the expression pool when it is about
+    # to launch a process, it will interpret the 'parameter' statements
+    # in the process definition and raise an exception if the requirements
+    # are not met.
+    #
+    def check_parameters (workitem)
+
+      #extract_parameters.each { |param| param.check(workitem) }
+      ExpressionTree.check_parameters(raw_representation, workitem)
     end
 
     protected
@@ -218,27 +213,6 @@ module OpenWFE
       end # later sparing a variable/participant lookup
 
       exp
-    end
-
-    def extract_parameters
-
-      r = []
-      raw_representation.last.each do |child|
-
-        next if OpenWFE::ExpressionTree.is_not_a_node?(child)
-
-        name = child.first.to_sym
-        next unless (name == :parameter or name == :param)
-
-        attributes = child[1]
-
-        r << Parameter.new(
-          attributes['field'],
-          attributes['match'],
-          attributes['default'],
-          attributes['type'])
-      end
-      r
     end
 
     #
@@ -324,86 +298,6 @@ module OpenWFE
         # (note 'on_cancel' and not 'on-cancel' as we're specifically storing
         # more info and not just the initial string value of the attribute)
     end
-
-    #
-    # Encapsulating
-    #   <parameter field="x" default="y" type="z" match="m" />
-    #
-    # Somehow I hate that param thing, Ruote is not a strongly typed language
-    # ... Anyway Pat seems to use it.
-    #
-    class Parameter
-
-      def initialize (field, match, default, type)
-
-        @field = to_s(field)
-        @match = to_s(match)
-        @default = to_s(default)
-        @type = to_s(type)
-      end
-
-      #
-      # Will raise an exception if this param requirement is not
-      # met by the workitem.
-      #
-      def check (workitem)
-
-        raise(
-          ArgumentError.new("'parameter'/'param' without a 'field' attribute")
-        ) unless @field
-
-        field_value = workitem.attributes[@field]
-        field_value ||= @default
-
-        raise(
-          ArgumentError.new("field '#{@field}' is missing")
-        ) unless field_value
-
-        check_match(field_value)
-
-        enforce_type(workitem, field_value)
-      end
-
-      protected
-
-      #
-      # Used in the constructor to flatten everything to strings.
-      #
-      def to_s (o)
-        o ? o.to_s : nil
-      end
-
-      #
-      # Will raise an exception if it cannot coerce the type
-      # of the value to the one desired.
-      #
-      def enforce_type (workitem, value)
-
-        value = if not @type
-          value
-        elsif @type == 'string'
-          value.to_s
-        elsif @type == 'int' or @type == 'integer'
-          Integer(value)
-        elsif @type == 'float'
-          Float(value)
-        else
-          raise
-            "unknown type '#{@type}' for field '#{@field}'"
-        end
-
-        workitem.attributes[@field] = value
-      end
-
-      def check_match (value)
-
-        return unless @match
-
-        raise(
-          ArgumentError.new("value of field '#{@field}' doesn't match")
-        ) unless value.to_s.match(@match)
-      end
-    end
   end
 
   private
@@ -429,8 +323,7 @@ module OpenWFE
 
     method_name = OpenWFE::to_underscore(method_name)
 
-    KEYWORDS.include?(
-      eval(":#{method_name}")) ? "_#{method_name}" : method_name
+    KEYWORDS.include?(method_name.to_sym) ? "_#{method_name}" : method_name
   end
 
   def OpenWFE.to_expression_name (method_name)

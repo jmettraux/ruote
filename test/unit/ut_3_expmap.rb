@@ -9,7 +9,7 @@
 
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
-require 'openwfe/expressions/expressionmap'
+require 'openwfe/expressions/expression_map'
 
 
 class ExpmapTest < Test::Unit::TestCase

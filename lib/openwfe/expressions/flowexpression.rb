@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -28,14 +27,9 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Made in Japan.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'openwfe/utils'
 require 'openwfe/logging'
@@ -43,6 +37,7 @@ require 'openwfe/contextual'
 require 'openwfe/rudefinitions'
 require 'openwfe/util/ometa'
 require 'openwfe/util/dollar'
+require 'openwfe/expressions/expression_tree'
 
 
 module OpenWFE

@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2008-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -29,13 +28,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'uri'
 require 'yaml'
@@ -46,7 +38,7 @@ require 'openwfe/util/treechecker'
 require 'openwfe/util/xml'
 require 'openwfe/util/json'
 require 'openwfe/expressions/rprocdef'
-require 'openwfe/expressions/expressionmap'
+require 'openwfe/expressions/expression_map'
 
 require 'rufus/verbs' # sudo gem install 'rufus-verbs'
 
@@ -198,127 +190,6 @@ module OpenWFE
       end
 
       rep
-    end
-  end
-
-  #
-  # A set of methods for manipulating / querying a process expression tree
-  #
-  module ExpressionTree
-
-    #
-    # Returns true if the argument is a leaf.
-    #
-    def self.is_not_a_node? (o)
-
-      (( ! o.is_a?(Array)) || o.size != 3 || ( ! o.first.is_a?(String)))
-    end
-
-    #
-    # Extracts the description out of a process definition tree.
-    #
-    # TODO #14964 : add language support here
-    #
-    def self.get_description (tree)
-
-      tree.last.each do |child|
-        next unless child.is_a?(Array)
-        return child.last.first if child.first == 'description'
-      end
-
-      nil
-    end
-
-    #
-    # Returns a string containing the ruby code that generated this
-    # raw representation tree.
-    #
-    def self.to_code_s (tree, indentation = 0)
-
-      s = ''
-      tab = '  '
-      ind = tab * indentation
-
-      s << ind
-      s << OpenWFE::make_safe(tree.first)
-
-      if single_string_child = (
-        tree.last.size == 1 and tree.last.first.class == String
-      )
-        s << " '#{tree.last.first}'"
-      end
-
-      sa = tree[1].inject('') do |r, (k, v)|
-        r << ", :#{OpenWFE::to_underscore(k)} => #{v.inspect}"
-      end
-      sa = sa[1..-1] unless single_string_child
-      s << sa if sa
-
-      if tree.last.length > 0
-        if tree.last.size == 1 and tree.last.first.class == String
-          # do nothing (already done)
-        else
-          s << " do\n"
-          tree.last.each do |child|
-            #if child.respond_to?(:to_code_s)
-            if child.is_a?(Array) and child.size == 3 # and ...
-              s << to_code_s(child, indentation + 1)
-            else
-              s << ind
-              s << tab
-              s << "'#{child.to_s}'" # inspect instead of to_s ?
-            end
-            s << "\n"
-          end
-          s << ind
-          s << "end"
-        end
-      end
-
-      s
-    end
-
-    #
-    # Turns the expression tree into an XML process definition
-    #
-    def self.to_xml (tree)
-
-      elt = REXML::Element.new tree.first.to_s
-
-      tree[1].each do |k, v|
-
-        if k == 'value' and (not v.is_a?(String))
-          elt << OpenWFE::Xml::to_rexml(v)
-        else
-          elt.attributes[k] = v
-        end
-      end
-
-      tree.last.each do |child|
-
-        #if child.kind_of?(SimpleExpRepresentation)
-        if child.is_a?(Array) and child.size == 3
-
-          elt << to_xml(child)
-        else
-
-          elt << REXML::Text.new(child.to_s)
-        end
-      end
-
-      elt
-    end
-
-    #
-    # Returns an XML string
-    #
-    def self.to_s (tree, indent=-1)
-
-      d = REXML::Document.new
-      d << to_xml(tree)
-      s = ''
-      d.write(s, indent)
-      s
     end
   end
 end

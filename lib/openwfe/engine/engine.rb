@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2006-2009, John Mettraux, Nicolas Modrzyk OpenWFE.org
 # All rights reserved.
@@ -29,14 +28,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-# Nicolas Modrzyk at openwfe.org
-#
 
 require 'logger'
 require 'fileutils'
@@ -63,8 +54,8 @@ require 'openwfe/engine/listener_methods'
 require 'openwfe/engine/participant_methods'
 require 'openwfe/engine/update_exp_methods'
 require 'openwfe/expressions/environment'
-require 'openwfe/expressions/expressionmap'
-require 'openwfe/participants/participantmap'
+require 'openwfe/expressions/expression_map'
+require 'openwfe/participants/participant_map'
 
 
 module OpenWFE

@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2009, John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -29,13 +28,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'openwfe/engine/engine'
 require 'openwfe/expool/fs_expstorage'
@@ -45,7 +37,7 @@ require 'openwfe/expool/yaml_errorjournal'
 module OpenWFE
 
   #
-  # An engine persisted to a Tokyo Cabinet database
+  # An engine persisted to the file system (work/expool/ by default).
   #
   class FsPersistedEngine < Engine
 

@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2006-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -29,13 +28,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'openwfe/workitem'
 require 'openwfe/service'

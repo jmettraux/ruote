@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2009, John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -29,13 +28,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'fileutils'
 require 'openwfe/expool/expstorage'
@@ -45,7 +37,15 @@ require 'openwfe/expool/threaded_expstorage'
 module OpenWFE
 
   #
-  # TODO : document me and :persist_as_yaml
+  # Stores the expressions (the pieces of process instances) in the file system.
+  #
+  # By default uses Ruby Marshalling. If the options :persist_as_yaml is set
+  # to true in the application context, YAML serialization will be used.
+  # YAML is more portable than Ruby Marshalling, but considerably slower.
+  #
+  # The default (Ruby Marshalling) is recommended. If you need to migrate from
+  # one version of Marshalling to the other, you can use work/pooltool.rb
+  # to migrate the whole set of expressions from one format to the other.
   #
   class FsExpressionStorage
     include ServiceMixin
