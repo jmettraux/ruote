@@ -7,8 +7,10 @@ require 'rake'
 require 'rake/clean'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
-require 'rake/rdoctask'
 require 'rake/testtask'
+
+#require 'rake/rdoctask'
+require 'hanna/rdoctask'
 
 
 load 'lib/openwfe/version.rb'
@@ -79,6 +81,7 @@ end
 
 task :upload_rdoc => :rdoc do
   sh %{
+    cp doc/rdoc-style.css rdoc/
     rsync -azv -e ssh \
       rdoc \
       jmettraux@rubyforge.org:/var/www/gforge-projects/openwferu/
