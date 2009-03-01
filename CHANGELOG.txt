@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #23768 : implememented work/pooltool.ru
 - todo  #24125 : moved ProcessParameter next to ExpressionTree module.
 - todo  #24193 : 'parameter' now raises ArgumentError instead of
                  OpenWFE::ParameterException

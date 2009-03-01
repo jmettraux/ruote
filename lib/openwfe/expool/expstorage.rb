@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2006-2009, Nicolas Modryzk and John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -28,17 +27,9 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Made in Japan.
 #++
-#
-
-#
-# "made in Japan"
-#
-# Nicolas Modrzyk at openwfe.org
-# John Mettraux at openwfe.org
-#
-
-require 'fileutils'
 
 require 'rufus/lru'
 
@@ -58,6 +49,8 @@ module OpenWFE
   module ExpressionStorageBase
 
     def observe_expool
+
+      return unless get_expression_pool
 
       get_expression_pool.add_observer(:update) do |channel, fei, fe|
         self[fei] = fe
@@ -285,14 +278,14 @@ module OpenWFE
 
     protected
 
-      #
-      # Returns the "real storage" i.e. the storage that does the real
-      # persistence behind this "cache storage".
-      #
-      def get_real_storage
+    #
+    # Returns the "real storage" i.e. the storage that does the real
+    # persistence behind this "cache storage".
+    #
+    def get_real_storage
 
-        @application_context[:s_expression_storage__1]
-      end
+      @application_context[:s_expression_storage__1]
+    end
   end
 
   #

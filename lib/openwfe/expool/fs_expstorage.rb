@@ -27,6 +27,8 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Made in Japan.
 #++
 
 require 'fileutils'
@@ -52,13 +54,16 @@ module OpenWFE
     include OwfeServiceLocator
     include ExpressionStorageBase
 
-    #attr_accessor :persist_as_yaml
+    attr_accessor :persist_as_yaml, :suffix
+    attr_reader :basepath
 
     def initialize (service_name, application_context)
 
       service_init(service_name, application_context)
 
-      @basepath = get_work_directory + '/expool'
+      @basepath =
+        application_context[:expstorage_path] || get_work_directory + '/expool'
+
       @persist_as_yaml = (application_context[:persist_as_yaml] == true)
       @suffix = 'ruote'
 
@@ -165,6 +170,21 @@ module OpenWFE
     end
 
     #
+    # An iterator on ALL expressions in the storage (only used by pooltool.ru)
+    #
+    def each
+
+      return unless block_given?
+
+      Dir["#{@basepath}/**/*.#{@suffix}"].each do |path|
+
+        fexp = load_fexp(path)
+
+        yield(fexp.fei, fexp)
+      end
+    end
+
+    #
     # Dangerous ! Nukes the whole work/expool/ dir
     #
     def purge
@@ -188,6 +208,13 @@ module OpenWFE
       }
       root.application_context = @application_context
       root
+    end
+
+    #
+    # Called by pooltool.ru
+    #
+    def close
+      # nothing to do
     end
 
     protected

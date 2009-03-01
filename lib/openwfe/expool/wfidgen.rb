@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2007-2009, John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -28,14 +27,9 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Made in Japan.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'thread'
 
@@ -63,7 +57,7 @@ module OpenWFE
 
       @last_fn = get_work_directory + '/wfidgen.last'
 
-      load_last()
+      load_last
 
       ensure_last_f
     end
@@ -164,14 +158,9 @@ module OpenWFE
 
           if File.exist?(@last_fn)
             begin
-              s = File.open(@last_fn, "r") do |f|
-                f.readline
-              end
+              s = File.open(@last_fn, 'r') { |f| f.readline }
               @last = Integer(s)
-              #puts @last
             rescue Exception => e
-              #puts
-              #puts e.to_s
             end
           end
 
@@ -208,8 +197,8 @@ module OpenWFE
       i = numeric_id % (10 * 1000 * 60 * 60 * 24)
       t = Time.now.gmtime
 
-      s = sprintf "%4d%02d%02d", t.year, t.month, t.day
-      s << "-"
+      s = sprintf '%4d%02d%02d', t.year, t.month, t.day
+      s << '-'
       s << Rufus::Mnemo::from_integer(i)
       s
     end
@@ -367,8 +356,8 @@ module OpenWFE
   #
 
   SPLIT_MAP = {
-    "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" => UuidWfidGenerator,
-    "[0-9]{8}-[a-z]*" => KotobaWfidGenerator
+    '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}' => UuidWfidGenerator,
+    '[0-9]{8}-[a-z]*' => KotobaWfidGenerator
   }
 
   #

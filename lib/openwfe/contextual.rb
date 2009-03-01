@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2006-2009, John Mettraux, Nicolas Modrzyk OpenWFE.org
 # All rights reserved.
@@ -28,15 +27,10 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Made in Japan.
 #++
-#
 
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-# Nicolas Modrzyk at openwfe.org
-#
 
 module OpenWFE
 
@@ -117,9 +111,21 @@ module OpenWFE
 
       FileUtils.makedirs(dir) unless File.exist?(dir)
 
+      copy_pooltool(dir)
+
       dir
     end
 
-  end
+    protected
 
+    def copy_pooltool (dir)
+      target = dir + '/pooltool.ru'
+      return if File.exist?(target)
+      source = File.dirname(__FILE__) + '/../pooltool.ru'
+      p source
+      FileUtils.cp(source, target)
+    end
+
+  end
 end
+

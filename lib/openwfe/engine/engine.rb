@@ -27,6 +27,8 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Made in Japan.
 #++
 
 require 'logger'
@@ -219,9 +221,9 @@ module OpenWFE
             workitem.participant_name, :reply, workitem)
         end
 
-        raise \
+        raise(
           "InFlowWorkitem doesn't belong to a process instance" +
-          " nor to a participant"
+          " nor to a participant")
       end
 
       return get_expression_pool.launch(workitem) \

@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2009, John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -28,14 +27,9 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Made in Japan.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'base64'
 
@@ -73,7 +67,7 @@ module OpenWFE
     include OwfeServiceLocator
     include ExpressionStorageBase
 
-    attr_reader :db
+    attr_reader :db, :path
 
     def initialize (service_name, application_context)
 
@@ -85,7 +79,11 @@ module OpenWFE
 
       linfo { "using #{klass} to access TokyoCabinet" }
 
-      @db = klass.new(get_work_directory + '/expstorage.tct')
+      @path =
+        application_context[:expstorage_path] ||
+        get_work_directory + '/expstorage.tct'
+
+      @db = klass.new(@path)
 
       set_indexes
 
@@ -97,9 +95,7 @@ module OpenWFE
     #
     def stop
 
-      @db.close
-      @db = nil
-
+      self.close
       super
     end
 
@@ -221,6 +217,28 @@ module OpenWFE
         :wfid => wfid,
         :consider_subprocesses => false,
         :include_classes => DefineExpression)[0]
+    end
+
+    #
+    # Used only by pooltool.ru
+    #
+    def each
+
+      return unless block_given?
+
+      @db.each do |k, v|
+        fexp = Marshal.load(Base64.decode64(v['fexp']))
+        yield(fexp.fei, fexp)
+      end
+    end
+
+    #
+    # Closes the underlying database
+    #
+    def close
+
+      @db.close
+      @db = nil
     end
 
     protected

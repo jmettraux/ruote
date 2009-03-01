@@ -1,4 +1,3 @@
-#
 #--
 # Copyright (c) 2009, John Mettraux, OpenWFE.org
 # All rights reserved.
@@ -28,18 +27,15 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Made in Japan.
 #++
-#
-
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'openwfe/expool/tc_expstorage'
 
 require 'rufus/tokyo/tyrant' # sudo gem install rufus-tokyo
+
+# TODO : maybe implement a ntt_expstorage...
 
 
 module OpenWFE

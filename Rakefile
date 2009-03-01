@@ -18,7 +18,7 @@ load 'lib/openwfe/version.rb'
   # where the OPENWFERU_VERSION is stored
 
 
-CLEAN.include("pkg", "html", "rdoc", "work", "logs")
+CLEAN.include('pkg', 'html', 'rdoc', 'work', 'logs')
 
 spec = Gem::Specification.new do |s|
 
@@ -37,7 +37,8 @@ spec = Gem::Specification.new do |s|
   s.has_rdoc = true
   s.extra_rdoc_files = [ 'README.txt' ]
 
-  [ 'builder',
+  [
+    'builder',
     #'json_pure',
     'rufus-lru',
     'rufus-scheduler',
@@ -45,10 +46,10 @@ spec = Gem::Specification.new do |s|
     'rufus-treechecker',
     'rufus-mnemo',
     'rufus-verbs'
-  ].each do |d|
+  ].each { |d|
     s.requirements << d
-    s.add_dependency d
-  end
+    s.add_dependency(d)
+  }
 
   files = FileList[ '{bin,docs,lib,test,examples}/**/*' ]
   files.exclude 'rdoc'
