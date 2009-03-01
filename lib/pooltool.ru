@@ -71,8 +71,11 @@ USAGE = %{
   -v, --version   : print the version of itog.rb and exits
   -h, --help      : print this help text and exits
 
-  -y, --yaml : states that the target should be serialized with YAML
-               (only works if the target is a directory)
+  -y, --yaml      : states that the target should be serialized with YAML
+                    (only works if the target is a directory)
+  -o, --overwrite : overwrites the target. If there are already expressions in
+                    the target, they are by default, not overwritten. With this
+                    switch, they will get overwritten.
 
   == specifying the source and the target
 
@@ -159,6 +162,8 @@ def determine_storage (s, opts, target=false)
   sto
 end
 
+overwrite = opts['-o'] || opts['--overwrite']
+
 #
 # let's do the job
 
@@ -176,20 +181,41 @@ source = determine_storage(source, opts)
 target = determine_storage(target, opts, true)
 
 i = 0
+o = 0
+s = 0
 processes = {}
 
 source.each do |fei, fexp|
-  i += 1
-  processes[fei.parent_wfid] = true
-  puts "    . #{fei.wfid} #{fei.expid} #{fei.expname}  (#{fexp.class})"
-  target[fei] = fexp
+
+  label = "#{fei.wfid} #{fei.expid} #{fei.expname}  (#{fexp.class})"
+
+  if target[fei]
+    if overwrite
+      i += 1
+      o += 1
+      processes[fei.parent_wfid] = true
+      puts "    o #{label}"
+      target[fei] = fexp
+    else
+      s += 1
+      puts "    S #{label}"
+    end
+  else
+    i += 1
+    processes[fei.parent_wfid] = true
+    puts "    . #{label}"
+    target[fei] = fexp
+  end
 end
 
 source.close
 target.close
 
+processes.delete('0')
+  # not counting the lonely engine env as a process instance
+
 puts
-puts "  migrated #{i} expressions."
+puts "  migrated #{i} expressions (skipped #{s} / overwrote #{o})."
 puts "  migrated #{processes.size} processes."
 puts
 
