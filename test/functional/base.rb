@@ -157,6 +157,9 @@ module FunctionalBase
 
   def purge_engine
 
+    @engine.application_context.values.each do |s|
+      s.purge if s.respond_to?(:purge)
+    end
     FileUtils.rm_rf('work')
   end
 

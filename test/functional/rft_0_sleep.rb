@@ -41,7 +41,7 @@ class RftSleepTest < Test::Unit::TestCase
 
     restart_engine
 
-    sleep 0.100
+    sleep 0.350
 
     assert_equal "a\nb", @tracer.to_s
 

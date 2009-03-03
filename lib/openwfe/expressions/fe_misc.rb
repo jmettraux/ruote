@@ -227,7 +227,7 @@ module OpenWFE
 
     def reply (workitem)
 
-      raise "dynamic evaluation of process definitions is not allowed" \
+      raise 'dynamic evaluation of process definitions is not allowed' \
         if @application_context[:dynamic_eval_allowed] != true
 
       df = lookup_vf_attribute(workitem, 'def') || workitem.get_result
@@ -235,8 +235,6 @@ module OpenWFE
       return reply_to_parent(workitem) unless df
         #
         # currently, 'nothing to eval' means, 'just go on'
-
-      ldebug { "apply() def is >#{df}<" }
 
       tree = get_def_parser.determine_rep(df)
 

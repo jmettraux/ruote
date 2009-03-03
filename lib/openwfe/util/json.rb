@@ -35,6 +35,8 @@ module OpenWFE
       return JSON.parse(text) \
         if defined?(JSON)
 
+      # WARNING : ActiveSupport is quite permissive...
+
       return ActiveSupport::JSON.decode(text) \
         if defined?(ActiveSupport::JSON)
 
@@ -47,6 +49,11 @@ module OpenWFE
     def self.as_h (h_or_json)
 
       h_or_json.is_a?(Hash) ? h_or_json : from_json(h_or_json)
+    end
+
+    protected
+
+    def is_valid_json? (s)
     end
   end
 end

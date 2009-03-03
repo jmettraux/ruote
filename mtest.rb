@@ -29,9 +29,9 @@ ruby = `which ruby`.strip
 ruby += ' -I~/rufus/rufus-tokyo/lib' # TODO : remove me later
 
 [
-  '', '--fs', '--tc',
-  #'', '--fs', '--tc', '--tt',
-  '--cfp',
+  '', '--fs', '--tc', '--ar',
+  #'', '--fs', '--tc', '--tt', '--ar',
+  #'--cfp',
   '--fs -y', '--fs -C', '--fs -C -y', '--tc -C'
   #'--fs -y', '--fs -C', '--fs -C -y', '--tc -C', '--tt -C'
 ].each do |args|

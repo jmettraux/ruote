@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+
 require 'uri'
 require 'yaml'
 require 'openwfe/rexml'
@@ -125,15 +126,21 @@ module OpenWFE
       tree
     end
 
+    X_START = /^</
+    Y_START = /^--- !/
+    J_ARRAY = /^[.*]$/
+      #
+      # TODO : place that somewhere in utils/
+
     def parse_string (pdef)
 
       pdef = pdef.strip
 
-      return parse_xml(pdef) if pdef[0, 1] == '<'
+      return parse_xml(pdef) if pdef.match(X_START)
+      return YAML.load(pdef) if pdef.match(Y_START)
 
-      return YAML.load(pdef) if pdef[0, 4] == '--- '
-
-      (json = (OpenWFE::Json.from_json(pdef) rescue nil)) and return json
+      #(json = (OpenWFE::Json.from_json(pdef) rescue nil)) and return json
+      return OpenWFE::Json.from_json if pdef.match(J_ARRAY)
 
       #
       # else it's some ruby code to eval
@@ -177,7 +184,7 @@ module OpenWFE
 
       xml.children.each do |c|
 
-        r = parse_xml c
+        r = parse_xml(c)
 
         rep.last << r if r
       end

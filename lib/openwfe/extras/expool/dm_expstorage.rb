@@ -192,7 +192,7 @@ module OpenWFE::Extras
       # do the rest of the filtering
 
       exps.inject([]) { |a, de|
-        fe = de.as_owfe_expression
+        fe = de.as_owfe_expression(application_context)
         a << fe if does_match?(options, fe)
         a
       }
