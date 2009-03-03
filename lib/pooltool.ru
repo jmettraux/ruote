@@ -69,9 +69,15 @@ USAGE = %{
     adapter=mysql:database=rw2_development:username=u:password=p \\
     work/expool2
 
+  to migrate from a DataMapper storage to a file one (notice the "dm:" prefix
+  and the DataMapper URL) :
+
+    ruby work/pooltool.ru -y dm:mysql://localhost/rw2_production work/expool2
+
 
   Warning : if the source is an ActiveRecord based storage, then the target 
             must be of another type, and vice versa.
+            No such worries with DataMapper.
 
   
   == options
@@ -125,7 +131,7 @@ end
 #
 # various methods
 
-def ar_connect (s)
+def ar_connect (ac, s)
 
   #require_gem 'activereocrd'
   gem 'activerecord'
@@ -138,6 +144,18 @@ def ar_connect (s)
   }
 
   ActiveRecord::Base.establish_connection(options)
+end
+
+def dm_connect (ac, s)
+
+  require 'dm-core'
+
+  require 'openwfe/extras/expool/dm_expstorage'
+
+  repo = "repo#{s.hash}".to_sym
+  ac[:expstorage_dm_repository] = repo
+
+  DataMapper.setup(repo, s)
 end
 
 def determine_source_suffix (dir)
@@ -153,9 +171,14 @@ def determine_storage (s, opts, target=false)
   ac[:s_wfid_generator] =
     OpenWFE::KotobaWfidGenerator.new(:s_wfid_generator, ac)
 
-  sto = if s.index('=') # active record
+  sto =  if s.match(/^dm:/)
 
-    ar_connect(s)
+    dm_connect(ac, s[3..-1])
+    OpenWFE::Extras::DmExpressionStorage.new('storage', ac)
+
+  elsif s.index('=') # active record
+
+    ar_connect(ac, s)
     OpenWFE::Extras::ArExpressionStorage.new('storage', ac)
 
   elsif s.index(':') # tokyo tyrant

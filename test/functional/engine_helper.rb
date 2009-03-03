@@ -26,7 +26,8 @@ ARGUMENTS for functional tests :
   --cfp : uses OpenWFE::CachedFilePersistedEngine (fast and deprecated)
 
   --db  : uses OpenWFE::Extras::DbPersistedEngine
-  --ar  : uses OpenWFE::Extras::ArPersistedEngine
+  --ar  : uses OpenWFE::Extras::ArPersistedEngine (ActiveRecord)
+  --dm  : uses OpenWFE::Extras::DmPersistedEngine (DataMapper)
 
   -C    : disable caching (used for thorough persistence testing)
 
@@ -91,6 +92,12 @@ else uses the in-memory OpenWFE::Engine (fastest, but no persistence at all)
       require File.dirname(__FILE__) + '/../ar_test_connection'
       require 'openwfe/extras/engine/ar_engine'
       OpenWFE::Extras::ArPersistedEngine
+
+    elsif ARGV.include?('--dm')
+
+      require File.dirname(__FILE__) + '/../dm_test_connection'
+      require 'openwfe/extras/engine/dm_engine'
+      OpenWFE::Extras::DmPersistedEngine
 
     else # in-memory, use only for testing !
 

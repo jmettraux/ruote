@@ -39,16 +39,6 @@ end
 module OpenWFE
 
   #
-  # re-opening FlowExpression to add a method for determining
-  # a 'Tokyo Cabinet key'
-  #
-  class FlowExpressionId
-    def as_tc_key
-      "#{@workflow_instance_id} #{@expression_name} #{@expression_id}"
-    end
-  end
-
-  #
   # Tokyo Cabinet based expstorage.
   #
   # Places all the expressions under expstorage.tch in the work directory.
@@ -101,7 +91,7 @@ module OpenWFE
 
     def [] (fei)
 
-      v = @db[fei.as_tc_key]
+      v = @db[fei.as_string_key]
 
       return nil unless v
 
@@ -113,7 +103,7 @@ module OpenWFE
 
     def []= (fei, fexp)
 
-      @db[fei.as_tc_key] = {
+      @db[fei.as_string_key] = {
         'wfid' => fexp.fei.wfid,
         'pwfid' => fexp.fei.parent_workflow_instance_id,
         'class' => fexp.class.name,
@@ -123,7 +113,7 @@ module OpenWFE
 
     def delete (fei)
 
-      @db.delete(fei.as_tc_key)
+      @db.delete(fei.as_string_key)
     end
 
     def purge

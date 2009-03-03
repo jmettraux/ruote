@@ -70,6 +70,14 @@ module OpenWFE
     end
 
     #
+    # Returns a String that can be used to identify the FlowExpression[Id]
+    # in a storage.
+    #
+    def as_string_key
+      "#{@workflow_instance_id} #{@expression_name} #{@expression_id}"
+    end
+
+    #
     # This method return @workflow_instance_id. If parent is set to
     # true, if will return the same result as
     # parent_workflow_instance_id().
