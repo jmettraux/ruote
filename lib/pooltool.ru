@@ -22,6 +22,10 @@
 # Made in Japan.
 #++
 
+
+$:.unshift('lib')
+
+
 require 'rubygems'
 require 'openwfe/expool/wfidgen'
 require 'openwfe/expool/fs_expstorage'
@@ -43,27 +47,31 @@ USAGE = %{
   to copy from the dir expool to expool2, making sure that the target uses
   YAML for serialization :
 
-    ruby pooltool.rb -y work/expool work/expool2
+    ruby work/pooltool.ru -y work/expool work/expool2
 
   to migrate from the dir expool to a TokyoCabinet file (.tct mandatory) :
 
-    ruby pooltool.rb work/expool work/expool.tct
+    ruby work/pooltool.ru work/expool work/expool.tct
 
   to migrate from a Tokyo Tyrant to a directory :
 
-    ruby pooltool.rb localhost:1978 work/expool2
+    ruby work/pooltool.ru localhost:1978 work/expool2
 
   to migrate from a Tokyo Tyrant (unix socket) to a directory (YAML
   serialization set to ON) :
 
-    ruby pooltool.rb -y /var/tyrant_socket:0 work/expool2
+    ruby work/pooltool.ru -y /var/tyrant_socket:0 work/expool2
 
   to migrate from a database to a directory (yaml) :
 
-    ruby pooltool.rb \\
-    --adapter mysql --database rw2_development --username u --password p \\
+    ruby work/pooltool.ru \\
     -y \\
-    ar work/expool2
+    adapter=mysql:database=rw2_development:username=u:password=p \\
+    work/expool2
+
+
+  Warning : if the source is an ActiveRecord based storage, then the target 
+            must be of another type, and vice versa.
 
   
   == options
@@ -117,6 +125,21 @@ end
 #
 # various methods
 
+def ar_connect (s)
+
+  #require_gem 'activereocrd'
+  gem 'activerecord'
+  require 'active_record'
+
+  require 'openwfe/extras/expool/ar_expstorage'
+
+  options = s.split(':').inject({}) { |h, pair|
+    ss = pair.split('='); h[ss[0]] = ss[1]; h
+  }
+
+  ActiveRecord::Base.establish_connection(options)
+end
+
 def determine_source_suffix (dir)
 
   Dir["#{dir}/**/*.ruote"].size > Dir["#{dir}/**/*.yaml"].size ?
@@ -130,7 +153,12 @@ def determine_storage (s, opts, target=false)
   ac[:s_wfid_generator] =
     OpenWFE::KotobaWfidGenerator.new(:s_wfid_generator, ac)
 
-  sto = if s.index(':')
+  sto = if s.index('=') # active record
+
+    ar_connect(s)
+    OpenWFE::Extras::ArExpressionStorage.new('storage', ac)
+
+  elsif s.index(':') # tokyo tyrant
 
     require 'openwfe/expool/tt_expstorage'
     ss = s.split(':')
@@ -138,7 +166,7 @@ def determine_storage (s, opts, target=false)
     ac[:tyrant_expstorage_port] = ss.last.to_i
     OpenWFE::TtExpressionStorage.new('storage', ac)
 
-  elsif s.match(/\.tct$/)
+  elsif s.match(/\.tct$/) # tokyo cabinet
 
     require 'openwfe/expool/tc_expstorage'
     ac[:expstorage_path] = s
@@ -155,7 +183,10 @@ def determine_storage (s, opts, target=false)
     sto.suffix = determine_source_suffix(s)
   end
 
-  if target and (opts['-y'] or opts['--yaml']) and sto.respond_to?(:persist_as_yaml=)
+  if (target and
+    (opts['-y'] or opts['--yaml']) and
+    sto.respond_to?(:persist_as_yaml=)
+  )
     sto.persist_as_yaml = true
   end
 

@@ -3,11 +3,6 @@
 # establishing the activerecord connection for all the tests
 #
 
-#%w{ lib }.each do |path|
-#  path = File.expand_path(File.dirname(__FILE__) + '/../../' + path)
-#  $:.unshift(path) unless $:.include?(path)
-#end
-
 require 'rubygems'
 
 #require_gem 'activerecord'

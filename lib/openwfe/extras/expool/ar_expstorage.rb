@@ -222,6 +222,27 @@ module OpenWFE::Extras
       as_owfe_expression(e)
     end
 
+    #
+    # Used only by work/pooltool.ru for storage migrations.
+    #
+    def each
+
+      return unless block_given?
+
+      Expression.find(:all).each do |e|
+        fexp = as_owfe_expression(e)
+        yield(fexp.fei, fexp)
+      end
+    end
+
+    #
+    # Closes the underlying database... Does nothing in this implementation.
+    #
+    def close
+
+      # nothing to do here.
+    end
+
     protected
 
     #
