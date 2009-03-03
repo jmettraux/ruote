@@ -74,6 +74,10 @@ USAGE = %{
 
     ruby work/pooltool.ru -y dm:mysql://localhost/rw2_production work/expool2
 
+  it's possible to migrate to/from a single .yaml file :
+
+    ruby work/pooltool.ru work/expool/ dump.yaml
+
 
   Warning : if the source is an ActiveRecord based storage, then the target 
             must be of another type, and vice versa.
@@ -126,6 +130,36 @@ end
 if opts['--version'] or opts['-v']
   puts '0.0.1'
   exit(0)
+end
+
+#
+# dump.yaml storage
+
+class YamlDump
+  def initialize (path)
+    @path = path
+  end
+  def [] (fei)
+    nil
+  end
+  def []= (fei, fexp)
+    dump.write(fexp.to_yaml)
+  end
+  def each
+    return unless block_given?
+    File.open(@path, 'r') do |f|
+      YAML.load_documents(f) { |fexp| yield(fexp.fei, fexp) }
+    end
+  end
+  def close
+    return unless @dump
+    @dump.close
+    @dump = nil
+  end
+  protected
+  def dump
+    @dump ||= File.open(@path, 'w')
+  end
 end
 
 #
@@ -185,6 +219,11 @@ def determine_storage (s, opts, target=false)
     ac[:tyrant_expstorage_host] = ss.first
     ac[:tyrant_expstorage_port] = ss.last.to_i
     OpenWFE::TtExpressionStorage.new('storage', ac)
+
+  elsif s.match(/\.yaml$/) # dump.yaml
+
+    require 'yaml'
+    YamlDump.new(s)
 
   elsif s.match(/\.tct$/) # tokyo cabinet
 
