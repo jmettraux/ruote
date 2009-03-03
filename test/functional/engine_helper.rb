@@ -25,6 +25,9 @@ ARGUMENTS for functional tests :
   --fp  : uses OpenWFE::FilePersistedEngine (slow and deprecated)
   --cfp : uses OpenWFE::CachedFilePersistedEngine (fast and deprecated)
 
+  --db  : uses OpenWFE::Extras::DbPersistedEngine
+  --ar  : uses OpenWFE::Extras::ArPersistedEngine
+
   -C    : disable caching (used for thorough persistence testing)
 
 else uses the in-memory OpenWFE::Engine (fastest, but no persistence at all)
@@ -76,6 +79,18 @@ else uses the in-memory OpenWFE::Engine (fastest, but no persistence at all)
 
       require 'openwfe/engine/fs_engine'
       OpenWFE::FsPersistedEngine
+
+    elsif ARGV.include?('--db')
+
+      require File.dirname(__FILE__) + '/../ar_test_connection'
+      require 'openwfe/extras/engine/db_persisted_engine'
+      OpenWFE::Extras::DbPersistedEngine
+
+    elsif ARGV.include?('--ar')
+
+      require File.dirname(__FILE__) + '/../ar_test_connection'
+      require 'openwfe/extras/engine/ar_engine'
+      OpenWFE::Extras::ArPersistedEngine
 
     else # in-memory, use only for testing !
 

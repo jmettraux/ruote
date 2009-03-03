@@ -31,8 +31,7 @@ require 'openwfe/extras/expool/db_errorjournal'
 module OpenWFE::Extras
 
   #
-  # A simple DbPersistedEngine, pure storage, no caching, no optimization.
-  # For tests only.
+  # A simple DbPersistedEngine.
   #
   class DbPersistedEngine < OpenWFE::Engine
 
@@ -44,7 +43,8 @@ module OpenWFE::Extras
     #
     def build_expression_storage
 
-      init_service(:s_expression_storage, DbExpressionStorage)
+      #init_service(:s_expression_storage, DbExpressionStorage)
+      init_storage(DbExpressionStorage)
     end
 
     #

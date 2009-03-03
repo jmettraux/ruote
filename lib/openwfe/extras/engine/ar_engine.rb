@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2007-2009, Tomaso Tosolini, John Mettraux OpenWFE.org
+# Copyright (c) 2007-2009, Tomaso Tosolini and John Mettraux, OpenWFE.org
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,49 +22,36 @@
 # Made in Italy.
 #++
 
-require 'openwfe/expool/threaded_expstorage'
+
+require 'openwfe/engine/engine'
 require 'openwfe/extras/expool/ar_expstorage'
+require 'openwfe/extras/expool/db_errorjournal'
 
 
 module OpenWFE::Extras
 
   #
-  # An extension of ArExpressionStorage that always stores its expression
-  # as YAML (way slower than the default Marshal, but Marshal version
-  # may differ over time).
+  # A simple ArPersistedEngine, pure storage, no caching, no optimization.
   #
-  # If you need to migrate from yaml to marshal and back (and other storage
-  # variants), have a look at work/pooltool.ru
-  #
-  class DbExpressionStorage < ArExpressionStorage
+  class ArPersistedEngine < OpenWFE::Engine
+
+    protected
 
     #
-    # Constructor.
+    # Overrides the method already found in Engine with a persisted
+    # expression storage
     #
-    def initialize (service_name, application_context)
+    def build_expression_storage
 
-      application_context[:persist_as_yaml] = true
-
-      super
+      init_storage(ArExpressionStorage)
     end
-  end
 
-  #
-  # A DbExpressionStorage that does less work, for more performance,
-  # thanks to the ThreadedStorageMixin.
-  #
-  # DEPRECATED. Use ArExpressionStorage.
-  #
-  class ThreadedDbExpressionStorage < DbExpressionStorage
-    include OpenWFE::ThreadedStorageMixin
+    #
+    # Uses a file persisted error journal.
+    #
+    def build_error_journal
 
-    def initialize (service_name, application_context)
-
-      super
-
-      start_queue
-        #
-        # which sets @thread_id
+      init_service(:s_error_journal, DbErrorJournal)
     end
   end
 end
