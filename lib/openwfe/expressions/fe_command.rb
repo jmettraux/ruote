@@ -1,41 +1,27 @@
-#
 #--
-# Copyright (c) 2007-2008, John Mettraux, OpenWFE.org
-# All rights reserved.
+# Copyright (c) 2007-2009, John Mettraux, jmettraux@gmail.com
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-# . Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-# . Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
-#   and/or other materials provided with the distribution.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
-# . Neither the name of the "OpenWFE" nor the names of its contributors may be
-#   used to endorse or promote products derived from this software without
-#   specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# Made in Japan.
 #++
-#
 
-#
-# "made in Japan"
-#
-# John Mettraux at openwfe.org
-#
 
 require 'openwfe/expressions/condition'
 
@@ -50,19 +36,19 @@ module OpenWFE
 
     protected
 
-      A_COMMAND_FIELD = 'command-field'
-      F_COMMAND = '__cursor_command__'
-      A_DISALLOW = 'disallow'
+    A_COMMAND_FIELD = 'command-field'
+    F_COMMAND = '__cursor_command__'
+    A_DISALLOW = 'disallow'
 
-      C_BACK = 'back'
-      C_SKIP = 'skip'
-      C_BREAK = 'break'
-      C_CANCEL = 'cancel'
-      C_REWIND = 'rewind'
-      C_CONTINUE = 'continue'
-      C_JUMP = 'jump'
+    C_BACK = 'back'
+    C_SKIP = 'skip'
+    C_BREAK = 'break'
+    C_CANCEL = 'cancel'
+    C_REWIND = 'rewind'
+    C_CONTINUE = 'continue'
+    C_JUMP = 'jump'
 
-      A_STEP = 'step'
+    A_STEP = 'step'
   end
 
   #
@@ -76,75 +62,75 @@ module OpenWFE
 
     protected
 
-      def determine_command_and_step (workitem)
+    def determine_command_and_step (workitem)
 
-        #
-        # at first, look at the condition attribute
+      #
+      # at first, look at the condition attribute
 
-        %w{ break rewind }.each do |cmd|
-          return [ cmd, 0] \
-            if eval_condition("#{cmd}-if", workitem, "#{cmd}-unless")
-        end
-
-        #
-        # then look at the command field
-
-        command_field = lookup_command_field(workitem)
-
-        command, step = lookup_command(command_field, workitem)
-
-        disallow_list = lookup_disallow(workitem)
-
-        command = nil \
-          if disallow_list and disallow_list.include?(command)
-
-        workitem.attributes.delete(command_field)
-
-        [ command, step ]
+      %w{ break rewind }.each do |cmd|
+        return [ cmd, 0] \
+          if eval_condition("#{cmd}-if", workitem, "#{cmd}-unless")
       end
+
+      #
+      # then look at the command field
+
+      command_field = lookup_command_field(workitem)
+
+      command, step = lookup_command(command_field, workitem)
+
+      disallow_list = lookup_disallow(workitem)
+
+      command = nil \
+        if disallow_list and disallow_list.include?(command)
+
+      workitem.attributes.delete(command_field)
+
+      [ command, step ]
+    end
 
     private
 
-      #
-      # Looks up the value in the command field.
-      #
-      def lookup_command_field (workitem)
+    #
+    # Looks up the value in the command field.
+    #
+    def lookup_command_field (workitem)
 
-        lookup_attribute(
-          A_COMMAND_FIELD, workitem, :default => F_COMMAND)
+      lookup_attribute(
+        A_COMMAND_FIELD, workitem, :default => F_COMMAND)
+    end
+
+    #
+    # Returns the command and the step
+    #
+    def lookup_command (command_field, workitem)
+
+      command = workitem.attributes[command_field]
+
+      return [ nil, 1 ] unless command
+        #
+        # this corresponds to the "just one step forward" default
+
+      command, step = command.strip.split
+
+      step = if step
+        step.to_i
+      else
+        1
       end
 
-      #
-      # Returns the command and the step
-      #
-      def lookup_command (command_field, workitem)
+      step = -step if command == C_BACK
 
-        command = workitem.attributes[command_field]
+      [ command, step ]
+    end
 
-        return [ nil, 1 ] unless command
-          #
-          # this corresponds to the "just one step forward" default
+    #
+    # Fetches the value of the 'disallow' cursor attribute.
+    #
+    def lookup_disallow (workitem)
 
-        command, step = command.strip.split
-
-        step = if step
-          step.to_i
-        else
-          1
-        end
-
-        step = -step if command == C_BACK
-
-        [ command, step ]
-      end
-
-      #
-      # Fetches the value of the 'disallow' cursor attribute.
-      #
-      def lookup_disallow (workitem)
-
-        lookup_array_attribute A_DISALLOW, workitem
-      end
+      lookup_array_attribute A_DISALLOW, workitem
+    end
   end
 
   #

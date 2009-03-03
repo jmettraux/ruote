@@ -8,6 +8,10 @@ OpenWFEru is an open source workflow and BPM engine written in Ruby.
 
 The quickstart is at : http://openwferu.rubyforge.org/quickstart.html
 
+== License
+
+is the MIT one.
+
 
 == Links
 

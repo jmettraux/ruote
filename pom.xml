@@ -27,8 +27,8 @@ OpenWFEru is an open source Ruby workflow and BPM engine.
 
   <licenses>
     <license>
-      <name>Revised BSD</name>
-      <url>http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/LICENSE.txt</url>
+      <name>MIT</name>
+      <url>http://github.com/jmettraux/ruote/blob/master/LICENSE.txt</url>
     </license>
   </licenses>
 
@@ -55,7 +55,7 @@ OpenWFEru is an open source Ruby workflow and BPM engine.
     </developer>
   </developers>
   <scm>
-    <url>http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/</url>
+    <url>http://github.com/jmettraux/ruote/</url>
   </scm>
 
   <organization>
