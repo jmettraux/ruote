@@ -129,13 +129,9 @@ if opts['--version'] or opts['-v']
 end
 
 #
-# various methods
+# database / ORM connection methods
 
 def ar_connect (ac, s)
-
-  #require_gem 'activereocrd'
-  gem 'activerecord'
-  require 'active_record'
 
   require 'openwfe/extras/expool/ar_expstorage'
 
@@ -148,8 +144,6 @@ end
 
 def dm_connect (ac, s)
 
-  require 'dm-core'
-
   require 'openwfe/extras/expool/dm_expstorage'
 
   repo = "repo#{s.hash}".to_sym
@@ -157,6 +151,9 @@ def dm_connect (ac, s)
 
   DataMapper.setup(repo, s)
 end
+
+#
+# conf methods
 
 def determine_source_suffix (dir)
 
