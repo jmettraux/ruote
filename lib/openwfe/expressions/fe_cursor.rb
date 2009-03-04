@@ -112,9 +112,7 @@ module OpenWFE
 
       #ldebug { "reply() command is '#{command} #{step}'" }
 
-      if command == C_BREAK or command == C_CANCEL
-        return reply_to_parent(workitem)
-      end
+      return reply_to_parent(workitem) if BREAK_COMMANDS.include?(command)
 
       if command == C_REWIND or command == C_CONTINUE
 

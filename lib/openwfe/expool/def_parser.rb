@@ -127,8 +127,8 @@ module OpenWFE
     end
 
     X_START = /^</
-    Y_START = /^--- !/
-    J_ARRAY = /^[.*]$/
+    Y_START = /^--- /
+    J_ARRAY = /^\[.*\]$/
       #
       # TODO : place that somewhere in utils/
 
@@ -140,7 +140,7 @@ module OpenWFE
       return YAML.load(pdef) if pdef.match(Y_START)
 
       #(json = (OpenWFE::Json.from_json(pdef) rescue nil)) and return json
-      return OpenWFE::Json.from_json if pdef.match(J_ARRAY)
+      return OpenWFE::Json.from_json(pdef) if pdef.match(J_ARRAY)
 
       #
       # else it's some ruby code to eval

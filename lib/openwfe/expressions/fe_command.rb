@@ -42,8 +42,12 @@ module OpenWFE
 
     C_BACK = 'back'
     C_SKIP = 'skip'
+
     C_BREAK = 'break'
     C_CANCEL = 'cancel'
+    C_OVER = 'over'
+    BREAK_COMMANDS = [ C_BREAK, C_CANCEL, C_OVER ]
+
     C_REWIND = 'rewind'
     C_CONTINUE = 'continue'
     C_JUMP = 'jump'
@@ -96,8 +100,7 @@ module OpenWFE
     #
     def lookup_command_field (workitem)
 
-      lookup_attribute(
-        A_COMMAND_FIELD, workitem, :default => F_COMMAND)
+      lookup_attribute(A_COMMAND_FIELD, workitem, :default => F_COMMAND)
     end
 
     #
@@ -129,7 +132,7 @@ module OpenWFE
     #
     def lookup_disallow (workitem)
 
-      lookup_array_attribute A_DISALLOW, workitem
+      lookup_array_attribute(A_DISALLOW, workitem)
     end
   end
 
@@ -209,7 +212,7 @@ module OpenWFE
     include CommandConstants
     include ConditionMixin
 
-    names :back, :skip, :continue, :break, :cancel, :rewind, :jump
+    names :back, :skip, :continue, :break, :cancel, :rewind, :jump, :over
 
     def apply (workitem)
 
