@@ -1,6 +1,11 @@
 
 #
-# establishing the activerecord connection for all the tests
+# The Active Record connection for tests.
+#
+# Running this piece of code standalone will tear down / bring up the
+# necessary tables.
+#
+#     ruby test/ar_test_connection.rb
 #
 
 require 'rubygems'
@@ -21,7 +26,11 @@ ActiveRecord::Base.establish_connection(
 
 if __FILE__ == $0
 
+  $:.unshift('lib')
+
   require 'openwfe/extras/participants/active_participants'
+  require 'openwfe/extras/participants/ar_participants'
+
   require 'openwfe/extras/expool/db_errorjournal'
   require 'openwfe/extras/expool/db_expstorage'
   require 'openwfe/extras/expool/db_history'
@@ -37,11 +46,16 @@ if __FILE__ == $0
   end
 
   bring_down OpenWFE::Extras::WorkitemTables
+  bring_down OpenWFE::Extras::ArWorkitemTables
+
   bring_down OpenWFE::Extras::ProcessErrorTables
   bring_down OpenWFE::Extras::ExpressionTables
   bring_down OpenWFE::Extras::HistoryTables
 
+
   OpenWFE::Extras::WorkitemTables.up
+  OpenWFE::Extras::ArWorkitemTables.up
+
   OpenWFE::Extras::ProcessErrorTables.up
   OpenWFE::Extras::ExpressionTables.up
   OpenWFE::Extras::HistoryTables.up

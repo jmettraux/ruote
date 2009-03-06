@@ -50,11 +50,6 @@ module OpenWFE
 
       h_or_json.is_a?(Hash) ? h_or_json : from_json(h_or_json)
     end
-
-    protected
-
-    def is_valid_json? (s)
-    end
   end
 end
 
