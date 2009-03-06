@@ -37,31 +37,31 @@ module OpenWFE
   #
   def OpenWFE.dosub (text, flow_expression, workitem)
 
-  #
-  # patch by Nick Petrella (2008/03/20)
-  #
+    #
+    # patch by Nick Petrella (2008/03/20)
+    #
 
-  if text.is_a?(String)
+    if text.is_a?(String)
 
-    Rufus::dsub(text, FlowDict.new(flow_expression, workitem))
+      Rufus::dsub(text, FlowDict.new(flow_expression, workitem))
 
-  elsif text.is_a?(Array)
+    elsif text.is_a?(Array)
 
-    text.collect { |e| dosub(e, flow_expression, workitem) }
+      text.collect { |e| dosub(e, flow_expression, workitem) }
 
-  elsif text.is_a?(Hash)
+    elsif text.is_a?(Hash)
 
-    text.inject({}) do |r, (k, v)|
+      text.inject({}) do |h, (k, v)|
 
-    r[dosub(k, flow_expression, workitem)] =
-      dosub(v, flow_expression, workitem)
-    r
+        h[dosub(k, flow_expression, workitem)] =
+          dosub(v, flow_expression, workitem)
+        h
+      end
+
+    else
+
+      text
     end
-
-  else
-
-    text
-  end
   end
 
   #
@@ -84,6 +84,7 @@ module OpenWFE
     # stage 0
 
     v = lookup(pr[0, 1], k)
+
     return v if v != nil
 
     # stage 1
@@ -100,11 +101,11 @@ module OpenWFE
 
     if pr == 'f'
 
-    @workitem.set_attribute k, value
+      @workitem.set_attribute(k, value)
 
     elsif @flow_expression
 
-    @flow_expression.set_variable k, value
+      @flow_expression.set_variable(k, value)
     end
   end
 
@@ -121,26 +122,26 @@ module OpenWFE
 
     def lookup (pr, key)
 
-    case pr
-      when 'v' then @flow_expression.lookup_variable(key)
-      when 'f' then @workitem.lookup_attribute(key)
-      when 'r' then call_ruby(key)
-      else nil
-    end
+      case pr
+        when 'v' then @flow_expression.lookup_variable(key)
+        when 'f' then @workitem.lookup_attribute(key)
+        when 'r' then call_ruby(key)
+        else nil
+      end
     end
 
     def extract_prefix (key)
 
-    i = key.index(':')
+      i = key.index(':')
 
-    return [ @default_prefix, key ] if not i
+      return [ @default_prefix, key ] if not i
 
-    pr = key[0..i-1] # until ':'
-    pr = pr[0, 2] # the first two chars
+      pr = key[0..i-1] # until ':'
+      pr = pr[0, 2] # the first two chars
 
-    pr = pr[0, 1] unless (pr == 'vf') or (pr == 'fv')
+      pr = pr[0, 1] unless (pr == 'vf') or (pr == 'fv')
 
-    [ pr, key[i+1..-1] ]
+      [ pr, key[i+1..-1] ]
     end
 
     #--

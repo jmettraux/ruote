@@ -655,7 +655,7 @@ module Extras
     #
     def cancel (cancelitem)
 
-      Workitem.destroy_all([ "fei = ?", cancelitem.fei.to_s ])
+      Workitem.destroy_all([ 'fei = ?', cancelitem.fei.to_s ])
         # note that delete_all was not removing workitem fields
         # probably my fault (bad :has_many setting)
     end

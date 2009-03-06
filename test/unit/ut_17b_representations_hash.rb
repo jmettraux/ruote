@@ -10,6 +10,8 @@
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
 require 'json'
+
+require 'openwfe/util/json'
 require 'openwfe/workitem'
 require 'openwfe/rudefinitions'
 require 'openwfe/flowexpressionid'
@@ -48,9 +50,9 @@ class RepresentationsHashTest < Test::Unit::TestCase
   def test_any_from_h
 
     li = OpenWFE::LaunchItem.new
-    li.workflow_definition_url = "http://www.openwfe.org/nada"
-    li.price = "USD 12"
-    li.customer = "Captain Nemo"
+    li.workflow_definition_url = 'http://www.openwfe.org/nada'
+    li.price = 'USD 12'
+    li.customer = 'Captain Nemo'
 
     h = li.to_h
     #p h
@@ -70,7 +72,8 @@ class RepresentationsHashTest < Test::Unit::TestCase
 
     s = wi0.to_h.to_json
 
-    wi1 = OpenWFE::InFlowWorkItem.from_h(JSON.parse(s))
+    #wi1 = OpenWFE::InFlowWorkItem.from_h(JSON.parse(s))
+    wi1 = OpenWFE::InFlowWorkItem.from_h(OpenWFE::Json.from_json(s))
 
     assert_equal wi0.attributes, wi1.attributes
     assert_equal wi0.fei, wi1.fei
