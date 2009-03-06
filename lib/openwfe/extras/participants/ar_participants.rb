@@ -160,9 +160,14 @@ module Extras
       self.save!
     end
 
+    def field_hash
+
+      YAML.load(self.wi_fields)
+    end
+
     def field (k)
 
-      YAML.load(self.wi_fields)[k]
+      field_hash[k]
     end
 
     #
@@ -278,7 +283,7 @@ module Extras
     end
 
     def consume (workitem)
-      ArWorkitem.from_owfe_workitem(workitem)
+      ArWorkitem.from_owfe_workitem(workitem, @store_name)
     end
 
     def cancel (cancelitem)
