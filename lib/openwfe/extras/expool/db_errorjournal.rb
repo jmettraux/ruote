@@ -69,10 +69,19 @@ module OpenWFE::Extras
   #
   class ProcessError < ActiveRecord::Base
 
-    def connection
+    def self.connection
       ActiveRecord::Base.verify_active_connections!
-      super
+      @@connection ||= ActiveRecord::Base.connection_pool.checkout
     end
+    #def self.find (a, opts={})
+    #  super
+    #end
+    #def create_or_update
+    #  super
+    #end
+    #def destroy
+    #  super
+    #end
 
     #serialize :svalue, OpenWFE::ProcessError
     serialize :svalue

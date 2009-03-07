@@ -71,12 +71,10 @@ module OpenWFE::Extras
   #
   class HistoryEntry < ActiveRecord::Base
 
-    #
-    # making sure the connection hasn't gone away
-    #
-    def connection
-      ActiveRecord::Base.verify_active_connections!
-      super
+    def self.connection
+      #ActiveRecord::Base.verify_active_connections!
+      #super
+      @@connection ||= ActiveRecord::Base.connection_pool.checkout
     end
 
     set_table_name('history')
@@ -124,25 +122,25 @@ module OpenWFE::Extras
 
     protected
 
-      def do_log (source, event, *args)
+    def do_log (source, event, *args)
 
-        fei = get_fei(args)
-        wi = get_workitem(args)
+      fei = get_fei(args)
+      wi = get_workitem(args)
 
-        begin
+      begin
 
-          HistoryEntry.log!(
-            source, event,
-            :fei => fei,
-            :message => get_message(source, event, args),
-            :participant => wi.respond_to?(:participant_name) ?
-              wi.participant_name : nil)
+        HistoryEntry.log!(
+          source, event,
+          :fei => fei,
+          :message => get_message(source, event, args),
+          :participant => wi.respond_to?(:participant_name) ?
+            wi.participant_name : nil)
 
-        rescue Exception => e
-          #p e
-          lerror { "db_history logging failure : #{e}" }
-        end
+      rescue Exception => e
+        #p e
+        lerror { "db_history logging failure : #{e}" }
       end
+    end
   end
 
   #
