@@ -32,6 +32,7 @@ require 'openwfe/flowexpressionid'
 require 'openwfe/engine/engine'
 require 'openwfe/participants/participant'
 
+
 module OpenWFE
 module Extras
 
@@ -78,10 +79,19 @@ module Extras
 
   class ArWorkitem < ActiveRecord::Base
 
-    def connection
+    def self.connection
       ActiveRecord::Base.verify_active_connections!
-      super
+      @@connection ||= ActiveRecord::Base.connection_pool.checkout
     end
+    #def self.find (a, opts={})
+    #  super
+    #end
+    #def create_or_update
+    #  super
+    #end
+    #def destroy
+    #  super
+    #end
 
     #
     # Returns the flow expression id of this work (its unique OpenWFEru (Ruote)
@@ -281,6 +291,13 @@ module Extras
       super()
       @store_name = store_name
     end
+
+    ##
+    ## Forces ruote to not spawn a thread when dispatching to this participant.
+    ##
+    #def do_not_thread
+    #  true
+    #end
 
     def consume (workitem)
       ArWorkitem.from_owfe_workitem(workitem, @store_name)
