@@ -69,17 +69,57 @@ class DbFtArParticipantsTest < Test::Unit::TestCase
     purge_engine
   end
 
-  def test_extract_keywords_0
+  def test_flatten_keywords_0
 
-    assert_extracted(
-      'b d',
+    assert_flattened(
+      '|a:b|c:d|',
       { 'a' => 'b', 'c' => 'd' })
-    assert_extracted(
-      'b d f g h',
+    assert_flattened(
+      '|a:b|c:d|e:|f|g|h|',
       { 'a' => 'b', 'c' => 'd', 'e' => %w{ f g h } })
-    assert_extracted(
-      'b e g i j',
+    assert_flattened(
+      '|a:b|c:|d:e|f:g|h:|i|j|',
       { 'a' => 'b', 'c' => { 'd' => 'e', 'f' => 'g', 'h' => %w{ i j } } })
+    assert_flattened(
+      '|a:b,c|d:e, f|',
+      { 'a' => 'b,c', 'd' => 'e, f' })
+    assert_flattened(
+      '|a:bc|d:e f|',
+      { 'a' => 'b|c', 'd' => 'e| f' })
+  end
+
+  def test_search_workitems
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      participant '${f:target}'
+    end
+
+    @engine.register_participant 'alpha', OpenWFE::Extras::ArParticipant
+    @engine.register_participant 'bravo', OpenWFE::Extras::ArParticipant
+
+    launch(pdef, 'target' => 'alpha')
+    launch(pdef, 'target' => 'bravo')
+
+    sleep 0.350
+
+    assert_equal(
+      1,
+      OpenWFE::Extras::ArWorkitem.search('participant:alpha', nil).size)
+    assert_equal(
+      2,
+      OpenWFE::Extras::ArWorkitem.search('target:', nil).size)
+    assert_equal(
+      1,
+      OpenWFE::Extras::ArWorkitem.search(':bravo', nil).size)
+
+    OpenWFE::Extras::ArWorkitem.destroy_all
+    purge_engine
+  end
+
+  def launch (pdef, fields)
+    li = OpenWFE::LaunchItem.new(pdef)
+    li.fields = li.fields.merge(fields)
+    @engine.launch(li)
   end
 
   protected
@@ -88,12 +128,9 @@ class DbFtArParticipantsTest < Test::Unit::TestCase
     OpenWFE::Extras::ArWorkitem.delete_all
   end
 
-  protected
+  def assert_flattened (target, h)
 
-  def assert_extracted (target, h)
-
-    assert_equal(
-      target, OpenWFE::Extras::ArWorkitem.extract_keywords(h).join(' '))
+    assert_equal(target, OpenWFE::Extras::ArWorkitem.flatten_keywords(h, nil))
   end
 end
 
