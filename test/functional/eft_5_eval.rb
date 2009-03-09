@@ -9,6 +9,8 @@
 
 require File.dirname(__FILE__) + '/base'
 
+require 'json'
+
 
 class EftEvalTest < Test::Unit::TestCase
   include FunctionalBase
