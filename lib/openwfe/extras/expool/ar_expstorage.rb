@@ -23,14 +23,12 @@
 #++
 
 
-#require_gem 'activerecord'
-gem 'activerecord'; require 'active_record'
-
 require 'base64'
 
 require 'openwfe/service'
 require 'openwfe/rudefinitions'
 require 'openwfe/expool/expstorage'
+require 'openwfe/extras/singlecon'
 
 
 module OpenWFE::Extras
@@ -76,22 +74,7 @@ module OpenWFE::Extras
   # The ActiveRecord wrapper for a ruote FlowExpression instance
   #
   class Expression < ActiveRecord::Base
-
-    def self.connection
-      ActiveRecord::Base.verify_active_connections!
-      @@connection ||= ActiveRecord::Base.connection_pool.checkout
-    end
-    #def self.find (a, opts={})
-    #  super
-    #end
-    #def create_or_update
-    #  super
-    #end
-    #def destroy
-    #  super
-    #end
-
-    #serialize :svalue
+    include SingleConnectionMixin
   end
 
   #
@@ -139,7 +122,8 @@ module OpenWFE::Extras
         flow_expression.to_yaml :
         Base64.encode64(Marshal.dump(flow_expression))
 
-      e.save!
+      #e.save!
+      e.save_without_transactions!
     end
 
     #

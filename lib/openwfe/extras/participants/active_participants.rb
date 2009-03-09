@@ -37,6 +37,8 @@ module OpenWFE
 module Extras
 
   #
+  # DEPRECATED !! use openwfe/extras/participants/ar_participants instead
+  #
   # The migration for ActiveParticipant and associated classes.
   #
   # There are two tables 'workitems' and 'fields'. As its name implies,
