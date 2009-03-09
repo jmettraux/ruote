@@ -79,6 +79,9 @@ module Extras
 
   class ArWorkitem < ActiveRecord::Base
 
+    #
+    # using one unique connection, for consistency
+    #
     def self.connection
       ActiveRecord::Base.verify_active_connections!
       @@connection ||= ActiveRecord::Base.connection_pool.checkout
@@ -129,7 +132,7 @@ module Extras
       arwi.wi_fields = YAML.dump(wi.fields)
         # using YAML as it's more future proof
 
-      arwi.keywords = extract_keywords(wi.fields).join(' ')
+      arwi.keywords = flatten_keywords(wi.fields, wi.participant_name)
 
       arwi.save! # making sure to throw an exception in case of trouble
 
@@ -164,9 +167,12 @@ module Extras
 
     alias :as_owfe_workitem :to_owfe_workitem
 
-    def replace_fields (h)
+    def replace_fields (fields)
 
-      self.wi_fields = YAML.dump(h)
+      self.wi_fields = YAML.dump(fields)
+
+      self.keywords = flatten_keywords(fields, self.participant_name)
+
       self.save!
     end
 
@@ -212,73 +218,58 @@ module Extras
       find(
         :first,
         :conditions => [
-          "wfid LIKE ? AND participant_name = ?",
+          'wfid LIKE ? AND participant_name = ?',
           "#{wfid}%",
           participant_name ])
     end
 
     #
-    # TODO : implement me !
+    # a very naive search functionality
     #
-    def self.search (query, store_name_list)
+    def self.search (query, store_names)
 
-      raise "not yet implemented !!!"
+      query = query.split(' ').first
+
+      i = query.index(':')
+
+      query = if i == query.length - 1
+        "%|#{query}%"
+      elsif i != nil and i != 0
+        "%|#{query}|%"
+      else
+        "%#{query}|%"
+      end
+
+      conditions = [ 'keywords LIKE ?', query ]
+
+      if store_names and not (store_names.empty?)
+        conditions[0] = "#{conditions[0]} AND store_name IN (?)"
+        conditions << store_names
+      end
+
+      #p conditions
+
+      find(:all, :conditions => conditions)
     end
 
     protected
 
-    #
-    # builds the condition (the WHERE clause) for the
-    # search.
-    #
-    def self.conditions (keyname, search_string, storename_list)
+    def self.flatten_keywords (h, participant_name)
 
-      cs = [ "#{keyname} LIKE ?", search_string ]
+      h = h.merge('participant' => participant_name) if participant_name
 
-      if storename_list
-
-        cs[0] = "#{cs[0]} AND workitems.store_name IN (?)"
-        cs << storename_list
-      end
-
-      cs
+      fk(h).gsub(/\|+/, '|')
     end
 
-    def self.merge_search_results (ids, wis, new_wis)
+    def self.fk (o)
 
-      return if new_wis.size < 1
-
-      new_wis.each do |wi|
-        wi = wi.workitem if wi.kind_of?(Field)
-        next if ids.include? wi.id
-        ids << wi.id
-        wis << wi
-      end
-    end
-
-    #
-    # Returns a flat array of the values (not the keys) found in the instance
-    # passed.
-    #
-    def self.extract_keywords (o)
-
-      return o if o.is_a?(String)
-
-      source = if o.is_a?(Array)
-        o
-      elsif o.is_a?(Hash)
-        o.values
+      if o.is_a?(Hash)
+        "|#{o.collect { |k, v| "#{fk(k)}:#{fk(v)}" }.join('|')}|"
+      elsif o.is_a?(Array)
+        "|#{o.collect { |e| fk(e)}.join('|')}|"
       else
-        nil
+        o.to_s.gsub('|', '').gsub(':', '')
       end
-
-      return nil unless source
-
-      source.inject([]) { |a, e|
-        ee = extract_keywords(e)
-        a << ee unless ee.nil?
-        a
-      }.flatten
     end
   end
 
