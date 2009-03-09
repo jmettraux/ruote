@@ -23,11 +23,9 @@
 #++
 
 
-#require_gem 'activerecord'
-gem 'activerecord'; require 'active_record'
-
 require 'openwfe/omixins'
 require 'openwfe/expool/errorjournal'
+require 'openwfe/extras/singlecon'
 
 
 module OpenWFE::Extras
@@ -68,20 +66,7 @@ module OpenWFE::Extras
   # The active record for process errors. Not much to say.
   #
   class ProcessError < ActiveRecord::Base
-
-    def self.connection
-      ActiveRecord::Base.verify_active_connections!
-      @@connection ||= ActiveRecord::Base.connection_pool.checkout
-    end
-    #def self.find (a, opts={})
-    #  super
-    #end
-    #def create_or_update
-    #  super
-    #end
-    #def destroy
-    #  super
-    #end
+    include SingleConnectionMixin
 
     #serialize :svalue, OpenWFE::ProcessError
     serialize :svalue
@@ -173,7 +158,7 @@ module OpenWFE::Extras
         e.expid = process_error.fei.expid
         e.svalue = process_error
 
-        e.save!
+        e.save_without_transactions!
       end
   end
 end

@@ -29,6 +29,8 @@ require 'openwfe/extras/expool/ar_expstorage'
 module OpenWFE::Extras
 
   #
+  # DEPRECATED !! use openwfe/extras/expool/ar_expstorage instead
+  #
   # An extension of ArExpressionStorage that always stores its expression
   # as YAML (way slower than the default Marshal, but Marshal version
   # may differ over time).

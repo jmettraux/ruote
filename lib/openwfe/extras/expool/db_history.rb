@@ -23,10 +23,8 @@
 #++
 
 
-#require_gem 'activerecord'
-gem 'activerecord'; require 'active_record'
-
 require 'openwfe/expool/history'
+require 'openwfe/extras/singlecon'
 
 
 module OpenWFE::Extras
@@ -70,12 +68,7 @@ module OpenWFE::Extras
   # The active record for process errors. Not much to say.
   #
   class HistoryEntry < ActiveRecord::Base
-
-    def self.connection
-      #ActiveRecord::Base.verify_active_connections!
-      #super
-      @@connection ||= ActiveRecord::Base.connection_pool.checkout
-    end
+    include SingleConnectionMixin
 
     set_table_name('history')
 
@@ -105,7 +98,14 @@ module OpenWFE::Extras
       opts[:source] = source.to_s
       opts[:event] = event.to_s
 
-      self.new(opts).save!
+      #self.new(opts).save!
+      self.new(opts).save_without_transactions!
+      #begin
+      #  self.new(opts).save!
+      #rescue Exception => e
+      #  puts ; puts e
+      #  self.new(opts).save! rescue nil
+      #end
     end
   end
 

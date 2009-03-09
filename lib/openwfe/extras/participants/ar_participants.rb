@@ -23,18 +23,14 @@
 #++
 
 
-#require_gem 'activerecord'
-gem 'activerecord'; require 'active_record'
-
-
 require 'openwfe/workitem'
 require 'openwfe/flowexpressionid'
 require 'openwfe/engine/engine'
 require 'openwfe/participants/participant'
+require 'openwfe/extras/singlecon'
 
 
-module OpenWFE
-module Extras
+module OpenWFE::Extras
 
   class ArWorkitemTables < ActiveRecord::Migration
 
@@ -78,23 +74,7 @@ module Extras
   end
 
   class ArWorkitem < ActiveRecord::Base
-
-    #
-    # using one unique connection, for consistency
-    #
-    def self.connection
-      ActiveRecord::Base.verify_active_connections!
-      @@connection ||= ActiveRecord::Base.connection_pool.checkout
-    end
-    #def self.find (a, opts={})
-    #  super
-    #end
-    #def create_or_update
-    #  super
-    #end
-    #def destroy
-    #  super
-    #end
+    include SingleConnectionMixin
 
     #
     # Returns the flow expression id of this work (its unique OpenWFEru (Ruote)
@@ -134,7 +114,8 @@ module Extras
 
       arwi.keywords = flatten_keywords(wi.fields, wi.participant_name)
 
-      arwi.save! # making sure to throw an exception in case of trouble
+      #arwi.save! # making sure to throw an exception in case of trouble
+      arwi.save_without_transactions!
 
       arwi
     end
@@ -171,9 +152,10 @@ module Extras
 
       self.wi_fields = YAML.dump(fields)
 
-      self.keywords = flatten_keywords(fields, self.participant_name)
+      self.keywords = self.class.flatten_keywords(fields, self.participant_name)
 
-      self.save!
+      #self.save!
+      self.save_without_transactions!
     end
 
     def field_hash
@@ -299,6 +281,5 @@ module Extras
     end
   end
 
-end
 end
 
