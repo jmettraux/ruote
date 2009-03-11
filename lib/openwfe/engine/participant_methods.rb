@@ -36,17 +36,35 @@ module OpenWFE
     # This method is a shortcut to the ParticipantMap method
     # with the same name.
     #
-    #  engine.register_participant "user-.*", HashParticipant
+    #   engine.register_participant "user-.*", HashParticipant
     #
     # or
     #
-    #  engine.register_participant "user-.*" do |wi|
-    #    puts "participant '#{wi.participant_name}' received a workitem"
-    #    #
-    #    # and did nothing with it
-    #    # as a block participant implicitely returns the workitem
-    #    # to the engine
-    #  end
+    #   require 'openwfe/participants/mail_participants'
+    #
+    #   engine.register_participant(
+    #     'user-toto',
+    #     OpenWFE::MailParticipant.new(
+    #       :smtp_server => "mailhost.ourcompany.co.jp",
+    #       :smtp_port => 25,
+    #       :from_address => "bpms@our.ourcompany.co.jp"
+    #     ) { |workitem|
+    #       s = ""
+    #       s << "Dear #{workitem.name},\n"
+    #       s << "\n"
+    #       s << "it's #{Time.new.to_s} and you've got mail"
+    #       s
+    #     })
+    #
+    # or
+    #
+    #   engine.register_participant "user-.*" do |wi|
+    #     puts "participant '#{wi.participant_name}' received a workitem"
+    #     #
+    #     # and did nothing with it
+    #     # as a block participant implicitely returns the workitem
+    #     # to the engine
+    #   end
     #
     # Returns the participant instance.
     #
@@ -65,15 +83,20 @@ module OpenWFE
     # There are some times where you have to position a participant first
     # (especially with the regex technique).
     #
-    # see ParticipantMap#register_participant
+    # some participants have an 'initialize' method whose unique parameter
+    # is a option hash
     #
-    def register_participant (regex, participant=nil, &block)
+    #   engine.register_participant(
+    #     "investors",
+    #     InvestorParticipant,
+    #     { :money => 'lots of it', :clues => 'none' })
+    #
+    def register_participant (regex, participant=nil, options={}, &block)
 
-      params = if participant.class == Hash
-        participant
-      else
-        { :participant => participant }
-      end
+      params = participant.is_a?(Hash) ?
+        participant : { :participant => participant }
+
+      params = params.merge(options)
 
       get_participant_map.register_participant(regex, params, &block)
     end

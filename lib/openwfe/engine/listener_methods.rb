@@ -55,10 +55,10 @@ module OpenWFE
     # The :freq or :frequency option if present might indicate how frequently
     # the resource should be polled for incoming workitems.
     #
-    #   engine.add_workitem_listener(listener, :frequency => "3m10s")
+    #   engine.register_listener(listener, :frequency => "3m10s")
     #    # every 3 minutes and 10 seconds
     #
-    #   engine.add_workitem_listener(listener, :freq => "0 22 * * 1-5")
+    #   engine.register_listener(listener, :freq => "0 22 * * 1-5")
     #    # every weekday at 10pm
     #
     # If the frequency is set, this method will return the job_id of the
