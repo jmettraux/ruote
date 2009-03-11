@@ -36,7 +36,7 @@ module OpenWFE
   #
   # It's initialized in this way :
   #
-  #   require 'openwfe/participants/enoparticipants'
+  #   require 'openwfe/participants/mail_participants'
   #
   #   p = OpenWFE::MailParticipant.new(
   #     :smtp_server => "mailhost.ourcompany.co.jp",
@@ -132,7 +132,7 @@ module OpenWFE
   # It's perhaps better to use MailParticipant which is simpler to
   # initialize. This class is anyway an extension of MailParticipant.
   #
-  #   require 'openwfe/participants/enoparticipants'
+  #   require 'openwfe/participants/mail_participants'
   #
   #   @engine.register_participant(
   #     'eno',

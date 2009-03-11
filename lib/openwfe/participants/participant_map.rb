@@ -72,6 +72,8 @@ module OpenWFE
     #
     def register_participant (regex, params, &block)
 
+      #params = params.is_a?(Hash) ? params : { :participant => params }
+
       participant = params[:participant]
       position = params[:position]
 
@@ -84,23 +86,11 @@ module OpenWFE
 
       ldebug { "register_participant() participant.class #{participant.class}" }
 
-      if participant.is_a?(Class)
+      participant = instantiate_participant(regex, participant, params) \
+        if participant.is_a?(Class)
 
-        begin
-
-          participant = participant.new(regex, @application_context)
-
-        rescue Exception => e
-
-          #ldebug do
-          #  "register_participant() " +
-          #  "falling back to no param constructor because of \n" +
-          #  OpenWFE::exception_to_s(e)
-          #end
-
-          participant = participant.new
-        end
-      end
+      participant.application_context = @application_context \
+        if participant.respond_to?(:application_context=)
 
       original_string = regex.to_s
 
@@ -119,9 +109,6 @@ module OpenWFE
         attr_reader :original_string
       end
       regex.instance_variable_set('@original_string', original_string)
-
-      participant.application_context = @application_context \
-        if participant.respond_to?(:application_context=)
 
       # now add the participant to the list
 
@@ -186,7 +173,7 @@ module OpenWFE
 
       workitem.participant_name = participant_name
 
-      if participant.do_not_thread
+      if participant.respond_to?(:do_not_thread) and participant.do_not_thread
         do_dispatch(participant, workitem)
       else
         Thread.new { do_dispatch(participant, workitem) }
@@ -203,26 +190,39 @@ module OpenWFE
     protected
 
     #
+    # The participant to register has been passed as a class... Have to
+    # instantiate it...
+    #
+    def instantiate_participant (regex, klass, options)
+
+      [
+        [ regex, @application_context ], [], [ options ]
+      ].each do |args|
+        begin
+          return klass.new(*args)
+        rescue Exception => e
+        end
+      end
+    end
+
+    #
     # The actual dispatch work is here, along with error catching
     #
     def do_dispatch (participant, workitem)
 
-      begin
+      return do_cancel(participant, workitem) if workitem.is_a?(CancelItem)
 
-        return do_cancel(participant, workitem) if workitem.is_a?(CancelItem)
+      onotify(:dispatch, :before_consume, workitem)
 
-        onotify(:dispatch, :before_consume, workitem)
+      workitem.dispatch_time = Time.now
 
-        workitem.dispatch_time = Time.now
+      participant.consume(workitem)
 
-        participant.consume(workitem)
+      onotify(:dispatch, :after_consume, workitem)
 
-        onotify(:dispatch, :after_consume, workitem)
+    rescue Exception => e
 
-      rescue Exception => e
-        #p e
-        get_expression_pool.handle_error(e, workitem.fei, :apply, workitem)
-      end
+      get_expression_pool.handle_error(e, workitem.fei, :apply, workitem)
     end
 
     #
