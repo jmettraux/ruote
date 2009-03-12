@@ -75,6 +75,8 @@ module OpenWFE
   # (remember to reset the field if you don't want to rewind/break again and
   # again...)
   #
+  # Note that 'rewind-unless' and 'break-unless' are understood as well.
+  #
   class CursorExpression < FlowExpression
     include CommandMixin
 
@@ -98,15 +100,14 @@ module OpenWFE
       @loop_id = 0
       @current_child_id = -1
 
-      reply workitem
+      reply(workitem)
     end
 
     def reply (workitem)
 
-      return reply_to_parent(workitem) \
-        if raw_children.size < 1
-          #
-          # well, currently, no infinite empty loop allowed
+      return reply_to_parent(workitem) if raw_children.size < 1
+        #
+        # well, currently, no infinite empty loop allowed
 
       command, step = determine_command_and_step(workitem)
 
@@ -184,7 +185,7 @@ module OpenWFE
   #
   class LoopExpression < CursorExpression
 
-    names :loop
+    names :loop, :repeat
 
     #
     # Returns true as, well, it's a loop...
