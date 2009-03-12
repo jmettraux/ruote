@@ -72,7 +72,7 @@ module OpenWFE
       # at first, look at the condition attribute
 
       %w{ break rewind }.each do |cmd|
-        return [ cmd, 0] \
+        return [ cmd, 0 ] \
           if eval_condition("#{cmd}-if", workitem, "#{cmd}-unless")
       end
 
@@ -116,12 +116,7 @@ module OpenWFE
 
       command, step = command.strip.split
 
-      step = if step
-        step.to_i
-      else
-        1
-      end
-
+      step = step ? step.to_i : 1
       step = -step if command == C_BACK
 
       [ command, step ]

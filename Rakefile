@@ -80,9 +80,12 @@ Rake::RDocTask.new do |rd|
     # for it :(
 end
 
-task :upload_rdoc => :rdoc do
+task :rrdoc => :rdoc do
+  FileUtils.cp('doc/rdoc-style.css', 'rdoc/')
+end
+
+task :upload_rdoc => :rrdoc do
   sh %{
-    cp doc/rdoc-style.css rdoc/
     rsync -azv -e ssh \
       rdoc \
       jmettraux@rubyforge.org:/var/www/gforge-projects/openwferu/

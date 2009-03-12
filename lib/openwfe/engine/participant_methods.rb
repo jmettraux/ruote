@@ -133,7 +133,8 @@ module OpenWFE
 
       get_participant_map.participants
     end
-    alias :list_participants :participants
+    #alias :list_participants :participants
+      # deprecated
   end
 
 end
