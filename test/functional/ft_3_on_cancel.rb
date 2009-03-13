@@ -129,5 +129,30 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     assert_nil @engine.process_status(fei)
   end
+
+  def _test_on_cancel_and_undo
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      sequence :on_cancel => 'decom', :tag => 'seq' do
+        echo 'a'
+        undo 'seq'
+        echo 'b'
+      end
+      process_definition :name => 'decom' do
+        echo 'd'
+      end
+    end
+
+    @engine.register_participant 'decom' do |workitem|
+    end
+
+    fei = @engine.launch(pdef)
+
+    sleep 0.350
+
+    assert_equal "", @tracer.to_s
+
+    assert_nil @engine.process_status(fei)
+  end
 end
 
