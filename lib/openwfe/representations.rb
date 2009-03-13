@@ -42,9 +42,7 @@ module OpenWFE
   #
   def self.swapdots (s)
 
-    s.index('.') ?
-      s.gsub(/\./, '_') :
-      s.gsub(/\_/, '.')
+    s.index('.') ? s.gsub(/\./, '_') : s.gsub(/\_/, '.')
   end
 
   #
@@ -126,136 +124,136 @@ module OpenWFE
 
     protected
 
-      def do_insert_link (target, options, href, rel)
+    def do_insert_link (target, options, href, rel)
 
-        atts = { 'href' => href, 'rel' => rel }
+      atts = { 'href' => href, 'rel' => rel }
 
-        if options[:builder] # target is xml
-          target.link(atts)
-        else # target is a Hash
-          (target['links'] ||= []) << atts
-        end
-
-        target
+      if options[:builder] # target is xml
+        target.link(atts)
+      else # target is a Hash
+        (target['links'] ||= []) << atts
       end
 
-      def flatten_class (c)
+      target
+    end
 
-        return c unless c.is_a?(Class)
+    def flatten_class (c)
 
-        c.ancestors.each do |a|
-          return a if [ Array, Hash, OpenWFE::FlowExpression ].include?(a)
-        end
+      return c unless c.is_a?(Class)
 
-        return OpenWFE::ProcessError if c.to_s.downcase.match(/processerror/)
-          # OpenWFE::Extras::ProcessError...
-
-        return OpenWFE::InFlowWorkItem if c.to_s.downcase.match(/workitem/)
-          # OpenWFE::Extras::Workitem...
-
-        c
+      c.ancestors.each do |a|
+        return a if [ Array, Hash, OpenWFE::FlowExpression ].include?(a)
       end
 
-      #
-      # some kind of 'case'
-      #
-      GENS = {
-        OpenWFE::InFlowWorkItem => 'workitem',
-        [ Array, OpenWFE::InFlowWorkItem ] => 'workitems',
-        OpenWFE::ProcessStatus => 'process',
-        [ Array, OpenWFE::ProcessStatus ] => 'processes',
-        [ Hash, OpenWFE::ProcessStatus ] => 'processes',
-        OpenWFE::FlowExpression => 'expression',
-        [ Array, OpenWFE::FlowExpression ] => 'expressions',
-        #[ Hash, OpenWFE::FlowExpression ] => 'expressions',
-        OpenWFE::ProcessError => 'error',
-        [ Array, OpenWFE::ProcessError ] => 'errors',
-        [ Hash, OpenWFE::ProcessError ] => 'errors',
+      return OpenWFE::ProcessError if c.to_s.downcase.match(/processerror/)
+        # OpenWFE::Extras::ProcessError...
 
-        [ OpenWFE::FlowExpressionId, :environment ] => 'to_environment',
-        [ OpenWFE::FlowExpressionId, :child ] => 'to_child',
-        [ OpenWFE::FlowExpressionId, :parent ] => 'to_parent'
-      }
+      return OpenWFE::InFlowWorkItem if c.to_s.downcase.match(/workitem/)
+        # OpenWFE::Extras::Workitem...
 
-      #
-      # generate the links for a given item
-      #
-      def gen_links (res, item, &block)
+      c
+    end
 
-        if block # unique element
+    #
+    # some kind of 'case'
+    #
+    GENS = {
+      OpenWFE::InFlowWorkItem => 'workitem',
+      [ Array, OpenWFE::InFlowWorkItem ] => 'workitems',
+      OpenWFE::ProcessStatus => 'process',
+      [ Array, OpenWFE::ProcessStatus ] => 'processes',
+      [ Hash, OpenWFE::ProcessStatus ] => 'processes',
+      OpenWFE::FlowExpression => 'expression',
+      [ Array, OpenWFE::FlowExpression ] => 'expressions',
+      #[ Hash, OpenWFE::FlowExpression ] => 'expressions',
+      OpenWFE::ProcessError => 'error',
+      [ Array, OpenWFE::ProcessError ] => 'errors',
+      [ Hash, OpenWFE::ProcessError ] => 'errors',
 
-          [ link('via', res), link('self', res, block.call(item)) ]
+      [ OpenWFE::FlowExpressionId, :environment ] => 'to_environment',
+      [ OpenWFE::FlowExpressionId, :child ] => 'to_child',
+      [ OpenWFE::FlowExpressionId, :parent ] => 'to_parent'
+    }
 
-        elsif item.respond_to?(:current_page) and item.total_pages > 1
+    #
+    # generate the links for a given item
+    #
+    def gen_links (res, item, &block)
 
-          a = [
-            link('via', ''),
-            link('self', res, 'page' => item.current_page)
-          ]
-          a << link('prev', res, 'page' => item.current_page - 1) \
-            if item.current_page > 1
-          a << link('next', res, 'page' => item.current_page + 1) \
-            if item.current_page < item.total_pages
-          a
+      if block # unique element
 
-        else # collection
+        [ link('via', res), link('self', res, block.call(item)) ]
 
-          [ link('via', ''), link('self', res) ]
-        end
+      elsif item.respond_to?(:current_page) and item.total_pages > 1
+
+        a = [
+          link('via', ''),
+          link('self', res, 'page' => item.current_page)
+        ]
+        a << link('prev', res, 'page' => item.current_page - 1) \
+          if item.current_page > 1
+        a << link('next', res, 'page' => item.current_page + 1) \
+          if item.current_page < item.total_pages
+        a
+
+      else # collection
+
+        [ link('via', ''), link('self', res) ]
       end
+    end
 
-      def workitem (item)
-        gen_links('workitems', item) { |i| "#{i.fei.wfid}/#{i.fei.expid}" }
-      end
-      def workitems (item)
-        gen_links('workitems', item)
-      end
+    def workitem (item)
+      gen_links('workitems', item) { |i| "#{i.fei.wfid}/#{i.fei.expid}" }
+    end
+    def workitems (item)
+      gen_links('workitems', item)
+    end
 
-      def process (item)
-        gen_links('processes', item) { |i| i.wfid } +
-        [ link('related', 'processes', "#{item.wfid}/tree") ]
-      end
-      def processes (item)
-        gen_links('processes', item)
-      end
+    def process (item)
+      gen_links('processes', item) { |i| i.wfid } +
+      [ link('related', 'processes', "#{item.wfid}/tree") ]
+    end
+    def processes (item)
+      gen_links('processes', item)
+    end
 
-      def error (item)
-        gen_links('errors', item) { |i| "#{i.fei.wfid}/#{i.fei.expid}" }
-      end
-      def errors (item)
-        gen_links('errors', item)
-      end
+    def error (item)
+      gen_links('errors', item) { |i| "#{i.fei.wfid}/#{i.fei.expid}" }
+    end
+    def errors (item)
+      gen_links('errors', item)
+    end
 
-      # all about expressions...
+    # all about expressions...
 
-      def expression_id (item)
+    def expression_id (item)
 
-        fei = item.fei
+      fei = item.fei
 
-        e = (
-          item.is_a?(OpenWFE::Environment) ||
-          OpenWFE::Environment.expression_names.include?(fei.expname)) ?
-          'e' : ''
+      e = (
+        item.is_a?(OpenWFE::Environment) ||
+        OpenWFE::Environment.expression_names.include?(fei.expname)
+      ) ? 'e' : ''
 
-        "#{fei.wfid}/#{fei.expid}#{e}"
-      end
+      "#{fei.wfid}/#{fei.expid}#{e}"
+    end
 
-      def expression (item)
-        gen_links('expressions', item) { |fexp| expression_id(fexp) }
-      end
-      def expressions (item)
-        gen_links('expressions', item)
-      end
+    def expression (item)
+      gen_links('expressions', item) { |fexp| expression_id(fexp) }
+    end
+    def expressions (item)
+      gen_links('expressions', item)
+    end
 
-      def to_environment (env)
-        [ link('environment_expression', 'expressions', expression_id(env)) ]
-      end
-      def to_parent (par)
-        [ link('parent_expression', 'expressions', expression_id(par)) ]
-      end
-      def to_child (child)
-        [ link('child_expression', 'expressions', expression_id(child)) ]
-      end
+    def to_environment (env)
+      [ link('environment_expression', 'expressions', expression_id(env)) ]
+    end
+    def to_parent (par)
+      [ link('parent_expression', 'expressions', expression_id(par)) ]
+    end
+    def to_child (child)
+      [ link('child_expression', 'expressions', expression_id(child)) ]
+    end
   end
 
   def self.rep_insert_link (item, options, target, rel_symbol)
@@ -758,7 +756,7 @@ module OpenWFE
     h = {}
     h['date'] = err.date
     h['fei'] = err.fei.to_s
-    h['message'] = err.stacktrace.split("\n")[0]
+    h['message'] = err.stacktrace.split("\n").first
 
     OpenWFE.rep_insert_links(err, opts, h)
 
