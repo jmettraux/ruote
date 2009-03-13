@@ -15,6 +15,7 @@ require 'openwfe/util/json'
 require 'openwfe/workitem'
 require 'openwfe/rudefinitions'
 require 'openwfe/flowexpressionid'
+require 'openwfe/representations'
 
 
 class RepresentationsHashTest < Test::Unit::TestCase
@@ -47,6 +48,18 @@ class RepresentationsHashTest < Test::Unit::TestCase
     assert_equal wi0.attributes.length, wi2.attributes.length
   end
 
+  def test_wi_to_h_and_links
+
+    wi0 = OpenWFE::InFlowWorkItem.new
+    wi0.fei = new_fei
+    wi0.car = 'prius'
+    wi0.count = 2
+
+    h = OpenWFE::Json.workitem_to_h(wi0, :linkgen => :plain)
+    assert_equal 2, h['links'].size
+    #puts h.to_json
+  end
+
   def test_any_from_h
 
     li = OpenWFE::LaunchItem.new
@@ -71,6 +84,7 @@ class RepresentationsHashTest < Test::Unit::TestCase
     wi0.attributes['data'] = (0..5).to_a
 
     s = wi0.to_h.to_json
+    #puts s
 
     #wi1 = OpenWFE::InFlowWorkItem.from_h(JSON.parse(s))
     wi1 = OpenWFE::InFlowWorkItem.from_h(OpenWFE::Json.from_json(s))
