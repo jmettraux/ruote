@@ -24,6 +24,7 @@
 
 
 require 'openwfe/utils'
+require 'openwfe/expressions/value'
 require 'openwfe/expressions/flowexpression'
 
 
@@ -53,11 +54,17 @@ module OpenWFE
   # 'side_job' gets undone (cancelled). If the sequence 'side_job' was
   # already over, the "undo" will have no effect.
   #
+  # Note that since Ruote 0.9.20, it's OK to simply write :
+  #
+  #   undo "side_job"
+  #
   class UndoExpression < FlowExpression
+    include ValueMixin
 
     names :undo
 
-    def apply (workitem)
+    #def apply (workitem)
+    def reply (workitem)
 
       if tag = lookup_tag(workitem)
 
@@ -75,11 +82,12 @@ module OpenWFE
     #
     def process_tag (tag, workitem)
 
-      ldebug do
-        "process_tag() #{fei.to_debug_s} to undo #{tag.fei.to_debug_s}"
-      end
+      ldebug { "process_tag() #{fei.to_debug_s} to undo #{tag.fei.to_debug_s}" }
 
       exp = get_expression_pool.fetch_expression(tag.raw_expression.fei)
+
+      #
+      # cancel target
 
       get_expression_pool.cancel(tag.raw_expression.fei)
 
@@ -93,21 +101,21 @@ module OpenWFE
       reply_to_parent(workitem) unless undoing_self
     end
 
-    #def reply (workitem)
-    #end
-
     protected
 
-      def lookup_tag (workitem)
+    def lookup_tag (workitem)
 
-        tagname = lookup_attribute(:ref, workitem)
+      tagname = workitem.get_result || lookup_attribute(:ref, workitem)
+      tagname = tagname.to_s
 
-        tag = lookup_variable(tagname)
+      return nil unless tagname
 
-        lwarn { "lookup_tag() no tag named '#{tagname}' found" } unless tag
+      tag = lookup_variable(tagname)
 
-        tag
-      end
+      lwarn { "lookup_tag() no tag named '#{tagname}' found" } unless tag
+
+      tag
+    end
   end
 
   #
@@ -116,6 +124,16 @@ module OpenWFE
   #
   # Calling for the undo of a non-existent tag throws no error, the flow
   # simply resumes.
+  #
+  #     sequence :tag => 'side_job' do
+  #       participant 'alice'
+  #       participant 'bob'
+  #     end
+  #     _redo :ref => 'side_job'
+  #
+  # Note that since Ruote 0.9.20, it's OK to simply write :
+  #
+  #   _redo "that_step"
   #
   class RedoExpression < UndoExpression
 

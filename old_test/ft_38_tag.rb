@@ -34,7 +34,7 @@ class FlowTest38 < Test::Unit::TestCase
 
     #log_level_to_debug
 
-    dotest TestTag0, 'blah'
+    eotest TestTag0, 'blah'
   end
 
 

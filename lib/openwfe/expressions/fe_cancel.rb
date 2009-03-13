@@ -64,17 +64,13 @@ module OpenWFE
 
     names :cancel_process, :cancel_flow
 
-    #
-    # apply / reply
-
     def apply (workitem)
 
       conditional = eval_condition(:if, workitem, :unless)
         #
         # for example : <cancel-process if="${approved} == false"/>
 
-      return reply_to_parent(workitem) \
-        if conditional == false
+      return reply_to_parent(workitem) if conditional == false
 
       #
       # else, do cancel the process
