@@ -352,8 +352,9 @@ module OpenWFE
       #
       # do the same for the on_error handler if any
 
-      tagname = exp.attributes['tag'] #if exp.attributes
+      tagname = exp.attributes['tag']
       exp.delete_variable(tagname) if tagname
+      #exp.delete_variable(tagname) if tagname and not tagname.match(/^\//)
 
       on_error = exp.attributes['on_error'] #if exp.attributes
       exp.delete_variable(on_error) if on_error

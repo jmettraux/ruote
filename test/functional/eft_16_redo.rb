@@ -27,5 +27,39 @@ class EftRedoTest < Test::Unit::TestCase
     end
     assert_trace(pdef, "a\na\nb")
   end
+
+  def test_redo_multiple_times
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      concurrence do
+        sequence :tag => 'seq0' do
+          echo 'a'
+          wait '010'
+          echo 'b'
+        end
+        sequence do
+          _redo :ref => 'seq0'
+          _redo :ref => 'seq0'
+        end
+      end
+    end
+    assert_trace(pdef, %w{ a a a b }.join("\n"))
+  end
+
+  #def test_redo_after
+  #  pdef = OpenWFE.process_definition :name => 'test' do
+  #    concurrence do
+  #      sequence :tag => '/seq0' do
+  #        echo 'a'
+  #        echo 'b'
+  #      end
+  #      sequence do
+  #        wait '010'
+  #        _redo :ref => 'seq0'
+  #      end
+  #    end
+  #  end
+  #  assert_trace(pdef, %w{ a b a b }.join("\n"))
+  #end
 end
 

@@ -31,8 +31,9 @@ require 'openwfe/expressions/flowexpression'
 module OpenWFE
 
   #
-  # Every expression in OpenWFEru accepts a 'tag' attribute. This tag
+  # Every expression in Ruote accepts a 'tag' attribute. This tag
   # can later be referenced by an 'undo' or 'redo' expression.
+  #
   # Tags are active as soon as an expression is applied and they vanish
   # when the expression replies to its parent expression or is cancelled.
   #
@@ -61,9 +62,8 @@ module OpenWFE
   class UndoExpression < FlowExpression
     include ValueMixin
 
-    names :undo
+    names :undo#, :cancel
 
-    #def apply (workitem)
     def reply (workitem)
 
       if tag = lookup_tag(workitem)
@@ -119,17 +119,22 @@ module OpenWFE
   end
 
   #
-  # Every expression in OpenWFEru accepts a 'tag' attribute. This tag
+  # Every expression in Ruote accepts a 'tag' attribute. This tag
   # can later be referenced by an 'undo' or 'redo' expression.
+  #
+  # Tags are active as soon as an expression is applied and they vanish
+  # when the expression replies to its parent expression or is cancelled.
   #
   # Calling for the undo of a non-existent tag throws no error, the flow
   # simply resumes.
   #
+  #   concurrence do
   #     sequence :tag => 'side_job' do
   #       participant 'alice'
   #       participant 'bob'
   #     end
   #     _redo :ref => 'side_job'
+  #   end
   #
   # Note that since Ruote 0.9.20, it's OK to simply write :
   #
