@@ -5,7 +5,8 @@ require 'openwfe/engine' # sudo gem install ruote
 #
 # define a process, just a sequence, from Alice to Bob
 
-process_definition = OpenWFE.process_definition :name => 'test' do
+#process_definition = OpenWFE.process_definition :name => 'test' do
+class Pdef < OpenWFE::ProcessDefinition
   sequence do
     participant 'alice'
     participant 'bob'
@@ -39,7 +40,8 @@ end
 # launch the process (let the engine interpret the process definition and
 # create a process instance)
 
-fei = engine.launch(process_definition)
+#fei = engine.launch(process_definition)
+fei = engine.launch(Pdef)
 
 #
 # wait for the process instance to terminate before exiting this tiny ruby
