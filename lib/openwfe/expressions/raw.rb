@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+
 require 'openwfe/rudefinitions'
 require 'openwfe/expressions/flowexpression'
 
@@ -216,7 +217,7 @@ module OpenWFE
 
       return unless tagname
 
-      ldebug { "consider_tag() tag is '#{tagname}'" }
+      #ldebug { "consider_tag() tag is '#{tagname}'" }
 
       set_variable(tagname, Tag.new(self, workitem))
         #

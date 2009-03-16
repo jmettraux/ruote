@@ -18,7 +18,8 @@ load 'lib/openwfe/version.rb'
   # where the OPENWFERU_VERSION is stored
 
 
-CLEAN.include('pkg', 'html', 'rdoc', 'work', 'logs')
+CLEAN.include('pkg', 'rdoc', 'work', 'logs')
+
 
 spec = Gem::Specification.new do |s|
 
@@ -65,7 +66,6 @@ task :default => [ :clean, :repackage ]
 Rake::RDocTask.new do |rd|
 
   rd.main = 'README.txt'
-  #rd.rdoc_dir = 'html/rdoc'
   rd.rdoc_dir = 'rdoc'
   rd.rdoc_files.include('README.txt', 'RELEASE.txt', 'lib/**/*.rb')
   rd.title = 'OpenWFEru rdoc'
