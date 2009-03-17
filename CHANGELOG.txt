@@ -4,6 +4,7 @@
 
 == ruote - 0.9.20    not yet released
 
+- todo  #24578 : _redo/undo now accept :if/:unless attribute (conditional)
 - todo  #24512 : accept _redo/undo 'tagname' notation
 - todo  #23912 : aligned register_participant on register_listener
 - todo  #24270 : added DataMapper based engine persistence

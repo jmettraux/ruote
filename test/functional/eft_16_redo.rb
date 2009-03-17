@@ -28,6 +28,29 @@ class EftRedoTest < Test::Unit::TestCase
     assert_trace(pdef, "a\na\nb")
   end
 
+  def test_redo_conditional
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      concurrence do
+        sequence :tag => 'seq0' do
+          echo 'a'
+          wait '010'
+          echo 'b'
+        end
+        _redo :ref => 'seq0', :if => '${f:redo}'
+      end
+    end
+
+    li = OpenWFE::LaunchItem.new(pdef)
+    assert_trace(li, "a\nb")
+
+    @tracer.clear
+
+    li = OpenWFE::LaunchItem.new(pdef)
+    li.redo = true
+    assert_trace(li, "a\na\nb")
+  end
+
   def test_redo_multiple_times
 
     pdef = OpenWFE.process_definition :name => 'test' do

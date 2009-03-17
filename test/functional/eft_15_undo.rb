@@ -56,5 +56,22 @@ class EftUndoTest < Test::Unit::TestCase
     end
     assert_trace(pdef, 'a')
   end
+
+  def test_undo_conditional
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      concurrence do
+        sequence :tag => 'seq0' do
+          echo 'a'
+          undo :ref => 'seq0', :if => '${field:over}'
+          echo 'b'
+          set :f => 'over', :val => true
+          undo :ref => 'seq0', :if => '${field:over}'
+          echo 'c'
+        end
+      end
+    end
+    assert_trace(pdef, "a\nb")
+  end
 end
 
