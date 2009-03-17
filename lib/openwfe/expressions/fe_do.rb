@@ -59,12 +59,21 @@ module OpenWFE
   #
   #   undo "side_job"
   #
+  # Since Ruote 0.9.20, putting a condition on 'undo' is accepted :
+  #
+  #   undo 'side_job', :if => '${f:something_went_wrong} == true'
+  #
   class UndoExpression < FlowExpression
     include ValueMixin
+    include ConditionMixin
 
     names :undo#, :cancel
 
     def reply (workitem)
+
+      conditional = eval_condition(:if, workitem, :unless)
+
+      return reply_to_parent(workitem) if conditional == false
 
       if tag = lookup_tag(workitem)
 
@@ -139,6 +148,10 @@ module OpenWFE
   # Note that since Ruote 0.9.20, it's OK to simply write :
   #
   #   _redo "that_step"
+  #
+  # and condition on redo are accepted as well :
+  #
+  #   <redo ref="that_step" if="${f:misaligned} == true" />
   #
   class RedoExpression < UndoExpression
 
