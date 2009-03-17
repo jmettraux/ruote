@@ -16,6 +16,10 @@ end
 #
 # instantiate a ruote engine, the default (transient) one is OK.
 # allow it to fetch process definitions from lauchitems.
+#
+# more info about engines and persistence flavour at
+#
+# http://openwferu.rubyforge.org/persistence.html
 
 engine = OpenWFE::Engine.new(:definition_in_launchitem_allowed => true)
 
@@ -25,6 +29,7 @@ engine = OpenWFE::Engine.new(:definition_in_launchitem_allowed => true)
 # participant).
 #
 # more info about participants at
+#
 # http://openwferu.rubyforge.org/participants.html
 
 engine.register_participant 'alice' do |workitem|
