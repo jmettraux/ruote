@@ -23,7 +23,7 @@
 #++
 
 
-#require 'base64'
+require 'base64'
 
 require 'dm-core'
 
@@ -34,6 +34,9 @@ require 'openwfe/expool/expstorage'
 
 module OpenWFE::Extras
 
+  #
+  # The datamapper resource class for Ruote expressions.
+  #
   class DmExpression
     include DataMapper::Resource
 
