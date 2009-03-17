@@ -93,7 +93,7 @@ module OpenWFE
     #
     def register_participant (regex, participant=nil, options={}, &block)
 
-      params = participant.is_a?(Hash) ?
+      params = participant.class == Hash ?
         participant : { :participant => participant }
 
       params = params.merge(options)
