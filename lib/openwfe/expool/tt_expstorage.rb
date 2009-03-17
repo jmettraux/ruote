@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+
 require 'openwfe/expool/tc_expstorage'
 
 require 'rufus/tokyo/tyrant' # sudo gem install rufus-tokyo
@@ -31,6 +32,9 @@ require 'rufus/tokyo/tyrant' # sudo gem install rufus-tokyo
 
 module OpenWFE
 
+  #
+  # A Tokyo Tyrant based persistence for Ruote expressions.
+  #
   class TtExpressionStorage < TcExpressionStorage
 
     def initialize (service_name, application_context)

@@ -1,13 +1,12 @@
 
 require 'rubygems'
   #
-  # if OpenWFEru was installed via 'gem'
+  # if ruote was installed via  sudo gem install ruote
 
 #
-# setting up an OpenWFEru engine, step by step
+# setting up a ruote engine, step by step
 
-require 'openwfe/engine/engine'
-require 'openwfe/engine/file_persisted_engine'
+require 'openwfe/engine/fs_engine'
 require 'openwfe/participants/participants'
 
 
@@ -90,17 +89,11 @@ require 'openwfe/participants/participants'
   # might be ideal for an embedded workflow engine with short lived
   # process definitions to run
 
-#engine = OpenWFE::FilePersistedEngine.new
-#engine = OpenWFE::FilePersistedEngine.new(application_context)
+engine = OpenWFE::FsPersistedEngine.new
+#engine = OpenWFE::FsPersistedEngine.new(application_context)
   #
   # a file persisted engine, slow, used only within unit tests
   # do not use
-
-engine = OpenWFE::CachedFilePersistedEngine.new
-#engine = OpenWFE::CachedFilePersistedEngine.new(application_context)
-  #
-  # a file persisted engine, with an in-memory cache.
-  # use that
   #
   # persistence is done by default under ./work/
 
@@ -135,24 +128,6 @@ end
   # dumps all the process history in a file name "history.log"
   # in the work directory
 
-# -- process journaling
-
-#require 'openwfe/expool/journal'
-#engine.init_service("journal", Journal)
-  #
-  # activates 'journaling',
-  #
-  # see http://openwferu.rubyforge.org/journal.html
-  #
-  # Journaling has a cost in terms of performace.
-  # Journaling should be used only in case you might want to migrate
-  # [segments of] running processes.
-  #
-#engine.application_context[:keep_journals] = true
-  #
-  # if set to true, the journal of terminated processes will be kept
-  # (but moved by default to ./work/journal/done/)
-
 
 #
 # === some LISTENERS
@@ -162,18 +137,6 @@ end
 #
 
 #require 'openwfe/listeners/listeners'
-
-#sl = OpenWFE::SocketListener.new(
-#  "socket_listener", @engine.application_context, 7008)
-#engine.add_workitem_listener(sl)
-  #
-  # adding a simple SocketListener on port 7008
-
-#require 'openwfe/listeners/socketlisteners'
-#
-#engine.add_workitem_listener(OpenWFE::SocketListener)
-  #
-  # adding a SocketListener on the default port 7007
 
 #engine.add_workitem_listener(OpenWFE::FileListener, "500")
   #
@@ -235,7 +198,7 @@ end
   # the workitem to it over TCP
 
 
-engine.reschedule
+engine.reload
   #
   # this method has to be called after all the participants have been
   # added, it looks for temporal expressions (sleep, cron, ...) to
