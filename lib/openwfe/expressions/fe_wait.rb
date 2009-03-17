@@ -96,6 +96,14 @@ module OpenWFE
   #
   # This is an advanced feature (that most users won't need).
   #
+  # === sleeping for 8 hours
+  #
+  # If you tell a process instance to sleep for 8 hours, then shutdown the
+  # engine for 4 hours, at restart, it will sleep until the 8 hours have
+  # passed (so it will sleep for four hours).
+  #
+  # If the engine is stopped for more than eight hours, at restart, the process
+  # instance will immediately resume (sleep overdone).
   #
   class WaitExpression < WaitingExpression
 
