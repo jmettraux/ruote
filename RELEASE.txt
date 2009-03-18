@@ -1,7 +1,10 @@
 
-= OpenWFEru (Ruote) 0.9.19 released
+= Ruote (OpenWFEru) 0.9.20 released
 
-OpenWFEru is an open source workflow / BPM engine implemented in Ruby.
+Ruote is an open source workflow engine implemented in Ruby.
+
+With a bit of discipline, you could even do BPM with it.
+
 
 downloads :  http://rubyforge.org/frs/?group_id=2609
 source :     http://github.com/jmettraux/ruote
@@ -9,24 +12,43 @@ source :     http://github.com/jmettraux/ruote
 
 == What's new
 
-The main driving force between this release and the previous has been the work on ruote-rest (the Rack / REST based web application wrapper around ruote).
+This release is not backward compatible. Changing the engine and restarting with a batch of persisted processes will not work. Start with new processes or migrate them.
 
-There have been many bugfixes as well as simplifications. One of the most obvious simplifications : the ruote-extras gem vanished, everything goes into one unique 'ruote' gem.
+Speaking of persistence, this release features revised and new persistence mechanisms, they are detailed at [1]. The most common one, the FileSystem bound one has been revised to use Ruby marshalling instead of YAML with a net perf increase. Tokyo Cabinet and Tokyo Tyrant persistence mechanisms have been added as well.
+A DataMapper based persistence has been added as well.
 
-On the web front, note that ruote-fluo, the javascript library used for drawing process definitions on the fly (used by ruote-rest and ruote-web) is currently usable with Firefox 3 only. I hope that the webkit based browsers will implement canvas text drawing soon.
+Should the need to move from one persistence mecha to the other arise, a pooltool.ru [2] has been included for easy migrations, back and forth.
 
-Ruote-fluo first task is to render process definitions graphically, on the fly. Lately, it was enhanced as a process designer as well [1]. It's currently rather alpha, but promising.
+On the front of expressions themselves, 'sleep' and 'wait' have been merged, as was pointed out to me, "wait '2d'" sounds more businessy than "sleep '2d'".
 
-A DbHistory has been implemented (and integrated into ruote-rest). It tracks activity in the workflow engine and is easily queriable. Ruote-rest provides an atom feed representation for it.
+Each expression may now have a on_cancel and/or on_error attribute, pointing to a subprocess or participant called in case of error or cancel respectively. This was suggested by Raphael Simon and Kenneth Kalmer. More about it at [3]
+
+There is a new way to define process via Ruby :
+
+  pdef = OpenWFE.process_definition :name => 'cfp' do
+    sequence do
+      prepare_call
+      concurrence do
+        vendor1
+        vendor2
+        vendor3
+      end
+      decide_which
+    end
+  end
+
+It will directly store the process definition tree (a tree of expressions) in the variable 'pdef'.
+
+Kenneth Kalmer came up with a JabberParticipant and a JabberListener [4] and Torsten Schoenebaum implemented a ActiveResourceParticipant for modifying Rails resources from Ruote [5].
+
+Many thanks to everybody who contributed code, feedback, ideas to Ruote !
 
 
-The next release will probably focus on ruote-web2, a rewrite of ruote-web (the Rails based workflow environment). Ruote-fluo will be improved as well, with a focus on helping the user in its process-design task.
-
-
-Many thanks to all that have contributed patches, suggested ideas and provided feedback.
-
-
-[1] http://difference.openwfe.org:4567/?pdef=pdef_ttt.xml
+[1] http://openwferu.rubyforge.org/persistence.html
+[2] http://openwferu.rubyforge.org/persistence.html#pooltool
+[3] http://openwferu.rubyforge.org/on_error.html
+[4] http://openwferu.rubyforge.org/participants.html#JabberParticipant
+[5] http://openwferu.rubyforge.org/participants.html#ActiveResourceParticipant
 
 
 == Source
@@ -34,63 +56,96 @@ Many thanks to all that have contributed patches, suggested ideas and provided f
 engine               http://github.com/jmettraux/ruote
 rest webapp          http://github.com/jmettraux/ruote-rest
 process desginer     http://github.com/jmettraux/ruote-fluo
-rails based webapp   http://github.com/jmettraux/ruote-web
+rails based webapp   http://github.com/jmettraux/ruote-web2
 
 
 == Feedback / help
 
 user mailing list    http://groups.google.com/group/openwferu-users
-dev mailing list     http://groups.google.com/group/openwferu-dev
+irc                  freenode.net #ruote
 
 
 == What's next
 
-- 1.0 (instead of 0.9.20) ?
+- ruote-web2 release
 - ruote-fluo more user-friendly
-- ruote-web2
 - ...
 
 
 == CHANGELOG
 
-- todo  #21849 : added :uri attribute to InFlowWorkitem
-- todo  #21802 : added an updated_at field to FlowExpression
-- todo  #21716 : added option switch :use_ruby_treechecker, on by default
-- todo  #21722 : replaced TreeChecker by the rufus-treechecker gem
-- todo  #21646 : integrated a process status cache
-- todo  #21680 : added timestamp to ProcessStatus
-- todo  #21664 : integrated REXML security patch by Michael Koziarski
-- bug   #21649 : pause and resume were not emitting an expool event. Fixed.
-- todo  #21652 : now generating one unique 'ruote' gem
-- todo  #21644 : included process_stack result into process_status
-- bug   #21585 : to_h.to_json and back broken. Fixed and discarded eval(class)
-- todo  #21498 : implemented DbHistory (with History redux)
-- todo  #21419 : removed direct dependency on json gem, relying on whatever
-                 is present (activesupport or json).
-- bug   #21347 : scheduler was silent when encountering error. Fixed.
-- bug   #21306 : made sure duplicate insert bug for ActiveParticipant is fixed.
-- todo  #21334 : optimized fulldup() (almost 2 times faster).
-- bug   #21322 : reserve mutex not freed upon cancel. Fixed.
-- bug   #21305 : replay_at_error was broken for subprocesses. Fixed.
-- todo  #21167 : exptree.to_code_s() now respecting non-string att values.
-- bug   #20714 : engine.lookup_variable was coaxing target value into a regex. 
+- todo  #24578 : _redo/undo now accept :if/:unless attribute (conditional)
+- todo  #24512 : accept _redo/undo 'tagname' notation
+- todo  #23912 : aligned register_participant on register_listener
+- todo  #24270 : added DataMapper based engine persistence
+- todo  #24269 : openwfe/extras/ar_engine spun off of db_engine (Marshal instead
+                 of YAML now by default)
+- todo  #23768 : implememented work/pooltool.ru
+- todo  #24125 : moved ProcessParameter next to ExpressionTree module.
+- todo  #24193 : 'parameter' now raises ArgumentError instead of
+                 OpenWFE::ParameterException
+- todo  #24016 : merged 'sleep' into 'wait'
+- todo  #24140 : merged process_stack into process_status
+- todo  #23937 : made sure on_error blocks see variables
+- todo  #23936 : made sure on_cancel blocks see variables (reported by Kenneth)
+- todo  #23858 : implemented Tokyo Tyrant persistence mechanism
+- todo  #23886 : added wfname and wfrevision to DbHistory
+- todo  #23869 : implement ProcessStatus#workitem_expids
+- todo  #23833 : engine#add_workitem_listener -> register_listener
+- todo  #23821 : participant impl can now decide if dispatches to them should
+                 be done in a specific thread
+- todo  #23016 : nuked old 'rest' legacy from OpenWFEja
+- todo  #23756 : implemented Marshal based file persistence
+- todo  #23683 : implemented Tokyo Cabinet persistence mechanism
+- todo  #23608 : init_service() now stops services getting 'overriden'
+- bug   #23609 : db_errorjournal.rb broken. Fixed.
+- todo  #23607 : added created_at timestamp to OpenWFE::Extras::ProcessError
+- todo  #23600 : file renaming among listeners and participants
+- bug   #23560 : ActiveParticipant turning value false to '0'. Fixed.
+- todo  #23553 : don't present the __result__ field to participants
+- todo  #23541 : implemented json safe serialization for FilterDefinition
+- todo  #23500 : added a HistoryEvent#log! for direct history logging (rw2)
+- todo  #23441 : tracking rel=prev/next in representations.rb (ruote-rest/web).
+- bug   #23438 : QueuedDbHistory was losing the :source information. Fixed.
+- todo  #23200 : added rewind-if/break-if attributes to cursor/loop
+- todo  #23187 : OpenWFE.process_definition :name => x, ... as a shortcut
+- bug   #23164 : ExpressionTree.to_code_s broken for 1 string child exps. Fixed.
+- todo  #23125 : moved website src to http://github.com/jmettraux/ruote_website
+- todo  #23102 : implemented on_cancel attribute with Kenneth Kalmer
+- todo  #23083 : implemented QueuedDbHistory (used in ruote-rest)
+- todo  #23015 : implemented on_error mecha as designed with Raphael Simon
+- todo  #23014 : added Jabber participant and listener (Kenneth Kalmer)
+- todo  #22868 : representations.rb : added error[s]_to_xml()
+- todo  #22864 : representations.rb : added expression[s]_to_xml()
+- todo  #22872 : added column 'expid' to 'expressions' table as well
+- todo  #22865 : added column 'expid' to 'workitems' and 'errors' tables
+- todo  #22834 : 'href' -> 'link' and upgraded lib/openwfe/representations.rb
+- todo  #22722 : upgraded lookup_processes() (can now look for variables and
+                 workitem fields (applied_workitem))
+- todo  #22550 : introduced applied_workitems in process_status and moved the
+                 engine lookup[_stuff] methods in a LookupMethods module
+- todo  #22699 : engine.update_raw_expression() becomes update_expression_tree()
+- todo  #22691 : implemented Xml.workitems_to_xml()
+- todo  #22682 : expressions now have priority over participants in lookup
+- todo  #22680 : made the participant_map a service locator as well
+- todo  #22608 : introduced the 'wfid' attribute for the 'listen' expression
+- todo  #22517 : logs/openwferu.log -> logs/ruote.log
+- bug   #10049 : empty ruby ProcessDefinition broke (instead of exiting). Fixed.
+- todo  #22584 : huge rework 'no_raw_children'
+- todo  #22004 : now stamping workitem with timeout info '__timeouts__' and
+                 added current_timeout() method to InFlowWorkItem class
+- todo  #22442 : now storing filter as workitem attribute
+- todo         : added expid() to OpenWFE::Extras::Workitem
+- bug   #22213 : engine.process_status() cache keeping 1! result. Fixed.
+- todo  #22202 : engine.launch(li, :variables => {...}) implemented
+- bug   #22158 : ArgumentError: OpenWFE::Extras is not missing constant Field!
                  Fixed.
-- todo  #20697 : implemented ProcessStatus.scheduled_jobs
-- todo  #20624 : returning [ :terminate, wi, fei ] or [ :error, e, fei ]if 
-                 launch(li, :wait_for => true) [instead of just fei]
-- bug   #20625 : exception inside of BlockParticipant can't get replayed. Fixed.
-- todo  #20467 : got rid of unnecessary synces in yamlfilestorage
-- todo  #20564 : sequence : caching current position for speed gain
-- todo  #20554 : optimized wait_for and added :wait_for option to engine.launch
-- todo  #20539 : indent = 2
-- bug   #20505 : fixed issues with branch count in ProcessStatus.
-- todo  #11856 : got rid of old rest interface (but kept xmlcodec for a while)
-- todo  #20083 : integrated treechecker and got rid of rufus-eval.
-- todo  #20466 : made sure that yaml ejournal mkdir_p path to journal.
-- bug   #20445 : yaml error journal get_error_logs() broken. Fixed.
-- todo  #20360 : implemented hpost/hget/hput/hdelete and hpoll expressions
-- bug   #20378 : workitem.att throws exception if attribute holds the boolean
-                 #false value. Fixed.
-- bug   #20364 : 'a' and 'step' were not using $ substitution for their
-                 first child param. Fixed.
+- todo  #22122 : tree wrapping redux (see test/ft_89_polyglot.rb)
+- bug   #22121 : when wait_for => true, two wfids were generated. Fixed.
+- todo  #22023 : made sure YAML, JSON and Array expression were accepted
+- todo  #22036 : introduced openwfe/util/json for from_json(s)
+- todo  #22005 : moved process_to_xml to ruote (openwfe/representations.rb)
+- todo  #20613 : cleaned up xml generation (builder(options) do |xml|)
+- bug   #21206 : tree.to_xml not happy with hash attributes. Fixed.
+- bug   #21958 : InMemoryEngine initial_tree and current_tree conflict. Fixed.
 
