@@ -43,7 +43,14 @@ class FtProcessUriTest < Test::Unit::TestCase
 
     prepare_def0
 
-    @engine.launch('tmp/def0.xml')
+    assert_trace 'tmp/def0.xml', 'a'
+  end
+
+  def test_launch_fs_stored_ruby_process
+
+    prepare_def1
+
+    assert_trace 'tmp/def1.rb', 'b'
   end
 
   protected
@@ -57,6 +64,16 @@ class FtProcessUriTest < Test::Unit::TestCase
 <process-definition name="test">
   <echo>a</echo>
 </process-definition>
+      })
+    end
+  end
+
+  def prepare_def1
+    File.open('tmp/def1.rb', 'w') do |f|
+      f.write(%{
+OpenWFE.process_definition :name => 'test' do
+  echo 'b'
+end
       })
     end
   end
