@@ -74,7 +74,7 @@ module FunctionalBase
 
     assert_equal(expected_trace, @tracer.to_s) if expected_trace
 
-    purge_engine
+    purge_engine unless opts[:no_purge]
 
     fei
   end
@@ -136,7 +136,10 @@ module FunctionalBase
     return if opts[:ignore_errors]
 
     expcount = @engine.get_expression_storage.size
+    return if expcount == 1
 
+    50.times { Thread.pass }
+    expcount = @engine.get_expression_storage.size
     return if expcount == 1
 
     puts '-' * 80
