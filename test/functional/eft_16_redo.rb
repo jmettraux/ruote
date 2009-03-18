@@ -42,7 +42,7 @@ class EftRedoTest < Test::Unit::TestCase
     end
 
     li = OpenWFE::LaunchItem.new(pdef)
-    assert_trace(li, "a\nb")
+    assert_trace(li, "a\nb", :no_purge => true)
 
     @tracer.clear
 
