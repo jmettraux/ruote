@@ -2,6 +2,11 @@
 = ruote (OpenWFEru) - CHANGELOG.txt
 
 
+== ruote - 0.9.21    not yet released
+
+- bug   #24713 : scheduler -> get_scheduler in expression 'wait'. Fixed.
+
+
 == ruote - 0.9.20    released 2009/03/18
 
 - todo  #24578 : _redo/undo now accept :if/:unless attribute (conditional)

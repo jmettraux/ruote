@@ -175,7 +175,7 @@ module OpenWFE
 
       ldebug do
         "[re]schedule() @scheduler_job_id is '#{@scheduler_job_id}' "+
-        " (scheduler #{scheduler.object_id})"
+        " (scheduler #{get_scheduler.object_id})"
       end
     end
   end
