@@ -34,7 +34,7 @@ spec = Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.rubyforge_project = 'openwferu'
   #s.autorequire = 'ruote'
-  s.test_file = 'test/rake_qtest.rb'
+  s.test_file = 'test/test.rb'
   s.has_rdoc = true
   s.extra_rdoc_files = [ 'README.txt' ]
 
