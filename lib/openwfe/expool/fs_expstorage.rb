@@ -79,9 +79,7 @@ module OpenWFE
     #
     def [] (fei)
 
-      fexp = load_fexp(filename_for(fei, true))
-      fexp.application_context = @application_context if fexp
-      fexp
+      load_fexp(filename_for(fei, true))
     end
 
     #
@@ -150,13 +148,7 @@ module OpenWFE
       Dir["#{dir}/*.#{@suffix}"].inject([]) do |a, path|
 
         fexp = load_fexp(path)
-
-        if fexp and does_match?(options, fexp)
-
-          fexp.application_context = @application_context
-          a << fexp
-        end
-
+        a << fexp if fexp and does_match?(options, fexp)
         a
       end
     end
@@ -193,13 +185,11 @@ module OpenWFE
 
       fexps = Dir["#{dir}/*.#{@suffix}"].collect { |path| load_fexp(path) }
 
-      root = fexps.find { |fexp|
+      fexps.find { |fexp|
         fexp.fei.expid == '0' &&
         fexp.fei.sub_instance_id == '' &&
         fexp.is_a?(OpenWFE::DefineExpression)
       }
-      root.application_context = @application_context
-      root
     end
 
     #
@@ -224,16 +214,15 @@ module OpenWFE
     # Loads the flow expression at the given path
     #
     def load_fexp (path)
-      return nil unless File.exist?(path)
-      File.open(path, 'r') { |f| decode(f.read) }
-    end
 
-    #
-    # Decodes the content of a file (reads YAML or Marshall binary
-    # indifferently)
-    #
-    def decode (s)
-      s[0, 5] == '--- !' ? YAML.load(s) : Marshal.load(s)
+      return nil unless File.exist?(path)
+
+      fexp = File.open(path, 'r') { |f|
+        s = f.read
+        s[0, 5] == '--- !' ? YAML.load(s) : Marshal.load(s)
+      }
+      fexp.application_context = @application_context if fexp
+      fexp
     end
 
     #
