@@ -443,11 +443,8 @@ module OpenWFE
 
       return ee if ee
 
-      ee = Environment.new_env(
-        eei, nil, nil, @application_context, nil)
-
+      ee = Environment.new_env(eei, nil, nil, @application_context, nil)
       ee.store_itself
-
       ee
     end
 

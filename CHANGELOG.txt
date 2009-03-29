@@ -4,6 +4,7 @@
 
 == ruote - 0.9.21    not yet released
 
+- bug   #24984 : NoMethodError when cancelling missing process. Fixed.
 - bug   #24713 : scheduler -> get_scheduler in expression 'wait'. Fixed.
 
 
