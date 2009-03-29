@@ -13,50 +13,11 @@ require 'rake/testtask'
 require 'hanna/rdoctask'
 
 
-load 'lib/openwfe/version.rb'
-  #
-  # where the OPENWFERU_VERSION is stored
+gemspec = File.read('ruote.gemspec')
+eval "gemspec = #{gemspec}"
 
 
 CLEAN.include('pkg', 'rdoc', 'work', 'logs')
-
-
-spec = Gem::Specification.new do |s|
-
-  s.name = 'ruote'
-  s.version = OpenWFE::OPENWFERU_VERSION
-  s.authors = [ 'John Mettraux', 'Alain Hoang' ]
-  s.email = 'john at openwfe dot org'
-  s.homepage = 'http://openwferu.rubyforge.org'
-  s.platform = Gem::Platform::RUBY
-  s.summary = 'an open source ruby workflow and bpm engine'
-
-  s.require_path = 'lib'
-  s.rubyforge_project = 'openwferu'
-  #s.autorequire = 'ruote'
-  s.test_file = 'test/test.rb'
-  s.has_rdoc = true
-  s.extra_rdoc_files = [ 'README.txt' ]
-
-  [
-    'builder',
-    #'json_pure',
-    'rufus-lru',
-    'rufus-scheduler',
-    'rufus-dollar',
-    'rufus-treechecker',
-    'rufus-mnemo',
-    'rufus-verbs'
-  ].each { |d|
-    s.requirements << d
-    s.add_dependency(d)
-  }
-
-  files = FileList[ '{bin,docs,lib,test,examples}/**/*' ]
-  files.exclude 'rdoc'
-  #files.exclude 'extras'
-  s.files = files.to_a
-end
 
 task :default => [ :clean, :repackage ]
 
@@ -95,14 +56,27 @@ end
 #
 # Create the various ruote[-.*] gems
 #
-Rake::GemPackageTask.new(spec) do |pkg|
+Rake::GemPackageTask.new(gemspec) do |pkg|
   #pkg.need_tar = true
 end
+
+
+#
+# changing the version
+
+task :change_version do
+
+  version = ARGV.pop
+  `sedip "s/VERSION = '.*'/VERSION = '#{version}'/" lib/openwfe/version.rb`
+  `sedip "s/s.version = '.*'/s.version = '#{version}'/" ruote.gemspec`
+  exit 0 # prevent rake from triggering other tasks
+end
+
 
 #
 # Packaging the source
 #
-Rake::PackageTask.new('ruote', OpenWFE::OPENWFERU_VERSION) do |pkg|
+Rake::PackageTask.new('ruote', gemspec.version) do |pkg|
 
   pkg.need_zip = true
   pkg.package_files = FileList[
