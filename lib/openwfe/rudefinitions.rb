@@ -104,8 +104,7 @@ module OpenWFE
     def get_expression_storages
 
       @application_context.inject([]) do |r, (k, v)|
-        r << v if k.to_s.match(/^s_expression_storage/)
-        r
+        r << v if k.to_s.match(/^s_expression_storage/); r
       end
     end
   end
