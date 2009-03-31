@@ -99,6 +99,7 @@ module OpenWFE
       cs = options[:consider_subprocesses]
 
       ap = options[:applied]
+      wi = options[:workitem]
 
       fexp, fei = if fexp_or_fei.is_a?(FlowExpressionId)
         [ nil, fexp_or_fei ]
@@ -108,11 +109,20 @@ module OpenWFE
 
       #
       # let's make it verbose...
+      #
+      # try to put the most demanding checks up front... optimize...
 
       if fexp
+
         return false if (ap == true and not fexp.apply_time)
         return false if (ap == false and fexp.apply_time)
+
         return false unless class_accepted?(fexp, ic, ec)
+
+        return false \
+          if (wi == true) and
+            fexp.respond_to?(:applied_workitem) and
+            (fexp.applied_workitem != nil)
       end
 
       return false \
@@ -350,6 +360,9 @@ module OpenWFE
     # :applied ::
     #   if this option is set to true, will only return the expressions
     #   that have been applied (exp.apply_time != nil).
+    # :workitem ::
+    #   if this option is set to true, will only return the expressions
+    #   that hold an 'applied_workitem' field (with a workitem in it)
     #
     def find_expressions (options={})
 

@@ -34,7 +34,6 @@ require 'openwfe/expressions/fe_sequence'
 require 'openwfe/expressions/fe_subprocess'
 require 'openwfe/expressions/fe_concurrence'
 require 'openwfe/expressions/fe_participant'
-#require 'openwfe/expressions/fe_sleep'
 require 'openwfe/expressions/fe_cron'
 require 'openwfe/expressions/fe_when'
 require 'openwfe/expressions/fe_wait'
@@ -64,12 +63,22 @@ module OpenWFE
   #
   class ExpressionMap
 
+    #
+    # the list of expression classes that may hold a workitem
+    # (for example, 'wait', 'listen' and more importantly 'participant').
+    #
+    attr_reader :workitem_holders
+
+    #
+    # Instantiates this expression map (1 per engine).
+    #
     def initialize
 
       #super
 
       @expressions = {}
       @ancestors = {}
+      @workitem_holders = []
 
       register DefineExpression
 
@@ -95,7 +104,6 @@ module OpenWFE
 
       register EqualsExpression
 
-      #register SleepExpression
       register CronExpression
       register WhenExpression
       register WaitExpression
@@ -178,7 +186,6 @@ module OpenWFE
 
       c = get_class(expression_name)
 
-      #c == DefineExpression
       (c and c.is_definition?)
     end
 
@@ -228,6 +235,13 @@ module OpenWFE
         name = OpenWFE::to_dash(name)
         @expressions[name] = expression_class
       end
+
+      if expression_class.public_instance_methods.find { |fn|
+        fn.to_s == 'applied_workitem'
+      }
+        @workitem_holders << expression_class
+      end
+
       register_ancestors(expression_class)
     end
 
