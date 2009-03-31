@@ -17,7 +17,7 @@ class FtLookupProcesses < Test::Unit::TestCase
   include FunctionalBase
 
 
-  def test_0
+  def test_lookup_processses
 
     #log_level_to_debug
 
@@ -94,6 +94,47 @@ class FtLookupProcesses < Test::Unit::TestCase
     @engine.cancel_process fei1
 
     sleep 0.350
+  end
+
+  def test_lookup_processes_with_value_only
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      sequence do
+        _set :variable => 'toto', :value => '${f:foto}'
+        _set :variable => 'nada', :value => 'nadaval'
+        participant :alpha
+      end
+    end
+
+    sa = @engine.register_participant :alpha, OpenWFE::HashParticipant
+
+    li = OpenWFE::LaunchItem.new(pdef)
+    li.foto = 'toto_zero'
+    fei0 = @engine.launch(li)
+
+    li = OpenWFE::LaunchItem.new(pdef)
+    li.foto = 'toto_one'
+    fei1 = @engine.launch(li)
+
+    sleep 0.350
+
+    wfids = @engine.lookup_processes(:value => 'toto_zero')
+    assert_equal 1, wfids.size
+
+    wfids = @engine.lookup_processes(:value => 'nadaval')
+    assert_equal 2, wfids.size
+
+    # over.
+
+    @engine.cancel_process fei0
+    @engine.cancel_process fei1
+
+    sleep 0.350
+  end
+
+  def test_lookup_processes_with_nested_fields
+
+    assert false
   end
 
 end

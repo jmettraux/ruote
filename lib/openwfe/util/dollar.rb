@@ -120,70 +120,70 @@ module OpenWFE
 
   protected
 
-    def lookup (pr, key)
+  def lookup (pr, key)
 
-      case pr
-        when 'v' then @flow_expression.lookup_variable(key)
-        when 'f' then @workitem.lookup_attribute(key)
-        when 'r' then call_ruby(key)
-        else nil
-      end
+    case pr
+      when 'v' then @flow_expression.lookup_variable(key)
+      when 'f' then @workitem.lookup_attribute(key)
+      when 'r' then call_ruby(key)
+      else nil
     end
+  end
 
-    def extract_prefix (key)
+  def extract_prefix (key)
 
-      i = key.index(':')
+    i = key.index(':')
 
-      return [ @default_prefix, key ] if not i
+    return [ @default_prefix, key ] if not i
 
-      pr = key[0..i-1] # until ':'
-      pr = pr[0, 2] # the first two chars
+    pr = key[0..i-1] # until ':'
+    pr = pr[0, 2] # the first two chars
 
-      pr = pr[0, 1] unless (pr == 'vf') or (pr == 'fv')
+    pr = pr[0, 1] unless (pr == 'vf') or (pr == 'fv')
 
-      [ pr, key[i+1..-1] ]
-    end
+    [ pr, key[i+1..-1] ]
+  end
 
-    #--
-    #def call_function (function_name)
-    #  #"function '#{function_name}' is not implemented"
-    #  "functions are not yet implemented"
-    #  #
-    #  # no need for them... we have Ruby :)
+  #--
+  #def call_function (function_name)
+  #  #"function '#{function_name}' is not implemented"
+  #  "functions are not yet implemented"
+  #  #
+  #  # no need for them... we have Ruby :)
+  #end
+  #++
+
+  #
+  # The ${r:1+2} stuff. ("3").
+  #
+  def call_ruby (ruby_code)
+
+    #if @flow_expression and @flow_expression.ac[:ruby_eval_allowed] != true
+    #  return ''
     #end
-    #++
+    return '' if @flow_expression.ac[:ruby_eval_allowed] != true
 
-    #
-    # The ${r:1+2} stuff. ("3").
-    #
-    def call_ruby (ruby_code)
+    wi = @workitem
+    workitem = @workitem
 
-      #if @flow_expression and @flow_expression.ac[:ruby_eval_allowed] != true
-      #  return ''
-      #end
-      return '' if @flow_expression.ac[:ruby_eval_allowed] != true
+    #fexp = nil
+    #flow_expression = nil
+    #fei = nil
 
-      wi = @workitem
-      workitem = @workitem
+    #if @flow_expression
+    fexp = @flow_expression
+    flow_expression = @flow_expression
+    fei = @flow_expression.fei
+    #end
+      #
+      # some simple notations made available to ${ruby:...}
+      # notations
 
-      #fexp = nil
-      #flow_expression = nil
-      #fei = nil
+    #TreeChecker.check ruby_code
+    fexp.ac[:s_tree_checker].check(ruby_code)
 
-      #if @flow_expression
-      fexp = @flow_expression
-      flow_expression = @flow_expression
-      fei = @flow_expression.fei
-      #end
-        #
-        # some simple notations made available to ${ruby:...}
-        # notations
-
-      #TreeChecker.check ruby_code
-      fexp.ac[:s_tree_checker].check(ruby_code)
-
-      eval(ruby_code, binding()).to_s
-    end
+    eval(ruby_code, binding()).to_s
+  end
   end
 
 end

@@ -43,7 +43,7 @@ class UtilsTest < Test::Unit::TestCase
   def test_grep_0
 
     assert OpenWFE::grep('sputnik', 'Rakefile').empty?
-    assert_equal 1, OpenWFE::grep('Mettraux', 'Rakefile').size
+    assert_equal 1, OpenWFE::grep('Mettraux', 'ruote.gemspec').size
 
     OpenWFE::grep 'Mettraux', 'Rakefile' do |line|
       assert_match 'Mettraux', line

@@ -72,9 +72,9 @@ module OpenWFE
     #   matches processes with a field or variable with the given value
     # :name ::
     #   matches processes containing a field or a variable with that name
-    # :variable_name or :var_name or :v_name ::
+    # :variable or :var or :v ::
     #   matches processes with a variable with that name
-    # :field_name or :f_name ::
+    # :field or :f ::
     #   matches processes with a workitem field named like this
     # :wfid_prefix ::
     #   matches processes whose wfid (process instance id) begins with the given
@@ -91,17 +91,16 @@ module OpenWFE
       var = options[:variable] || options[:var] || options[:v] || vf
       field = options[:field] || options[:f] || vf
 
-      raise "specify at least :variable or :field" \
+      raise 'specify at least :variable or :field' \
         if (var == nil) and (field == nil)
 
       opts = {
         :wfid => options[:wfid],
         :wfid_prefix => options[:wfid_prefix]
       }
+      opts[:include_classes] = Environment if field == nil
 
       # do look up...
-
-      opts[:include_classes] = Environment if field == nil
 
       exps = get_expression_storage.find_expressions(opts)
 
@@ -130,6 +129,12 @@ module OpenWFE
 
       h_match?(exp.variables, var, value)
     end
+
+    #def val_match? (exp, val, to_string)
+    #  if exp.is_a?(Environment)
+    #  elsif exp.respond_to?(:applied_workitem)
+    #  end
+    #end
 
     def h_match? (h, k, v, recursive=false)
 

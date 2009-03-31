@@ -197,7 +197,7 @@ module OpenWFE
   # Pretty printing a caller() array
   #
   def OpenWFE.caller_to_s (start_index, max_lines=nil)
-    s = ""
+    s = ''
     caller(start_index + 1).each_with_index do |line, index|
       break if max_lines and index >= max_lines
       s << "   #{line}\n"
@@ -268,18 +268,18 @@ module OpenWFE
     end
   end
 
-
-  #
+  #--
   # (2008.03.12 Deprecated, kept here for a while
   # for backward compatibility)
   #
   # A simple Hash that accepts String or Symbol as lookup keys []
   #
-  class SymbolHash < Hash
-    def [] (key)
-      super(key.to_s)
-    end
-  end
+  #class SymbolHash < Hash
+  #  def [] (key)
+  #    super(key.to_s)
+  #  end
+  #end
+  #++
 
   #
   # Returns a version of s that is usable as or within a filename
@@ -287,14 +287,14 @@ module OpenWFE
   #
   def OpenWFE.ensure_for_filename (s)
 
-    s = s.gsub(" ", "_")
-    s = s.gsub("/", "_")
-    s = s.gsub(":", "_")
-    s = s.gsub(";", "_")
-    s = s.gsub("\*", "_")
-    s = s.gsub("\\", "_")
-    s = s.gsub("\+", "_")
-    s = s.gsub("\?", "_")
+    s = s.gsub(' ', '_')
+    s = s.gsub('/', '_')
+    s = s.gsub(':', '_')
+    s = s.gsub(';', '_')
+    s = s.gsub("\*", '_')
+    s = s.gsub("\\", '_')
+    s = s.gsub("\+", '_')
+    s = s.gsub("\?", '_')
 
     s
   end
@@ -303,7 +303,7 @@ module OpenWFE
   # "my//path" -> "my/path"
   #
   def OpenWFE.clean_path (s)
-    s.gsub(/\/+/, "/")
+    s.gsub(/\/+/, '/')
   end
 
   #
@@ -312,12 +312,6 @@ module OpenWFE
   def OpenWFE.lookup_attribute (container, key)
 
     key, rest = pop_key(key)
-
-    #value = nil
-    #begin
-    #  value = container[key]
-    #rescue Exception => e
-    #end
 
     value = flex_lookup(container, key)
 
@@ -429,7 +423,7 @@ module OpenWFE
     require 'open-uri'
 
     begin
-      open("http://www.openwfe.org")
+      open('http://www.openwfe.org')
       true
     rescue SocketError => se
       false
@@ -438,47 +432,39 @@ module OpenWFE
 
   protected
 
-    def OpenWFE.pop_key (key)
-      i = key.index(".")
-      return narrow(key), nil unless i
-      [ narrow(key[0..i-1]), key[i+1..-1] ]
+  def OpenWFE.pop_key (key)
+    i = key.index('.')
+    return narrow(key), nil unless i
+    [ narrow(key[0..i-1]), key[i+1..-1] ]
+  end
+
+  def OpenWFE.pop_last_key (key)
+    i = key.rindex('.')
+    return nil, narrow(key) unless i
+    [ key[0..i-1], narrow(key[i+1..-1]) ]
+  end
+
+  def OpenWFE.narrow (key)
+    return 0 if key == '0'
+    i = key.to_i
+    return i if i != 0
+    key
+  end
+
+  #
+  # Looks up in a container (something that has a [] method)  with a key,
+  # if nothing has been found and the key is a number, turns the
+  # the number into a String a does a last lookup.
+  #
+  def OpenWFE.flex_lookup (container, key)
+
+    value = (container[key] rescue nil)
+
+    if value == nil and key.kind_of?(Fixnum)
+      value = (container[key.to_s] rescue nil)
     end
 
-    def OpenWFE.pop_last_key (key)
-      i = key.rindex(".")
-      return nil, narrow(key) unless i
-      [ key[0..i-1], narrow(key[i+1..-1]) ]
-    end
-
-    def OpenWFE.narrow (key)
-      return 0 if key == "0"
-      i = key.to_i
-      return i if i != 0
-      key
-    end
-
-    #
-    # Looks up in a container (something that has a [] method)  with a key,
-    # if nothing has been found and the key is a number, turns the
-    # the number into a String a does a last lookup.
-    #
-    def OpenWFE.flex_lookup (container, key)
-
-      value = nil
-
-      begin
-        value = container[key]
-      rescue Exception => e
-      end
-
-      if value == nil and key.kind_of?(Fixnum)
-        begin
-          value = container[key.to_s]
-        rescue Exception => e
-        end
-      end
-
-      value
-    end
+    value
+  end
 end
 
