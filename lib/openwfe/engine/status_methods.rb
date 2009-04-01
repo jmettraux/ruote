@@ -237,26 +237,26 @@ module OpenWFE
 
     protected
 
-      #
-      # Prepares the @expressions instance variable. This method
-      # is only called by the process_status method of the Engine.
-      #
-      def pack_expressions
+    #
+    # Prepares the @expressions instance variable. This method
+    # is only called by the process_status method of the Engine.
+    #
+    def pack_expressions
 
-        @expressions = []
+      @expressions = []
 
-        @all_expressions.sort_by { |fe|
-          "#{fe.fei.wfid} #{fe.fei.expid}"
-        }.each do |fe|
+      @all_expressions.sort_by { |fe|
+        "#{fe.fei.wfid} #{fe.fei.expid}"
+      }.each do |fe|
 
-          next unless fe.apply_time
-            # no Environment instances allowed
+        next unless fe.apply_time
+          # no Environment instances allowed
 
-          @expressions.delete_if { |e| e.fei == fe.parent_id }
+        @expressions.delete_if { |e| e.fei == fe.parent_id }
 
-          @expressions << fe
-        end
+        @expressions << fe
       end
+    end
   end
 
   #

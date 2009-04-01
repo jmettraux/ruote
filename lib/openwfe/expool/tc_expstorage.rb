@@ -175,8 +175,15 @@ module OpenWFE
         @db.query { |q|
           q.add('wfid', :starts_with, wfidp)
         }
+      elsif options.delete(:workitem)
+        #
+        # union of matching expressions (good perf)
+        #
+        get_expression_map.workitem_holders.inject([]) do |a, k|
+          a += @db.query { |q| q.add('class', :equals, k.to_s) }
+        end
       else
-        @db.values # everything
+        @db.values # everything :(
       end
 
       values.inject([]) { |a, v|
@@ -233,6 +240,7 @@ module OpenWFE
       @db.set_index(:pk, :lexical)
       @db.set_index('wfid', :lexical)
       @db.set_index('pwfid', :lexical)
+      @db.set_index('class', :lexical)
     end
   end
 
