@@ -15,12 +15,12 @@ require 'openwfe/participants/store_participants'
 class FtFindExpressions < Test::Unit::TestCase
   include FunctionalBase
 
-
   def test_find_expressions
 
-    #@verbose = true
     @verbose = false
-    n = 10
+    #@verbose = true
+
+    n = 21
 
     pdef = OpenWFE.process_definition :name => 'test' do
       sequence do
@@ -30,14 +30,44 @@ class FtFindExpressions < Test::Unit::TestCase
 
     sa = @engine.register_participant :alpha, OpenWFE::HashParticipant
 
-    n.times { @engine.launch(pdef) }
+    fei = nil
+    n.times { fei = @engine.launch(pdef) }
 
     sleep 0.350
     sleep 0.350
+    sleep 0.350 # ar_expstorage is not very fast :( wait fail
 
-    sto = @engine.get_expression_storage
+    assert_find_count(n * 4 + 1, {})
+    assert_find_count(n, :workitem => true)
+    assert_find_count(4, :wfid => fei.wfid)
 
-    assert_find_count(41, {})
+    # over.
+
+    purge_engine
+  end
+
+  def test_find_schedulable_expressions
+
+    @verbose = false
+    #@verbose = true
+
+    n = 21
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      sequence do
+        wait '3w'
+      end
+    end
+
+    fei = nil
+    n.times { fei = @engine.launch(pdef) }
+
+    sleep 0.350
+    sleep 0.350
+    sleep 0.350 # ar_expstorage is not very fast :( wait fail
+
+    assert_find_count(2 * n + 1, { :include_classes => Rufus::Schedulable })
+      # environments are schedulable
 
     # over.
 
@@ -48,13 +78,15 @@ class FtFindExpressions < Test::Unit::TestCase
 
   def assert_find_count (count, opts)
 
+    o = opts.dup
+
     t = Time.now
     c = @engine.get_expression_storage.find_expressions(opts).size
     t = (Time.now - t).to_f
 
-    opts.delete(:cache)
+    o.delete(:cache)
 
-    puts " .. #{opts.inspect} took #{t} ms" if @verbose
+    puts " .. #{o.inspect} took #{t} ms" if @verbose
 
     assert_equal(count, c)
   end

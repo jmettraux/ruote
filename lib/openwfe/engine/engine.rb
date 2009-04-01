@@ -170,7 +170,7 @@ module OpenWFE
     #
     def reschedule
 
-      get_expression_pool.reschedule()
+      get_expression_pool.reschedule
     end
 
     alias :reload :reschedule
@@ -223,9 +223,7 @@ module OpenWFE
           # launchitem coming from listener
           # let's attempt to launch a new process instance
 
-      raise \
-        "engine.reply() " +
-        "cannot handle instances of #{workitem.class}"
+      raise "engine.reply() cannot handle instances of #{workitem.class}"
     end
 
     alias :forward :reply

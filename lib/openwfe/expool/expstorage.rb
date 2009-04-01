@@ -117,12 +117,12 @@ module OpenWFE
         return false if (ap == true and not fexp.apply_time)
         return false if (ap == false and fexp.apply_time)
 
-        return false unless class_accepted?(fexp, ic, ec)
+        if wi == true
+          return false unless fexp.respond_to?(:applied_workitem)
+          return false if fexp.applied_workitem == nil
+        end
 
-        return false \
-          if (wi == true) and
-            fexp.respond_to?(:applied_workitem) and
-            (fexp.applied_workitem != nil)
+        return false unless class_accepted?(fexp, ic, ec)
       end
 
       return false \
