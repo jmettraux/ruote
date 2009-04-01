@@ -115,22 +115,20 @@ class FtLookupProcesses < Test::Unit::TestCase
 
     sleep 0.350
 
-    #wfids = @engine.lookup_processes(:value => 'toto_zero')
-    #assert_equal 1, wfids.size
-    #wfids = @engine.lookup_processes(:value => 'nadaval')
-    #assert_equal 2, wfids.size
-    # TODO
-    assert true
+    wfids = @engine.lookup_processes(:value => 'toto_zero')
+    assert_equal 1, wfids.size
+    wfids = @engine.lookup_processes(:value => 'nadaval')
+    assert_equal 2, wfids.size
 
     # over.
 
     purge_engine
   end
 
-  # TODO
-  #def test_lookup_processes_with_nested_fields
-  #  assert false
-  #end
+  def _test_lookup_processes_with_nested_fields
+    # TODO : write me !
+    assert false
+  end
 
 end
 
