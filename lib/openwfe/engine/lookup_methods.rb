@@ -96,9 +96,6 @@ module OpenWFE
       var = options[:variable] || options[:var] || options[:v] || vf
       field = options[:field] || options[:f] || vf
 
-      #raise 'specify at least :variable or :field' \
-      #  if (var == nil) and (field == nil)
-
       opts = {
         :wfid => options[:wfid],
         :wfid_prefix => options[:wfid_prefix]
@@ -113,14 +110,9 @@ module OpenWFE
       vv = var or (not field)
       ff = field or (not var)
 
-      #result = exps.find_all do |exp|
-      #  v_match?(exp, var, val) || f_match?(exp, field, val)
-      #end
-      #result.collect { |exp| exp.fei.wfid }.uniq
-
       result = exps.inject([]) do |ids, exp|
 
-        unless ids.include?(exp.fei.parent_wfid)
+        unless ids.include?(exp.fei.wfid)
 
           vars = exp.is_a?(Environment) ?
             exp.variables : nil
@@ -137,7 +129,7 @@ module OpenWFE
             [ nil, nil ]
           end
 
-          ids << exp.fei.parent_wfid if val_match?(h, k, val, options)
+          ids << exp.fei.wfid if val_match?(h, k, val, options)
         end
 
         ids
@@ -174,34 +166,6 @@ module OpenWFE
       false
     end
 
-  # xxxZZZZZZZZZZZZZZZZZZZ
-
-    #def f_match? (exp, field, value)
-    #  return false unless field
-    #  return false unless exp.respond_to?(:applied_workitem)
-    #  h_match?(exp.applied_workitem.attributes, field, value, true)
-    #end
-    #def v_match? (exp, var, value)
-    #  return false unless var
-    #  return false unless exp.is_a?(Environment)
-    #  return false if exp.fei.wfid == '0' # (engine environment)
-    #  h_match?(exp.variables, var, value)
-    #end
-    #def h_match? (h, k, v, recursive=false)
-    #  val = h[k]
-    #  if val != nil
-    #    case v
-    #      when nil then return true
-    #      when Regexp then return true if v.match(val)
-    #      else return true if v == val
-    #    end
-    #  end
-    #  return false unless recursive
-    #  h.values.each do |val|
-    #    return true if val.is_a?(Hash) and h_match?(val, k, v, true)
-    #  end
-    #  false
-    #end
   end
 end
 
