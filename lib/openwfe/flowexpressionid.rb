@@ -118,7 +118,7 @@ module OpenWFE
     #
     def to_h
 
-      FIELDS.inject({}) { |r, f| r[f] = instance_eval("@#{f.to_s}"); r }
+      FIELDS.inject({}) { |r, f| r[f] = instance_variable_get("@#{f.to_s}"); r }
     end
 
     #
