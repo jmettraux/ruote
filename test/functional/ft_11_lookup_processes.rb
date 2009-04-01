@@ -125,7 +125,7 @@ class FtLookupProcesses < Test::Unit::TestCase
     purge_engine
   end
 
-  def _test_lookup_processes_with_nested_fields
+  def test_lookup_processes_with_nested_fields
 
     pdef = OpenWFE.process_definition :name => 'test' do
       participant :alpha
@@ -157,6 +157,9 @@ class FtLookupProcesses < Test::Unit::TestCase
     assert_equal [], wfids
 
     wfids = @engine.lookup_processes(:f => 'foto.labo', :val => 'nada')
+    assert_equal [ fei0.wfid ], wfids
+
+    wfids = @engine.lookup_processes(:f => 'me.li.me', :val => 'lo')
     assert_equal [ fei0.wfid ], wfids
 
     # over.

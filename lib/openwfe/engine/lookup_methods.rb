@@ -84,9 +84,9 @@ module OpenWFE
     #   here
     #
     # :to_string ::
-    #   blah TODO
+    #   turns actual values to strings before comparing to the :value / :val
     # :recursive ::
-    #   blah TODO
+    #   looks inside of hash/array values (else only scans first level)
     #
     def lookup_processes (options)
 
@@ -113,6 +113,7 @@ module OpenWFE
       result = exps.inject([]) do |ids, exp|
 
         unless ids.include?(exp.fei.wfid)
+          # don't check if the id is already in
 
           vars = exp.is_a?(Environment) ?
             exp.variables : nil
@@ -129,7 +130,9 @@ module OpenWFE
             [ nil, nil ]
           end
 
-          ids << exp.fei.wfid if val_match?(h, k, val, options)
+          if val_match?(h, k, val, options) || nested_match?(h, k, val, options)
+            ids << exp.fei.wfid
+          end
         end
 
         ids
@@ -164,6 +167,19 @@ module OpenWFE
         if options[:recursive] and values.find { |vv| val_match?(vv, k, v, options) }
 
       false
+    end
+
+    def nested_match? (h, k, v, options)
+
+      return false unless (h and k)
+      return false unless k.index('.')
+
+      val = OpenWFE.lookup_attribute(h, k)
+
+      return false if val == nil
+      return true if v == nil
+
+      val_included?([ val ], k, v, options)
     end
 
   end
