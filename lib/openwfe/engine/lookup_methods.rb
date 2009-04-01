@@ -83,6 +83,11 @@ module OpenWFE
     #   matches the process instance whose wfid (process instance id) is given
     #   here
     #
+    # :to_string ::
+    #   blah TODO
+    # :recursive ::
+    #   blah TODO
+    #
     def lookup_processes (options)
 
       val = options[:value] || options[:val]
@@ -91,71 +96,112 @@ module OpenWFE
       var = options[:variable] || options[:var] || options[:v] || vf
       field = options[:field] || options[:f] || vf
 
-      raise 'specify at least :variable or :field' \
-        if (var == nil) and (field == nil)
+      #raise 'specify at least :variable or :field' \
+      #  if (var == nil) and (field == nil)
 
       opts = {
         :wfid => options[:wfid],
         :wfid_prefix => options[:wfid_prefix]
       }
-      opts[:include_classes] = Environment if field == nil
+      opts[:include_classes] = Environment if var and (not field)
+      opts[:workitem] = true if field and (not var)
 
       # do look up...
 
       exps = get_expression_storage.find_expressions(opts)
 
-      result = exps.find_all do |exp|
-        v_match?(exp, var, val) || f_match?(exp, field, val)
-      end
+      vv = var or (not field)
+      ff = field or (not var)
 
-      result.collect { |exp| exp.fei.wfid }
+      #result = exps.find_all do |exp|
+      #  v_match?(exp, var, val) || f_match?(exp, field, val)
+      #end
+      #result.collect { |exp| exp.fei.wfid }.uniq
+
+      result = exps.inject([]) do |ids, exp|
+
+        unless ids.include?(exp.fei.parent_wfid)
+
+          vars = exp.is_a?(Environment) ?
+            exp.variables : nil
+          fields = exp.respond_to?(:applied_workitem) ?
+            exp.applied_workitem.fields : nil
+
+          h, k = if vv and vars
+            [ exp.fei.wfid == '0' ? nil : vars, var ]
+          elsif ff and fields
+            [ fields, field ]
+          elsif val != nil
+            [ vars || fields, nil ]
+          else
+            [ nil, nil ]
+          end
+
+          ids << exp.fei.parent_wfid if val_match?(h, k, val, options)
+        end
+
+        ids
+      end
     end
 
     protected
 
-    def f_match? (exp, field, value)
+    def val_match? (h, k, v, options)
 
-      return false unless field
-      return false unless exp.respond_to?(:applied_workitem)
+      #return false unless h
+      return false unless (h.respond_to?(:[]) and h.respond_to?(:values))
 
-      h_match?(exp.applied_workitem.attributes, field, value, true)
+      return val_included?(h.values, k, v, options) unless k
+
+      return false unless h.has_key?(k)
+      return true unless v
+
+      return val_included?([ h[k] ], k, v, options)
     end
 
-    def v_match? (exp, var, value)
+    def val_included? (values, k, v, options)
 
-      return false unless var
-      return false unless exp.is_a?(Environment)
-      return false if exp.fei.wfid == '0' # (engine environment)
+      return true if values.include?(v)
 
-      h_match?(exp.variables, var, value)
-    end
+      return true \
+        if v.is_a?(Regexp) and values.find { |vv| vv.is_a?(String) and v.match(vv) }
+      return true \
+        if options[:to_string] and values.find { |vv| vv.to_s == v }
 
-    #def val_match? (exp, val, to_string)
-    #  if exp.is_a?(Environment)
-    #  elsif exp.respond_to?(:applied_workitem)
-    #  end
-    #end
-
-    def h_match? (h, k, v, recursive=false)
-
-      val = h[k]
-
-      if val != nil
-        case v
-          when nil then return true
-          when Regexp then return true if v.match(val)
-          else return true if v == val
-        end
-      end
-
-      return false unless recursive
-
-      h.values.each do |val|
-        return true if val.is_a?(Hash) and h_match?(val, k, v, true)
-      end
+      return true \
+        if options[:recursive] and values.find { |vv| val_match?(vv, k, v, options) }
 
       false
     end
+
+  # xxxZZZZZZZZZZZZZZZZZZZ
+
+    #def f_match? (exp, field, value)
+    #  return false unless field
+    #  return false unless exp.respond_to?(:applied_workitem)
+    #  h_match?(exp.applied_workitem.attributes, field, value, true)
+    #end
+    #def v_match? (exp, var, value)
+    #  return false unless var
+    #  return false unless exp.is_a?(Environment)
+    #  return false if exp.fei.wfid == '0' # (engine environment)
+    #  h_match?(exp.variables, var, value)
+    #end
+    #def h_match? (h, k, v, recursive=false)
+    #  val = h[k]
+    #  if val != nil
+    #    case v
+    #      when nil then return true
+    #      when Regexp then return true if v.match(val)
+    #      else return true if v == val
+    #    end
+    #  end
+    #  return false unless recursive
+    #  h.values.each do |val|
+    #    return true if val.is_a?(Hash) and h_match?(val, k, v, true)
+    #  end
+    #  false
+    #end
   end
 end
 
