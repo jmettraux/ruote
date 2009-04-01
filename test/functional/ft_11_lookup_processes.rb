@@ -142,10 +142,21 @@ class FtLookupProcesses < Test::Unit::TestCase
 
     sleep 0.350
 
+    # TODO : add test for :to_string
+
     wfids = @engine.lookup_processes(:value => 'lo')
+    assert_equal [], wfids
+
+    wfids = @engine.lookup_processes(:value => 'lo', :recursive => true)
     assert_equal [ fei0.wfid ], wfids
 
     wfids = @engine.lookup_processes(:field => 'foto.labo')
+    assert_equal [ fei0.wfid ], wfids
+
+    wfids = @engine.lookup_processes(:f => 'foto.labo', :val => 'other')
+    assert_equal [], wfids
+
+    wfids = @engine.lookup_processes(:f => 'foto.labo', :val => 'nada')
     assert_equal [ fei0.wfid ], wfids
 
     # over.
