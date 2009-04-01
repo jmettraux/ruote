@@ -126,8 +126,31 @@ class FtLookupProcesses < Test::Unit::TestCase
   end
 
   def _test_lookup_processes_with_nested_fields
-    # TODO : write me !
-    assert false
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      participant :alpha
+    end
+
+    sa = @engine.register_participant :alpha, OpenWFE::HashParticipant
+
+    li = OpenWFE::LaunchItem.new(pdef)
+    li.foto = { 'labo' => 'nada' }
+    li.me = { 'li' => { 'me' => 'lo' } }
+    fei0 = @engine.launch(li)
+
+    fei1 = @engine.launch(pdef) # an empty process
+
+    sleep 0.350
+
+    wfids = @engine.lookup_processes(:value => 'lo')
+    assert_equal [ fei0.wfid ], wfids
+
+    wfids = @engine.lookup_processes(:field => 'foto.labo')
+    assert_equal [ fei0.wfid ], wfids
+
+    # over.
+
+    purge_engine
   end
 
 end
