@@ -137,16 +137,6 @@ class FeiTest < Test::Unit::TestCase
     assert_equal s1, fei1.to_s
   end
 
-  def test_web_s
-
-    s1 = '(fei 0.9.16 eng http://test/test.xml test 1.0 123456 do-test 0.0)'
-    fei1 = OpenWFE::FlowExpressionId.from_s s1
-
-    assert_equal(
-      [ '123456', '0.0' ],
-      OpenWFE::FlowExpressionId.split_web_s(fei1.to_web_s))
-  end
-
   def test_from_h
 
     fei = new_fei()

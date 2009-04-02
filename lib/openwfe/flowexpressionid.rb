@@ -240,23 +240,20 @@ module OpenWFE
       URI.escape("#{wid}__#{eid}")
     end
 
-    #
+    #--
     # Splits the web fei into the workflow instance id and the expression
     # id.
-    #
-    def self.split_web_s (s)
-
-      i = s.rindex('__')
-
-      [ s[0..i-1].gsub("\_", '.'), s[i+2..-1].gsub("\_", '.') ]
-    end
+    #def self.split_web_s (s)
+    #  i = s.rindex('__')
+    #  [ s[0..i-1].gsub("\_", '.'), s[i+2..-1].gsub("\_", '.') ]
+    #end
+    #++
 
     #
     # Yet another debugging method. Just returns the sub_instance_id and
     # the expression_id, in a string.
     #
     def to_env_s
-
       "i#{sub_instance_id}  #{@expression_id}"
     end
 
