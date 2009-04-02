@@ -226,19 +226,18 @@ module OpenWFE
       "(fei #{wfid} #{expid} #{expname})"
     end
 
-    #
+    #--
     # Returns a URI escaped string with just the wfid and the expid, like
     # '20070917-dupibodasa__0.0.1'
     #
     # Useful for unique identifier in URIs.
     #
-    def to_web_s
-
-      wid = wfid.gsub("\.", '_')
-      eid = expid.gsub("\.", '_')
-
-      URI.escape("#{wid}__#{eid}")
-    end
+    #def to_web_s
+    #  wid = wfid.gsub("\.", '_')
+    #  eid = expid.gsub("\.", '_')
+    #  URI.escape("#{wid}__#{eid}")
+    #end
+    #++
 
     #--
     # Splits the web fei into the workflow instance id and the expression
@@ -278,8 +277,7 @@ module OpenWFE
     def sub_instance_id
 
       i = workflow_instance_id.index('.')
-      return '' unless i
-      workflow_instance_id[i..-1]
+      i ? workflow_instance_id[i..-1] : ''
     end
 
     #
@@ -295,8 +293,7 @@ module OpenWFE
     def last_sub_instance_id
 
       i = workflow_instance_id.rindex('.')
-      return nil unless i
-      workflow_instance_id[i+1..-1]
+      i ? workflow_instance_id[i+1..-1] : nil
     end
 
     #
@@ -318,8 +315,7 @@ module OpenWFE
     def child_id
 
       i = @expression_id.rindex(".")
-      return @expression_id unless i
-      @expression_id[i+1..-1]
+      i ? @expression_id[i+1..-1] : @expression_id
     end
 
     #

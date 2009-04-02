@@ -33,16 +33,22 @@ require 'openwfe/util/json'
 
 module OpenWFE
 
-  #
   # Swaps from dots to underscores
   #
   #   swapdots "0_0_1" # => "0.0.1"
-  #
   #   swapdots "0.0.1" # => "0_0_1"
   #
+  # DEPRECATED since 0.9.21
+  #
   def self.swapdots (s)
-
     s.index('.') ? s.gsub(/\./, '_') : s.gsub(/\_/, '.')
+  end
+
+  def self.to_dots (s)
+    s.gsub(/\_/, '.')
+  end
+  def self.to_uscores (s)
+    s.gsub(/\./, '_')
   end
 
   #
@@ -84,17 +90,15 @@ module OpenWFE
     #
     def link (rel, res, opts={})
 
-      id = nil
-      if opts.is_a?(Hash)
-        id = opts.delete(:id)
+      id, opts = if opts.is_a?(Hash)
+        [ opts.delete(:id), opts ]
       else
-        id = opts
-        opts = {}
+        [ opts, {} ]
       end
 
       href = "/#{res}"
 
-      href = "#{href}/#{OpenWFE.swapdots(id)}" if id
+      href = "#{href}/#{OpenWFE.to_uscores(id)}" if id
 
       href = "#{href}?#{opts.collect { |k, v| "#{k}=#{v}" }.join('&')}" \
         if opts.size > 0
