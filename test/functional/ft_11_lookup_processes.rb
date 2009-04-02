@@ -136,13 +136,12 @@ class FtLookupProcesses < Test::Unit::TestCase
     li = OpenWFE::LaunchItem.new(pdef)
     li.foto = { 'labo' => 'nada' }
     li.me = { 'li' => { 'me' => 'lo' } }
+    li.kazoe = 4
     fei0 = @engine.launch(li)
 
     fei1 = @engine.launch(pdef) # an empty process
 
     sleep 0.350
-
-    # TODO : add test for :to_string
 
     wfids = @engine.lookup_processes(:value => 'lo')
     assert_equal [], wfids
@@ -160,6 +159,15 @@ class FtLookupProcesses < Test::Unit::TestCase
     assert_equal [ fei0.wfid ], wfids
 
     wfids = @engine.lookup_processes(:f => 'me.li.me', :val => 'lo')
+    assert_equal [ fei0.wfid ], wfids
+
+    wfids = @engine.lookup_processes(:value => 4)
+    assert_equal [ fei0.wfid ], wfids
+
+    wfids = @engine.lookup_processes(:value => '4')
+    assert_equal [], wfids
+
+    wfids = @engine.lookup_processes(:value => '4', :to_string => true)
     assert_equal [ fei0.wfid ], wfids
 
     # over.
