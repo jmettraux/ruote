@@ -53,6 +53,17 @@ class FtProcessUriTest < Test::Unit::TestCase
     assert_trace 'tmp/def1.rb', 'b'
   end
 
+  def test_launch_fs_stored_ruby_process_with_initial_dot
+
+    prepare_def1
+
+    assert_trace './tmp/def1.rb', 'b'
+  end
+
+  #def test_launch_c_something
+  #  assert_trace 'C:\whatever\nada.xml', ''
+  #end
+
   protected
 
   def prepare_def0
