@@ -78,6 +78,9 @@ module OpenWFE
     #
     def read_uri (uri)
 
+      return File.read(uri) if uri.match(/^[A-Z]:\\/)
+        # seems like we're on windows, well... A:\ ?
+
       u = URI.parse(uri.to_s)
 
       raise(':remote_definitions_allowed is set to false') \

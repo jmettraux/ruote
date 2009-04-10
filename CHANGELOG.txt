@@ -4,6 +4,7 @@
 
 == ruote - 0.9.21    not yet released
 
+- bug   #25301 : engine doesn't recognize C:\ paths as local on windows. Fixed.
 - todo  #25089 : implemented nested process lookups engine#lookup_processes
 - bug   #25016 : gem 'activerecord' getting in the way of frozen.rb. Removed.
 - bug   #24984 : NoMethodError when cancelling missing process. Fixed.
