@@ -237,13 +237,14 @@ module OpenWFE
 
     protected
 
-      def compute_file_path (fei)
-
-        @basepath +
-        fei.workflow_instance_id + '__' +
-        fei.workflow_definition_name + '_' +
-        fei.workflow_definition_revision + '__' +
-        fei.expression_id + '.yaml'
-      end
+    def compute_file_path (fei)
+      [
+        @basepath,
+        fei.workflow_instance_id, '__',
+        fei.workflow_definition_name, '_',
+        fei.workflow_definition_revision, '__',
+        fei.expression_id, '.yaml'
+      ].join
+    end
   end
 end
