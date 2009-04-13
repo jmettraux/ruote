@@ -95,7 +95,7 @@ module OpenWFE
 
       original_string = regex.to_s
 
-      unless regex.kind_of?(Regexp)
+      unless regex.is_a?(Regexp)
 
         regex = regex.to_s
         regex = '^' + regex unless regex[0, 1] == '^'
@@ -200,7 +200,7 @@ module OpenWFE
       options[:application_context] = @application_context
 
       [
-        [ regex, @application_context ], [], [ options ]
+        [ regex, @application_context ], [ options ], []
       ].each do |args|
         begin
           return klass.new(*args)

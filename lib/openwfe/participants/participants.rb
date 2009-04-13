@@ -72,6 +72,8 @@ module OpenWFE
       reply_to_engine(workitem) if @reply_anyway
     end
 
+    protected
+
     #
     # This method does the actual job of dumping the workitem (as some
     # YAML to a file).
@@ -100,8 +102,6 @@ module OpenWFE
         "#{fei.workflow_definition_revision}__" +
         "#{workitem.participant_name}.yaml")
     end
-
-    protected
 
     #
     # By default, uses YAML to serialize the workitem
@@ -373,7 +373,7 @@ module OpenWFE
 
       return '(no template given)' unless template
 
-      OpenWFE::dosub(template, fe, workitem)
+      OpenWFE.dosub(template, fe, workitem)
     end
   end
 
