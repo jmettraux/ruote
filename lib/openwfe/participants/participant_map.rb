@@ -72,8 +72,6 @@ module OpenWFE
     #
     def register_participant (regex, params, &block)
 
-      #params = params.is_a?(Hash) ? params : { :participant => params }
-
       participant = params[:participant]
       position = params[:position]
 
@@ -91,6 +89,9 @@ module OpenWFE
 
       participant.application_context = @application_context \
         if participant.respond_to?(:application_context=)
+          #
+          # note that since 0.9.21 the application_context is passed in
+          # the participant options as well.
 
       original_string = regex.to_s
 
@@ -194,6 +195,9 @@ module OpenWFE
     # instantiate it...
     #
     def instantiate_participant (regex, klass, options)
+
+      options[:regex] = regex
+      options[:application_context] = @application_context
 
       [
         [ regex, @application_context ], [], [ options ]
