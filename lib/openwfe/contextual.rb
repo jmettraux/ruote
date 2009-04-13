@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+
 module OpenWFE
 
   #
@@ -84,8 +85,7 @@ module OpenWFE
     end
 
     #
-    # Returns the work directory for the OpenWFE[ru] application context
-    # (if any).
+    # Returns the work directory for the ruote application context (if any).
     #
     def get_work_directory (context_or_dir=nil)
 

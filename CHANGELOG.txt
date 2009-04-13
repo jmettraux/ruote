@@ -4,6 +4,7 @@
 
 == ruote - 0.9.21    not yet released
 
+- todo  #25399 : reformed YamlParticipant (store participants)
 - todo  #25404 : now passing the application_context as a participant option.
 - bug   #25301 : engine doesn't recognize C:\ paths as local on windows. Fixed.
 - todo  #25089 : implemented nested process lookups engine#lookup_processes

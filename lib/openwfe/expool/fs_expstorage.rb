@@ -276,7 +276,7 @@ module OpenWFE
   # With this extension of YmalFileExpressionStorage, persistence occurs
   # in a separate thread, for a snappier response.
   #
-  # Will probably get deprecated soon.
+  # DEPRECATED.
   #
   class ThreadedYamlFileExpressionStorage < YamlFileExpressionStorage
     include ThreadedStorageMixin

@@ -22,10 +22,8 @@
 # Made in Japan.
 #++
 
-
 require 'openwfe/utils'
 require 'openwfe/omixins'
-require 'openwfe/participants/yaml_filestorage'
 require 'openwfe/participants/participant'
 
 
@@ -53,12 +51,10 @@ module OpenWFE
     include LocalParticipant
     include FeiMixin
 
-    #
     # optional field (only used by the old rest interface for now)
     #
     attr_accessor :store_name
 
-    #
     # Called by the engine (the participant expression) when handing
     # out a workitem (to this participant).
     #
@@ -73,7 +69,6 @@ module OpenWFE
     end
     alias :push :consume
 
-    #
     # Called by the participant expression when this participant is
     # 'cancelled' within a flow. The workitem then gets removed.
     #
@@ -81,10 +76,9 @@ module OpenWFE
 
       ldebug { "cancel() removing workitem  #{cancelitem.flow_expression_id}" }
 
-      delete(cancelitem.flow_expression_id)
+      delete(cancelitem.fei)
     end
 
-    #
     # The workitem is to be stored again within the store participant,
     # it will probably be reused later. Don't send back to engine yet.
     #
@@ -96,7 +90,6 @@ module OpenWFE
       self[workitem.flow_expression_id] = workitem
     end
 
-    #
     # The workflow client is done with the workitem, send it back to
     # the engine and make sure it's not in the store participant anymore.
     #
@@ -105,26 +98,22 @@ module OpenWFE
       raise "Workitem not found in #{self.class}, cannot forward." \
         unless self.has_key?(workitem.flow_expression_id)
 
-      delete(workitem)
+      delete(workitem.fei)
 
       reply_to_engine(workitem)
     end
 
-    #
     # 'proceed' is just an alias for 'forward'
     #
     alias :proceed :forward
 
+    # deletes the workitems corresponding to the given flow expression id (fei).
     #
-    # This delete() method accepts a workitem or simply its FlowExpressionId
-    # identifier.
-    #
-    def delete (wi_or_fei)
+    def delete (fei)
 
-      super(extract_fei(wi_or_fei))
+      super(fei)
     end
 
-    #
     # A convenience method for delegating a workitem to another
     # store participant.
     #
@@ -134,7 +123,6 @@ module OpenWFE
       other_store_participant.push(wi)
     end
 
-    #
     # Returns all the workitems for a given workflow instance id.
     # If no workflow_instance_id is given, all the workitems will be
     # returned.
@@ -146,7 +134,6 @@ module OpenWFE
         self.values
     end
 
-    #
     # Returns the first workitem at hand.
     # As a StoreParticipant is usually implemented with a hash, two
     # consecutive calls to this method might not return the same workitem
@@ -157,18 +144,18 @@ module OpenWFE
       self.values.first
     end
 
-    #
     # Joins this participant, ie wait until a workitem arrives in it
     #
     def join (force_wait=false)
+
       return if self.size > 0 && (not force_wait)
+
       (@waiting_threads ||= []) << Thread.current
       Thread.stop
     end
 
     protected
 
-    #
     # This method is called each time a workitem comes in. Waiting threads
     # get woken up.
     #
@@ -184,6 +171,8 @@ module OpenWFE
   # hash (this class is an extension of Hash).
   #
   # Some examples :
+  #
+  #   require 'openwfe/participants/store_participants'
   #
   #   engine.register_participant(:alice, OpenWFE::HashParticipant)
   #   engine.register_participant("bob", OpenWFE::HashParticipant)
@@ -202,49 +191,151 @@ module OpenWFE
   end
 
   #
-  # Implementation of a store participant stores the workitems in
-  # yaml file in a dedicated directory.
+  # Stores workitems in the filesystem.
   #
-  # It's quite easy to register a YamlParticipant :
+  # Don't use this class directly, instead use YamlParticipant or another
+  # of the subclasses.
   #
-  #   yp = engine.register_participant(:alex, YamlParticipant)
-  #
-  #   puts yp.dirname
-  #
-  # should yield "./work/participants/alex/" (if the key :work_directory
-  # in engine.application_context is unset)
-  #
-  class YamlParticipant < YamlFileStorage
+  class FsParticipant
+
+    include Enumerable
     include StoreParticipantMixin
 
-    attr_accessor :dirname
+    attr_reader :path
+    attr_reader :dirname
+    attr_reader :fullpath
 
+    # Instantiates the participant.
     #
-    # The constructor for YamlParticipant awaits a dirname and an
-    # application_context.
-    # The dirname should be a simple name acceptable as a filename.
+    # There are two options, :path and :fullpath. The dir where the workitems
+    # are placed is determined by :
     #
-    def initialize (dirname, application_context)
+    #   {ruote_work_dir}/{:path}/{participant_name}/
+    #
+    # if :fullpath is set, it simply becomes
+    #
+    #   {:fullpath}/
+    #
+    #
+    def initialize (options={})
 
-      @dirname = OpenWFE::ensure_for_filename(dirname.to_s)
+      self.application_context = options[:application_context]
 
-      service_name = self.class.name + '__' + @dirname
+      @path = options[:path] || 'participants'
+      @dirname = OpenWFE::ensure_for_filename(options[:regex].to_s)
 
-      path = '/participants/' + @dirname
+      @fullpath =
+        options[:fullpath] || File.join(get_work_directory, @path, @dirname)
 
-      super(service_name, application_context, path)
+      FileUtils.mkdir_p(@fullpath)
+    end
+
+    def []= (fei, workitem)
+
+      File.open(filename_for(fei), 'w') do |f|
+        f.write(encode_workitem(workitem))
+      end
+    end
+
+    def delete (fei)
+
+      begin
+        FileUtils.rm_f(filename_for(fei))
+      rescue Exception => e
+        # don't care
+      end
+    end
+
+    def values
+
+      Dir.entries(@fullpath).inject([]) do |workitems, path|
+        workitem = load_workitem(File.join(@fullpath, path))
+        workitems << workitem if workitem
+        workitems
+      end
+    end
+
+    def purge
+
+      FileUtils.rm_rf(@fullpath)
+    end
+
+    def size
+
+      paths.size
+    end
+
+    def each (&block)
+
+      return unless block
+
+      values.each do |workitem|
+        block.call(workitem.fei, workitem)
+      end
     end
 
     protected
 
-    def compute_file_path (fei)
-      [
-        @basepath,
+    def paths
+
+      Dir.entries(@fullpath).inject([]) do |paths, path|
+        paths << path if is_workitem_path?(File.join(@fullpath, path))
+        paths
+      end
+    end
+  end
+
+  #
+  # A store participant class that places workitems in the work directory
+  # (generally under /work/participants/{participant_name}/) as YAML files.
+  #
+  #   require 'openwfe/participants/store_participants'
+  #
+  #   engine.register_participant :accounting, YamlParticipant
+  #     # will store workitems under work/participants/accounting/
+  #
+  #   engine.register_participant :accounting, YamlParticipant, :path => 'parts'
+  #     # will store workitems under work/parts/accounting/
+  #
+  #   engine.register_participant :accounting, YamlParticipant, :fullpath => '/tmp/workitems/acct/'
+  #     # will store workitems under /tmp/workitems/acct/
+  #
+  class YamlParticipant < FsParticipant
+
+    protected
+
+    def is_workitem_path? (path)
+
+      path.match(/\.yaml$/)
+    end
+
+    def encode_workitem (workitem)
+
+      YAML.dump(workitem)
+    end
+
+    def load_workitem (path)
+
+      return nil unless is_workitem_path?(path)
+      YAML.load_file(path)
+    end
+
+    def has_key? (fei)
+
+      File.exist?(filename_for(fei))
+    end
+
+    def filename_for (fei)
+
+      fn = [
         fei.workflow_instance_id, '__',
         fei.workflow_definition_name, '_',
         fei.workflow_definition_revision, '__',
         fei.expression_id, '.yaml'
       ].join
+
+      File.join(@fullpath, fn)
     end
   end
 end
+
