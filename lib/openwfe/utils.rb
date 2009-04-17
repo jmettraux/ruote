@@ -287,22 +287,14 @@ module OpenWFE
   #
   def OpenWFE.ensure_for_filename (s)
 
-    s = s.gsub(' ', '_')
-    s = s.gsub('/', '_')
-    s = s.gsub(':', '_')
-    s = s.gsub(';', '_')
-    s = s.gsub("\*", '_')
-    s = s.gsub("\\", '_')
-    s = s.gsub("\+", '_')
-    s = s.gsub("\?", '_')
-
-    s
+    s.gsub(/[ \/:;\*\\\+\?]/, '_')
   end
 
   #
   # "my//path" -> "my/path"
   #
   def OpenWFE.clean_path (s)
+
     s.gsub(/\/+/, '/')
   end
 

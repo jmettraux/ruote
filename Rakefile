@@ -29,7 +29,7 @@ Rake::RDocTask.new do |rd|
   rd.main = 'README.txt'
   rd.rdoc_dir = 'rdoc'
   rd.rdoc_files.include('README.txt', 'RELEASE.txt', 'lib/**/*.rb')
-  rd.title = 'OpenWFEru rdoc'
+  rd.title = 'ruote (OpenWFEru) rdoc'
   rd.options << '-N' # line numbers
   rd.options << '-S' # inline source
 
