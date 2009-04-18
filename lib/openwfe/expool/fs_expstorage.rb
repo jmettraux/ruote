@@ -71,7 +71,7 @@ module OpenWFE
 
       FileUtils.mkdir_p(d) unless File.exist?(d)
 
-      File.open("#{d}/#{fn}", 'w') { |f| f.write(encode(fexp)) }
+      File.open("#{d}/#{fn}", 'wb') { |f| f.write(encode(fexp)) }
     end
 
     #
@@ -217,7 +217,7 @@ module OpenWFE
 
       return nil unless File.exist?(path)
 
-      fexp = File.open(path, 'r') { |f|
+      fexp = File.open(path, 'rb') { |f|
         s = f.read
         s[0, 5] == '--- !' ? YAML.load(s) : Marshal.load(s)
       }
