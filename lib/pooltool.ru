@@ -86,7 +86,7 @@ USAGE = %{
   
   == options
 
-  -v, --version   : print the version of itog.rb and exits
+  -v, --version   : print the version of pooltool.ru and exits
   -h, --help      : print this help text and exits
 
   -y, --yaml      : states that the target should be serialized with YAML
