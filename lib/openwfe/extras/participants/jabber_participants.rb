@@ -52,8 +52,6 @@ module OpenWFE
     #
     # The JabberParticipant will send a JSON encoded InFlowWorkItem to a Jabber
     # ID specified in the 'target_id' attribute of the workitem's attributes.
-    # To change the format sent, use the 'message_format' attribute of the
-    # workitem, and set it to either 'XML' or 'YAML' (defaults to 'JSON').
     #
     # You can specify the JID, password and JID resource names on class level
     # or by passing the :jabber_id, :password, or :resource keys to the
@@ -111,13 +109,10 @@ module OpenWFE
             self.connection.deliver( target_jid, message )
             
           else
-            # Sensible defaults
-            workitem.attributes.reverse_merge!({ 'format' => 'JSON' })
-
             ldebug { "sending workitem to jid: #{target_jid}" }
             self.connection.deliver(
               target_jid,
-              encode_workitem( workitem, workitem.attributes['format'] )
+              encode_workitem( workitem )
             )
           end
         else
@@ -130,16 +125,14 @@ module OpenWFE
       end
 
       protected
-
-      def encode_workitem( wi, format = 'JSON' )
-        if format.downcase == 'xml'
-           wi.to_xml
-        elsif format.downcase == 'yaml'
-          YAML.dump( wi )
-        else
-          wi.to_h.to_json
-        end
-
+      
+      # Encode (and extend) the workitem as JSON
+      def encode_workitem( wi )
+        h = wi.to_h
+        h['sender_jid'] = self.class.jid
+        h['reply_jid'] = JabberListener.jid
+        
+        h.to_json
       end
 
     end
