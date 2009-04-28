@@ -101,43 +101,6 @@ class EtJabberTest < Test::Unit::TestCase
     assert @client1.subscribed_to?( @jid2 )
   end
 
-  def test_jabber_participant_xml
-    pdef = <<-EOF
-    class JabberParticipant0 < OpenWFE::ProcessDefinition
-      
-      sequence do
-        jabber
-        _print 'done.'
-      end
-
-      set :field => 'target_jid', :value => "#{@jid2}"
-      set :field => 'format', :value => 'xml'
-    end
-    EOF
-
-    jabberp = @engine.register_participant(
-      :jabber, OpenWFE::Extras::JabberParticipant.new(:connection => @client1))
-
-    assert_trace(pdef, 'done.')
-
-    messages = []
-    
-    begin
-      Timeout::timeout(20) {
-        loop do
-          messages = @client2.received_messages
-          break unless messages.empty?
-          sleep 1
-        end
-      }
-    rescue Timeout::Error
-      flunk "timeout waiting for messages"
-    end
-    
-    assert_equal @jid1, messages.first.from.strip.to_s
-    assert_match /^<.*>$/, messages.first.body # XML format
-  end
-
   def test_jabber_participant_message
     pdef = <<-EOF
     class JabberProcess0 < OpenWFE::ProcessDefinition

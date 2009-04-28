@@ -52,6 +52,10 @@ module OpenWFE
           # Contacts that are always included in the participants roster
           @@contacts = []
           cattr_accessor :contacts
+
+          def jid
+            self.jabber_id.nil? ? nil : self.jabber_id + '/' + self.resource
+          end
         end
         
       end
@@ -82,11 +86,10 @@ module OpenWFE
       end
 
       protected
-
+      
       def connect!
         if @connection.nil?
-          jid = self.class.jabber_id + '/' + self.class.resource
-          @connection = Jabber::Simple.new( jid, self.class.password )
+          @connection = Jabber::Simple.new( self.class.jid, self.class.password )
           @connection.status( :chat, "#{self.class} waiting for instructions" )
         end
       end
