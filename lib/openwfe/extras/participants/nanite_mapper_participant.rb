@@ -71,6 +71,9 @@ module OpenWFE
       
       # All options as taken by Nanite.start_mapper
       def initialize( options = {} )
+        
+        options = { :identity => 'ruote' }.merge(options)
+        
         @em_thread = Thread.new do
           EM.run do
             Nanite.start_mapper( options )
@@ -80,7 +83,7 @@ module OpenWFE
 
       def stop
         AMQP.stop { EM.stop if EM.reactor_running? }
-        @em_thread.exit
+        @em_thread.join
       end
 
       def consume( workitem )
@@ -95,14 +98,14 @@ module OpenWFE
         
         ldebug { "sending workitem to #{resource}" }
         Nanite.request( resource, workitem.to_h.to_json, workitem.params ) do |res|
-          ldebug { "replying to engine" }
+          ldebug { "response from nanite: #{res.inspect}" }
 
           # res = { "nanite-name" => "return value" }
-          res = res.values.first
+          json = res.values.first
           
-          hash = defined?(ActiveSupport::JSON) ? ActiveSupport::JSON.decode(res) : JSON.parse(res)
+          hash = defined?(ActiveSupport::JSON) ? ActiveSupport::JSON.decode(json) : JSON.parse(json)
           wi = OpenWFE.workitem_from_h( hash )
-          
+          #require 'ruby-debug'; debugger
           reply_to_engine( wi )
         end
       end
