@@ -30,7 +30,7 @@ module OpenWFE
     #
     # Use nanite to shell out heavy lifting to a cluster of self
     # assembling daemons. Learn more about nanite at
-    # http://github.com/ezmobius/nanite 
+    # http://github.com/ezmobius/nanite
     #
     # This participant implements a nanite mapper (or master) that
     # will pass commands out to nanite agents for processing. This
@@ -68,12 +68,12 @@ module OpenWFE
     # which gets slotted nicely into all #request calls.
     class NaniteMapperParticipant
       include LocalParticipant
-      
+
       # All options as taken by Nanite.start_mapper
       def initialize( options = {} )
-        
+
         options = { :identity => 'ruote' }.merge(options)
-        
+
         @em_thread = Thread.new do
           EM.run do
             Nanite.start_mapper( options )
@@ -95,14 +95,14 @@ module OpenWFE
           lerror { "no resource specified" }
           raise ArgumentError, "Missing resource in params"
         end
-        
+
         ldebug { "sending workitem to #{resource}" }
         Nanite.request( resource, workitem.to_h.to_json, workitem.params ) do |res|
           ldebug { "response from nanite: #{res.inspect}" }
 
           # res = { "nanite-name" => "return value" }
           json = res.values.first
-          
+
           hash = defined?(ActiveSupport::JSON) ? ActiveSupport::JSON.decode(json) : JSON.parse(json)
           wi = OpenWFE.workitem_from_h( hash )
           #require 'ruby-debug'; debugger
