@@ -18,7 +18,7 @@ class EtJabberTest < Test::Unit::TestCase
 
   def setup
     @@connections ||= {}
- 
+
     if @@connections.include?(:client1)
       @client1 = @@connections[:client1]
       @client2 = @@connections[:client2]
@@ -28,12 +28,12 @@ class EtJabberTest < Test::Unit::TestCase
       @jid2_raw = @@connections[:jid2_raw]
       @jid1 = @jid1_raw.strip.to_s
       @jid2 = @jid2_raw.strip.to_s
-      
+
       super
-      
+
       return true
     end
- 
+
     logins = []
     begin
       logins = File.readlines(File.expand_path("~/.xmpp4r-simple-test-config")).map! { |login| login.split(" ") }
@@ -45,28 +45,28 @@ class EtJabberTest < Test::Unit::TestCase
       puts "user2@example.com/res password\n\n"
       raise e
     end
- 
+
     @@connections[:client1] = Jabber::Simple.new(*logins[0])
     @@connections[:client2] = Jabber::Simple.new(*logins[1])
- 
+
     @@connections[:jid1_raw] = Jabber::JID.new(logins[0][0])
     @@connections[:jid2_raw] = Jabber::JID.new(logins[1][0])
- 
+
     # Force load the client and roster, just to be safe.
     @@connections[:client1].roster
     @@connections[:client2].roster
- 
+
     setup
   end
-  
+
   def test_jabber_participant
-    
+
     pdef = <<-EOF
     class JabberParticipant0 < OpenWFE::ProcessDefinition
       
       sequence do
         jabber
-        _print 'done.'
+        echo 'done.'
       end
 
       set :field => 'target_jid', :value => "#{@jid2}"
@@ -77,11 +77,11 @@ class EtJabberTest < Test::Unit::TestCase
       :jabber, OpenWFE::Extras::JabberParticipant.new(:connection => @client1))
 
     assert_equal false, @client1.subscribed_to?( @jid2 )
-    
+
     assert_trace(pdef, 'done.')
 
     messages = []
-    
+
     begin
       Timeout::timeout(20) {
         loop do
@@ -93,10 +93,10 @@ class EtJabberTest < Test::Unit::TestCase
     rescue Timeout::Error
       flunk "timeout waiting for messages"
     end
-    
+
     assert_equal @jid1, messages.first.from.strip.to_s
     assert_match /^\{.*\}$/, messages.first.body # JSON message by default
-    
+
     # roster entries must be made
     assert @client1.subscribed_to?( @jid2 )
   end
@@ -116,9 +116,9 @@ class EtJabberTest < Test::Unit::TestCase
       :jabber, OpenWFE::Extras::JabberParticipant.new(:connection => @client1))
 
     assert_trace( pdef, nil )
-    
+
     messages = []
-    
+
     begin
       Timeout::timeout(20) {
         loop do
@@ -130,37 +130,37 @@ class EtJabberTest < Test::Unit::TestCase
     rescue Timeout::Error
       flunk "timeout waiting for messages"
     end
-    
+
     assert_equal 'Hello world', messages.first.body # Custom message
   end
 
   def test_jabber_listener
     log_level_to_debug
-    
+
     pdef = <<-EOF
     class JabberParticipant0 < OpenWFE::ProcessDefinition
       
       sequence do
-        _print '${f:foo}'
+        echo '${f:foo}'
         jabber :wait_for_reply => true
-        _print '${f:foo}'
+        echo '${f:foo}'
       end
 
       set :field => 'target_jid', :value => "#{@jid2}"
       set :field => 'foo', :value => 'foo'
     end
     EOF
-    
+
     jabberp = @engine.register_participant(
       :jabber, OpenWFE::Extras::JabberParticipant.new(:connection => @client1))
 
     @engine.register_listener(
       OpenWFE::Extras::JabberListener, :freq => '1s', :connection => @client1)
-    
+
     fei = @engine.launch pdef
-    
+
     messages = []
-      
+
     begin
       Timeout::timeout(20) {
         loop do
@@ -172,12 +172,12 @@ class EtJabberTest < Test::Unit::TestCase
     rescue Timeout::Error
       flunk "timeout waiting for messages"
     end
-    
+
     wi = OpenWFE::InFlowWorkItem.from_h( JSON.parse( messages.first.body ) )
     wi.attributes['foo'] = "bar"
 
     @client2.deliver( @jid1, wi.to_h.to_json )
-    
+
     wait( fei )
 
     assert_engine_clean( fei )
