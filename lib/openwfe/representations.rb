@@ -118,9 +118,11 @@ module OpenWFE
 
     def insert_links (item, options, target, hint)
 
-      links(item, hint).each do |href, rel|
+      unless options[:no_links]
 
-        do_insert_link(target, options, href, rel)
+        links(item, hint).each do |href, rel|
+          do_insert_link(target, options, href, rel)
+        end
       end
 
       target
@@ -741,6 +743,8 @@ module OpenWFE
           #xml.stacktrace do
           #  xml.cdata! "\n#{v.stacktrace}\n"
           #end
+
+          workitem_to_xml(err.workitem, options.merge(:no_links => true))
         end
       end
     end
@@ -768,6 +772,7 @@ module OpenWFE
 
     h['wfid'] = err.wfid
     h['expid'] = err.fei.expid
+    h['workitem'] = workitem_to_h(err.workitem, opts.merge(:no_links => true))
     h
   end
 end
