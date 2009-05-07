@@ -285,10 +285,10 @@ module OpenWFE
 
     protected
 
-      def record_error (error)
+    def record_error (error)
 
-        (@per_processes[error.wfid] ||= []) << error
-          # not that unreadable after all...
-      end
+      (@per_processes[error.wfid] ||= []) << error
+        # not that unreadable after all...
+    end
   end
 end
