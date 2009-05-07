@@ -73,12 +73,10 @@ module OpenWFE
   # A short example :
   #
   #   class MyProcessDefinition < OpenWFE::ProcessDefinition
-  #     def make
-  #       process_definition :name => "test1", :revision => "0" do
-  #         sequence do
-  #           set :variable => "toto", :value => "nada"
-  #           print "toto:${toto}"
-  #         end
+  #     process_definition :name => "test1", :revision => "0" do
+  #       sequence do
+  #         set :variable => "toto", :value => "nada"
+  #         echo "toto:${toto}"
   #       end
   #     end
   #   end
