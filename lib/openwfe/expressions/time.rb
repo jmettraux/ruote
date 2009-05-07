@@ -236,7 +236,7 @@ module OpenWFE
 
       ldebug { "reschedule() @scheduler_job_id is #{@scheduler_job_id}" }
 
-      to_reschedule scheduler
+      to_reschedule(scheduler)
     end
 
     def reply_to_parent (workitem)
