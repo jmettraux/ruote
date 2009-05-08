@@ -37,47 +37,40 @@ module OpenWFE
   #
   class ProcessError
 
-    #
     # When did the error occur.
     #
-    attr_reader :date
+    attr_accessor :date
 
-    #
     # The FlowExpressionId instance uniquely pointing at the expression
     # which 'failed'.
     #
-    attr_reader :fei
+    attr_accessor :fei
 
-    #
     # Generally something like :apply or :reply
     #
-    attr_reader :message
+    attr_accessor :message
 
-    #
     # The workitem accompanying the message (apply(workitem) /
     # reply (workitem)).
     #
-    attr_reader :workitem
+    attr_accessor :workitem
 
-    #
     # The String stack trace of the error.
     #
-    attr_reader :stacktrace
+    attr_accessor :stacktrace
 
     alias :backtrace :stacktrace
 
-    #
     # The error class (String) of the top level error
     #
-    attr_reader :error_class
+    attr_accessor :error_class
 
     def initialize (*args)
 
       @date = Time.new
-      @fei, @message, @workitem, @error_class, @stacktrace = args
+      @fei, @message, @workitem, @error_class, @stacktrace = args if args
     end
 
-    #
     # Returns the parent workflow instance id (process id) of this
     # ProcessError instance.
     #
@@ -87,7 +80,6 @@ module OpenWFE
 
     alias :parent_wfid :wfid
 
-    #
     # Produces a human readable version of the information in the
     # ProcessError instance.
     #
@@ -103,8 +95,7 @@ module OpenWFE
       s
     end
 
-    #
-    # Returns a hash
+    # Returns a hash version of this process error
     #
     def hash
       to_s.hash
@@ -112,7 +103,6 @@ module OpenWFE
         # a bit costly but as it's only used by resume_process()...
     end
 
-    #
     # Returns true if the other instance is a ProcessError and is the
     # same error as this one.
     #
@@ -164,7 +154,6 @@ module OpenWFE
       end
     end
 
-    #
     # Stops this journal, takes care of 'unobserving' the expression pool
     #
     def stop
@@ -174,7 +163,6 @@ module OpenWFE
       @observers.each { |o| get_expression_pool.remove_observer(o) }
     end
 
-    #
     # Returns true if the given wfid (or fei) (process instance id)
     # has had errors.
     #
@@ -183,7 +171,6 @@ module OpenWFE
       get_error_log(wfid).size > 0
     end
 
-    #
     # Takes care of removing an error from the error journal and
     # they replays its process at that point.
     #
@@ -203,7 +190,6 @@ module OpenWFE
         error.workitem)
     end
 
-    #
     # A utility method : given a list of errors, will make sure that for
     # each flow expression only one expression (the most recent) will get
     # listed.
@@ -236,7 +222,6 @@ module OpenWFE
       @per_processes = {}
     end
 
-    #
     # Returns a list (older first) of the errors for a process
     # instance identified by its fei or wfid.
     #
@@ -249,7 +234,6 @@ module OpenWFE
       @per_processes[wfid] || []
     end
 
-    #
     # Removes the error log for a process instance.
     #
     def remove_error_log (wfid)
@@ -258,7 +242,6 @@ module OpenWFE
       @per_processes.delete(wfid)
     end
 
-    #
     # Removes a list of errors from the error journal.
     #
     # The 'errors' parameter may be a single error (instead of an array).
@@ -274,7 +257,6 @@ module OpenWFE
       end
     end
 
-    #
     # Reads all the error logs currently stored.
     # Returns a hash wfid --> error list.
     #
@@ -292,3 +274,4 @@ module OpenWFE
     end
   end
 end
+

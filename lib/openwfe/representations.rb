@@ -83,7 +83,6 @@ module OpenWFE
       send(method, item)
     end
 
-    #
     # Override me (message to ruote-rest and ruote-web2)
     #
     # (Warning : this method turns dots to underscores in the id)
@@ -106,7 +105,6 @@ module OpenWFE
       [ href, rel ]
     end
 
-    #
     # Calls link() and converts its result from array to hash
     # { 'href' => x, 'rel' => y }
     #
@@ -181,7 +179,6 @@ module OpenWFE
       [ OpenWFE::FlowExpressionId, :parent ] => 'to_parent'
     }
 
-    #
     # generate the links for a given item
     #
     def gen_links (res, item, &block)
@@ -275,7 +272,6 @@ module OpenWFE
     lgen.insert_links(item, options, target, hint)
   end
 
-  #
   # (don't use directly)
   #
   def Json.collection_to_h (col, opts, hint, &block)
@@ -287,7 +283,6 @@ module OpenWFE
     OpenWFE.rep_insert_links(col, opts, { 'elements' => elts }, hint)
   end
 
-  #
   # (don't use directly)
   #
   def Xml.collection_to_xml (tag, col, opts, hint, &block)
@@ -303,11 +298,24 @@ module OpenWFE
     end
   end
 
+  def Json.collection_from_h (h, &block)
+
+    h['elements'].collect { |e| block.call(e) }
+  end
+
+  def Xml.collection_from_xml (elt, childname, &block)
+
+    elt.owfe_elt_children.select { |e|
+      e.name == childname
+    }.collect { |e|
+      block.call(e)
+    }
+  end
+
   #--
   # launchitems
   #++
 
-  #
   # Turns a launchitem into an XML String
   #
   def Xml.launchitem_to_xml (li, options={})
@@ -322,7 +330,6 @@ module OpenWFE
     end
   end
 
-  #
   # Given some XML (string or rexml doc/elt), extracts the LaunchItem
   # instance.
   #
@@ -353,7 +360,6 @@ module OpenWFE
     li
   end
 
-  #
   # Turns a launchitem into a hash
   #
   def Json.launchitem_to_h (li)
@@ -361,7 +367,6 @@ module OpenWFE
     li.to_h
   end
 
-  #
   # Creates a LaunchItem instance from a hash (or a JSON string)
   #
   def Json.launchitem_from_h (h_or_json)
@@ -400,7 +405,6 @@ module OpenWFE
   # workitems
   #++
 
-  #
   # Turns an [InFlow]WorkItem into some XML.
   #
   def Xml.workitem_to_xml (wi, options={})
@@ -429,7 +433,6 @@ module OpenWFE
     end
   end
 
-  #
   # Turns a list of workitems into a XML document (String)
   #
   def Xml.workitems_to_xml (wis, options={})
@@ -441,7 +444,6 @@ module OpenWFE
     }
   end
 
-  #
   # Extracts an [InFlow]WorkItem instance from some XML.
   #
   def Xml.workitem_from_xml (xml)
@@ -465,21 +467,15 @@ module OpenWFE
     wi
   end
 
-  #
   # Extracts a list of workitems from some XML.
   #
   def Xml.workitems_from_xml (xml)
 
-    root = to_element(xml, 'workitems')
-
-    root.owfe_elt_children.select { |elt|
-      elt.name == 'workitem'
-    }.collect { |elt|
+    Xml.collection_from_xml(to_element(xml, 'workitems'), 'workitem') do |elt|
       workitem_from_xml(elt)
-    }
+    end
   end
 
-  #
   # Turns an array of workitems into a hash
   #
   def Json.workitems_to_h (wis, opts={})
@@ -489,7 +485,6 @@ module OpenWFE
     }
   end
 
-  #
   # Turns a workitem into a hash
   #
   def Json.workitem_to_h (wi, opts={})
@@ -585,7 +580,6 @@ module OpenWFE
     end
   end
 
-  #
   # Turns a serie of process [status] instances into a hash.
   #
   def Json.processes_to_h (pss, opts={})
@@ -596,7 +590,6 @@ module OpenWFE
     }
   end
 
-  #
   # Turns a process [status] into a JSON string.
   #
   def Json.process_to_h (pr, opts={})
@@ -774,6 +767,42 @@ module OpenWFE
     h['expid'] = err.fei.expid
     h['workitem'] = workitem_to_h(err.workitem, opts.merge(:no_links => true))
     h
+  end
+
+  def Xml.errors_from_xml (xml)
+
+    Xml.collection_from_xml(to_element(xml, 'errors'), 'error') do |elt|
+      error_from_xml(elt)
+    end
+  end
+
+  def Xml.error_from_xml (xml)
+
+    root = to_element(xml, 'error')
+
+    e = OpenWFE::ProcessError.new
+    e.fei = OpenWFE::FlowExpressionId.from_s(text(root, 'fei'))
+    e.date = text(root, 'date')
+    e.message = text(root, 'call')
+    e.stacktrace = text(root, 'message')
+    e
+  end
+
+  def Json.errors_from_h (h)
+
+    collection_from_h(h) { |e| error_from_h(e) }
+  end
+
+  def Json.error_from_h (h)
+
+    e = OpenWFE::ProcessError.new
+    e.fei = OpenWFE::FlowExpressionId.from_s(h['fei'])
+    e.date = h['date']
+    e.message = h['call']
+
+    e.workitem = h['workitem']
+    e.workitem = OpenWFE::InFlowWorkItem.from_h(e.workitem) if e.workitem
+    e
   end
 end
 
