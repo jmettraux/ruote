@@ -4,6 +4,7 @@
 
 == ruote - 0.9.21    not yet released
 
+- todo  #25840 : error[s]_from_{xml|h} : implemented
 - todo  #25823 : error_to_h and _to_xml : representation now includes workitem
 - todo  #25399 : reformed YamlParticipant (store participants)
 - todo  #25404 : now passing the application_context as a participant option.

@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# Made in Japan (as opposed to "swiss made).
+# Made in Japan (as opposed to "swiss made").
 #++
 
 

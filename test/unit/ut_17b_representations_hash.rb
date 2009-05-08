@@ -12,9 +12,9 @@ require File.dirname(__FILE__) + '/../test_helper.rb'
 require 'json'
 
 require 'openwfe/util/json'
-require 'openwfe/workitem'
-require 'openwfe/rudefinitions'
-require 'openwfe/flowexpressionid'
+#require 'openwfe/workitem'
+#require 'openwfe/rudefinitions'
+#require 'openwfe/flowexpressionid'
 require 'openwfe/representations'
 
 

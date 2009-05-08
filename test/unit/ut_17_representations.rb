@@ -293,38 +293,38 @@ end}}, li.attributes)
 
   protected
 
-    def new_process_status (wfid)
+  def new_process_status (wfid)
 
-      ps = OpenWFE::ProcessStatus.new
-      class << ps
-        attr_accessor :wfid
-        def wfname; 'test-wf'; end
-        def wfrevision; '0'; end
-        def branches; 1; end
-        def variables; { 'var0' => 'val0' }; end
-        def scheduled_jobs; []; end
-        def expressions; []; end
-        def all_expressions
-          return @a if @a
-          @a = [ Object.new ]
-          class << @a.first
-            def fei; new_fei(wfid); end
-            def raw_representation; [ 'test', {}, [] ]; end
-            def children; []; end
-          end
-          class << @a
-            def find_root_expression
-              self.first
-            end
-          end
-          @a.extend(OpenWFE::RepresentationMixin)
-          @a
+    ps = OpenWFE::ProcessStatus.new
+    class << ps
+      attr_accessor :wfid
+      def wfname; 'test-wf'; end
+      def wfrevision; '0'; end
+      def branches; 1; end
+      def variables; { 'var0' => 'val0' }; end
+      def scheduled_jobs; []; end
+      def expressions; []; end
+      def all_expressions
+        return @a if @a
+        @a = [ Object.new ]
+        class << @a.first
+          def fei; new_fei(wfid); end
+          def raw_representation; [ 'test', {}, [] ]; end
+          def children; []; end
         end
+        class << @a
+          def find_root_expression
+            self.first
+          end
+        end
+        @a.extend(OpenWFE::RepresentationMixin)
+        @a
       end
-      ps.wfid = wfid
-
-      ps
     end
+    ps.wfid = wfid
+
+    ps
+  end
 
 end
 
