@@ -142,5 +142,23 @@ class ErrorRepresentationsTest < Test::Unit::TestCase
     assert_equal 'value1', error.workitem.attributes['key1']
   end
 
+  def test_error_to_xml
+
+    pe = OpenWFE::ProcessError.new
+    pe.fei = new_fei
+    pe.date = Time.now
+    pe.message = 'apply'
+    pe.stacktrace = 'nada'
+
+    pe.workitem = OpenWFE::InFlowWorkItem.new
+    pe.workitem.fei = pe.fei
+
+    xml = OpenWFE::Xml.error_to_xml(pe, :indent => 2, :linkgen => :plain)
+    #puts xml
+
+    d = pe.date.strftime("%Y%m%d%H%M%S")
+    assert_match /"\/errors\/20080919-equestris\/0_0\/#{d}"/, xml
+  end
+
 end
 
