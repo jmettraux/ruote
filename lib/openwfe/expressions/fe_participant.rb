@@ -199,10 +199,10 @@ module OpenWFE
 
         reply_to_parent(@applied_workitem)
 
-      rescue
+      rescue Exception => e
 
         lerror {
-          "trigger() problem while timing out\n#{OpenWFE::exception_to_s($!)}"
+          "trigger() problem while timing out\n#{OpenWFE::exception_to_s(e)}"
         }
       end
     end
