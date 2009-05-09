@@ -71,7 +71,6 @@ module OpenWFE::Extras
     #serialize :svalue, OpenWFE::ProcessError
     serialize :svalue
 
-    #
     # Returns the OpenWFE process error, as serialized
     # (but takes care of setting its db_id)
     #
@@ -96,7 +95,6 @@ module OpenWFE::Extras
   class DbErrorJournal < OpenWFE::ErrorJournal
     include OpenWFE::FeiMixin
 
-    #
     # Returns the error log for a given workflow/process instance,
     # the older error first.
     #
@@ -107,7 +105,6 @@ module OpenWFE::Extras
       errors.collect { |e| e.as_owfe_error }
     end
 
-    #
     # Erases all the errors for one given workflow/process instance.
     #
     def remove_error_log (wfid)
@@ -115,7 +112,6 @@ module OpenWFE::Extras
       ProcessError.destroy_all([ 'wfid = ?', wfid ])
     end
 
-    #
     # Returns a map wfid => error log, ie returns 1 error log for
     # each workflow/process instance that encountered an error.
     #
@@ -126,7 +122,6 @@ module OpenWFE::Extras
       end
     end
 
-    #
     # Removes a set of errors. This is used by the expool when
     # resuming a previously broken process instance.
     #
@@ -139,27 +134,26 @@ module OpenWFE::Extras
 
     protected
 
-      #
-      # This is the inner method used by the error journal to
-      # record a process error (instance of OpenWFE::ProcessError)
-      # that it observed in the expression pool.
-      #
-      # This method will throw an exception in case of trouble with
-      # the database.
-      #
-      def record_error (process_error)
+    # This is the inner method used by the error journal to
+    # record a process error (instance of OpenWFE::ProcessError)
+    # that it observed in the expression pool.
+    #
+    # This method will throw an exception in case of trouble with
+    # the database.
+    #
+    def record_error (process_error)
 
-        e = OpenWFE::Extras::ProcessError.new
+      e = OpenWFE::Extras::ProcessError.new
 
-        e.created_at = process_error.date
-          # making sure they are, well, in sync
+      e.created_at = process_error.date
+        # making sure they are, well, in sync
 
-        e.wfid = process_error.wfid
-        e.expid = process_error.fei.expid
-        e.svalue = process_error
+      e.wfid = process_error.wfid
+      e.expid = process_error.fei.expid
+      e.svalue = process_error
 
-        e.save_without_transactions!
-      end
+      e.save_without_transactions!
+    end
   end
 end
 
