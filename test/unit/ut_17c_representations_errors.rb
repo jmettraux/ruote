@@ -156,8 +156,10 @@ class ErrorRepresentationsTest < Test::Unit::TestCase
     xml = OpenWFE::Xml.error_to_xml(pe, :indent => 2, :linkgen => :plain)
     #puts xml
 
-    d = pe.date.strftime("%Y%m%d%H%M%S")
-    assert_match /"\/errors\/20080919-equestris\/0_0\/#{d}"/, xml
+    #d = pe.date.strftime("%Y%m%d%H%M%S")
+    #assert_match /"\/errors\/20080919-equestris\/0_0\/#{d}"/, xml
+
+    assert_match /"\/errors\/20080919-equestris\/0_0"/, xml
   end
 
 end

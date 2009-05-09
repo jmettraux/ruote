@@ -221,9 +221,10 @@ module OpenWFE
     end
 
     def error (item)
-      gen_links('errors', item) do |i|
-        "#{i.fei.wfid}/#{i.fei.expid}/#{i.date.strftime("%Y%m%d%H%M%S")}"
-      end
+      #gen_links('errors', item) do |i|
+      #  "#{i.fei.wfid}/#{i.fei.expid}/#{i.date.strftime("%Y%m%d%H%M%S")}"
+      #end
+      gen_links('errors', item) { |i| "#{i.fei.wfid}/#{i.fei.expid}" }
     end
     def errors (item)
       gen_links('errors', item)
