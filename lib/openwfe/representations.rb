@@ -728,6 +728,7 @@ module OpenWFE
         OpenWFE.rep_insert_links(err, options, xml)
 
         xml.date err.date # when
+        xml.fdate err.fdate
         xml.fei err.fei.to_s # what
         xml.call err.message.to_s # how
         xml.message err.stacktrace.split("\n")[0] # how
@@ -759,6 +760,7 @@ module OpenWFE
 
     h = {}
     h['date'] = err.date
+    h['fdate'] = err.fdate
     h['fei'] = err.fei.to_s
     h['message'] = err.stacktrace.split("\n").first
 
@@ -788,6 +790,12 @@ module OpenWFE
     e.date = text(root, 'date')
     e.message = text(root, 'call')
     e.stacktrace = text(root, 'message')
+
+    e.fdate = text(root, 'fdate')
+    e.fdate = e.fdate.to_f if e.fdate
+
+    e.workitem = workitem_from_xml(root.owfe_first_elt_child('workitem'))
+
     e
   end
 
@@ -801,6 +809,7 @@ module OpenWFE
     e = OpenWFE::ProcessError.new
     e.fei = OpenWFE::FlowExpressionId.from_s(h['fei'])
     e.date = h['date']
+    e.fdate = h['fdate']
     e.message = h['call']
 
     e.workitem = h['workitem']
