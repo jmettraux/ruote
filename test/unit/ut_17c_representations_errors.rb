@@ -61,6 +61,7 @@ class ErrorRepresentationsTest < Test::Unit::TestCase
 
     assert_equal 1, errors.size
     assert_equal 'pexp : no participant named "tonto"', errors.first.stacktrace
+    assert_equal({}, errors.first.workitem.attributes)
   end
 
   def test_errors_from_json
@@ -147,6 +148,7 @@ class ErrorRepresentationsTest < Test::Unit::TestCase
     pe = OpenWFE::ProcessError.new
     pe.fei = new_fei
     pe.date = Time.now
+    pe.fdate = pe.date.to_f
     pe.message = 'apply'
     pe.stacktrace = 'nada'
 
@@ -160,6 +162,7 @@ class ErrorRepresentationsTest < Test::Unit::TestCase
     #assert_match /"\/errors\/20080919-equestris\/0_0\/#{d}"/, xml
 
     assert_match /"\/errors\/20080919-equestris\/0_0"/, xml
+    assert_match />#{pe.fdate}</, xml
   end
 
 end

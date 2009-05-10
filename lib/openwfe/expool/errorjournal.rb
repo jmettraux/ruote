@@ -40,6 +40,7 @@ module OpenWFE
     # When did the error occur.
     #
     attr_accessor :date
+    attr_accessor :fdate
 
     # The FlowExpressionId instance uniquely pointing at the expression
     # which 'failed'.
@@ -67,14 +68,19 @@ module OpenWFE
 
     def initialize (*args)
 
-      @date = Time.new
-      @fei, @message, @workitem, @error_class, @stacktrace = args if args
+      if args.size > 0
+
+        @date = Time.now
+        @fdate = @date.to_f
+        @fei, @message, @workitem, @error_class, @stacktrace = args
+      end
     end
 
     # Returns the parent workflow instance id (process id) of this
     # ProcessError instance.
     #
     def wfid
+
       @fei.parent_wfid
     end
 
@@ -84,33 +90,31 @@ module OpenWFE
     # ProcessError instance.
     #
     def to_s
-      s = ""
+      s = ''
       s << "-- #{self.class.name} --\n"
-      s << "   date :    #{@date}\n"
-      s << "   fei :     #{@fei}\n"
-      s << "   message :   #{@message}\n"
-      s << "   workitem :  ...\n"
+      s << "   date : #{@date}\n"
+      s << "   fdate : #{@fdate}\n"
+      s << "   fei : #{@fei}\n"
+      s << "   message : #{@message}\n"
+      s << "   workitem : ...\n"
       s << "   error_class : #{@error_class}\n"
-      s << "   stacktrace :  #{@stacktrace[0, 80]}\n"
+      s << "   stacktrace : #{@stacktrace[0, 80]}\n"
       s
     end
 
     # Returns a hash version of this process error
     #
     def hash
-      to_s.hash
-        #
-        # a bit costly but as it's only used by resume_process()...
+
+      "#{@fei.to_s} #{@fdate}".hash
     end
 
     # Returns true if the other instance is a ProcessError and is the
     # same error as this one.
     #
     def == (other)
-      return false unless other.is_a?(OpenWFE::ProcessError)
-      return to_s == other.to_s
-        #
-        # a bit costly but as it's only used by resume_process()...
+
+      other.is_a?(OpenWFE::ProcessError) ? (hash == other.hash) : false
     end
   end
 
