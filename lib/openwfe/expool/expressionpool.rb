@@ -786,7 +786,6 @@ module OpenWFE
       end
     end
 
-    #
     # Will raise an exception if the expression belongs to a paused
     # process.
     #
@@ -797,84 +796,6 @@ module OpenWFE
       raise PausedError.new(wfid) if @paused_instances[wfid]
     end
 
-    #
-    # if the launch method is called with a schedule option
-    # (like :at, :in, :cron and :every), this method takes care of
-    # wrapping the process with a sleep or a cron.
-    #
-    def wrap_in_schedule (raw_expression, options)
-
-      oat = options[:at]
-      oin = options[:in]
-      ocron = options[:cron]
-      oevery = options[:every]
-
-      fei = new_fei(
-        :workflow_instance_id => get_wfid_generator.generate(nil),
-        :workflow_definition_name => 'schedlaunch',
-        :expression_name => 'sequence')
-
-      # not very happy with this code, it builds custom
-      # wrapping processes manually, maybe there is
-      # a more elegant way, but for now, it's ok.
-
-      template = if oat or oin
-
-        sleep_atts = if oat
-          { 'until' => oat }
-        else #oin
-          { 'for' => oin }
-        end
-        sleep_atts['scheduler-tags'] = "scheduled-launch, #{fei.wfid}"
-
-        raw_expression.new_environment
-        raw_expression.store_itself
-
-        [
-          'sequence', {}, [
-            [ 'sleep', sleep_atts, [] ],
-            raw_expression.fei
-          ]
-        ]
-
-      elsif ocron or oevery
-
-        fei.expression_name = 'cron'
-
-        cron_atts = if ocron
-          { 'tab' => ocron }
-        else #oevery
-          { 'every' => oevery }
-        end
-        cron_atts['name'] = "//cron_launch__#{fei.wfid}"
-        cron_atts['scheduler-tags'] = "scheduled-launch, #{fei.wfid}"
-
-        template = raw_expression.raw_representation
-        remove(raw_expression)
-
-        [ 'cron', cron_atts, [ template ] ]
-
-      else
-
-        nil # don't schedule at all
-      end
-
-      if template
-
-        raw_exp = RawExpression.new_raw(
-          fei, nil, nil, @application_context, template)
-
-        #raw_exp.store_itself
-        raw_exp.new_environment
-
-        raw_exp
-      else
-
-        raw_expression
-      end
-    end
-
-    #
     # Removes an environment, especially takes care of unbinding
     # any special value it may contain.
     #
