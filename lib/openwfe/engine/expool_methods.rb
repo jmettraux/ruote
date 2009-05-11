@@ -37,7 +37,6 @@ module OpenWFE
     # They are made available here for a simpler model.
     #++
 
-    #
     # Given any expression of a process, cancels the complete process
     # instance.
     #
@@ -48,7 +47,6 @@ module OpenWFE
     alias :cancel_flow :cancel_process
     alias :abort_process :cancel_process
 
-    #
     # Cancels the given expression (and its children if any)
     # (warning : advanced method)
     #
@@ -60,7 +58,6 @@ module OpenWFE
       get_expression_pool.cancel_expression(exp_or_fei)
     end
 
-    #
     # Pauses a process instance.
     #
     def pause_process (wfid)
@@ -68,7 +65,6 @@ module OpenWFE
       get_expression_pool.pause_process(wfid)
     end
 
-    #
     # Restarts a process : removes its 'paused' flag (variable) and makes
     # sure to 'replay' events (replies) that came for it while it was
     # in pause.
@@ -78,7 +74,6 @@ module OpenWFE
       get_expression_pool.resume_process(wfid)
     end
 
-    #
     # Not a delegate to an expool method, placed here for now.
     #
     # Takes care of removing an error from the error journal and
@@ -89,25 +84,28 @@ module OpenWFE
       get_error_journal.replay_at_error(error)
     end
 
-    protected
-
+    # Reapplies an expression.
     #
-    # In case of wfid, returns the root expression of the process,
-    # in case of fei, returns the expression itself.
+    # This method is mostly concerned with ParticipantExpression instances
+    # whose participant has "stalled" (participants whose reply won't come).
     #
-    def fetch_exp (fei_or_wfid)
+    def reapply (exp_or_fei)
 
-      exp = if fei_or_wfid.is_a?(String)
-
-        get_expression_pool.fetch_root(fei_or_wfid)
-
-      else
-
-        get_expression_pool.fetch_expression(fei_or_wfid)
-      end
-
-      exp || raise("no expression found for '#{fei_or_wfid.to_s}'")
+      get_expression_pool.reapply(exp_or_fei)
     end
+
+    #protected
+    ## In case of wfid, returns the root expression of the process,
+    ## in case of fei, returns the expression itself.
+    ##
+    #def fetch_exp (fei_or_wfid)
+    #  exp = if fei_or_wfid.is_a?(String)
+    #    get_expression_pool.fetch_root(fei_or_wfid)
+    #  else
+    #    get_expression_pool.fetch_expression(fei_or_wfid)
+    #  end
+    #  exp || raise("no expression found for '#{fei_or_wfid.to_s}'")
+    #end
   end
 end
 
