@@ -94,18 +94,21 @@ module OpenWFE
       get_expression_pool.reapply(exp_or_fei)
     end
 
-    #protected
-    ## In case of wfid, returns the root expression of the process,
-    ## in case of fei, returns the expression itself.
-    ##
-    #def fetch_exp (fei_or_wfid)
-    #  exp = if fei_or_wfid.is_a?(String)
-    #    get_expression_pool.fetch_root(fei_or_wfid)
-    #  else
-    #    get_expression_pool.fetch_expression(fei_or_wfid)
-    #  end
-    #  exp || raise("no expression found for '#{fei_or_wfid.to_s}'")
-    #end
+    protected
+
+    # In case of wfid, returns the root expression of the process,
+    # in case of fei, returns the expression itself.
+    #
+    def fetch_exp (fei_or_wfid)
+
+      exp = if fei_or_wfid.is_a?(String)
+        get_expression_pool.fetch_root(fei_or_wfid)
+      else
+        get_expression_pool.fetch_expression(fei_or_wfid)
+      end
+
+      exp || raise("no expression found for '#{fei_or_wfid.to_s}'")
+    end
   end
 end
 
