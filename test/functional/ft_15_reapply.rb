@@ -34,7 +34,7 @@ class FtReapplyTest < Test::Unit::TestCase
       end
     end)
 
-    sleep 0.450
+    sleep 0.350
 
     assert_equal '', @tracer.to_s
 
@@ -42,7 +42,7 @@ class FtReapplyTest < Test::Unit::TestCase
 
     @engine.reapply(alpha)
 
-    sleep 0.450
+    sleep 0.350
 
     assert_equal 'hello (true)', @tracer.to_s
 
