@@ -4,6 +4,7 @@
 
 == ruote - 0.9.21    not yet released
 
+- todo  #25799 : implemented engine.reapply(exp)
 - bug   #25832 : scheduled launch broken. Fixed.
 - todo  #25851 : added fdate to ProcessError (date in float)
 - todo  #25840 : error[s]_from_{xml|h} : implemented

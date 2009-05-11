@@ -54,13 +54,11 @@ module OpenWFE
 
     include ExpoolPauseMethods
 
-    #
     # The hash containing the wfid of the process instances currently
     # paused (a cache).
     #
     attr_reader :paused_instances
 
-    #
     # The constructor for the expression pool.
     #
     def initialize (service_name, application_context)
@@ -79,7 +77,6 @@ module OpenWFE
         # makes sure it's called now
     end
 
-    #
     # Stops this expression pool (especially its workqueue).
     #
     def stop
@@ -89,7 +86,6 @@ module OpenWFE
       onotify(:stop)
     end
 
-    #
     # This is the first stage of the tlaunch_child() method.
     #
     # (it's used by the concurrent iterator when preparing all its
@@ -132,7 +128,6 @@ module OpenWFE
       raw_exp
     end
 
-    #
     # Launches the given template (sexp) as the child of its
     # parent expression.
     #
@@ -152,7 +147,6 @@ module OpenWFE
       raw_exp.fei
     end
 
-    #
     # Launches a subprocess.
     # The resulting wfid is a subid for the wfid of the firing expression.
     #
@@ -180,7 +174,6 @@ module OpenWFE
       raw_exp.fei
     end
 
-    #
     # Replaces the flow expression with a raw expression that has
     # the same fei, same parent and points to the same env.
     # The raw_representation will be the template.
@@ -202,8 +195,7 @@ module OpenWFE
       apply(re, workitem)
     end
 
-    #
-    # Launches new process instance.
+    # Launches a new process instance.
     #
     def launch (raw_exp, workitem)
 
@@ -212,7 +204,6 @@ module OpenWFE
       apply(raw_exp, workitem)
     end
 
-    #
     # Applies a given expression (id or expression)
     #
     def apply (exp_or_fei, workitem)
@@ -221,7 +212,6 @@ module OpenWFE
         self, :do_apply_reply, :apply, exp_or_fei, workitem)
     end
 
-    #
     # Replies to a given expression
     #
     def reply (exp_or_fei, workitem)
@@ -230,7 +220,6 @@ module OpenWFE
         self, :do_apply_reply, :reply, exp_or_fei, workitem)
     end
 
-    #
     # Cancels the given expression.
     # The param might be an expression instance or a FlowExpressionId
     # instance.
@@ -256,7 +245,6 @@ module OpenWFE
       wi
     end
 
-    #
     # Cancels the given expression and makes sure to resume the flow
     # if the expression or one of its children were active.
     #
@@ -285,7 +273,26 @@ module OpenWFE
       end
     end
 
+    # Re-applies a given expression.
     #
+    # Note : this expression must be present and have been applied previously.
+    #
+    def reapply (exp)
+
+      exp, fei = fetch(exp)
+
+      raise "cannot re-apply 'missing' expression #{fei.to_short_s}" \
+        unless exp
+
+      wi = exp.applied_workitem rescue nil
+      wi.attributes['__reapplied__'] = true
+
+      raise "cannot re-apply expression #{fei.to_short_s}, not applied" \
+        unless exp
+
+      apply(exp, wi)
+    end
+
     # Given any expression of a process, cancels the complete process
     # instance.
     #
@@ -304,14 +311,11 @@ module OpenWFE
     end
     alias :cancel_flow :cancel_process
 
-    #
     # Forgets the given expression (make it an orphan).
     #
     def forget (parent_exp, exp)
 
       exp, fei = fetch exp
-
-      #ldebug { "forget() forgetting  #{fei}" }
 
       return if not exp
 
@@ -326,7 +330,6 @@ module OpenWFE
       ldebug { "forget() forgot #{fei}" }
     end
 
-    #
     # Replies to the parent of the given expression.
     #
     def reply_to_parent (exp, workitem, remove=true)
@@ -394,7 +397,6 @@ module OpenWFE
       reply(exp.parent_id, workitem)
     end
 
-    #
     # Adds or updates a flow expression in this pool
     #
     def update (flow_expression)
@@ -408,7 +410,6 @@ module OpenWFE
       flow_expression
     end
 
-    #
     # Fetches a FlowExpression from the pool.
     # Returns a tuple : the FlowExpression plus its FlowExpressionId.
     #
@@ -422,7 +423,6 @@ module OpenWFE
       [ get_expression_storage[fei], fei ]
     end
 
-    #
     # Fetches a FlowExpression (returns only the FlowExpression instance)
     #
     # The param 'exp' may be a FlowExpressionId or a FlowExpression that
@@ -433,7 +433,6 @@ module OpenWFE
       fetch(exp)[0]
     end
 
-    #
     # Returns the engine environment (the top level environment)
     #
     def fetch_engine_environment
@@ -448,7 +447,6 @@ module OpenWFE
       ee
     end
 
-    #
     # Fetches the root expression of a process (or a subprocess).
     #
     def fetch_root (wfid)
@@ -456,7 +454,6 @@ module OpenWFE
       get_expression_storage.fetch_root(wfid)
     end
 
-    #
     # Removes a flow expression from the pool
     # (This method is mainly called from the pool itself)
     #
@@ -473,7 +470,6 @@ module OpenWFE
       remove_environment(exp.environment_id) if exp.owns_its_environment?
     end
 
-    #
     # This method is called at each expool (engine) [re]start.
     # It roams through the previously saved (persisted) expressions
     # to reschedule ones like 'sleep' or 'cron'.
@@ -500,7 +496,6 @@ module OpenWFE
       linfo { "reschedule() done. (took #{t.duration} ms)" }
     end
 
-    #
     # Returns the unique engine_environment FlowExpressionId instance.
     # There is only one such environment in an engine, hence this
     # 'singleton' method.
@@ -514,40 +509,6 @@ module OpenWFE
         :expression_name => EN_ENVIRONMENT)
     end
 
-    #--
-    # Returns the list of applied expressions belonging to a given
-    # workflow instance.
-    #
-    # If the unapplied optional parameter is set to true, all the
-    # expressions (even those not yet applied) that compose the process
-    # instance will be returned. Environments will be returned as well.
-    #
-    #def process_stack (wfid)
-    #  wfid = extract_wfid(wfid, true)
-    #  params = { :parent_wfid => wfid }
-    #  stack = get_expression_storage.find_expressions(params)
-    #  stack.extend(RepresentationMixin)
-    #  stack
-    #end
-    #++
-
-    #--
-    # Lists all workflows (processes) currently in the expool (in
-    # the engine).
-    # This method will return a list of "process-definition" expressions
-    # (root of flows).
-    #
-    #def list_processes (options={})
-    #  options[:include_classes] = DefineExpression
-    #    #
-    #    # Maybe it would be better to list root expressions instead
-    #    # so that expressions like 'sequence' can be used
-    #    # as root expressions. Later...
-    #  get_expression_storage.find_expressions(options)
-    #end
-    #++
-
-    #
     # This method is called when apply() or reply() failed for
     # an expression.
     # There are currently only two 'users', the ParticipantExpression
@@ -581,7 +542,6 @@ module OpenWFE
       onotify(:error, fei, message, workitem, error.class.name, error.to_s)
     end
 
-    #
     # Returns true if the process instance to which the expression
     # belongs is currently paused.
     #
@@ -590,7 +550,6 @@ module OpenWFE
       (@paused_instances[expression.fei.parent_wfid] != nil)
     end
 
-    #
     # Builds the RawExpression instance at the root of the flow
     # being launched.
     #
@@ -623,7 +582,6 @@ module OpenWFE
         new_fei(h), nil, nil, @application_context, procdef)
     end
 
-    #
     # If the launch option :wait_for is set to true, this method
     # will be called to apply the raw_expression. It will only return
     # when the launched process is over, which means it terminated, it
@@ -670,7 +628,6 @@ module OpenWFE
 
     protected
 
-    #
     # Checks if there is an event handler available
     #
     def do_handle_error (fei, workitem)
@@ -741,7 +698,6 @@ module OpenWFE
       false # no error handler found
     end
 
-    #
     # This is the method called [asynchronously] by the WorkQueue
     # upon apply/reply.
     #
@@ -814,7 +770,6 @@ module OpenWFE
       onotify(:remove, environment_id)
     end
 
-    #
     # Builds a FlowExpressionId instance for a process being
     # launched.
     #
@@ -834,7 +789,6 @@ module OpenWFE
       h[key] = OpenWFE::stu(v.to_s) if v
     end
 
-    #
     # Given a [replying] child flow expression, will update its parent
     # raw expression if the child raw_expression changed.
     #
