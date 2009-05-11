@@ -33,5 +33,9 @@ module Ruote
 
     #def initialize
     #end
+
+    def apply (tree, parent_id, workitem)
+      p tree
+    end
   end
 end

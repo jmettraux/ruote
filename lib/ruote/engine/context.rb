@@ -35,8 +35,8 @@ module Ruote
     def engine
       @context[:s_engine]
     end
-    def get_expression_pool
-      @context[:expression_pool]
+    def expool
+      @context[:s_expression_pool]
     end
     def expstorage
       @context[:s_expression_storage]
