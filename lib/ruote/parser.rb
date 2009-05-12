@@ -23,6 +23,9 @@
 #++
 
 
+require 'ruote/parser/ruby_dsl'
+
+
 module Ruote
 
   class Parser

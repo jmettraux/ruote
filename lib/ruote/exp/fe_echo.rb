@@ -29,7 +29,7 @@ module Ruote
 
   class EchoExpression < FlowExpression
 
-    def self.names; %w[ echo ]; end
+    names :echo
 
     def apply (workitem)
 
@@ -41,7 +41,7 @@ module Ruote
       #text = "#{workitem.attributes['__result__'].to_s}\n"
       text = "#{@children.first.to_s}\n"
 
-      if t = context['__tracer']
+      if t = context[:s_tracer]
         t << text
       else
         print(text)

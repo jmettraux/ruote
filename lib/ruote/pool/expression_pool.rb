@@ -42,6 +42,9 @@ module Ruote
       # TODO : participant and subprocess lookup
 
       exp_class = expmap.exp_class(tree.first)
+
+      raise "unknown expression '#{tree.first}'" if not exp_class
+
       exp = exp_class.new(fei, parent_id, tree)
 
       expstorage[fei] = exp

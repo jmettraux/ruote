@@ -40,7 +40,12 @@ module Ruote
 
     include EngineContext
 
+    attr_reader :running
+
+
     def initialize (context={})
+
+      @running = true
 
       @context = context
 
@@ -64,6 +69,10 @@ module Ruote
       workitem = Workitem.new(workitem)
 
       pool.launch(tree, workitem)
+    end
+
+    def stop
+      @running = false
     end
 
     protected

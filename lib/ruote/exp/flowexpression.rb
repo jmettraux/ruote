@@ -22,12 +22,13 @@
 # Made in Japan.
 #++
 
+require 'ruote/util/ometa'
 require 'ruote/engine/context'
 
 
 module Ruote
 
-  class FlowExpression
+  class FlowExpression < ObjectWithMeta
 
     include EngineContext
 
@@ -73,6 +74,14 @@ module Ruote
     #    false
     #  end
     #end
+
+    # Keeping track of names and aliases for the expression
+    #
+    def self.names (*exp_names)
+
+      exp_names = exp_names.collect { |n| n.to_s }
+      meta_def(:expression_names) { exp_names }
+    end
 
     protected
 

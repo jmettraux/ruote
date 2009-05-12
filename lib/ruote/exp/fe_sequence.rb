@@ -30,7 +30,7 @@ module Ruote
 
   class SequenceExpression < FlowExpression
 
-    def self.names; %w[ sequence ]; end
+    names :sequence
 
     def apply (workitem)
 

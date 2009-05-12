@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,30 @@
 # Made in Japan.
 #++
 
-exppath = File.dirname(__FILE__)
-
-Dir.new(exppath).entries.select { |p|
-  p.match(/^fe_.*\.rb$/)
-}.each { |p|
-  require exppath + '/' + p
-}
+#--
+# note, it's ometa, not omerta.
+#++
 
 
 module Ruote
 
-  class ExpressionMap
+  class ObjectWithMeta
+    #
+    # meta a la lucky stiff
 
-    def initialize
-
-      @map = {}
-
-      add(Ruote::SequenceExpression)
-      add(Ruote::EchoExpression)
+    def self.metaclass
+      class << self
+        self
+      end
     end
-
-    def exp_class (exp_name)
-      @map[exp_name]
+    def self.meta_eval (&block)
+      metaclass.instance_eval(&block)
     end
-
-    protected
-
-    def add (exp_class)
-      exp_class.expression_names.each { |n| @map[n] = exp_class }
+    def self.meta_def (method_name, &block)
+      meta_eval { define_method method_name, &block }
+    end
+    def class_def (method_name, &block)
+      class_eval { define_method name, &block }
     end
   end
 end
