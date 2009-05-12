@@ -33,18 +33,33 @@ Dir.new(exppath).entries.select { |p|
 
 module Ruote
 
+  #
+  # Mapping from expression names (sequence, concurrence, ...) to expression
+  # classes (Ruote::SequenceExpression, Ruote::ConcurrenceExpression, ...)
+  #
   class ExpressionMap
 
     def initialize
 
       @map = {}
-
+      add(Ruote::DefineExpression)
       add(Ruote::SequenceExpression)
       add(Ruote::EchoExpression)
     end
 
-    def exp_class (exp_name)
+    # Returns the expression class for the given expression name
+    #
+    def expression_class (exp_name)
+
       @map[exp_name]
+    end
+
+    # Returns true if the argument points to a definition
+    #
+    def is_definition? (tree)
+
+      c = exp_class(tree.first)
+      (c && c.is_definition?)
     end
 
     protected

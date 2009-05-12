@@ -41,7 +41,7 @@ module Ruote
 
       # TODO : participant and subprocess lookup
 
-      exp_class = expmap.exp_class(tree.first)
+      exp_class = expmap.expression_class(tree.first)
 
       raise "unknown expression '#{tree.first}'" if not exp_class
 
@@ -55,6 +55,8 @@ module Ruote
 
       #exp.apply(workitem)
       workqueue.queue(exp, :apply, workitem)
+
+      fei
     end
 
     def cancel (fei)

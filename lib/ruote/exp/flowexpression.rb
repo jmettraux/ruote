@@ -42,7 +42,7 @@ module Ruote
       @fei = fei
       @parent_id = parent_id
 
-      @tree = tree
+      @tree = tree.dup
       @children = []
     end
 
@@ -83,6 +83,20 @@ module Ruote
       meta_def(:expression_names) { exp_names }
     end
 
+    # Returns true if this expression is a a definition
+    # (define, process_definition, set, ...)
+    #
+    def self.is_definition?
+      false
+    end
+
+    # This method makes sure the calling class responds "true" to is_definition?
+    # calls.
+    #
+    def self.is_definition
+      meta_def(:is_definition) { true }
+    end
+
     protected
 
     def apply_child (child_index, workitem)
@@ -92,7 +106,7 @@ module Ruote
 
     def store_self
 
-      pool.store(self)
+      expstorage[@fei] = self
     end
 
     def reply_to_parent (workitem)

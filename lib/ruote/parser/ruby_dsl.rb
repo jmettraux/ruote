@@ -38,6 +38,8 @@ module Ruote
     define(attributes, &block)
   end
 
+  # :nodoc:
+  #
   module RubyDsl
 
     class BranchContext
