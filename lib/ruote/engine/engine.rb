@@ -29,8 +29,8 @@ require 'ruote/engine/context'
 require 'ruote/parser'
 require 'ruote/workitem'
 require 'ruote/exp/expression_map'
-require 'ruote/expool/wfid_generator'
-require 'ruote/expool/expression_pool'
+require 'ruote/pool/wfid_generator'
+require 'ruote/pool/expression_pool'
 require 'ruote/wqueue/work_queue'
 
 
@@ -63,7 +63,7 @@ module Ruote
       tree = parser.parse(definition)
       workitem = Workitem.new(workitem)
 
-      expool.launch(tree, workitem)
+      pool.launch(tree, workitem)
     end
 
     protected

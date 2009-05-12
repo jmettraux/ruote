@@ -38,7 +38,14 @@ module Ruote
 
     def reply (workitem)
 
-      puts @children.inspect
+      #text = "#{workitem.attributes['__result__'].to_s}\n"
+      text = "#{@children.first.to_s}\n"
+
+      if t = context['__tracer']
+        t << text
+      else
+        print(text)
+      end
 
       reply_to_parent(workitem)
     end

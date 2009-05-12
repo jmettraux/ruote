@@ -39,7 +39,7 @@ module Ruote
     def engine
       @context[:s_engine]
     end
-    def expool
+    def pool
       @context[:s_expression_pool]
     end
     def expmap

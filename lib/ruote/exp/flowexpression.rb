@@ -55,17 +55,17 @@ module Ruote
 
     def apply_child (child_index, workitem)
 
-      expool.apply_child(self, child_index, workitem)
+      pool.apply_child(self, child_index, workitem)
     end
 
     def store_self
 
-      expool.store(self)
+      pool.store(self)
     end
 
     def reply_to_parent (workitem)
 
-      expool.reply_to_parent(self, workitem)
+      pool.reply_to_parent(self, workitem)
     end
   end
 end

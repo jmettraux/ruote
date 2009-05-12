@@ -32,9 +32,6 @@ module Ruote
 
     include EngineContext
 
-    #def initialize
-    #end
-
     def launch (tree, workitem)
 
       apply(tree, new_fei, nil, workitem)
@@ -73,10 +70,14 @@ module Ruote
       workitem.fei = exp.fei
 
       if exp.parent_id
+
         parent = expstorage[exp.parent_id]
+
         #parent.reply(workitem)
         workqueue.queue(parent, :reply, workitem)
+
       else
+
         puts "process #{exp.fei.wfid} over"
       end
     end
@@ -84,10 +85,12 @@ module Ruote
     protected
 
     def new_fei
+
       fei = FlowExpressionId.new
       fei.engine_id = engine.engine_id
       fei.wfid = wfidgen.generate
       fei.expid = '0'
+
       fei
     end
   end
