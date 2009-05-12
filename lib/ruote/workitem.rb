@@ -32,6 +32,12 @@ module Ruote
 
     alias :fields :attributes
     alias :fields= :attributes=
+
+    def initialize (attributes={})
+
+      @fei = nil
+      @attributes = attributes
+    end
   end
 end
 

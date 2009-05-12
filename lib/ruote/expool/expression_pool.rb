@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'ruote/fei'
 require 'ruote/engine/context'
 
 
@@ -34,8 +35,60 @@ module Ruote
     #def initialize
     #end
 
-    def apply (tree, parent_id, workitem)
-      p tree
+    def launch (tree, workitem)
+
+      apply(tree, new_fei, nil, workitem)
+    end
+
+    def apply (tree, fei, parent_id, workitem)
+
+      # TODO : participant and subprocess lookup
+
+      exp_class = expmap.exp_class(tree.first)
+      exp = exp_class.new(fei, parent_id, tree)
+
+      expstorage[fei] = exp
+
+      exp.context = @context
+
+      workitem.fei = fei
+
+      exp.apply(workitem)
+        # TODO : queue
+    end
+
+    #def reapply (fei)
+    #end
+
+    def apply_child (exp, child_index, workitem)
+
+      fei = exp.fei.new_child_fei(child_index)
+
+      apply(exp.children[child_index], fei, exp.fei, workitem)
+    end
+
+    def reply_to_parent (exp, workitem)
+
+      expstorage.delete(exp.fei)
+      workitem.fei = exp.fei
+
+      if exp.parent_id
+        parent = expstorage[exp.parent_id]
+        parent.reply(workitem)
+          # TODO : queue
+      else
+        puts "process #{exp.fei.wfid} over"
+      end
+    end
+
+    protected
+
+    def new_fei
+      fei = FlowExpressionId.new
+      fei.engine_id = engine.engine_id
+      fei.wfid = wfidgen.generate
+      fei.expid = '0'
+      fei
     end
   end
 end

@@ -38,7 +38,7 @@ module Ruote
 
       @mutex.synchronize do
         @counter += 1
-        @counter
+        @counter.to_s
       end
     end
   end

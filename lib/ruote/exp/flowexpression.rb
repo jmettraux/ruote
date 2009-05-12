@@ -22,31 +22,50 @@
 # Made in Japan.
 #++
 
-
-require 'ruote/expressions/flowexpression'
+require 'ruote/engine/context'
 
 
 module Ruote
 
-  class SequenceExpression < FlowExpression
+  class FlowExpression
 
-    def self.names; %w[ sequence ]; end
+    include EngineContext
 
-    def apply (workitem)
+    attr_accessor :fei
+    attr_accessor :parent_id
+    attr_accessor :children
 
-      reply(workitem)
+    def initialize (fei, parent_id, tree)
+
+      @fei = fei
+      @parent_id = parent_id
+
+      @attributes = tree[1]
+      @children = tree[2]
     end
 
+    # The default implementation : replies to the parent expression
+    #
     def reply (workitem)
 
-      position = workitem.fei == self.fei ? -1 : workitem.fei.child_id
-      position += 1
+      reply_to_parent(workitem)
+    end
 
-      if position >= @children.size
-        apply_child(position, workitem)
-      else
-        reply_to_parent(workitem)
-      end
+    protected
+
+    def apply_child (child_index, workitem)
+
+      expool.apply_child(self, child_index, workitem)
+    end
+
+    def store_self
+
+      expool.store(self)
+    end
+
+    def reply_to_parent (workitem)
+
+      expool.reply_to_parent(self, workitem)
     end
   end
 end

@@ -32,11 +32,18 @@ module Ruote
     alias :ac :context
     alias :application_context :context
 
+    def engine_id
+      @context[:engine_id] || 'default'
+    end
+
     def engine
       @context[:s_engine]
     end
     def expool
       @context[:s_expression_pool]
+    end
+    def expmap
+      @context[:s_expression_map]
     end
     def expstorage
       @context[:s_expression_storage]
@@ -49,6 +56,9 @@ module Ruote
     end
     def scheduler
       @context[:s_scheduler]
+    end
+    def wfidgen
+      @context[:s_wfid_generator]
     end
   end
 end

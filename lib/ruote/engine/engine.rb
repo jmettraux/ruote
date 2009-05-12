@@ -27,7 +27,8 @@
 
 require 'ruote/engine/context'
 require 'ruote/parser'
-require 'ruote/expressions/expression_map'
+require 'ruote/workitem'
+require 'ruote/exp/expression_map'
 require 'ruote/expool/wfid_generator'
 require 'ruote/expool/expression_pool'
 require 'ruote/wqueue/work_queue'
@@ -42,6 +43,8 @@ module Ruote
     def initialize (context={})
 
       @context = context
+
+      @context[:s_engine] = self
 
       build_scheduler
       build_parser
@@ -58,8 +61,9 @@ module Ruote
     def launch (definition, workitem)
 
       tree = parser.parse(definition)
+      workitem = Workitem.new(workitem)
 
-      expool.apply(tree, nil, workitem)
+      expool.launch(tree, workitem)
     end
 
     protected
@@ -67,7 +71,7 @@ module Ruote
     def build_service (name, o)
 
       service = o.is_a?(Class) ? o.new : o
-      service.context = @context if o.respond_to?(:context=)
+      service.context = @context if service.respond_to?(:context=)
       @context[name] = service
       #service
     end

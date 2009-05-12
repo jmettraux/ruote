@@ -22,14 +22,15 @@
 # Made in Japan.
 #++
 
-require 'ruote/expressions/flowexpression'
+
+require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
-  class EchoExpression < FlowExpression
+  class SequenceExpression < FlowExpression
 
-    def self.names; %w[ echo ]; end
+    def self.names; %w[ sequence ]; end
 
     def apply (workitem)
 
@@ -38,9 +39,14 @@ module Ruote
 
     def reply (workitem)
 
-      puts @children.inspect
+      position = workitem.fei == self.fei ? -1 : workitem.fei.child_id
+      position += 1
 
-      reply_to_parent(workitem)
+      if position < @children.size
+        apply_child(position, workitem)
+      else
+        reply_to_parent(workitem)
+      end
     end
   end
 end

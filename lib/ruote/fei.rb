@@ -31,6 +31,25 @@ module Ruote
     attr_accessor :engine_id
     attr_accessor :expid
     attr_accessor :wfid
+
+    def hash
+      instance_variables.join('|').hash
+    end
+
+    def equal (other)
+      return false unless other.is_a(FlowExpressionId)
+      (hash == other.hash)
+    end
+
+    def child_id
+      @expid.split('_').last.to_i
+    end
+
+    def new_child_fei (child_index)
+      cfei = self.dup
+      cfei.expid = "#{@expid}_#{child_index}"
+      cfei
+    end
   end
 end
 

@@ -22,48 +22,25 @@
 # Made in Japan.
 #++
 
-require 'ruote/engine/context'
+require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
-  class FlowExpression
+  class EchoExpression < FlowExpression
 
-    include EngineContext
+    def self.names; %w[ echo ]; end
 
-    attr_accessor :fei
-    attr_accessor :parent_id
-    attr_accessor :children
+    def apply (workitem)
 
-    def initialize (fei, parent_id, children)
-
-      @fei = fei
-      @parent_id = parent_id
-      @children = children
+      reply(workitem)
     end
 
-    # The default implementation : replies to the parent expression
-    #
     def reply (workitem)
 
+      puts @children.inspect
+
       reply_to_parent(workitem)
-    end
-
-    protected
-
-    def apply_child (child_index, workitem)
-
-      expool.apply(@fei, child_index, workitem)
-    end
-
-    def store_self
-
-      expool.store(self)
-    end
-
-    def reply_to_parent (workitem)
-
-      expool.reply_to_parent(@fei, workitem)
     end
   end
 end
