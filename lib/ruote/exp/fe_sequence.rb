@@ -42,7 +42,7 @@ module Ruote
       position = workitem.fei == self.fei ? -1 : workitem.fei.child_id
       position += 1
 
-      if position < @children.size
+      if position < @tree.last.size
         apply_child(position, workitem)
       else
         reply_to_parent(workitem)

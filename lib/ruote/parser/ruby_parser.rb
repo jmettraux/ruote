@@ -22,74 +22,50 @@
 # Made in Japan.
 #++
 
-require 'ruote/engine/context'
-
-
 module Ruote
 
-  class FlowExpression
+  # Not really a parser, more an AST builder.
+  #
+  def self.define (attributes={}, &block)
 
-    include EngineContext
+    attributes[:name] ||= 'no-name'
 
-    attr_accessor :fei
-    attr_accessor :parent_id
-    attr_accessor :tree
-    attr_accessor :children
+    RubyBuilder.create_branch('define', attributes, &block)
+  end
 
-    def initialize (fei, parent_id, tree)
+  def self.process_definition (attributes={}, &block)
 
-      @fei = fei
-      @parent_id = parent_id
+    define(attributes, &block)
+  end
 
-      @tree = tree
-      @children = []
+  module RubyBuilder
+
+    class BranchContext
+
+      def initialize (name, attributes)
+
+        @name = name
+        @attributes = attributes.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+        @children = []
+      end
+
+      def method_missing (m, *args, &block)
+
+        @children.push(
+          Ruote::RubyBuilder.create_branch(m.to_s, args.first || {}, &block))
+      end
+
+      def to_a
+
+        [ @name, @attributes, @children ]
+      end
     end
 
-    # The default implementation : replies to the parent expression
-    #
-    def reply (workitem)
+    def self.create_branch (name, attributes, &block)
 
-      reply_to_parent(workitem)
-    end
-
-    def cancel
-
-      @children.each { |cfei| pool.cancel(cfei) }
-    end
-
-    #def on_error
-    #  if oe = @attributes['on_error']
-    #    p oe
-    #    true
-    #  else
-    #    false
-    #  end
-    #end
-    #def on_cancel
-    #  if oc = @attributes['on_cancel']
-    #    p oc
-    #    true
-    #  else
-    #    false
-    #  end
-    #end
-
-    protected
-
-    def apply_child (child_index, workitem)
-
-      pool.apply_child(self, child_index, workitem)
-    end
-
-    def store_self
-
-      pool.store(self)
-    end
-
-    def reply_to_parent (workitem)
-
-      pool.reply_to_parent(self, workitem)
+      c = BranchContext.new(name, attributes)
+      c.instance_eval(&block) if block
+      c.to_a
     end
   end
 end
-

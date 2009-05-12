@@ -54,6 +54,13 @@ module Ruote
       workqueue.queue(exp, :apply, workitem)
     end
 
+    def cancel (fei)
+
+      exp = exp_storage[fei]
+
+      workqueue.queue(exp, :apply, workitem)
+    end
+
     #def reapply (fei)
     #end
 
@@ -61,7 +68,7 @@ module Ruote
 
       fei = exp.fei.new_child_fei(child_index)
 
-      apply(exp.children[child_index], fei, exp.fei, workitem)
+      apply(exp.tree.last[child_index], fei, exp.fei, workitem)
     end
 
     def reply_to_parent (exp, workitem)
