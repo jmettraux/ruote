@@ -22,10 +22,34 @@
 # Made in Japan.
 #++
 
+require 'thread'
+require 'ruote/engine/context'
+
 
 module Ruote
 
   class PlainWorkQueue
+
+    include EngineContext
+
+    def initialize
+
+      @queue = Queue.new
+    end
+
+    def queue (target, method, *args)
+
+      @queue.push([target, method, args])
+      step
+    end
+
+    def step
+
+      return if @queue.size < 1
+      target, method, args = @queue.pop
+
+      target.send(method, *args)
+    end
   end
 end
 

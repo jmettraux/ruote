@@ -53,8 +53,8 @@ module Ruote
 
       workitem.fei = fei
 
-      exp.apply(workitem)
-        # TODO : queue
+      #exp.apply(workitem)
+      workqueue.queue(exp, :apply, workitem)
     end
 
     #def reapply (fei)
@@ -74,8 +74,8 @@ module Ruote
 
       if exp.parent_id
         parent = expstorage[exp.parent_id]
-        parent.reply(workitem)
-          # TODO : queue
+        #parent.reply(workitem)
+        workqueue.queue(parent, :reply, workitem)
       else
         puts "process #{exp.fei.wfid} over"
       end

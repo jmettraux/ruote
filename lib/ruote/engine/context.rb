@@ -49,7 +49,7 @@ module Ruote
       @context[:s_expression_storage]
     end
     def workqueue
-      @context[:s_wqueue]
+      @context[:s_work_queue]
     end
     def parser
       @context[:s_parser]
