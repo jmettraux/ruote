@@ -7,7 +7,7 @@
 
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
-require 'ruote/parser/ruby_parser'
+require 'ruote/parser/ruby_dsl'
 
 
 class RubyParserTest < Test::Unit::TestCase

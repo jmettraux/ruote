@@ -30,7 +30,7 @@ module Ruote
 
     attributes[:name] ||= 'no-name'
 
-    RubyBuilder.create_branch('define', attributes, &block)
+    RubyDsl.create_branch('define', attributes, &block)
   end
 
   def self.process_definition (attributes={}, &block)
@@ -38,7 +38,7 @@ module Ruote
     define(attributes, &block)
   end
 
-  module RubyBuilder
+  module RubyDsl
 
     class BranchContext
 
@@ -52,7 +52,7 @@ module Ruote
       def method_missing (m, *args, &block)
 
         @children.push(
-          Ruote::RubyBuilder.create_branch(m.to_s, args.first || {}, &block))
+          Ruote::RubyDsl.create_branch(m.to_s, args.first || {}, &block))
       end
 
       def to_a
