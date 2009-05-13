@@ -121,15 +121,15 @@ module FunctionalBase
 
   def assert_no_remaining_expressions (fei, opts)
 
-    return
     return if opts[:ignore_errors]
 
     expcount = @engine.expstorage.size
-    return if expcount == 1
+    #return if expcount == 1
+    return if expcount == 0
 
-    50.times { Thread.pass }
-    expcount = @engine.expstorage.size
-    return if expcount == 1
+    #50.times { Thread.pass }
+    #expcount = @engine.expstorage.size
+    #return if expcount == 1
 
     puts '-' * 80
     puts 'too many expressions left in storage'
