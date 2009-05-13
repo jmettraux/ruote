@@ -22,47 +22,31 @@
 # Made in Japan.
 #++
 
-require 'thread'
+
 require 'ruote/engine/context'
+require 'ruote/storage/base'
 
 
 module Ruote
 
-  class WorkQueue
+  #
+  # Dumb Hash based in-memory storage.
+  #
+  # Warning : not constrained at all. May eat up all your mem.
+  #           For testing purposes only !
+  #
+  class HashStorage < Hash
+
     include EngineContext
+    include StorageBase
 
-    protected
+    # Overriding #context= to make sure #observe pool is called once the
+    # context is known.
+    #
+    def context= (c)
 
-    def process (target, method, args)
-
-      target.send(method, *args)
-    end
-  end
-
-  # A lazy, no-thread work queue.
-  #
-  # Each time a piece of work is queue, #step is called.
-  #
-  class PlainWorkQueue < WorkQueue
-
-    def initialize
-
-      @queue = Queue.new
-    end
-
-    def queue (target, method, *args)
-
-      @queue.push([target, method, args])
-      step
-    end
-
-    def step
-
-      return if @queue.size < 1
-
-      target, method, args = @queue.pop
-
-      process(target, method, args)
+      @context = c
+      observe_pool
     end
   end
 end

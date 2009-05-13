@@ -27,13 +27,16 @@ module Ruote
 
   class FlowExpressionId
 
-    #attr_accessor :owfe_version
     attr_accessor :engine_id
     attr_accessor :expid
     attr_accessor :wfid
 
+    def to_s
+      "#{@engine_id}|#{@expid}|#{@wfid}"
+    end
+
     def hash
-      instance_variables.join('|').hash
+      to_s.hash
     end
 
     def equal (other)

@@ -25,13 +25,15 @@
 
 #require 'rufus/scheduler' # sudo gem install rufus-scheduler
 
-require 'ruote/engine/context'
+require 'ruote/evhub'
 require 'ruote/parser'
 require 'ruote/workitem'
+require 'ruote/engine/context'
 require 'ruote/exp/expression_map'
 require 'ruote/pool/wfid_generator'
 require 'ruote/pool/expression_pool'
 require 'ruote/wqueue/work_queue'
+require 'ruote/storage/hash_storage'
 
 
 module Ruote
@@ -51,6 +53,8 @@ module Ruote
 
       @context[:s_engine] = self
 
+      build_event_hub
+
       build_scheduler
       build_parser
       build_expression_map
@@ -63,10 +67,11 @@ module Ruote
       build_parser
     end
 
-    def launch (definition, workitem)
+    def launch (definition, opts={})
 
       tree = parser.parse(definition)
-      workitem = Workitem.new(workitem)
+
+      workitem = Workitem.new(opts[:workitem] || {})
 
       pool.launch(tree, workitem)
     end
@@ -85,6 +90,10 @@ module Ruote
       #service
     end
 
+    def build_event_hub
+      build_service(:s_event_hub, Ruote::EventHub)
+    end
+
     def build_scheduler
       #build_service(:s_scheduler, Rufus::Scheduler.start_new)
     end
@@ -94,7 +103,7 @@ module Ruote
     end
 
     def build_expression_storage
-      build_service(:s_expression_storage, Hash)
+      build_service(:s_expression_storage, Ruote::HashStorage)
     end
 
     def build_expression_pool

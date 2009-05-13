@@ -90,8 +90,7 @@ module Ruote
 
       else
 
-        workqueue.queue(nil, :terminate, exp.fei)
-          # pure notification
+        evhub.notify(:process, :terminate, exp.fei)
       end
     end
 

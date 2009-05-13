@@ -22,47 +22,30 @@
 # Made in Japan.
 #++
 
-require 'thread'
-require 'ruote/engine/context'
-
 
 module Ruote
 
-  class WorkQueue
-    include EngineContext
-
-    protected
-
-    def process (target, method, args)
-
-      target.send(method, *args)
-    end
-  end
-
-  # A lazy, no-thread work queue.
   #
-  # Each time a piece of work is queue, #step is called.
+  # Tracking events in the workflow engine
   #
-  class PlainWorkQueue < WorkQueue
+  class EventHub
 
     def initialize
 
-      @queue = Queue.new
+      @observers = { :all => [] }
     end
 
-    def queue (target, method, *args)
+    def notify (eclass, emessage, *args)
 
-      @queue.push([target, method, args])
-      step
+      os = @observers[eclass]
+      os.each { |o| o.notify(eclass, emessage, args) } if os
+
+      @observers[:all].each { |o| o.notify(eclass, emessage, args) }
     end
 
-    def step
+    def add_observer (observer, eclass)
 
-      return if @queue.size < 1
-
-      target, method, args = @queue.pop
-
-      process(target, method, args)
+      (@observers[eclass] ||= []) << observer
     end
   end
 end

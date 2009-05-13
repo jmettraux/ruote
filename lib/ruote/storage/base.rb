@@ -22,47 +22,23 @@
 # Made in Japan.
 #++
 
-require 'thread'
+
 require 'ruote/engine/context'
 
 
 module Ruote
 
-  class WorkQueue
-    include EngineContext
+  module StorageBase
 
-    protected
+    def observe_pool
 
-    def process (target, method, args)
-
-      target.send(method, *args)
-    end
-  end
-
-  # A lazy, no-thread work queue.
-  #
-  # Each time a piece of work is queue, #step is called.
-  #
-  class PlainWorkQueue < WorkQueue
-
-    def initialize
-
-      @queue = Queue.new
-    end
-
-    def queue (target, method, *args)
-
-      @queue.push([target, method, args])
-      step
-    end
-
-    def step
-
-      return if @queue.size < 1
-
-      target, method, args = @queue.pop
-
-      process(target, method, args)
+      evhub.add_observer(:expressions, :update) do |eclass, emessage, args|
+        exp = args.first
+        self[exp.fei] = exp
+      end
+      evhub.add_observer(:expressions, :delete) do |eclass, emessage, args|
+        self.delete(args.first)
+      end
     end
   end
 end
