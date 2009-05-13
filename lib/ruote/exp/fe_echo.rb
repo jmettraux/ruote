@@ -39,7 +39,7 @@ module Ruote
     def reply (workitem)
 
       #text = "#{workitem.attributes['__result__'].to_s}\n"
-      text = "#{@children.first.to_s}\n"
+      text = "#{@tree.last.first.to_s}\n"
 
       if t = context[:s_tracer]
         t << text

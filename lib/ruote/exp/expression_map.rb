@@ -58,7 +58,7 @@ module Ruote
     #
     def is_definition? (tree)
 
-      c = exp_class(tree.first)
+      c = expression_class(tree.first)
       (c && c.is_definition?)
     end
 

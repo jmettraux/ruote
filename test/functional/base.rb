@@ -7,6 +7,8 @@
 # Sat Sep 20 23:40:10 JST 2008
 #
 
+require 'fileutils'
+
 require File.dirname(__FILE__) + '/../test_helper.rb'
 require File.dirname(__FILE__) + '/engine_helper.rb'
 
@@ -32,7 +34,7 @@ module FunctionalBase
       #
       # useful for tracking misuses of the application context
 
-    ac[':s_tracer'] = @tracer
+    ac[:s_tracer] = @tracer
     #ac[:ruby_eval_allowed] = true
     #ac[:definition_in_launchitem_allowed] = true
 

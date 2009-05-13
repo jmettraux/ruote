@@ -54,10 +54,22 @@ module Ruote
       def method_missing (m, *args, &block)
 
         @children.push(
-          Ruote::RubyDsl.create_branch(m.to_s, args.first || {}, &block))
+          Ruote::RubyDsl.create_branch(m.to_s, args_to_h(args), &block))
+      end
+
+      def args_to_h (args)
+
+        args.inject({}) { |h, a| a.is_a?(Hash) ? h.merge!(a) : h[a] = nil; h }
       end
 
       def to_a
+
+        @attributes.keys.each do |k|
+          if @attributes[k] == nil
+            @attributes.delete(k)
+            @children << k
+          end
+        end
 
         [ @name, @attributes, @children ]
       end

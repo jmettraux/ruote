@@ -27,5 +27,31 @@ class RubyParserTest < Test::Unit::TestCase
       ]],
       tree)
   end
+
+  def test_echo
+
+    tree = Ruote.define :name => 'nada' do
+      echo 'a'
+    end
+
+    assert_equal(
+      ["define", {"name"=>"nada"}, [
+        ["echo", {}, ["a"]]
+      ]],
+      tree)
+  end
+
+  def test_echo_with_escape
+
+    tree = Ruote.define :name => 'nada' do
+      echo 'a', :escape => true
+    end
+
+    assert_equal(
+      ["define", {"name"=>"nada"}, [
+        ["echo", {"escape"=>true}, ["a"]]
+      ]],
+      tree)
+  end
 end
 
