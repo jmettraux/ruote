@@ -23,35 +23,30 @@
 #++
 
 
-require 'ruote/engine/context'
-
-
 module Ruote
 
-  module StorageBase
+  class ProcessStatus
 
-    protected
+    attr_reader :expressions
 
-    def observe_pool
+    def initialize (expressions)
 
-      evhub.add_observer(:expressions, :update) do |eclass, emessage, args|
-        exp = args.first
-        self[exp.fei] = exp
-      end
-      evhub.add_observer(:expressions, :delete) do |eclass, emessage, args|
-        self.delete(args.first)
-      end
+      @expressions = expressions
     end
 
-    def fei_match? (fei, query)
-      # TODO : if necessary ?
+    def root_expression
+
+      @expressions.find { |e| e.fei.expid == '0' && e.fei.sub_wfid == nil }
     end
 
-    def exp_match? (exp, query)
+    def definition_name
 
-      wfid = query[:wfid]
+      root_expression.attributes['name']
+    end
 
-      (exp.fei.wfid == wfid)
+    def definition_revision
+
+      root_expression.attributes['revision']
     end
   end
 end

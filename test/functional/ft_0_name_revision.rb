@@ -11,18 +11,23 @@ require File.dirname(__FILE__) + '/base'
 class FtNameRevisionTest < Test::Unit::TestCase
   include FunctionalBase
 
+  def teardown
+
+    @engine.stop
+    purge_engine
+  end
+
   def test_no_name
 
     pdef = Ruote.process_definition do
     end
 
-    flunk
+    fei = assert_trace pdef, ''
 
-    fei = @engine.launch(pdef)
+    ps = @engine.process_status(fei.wfid)
 
-    p fei
-
-    purge_engine # bad somehow, next tests may fail
+    assert_equal 'no-name', ps.definition_name
+    assert_equal '0', ps.definition_revision
   end
 end
 

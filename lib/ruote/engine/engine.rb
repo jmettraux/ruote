@@ -29,6 +29,7 @@ require 'ruote/evhub'
 require 'ruote/parser'
 require 'ruote/workitem'
 require 'ruote/engine/context'
+require 'ruote/engine/process_status'
 require 'ruote/exp/expression_map'
 require 'ruote/pool/wfid_generator'
 require 'ruote/pool/expression_pool'
@@ -80,6 +81,12 @@ module Ruote
       @running = false
     end
 
+    def process_status (wfid)
+
+      es = expstorage.find_expressions(:wfid => wfid)
+      es.size > 0 ? ProcessStatus.new(es) : nil
+    end
+
     protected
 
     def build_service (name, o)
@@ -124,6 +131,10 @@ module Ruote
 
     def build_parser
       build_service(:s_parser, Ruote::Parser)
+    end
+
+    def build_participant_map
+      build_service(:s_participant_map, Ruote::ParticipantMap)
     end
   end
 end

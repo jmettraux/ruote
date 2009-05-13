@@ -58,7 +58,7 @@ module Ruote
 
     def step
 
-      return if @queue.size < 1
+      return if engine.running == false || @queue.size < 1
 
       target, method, args = @queue.pop
 

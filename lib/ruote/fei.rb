@@ -53,6 +53,14 @@ module Ruote
       cfei.expid = "#{@expid}_#{child_index}"
       cfei
     end
+
+    def parent_wfid
+      @wfid.split('|').first
+    end
+
+    def sub_wfid
+      @wfid.split('|').last
+    end
   end
 end
 

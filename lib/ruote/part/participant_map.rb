@@ -28,30 +28,43 @@ require 'ruote/engine/context'
 
 module Ruote
 
-  module StorageBase
+  class ParticipantMap
 
-    protected
+    include EngineContext
 
-    def observe_pool
+    attr_reader :map
 
-      evhub.add_observer(:expressions, :update) do |eclass, emessage, args|
-        exp = args.first
-        self[exp.fei] = exp
-      end
-      evhub.add_observer(:expressions, :delete) do |eclass, emessage, args|
-        self.delete(args.first)
+
+    def initialize
+
+      @map = []
+    end
+
+    def register (name, participant, position=:last)
+
+      entry = [
+        name.is_a?(Regexp) ? name : Regexp.new("^#{name}$"),
+        participant
+      ]
+
+      case position
+        when :last then @map << entry
+        when :first then @map.unshift(entry)
+        when Fixnum then @map.insert(position, entry)
+        else raise "cannot insertion participant at position '#{position}'"
       end
     end
 
-    def fei_match? (fei, query)
-      # TODO : if necessary ?
+    def lookup (participant_name)
+
+      r, p = @map.find { |r, p| r.match(participant_name) }
+      p
     end
 
-    def exp_match? (exp, query)
+    def dispatch (participant, workitem)
+    end
 
-      wfid = query[:wfid]
-
-      (exp.fei.wfid == wfid)
+    def cancel (participant_name, workitem)
     end
   end
 end

@@ -48,6 +48,11 @@ module Ruote
       @context = c
       observe_pool
     end
+
+    def find_expressions (query={})
+
+      inject([]) { |a, (k, v)| exp_match?(k, query) }
+    end
   end
 end
 
