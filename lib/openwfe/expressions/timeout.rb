@@ -50,8 +50,14 @@ module OpenWFE
       s_timeout = lookup_attribute(timeout_attname, @applied_workitem)
       return unless s_timeout
 
-      timeout = Rufus::parse_time_string(s_timeout)
-      @timeout_at = Time.new.to_f + timeout
+      begin
+        timeout = Rufus::parse_time_string(s_timeout)
+        @timeout_at = Time.new.to_f + timeout
+      rescue
+        @timeout_at = Time.parse(s_timeout)
+        #If the user specifies a time of day (16:00), then we schedule for when that time next occurs whether today or tomorrow (not the past)
+        @timeout_at += 86400 if @timeout_at < Time.now && s_timeout =~ /\d{1,2}:\d{1,2}/
+      end
 
       stamp_workitem(workitem, s_timeout)
     end
