@@ -90,7 +90,8 @@ module Ruote
 
       else
 
-        puts "process #{exp.fei.wfid} over"
+        workqueue.queue(nil, :terminate, exp.fei)
+          # pure notification
       end
     end
 

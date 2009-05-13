@@ -22,61 +22,26 @@
 # Made in Japan.
 #++
 
-require 'thread'
-require 'ruote/engine/context'
+
+require 'ruote/exp/fe_sequence'
 
 
 module Ruote
 
-  class WorkQueue
-    include EngineContext
+  class DefineExpression < SequenceExpression
 
-    def initialize
+    names :define, :process_definition, :workflow_definition
 
-      @observers = {}
-    end
+    def apply (workitem)
 
-    def add_observer (observer, method)
+      # reorganize tree, place body at the end
 
-      (@observers[method] ||= []) << observer
-    end
+      definitions, bodies = @tree[2].partition { |b| expmap.is_definition?(b) }
+      @tree[2] = definitions + bodies[0, 1]
 
-    protected
+      store_self
 
-    def process (target, method, args)
-
-      target.send(method, *args) if target
-
-      os = @observers[method]
-      os.each { |o| o.notify(target, method, args) } if os
-    end
-  end
-
-  # A lazy, no-thread work queue.
-  #
-  # Each time a piece of work is queue, #step is called.
-  #
-  class PlainWorkQueue < WorkQueue
-
-    def initialize
-
-      super()
-      @queue = Queue.new
-    end
-
-    def queue (target, method, *args)
-
-      @queue.push([target, method, args])
-      step
-    end
-
-    def step
-
-      return if @queue.size < 1
-
-      target, method, args = @queue.pop
-
-      process(target, method, args)
+      reply(workitem)
     end
   end
 end

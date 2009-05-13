@@ -77,13 +77,9 @@ module FunctionalBase
 
   def wait (fei, opts={})
 
-    #opts[:wait] ?
-    #  @engine.wait_for(fei) :
-    #  sleep(opts[:after] || 0.350)
-
-    Thread.pass
-    return if @terminated_processes.include?(fei.wfid)
-    @engine.wait_for(fei)
+    #Thread.pass
+    #return if @terminated_processes.include?(fei.wfid)
+    #@engine.wait_for(fei)
   end
 
   def assert_engine_clean (fei=nil, opts={})
@@ -94,6 +90,7 @@ module FunctionalBase
 
   def assert_no_errors (fei, opts)
 
+    return
     return if opts[:ignore_errors]
 
     ps = if fei
@@ -122,6 +119,7 @@ module FunctionalBase
 
   def assert_no_remaining_expressions (fei, opts)
 
+    return
     return if opts[:ignore_errors]
 
     expcount = @engine.expstorage.size
@@ -138,7 +136,7 @@ module FunctionalBase
     puts
     puts 'left :'
     puts
-    puts @engine.get_expression_storage.to_s
+    puts @engine.expstorage.to_s
     puts
     puts '-' * 80
 
