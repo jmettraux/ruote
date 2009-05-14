@@ -43,8 +43,6 @@ module Ruote
 
     include EngineContext
 
-    attr_reader :running
-
 
     def initialize (context={})
 
@@ -78,13 +76,36 @@ module Ruote
     end
 
     def stop
-      @running = false
+      #@running = false
     end
 
     def process_status (wfid)
 
       es = expstorage.find_expressions(:wfid => wfid)
       es.size > 0 ? ProcessStatus.new(es) : nil
+    end
+
+    def wait_for (wfid)
+
+      #50.times { Thread.pass }
+
+      t = Thread.current
+      result = nil
+
+      obs = evhub.observe(:processes) do |eclass, emessage, args|
+        if [ :terminate, :cancel, :error ].include?(emessage) && args[:fei].wfid == wfid
+          result = [ emessage, args ]
+          t.wakeup
+        end
+      end
+
+      #yield if block_given?
+
+      #Thread.stop unless result
+
+      evhub.remove_observer(obs)
+
+      result
     end
 
     protected
@@ -118,7 +139,9 @@ module Ruote
     end
 
     def build_work_queue
-      build_service(:s_work_queue, Ruote::PlainWorkQueue)
+      #build_service(:s_work_queue, Ruote::PlainWorkQueue)
+      build_service(:s_work_queue, Ruote::ThreadWorkQueue)
+      #build_service(:s_work_queue, Ruote::FiberWorkQueue)
     end
 
     def build_wfid_generator

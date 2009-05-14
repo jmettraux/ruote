@@ -53,8 +53,7 @@ module Ruote
 
       workitem.fei = fei
 
-      #exp.apply(workitem)
-      workqueue.queue(exp, :apply, workitem)
+      wqueue.push(exp, :apply, workitem)
 
       fei
     end
@@ -63,7 +62,7 @@ module Ruote
 
       exp = exp_storage[fei]
 
-      workqueue.queue(exp, :apply, workitem)
+      wqueue.push(exp, :apply, workitem)
     end
 
     #def reapply (fei)
@@ -85,12 +84,12 @@ module Ruote
 
         parent = expstorage[exp.parent_id]
 
-        #parent.reply(workitem)
-        workqueue.queue(parent, :reply, workitem)
+        wqueue.push(parent, :reply, workitem)
 
       else
 
-        evhub.notify(:process, :terminate, exp.fei)
+        evhub.notify(
+          :processes, :terminate, :fei => exp.fei, :workitem => workitem)
       end
     end
 

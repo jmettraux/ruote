@@ -25,6 +25,15 @@
 
 module Ruote
 
+  class BlockObserver
+    def initialize (block)
+      @block = block
+    end
+    def notify (eclass, emessage, args)
+      @block.call(eclass, emessage, args)
+    end
+  end
+
   #
   # Tracking events in the workflow engine
   #
@@ -35,7 +44,9 @@ module Ruote
       @observers = { :all => [] }
     end
 
-    def notify (eclass, emessage, *args)
+    def notify (eclass, emessage, args)
+
+      p [ eclass, emessage, args ]
 
       os = @observers[eclass]
       os.each { |o| o.notify(eclass, emessage, args) } if os
@@ -46,6 +57,19 @@ module Ruote
     def add_observer (observer, eclass)
 
       (@observers[eclass] ||= []) << observer
+      observer
+    end
+
+    def observe (eclass, &block)
+
+      add_observer(BlockObserver.new(block), eclass)
+    end
+
+    def remove_observer (observer)
+
+      @observers.values.each do |v|
+        return if v.delete(observer)
+      end
     end
   end
 end

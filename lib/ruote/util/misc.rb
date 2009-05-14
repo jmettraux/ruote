@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,17 @@
 #++
 
 
-require 'ruote/engine/context'
-require 'ruote/storage/base'
-
-
 module Ruote
 
+  # Pretty printing a caller() array
   #
-  # Dumb Hash based in-memory storage.
-  #
-  # Warning : not constrained at all. May eat up all your mem.
-  #           For testing purposes only !
-  #
-  class HashStorage < Hash
-
-    include EngineContext
-    include StorageBase
-
-    # Overriding #context= to make sure #observe pool is called once the
-    # context is known.
-    #
-    def context= (c)
-
-      @context = c
-      observe_pool
+  def Ruote.caller_to_s (start_index, max_lines=nil)
+    s = ''
+    caller(start_index + 1).each_with_index do |line, index|
+      break if max_lines and index >= max_lines
+      s << "   #{line}\n"
     end
-
-    def find_expressions (query={})
-
-      values.collect { |exp| exp_match?(exp, query) }
-    end
+    s
   end
 end
 
