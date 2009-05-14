@@ -32,7 +32,7 @@ module Ruote
     def initialize (block)
       @block = block
     end
-    def notify (eclass, emessage, args)
+    def receive (eclass, emessage, args)
       @block.call(eclass, emessage, args)
     end
   end
@@ -46,7 +46,7 @@ module Ruote
       @observers = { :all => [] }
     end
 
-    def add_observer (observer, eclass)
+    def add_observer (eclass, observer)
 
       (@observers[eclass] ||= []) << observer
       observer
@@ -71,9 +71,9 @@ module Ruote
         eclass, emsg, eargs = event
 
         os = @observers[eclass]
-        os.each { |o| o.notify(eclass, emsg, eargs) } if os
+        os.each { |o| o.receive(eclass, emsg, eargs) } if os
 
-        @observers[:all].each { |o| o.notify(eclass, emsg, eargs) }
+        @observers[:all].each { |o| o.receive(eclass, emsg, eargs) }
 
       rescue Exception => e
         p [ e.class, e ]
@@ -90,13 +90,11 @@ module Ruote
       @queue = Queue.new
 
       @thread = Thread.new do
-        loop do
-          process(@queue.pop)
-        end
+        loop { process(@queue.pop) }
       end
     end
 
-    def push (eclass, emsg, eargs)
+    def emit (eclass, emsg, eargs)
 
       @queue.push([ eclass, emsg, eargs ])
     end
@@ -133,7 +131,7 @@ module Ruote
   #
   class EmWorkQueue < WorkQueue
 
-    def push (eclass, emsg, eargs)
+    def emit (eclass, emsg, eargs)
 
       EM.next_tick { process([ eclass, emsg, eargs ]) }
         # that's all there is to it

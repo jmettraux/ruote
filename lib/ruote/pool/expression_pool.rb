@@ -37,13 +37,7 @@ module Ruote
     def context= (c)
 
       @context = c
-
-      wqueue.observe(:expressions) do |eclass, emsg, eargs|
-        case emsg
-        when :apply, :reply
-          eargs[:expression].send(emsg, eargs[:workitem])
-        end
-      end
+      wqueue.add_observer(:expressions, self)
     end
 
     def launch (tree, workitem)
@@ -67,7 +61,7 @@ module Ruote
 
       workitem.fei = fei
 
-      wqueue.push(
+      wqueue.emit(
         :expressions, :apply,
         :expression => exp, :workitem => workitem)
 
@@ -75,7 +69,7 @@ module Ruote
     end
 
     #def cancel (fei)
-    #  wqueue.push(:expressions, :cancel, :fei => fei)
+    #  wqueue.emit(:expressions, :cancel, :fei => fei)
     #end
 
     #def reapply (fei)
@@ -97,15 +91,24 @@ module Ruote
 
         parent = expstorage[exp.parent_id]
 
-        wqueue.push(
+        wqueue.emit(
           :expressions, :reply,
           :expression => parent, :workitem => workitem)
 
       else
 
-        wqueue.push(
+        wqueue.emit(
           :processes, :terminate,
           :fei => exp.fei, :workitem => workitem)
+      end
+    end
+
+    def receive (eclass, emsg, eargs)
+
+      case emsg
+      when :apply, :reply
+        # TODO : add error interception here !
+        eargs[:expression].send(emsg, eargs[:workitem])
       end
     end
 

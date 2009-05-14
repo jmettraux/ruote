@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -34,12 +34,14 @@ module Ruote
 
     def observe_expression_events
 
-      wqueue.add_observer(:expressions, :update) do |eclass, emessage, args|
-        exp = args.first
-        self[exp.fei] = exp
-      end
-      wqueue.add_observer(:expressions, :delete) do |eclass, emessage, args|
-        self.delete(args.first)
+      wqueue.observe(:expressions) do |eclass, emsg, args|
+        case emsg
+        when :update
+          exp = args.first
+          self[exp.fei] = exp
+        when :delete
+          self.delete(args.first)
+        end
       end
     end
 
