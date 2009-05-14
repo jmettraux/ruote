@@ -92,16 +92,20 @@ module Ruote
       t = Thread.current
       result = nil
 
+      messages = [ :terminate, :cancel, :error ]
+
       obs = evhub.observe(:processes) do |eclass, emessage, args|
-        if [ :terminate, :cancel, :error ].include?(emessage) && args[:fei].wfid == wfid
+        if messages.include?(emessage) && args[:fei].wfid == wfid
           result = [ emessage, args ]
           t.wakeup
         end
       end
 
+      p [ :wait_for, :observing ]
+
       #yield if block_given?
 
-      #Thread.stop unless result
+      Thread.stop unless result
 
       evhub.remove_observer(obs)
 
@@ -139,7 +143,6 @@ module Ruote
     end
 
     def build_work_queue
-      #build_service(:s_work_queue, Ruote::PlainWorkQueue)
       build_service(:s_work_queue, Ruote::ThreadWorkQueue)
       #build_service(:s_work_queue, Ruote::FiberWorkQueue)
     end

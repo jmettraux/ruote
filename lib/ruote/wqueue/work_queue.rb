@@ -38,34 +38,11 @@ module Ruote
         target, method, args = unit
         target.send(method, *args)
       rescue Exception => e
+
+        # TODO : implement error handling
+
         p e
       end
-    end
-  end
-
-  # A lazy, no-thread work queue.
-  #
-  # Each time a piece of work is queue, #step is called.
-  #
-  # Breaks with a simple sequence with 600 steps. Not stack safe !
-  #
-  class PlainWorkQueue < WorkQueue
-
-    def initialize
-
-      @queue = Queue.new
-    end
-
-    def push (target, method, *args)
-
-      @queue.push([target, method, args])
-      step
-    end
-
-    def step
-
-      return if @queue.size < 1
-      process(@queue.pop)
     end
   end
 
@@ -95,19 +72,18 @@ module Ruote
       @queue = Queue.new
       @unit = nil
 
-      @fiber = Fiber.new do
-        loop do
-          process(@unit)
-          Fiber.yield
-        end
-      end
-
       @thread = Thread.new do
+
+        fiber = Fiber.new do
+          loop do
+            process(@unit)
+            Fiber.yield
+          end
+        end
+
         loop do
-          target, method, args = @queue.pop
-          target.send(method, *args)
           @unit = @queue.pop
-          @fiber.resume
+          fiber.resume
         end
       end
     end
