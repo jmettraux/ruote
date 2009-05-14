@@ -65,6 +65,8 @@ module Ruote
     end
   end
 
+  # Not very interesting
+  #
   class FiberWorkQueue < WorkQueue
 
     def initialize
@@ -74,15 +76,17 @@ module Ruote
 
       @thread = Thread.new do
 
+        unit = nil
+
         fiber = Fiber.new do
           loop do
-            process(@unit)
+            process(unit)
             Fiber.yield
           end
         end
 
         loop do
-          @unit = @queue.pop
+          unit = @queue.pop
           fiber.resume
         end
       end
@@ -91,6 +95,20 @@ module Ruote
     def push (target, method, *args)
 
       @queue.push([target, method, args])
+    end
+  end
+
+  # Works well when IO is involved (this mean, almost always)
+  #
+  class EmWorkQueue < WorkQueue
+
+    def push (target, method, *args)
+
+      EM.next_tick do
+
+        process([target, method, args])
+          # that's all there is to it
+      end
     end
   end
 

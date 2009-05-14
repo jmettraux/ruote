@@ -143,8 +143,12 @@ module Ruote
     end
 
     def build_work_queue
-      build_service(:s_work_queue, Ruote::ThreadWorkQueue)
       #build_service(:s_work_queue, Ruote::FiberWorkQueue)
+      if defined?(EM) && EM.reactor_running?
+        build_service(:s_work_queue, Ruote::EmWorkQueue)
+      else
+        build_service(:s_work_queue, Ruote::ThreadWorkQueue)
+      end
     end
 
     def build_wfid_generator
