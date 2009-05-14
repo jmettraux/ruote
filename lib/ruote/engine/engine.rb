@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@ require 'ruote/parser'
 require 'ruote/workitem'
 require 'ruote/engine/context'
 require 'ruote/engine/process_status'
+require 'ruote/engine/misc_methods'
 require 'ruote/engine/participant_methods'
 require 'ruote/exp/expression_map'
 require 'ruote/pool/wfid_generator'
@@ -44,6 +45,7 @@ module Ruote
 
     include EngineContext
 
+    include MiscMethods
     include ParticipantMethods
 
 
@@ -92,33 +94,6 @@ module Ruote
 
       es = expstorage.find_expressions(:wfid => wfid)
       es.size > 0 ? ProcessStatus.new(es) : nil
-    end
-
-    def wait_for (wfid)
-
-      t = Thread.current
-      result = nil
-
-      messages = [ :terminate, :cancel, :error ]
-
-      obs = wqueue.observe(:processes) do |eclass, emessage, args|
-        if messages.include?(emessage) && args[:fei].wfid == wfid
-          result = [ emessage, args ]
-          t.wakeup
-        end
-      end
-
-      #yield if block_given?
-
-      begin
-        Thread.stop unless result
-      rescue Exception => e
-        # ignore
-      end
-
-      wqueue.remove_observer(obs)
-
-      result
     end
 
     protected

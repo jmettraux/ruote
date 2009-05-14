@@ -5,6 +5,27 @@
 # since Mon Oct  9 22:19:44 JST 2006
 #
 
+if ARGV.include?('--em')
+  puts
+  puts 'starting EM'
+  puts
+
+  require 'eventmachine'
+
+  unless (EM.reactor_running?)
+
+    Thread.new { EM.run { } }
+
+    #sleep 0.200
+    #while (not EM.reactor_running?)
+    #  Thread.pass
+    #end
+    #  #
+    #  # all this waiting, especially for the JRuby eventmachine, which seems
+    #  # rather 'diesel'
+  end
+end
+
 #
 # Returns the class of the engine to use, based on the ARGV
 #
@@ -14,6 +35,8 @@ def determine_engine_class (application_context)
     puts %{
 
 ARGUMENTS for functional tests :
+
+  --em  : starts EventMachine, lets Ruote use the EM based workqueue
 
   --fs  : uses Ruote::FsPersistedEngine (fast)
      -y : makes 'fs' store expressions as YAML (slow)

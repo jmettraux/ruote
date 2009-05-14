@@ -27,7 +27,7 @@ puts "#{Time.now - t}s"
 #  #engine.wait_for(fei.wfid)
 #  #puts "#{Time.now - t}s"
 #  #EM.stop
-#  engine.evhub.observe(:processes) do |eclass, emsg, args|
+#  engine.wqueue.observe(:processes) do |eclass, emsg, args|
 #    puts "#{Time.now - t}s"
 #    EM.stop
 #  end
