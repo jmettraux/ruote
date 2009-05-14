@@ -55,7 +55,7 @@ module Ruote
 
       exp = exp_class.new(fei, parent_id, tree)
 
-      expstorage[fei] = exp
+      wqueue.emit(:expressions, :update, :expression => exp)
 
       exp.context = @context
 
@@ -84,7 +84,7 @@ module Ruote
 
     def reply_to_parent (exp, workitem)
 
-      expstorage.delete(exp.fei)
+      wqueue.emit(:expressions, :delete, :fei => exp.fei)
       workitem.fei = exp.fei
 
       if exp.parent_id

@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -87,6 +87,7 @@ module Ruote
     # (define, process_definition, set, ...)
     #
     def self.is_definition?
+
       false
     end
 
@@ -94,6 +95,7 @@ module Ruote
     # calls.
     #
     def self.is_definition
+
       meta_def(:is_definition) { true }
     end
 
@@ -106,7 +108,7 @@ module Ruote
 
     def store_self
 
-      expstorage[@fei] = self
+      wqueue.emit(:expressions, :update, :expression => self)
     end
 
     def reply_to_parent (workitem)

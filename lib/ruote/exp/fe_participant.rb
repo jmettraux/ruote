@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,44 +22,52 @@
 # Made in Japan.
 #++
 
+require 'ruote/exp/flowexpression'
+
 
 module Ruote
 
-  class FlowExpressionId
+  class ParticipantExpression < FlowExpression
 
-    attr_accessor :engine_id
-    attr_accessor :wfid
-    attr_accessor :expid
+    #include FilterMixin
+    #include TimeoutMixin
+    #include ConditionMixin
+      # TODO
 
-    def to_s
-      "#{@engine_id}|#{@wfid}|#{@expid}"
+    names :participant
+
+    attr_accessor :applied_workitem
+
+    def apply (workitem)
+
+      @participant_name = @attributes[:ref]
+
+      participant = pmap.lookup(@participant_name)
+
+      raise(
+        ArgumentError.new(
+          "pexp : no participant named #{@participant_name.inspect}")
+      ) unless participant
+
+      @applied_workitem = workitem.dup
+
+      store_self
+
+      wqueue.emit(
+        :participants, :dispatch,
+        :participant => participant, :workitem => workitem)
     end
 
-    def hash
-      to_s.hash
-    end
+    #def reply (workitem)
+    #end
 
-    def equal (other)
-      return false unless other.is_a(FlowExpressionId)
-      (hash == other.hash)
-    end
+    def cancel
 
-    def child_id
-      @expid.split('_').last.to_i
-    end
+      return unless @applied_workitem
 
-    def new_child_fei (child_index)
-      cfei = self.dup
-      cfei.expid = "#{@expid}_#{child_index}"
-      cfei
-    end
-
-    def parent_wfid
-      @wfid.split('|').first
-    end
-
-    def sub_wfid
-      @wfid.split('|').last
+      wqueue.emit(
+        :participants, :cancel,
+        :participant => pmap.lookup(@participant_name), :fei => workitem)
     end
   end
 end

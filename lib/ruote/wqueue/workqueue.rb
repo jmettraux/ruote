@@ -54,7 +54,7 @@ module Ruote
 
     def observe (eclass, &block)
 
-      add_observer(BlockObserver.new(block), eclass)
+      add_observer(eclass, BlockObserver.new(block))
     end
 
     def remove_observer (observer)
@@ -69,6 +69,12 @@ module Ruote
       begin
 
         eclass, emsg, eargs = event
+
+        #p [
+        #  eclass,
+        #  emsg,
+        #  eargs[:fei] ? eargs[:fei].to_s : eargs[:expression].fei.to_s
+        #]
 
         os = @observers[eclass]
         os.each { |o| o.receive(eclass, emsg, eargs) } if os

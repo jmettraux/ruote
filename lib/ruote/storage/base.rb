@@ -30,19 +30,26 @@ module Ruote
 
   module StorageBase
 
+    # Receiving :expressions messages
+    #
+    def receive (eclass, emsg, eargs)
+
+      case emsg
+      when :update
+        exp = eargs[:expression]
+        self[exp.fei] = exp
+      when :delete
+        self.delete(eargs[:fei])
+      end
+    end
+
     protected
 
-    def observe_expression_events
+    # Observing the workqueue for :expressions messages
+    #
+    def observe_workqueue
 
-      wqueue.observe(:expressions) do |eclass, emsg, args|
-        case emsg
-        when :update
-          exp = args.first
-          self[exp.fei] = exp
-        when :delete
-          self.delete(args.first)
-        end
-      end
+      wqueue.add_observer(:expressions, self)
     end
 
     def fei_match? (fei, query)
