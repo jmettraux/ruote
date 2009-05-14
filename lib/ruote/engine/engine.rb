@@ -32,7 +32,7 @@ require 'ruote/engine/process_status'
 require 'ruote/exp/expression_map'
 require 'ruote/pool/wfid_generator'
 require 'ruote/pool/expression_pool'
-require 'ruote/wqueue/work_queue'
+require 'ruote/wqueue/workqueue'
 require 'ruote/storage/hash_storage'
 
 
