@@ -29,11 +29,13 @@ require 'ruote/parser'
 require 'ruote/workitem'
 require 'ruote/engine/context'
 require 'ruote/engine/process_status'
+require 'ruote/engine/participant_methods'
 require 'ruote/exp/expression_map'
 require 'ruote/pool/wfid_generator'
 require 'ruote/pool/expression_pool'
-require 'ruote/wqueue/workqueue'
+require 'ruote/part/participant_map'
 require 'ruote/storage/hash_storage'
+require 'ruote/wqueue/workqueue'
 
 
 module Ruote
@@ -41,6 +43,8 @@ module Ruote
   class Engine
 
     include EngineContext
+
+    include ParticipantMethods
 
 
     def initialize (context={})
@@ -60,6 +64,7 @@ module Ruote
       build_expression_storage
       build_expression_pool
       build_wfid_generator
+      build_participant_map
 
       build_tree_checker
       build_parser
@@ -72,6 +77,11 @@ module Ruote
       workitem = Workitem.new(opts[:workitem] || {})
 
       pool.launch(tree, workitem)
+    end
+
+    def reply (workitem)
+
+      pool.reply(workitem)
     end
 
     def stop

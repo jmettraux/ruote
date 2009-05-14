@@ -40,7 +40,7 @@ module Ruote
 
     def apply (workitem)
 
-      @participant_name = @attributes[:ref]
+      @participant_name = @tree[1]['ref']
 
       participant = pmap.lookup(@participant_name)
 

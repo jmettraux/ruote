@@ -68,6 +68,13 @@ module Ruote
       fei
     end
 
+    def reply (workitem)
+
+      wqueue.emit(
+        :expressions, :reply,
+        :expression => expstorage[workitem.fei], :workitem => workitem)
+    end
+
     #def cancel (fei)
     #  wqueue.emit(:expressions, :cancel, :fei => fei)
     #end

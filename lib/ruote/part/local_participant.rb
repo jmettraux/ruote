@@ -23,45 +23,16 @@
 #++
 
 
+require 'ruote/part/local_participant'
+
+
 module Ruote
 
-  module EngineContext
+  module LocalParticipant
 
-    attr_accessor :context
+    def reply_to_engine (workitem)
 
-    alias :ac :context
-    alias :application_context :context
-
-    def engine_id
-      @context[:engine_id] || 'default'
-    end
-
-    def engine
-      @context[:s_engine]
-    end
-    def pool
-      @context[:s_expression_pool]
-    end
-    def expmap
-      @context[:s_expression_map]
-    end
-    def expstorage
-      @context[:s_expression_storage]
-    end
-    def wqueue
-      @context[:s_work_queue]
-    end
-    def parser
-      @context[:s_parser]
-    end
-    def scheduler
-      @context[:s_scheduler]
-    end
-    def wfidgen
-      @context[:s_wfid_generator]
-    end
-    def pmap
-      @context[:s_participant_map]
+      engine.reply(workitem)
     end
   end
 end

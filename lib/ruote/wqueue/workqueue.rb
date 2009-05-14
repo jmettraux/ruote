@@ -76,13 +76,16 @@ module Ruote
         #  eargs[:fei] ? eargs[:fei].to_s : eargs[:expression].fei.to_s
         #]
 
-        os = @observers[eclass]
-        os.each { |o| o.receive(eclass, emsg, eargs) } if os
+        # using #send, so that protected #receive are OK
 
-        @observers[:all].each { |o| o.receive(eclass, emsg, eargs) }
+        os = @observers[eclass]
+        os.each { |o| o.send(:receive, eclass, emsg, eargs) } if os
+
+        @observers[:all].each { |o| o.send(:receive, eclass, emsg, eargs) }
 
       rescue Exception => e
         p [ e.class, e ]
+        puts e.backtrace
       end
     end
   end

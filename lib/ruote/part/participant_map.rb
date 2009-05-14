@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,14 @@
 
 require 'ruote/engine/context'
 
+parpath = File.dirname(__FILE__)
+
+Dir.new(parpath).entries.select { |p|
+  p.match(/^.*_participant\.rb$/)
+}.each { |p|
+  require parpath + '/' + p
+}
+
 
 module Ruote
 
@@ -40,12 +48,20 @@ module Ruote
       @map = []
     end
 
-    def register (name, participant, position=:last)
+    def context= (c)
+
+      @context = c
+      wqueue.add_observer(:participants, self)
+    end
+
+    def register (name, participant, options, block)
 
       entry = [
         name.is_a?(Regexp) ? name : Regexp.new("^#{name}$"),
-        participant
+        prepare(participant, options, block)
       ]
+
+      position = options[:position] || :last
 
       case position
         when :last then @map << entry
@@ -61,10 +77,39 @@ module Ruote
       p
     end
 
-    def dispatch (participant, workitem)
+    protected
+
+    def receive (eclass, emsg, eargs)
+
+      case emsg
+        when :dispatch then dispatch(eargs[:participant], eargs[:workitem])
+        when :cancel then dispatch(eargs[:participant_name], eargs[:fei])
+      end
     end
 
-    def cancel (participant_name, workitem)
+    def dispatch (participant, workitem)
+
+      participant.consume(workitem)
+    end
+
+    def cancel (participant_name, fei)
+
+      p :cancel # TODO
+    end
+
+    def prepare (p, opts, block)
+
+      p = if block
+        BlockParticipant.new(block, opts)
+      elsif p.class == Class
+        p.new(opts)
+      else
+        p
+      end
+
+      p.context = @context if p.respond_to?(:context=)
+
+      p
     end
   end
 end

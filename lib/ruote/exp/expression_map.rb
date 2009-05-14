@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,7 @@
 #
 # Made in Japan.
 #++
+
 
 exppath = File.dirname(__FILE__)
 
@@ -45,6 +46,7 @@ module Ruote
       add(Ruote::DefineExpression)
       add(Ruote::SequenceExpression)
       add(Ruote::EchoExpression)
+      add(Ruote::ParticipantExpression)
     end
 
     # Returns the expression class for the given expression name

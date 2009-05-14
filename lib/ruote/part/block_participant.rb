@@ -23,45 +23,32 @@
 #++
 
 
+require 'ruote/engine/context'
+require 'ruote/part/local_participant'
+
+
 module Ruote
 
-  module EngineContext
+  class BlockParticipant
 
-    attr_accessor :context
+    include EngineContext
+    include LocalParticipant
 
-    alias :ac :context
-    alias :application_context :context
+    def initialize (block, opts)
 
-    def engine_id
-      @context[:engine_id] || 'default'
+      @opts = opts
+      @block = block
     end
 
-    def engine
-      @context[:s_engine]
+    def consume (workitem)
+
+      @block.call(workitem)
+
+      reply_to_engine(workitem)
     end
-    def pool
-      @context[:s_expression_pool]
-    end
-    def expmap
-      @context[:s_expression_map]
-    end
-    def expstorage
-      @context[:s_expression_storage]
-    end
-    def wqueue
-      @context[:s_work_queue]
-    end
-    def parser
-      @context[:s_parser]
-    end
-    def scheduler
-      @context[:s_scheduler]
-    end
-    def wfidgen
-      @context[:s_wfid_generator]
-    end
-    def pmap
-      @context[:s_participant_map]
+
+    def cancel (fei)
+      # do nothing
     end
   end
 end
