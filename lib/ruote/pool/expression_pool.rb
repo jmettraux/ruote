@@ -32,6 +32,20 @@ module Ruote
 
     include EngineContext
 
+    # Making sure to observe the work queue once the context is known
+    #
+    def context= (c)
+
+      @context = c
+
+      wqueue.observe(:expressions) do |eclass, emsg, eargs|
+        case emsg
+        when :apply, :reply
+          eargs[:expression].send(emsg, eargs[:workitem])
+        end
+      end
+    end
+
     def launch (tree, workitem)
 
       apply(tree, new_fei, nil, workitem)
@@ -53,17 +67,16 @@ module Ruote
 
       workitem.fei = fei
 
-      wqueue.push(exp, :apply, workitem)
+      wqueue.push(
+        :expressions, :apply,
+        :expression => exp, :workitem => workitem)
 
       fei
     end
 
-    def cancel (fei)
-
-      exp = exp_storage[fei]
-
-      wqueue.push(exp, :apply, workitem)
-    end
+    #def cancel (fei)
+    #  wqueue.push(:expressions, :cancel, :fei => fei)
+    #end
 
     #def reapply (fei)
     #end
@@ -84,12 +97,15 @@ module Ruote
 
         parent = expstorage[exp.parent_id]
 
-        wqueue.push(parent, :reply, workitem)
+        wqueue.push(
+          :expressions, :reply,
+          :expression => parent, :workitem => workitem)
 
       else
 
-        evhub.notify(
-          :processes, :terminate, :fei => exp.fei, :workitem => workitem)
+        wqueue.push(
+          :processes, :terminate,
+          :fei => exp.fei, :workitem => workitem)
       end
     end
 

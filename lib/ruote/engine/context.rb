@@ -39,9 +39,6 @@ module Ruote
     def engine
       @context[:s_engine]
     end
-    def evhub
-      @context[:s_event_hub]
-    end
     def pool
       @context[:s_expression_pool]
     end

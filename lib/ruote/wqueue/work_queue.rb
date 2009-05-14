@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,20 +28,55 @@ require 'ruote/engine/context'
 
 module Ruote
 
+  class BlockObserver
+    def initialize (block)
+      @block = block
+    end
+    def notify (eclass, emessage, args)
+      @block.call(eclass, emessage, args)
+    end
+  end
+
   class WorkQueue
+
     include EngineContext
+
+    def initialize
+
+      @observers = { :all => [] }
+    end
+
+    def add_observer (observer, eclass)
+
+      (@observers[eclass] ||= []) << observer
+      observer
+    end
+
+    def observe (eclass, &block)
+
+      add_observer(BlockObserver.new(block), eclass)
+    end
+
+    def remove_observer (observer)
+
+      @observers.values.each { |v| v.delete(observer) }
+    end
 
     protected
 
-    def process (unit)
+    def process (event)
+
       begin
-        target, method, args = unit
-        target.send(method, *args)
+
+        eclass, emsg, eargs = event
+
+        os = @observers[eclass]
+        os.each { |o| o.notify(eclass, emsg, eargs) } if os
+
+        @observers[:all].each { |o| o.notify(eclass, emsg, eargs) }
+
       rescue Exception => e
-
-        # TODO : implement error handling
-
-        p e
+        p [ e.class, e ]
       end
     end
   end
@@ -49,6 +84,8 @@ module Ruote
   class ThreadWorkQueue < WorkQueue
 
     def initialize
+
+      super()
 
       @queue = Queue.new
 
@@ -59,56 +96,47 @@ module Ruote
       end
     end
 
-    def push (target, method, *args)
+    def push (eclass, emsg, eargs)
 
-      @queue.push([target, method, args])
+      @queue.push([ eclass, emsg, eargs ])
     end
   end
 
+  #--
   # Not very interesting
   #
-  class FiberWorkQueue < WorkQueue
-
-    def initialize
-
-      @queue = Queue.new
-      @unit = nil
-
-      @thread = Thread.new do
-
-        unit = nil
-
-        fiber = Fiber.new do
-          loop do
-            process(unit)
-            Fiber.yield
-          end
-        end
-
-        loop do
-          unit = @queue.pop
-          fiber.resume
-        end
-      end
-    end
-
-    def push (target, method, *args)
-
-      @queue.push([target, method, args])
-    end
-  end
+  #class FiberWorkQueue < WorkQueue
+  #  def initialize
+  #    @queue = Queue.new
+  #    @unit = nil
+  #    @thread = Thread.new do
+  #      unit = nil
+  #      fiber = Fiber.new do
+  #        loop do
+  #          process(unit)
+  #          Fiber.yield
+  #        end
+  #      end
+  #      loop do
+  #        unit = @queue.pop
+  #        fiber.resume
+  #      end
+  #    end
+  #  end
+  #  def push (target, method, *args)
+  #    @queue.push([ target, method, args ])
+  #  end
+  #end
+  #++
 
   # Works well when IO is involved (this mean, almost always)
   #
   class EmWorkQueue < WorkQueue
 
-    def push (target, method, *args)
+    def push (eclass, emsg, eargs)
 
-      EM.next_tick do
-
-        process([target, method, args])
-          # that's all there is to it
-      end
+      EM.next_tick { process([ eclass, emsg, eargs ]) }
+        # that's all there is to it
     end
   end
 

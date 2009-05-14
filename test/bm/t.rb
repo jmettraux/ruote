@@ -7,7 +7,8 @@ pdef = Ruote.process_definition do
   sequence do
     #625.times do
     #500.times do
-    5000.times do
+    #5000.times do
+    5.times do
       echo 'a'
     end
   end

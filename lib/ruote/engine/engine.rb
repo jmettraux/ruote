@@ -25,7 +25,6 @@
 
 #require 'rufus/scheduler' # sudo gem install rufus-scheduler
 
-require 'ruote/evhub'
 require 'ruote/parser'
 require 'ruote/workitem'
 require 'ruote/engine/context'
@@ -52,14 +51,14 @@ module Ruote
 
       @context[:s_engine] = self
 
-      build_event_hub
+      build_work_queue
+        # building it first, it's the event hub
 
       build_scheduler
       build_parser
       build_expression_map
       build_expression_storage
       build_expression_pool
-      build_work_queue
       build_wfid_generator
 
       build_tree_checker
@@ -87,27 +86,27 @@ module Ruote
 
     def wait_for (wfid)
 
-      #50.times { Thread.pass }
-
       t = Thread.current
       result = nil
 
       messages = [ :terminate, :cancel, :error ]
 
-      obs = evhub.observe(:processes) do |eclass, emessage, args|
+      obs = wqueue.observe(:processes) do |eclass, emessage, args|
         if messages.include?(emessage) && args[:fei].wfid == wfid
           result = [ emessage, args ]
           t.wakeup
         end
       end
 
-      p [ :wait_for, :observing ]
-
       #yield if block_given?
 
-      Thread.stop unless result
+      begin
+        Thread.stop unless result
+      rescue Exception => e
+        # ignore
+      end
 
-      evhub.remove_observer(obs)
+      wqueue.remove_observer(obs)
 
       result
     end
@@ -119,11 +118,8 @@ module Ruote
       service = o.is_a?(Class) ? o.new : o
       service.context = @context if service.respond_to?(:context=)
       @context[name] = service
-      #service
-    end
 
-    def build_event_hub
-      build_service(:s_event_hub, Ruote::EventHub)
+      #service
     end
 
     def build_scheduler
@@ -143,7 +139,9 @@ module Ruote
     end
 
     def build_work_queue
+
       #build_service(:s_work_queue, Ruote::FiberWorkQueue)
+
       if defined?(EM) && EM.reactor_running?
         build_service(:s_work_queue, Ruote::EmWorkQueue)
       else

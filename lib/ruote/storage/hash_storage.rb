@@ -46,7 +46,7 @@ module Ruote
     def context= (c)
 
       @context = c
-      observe_pool
+      observe_expression_events
     end
 
     def find_expressions (query={})

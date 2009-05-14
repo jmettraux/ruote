@@ -32,13 +32,13 @@ module Ruote
 
     protected
 
-    def observe_pool
+    def observe_expression_events
 
-      evhub.add_observer(:expressions, :update) do |eclass, emessage, args|
+      wqueue.add_observer(:expressions, :update) do |eclass, emessage, args|
         exp = args.first
         self[exp.fei] = exp
       end
-      evhub.add_observer(:expressions, :delete) do |eclass, emessage, args|
+      wqueue.add_observer(:expressions, :delete) do |eclass, emessage, args|
         self.delete(args.first)
       end
     end

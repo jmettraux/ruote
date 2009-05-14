@@ -23,16 +23,16 @@ module FunctionalBase
 
     ac = {}
 
-    class << ac
-      alias :old_put :[]=
-      def []= (k, v)
-        raise("!!!!! #{k.class}\n#{k.inspect}") \
-          if k.class != String and k.class != Symbol
-        old_put(k, v)
-      end
-    end
-      #
-      # useful for tracking misuses of the application context
+    #class << ac
+    #  alias :old_put :[]=
+    #  def []= (k, v)
+    #    raise("!!!!! #{k.class}\n#{k.inspect}") \
+    #      if k.class != String and k.class != Symbol
+    #    old_put(k, v)
+    #  end
+    #end
+    #  #
+    #  # useful for tracking misuses of the application context
 
     ac[:s_tracer] = @tracer
     #ac[:ruby_eval_allowed] = true
@@ -41,9 +41,9 @@ module FunctionalBase
     @engine = determine_engine_class(ac).new(ac)
 
     @terminated_processes = []
-    #@engine.get_expression_pool.add_observer(:terminate) do |c, fe, wi|
-    #  @terminated_processes << fe.fei.wfid
-    #end
+    @engine.wqueue.observe(:processes) do |eclass, emsg, eargs|
+      @terminated_processes << eargs[:fei].wfid if emsg == :terminate
+    end
   end
 
   def teardown
@@ -79,9 +79,9 @@ module FunctionalBase
 
   def wait (fei, opts={})
 
-    #Thread.pass
-    #return if @terminated_processes.include?(fei.wfid)
-    #@engine.wait_for(fei)
+    Thread.pass
+    return if @terminated_processes.include?(fei.wfid)
+    @engine.wait_for(fei)
   end
 
   def assert_engine_clean (fei=nil, opts={})
