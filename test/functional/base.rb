@@ -43,7 +43,7 @@ module FunctionalBase
 
     @terminated_processes = []
     @engine.wqueue.subscribe(:processes) do |eclass, emsg, eargs|
-      @terminated_processes << eargs[:fei].wfid if emsg == :terminate
+      @terminated_processes << eargs[:wfid] if emsg == :terminate
     end
   end
 
@@ -80,6 +80,10 @@ module FunctionalBase
     else
       @engine.remove_service(:s_logger)
     end
+  end
+
+  def logger
+    @engine.context[:s_logger]
   end
 
   def wait_for (fei, opts={})

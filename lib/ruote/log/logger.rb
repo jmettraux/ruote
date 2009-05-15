@@ -53,6 +53,8 @@ module Ruote
 
       if fei = eargs[:fei]
         fei.to_s
+      elsif wfid = eargs[:wfid]
+        wfid
       elsif exp = eargs[:expression]
         exp.fei.to_s
       else

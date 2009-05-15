@@ -36,7 +36,7 @@ module Ruote
 
     attr_reader :log
 
-    def initialize (opts)
+    def initialize
 
       @log = []
     end

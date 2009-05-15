@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,11 @@ module Ruote
 
     def launch (tree, workitem)
 
-      apply(tree, new_fei, nil, workitem)
+      fei = new_fei
+
+      wqueue.emit(:processes, :launch, :wfid => fei.wfid)
+
+      apply(tree, fei, nil, workitem)
     end
 
     def apply (tree, fei, parent_id, workitem)
@@ -108,7 +112,7 @@ module Ruote
 
         wqueue.emit(
           :processes, :terminate,
-          :fei => exp.fei, :workitem => workitem)
+          :wfid => exp.fei.wfid, :workitem => workitem)
       end
     end
 

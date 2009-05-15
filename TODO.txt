@@ -7,7 +7,7 @@
 [o] object full_dup
 [o] engine#remove_service
 [ ] :receive or :receive_back for when workitems come back from participant
-[ ] emit :processes :launch :wfid
-[ ] emit :processes :terminate :wfid only
+[o] emit :processes :launch :wfid
+[o] emit :processes :terminate :wfid only
 [ ] wfid_gen : rufus-mnemo
 
