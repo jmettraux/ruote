@@ -11,7 +11,7 @@ require File.dirname(__FILE__) + '/base'
 class EftParticipantTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_no_name
+  def test_participant
 
     pdef = Ruote.process_definition do
       participant :ref => 'alpha'

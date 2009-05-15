@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,59 +25,45 @@
 
 module Ruote
 
-  class FlowExpressionId
+  module MiscMethods
 
-    attr_accessor :engine_id
-    attr_accessor :wfid
-    attr_accessor :expid
+    # Suspends the execution of the current thread and wait for the termination
+    # (or error or cancellation) of a given process instance.
+    #
+    def wait_for (wfid)
 
-    def to_s
-
-      "#{@engine_id}|#{@wfid}|#{@expid}"
-    end
-
-    def hash
-
-      to_s.hash
-    end
-
-    def equal (other)
-
-      return false unless other.is_a(FlowExpressionId)
-
-      (hash == other.hash)
-    end
-
-    def child_id
-
-      @expid.split('_').last.to_i
-    end
-
-    def new_child_fei (child_index)
-
-      cfei = self.dup
-      cfei.expid = "#{@expid}_#{child_index}"
-
-      cfei
-    end
-
-    def parent_wfid
-
-      @wfid.split('|').first
-    end
-
-    def sub_wfid
-
-      ss = @wfid.split('|')
-      ss.size > 1 ? ss.last : nil
-    end
-
-    def self.from_h (h)
-
-      %w[ engine_id wfid expid ].inject(FlowExpressionId.new) do |fei, k|
-        fei.instance_variable_set("@#{k}", h[k.to_sym] || h[k])
-        fei
+      if EM.reactor_running?
+        sleep 0.0007
+        return
       end
+
+      # why doesn't this work with EM ?
+      # EM as Thread.new { EM.run { } } maybe
+
+      t = Thread.current
+      result = nil
+
+      messages = [ :terminate, :cancel, :error ]
+
+      obs = wqueue.observe(:processes) do |eclass, emessage, args|
+        if messages.include?(emessage) && args[:fei].wfid == wfid
+          result = [ emessage, args ]
+          t.wakeup
+        end
+      end
+
+      #yield if block_given?
+
+      begin
+        Thread.stop unless result
+      rescue Exception => e
+        p e
+        # ignore
+      end
+
+      wqueue.remove_observer(obs)
+
+      result
     end
   end
 end

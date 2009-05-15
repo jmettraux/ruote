@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,61 +23,36 @@
 #++
 
 
+require 'ruote/engine/context'
+require 'ruote/part/local_participant'
+
+
 module Ruote
 
-  class FlowExpressionId
+  class HashParticipant
 
-    attr_accessor :engine_id
-    attr_accessor :wfid
-    attr_accessor :expid
+    include EngineContext
+    include LocalParticipant
 
-    def to_s
+    def initialize (opts)
 
-      "#{@engine_id}|#{@wfid}|#{@expid}"
+      @items = {}
     end
 
-    def hash
+    def consume (workitem)
 
-      to_s.hash
+      @items[workitem.fei] = workitem
     end
 
-    def equal (other)
+    def cancel (fei)
 
-      return false unless other.is_a(FlowExpressionId)
-
-      (hash == other.hash)
+      @items.delete(fei)
     end
 
-    def child_id
+    def reply (workitem)
 
-      @expid.split('_').last.to_i
-    end
-
-    def new_child_fei (child_index)
-
-      cfei = self.dup
-      cfei.expid = "#{@expid}_#{child_index}"
-
-      cfei
-    end
-
-    def parent_wfid
-
-      @wfid.split('|').first
-    end
-
-    def sub_wfid
-
-      ss = @wfid.split('|')
-      ss.size > 1 ? ss.last : nil
-    end
-
-    def self.from_h (h)
-
-      %w[ engine_id wfid expid ].inject(FlowExpressionId.new) do |fei, k|
-        fei.instance_variable_set("@#{k}", h[k.to_sym] || h[k])
-        fei
-      end
+      @items.delete(workitem.fei)
+      reply_to_engine(workitem)
     end
   end
 end

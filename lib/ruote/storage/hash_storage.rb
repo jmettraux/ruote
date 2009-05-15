@@ -51,10 +51,11 @@ module Ruote
 
     def find_expressions (query={})
 
-      values.collect { |exp| exp_match?(exp, query) }
+      values.select { |exp| exp_match?(exp, query) }
     end
 
     def to_s
+
       inject('') do |s, (k, v)|
         s << "#{k.to_s} => #{v.class}\n"
       end

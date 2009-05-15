@@ -36,7 +36,12 @@ module Ruote
 
     def root_expression
 
-      @expressions.find { |e| e.fei.expid == '0' && e.fei.sub_wfid == nil }
+      @expressions.find { |e| p e.fei.sub_wfid; e.fei.expid == '0' && e.fei.sub_wfid == nil }
+    end
+
+    def wfid
+
+      root_expression.fei.wfid
     end
 
     def definition_name
@@ -47,6 +52,11 @@ module Ruote
     def definition_revision
 
       root_expression.attributes['revision']
+    end
+
+    def to_s
+
+      "(process_status wfid '#{wfid}', expressions #{@expressions.size})"
     end
   end
 end

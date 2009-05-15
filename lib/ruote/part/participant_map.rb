@@ -24,14 +24,7 @@
 
 
 require 'ruote/engine/context'
-
-parpath = File.dirname(__FILE__)
-
-Dir.new(parpath).entries.select { |p|
-  p.match(/^.*_participant\.rb$/)
-}.each { |p|
-  require parpath + '/' + p
-}
+require 'ruote/part/block_participant'
 
 
 module Ruote
