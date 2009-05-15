@@ -32,7 +32,7 @@ module Ruote
 
     def reply_to_engine (workitem)
 
-      engine.reply(workitem)
+      wqueue.emit(:workitems, :receive, :workitem => workitem)
     end
   end
 end

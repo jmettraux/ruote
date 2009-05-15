@@ -59,7 +59,6 @@ module Ruote
         # building it first, it's the event hub
 
       build_scheduler
-      build_parser
       build_expression_map
       build_expression_storage
       build_expression_pool
@@ -81,6 +80,8 @@ module Ruote
 
     def reply (workitem)
 
+      wqueue.emit(:participant, :reply, :workitem => workitem)
+
       pool.reply(workitem)
     end
 
@@ -91,9 +92,12 @@ module Ruote
     end
 
     def stop
+
+      # TODO
     end
 
     def shutdown
+
       @context.keys.each { |k| remove_service(k) }
     end
 

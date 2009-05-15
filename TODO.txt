@@ -10,4 +10,6 @@
 [o] emit :processes :launch :wfid
 [o] emit :processes :terminate :wfid only
 [ ] wfid_gen : rufus-mnemo
+[ ] arch doc
+[ ] ev : :participants :register/:unregister
 
