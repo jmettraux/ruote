@@ -58,7 +58,7 @@ module FunctionalBase
 
     fei = @engine.launch(launch_thing, opts[:launch_opts] || {})
 
-    wait(fei, opts)
+    wait_for(fei, opts)
 
     yield(@engine) if block_given?
 
@@ -77,11 +77,15 @@ module FunctionalBase
   #  $OWFE_LOG.level = Logger::DEBUG
   #end
 
-  def wait (fei, opts={})
-
+  def wait_for (fei, opts={})
     Thread.pass
     return if @terminated_processes.include?(fei.wfid)
     @engine.wait_for(fei)
+  end
+
+  def wait
+    Thread.pass
+    sleep 0.001
   end
 
   def assert_engine_clean (fei=nil, opts={})
@@ -92,7 +96,8 @@ module FunctionalBase
 
   def assert_no_errors (fei, opts)
 
-    return
+    return # TODO : wire back in when
+
     return if opts[:ignore_errors]
 
     ps = if fei

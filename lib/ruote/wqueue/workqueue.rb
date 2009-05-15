@@ -70,12 +70,16 @@ module Ruote
 
         eclass, emsg, eargs = event
 
-        #p [
-        #  eclass,
-        #  emsg,
-        #  eargs[:fei] ? eargs[:fei].to_s : eargs[:expression].fei.to_s
-        #]
+        #third = if fei = eargs[:fei]
+        #  fei.to_s
+        #elsif exp = eargs[:expression]
+        #  exp.fei.to_s
+        #else
+        #  eargs.inject({}) { |h, (k, v)| h[k] = v.class; h }
+        #end
+        #p [ eclass, emsg, third ]
 
+        #
         # using #send, so that protected #receive are OK
 
         os = @observers[eclass]

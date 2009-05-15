@@ -30,6 +30,8 @@ module Ruote
 
   module StorageBase
 
+    protected
+
     # Receiving :expressions messages
     #
     def receive (eclass, emsg, eargs)
@@ -42,8 +44,6 @@ module Ruote
         self.delete(eargs[:fei])
       end
     end
-
-    protected
 
     # Observing the workqueue for :expressions messages
     #

@@ -23,11 +23,12 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     fei = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
 
+    wait
+
     ps = @engine.process_status(fei.wfid)
 
-    puts ps
-
     assert 'no-name', ps.definition_name
+    assert '0', ps.definition_revision
   end
 end
 

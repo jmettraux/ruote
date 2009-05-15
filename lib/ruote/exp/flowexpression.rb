@@ -34,6 +34,7 @@ module Ruote
 
     attr_accessor :fei
     attr_accessor :parent_id
+
     attr_accessor :tree
     attr_accessor :children
 
@@ -44,6 +45,18 @@ module Ruote
 
       @tree = tree.dup
       @children = []
+    end
+
+    def name
+      @tree[0]
+    end
+
+    def attributes
+      @tree[1]
+    end
+
+    def raw_children
+      @tree[2]
     end
 
     # The default implementation : replies to the parent expression
@@ -59,7 +72,7 @@ module Ruote
     end
 
     #def on_error
-    #  if oe = @attributes['on_error']
+    #  if oe = attributes['on_error']
     #    p oe
     #    true
     #  else
@@ -67,7 +80,7 @@ module Ruote
     #  end
     #end
     #def on_cancel
-    #  if oc = @attributes['on_cancel']
+    #  if oc = attributes['on_cancel']
     #    p oc
     #    true
     #  else

@@ -36,7 +36,7 @@ module Ruote
 
     def root_expression
 
-      @expressions.find { |e| p e.fei.sub_wfid; e.fei.expid == '0' && e.fei.sub_wfid == nil }
+      @expressions.find { |e| e.fei.expid == '0' && e.fei.sub_wfid == nil }
     end
 
     def wfid
