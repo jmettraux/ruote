@@ -21,6 +21,7 @@ Richard Jennings
 Contributors
 ------------
 
+Andrew Timberlake - timeout 'at'
 Torsten Schoenebaum - ActiveResourceParticipant
 Raphael Simon - error handling mechanism design and QA
 Maarten Oelering - bug reports and test cases
