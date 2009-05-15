@@ -35,8 +35,8 @@ require 'ruote/exp/expression_map'
 require 'ruote/pool/wfid_generator'
 require 'ruote/pool/expression_pool'
 require 'ruote/part/participant_map'
+require 'ruote/queue/workqueue'
 require 'ruote/storage/hash_storage'
-require 'ruote/wqueue/workqueue'
 
 
 module Ruote
