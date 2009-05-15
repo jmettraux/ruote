@@ -2,4 +2,5 @@
 [ ] NullParticipant
 [ ] port load26 (requires BlockParticipant)
 [ ] logger service (auto rotate ?)
+[x] object full_dup
 

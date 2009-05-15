@@ -35,5 +35,52 @@ module Ruote
     end
     s
   end
+
+  # Deep object duplication
+  #
+  def Ruote.fulldup (object)
+
+    return object.fulldup if object.respond_to?(:fulldup)
+      # trusting client objects providing a fulldup() implementation
+      # Tomaso Tosolini 2007.12.11
+
+    begin
+      return Marshal.load(Marshal.dump(object))
+        # as soon as possible try to use that Marshal technique
+        # it's quite fast
+    rescue TypeError => te
+    end
+
+    if object.kind_of?(REXML::Element)
+      d = REXML::Document.new object.to_s
+      return d if object.kind_of?(REXML::Document)
+      return d.root
+    end
+      # avoiding "TypeError: singleton can't be dumped"
+
+    o = object.class.new
+
+    # some kind of collection ?
+
+    if object.kind_of?(Array)
+      object.each { |i| o << fulldup(i) }
+    elsif object.kind_of?(Hash)
+      object.each { |k, v| o[fulldup(k)] = fulldup(v) }
+    end
+
+    # duplicate the attributes of the object
+
+    object.instance_variables.each do |v|
+      value = object.instance_variable_get(v)
+      value = fulldup(value)
+      begin
+        o.instance_variable_set(v, value)
+      rescue Exception => e
+        # ignore, must be readonly
+      end
+    end
+
+    o
+  end
 end
 
