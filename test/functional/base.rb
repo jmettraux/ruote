@@ -13,7 +13,7 @@ require File.dirname(__FILE__) + '/../test_helper.rb'
 require File.dirname(__FILE__) + '/engine_helper.rb'
 
 require 'ruote/engine'
-require 'ruote/log/logger'
+require 'ruote/log/test_logger'
 
 
 module FunctionalBase
@@ -76,7 +76,7 @@ module FunctionalBase
 
   def verbose (on=true)
     if on
-      @engine.add_service(:s_logger, Ruote::Logger)
+      @engine.add_service(:s_logger, Ruote::TestLogger)
     else
       @engine.remove_service(:s_logger)
     end

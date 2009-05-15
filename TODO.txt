@@ -2,6 +2,7 @@
 [ ] NullParticipant
 [ ] port load26 (requires BlockParticipant)
 [o] logger service
+[o] test logger
 [ ] file logger service
 [o] object full_dup
 [o] engine#remove_service
