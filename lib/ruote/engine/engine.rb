@@ -51,8 +51,6 @@ module Ruote
 
     def initialize (context={})
 
-      @running = true
-
       @context = context
 
       @context[:s_engine] = self
@@ -86,68 +84,83 @@ module Ruote
       pool.reply(workitem)
     end
 
-    def stop
-      #@running = false
-    end
-
     def process_status (wfid)
 
       es = expstorage.find_expressions(:wfid => wfid)
       es.size > 0 ? ProcessStatus.new(es) : nil
     end
 
-    protected
+    def stop
+    end
 
-    def build_service (name, o)
+    def shutdown
+      @context.keys.each { |k| remove_service(k) }
+    end
+
+    def add_service (key, o)
+
+      remove_service(key)
+        # shutdown previous service
 
       service = o.is_a?(Class) ? o.new : o
       service.context = @context if service.respond_to?(:context=)
-      @context[name] = service
+      @context[key] = service
 
       #service
     end
 
+    def remove_service (key)
+
+      service = @context.delete(key)
+      service.shutdown if service.respond_to?(:shutdown)
+      service.unsubscribe if service.respond_to?(:unsubscribe)
+
+      (service != nil)
+    end
+
+    protected
+
     def build_scheduler
-      #build_service(:s_scheduler, Rufus::Scheduler.start_new)
+      #add_service(:s_scheduler, Rufus::Scheduler.start_new)
     end
 
     def build_expression_map
-      build_service(:s_expression_map, Ruote::ExpressionMap)
+      add_service(:s_expression_map, Ruote::ExpressionMap)
     end
 
     def build_expression_storage
-      build_service(:s_expression_storage, Ruote::HashStorage)
+      add_service(:s_expression_storage, Ruote::HashStorage)
     end
 
     def build_expression_pool
-      build_service(:s_expression_pool, Ruote::ExpressionPool)
+      add_service(:s_expression_pool, Ruote::ExpressionPool)
     end
 
     def build_work_queue
 
-      #build_service(:s_work_queue, Ruote::FiberWorkQueue)
+      #add_service(:s_work_queue, Ruote::FiberWorkQueue)
 
       if defined?(EM) && EM.reactor_running?
-        build_service(:s_work_queue, Ruote::EmWorkQueue)
+        add_service(:s_work_queue, Ruote::EmWorkQueue)
       else
-        build_service(:s_work_queue, Ruote::ThreadWorkQueue)
+        add_service(:s_work_queue, Ruote::ThreadWorkQueue)
       end
     end
 
     def build_wfid_generator
-      build_service(:s_wfid_generator, Ruote::PlainWfidGenerator)
+      add_service(:s_wfid_generator, Ruote::PlainWfidGenerator)
     end
 
     def build_tree_checker
-      #build_service(:s_tree_checker, ...
+      #add_service(:s_tree_checker, ...
     end
 
     def build_parser
-      build_service(:s_parser, Ruote::Parser)
+      add_service(:s_parser, Ruote::Parser)
     end
 
     def build_participant_map
-      build_service(:s_participant_map, Ruote::ParticipantMap)
+      add_service(:s_participant_map, Ruote::ParticipantMap)
     end
   end
 end

@@ -13,6 +13,7 @@ require File.dirname(__FILE__) + '/../test_helper.rb'
 require File.dirname(__FILE__) + '/engine_helper.rb'
 
 require 'ruote/engine'
+require 'ruote/log/logger'
 
 
 module FunctionalBase
@@ -41,7 +42,7 @@ module FunctionalBase
     @engine = determine_engine_class(ac).new(ac)
 
     @terminated_processes = []
-    @engine.wqueue.observe(:processes) do |eclass, emsg, eargs|
+    @engine.wqueue.subscribe(:processes) do |eclass, emsg, eargs|
       @terminated_processes << eargs[:fei].wfid if emsg == :terminate
     end
   end
@@ -73,9 +74,13 @@ module FunctionalBase
 
   protected
 
-  #def log_level_to_debug
-  #  $OWFE_LOG.level = Logger::DEBUG
-  #end
+  def verbose (on=true)
+    if on
+      @engine.add_service(:s_logger, Ruote::Logger)
+    else
+      @engine.remove_service(:s_logger)
+    end
+  end
 
   def wait_for (fei, opts={})
     Thread.pass

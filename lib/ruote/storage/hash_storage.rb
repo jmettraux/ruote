@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 
 require 'ruote/engine/context'
+require 'ruote/queue/subscriber'
 require 'ruote/storage/base'
 
 
@@ -38,16 +39,8 @@ module Ruote
   class HashStorage < Hash
 
     include EngineContext
-    include StorageBase
-
-    # Overriding #context= to make sure #observe pool is called once the
-    # context is known.
-    #
-    def context= (c)
-
-      @context = c
-      observe_workqueue
-    end
+    include StorageBase # which overrides #context=
+    include Subscriber
 
     def find_expressions (query={})
 

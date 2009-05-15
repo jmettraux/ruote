@@ -22,13 +22,14 @@
 # Made in Japan.
 #++
 
+
 require 'thread'
 require 'ruote/engine/context'
 
 
 module Ruote
 
-  class BlockObserver
+  class BlockSubscriber
     def initialize (block)
       @block = block
     end
@@ -43,23 +44,23 @@ module Ruote
 
     def initialize
 
-      @observers = { :all => [] }
+      @subscribers = { :all => [] }
     end
 
-    def add_observer (eclass, observer)
+    def add_subscriber (eclass, subscriber)
 
-      (@observers[eclass] ||= []) << observer
-      observer
+      (@subscribers[eclass] ||= []) << subscriber
+      subscriber
     end
 
-    def observe (eclass, &block)
+    def subscribe (eclass, &block)
 
-      add_observer(eclass, BlockObserver.new(block))
+      add_subscriber(eclass, BlockSubscriber.new(block))
     end
 
-    def remove_observer (observer)
+    def remove_subscriber (subscriber)
 
-      @observers.values.each { |v| v.delete(observer) }
+      @subscribers.values.each { |v| v.delete(subscriber) }
     end
 
     protected
@@ -70,22 +71,13 @@ module Ruote
 
         eclass, emsg, eargs = event
 
-        #third = if fei = eargs[:fei]
-        #  fei.to_s
-        #elsif exp = eargs[:expression]
-        #  exp.fei.to_s
-        #else
-        #  eargs.inject({}) { |h, (k, v)| h[k] = v.class; h }
-        #end
-        #p [ eclass, emsg, third ]
-
         #
         # using #send, so that protected #receive are OK
 
-        os = @observers[eclass]
+        os = @subscribers[eclass]
         os.each { |o| o.send(:receive, eclass, emsg, eargs) } if os
 
-        @observers[:all].each { |o| o.send(:receive, eclass, emsg, eargs) }
+        @subscribers[:all].each { |o| o.send(:receive, eclass, emsg, eargs) }
 
       rescue Exception => e
         p [ e.class, e ]

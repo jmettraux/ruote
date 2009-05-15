@@ -24,87 +24,40 @@
 
 
 require 'ruote/engine/context'
-require 'ruote/part/block_participant'
 require 'ruote/queue/subscriber'
 
 
 module Ruote
 
-  class ParticipantMap
+  # Plain logger (outputs to stdout)
+  #
+  class Logger
 
     include EngineContext
     include Subscriber
 
-    attr_reader :map
-
-
-    def initialize
-
-      @map = []
-    end
-
     def context= (c)
 
       @context = c
-      subscribe(:participants)
-    end
-
-    def register (name, participant, options, block)
-
-      entry = [
-        name.is_a?(Regexp) ? name : Regexp.new("^#{name}$"),
-        prepare(participant, options, block)
-      ]
-
-      position = options[:position] || :last
-
-      case position
-        when :last then @map << entry
-        when :first then @map.unshift(entry)
-        when Fixnum then @map.insert(position, entry)
-        else raise "cannot insertion participant at position '#{position}'"
-      end
-    end
-
-    def lookup (participant_name)
-
-      r, p = @map.find { |r, p| r.match(participant_name) }
-      p
+      subscribe(:all)
     end
 
     protected
 
     def receive (eclass, emsg, eargs)
 
-      case emsg
-        when :dispatch then dispatch(eargs[:participant], eargs[:workitem])
-        when :cancel then dispatch(eargs[:participant_name], eargs[:fei])
-      end
+      p [ :ruote, eclass, emsg, summarize_args(eclass, emsg, eargs) ]
     end
 
-    def dispatch (participant, workitem)
+    def summarize_args (eclass, emsg, eargs)
 
-      participant.consume(workitem)
-    end
-
-    def cancel (participant_name, fei)
-
-      p :cancel # TODO
-    end
-
-    def prepare (p, opts, block)
-
-      p = if block
-        BlockParticipant.new(block, opts)
-      elsif p.class == Class
-        p.new(opts)
+      if fei = eargs[:fei]
+        fei.to_s
+      elsif exp = eargs[:expression]
+        exp.fei.to_s
       else
-        p
+        eargs.inject({}) { |h, (k, v)| h[k] = v.class; h }
       end
-
-      p.context = @context if p.respond_to?(:context=)
-
-      p
     end
   end
 end

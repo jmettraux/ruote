@@ -32,7 +32,7 @@ module Ruote
     #
     def wait_for (wfid)
 
-      if EM.reactor_running?
+      if defined?(EM) and EM.reactor_running?
         sleep 0.0007
         return
       end
@@ -45,7 +45,7 @@ module Ruote
 
       messages = [ :terminate, :cancel, :error ]
 
-      obs = wqueue.observe(:processes) do |eclass, emessage, args|
+      sub = wqueue.subscribe(:processes) do |eclass, emessage, args|
         if messages.include?(emessage) && args[:fei].wfid == wfid
           result = [ emessage, args ]
           t.wakeup
@@ -57,11 +57,11 @@ module Ruote
       begin
         Thread.stop unless result
       rescue Exception => e
-        p e
+        #p [ :wait_for, e ]
         # ignore
       end
 
-      wqueue.remove_observer(obs)
+      wqueue.remove_subscriber(sub)
 
       result
     end

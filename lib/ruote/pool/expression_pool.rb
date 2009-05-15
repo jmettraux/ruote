@@ -24,6 +24,7 @@
 
 require 'ruote/fei'
 require 'ruote/engine/context'
+require 'ruote/queue/subscriber'
 
 
 module Ruote
@@ -31,13 +32,14 @@ module Ruote
   class ExpressionPool
 
     include EngineContext
+    include Subscriber
 
     # Making sure to observe the work queue once the context is known
     #
     def context= (c)
 
       @context = c
-      wqueue.add_observer(:expressions, self)
+      subscribe(:expressions)
     end
 
     def launch (tree, workitem)

@@ -23,46 +23,18 @@
 #++
 
 
-require 'ruote/engine/context'
-
-
 module Ruote
 
-  module StorageBase
+  module Subscriber
 
-    # Overriding #context= to make sure #observe pool is called once the
-    # context is known.
-    #
-    def context= (c)
+    def subscribe (eclass)
 
-      @context = c
-      subscribe(:expressions)
+      wqueue.add_subscriber(eclass, self)
     end
 
-    protected
+    def unsubscribe
 
-    # Receiving :expressions messages
-    #
-    def receive (eclass, emsg, eargs)
-
-      case emsg
-      when :update
-        exp = eargs[:expression]
-        self[exp.fei] = exp
-      when :delete
-        self.delete(eargs[:fei])
-      end
-    end
-
-    def fei_match? (fei, query)
-      # TODO : if necessary ?
-    end
-
-    def exp_match? (exp, query)
-
-      wfid = query[:wfid]
-
-      (exp.fei.wfid == wfid)
+      wqueue.remove_subscriber(self)
     end
   end
 end
