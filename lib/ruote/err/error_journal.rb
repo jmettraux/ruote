@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,41 +23,40 @@
 #++
 
 
+require 'ruote/engine/context'
+require 'ruote/queue/subscriber'
+
+
 module Ruote
 
-  class ProcessStatus
+  class ErrorJournal
 
-    attr_reader :expressions, :errors
+    include EngineContext
+    include Subscriber
 
-    def initialize (expressions, errors)
+    def initialize
 
-      @expressions = expressions
-      @errors = errors
+      @errors = {}
     end
 
-    def root_expression
+    def context= (c)
 
-      @expressions.find { |e| e.fei.expid == '0' && e.fei.sub_wfid == nil }
+      @context = c
+      subscribe(:errors)
     end
 
-    def wfid
+    # Returns the list of errors for a given process instance
+    #
+    def errors (wfid)
 
-      root_expression.fei.wfid
+      @errors[wfid] || []
     end
 
-    def definition_name
+    protected
 
-      root_expression.attributes['name']
-    end
+    def receive (eclass, emsg, eargs)
 
-    def definition_revision
-
-      root_expression.attributes['revision']
-    end
-
-    def to_s
-
-      "(process_status wfid '#{wfid}', expressions #{@expressions.size})"
+      (@errors[eargs.last[:workitem].fei.wfid] ||= []) << eargs
     end
   end
 end

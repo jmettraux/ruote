@@ -63,6 +63,9 @@ module Ruote
     def plist
       @context[:s_participant_list]
     end
+    def ejournal
+      @context[:s_error_journal]
+    end
   end
 end
 

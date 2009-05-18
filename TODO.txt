@@ -17,3 +17,6 @@
 [ ] emit event upon setting tag !
 [ ] emit event upon leaving tag
 
+[ ] on_error
+[ ] on_cancel
+

@@ -53,7 +53,6 @@ module Ruote
     #def cancel (fei)
     #  wqueue.emit(:expressions, :cancel, :fei => fei)
     #end
-
     #def reapply (fei)
     #end
 
@@ -108,10 +107,9 @@ module Ruote
 
       rescue Exception => e
 
-        # TODO : emit or handle error instead
+        # TODO : implement on_error
 
-        p [ emsg, e ]
-        puts e.backtrace
+        wqueue.emit(:errors, :s_expression_pool, [ :expressions, emsg, eargs ])
       end
     end
 

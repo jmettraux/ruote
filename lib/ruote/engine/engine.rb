@@ -37,6 +37,7 @@ require 'ruote/pool/expression_pool'
 require 'ruote/part/participant_list'
 require 'ruote/queue/workqueue'
 require 'ruote/storage/hash_storage'
+require 'ruote/err/error_journal'
 
 
 module Ruote
@@ -68,6 +69,7 @@ module Ruote
       build_expression_pool
       build_wfid_generator
       build_participant_list
+      build_error_journal
 
       build_tree_checker
       build_parser
@@ -99,8 +101,13 @@ module Ruote
 
     def process_status (wfid)
 
-      es = expstorage.find_expressions(:wfid => wfid)
-      es.size > 0 ? ProcessStatus.new(es) : nil
+      exps = expstorage.find_expressions(:wfid => wfid)
+      errs = ejournal.errors(wfid)
+
+      # NOTE : should we return a process status if there are only errors ?
+      # (no expressions ?)
+
+      exps.size > 0 ? ProcessStatus.new(exps, errs) : nil
     end
 
     def stop
@@ -177,6 +184,10 @@ module Ruote
 
     def build_participant_list
       add_service(:s_participant_list, Ruote::ParticipantList)
+    end
+
+    def build_error_journal
+      add_service(:s_error_journal, Ruote::ErrorJournal)
     end
   end
 end
