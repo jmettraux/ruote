@@ -60,8 +60,8 @@ module Ruote
     def wfidgen
       @context[:s_wfid_generator]
     end
-    def pmap
-      @context[:s_participant_map]
+    def plist
+      @context[:s_participant_list]
     end
   end
 end

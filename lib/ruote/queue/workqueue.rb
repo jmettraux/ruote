@@ -80,6 +80,10 @@ module Ruote
         @subscribers[:all].each { |o| o.send(:receive, eclass, emsg, eargs) }
 
       rescue Exception => e
+
+        # TODO : rescue for each subscriber, don't care if 1+ fails,
+        #        send to others anyway
+
         p [ e.class, e ]
         puts e.backtrace
       end

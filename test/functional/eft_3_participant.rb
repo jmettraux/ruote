@@ -18,8 +18,10 @@ class EftParticipantTest < Test::Unit::TestCase
     end
 
     @engine.register_participant :alpha do |workitem|
-      @tracer << "alpha"
+      @tracer << 'alpha'
     end
+
+    #noisy
 
     assert_trace pdef, 'alpha'
   end

@@ -40,18 +40,82 @@ module Ruote
 
       @context = c
       subscribe(:expressions)
+      subscribe(:processes)
     end
 
-    def launch (tree, workitem)
+    def reply (workitem)
 
-      fei = new_fei
-
-      wqueue.emit(:processes, :launch, :wfid => fei.wfid)
-
-      apply(tree, fei, nil, workitem)
+      wqueue.emit(
+        :expressions, :reply,
+        :expression => expstorage[workitem.fei], :workitem => workitem)
     end
 
-    def apply (tree, fei, parent_id, workitem)
+    #def cancel (fei)
+    #  wqueue.emit(:expressions, :cancel, :fei => fei)
+    #end
+
+    #def reapply (fei)
+    #end
+
+    def apply_child (exp, child_index, workitem)
+
+      fei = exp.fei.new_child_fei(child_index)
+
+      apply(exp.tree.last[child_index], fei, exp.fei, workitem, nil)
+    end
+
+    def reply_to_parent (exp, workitem)
+
+      wqueue.emit(:expressions, :delete, :fei => exp.fei)
+      workitem.fei = exp.fei
+
+      if exp.parent_id
+
+        parent = expstorage[exp.parent_id]
+
+        wqueue.emit(
+          :expressions, :reply,
+          :expression => parent, :workitem => workitem)
+
+      else
+
+        wqueue.emit(
+          :processes, :terminated,
+          :wfid => exp.fei.wfid, :workitem => workitem)
+      end
+    end
+
+    protected
+
+    def receive (eclass, emsg, eargs)
+
+      if eclass == :expressions
+
+        apply_reply(emsg, eargs) if emsg == :apply || emsg == :reply
+
+      elsif eclass == :processes
+
+        launch(eargs) if emsg == :launch
+
+      end
+    end
+
+    def apply_reply (emsg, eargs)
+
+      begin
+
+        eargs[:expression].send(emsg, eargs[:workitem])
+
+      rescue Exception => e
+
+        # TODO : emit or handle error instead
+
+        p [ emsg, e ]
+        puts e.backtrace
+      end
+    end
+
+    def apply (tree, fei, parent_id, workitem, variables)
 
       # TODO : participant and subprocess lookup
 
@@ -74,64 +138,19 @@ module Ruote
       fei
     end
 
-    def reply (workitem)
+    def launch (args)
 
-      wqueue.emit(
-        :expressions, :reply,
-        :expression => expstorage[workitem.fei], :workitem => workitem)
+      fei = new_fei(args[:wfid])
+      variables = nil
+
+      apply(args[:tree], fei, nil, args[:workitem], variables)
     end
 
-    #def cancel (fei)
-    #  wqueue.emit(:expressions, :cancel, :fei => fei)
-    #end
-
-    #def reapply (fei)
-    #end
-
-    def apply_child (exp, child_index, workitem)
-
-      fei = exp.fei.new_child_fei(child_index)
-
-      apply(exp.tree.last[child_index], fei, exp.fei, workitem)
-    end
-
-    def reply_to_parent (exp, workitem)
-
-      wqueue.emit(:expressions, :delete, :fei => exp.fei)
-      workitem.fei = exp.fei
-
-      if exp.parent_id
-
-        parent = expstorage[exp.parent_id]
-
-        wqueue.emit(
-          :expressions, :reply,
-          :expression => parent, :workitem => workitem)
-
-      else
-
-        wqueue.emit(
-          :processes, :terminate,
-          :wfid => exp.fei.wfid, :workitem => workitem)
-      end
-    end
-
-    def receive (eclass, emsg, eargs)
-
-      case emsg
-      when :apply, :reply
-        # TODO : add error interception here !
-        eargs[:expression].send(emsg, eargs[:workitem])
-      end
-    end
-
-    protected
-
-    def new_fei
+    def new_fei (wfid)
 
       fei = FlowExpressionId.new
       fei.engine_id = engine.engine_id
-      fei.wfid = wfidgen.generate
+      fei.wfid = wfid || wfidgen.generate
       fei.expid = '0'
 
       fei

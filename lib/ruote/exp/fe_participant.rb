@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+
 require 'ruote/exp/flowexpression'
 
 
@@ -42,7 +43,7 @@ module Ruote
 
       @participant_name = @tree[1]['ref']
 
-      participant = pmap.lookup(@participant_name)
+      participant = plist.lookup(@participant_name)
 
       raise(
         ArgumentError.new(
@@ -53,9 +54,9 @@ module Ruote
 
       store_self
 
-      wqueue.emit(
-        :participants, :dispatch,
-        :participant => participant, :workitem => workitem)
+      wqueue.emit(:workitems, :dispatching, :workitem => @applied_workitem)
+
+      participant.consume(workitem)
     end
 
     #def reply (workitem)
@@ -65,9 +66,9 @@ module Ruote
 
       return unless @applied_workitem
 
-      wqueue.emit(
-        :participants, :cancel,
-        :participant => pmap.lookup(@participant_name), :fei => workitem)
+      participant = plist.lookup(@participant_name)
+
+      participant.cancel(@fei)
     end
   end
 end

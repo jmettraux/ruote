@@ -29,8 +29,12 @@ module Ruote
 
     def register_participant (regex, participant=nil, opts={}, &block)
 
-      pmap.register(regex, participant, opts, block)
+      plist.register(regex, participant, opts, block)
     end
+
+    #def unregister_participant (p)
+    # TODO
+    #end
   end
 end
 

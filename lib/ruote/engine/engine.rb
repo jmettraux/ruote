@@ -34,7 +34,7 @@ require 'ruote/engine/participant_methods'
 require 'ruote/exp/expression_map'
 require 'ruote/pool/wfid_generator'
 require 'ruote/pool/expression_pool'
-require 'ruote/part/participant_map'
+require 'ruote/part/participant_list'
 require 'ruote/queue/workqueue'
 require 'ruote/storage/hash_storage'
 
@@ -48,10 +48,14 @@ module Ruote
     include MiscMethods
     include ParticipantMethods
 
+    attr_reader :engine_id
+
 
     def initialize (context={})
 
       @context = context
+
+      @engine_id = @context[:engine_id] || 'engine'
 
       @context[:s_engine] = self
 
@@ -63,7 +67,7 @@ module Ruote
       build_expression_storage
       build_expression_pool
       build_wfid_generator
-      build_participant_map
+      build_participant_list
 
       build_tree_checker
       build_parser
@@ -71,16 +75,24 @@ module Ruote
 
     def launch (definition, opts={})
 
+      wfid = wfidgen.generate
+
       tree = parser.parse(definition)
 
       workitem = Workitem.new(opts[:workitem] || {})
 
-      pool.launch(tree, workitem)
+      wqueue.emit(
+        :processes, :launch,
+        :wfid => wfid,
+        :tree => tree,
+        :workitem => workitem)
+
+      wfid
     end
 
     def reply (workitem)
 
-      wqueue.emit(:participant, :reply, :workitem => workitem)
+      wqueue.emit(:workitems, :received, :workitem => workitem)
 
       pool.reply(workitem)
     end
@@ -163,8 +175,8 @@ module Ruote
       add_service(:s_parser, Ruote::Parser)
     end
 
-    def build_participant_map
-      add_service(:s_participant_map, Ruote::ParticipantMap)
+    def build_participant_list
+      add_service(:s_participant_list, Ruote::ParticipantList)
     end
   end
 end

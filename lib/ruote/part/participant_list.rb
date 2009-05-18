@@ -25,28 +25,20 @@
 
 require 'ruote/engine/context'
 require 'ruote/part/block_participant'
-require 'ruote/queue/subscriber'
 
 
 module Ruote
 
-  class ParticipantMap
+  class ParticipantList
 
     include EngineContext
-    include Subscriber
 
-    attr_reader :map
+    attr_reader :list
 
 
     def initialize
 
-      @map = []
-    end
-
-    def context= (c)
-
-      @context = c
-      subscribe(:participants)
+      @list = []
     end
 
     def register (name, participant, options, block)
@@ -59,38 +51,20 @@ module Ruote
       position = options[:position] || :last
 
       case position
-        when :last then @map << entry
-        when :first then @map.unshift(entry)
-        when Fixnum then @map.insert(position, entry)
+        when :last then @list << entry
+        when :first then @list.unshift(entry)
+        when Fixnum then @list.insert(position, entry)
         else raise "cannot insertion participant at position '#{position}'"
       end
     end
 
     def lookup (participant_name)
 
-      r, p = @map.find { |r, p| r.match(participant_name) }
+      r, p = @list.find { |r, p| r.match(participant_name) }
       p
     end
 
     protected
-
-    def receive (eclass, emsg, eargs)
-
-      case emsg
-        when :dispatch then dispatch(eargs[:participant], eargs[:workitem])
-        when :cancel then dispatch(eargs[:participant_name], eargs[:fei])
-      end
-    end
-
-    def dispatch (participant, workitem)
-
-      participant.consume(workitem)
-    end
-
-    def cancel (participant_name, fei)
-
-      p :cancel # TODO
-    end
 
     def prepare (p, opts, block)
 

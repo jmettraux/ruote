@@ -57,22 +57,27 @@ module FunctionalBase
   #
   def assert_trace (launch_thing, expected_trace, opts={})
 
-    fei = @engine.launch(launch_thing, opts[:launch_opts] || {})
+    wfid = @engine.launch(launch_thing, opts[:launch_opts] || {})
 
-    wait_for(fei, opts)
+    wait_for(wfid, opts)
 
     yield(@engine) if block_given?
 
-    assert_engine_clean(fei, opts)
+    assert_engine_clean(wfid, opts)
 
     assert_equal(expected_trace, @tracer.to_s) if expected_trace
 
     purge_engine unless opts[:no_purge]
 
-    fei
+    wfid
   end
 
   protected
+
+  def noisy (on=true)
+    verbose(true) if on and ( ! @engine.context[:s_logger])
+    @engine.context[:noisy] = on
+  end
 
   def verbose (on=true)
     if on
@@ -86,10 +91,10 @@ module FunctionalBase
     @engine.context[:s_logger]
   end
 
-  def wait_for (fei, opts={})
+  def wait_for (wfid, opts={})
     Thread.pass
-    return if @terminated_processes.include?(fei.wfid)
-    @engine.wait_for(fei)
+    return if @terminated_processes.include?(wfid)
+    @engine.wait_for(wfid)
   end
 
   def wait
@@ -97,23 +102,24 @@ module FunctionalBase
     sleep 0.001
   end
 
-  def assert_engine_clean (fei=nil, opts={})
+  def assert_engine_clean (wfid=nil, opts={})
 
-    assert_no_errors(fei, opts)
-    assert_no_remaining_expressions(fei, opts)
+    assert_no_errors(wfid, opts)
+    assert_no_remaining_expressions(wfid, opts)
   end
 
-  def assert_no_errors (fei, opts)
+  def assert_no_errors (wfid, opts)
 
     return # TODO : wire back in when
 
     return if opts[:ignore_errors]
 
-    ps = if fei
-      @engine.process_status(fei.wfid)
-    else
-      @engine.process_statuses.values.first
-    end
+    #ps = if wfid
+    #  @engine.process_status(wfid)
+    #else
+    #  @engine.process_statuses.values.first
+    #end
+    ps = @engine.process_status(wfid)
 
     return unless ps
     return if ps.errors.size == 0
@@ -133,7 +139,7 @@ module FunctionalBase
     flunk 'caught process error(s)'
   end
 
-  def assert_no_remaining_expressions (fei, opts)
+  def assert_no_remaining_expressions (wfid, opts)
 
     return if opts[:ignore_errors]
 
@@ -148,7 +154,7 @@ module FunctionalBase
     puts '-' * 80
     puts 'too many expressions left in storage'
     puts
-    puts "this test's wfid : #{fei.wfid}"
+    puts "this test's wfid : #{wfid}"
     puts
     puts 'left :'
     puts

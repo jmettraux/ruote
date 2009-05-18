@@ -27,6 +27,8 @@ module Ruote
 
   module MiscMethods
 
+    WAIT_MESSAGES = %w[ terminated cancel error ].collect { |m| m.to_sym }
+
     # Suspends the execution of the current thread and wait for the termination
     # (or error or cancellation) of a given process instance.
     #
@@ -43,10 +45,8 @@ module Ruote
       t = Thread.current
       result = nil
 
-      messages = [ :terminate, :cancel, :error ]
-
       sub = wqueue.subscribe(:processes) do |eclass, emessage, args|
-        if messages.include?(emessage) && args[:wfid] == wfid
+        if args[:wfid] == wfid && WAIT_MESSAGES.include?(emessage)
           result = [ emessage, args ]
           t.wakeup
         end

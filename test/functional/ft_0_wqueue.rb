@@ -24,7 +24,7 @@ class FtWorkqueueTest < Test::Unit::TestCase
 
     #p logger.log
     assert_equal 1, logger.log.select { |e| e[1] == :launch }.size
-    assert_equal 1, logger.log.select { |e| e[1] == :terminate }.size
+    assert_equal 1, logger.log.select { |e| e[1] == :terminated }.size
   end
 end
 

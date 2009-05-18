@@ -21,11 +21,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     @engine.register_participant :alpha, Ruote::HashParticipant
 
-    fei = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
+    wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
 
     wait
 
-    ps = @engine.process_status(fei.wfid)
+    ps = @engine.process_status(wfid)
 
     assert 'no-name', ps.definition_name
     assert '0', ps.definition_revision

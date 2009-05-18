@@ -45,7 +45,11 @@ module Ruote
 
     def receive (eclass, emsg, eargs)
 
-      @log << [ eclass, emsg, summarize_args(eclass, emsg, eargs) ]
+      data = [ eclass, emsg, summarize_args(eclass, emsg, eargs) ]
+
+      @log << data
+
+      p(data) if context[:noisy]
     end
   end
 end

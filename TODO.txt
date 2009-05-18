@@ -13,3 +13,7 @@
 [ ] arch doc
 [ ] ev : :participants :register/:unregister
 
+[ ] tag (which implies variables)
+[ ] emit event upon setting tag !
+[ ] emit event upon leaving tag
+
