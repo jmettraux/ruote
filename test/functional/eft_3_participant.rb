@@ -22,6 +22,7 @@ class EftParticipantTest < Test::Unit::TestCase
     end
 
     #noisy
+    verbose
 
     assert_trace pdef, 'alpha'
     assert_equal 1, logger.log.select { |e| e[1] == :dispatching }.size

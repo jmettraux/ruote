@@ -60,7 +60,15 @@ module Ruote
       elsif exp = eargs[:expression]
         exp.fei.to_s
       else
-        eargs.inject({}) { |h, (k, v)| h[k] = v.class; h }
+        eargs.inject({}) { |h, (k, v)| h[k] = value_to_s(v); h }
+      end
+    end
+
+    def value_to_s (v)
+      case v
+      when String then v
+      when Symbol then v
+      else v.class
       end
     end
   end

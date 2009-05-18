@@ -29,6 +29,11 @@ require 'ruote/part/block_participant'
 
 module Ruote
 
+  #
+  # Tracking participants to [business] processes.
+  #
+  # (Warning, the register/unregsiter methods are not thread-safe)
+  #
   class ParticipantList
 
     include EngineContext
@@ -41,6 +46,8 @@ module Ruote
       @list = []
     end
 
+    # Registers participant (and returns it)
+    #
     def register (name, participant, options, block)
 
       entry = [
@@ -56,12 +63,17 @@ module Ruote
         when Fixnum then @list.insert(position, entry)
         else raise "cannot insertion participant at position '#{position}'"
       end
+
+      entry.last
     end
 
     def lookup (participant_name)
 
       r, p = @list.find { |r, p| r.match(participant_name) }
       p
+    end
+
+    def unregister (name)
     end
 
     protected

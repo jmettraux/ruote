@@ -29,12 +29,20 @@ module Ruote
 
     def register_participant (regex, participant=nil, opts={}, &block)
 
-      plist.register(regex, participant, opts, block)
+      p = plist.register(regex, participant, opts, block)
+
+      wqueue.emit(
+        :participants, :registered,
+        :regex => regex, :participant => p)
+
+      p
     end
 
-    #def unregister_participant (p)
-    # TODO
-    #end
+    def unregister_participant (name)
+
+      plist.unregister(name) ||
+        raise(ArgumentError.new("no participant found under '#{name}'"))
+    end
   end
 end
 

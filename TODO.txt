@@ -1,17 +1,19 @@
 
-[ ] NullParticipant
 [o] port load26 (requires BlockParticipant)
 [o] logger service
 [o] test logger
-[ ] file logger service
 [o] object full_dup
 [o] engine#remove_service
 [o] :receive or :receive_back for when workitems come back from participant
 [o] emit :processes :launch :wfid
 [o] emit :processes :terminate :wfid only
-[ ] wfid_gen : rufus-mnemo
 [o] arch doc
+[ ] NullParticipant
+[ ] wfid_gen : rufus-mnemo
 [ ] ev : :participants :register/:unregister
+
+[ ] test logger always on for tests (in-memory only)
+[ ] file logger service
 
 [ ] tag (which implies variables)
 [ ] emit event upon setting tag !
@@ -19,4 +21,6 @@
 
 [ ] on_error
 [ ] on_cancel
+
+[ ] fs_error_journal
 
