@@ -24,6 +24,8 @@ class EftParticipantTest < Test::Unit::TestCase
     #noisy
 
     assert_trace pdef, 'alpha'
+    assert_equal 1, logger.log.select { |e| e[1] == :dispatching }.size
+    assert_equal 1, logger.log.select { |e| e[1] == :received }.size
   end
 end
 
