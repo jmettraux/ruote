@@ -62,7 +62,6 @@ module OpenWFE
       observe_expool
     end
 
-    #
     # Stores an expression
     #
     def []= (fei, fexp)
@@ -74,7 +73,6 @@ module OpenWFE
       File.open("#{d}/#{fn}", 'wb') { |f| f.write(encode(fexp)) }
     end
 
-    #
     # Retrieves an expression
     #
     def [] (fei)
@@ -82,7 +80,6 @@ module OpenWFE
       load_fexp(filename_for(fei, true))
     end
 
-    #
     # Removes the expression from the storage
     #
     def delete (fei)
@@ -90,7 +87,6 @@ module OpenWFE
       FileUtils.rm_f(filename_for(fei, true))
     end
 
-    #
     # Returns the count of expressions currently stored
     #
     def size
@@ -98,7 +94,6 @@ module OpenWFE
       Dir["#{@basepath}/**/*.#{@suffix}"].size
     end
 
-    #
     # Finds expressions matching the given criteria (returns a list
     # of expressions).
     #
@@ -153,7 +148,6 @@ module OpenWFE
       end
     end
 
-    #
     # An iterator on ALL expressions in the storage (only used by pooltool.ru)
     #
     def each
@@ -168,7 +162,6 @@ module OpenWFE
       end
     end
 
-    #
     # Dangerous ! Nukes the whole work/expool/ dir
     #
     def purge
@@ -176,7 +169,6 @@ module OpenWFE
       FileUtils.rm_f(@basepath)
     end
 
-    #
     # Fetches the root expression of a process instance
     #
     def fetch_root (wfid)
@@ -192,7 +184,6 @@ module OpenWFE
       }
     end
 
-    #
     # Called by pooltool.ru
     #
     def close
@@ -201,7 +192,6 @@ module OpenWFE
 
     protected
 
-    #
     # Encodes the flow expression (if the options :yaml_persistence is set
     # to true in the application context or via #yaml= will save as
     # YAML)
@@ -210,7 +200,6 @@ module OpenWFE
       @persist_as_yaml ? fexp.to_yaml : Marshal.dump(fexp)
     end
 
-    #
     # Loads the flow expression at the given path
     #
     def load_fexp (path)
@@ -225,7 +214,6 @@ module OpenWFE
       fexp
     end
 
-    #
     # Returns the directory path for a given workflow instance id
     #
     def dir_for (wfid)
@@ -236,7 +224,6 @@ module OpenWFE
       "#{@basepath}/#{a_wfid[-2]}/#{a_wfid[-1]}"
     end
 
-    #
     # Returns the pair dir / filename for an expression.
     # If the optional arg join is set to true, will return the full path
     # for the expression
