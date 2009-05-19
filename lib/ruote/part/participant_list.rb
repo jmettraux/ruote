@@ -69,11 +69,23 @@ module Ruote
 
     def lookup (participant_name)
 
-      r, p = @list.find { |r, p| r.match(participant_name) }
-      p
+      re, pa = @list.find { |re, pa| re.match(participant_name) }
+      pa
     end
 
-    def unregister (name)
+    def unregister (name_or_participant)
+
+      name_or_participant = name_or_participant.to_s \
+        if name_or_participant.is_a?(Symbol)
+
+      entry = @list.find do |re, pa|
+
+        name_or_participant.is_a?(String) ?
+          re.match(name_or_participant) :
+          (pa == name_or_participant)
+      end
+
+      @list.delete(entry)
     end
 
     protected

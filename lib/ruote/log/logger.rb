@@ -68,6 +68,7 @@ module Ruote
       case v
       when String then v
       when Symbol then v
+      when Regexp then v
       else v.class
       end
     end

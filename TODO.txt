@@ -9,10 +9,10 @@
 [o] emit :processes :terminate :wfid only
 [o] arch doc
 [o] verbose always on
+[o] ev : :participants :register/:unregister
 
 [ ] NullParticipant
 [ ] wfid_gen : rufus-mnemo
-[ ] ev : :participants :register/:unregister
 
 [ ] test logger always on for tests (in-memory only)
 [ ] file logger service
