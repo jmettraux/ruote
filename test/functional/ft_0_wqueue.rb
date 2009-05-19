@@ -15,7 +15,7 @@ class FtWorkqueueTest < Test::Unit::TestCase
 
   def test_launch_terminate
 
-    verbose
+    #noisy
 
     pdef = Ruote.process_definition do
     end

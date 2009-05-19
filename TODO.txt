@@ -8,6 +8,8 @@
 [o] emit :processes :launch :wfid
 [o] emit :processes :terminate :wfid only
 [o] arch doc
+[o] verbose always on
+
 [ ] NullParticipant
 [ ] wfid_gen : rufus-mnemo
 [ ] ev : :participants :register/:unregister
@@ -21,6 +23,8 @@
 
 [ ] on_error
 [ ] on_cancel
+
+[ ] forget
 
 [ ] fs_error_journal
 

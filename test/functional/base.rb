@@ -41,6 +41,8 @@ module FunctionalBase
 
     @engine = determine_engine_class(ac).new(ac)
 
+    @engine.add_service(:s_logger, Ruote::TestLogger)
+
     @terminated_processes = []
     @engine.wqueue.subscribe(:processes) do |eclass, emsg, eargs|
       @terminated_processes << eargs[:wfid] if emsg == :terminate
@@ -75,16 +77,7 @@ module FunctionalBase
   protected
 
   def noisy (on=true)
-    verbose(true) if on and ( ! @engine.context[:s_logger])
     @engine.context[:noisy] = on
-  end
-
-  def verbose (on=true)
-    if on
-      @engine.add_service(:s_logger, Ruote::TestLogger)
-    else
-      @engine.remove_service(:s_logger)
-    end
   end
 
   def logger
