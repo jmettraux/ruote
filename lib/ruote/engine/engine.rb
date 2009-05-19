@@ -171,7 +171,7 @@ module Ruote
     end
 
     def build_wfid_generator
-      add_service(:s_wfid_generator, Ruote::PlainWfidGenerator)
+      add_service(:s_wfid_generator, Ruote::WfidGenerator)
     end
 
     def build_tree_checker

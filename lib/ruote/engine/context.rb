@@ -32,9 +32,21 @@ module Ruote
     alias :ac :context
     alias :application_context :context
 
+    #++
+    # misc
+    #--
+
     def engine_id
       @context[:engine_id] || 'default'
     end
+
+    def workdir
+      @context[:work_directory] || 'work'
+    end
+
+    #++
+    # services
+    #--
 
     def engine
       @context[:s_engine]

@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,63 @@
 # Made in Japan.
 #++
 
+
+require 'time'
 require 'thread'
+require 'fileutils'
+require 'rufus/mnemo' # sudo gem install rufus-mnemo
+require 'ruote/engine/context'
 
 
 module Ruote
 
-  class PlainWfidGenerator
+  class WfidGenerator
 
-    def initialize
-      @counter = -1
+    include EngineContext
+
+
+    def context= (c)
+
+      @context = c
+
       @mutex = Mutex.new
+
+      load_last
+      save_last
     end
 
     def generate
 
       @mutex.synchronize do
-        @counter += 1
-        @counter.to_s
+        wfid = Time.now
+        wfid = @last + 0.001 if wfid <= @last
+        @last = wfid
+        save_last
+        "#{@last.strftime('%Y%m%d%H%m%S')}-#{@last.usec}"
       end
+    end
+
+    protected
+
+    def file_path
+
+      File.join(workdir, 'wfidgen.last')
+    end
+
+    def load_last
+
+      FileUtils.mkdir(workdir) unless File.exist?(workdir)
+      t = File.read(file_path).strip rescue ''
+      t = Time.parse(t)
+      n = Time.now
+      @last = t > n ? t : n
+    end
+
+    def save_last
+
+      @file = File.open(file_path, 'w+') if (not @file) or @file.closed?
+      @file.pos = 0
+      @file.puts("#{@last.strftime('%Y/%m/%d %H:%m:%S')}.#{@last.usec}")
     end
   end
 end
