@@ -4,6 +4,7 @@
 
 == ruote - 0.9.21    not yet released
 
+- bug   #25953 : conflict with Rails #observers method. Fixed.
 - todo  #25799 : implemented engine.reapply(exp)
 - bug   #25832 : scheduled launch broken. Fixed.
 - todo  #25851 : added fdate to ProcessError (date in float)
