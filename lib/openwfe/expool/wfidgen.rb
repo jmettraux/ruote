@@ -53,7 +53,6 @@ module OpenWFE
       ensure_last_f
     end
 
-    #
     # Returns a new workflow instance id
     #
     # The launchitem parameter is not used by this generator.
@@ -72,7 +71,6 @@ module OpenWFE
       to_string(wfid)
     end
 
-    #
     # The actual job of turning the numeric result into a String.
     # This method is overriden in extension of this class.
     #
@@ -81,7 +79,6 @@ module OpenWFE
       numeric_id.to_s
     end
 
-    #
     # Is a simple call to OpenWFE::split_wfid()
     #
     def split_wfid (wfid)
@@ -89,7 +86,6 @@ module OpenWFE
       OpenWFE.split_wfid(wfid)
     end
 
-    #
     # This method is called by OpenWFE::split_wfid() when it has detected
     # a wfid following this 'defaut' scheme.
     #
@@ -103,7 +99,6 @@ module OpenWFE
       r
     end
 
-    #
     # Stops this service.
     # In this particular implementation, makes sure the "wfidgen.last"
     # file is closed.
@@ -118,48 +113,48 @@ module OpenWFE
 
     protected
 
-      def ensure_last_f
-        if (not @last_f) or @last_f.closed?
+    def ensure_last_f
+      if (not @last_f) or @last_f.closed?
+        begin
+          @last_f = File.open(@last_fn, "w+")
+        rescue Exception => e
+          lwarn do
+            "new() failed to open #{@last_fn}, "+
+            "continuing anyway...\n"+
+            OpenWFE::exception_to_s(e)
+          end
+        end
+      end
+    end
+
+    def now
+      wfid = Time.now.to_f * 1000 * 10
+      wfid.to_i
+    end
+
+    def save_last
+      return unless @last_f
+      ensure_last_f()
+      @last_f.pos = 0
+      @last_f.puts @last
+    end
+
+    def load_last
+      @mutex.synchronize do
+
+        if File.exist?(@last_fn)
           begin
-            @last_f = File.open(@last_fn, "w+")
+            s = File.open(@last_fn, 'r') { |f| f.readline }
+            @last = Integer(s)
           rescue Exception => e
-            lwarn do
-              "new() failed to open #{@last_fn}, "+
-              "continuing anyway...\n"+
-              OpenWFE::exception_to_s(e)
-            end
           end
         end
+
+        n = now
+
+        @last = n if (not @last) or (@last < n)
       end
-
-      def now
-        wfid = Time.now.to_f * 1000 * 10
-        wfid.to_i
-      end
-
-      def save_last
-        return unless @last_f
-        ensure_last_f()
-        @last_f.pos = 0
-        @last_f.puts @last
-      end
-
-      def load_last
-        @mutex.synchronize do
-
-          if File.exist?(@last_fn)
-            begin
-              s = File.open(@last_fn, 'r') { |f| f.readline }
-              @last = Integer(s)
-            rescue Exception => e
-            end
-          end
-
-          n = now
-
-          @last = n if (not @last) or (@last < n)
-        end
-      end
+    end
   end
 
   #
@@ -171,7 +166,6 @@ module OpenWFE
   #
   class KotobaWfidGenerator < DefaultWfidGenerator
 
-    #
     # Overrides the to_string() method of the DefaultWfidGenerator,
     #
     def to_string (numeric_id)
@@ -179,7 +173,6 @@ module OpenWFE
       self.class.to_string(numeric_id)
     end
 
-    #
     # That's here that the numeric wfid gets turned into a 'kotoba'.
     # A static method easily accessible by any.
     #
@@ -194,7 +187,6 @@ module OpenWFE
       s
     end
 
-    #
     # This method is called by OpenWFE::split_wfid() when it has detected
     # a wfid following the 'kotoba' scheme.
     # Returns the 'kotoba' wfid split into its syllables
@@ -204,7 +196,6 @@ module OpenWFE
       Rufus::Mnemo::split(wfid[9..-1])
     end
 
-    #
     # Turns a KotobaWfidGenerator produced wfid into a UTC date.
     #
     def self.to_time (wfid)
@@ -277,8 +268,8 @@ module OpenWFE
   class UuidWfidGenerator < Service
 
     COMMANDS = [
-      "uuidgen -t",
-      "uuidgen"
+      'uuidgen -t',
+      'uuidgen'
     ]
 
     def initialize (service_name, application_context)
@@ -306,7 +297,6 @@ module OpenWFE
       linfo { "new() command that will be used : '#{@command}'" }
     end
 
-    #
     # Generates a brand new UUID
     #
     # The launchitem parameter is not used by this generator.
@@ -316,7 +306,6 @@ module OpenWFE
       `#{@command}`.chomp
     end
 
-    #
     # Is a simple call to OpenWFE::split_wfid()
     #
     def split_wfid (wfid)
@@ -324,7 +313,6 @@ module OpenWFE
       OpenWFE.split_wfid(wfid)
     end
 
-    #
     # This method is called by OpenWFE::split_wfid() when it has detected
     # a wfid that is a UUID.
     #
@@ -342,16 +330,15 @@ module OpenWFE
     end
   end
 
-  #
+  #--
   # "module methods"
-  #
+  #++
 
   SPLIT_MAP = {
     '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}' => UuidWfidGenerator,
     '[0-9]{8}-[a-z]*' => KotobaWfidGenerator
   }
 
-  #
   # This method should be able to split any wfid whose scheme is implemented
   # here.
   #

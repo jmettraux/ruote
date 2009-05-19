@@ -65,55 +65,55 @@ module OpenWFE
 
     protected
 
-      #
-      # Observable classes do call this method to notify their
-      # observers.
-      #
-      # Returns true if there was an observer registered.
-      #
-      def onotify (channel, *args)
+    #
+    # Observable classes do call this method to notify their
+    # observers.
+    #
+    # Returns true if there was an observer registered.
+    #
+    def onotify (channel, *args)
 
-        do_notify(:all, channel, *args)
-        do_notify(channel, channel, *args)
-      end
+      do_notify(:all, channel, *args)
+      do_notify(channel, channel, *args)
+    end
 
     private
 
-      def do_remove_observer (observer, channel)
+    def do_remove_observer (observer, channel)
 
-        observers = @observers[channel]
-        observers.delete(observer) if observers
-      end
+      observers = @observers[channel]
+      observers.delete(observer) if observers
+    end
 
-      def do_notify (target_channel, channel, *args)
+    def do_notify (target_channel, channel, *args)
 
-        #ldebug { "do_notify() @observers.size is #{@observers.size}" }
+      #ldebug { "do_notify() @observers.size is #{@observers.size}" }
 
-        observers = if target_channel.is_a?(String)
+      observers = if target_channel.is_a?(String)
 
-          @observers.inject([]) do |r, (c, o)|
+        @observers.inject([]) do |r, (c, o)|
 
-            if c.is_a?(String)
-              r += o if target_channel.match(c)
-            elsif c.is_a?(Regexp)
-              r += o if c.match(target_channel)
-            end
-
-            r
+          if c.is_a?(String)
+            r += o if target_channel.match(c)
+          elsif c.is_a?(Regexp)
+            r += o if c.match(target_channel)
           end
-        else
 
-          @observers[target_channel]
+          r
         end
+      else
 
-        return false unless observers
-
-        observers.each { |obs| obs.call(channel, *args) }
-
-        (observers.size > 0)
-          #
-          # returns true if at least one observer was called
+        @observers[target_channel]
       end
+
+      return false unless observers
+
+      observers.each { |obs| obs.call(channel, *args) }
+
+      (observers.size > 0)
+        #
+        # returns true if at least one observer was called
+    end
   end
 end
 
