@@ -182,6 +182,22 @@ module OpenWFE
     end
 
     #
+    # When the engine is stopped, the participant map will run over
+    # all the registered participants and call #stop on them, if they
+    # implement a #stop method. Useful if your participants need to
+    # clean up after themselves when the engine goes down.
+    #
+    def stop
+
+      @participants.each do |participant|
+        if participant[1].respond_to?(:stop)
+          participant[1].stop
+          linfo { "stop() stopped participant '#{participant[1].class}'" }
+        end
+      end
+    end
+
+    #
     # The method onotify (from Observable) is made public so that
     # ParticipantExpression instances may notify the pmap of applies
     # and replies.
