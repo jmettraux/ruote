@@ -10,12 +10,16 @@
 [o] arch doc
 [o] verbose always on
 [o] ev : :participants :register/:unregister
+[o] test logger always on for tests (in-memory only)
+[o] NullParticipant
+[o] NoOpParticipant
 
-[ ] NullParticipant
 [ ] wfid_gen : rufus-mnemo
 
-[ ] test logger always on for tests (in-memory only)
 [ ] file logger service
+
+[ ] cache storage
+[ ] fs storage
 
 [ ] tag (which implies variables)
 [ ] emit event upon setting tag !
