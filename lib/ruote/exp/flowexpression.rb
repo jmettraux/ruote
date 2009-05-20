@@ -53,6 +53,10 @@ module Ruote
       @variables = variables
     end
 
+    def parent
+      expstorage[@parent_id]
+    end
+
     def name
       @tree[0]
     end
@@ -111,7 +115,7 @@ module Ruote
     #
     def self.is_definition
 
-      meta_def(:is_definition) { true }
+      meta_def(:is_definition?) { true }
     end
 
     #--
@@ -169,11 +173,12 @@ module Ruote
 
       elsif @parent_id
 
-        parent = expstorage[@parent_id]
-        return expstorage[@parent_id].lookup_variable(var)
+        return parent.lookup_variable(var)
 
       #else # engine level
       end
+
+      nil
     end
 
     def set_variable (var, val)
@@ -188,9 +193,12 @@ module Ruote
 
         @variables[var] = val
 
+        persist
+          # very important, persisting...
+
       elsif @parent_id
 
-        expstorage[@parent_id].set_variable(var, val)
+        parent.set_variable(var, val)
 
       #else # should not happen
       end
@@ -203,7 +211,7 @@ module Ruote
       pool.apply_child(self, child_index, workitem)
     end
 
-    def store_self
+    def persist
 
       wqueue.emit(:expressions, :update, :expression => self)
     end

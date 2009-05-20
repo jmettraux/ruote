@@ -17,7 +17,7 @@
 [o] rufus-dollar
 [o] variables in ProcessStatus (process level only)
 
-[ ] subprocess binding
+[o] subprocess binding
 [ ] subprocess lookup
 [ ] participant lookup
 

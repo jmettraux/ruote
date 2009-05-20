@@ -62,12 +62,14 @@ module Ruote
     def is_definition? (tree)
 
       c = expression_class(tree.first)
+
       (c && c.is_definition?)
     end
 
     protected
 
     def add (exp_class)
+
       exp_class.expression_names.each { |n| @map[n] = exp_class }
     end
   end

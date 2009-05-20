@@ -30,16 +30,32 @@ module Ruote
 
   class DefineExpression < SequenceExpression
 
+    is_definition
+
     names :define, :process_definition, :workflow_definition
 
     def apply (workitem)
 
+      #
       # reorganize tree, place body at the end
+
+      original = @tree[2]
 
       definitions, bodies = @tree[2].partition { |b| expmap.is_definition?(b) }
       @tree[2] = definitions + bodies[0, 1]
 
-      store_self
+      persist if @tree[2] != original
+
+      #
+      # if there is a parent, register
+
+      if @parent_id and name = attribute(:name, workitem)
+
+        parent.set_variable(name, @tree)
+      end
+
+      #
+      # start execution
 
       reply(workitem)
     end

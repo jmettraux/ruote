@@ -52,7 +52,7 @@ module Ruote
 
       @applied_workitem = workitem.dup
 
-      store_self
+      persist
 
       wqueue.emit(:workitems, :dispatching, :workitem => @applied_workitem)
 

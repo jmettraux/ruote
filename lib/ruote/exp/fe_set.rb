@@ -29,6 +29,8 @@ module Ruote
 
   class SetExpression < FlowExpression
 
+    is_definition
+
     names :set
 
     def apply (workitem)
