@@ -60,7 +60,7 @@ end
     # no description
     sequence do
     end
-    define "sub0" do
+    define :name => "sub0" do
     end
   end
 
@@ -70,7 +70,6 @@ end
     assert_nil OpenWFE::ExpressionTree.get_description(tree)
 
     tree = OpenWFE::DefParser.parse Test2b
-    #p tree
     assert_nil OpenWFE::ExpressionTree.get_description(tree)
   end
 end

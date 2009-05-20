@@ -50,10 +50,10 @@ module OpenWFE
   #   require 'openwfe/def'
   #
   #   class AnotherDefinition0 < OpenWFE::ProcessDefinition
-  #    sequence do
-  #      participant :ref => "toto"
-  #      subprocess :ref => "http://company.process.server/def0.rb"
-  #    end
+  #     sequence do
+  #       participant :ref => "toto"
+  #       subprocess :ref => "http://company.process.server/def0.rb"
+  #     end
   #   end
   #
   # (but the engine parameter :remove_definitions_allowed must be set to true,
@@ -134,7 +134,6 @@ module OpenWFE
       end
     end
 
-    #
     # Takes care of cancelling the subprocess as well if any
     #
     def cancel

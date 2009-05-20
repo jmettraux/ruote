@@ -21,10 +21,10 @@ class FlowTest84b < Test::Unit::TestCase
   # TEST 0
 
   class Test0 < OpenWFE::ProcessDefinition
-     sub0
-     define "sub0" do
-       toto
-     end
+    sub0
+    define "sub0" do
+      toto
+    end
   end
 
   def test_0

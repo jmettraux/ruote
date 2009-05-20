@@ -31,7 +31,6 @@ module OpenWFE
   #
   module ValueMixin
 
-    #
     # Expressions that include the ValueMixin let it gather values and
     # then, in their reply() methods do the job with the values.
     # The gathering task is performed by the ValueMixin.
@@ -82,18 +81,18 @@ module OpenWFE
 
     private
 
-      def lookup (name_array, workitem)
+    def lookup (name_array, workitem)
 
-        name_array.each do |n|
+      name_array.each do |n|
 
-          v = lookup_string_attribute(n, workitem)
+        v = lookup_string_attribute(n, workitem)
 
-          return v if v != nil
-            # covers v = false as well
-        end
-
-        nil
+        return v if v != nil
+          # covers v == false as well
       end
+
+      nil
+    end
   end
 
 end
