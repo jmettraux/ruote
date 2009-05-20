@@ -34,24 +34,27 @@ module Ruote
 
     names :define, :process_definition, :workflow_definition
 
+    attr_accessor :original_children
+
     def apply (workitem)
 
-      #
-      # reorganize tree, place body at the end
-
-      original = @tree[2]
+      @original_children = @tree[2]
 
       definitions, bodies = @tree[2].partition { |b| expmap.is_definition?(b) }
-      @tree[2] = definitions + bodies[0, 1]
 
-      persist if @tree[2] != original
+      @tree[2] = bodies
 
-      #
-      # if there is a parent, register
+      definitions.each do |d|
 
-      if @parent_id and name = attribute(:name, workitem)
+        if name = d[1]['name']
 
-        parent.set_variable(name, @tree)
+          name = Ruote.dosub(name, self, workitem)
+          set_variable(name, d)
+        end
+      end
+
+      if (@variables && @variables.size > 0) || @tree[2] != @original_children
+        persist
       end
 
       #
