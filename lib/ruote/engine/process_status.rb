@@ -27,7 +27,9 @@ module Ruote
 
   class ProcessStatus
 
-    attr_reader :expressions, :errors
+    attr_reader :expressions
+    attr_reader :variables
+    attr_reader :errors
 
     def initialize (expressions, errors)
 
@@ -38,6 +40,11 @@ module Ruote
     def root_expression
 
       @expressions.find { |e| e.fei.expid == '0' && e.fei.sub_wfid == nil }
+    end
+
+    def variables
+
+      root_expression.variables
     end
 
     def wfid
