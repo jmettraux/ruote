@@ -23,44 +23,36 @@
 #++
 
 
-require 'ruote/exp/fe_sequence'
+require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
-  class DefineExpression < SequenceExpression
+  class DefineExpression < FlowExpression
 
     is_definition
 
     names :define, :process_definition, :workflow_definition
 
-    attr_accessor :original_children
-
     def apply (workitem)
 
-      @original_children = @tree[2]
+      t = self.class.reorganize(expmap, @tree)
 
-      definitions, bodies = @tree[2].partition { |b| expmap.is_definition?(b) }
+      name = attribute(:name, workitem)
 
-      @tree[2] = bodies
+      set_variable(name, t)
 
-      definitions.each do |d|
+      reply_to_parent(workitem)
+    end
 
-        if name = d[1]['name']
+    # Used by instances of this class and also the expression pool,
+    # when launching a new process instance.
+    #
+    def self.reorganize (expmap, tree)
 
-          name = Ruote.dosub(name, self, workitem)
-          set_variable(name, d)
-        end
-      end
+      definitions, bodies = tree[2].partition { |b| expmap.is_definition?(b) }
 
-      if (@variables && @variables.size > 0) || @tree[2] != @original_children
-        persist
-      end
-
-      #
-      # start execution
-
-      reply(workitem)
+      [ 'sequence', tree[1], definitions + bodies ]
     end
   end
 end

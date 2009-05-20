@@ -146,7 +146,11 @@ module Ruote
 
       fei = new_fei(args[:wfid])
 
-      apply(args[:tree], fei, nil, args[:workitem], {})
+      tree = args[:tree]
+      tree = DefineExpression.reorganize(expmap, tree) \
+        if expmap.is_definition?(tree)
+
+      apply(tree, fei, nil, args[:workitem], {})
         # {} variables are set here
     end
 
