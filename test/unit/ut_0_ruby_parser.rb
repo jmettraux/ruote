@@ -28,6 +28,25 @@ class RubyParserTest < Test::Unit::TestCase
       tree)
   end
 
+  def test_empty_sub
+
+    tree = Ruote.define :name => 'nada' do
+      sequence do
+        alpha
+        bravo
+      end
+      define 'toto' do
+      end
+    end
+
+    assert_equal(
+      ["define", {"name"=>"nada"}, [
+        ["sequence", {}, [["alpha", {}, []], ["bravo", {}, []]]],
+        ["define", {"toto"=>nil}, []]
+      ]],
+      tree)
+  end
+
   def test_echo
 
     tree = Ruote.define :name => 'nada' do
@@ -36,7 +55,7 @@ class RubyParserTest < Test::Unit::TestCase
 
     assert_equal(
       ["define", {"name"=>"nada"}, [
-        ["echo", {}, ["a"]]
+        ["echo", {"a"=>nil}, []]
       ]],
       tree)
   end
@@ -49,7 +68,7 @@ class RubyParserTest < Test::Unit::TestCase
 
     assert_equal(
       ["define", {"name"=>"nada"}, [
-        ["echo", {"escape"=>true}, ["a"]]
+        ["echo", {"a"=>nil, "escape"=>true}, []]
       ]],
       tree)
   end

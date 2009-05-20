@@ -69,13 +69,11 @@ module Ruote
       @tree[2]
     end
 
-    # Returns the text of the first child of this expression.
-    # Returns "" if there are no children.
-    # Dollar substitution is performed (hence the need for the workitem).
-    #
-    def child_text (workitem)
+    def attribute_text (workitem)
 
-      Ruote.dosub(raw_children.first.to_s, self, workitem)
+      text = @tree[1].keys.find { |k| @tree[1][k] == nil }
+
+      Ruote.dosub(text.to_s, self, workitem)
     end
 
     # The default implementation : replies to the parent expression

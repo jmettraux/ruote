@@ -54,7 +54,10 @@ module Ruote
 
     def definition_name
 
-      root_expression.attributes['name']
+      root_expression.attributes['name'] ||
+      root_expression.attributes.keys.find() { |k|
+        root_expression.attributes[k] == nil
+      }
     end
 
     def definition_revision

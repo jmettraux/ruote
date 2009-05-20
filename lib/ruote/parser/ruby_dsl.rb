@@ -26,16 +26,14 @@ module Ruote
 
   # Not really a parser, more an AST builder.
   #
-  def self.define (attributes={}, &block)
-
-    attributes[:name] ||= 'no-name'
+  def self.define (*attributes, &block)
 
     RubyDsl.create_branch('define', attributes, &block)
   end
 
-  def self.process_definition (attributes={}, &block)
+  def self.process_definition (*attributes, &block)
 
-    define(attributes, &block)
+    define(*attributes, &block)
   end
 
   # :nodoc:
@@ -47,29 +45,17 @@ module Ruote
       def initialize (name, attributes)
 
         @name = name
-        @attributes = attributes.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+        @attributes = attributes
         @children = []
       end
 
       def method_missing (m, *args, &block)
 
         @children.push(
-          Ruote::RubyDsl.create_branch(m.to_s, args_to_h(args), &block))
-      end
-
-      def args_to_h (args)
-
-        args.inject({}) { |h, a| a.is_a?(Hash) ? h.merge!(a) : h[a] = nil; h }
+          Ruote::RubyDsl.create_branch(m.to_s, args, &block))
       end
 
       def to_a
-
-        @attributes.keys.each do |k|
-          if @attributes[k] == nil
-            @attributes.delete(k)
-            @children << k
-          end
-        end
 
         [ @name, @attributes, @children ]
       end
@@ -77,7 +63,15 @@ module Ruote
 
     def self.create_branch (name, attributes, &block)
 
-      c = BranchContext.new(name, attributes)
+      h = attributes.inject({}) { |h, a|
+        a.is_a?(Hash) ? h.merge!(a) : h[a] = nil
+        h
+      }.inject ({}) { |h, (k, v)|
+        h[k.to_s] = v
+        h
+      }
+
+      c = BranchContext.new(name, h)
       c.instance_eval(&block) if block
       c.to_a
     end

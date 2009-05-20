@@ -48,7 +48,7 @@ module Ruote
 
       #text = "#{workitem.attributes['__result__'].to_s}\n"
       #text = "#{raw_children.first.to_s}\n"
-      text = "#{child_text(workitem)}\n"
+      text = "#{attribute_text(workitem)}\n"
 
       if t = context[:s_tracer]
         t << text

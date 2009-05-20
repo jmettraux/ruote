@@ -41,9 +41,22 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
     assert_equal({"sub0"=>["sequence", {"name"=>"sub0"}, []]}, ps.variables)
   end
 
-  def test_define_implicit_name
+  #def test_define_implicit_name
+  #  pdef = Ruote.define 'accounting_process' do
+  #  end
+  #  assert_equal 'accounting_process', pdef[1]['name']
+  #end
 
-    flunk
+  def test_sub_define_implicit_name
+
+    pdef = Ruote.define 'accounting_process' do
+      define 'sub0' do
+      end
+    end
+
+    assert_equal(
+      ["define", {"accounting_process"=>nil}, [["define", {"sub0"=>nil}, []]]],
+      pdef)
   end
 end
 
