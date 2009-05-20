@@ -37,23 +37,34 @@ module OpenWFE
     # leverage an extremely powerful local/remote participant
     # combinations.
     #
+    # By default the participant relies on the presence of an AMQP
+    # listener. Workitems are sent and no replies are given to the
+    # engine. The participant can be configured to reply to the engine
+    # immediately after queueing a message, see the usage section below.
+    #
     # == Configuration
     #
-    # Configuration is handled by directly manipulating the values of
-    # the +AMQP.settings+ hash, as provided by the AMQP gem. No
-    # defaults are set by the participant.
+    # AMQP configuration is handled by directly manipulating the
+    # values of the +AMQP.settings+ hash, as provided by the AMQP
+    # gem. No AMQP defaults are set by the participant.
     #
     # The participant requires version 0.6.1 or later of the amqp gem.
     #
     # == Usage
     #
     # Currently it's possible to send either workitems or messages
-    # directly to a specific queue, and optionally have the engine
-    # wait for replies on another queue (see AMQPListener).
+    # directly to a specific queue, and have the engine wait for
+    # replies on another queue (see AMQPListener).
     #
     # Setting up the participant
     #
-    #   engine.register_participant( :amqp, OpenWFE::Extras::AMQPParticipant )
+    #   engine.register_participant(
+    #     :amqp, OpenWFE::Extras::AMQPParticipant )
+    #
+    # Setup a participant that always replies to the engine
+    #
+    #   engine.register_participant(
+    #     :amp, OpenWFE::Extras::AMQPParticipant.new(:reply_by_default => true ) )
     #
     # Sending a message example
     #
@@ -71,11 +82,11 @@ module OpenWFE
     #     end
     #   end
     #
-    # Waiting for responses via the listener
+    # Let the participant reply to the engine without involving the listener
     #
     #   class AmqpWaitExample < OpenWFE::ProcessDefinition
     #     sequence do
-    #       amqp :queue => 'test', :wait_for_reply => true
+    #       amqp :queue => 'test', :reply_anyway => true
     #     end
     #   end
     #
@@ -102,10 +113,24 @@ module OpenWFE
     class AMQPParticipant
       include LocalParticipant
 
-      def initialize
+      # Accepts an options hash with the following keys:
+      #
+      # * :reply_by_default => (bool) false by default
+      def initialize( options = {} )
         ensure_reactor!
+
+        @options = {
+          :reply_by_default => false
+        }.merge( options )
       end
 
+      # Process the workitem at hand. By default the workitem will be
+      # published to the direct exchange specified in the +queue+
+      # workitem parameter. You can specify a +message+ workitem
+      # parameter to have that sent instead of the workitem.
+      #
+      # To force the participant to reply to the engine, set the
+      # +reply_anyway+ workitem parameter.
       def consume( workitem )
         ldebug { "consuming workitem" }
         ensure_reactor!
@@ -128,7 +153,7 @@ module OpenWFE
           lerror { "no queue in workitem params!" }
         end
 
-        unless workitem.params['wait-for-reply'] == true
+        if @options[:reply_by_default] || workitem.params['reply-anyway'] == true
           reply_to_engine( workitem )
         end
 

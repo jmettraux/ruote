@@ -46,7 +46,7 @@ class EtAmqpTest < Test::Unit::TestCase
     class AmqpParticipant0 < OpenWFE::ProcessDefinition
 
       sequence do
-        amqp :queue => 'test1'
+        amqp :queue => 'test1', 'reply_anyway' => true
         echo 'done.'
       end
     end
@@ -73,13 +73,47 @@ class EtAmqpTest < Test::Unit::TestCase
     assert_match /^\{.*\}$/, @msg # JSON message by default
   end
 
+  def test_amqp_reply_anyway_participant
+
+    pdef = <<-EOF
+    class AmqpParticipant0 < OpenWFE::ProcessDefinition
+
+      sequence do
+        amqp :queue => 'test4'
+        echo 'done.'
+      end
+    end
+    EOF
+
+    p = OpenWFE::Extras::AMQPParticipant.new( :reply_by_default => true )
+    @engine.register_participant( :amqp, p )
+
+    assert_trace( pdef, 'done.' )
+
+    begin
+      Timeout::timeout(10) do
+        @msg = nil
+        MQ.queue('test4').subscribe { |msg| @msg = msg }
+
+        loop do
+          break unless @msg.nil?
+          sleep 1
+        end
+      end
+    rescue Timeout::Error
+      flunk "Timeout waiting for message"
+    end
+
+    assert_match /^\{.*\}$/, @msg # JSON message by default
+  end
+
   def test_amqp_participant_message
 
     pdef = <<-EOF
     class AmqpParticipant1 < OpenWFE::ProcessDefinition
 
       sequence do
-        amqp :queue => 'test2', :message => 'foo'
+        amqp :queue => 'test2', :message => 'foo', 'reply_anyway' => true
         echo 'done.'
       end
     end
@@ -115,7 +149,7 @@ class EtAmqpTest < Test::Unit::TestCase
 
       sequence do
         echo '${f:foo}'
-        amqp :queue => 'test3', :wait_for_reply => true
+        amqp :queue => 'test3'
         echo '${f:foo}'
       end
     end
