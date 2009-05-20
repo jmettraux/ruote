@@ -90,7 +90,7 @@ module Ruote
 
       if eclass == :expressions
 
-        apply_reply(emsg, eargs) if emsg == :apply || emsg == :reply
+        apply_reply_exp(emsg, eargs) if emsg == :apply || emsg == :reply
 
       elsif eclass == :processes
 
@@ -99,7 +99,7 @@ module Ruote
       end
     end
 
-    def apply_reply (emsg, eargs)
+    def apply_reply_exp (emsg, eargs)
 
       begin
 
@@ -109,7 +109,13 @@ module Ruote
 
         # TODO : implement on_error
 
-        wqueue.emit(:errors, :s_expression_pool, [ :expressions, emsg, eargs ])
+        wqueue.emit(
+          :errors,
+          :s_expression_pool,
+          {
+            :error => e,
+            :message => [ :expressions, emsg, eargs ]
+          })
       end
     end
 
@@ -121,7 +127,7 @@ module Ruote
 
       raise "unknown expression '#{tree.first}'" if not exp_class
 
-      exp = exp_class.new(fei, parent_id, tree)
+      exp = exp_class.new(fei, parent_id, tree, variables)
 
       wqueue.emit(:expressions, :update, :expression => exp)
 
@@ -139,9 +145,9 @@ module Ruote
     def launch (args)
 
       fei = new_fei(args[:wfid])
-      variables = nil
 
-      apply(args[:tree], fei, nil, args[:workitem], variables)
+      apply(args[:tree], fei, nil, args[:workitem], {})
+        # {} variables are set here
     end
 
     def new_fei (wfid)

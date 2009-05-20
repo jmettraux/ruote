@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,56 +22,45 @@
 # Made in Japan.
 #++
 
-
-require 'ruote/engine/context'
-require 'ruote/queue/subscriber'
+require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
-  # Plain logger (outputs to stdout)
-  #
-  class Logger
+  class SetExpression < FlowExpression
 
-    include EngineContext
-    include Subscriber
+    names :set
 
-    def context= (c)
+    def apply (workitem)
 
-      @context = c
-      subscribe(:all)
+      reply(workitem)
     end
 
-    protected
+    def reply (workitem)
 
-    def receive (eclass, emsg, eargs)
-
-      p [ :ruote, eclass, emsg, summarize_args(eclass, emsg, eargs) ]
-    end
-
-    def summarize_args (eclass, emsg, eargs)
-
-      if eargs.is_a?(Array)
-        [ eargs[0], eargs[1], summarize_args(eargs[0], eargs[1], eargs[2]) ]
-      elsif fei = eargs[:fei]
-        fei.to_s
-      elsif wfid = eargs[:wfid]
-        wfid
-      elsif exp = eargs[:expression]
-        exp.fei.to_s
+      value = if val_key = has_attribute(:val, :value)
+        attribute(val_key, workitem)
       else
-        eargs.inject({}) { |h, (k, v)| h[k] = value_to_s(v); h }
+        child_text(workitem)
       end
-    end
 
-    def value_to_s (v)
-      case v
-      when String then v
-      when Symbol then v
-      when Regexp then v
-      when Exception then "#{v.class} >#{v.message}< at #{v.backtrace.first}"
-      else v.class
+      if var_key = has_attribute(:v, :var, :variable)
+
+        var = attribute(var_key, workitem)
+        set_variable(var, value)
+
+      elsif field_key = has_attribute(:f, :fld, :field)
+
+        field = attribute(field_key, workitem)
+        workitem.attributes[field] = value
+
+      else
+
+        raise ArgumentError.new(
+          "missing a variable or field target in #{@tree.inspect}")
       end
+
+      reply_to_parent(workitem)
     end
   end
 end

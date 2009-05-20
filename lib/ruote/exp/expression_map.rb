@@ -47,6 +47,7 @@ module Ruote
       add(Ruote::SequenceExpression)
       add(Ruote::EchoExpression)
       add(Ruote::ParticipantExpression)
+      add(Ruote::SetExpression)
     end
 
     # Returns the expression class for the given expression name

@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,14 @@ require 'ruote/exp/flowexpression'
 
 module Ruote
 
+  # An expression for echoing text to STDOUT or to a :s_tracer service
+  # (if there is one bound in the engine context).
+  #
+  #   sequence do
+  #     participant :ref => 'toto'
+  #     echo 'toto replied'
+  #   end
+  #
   class EchoExpression < FlowExpression
 
     names :echo
@@ -39,7 +47,8 @@ module Ruote
     def reply (workitem)
 
       #text = "#{workitem.attributes['__result__'].to_s}\n"
-      text = "#{raw_children.first.to_s}\n"
+      #text = "#{raw_children.first.to_s}\n"
+      text = "#{child_text(workitem)}\n"
 
       if t = context[:s_tracer]
         t << text

@@ -53,5 +53,31 @@ class RubyParserTest < Test::Unit::TestCase
       ]],
       tree)
   end
+
+  def test_set
+
+    tree = Ruote.define :name => 'nada' do
+      set :var => 'v', :val => %w[ 1 2 3 4 ]
+    end
+
+    assert_equal(
+      ["define", {"name"=>"nada"}, [
+        ["set", {"val"=>["1", "2", "3", "4"], "var"=>"v"}, []]
+      ]],
+      tree)
+  end
+
+  #def test_set_nested
+  #  tree = Ruote.define :name => 'nada' do
+  #    set do
+  #      %w[ 1 2 3 4 ]
+  #    end
+  #  end
+  #  assert_equal(
+  #    ["define", {"name"=>"nada"}, [
+  #      ["sequence", {}, [["alpha", {}, []], ["bravo", {}, []]]]
+  #    ]],
+  #    tree)
+  #end
 end
 

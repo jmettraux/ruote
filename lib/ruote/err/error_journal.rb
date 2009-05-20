@@ -56,7 +56,9 @@ module Ruote
 
     def receive (eclass, emsg, eargs)
 
-      (@errors[eargs.last[:workitem].fei.wfid] ||= []) << eargs
+      wfid = eargs[:message].last[:workitem].fei.wfid
+
+      (@errors[wfid] ||= []) << eargs
     end
   end
 end

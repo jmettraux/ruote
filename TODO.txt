@@ -14,6 +14,11 @@
 [o] NullParticipant
 [o] NoOpParticipant
 
+[o] rufus-dollar
+[ ] subprocess binding
+[ ] subprocess lookup
+[ ] participant lookup
+
 [ ] wfid_gen : rufus-mnemo
 
 [ ] file logger service
@@ -29,6 +34,11 @@
 [ ] on_cancel
 
 [ ] forget
+[ ] timeout
+
+[ ] engine#reload
 
 [ ] fs_error_journal
+
+[ ] participants stop
 

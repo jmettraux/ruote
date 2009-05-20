@@ -23,6 +23,7 @@
 #++
 
 require 'ruote/util/ometa'
+require 'ruote/util/dollar'
 require 'ruote/engine/context'
 
 
@@ -38,13 +39,18 @@ module Ruote
     attr_accessor :tree
     attr_accessor :children
 
-    def initialize (fei, parent_id, tree)
+    attr_accessor :variables
+
+
+    def initialize (fei, parent_id, tree, variables)
 
       @fei = fei
       @parent_id = parent_id
 
       @tree = tree.dup
       @children = []
+
+      @variables = variables
     end
 
     def name
@@ -59,6 +65,15 @@ module Ruote
       @tree[2]
     end
 
+    # Returns the text of the first child of this expression.
+    # Returns "" if there are no children.
+    # Dollar substitution is performed (hence the need for the workitem).
+    #
+    def child_text (workitem)
+
+      Ruote.dosub(raw_children.first.to_s, self, workitem)
+    end
+
     # The default implementation : replies to the parent expression
     #
     def reply (workitem)
@@ -71,22 +86,9 @@ module Ruote
       @children.each { |cfei| pool.cancel(cfei) }
     end
 
-    #def on_error
-    #  if oe = attributes['on_error']
-    #    p oe
-    #    true
-    #  else
-    #    false
-    #  end
-    #end
-    #def on_cancel
-    #  if oc = attributes['on_cancel']
-    #    p oc
-    #    true
-    #  else
-    #    false
-    #  end
-    #end
+    #--
+    # meta stuff
+    #++
 
     # Keeping track of names and aliases for the expression
     #
@@ -110,6 +112,88 @@ module Ruote
     def self.is_definition
 
       meta_def(:is_definition) { true }
+    end
+
+    #--
+    # attributes
+    #++
+
+    def has_attribute (*args)
+
+      args.each { |a| a = a.to_s; return a if @tree[1][a] != nil }
+
+      nil
+    end
+
+    def attribute (n, workitem, options={})
+
+      n = n.to_s
+
+      default = options[:default]
+      escape = options[:escape]
+      string = options[:to_s] || options[:string]
+
+      v = @tree[1][n]
+
+      v = if v == nil
+        default
+      elsif escape
+        v
+      else
+        Ruote.dosub(v, self, workitem)
+      end
+
+      v = v.to_s if v and string
+
+      v
+    end
+
+    #--
+    # variables
+    #++
+
+    #ENGINE_LEVEL_VAR = /^\/\/[^\/ ]+/
+    PROCESS_LEVEL_VAR = /^\/([^\/ ]+)/
+
+    def lookup_variable (var)
+
+      if m = PROCESS_LEVEL_VAR.match(var)
+
+        return expstorage.root_expression(wfid).lookup_variable(m[1])
+      end
+
+      if @variables
+
+        val = @variables[var]
+        return val if val != nil
+
+      elsif @parent_id
+
+        parent = expstorage[@parent_id]
+        return expstorage[@parent_id].lookup_variable(var)
+
+      #else # engine level
+      end
+    end
+
+    def set_variable (var, val)
+
+      if m = PROCESS_LEVEL_VAR.match(var)
+
+        expstorage.root_expression(wfid).set_variable(m[1], var)
+        return
+      end
+
+      if @variables
+
+        @variables[var] = val
+
+      elsif @parent_id
+
+        expstorage[@parent_id].set_variable(var, val)
+
+      #else # should not happen
+      end
     end
 
     protected
