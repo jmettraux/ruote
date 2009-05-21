@@ -27,6 +27,7 @@ require 'yaml'
 
 require 'openwfe/util/xml'
 require 'openwfe/util/json'
+require 'activesupport'
 
 require 'openwfe/extras/misc/jabber_common'
 
@@ -107,7 +108,7 @@ module OpenWFE
           # Message or workitem?
           if message = ( workitem.attributes['message'] || workitem.params['message'] )
             self.connection.deliver( target_jid, message )
-            
+
           else
             ldebug { "sending workitem to jid: #{target_jid}" }
             self.connection.deliver(
@@ -118,21 +119,21 @@ module OpenWFE
         else
           lerror { "no target_jid in workitem attributes!" }
         end
-        
+
         unless workitem.params['wait-for-reply'] == true
           reply_to_engine( workitem )
         end
       end
 
       protected
-      
+
       # Encode (and extend) the workitem as JSON
       def encode_workitem( wi )
         h = wi.to_h
         h['sender_jid'] = self.class.jid
         h['reply_jid'] = JabberListener.jid
-        
-        h.to_json
+
+        ActiveSupport::JSON.encode( h )
       end
 
     end

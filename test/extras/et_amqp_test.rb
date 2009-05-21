@@ -18,7 +18,6 @@
 require File.dirname(__FILE__) + '/base'
 require 'openwfe/extras/participants/amqp_participants'
 require 'openwfe/extras/listeners/amqp_listeners'
-require 'json'
 
 # AMQP magic worked here
 AMQP.settings[:vhost] = '/ruote-test'
@@ -174,10 +173,10 @@ class EtAmqpTest < Test::Unit::TestCase
       flunk "Timeout waiting for message"
     end
 
-    wi = OpenWFE::InFlowWorkItem.from_h( JSON.parse( @msg ) )
+    wi = OpenWFE::InFlowWorkItem.from_h( ActiveSupport::JSON.decode( @msg ) )
     wi.attributes['foo'] = "bar"
 
-    MQ.queue( wi.attributes['reply_queue'] ).publish( wi.to_h.to_json )
+    MQ.queue( wi.attributes['reply_queue'] ).publish( ActiveSupport::JSON.encode( wi.to_h ) )
 
     wait( fei )
 

@@ -63,7 +63,7 @@ class EtJabberTest < Test::Unit::TestCase
 
     pdef = <<-EOF
     class JabberParticipant0 < OpenWFE::ProcessDefinition
-      
+
       sequence do
         jabber
         echo 'done.'
@@ -139,7 +139,7 @@ class EtJabberTest < Test::Unit::TestCase
 
     pdef = <<-EOF
     class JabberParticipant0 < OpenWFE::ProcessDefinition
-      
+
       sequence do
         echo '${f:foo}'
         jabber :wait_for_reply => true
@@ -173,10 +173,10 @@ class EtJabberTest < Test::Unit::TestCase
       flunk "timeout waiting for messages"
     end
 
-    wi = OpenWFE::InFlowWorkItem.from_h( JSON.parse( messages.first.body ) )
+    wi = OpenWFE::InFlowWorkItem.from_h( ActiveSupport::JSON.decode( messages.first.body ) )
     wi.attributes['foo'] = "bar"
 
-    @client2.deliver( @jid1, wi.to_h.to_json )
+    @client2.deliver( @jid1, ActiveSupport::JSON.encode( wi.to_h ) )
 
     wait( fei )
 
