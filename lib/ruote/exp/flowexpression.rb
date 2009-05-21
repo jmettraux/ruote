@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -172,17 +172,17 @@ module Ruote
     # variables
     #++
 
-    #ENGINE_LEVEL_VAR = /^\/\/[^\/ ]+/
-    PROCESS_LEVEL_VAR = /^\/([^\/ ]+)/
+    # Looks up the value of a variable in expression tree
+    # (seen from a leave, it looks more like a stack than a tree)
+    #
+    def lookup_variable (var, prefix=nil)
 
-    def lookup_variable (var)
+      #p [ :lv, var, prefix, @variables ]
 
-      #p [ :lv, var, @variables ]
+      var, prefix = split_prefix(var, prefix)
 
-      if m = PROCESS_LEVEL_VAR.match(var)
-
-        return expstorage.root_expression(wfid).lookup_variable(m[1])
-      end
+      return parent.lookup_variable(var, prefix) \
+        if @parent_id && prefix.length > 0
 
       if @variables
 
@@ -191,7 +191,7 @@ module Ruote
 
       elsif @parent_id
 
-        return parent.lookup_variable(var)
+        return parent.lookup_variable(var, prefix)
 
       #else # engine level
       end
@@ -199,13 +199,15 @@ module Ruote
       nil
     end
 
-    def set_variable (var, val)
+    # Sets a variable to a given value.
+    # (will set at the appropriate level).
+    #
+    def set_variable (var, val, prefix=nil)
 
-      if m = PROCESS_LEVEL_VAR.match(var)
+      var, prefix = split_prefix(var, prefix)
 
-        expstorage.root_expression(wfid).set_variable(m[1], var)
-        return
-      end
+      return parent.set_variable(var, val, prefix) \
+        if @parent_id && prefix.length > 0
 
       if @variables
 
@@ -216,13 +218,29 @@ module Ruote
 
       elsif @parent_id
 
-        parent.set_variable(var, val)
+        parent.set_variable(var, val, prefix)
 
       #else # should not happen
       end
     end
 
     protected
+
+    VAR_PREFIX_REGEX = /^(\/*)/
+
+    # Used by lookup_variable and set_variable to extract the
+    # prefix in a variable name
+    #
+    def split_prefix (var, prefix)
+
+      if (not prefix)
+        m = VAR_PREFIX_REGEX.match(var)
+        prefix = m ? m[1][0, 2] : ''
+        var = var[prefix.length..-1]
+      end
+
+      [ var, prefix ]
+    end
 
     def apply_child (child_index, workitem)
 

@@ -144,6 +144,7 @@ module FunctionalBase
     #expcount = @engine.expstorage.size
     #return if expcount == 1
 
+    puts
     puts '-' * 80
     puts 'too many expressions left in storage'
     puts

@@ -11,7 +11,21 @@ require File.dirname(__FILE__) + '/base'
 class EftSubprocessTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_subprocess
+  def test_subprocess_ref
+
+    pdef = Ruote.process_definition do
+      subprocess :ref => 'sub0'
+      define :sub0 do
+        echo 'a'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, 'a'
+  end
+
+  def test_subprocess_att_text
 
     pdef = Ruote.process_definition do
       subprocess 'sub0'
@@ -25,21 +39,7 @@ class EftSubprocessTest < Test::Unit::TestCase
     assert_trace pdef, 'a'
   end
 
-  def test_subprocess_ref
-
-    pdef = Ruote.process_definition do
-      subprocess :ref => 'sub0'
-      define :sub0 do
-        echo 'a'
-      end
-    end
-
-    noisy
-
-    assert_trace pdef, 'a'
-  end
-
-  def test_subprocess_implicit
+  def test_subprocess_exp_name
 
     pdef = Ruote.process_definition do
       sub0

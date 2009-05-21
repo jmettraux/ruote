@@ -84,16 +84,30 @@ module Ruote
       end
     end
 
-    def launch_sub (pos, tree, parent_id, workitem)
+    def launch_sub (pos, tree, parent, workitem)
 
-      i = parent_id.dup
-      i.wfid = "#{i.wfid}_XXX"
+      i = parent.fei.dup
+      i.wfid = "#{i.wfid}_#{get_next_sub_id(parent)}"
       i.expid = pos
 
-      apply(tree, i, parent_id, workitem, {})
+      apply(tree, i, parent.fei, workitem, {})
     end
 
     protected
+
+    def get_next_sub_id (parent)
+
+      prefix, last_sub_id = parent.lookup_variable('/__next_sub_id__')
+
+      prefix ||= ''
+      last_sub_id ||= -1
+
+      last_sub_id = last_sub_id + 1
+
+      parent.set_variable('/__next_sub_id__', [ prefix, last_sub_id ])
+
+      "#{prefix}#{last_sub_id}"
+    end
 
     def receive (eclass, emsg, eargs)
 

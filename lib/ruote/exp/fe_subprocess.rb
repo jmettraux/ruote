@@ -43,11 +43,7 @@ module Ruote
 
       raise "no subprocess named '#{ref}' found" unless pos
 
-      #i = @fei.dup
-      #i.expid = "#{i.expid}_0"
-      #pool.send(:apply, tree, i, @fei, workitem, {})
-
-      pool.launch_sub(pos, tree, @fei, workitem)
+      pool.launch_sub(pos, tree, self, workitem)
     end
   end
 end
