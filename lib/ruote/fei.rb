@@ -30,6 +30,9 @@ module Ruote
 
   class FlowExpressionId
 
+    CHILD_SEP = '_'
+    SUBP_SEP = '_'
+
     attr_accessor :engine_id
     attr_accessor :wfid
     attr_accessor :expid
@@ -53,25 +56,25 @@ module Ruote
 
     def child_id
 
-      @expid.split('_').last.to_i
+      @expid.split(CHILD_SEP).last.to_i
     end
 
     def new_child_fei (child_index)
 
       cfei = self.dup
-      cfei.expid = "#{@expid}_#{child_index}"
+      cfei.expid = [ @expid, CHILD_SEP, child_index ].join
 
       cfei
     end
 
     def parent_wfid
 
-      @wfid.split('|').first
+      @wfid.split(SUBP_SEP).first
     end
 
     def sub_wfid
 
-      ss = @wfid.split('|')
+      ss = @wfid.split(SUBP_SEP)
       ss.size > 1 ? ss.last : nil
     end
 

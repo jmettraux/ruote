@@ -84,6 +84,15 @@ module Ruote
       end
     end
 
+    def launch_sub (pos, tree, parent_id, workitem)
+
+      i = parent_id.dup
+      i.wfid = "#{i.wfid}_XXX"
+      i.expid = pos
+
+      apply(tree, i, parent_id, workitem, {})
+    end
+
     protected
 
     def receive (eclass, emsg, eargs)

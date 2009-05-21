@@ -36,13 +36,18 @@ module Ruote
     def apply (workitem)
 
       ref = attribute(:ref, workitem)
-      tree = lookup_variable(ref)
 
-      # this is nice, but what about visualization ???
+      raise "no subprocess referred in #{tree}" unless ref
 
-      i = @fei.dup
-      i.expid = "#{i.expid}_0"
-      pool.send(:apply, tree, i, @fei, workitem, {})
+      pos, tree = lookup_variable(ref)
+
+      raise "no subprocess named '#{ref}' found" unless pos
+
+      #i = @fei.dup
+      #i.expid = "#{i.expid}_0"
+      #pool.send(:apply, tree, i, @fei, workitem, {})
+
+      pool.launch_sub(pos, tree, @fei, workitem)
     end
   end
 end

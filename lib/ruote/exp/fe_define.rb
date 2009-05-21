@@ -42,7 +42,10 @@ module Ruote
 
       # TODO : what if no name ??
 
-      set_variable(name, tree)
+      set_variable(name, [ fei.expid, tree ])
+        #
+        # fei.expid : keeping track of the expid/branch for the subprocess
+        #             (so that graphical representations match)
 
       reply_to_parent(workitem)
     end

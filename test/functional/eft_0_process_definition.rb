@@ -38,7 +38,9 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
 
     ps = @engine.process_status(wfid)
 
-    assert_equal({"sub0"=>["sequence", {"name"=>"sub0"}, []]}, ps.variables)
+    assert_equal(
+      {"sub0"=>["0_0", ["sequence", {"name"=>"sub0"}, []]]},
+      ps.variables)
   end
 
   #def test_define_implicit_name

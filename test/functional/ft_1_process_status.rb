@@ -111,7 +111,8 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process_status(wfid)
 
     assert_equal(
-      {"sub0"=>["sequence", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]]},
+      {"sub0" => [
+        "0_0", ["sequence", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]]]},
       ps.variables)
 
     assert_equal(
