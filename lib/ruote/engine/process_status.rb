@@ -65,10 +65,55 @@ module Ruote
       root_expression.attributes['revision']
     end
 
+    def original_tree
+
+      root_expression.original_tree
+    end
+
     def to_s
 
       "(process_status wfid '#{wfid}', expressions #{@expressions.size})"
     end
+
+    def current_tree
+
+      h = Ruote.decompose_tree(original_tree)
+
+      @expressions.sort { |e0, e1|
+        e0.fei.expid <=> e1.fei.expid
+      }.each { |e|
+        h.merge!(Ruote.decompose_tree(e.tree, e.fei.expid))
+      }
+
+      Ruote.recompose_tree(h)
+    end
+  end
+
+  def self.decompose_tree (t, pos='0', h={})
+
+    h[pos] = t[0, 2]
+    t[2].each_with_index { |c, i| decompose_tree(c, "#{pos}_#{i}", h) }
+    h
+  end
+
+  def self.recompose_tree (h, pos='0')
+
+    t = h[pos]
+
+    return nil unless t
+
+    t << []
+
+    i = 0
+
+    loop do
+      tt = recompose_tree(h, "#{pos}_#{i}")
+      break unless tt
+      t.last << tt
+      i = i + 1
+    end
+
+    t
   end
 end
 

@@ -41,7 +41,7 @@ module Ruote
 
     def apply (workitem)
 
-      @participant_name = @tree[1]['ref']
+      @participant_name = attribute(:ref, workitem)
 
       participant = plist.lookup(@participant_name)
 

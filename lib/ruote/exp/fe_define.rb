@@ -36,13 +36,13 @@ module Ruote
 
     def apply (workitem)
 
-      t = self.class.reorganize(expmap, @tree)
+      self.tree = self.class.reorganize(expmap, tree)
 
       name = attribute(:name, workitem) || attribute_text(workitem)
 
       # TODO : what if no name ??
 
-      set_variable(name, t)
+      set_variable(name, tree)
 
       reply_to_parent(workitem)
     end

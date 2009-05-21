@@ -20,16 +20,12 @@ class FtProcessStatusTest < Test::Unit::TestCase
     end
 
     @engine.register_participant :alpha, Ruote::HashParticipant
-
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
-
     wait
-
     ps = @engine.process_status(wfid)
 
     assert_equal 'my process', ps.definition_name
     assert_equal nil, ps.definition_revision
-
     assert_equal({}, ps.variables)
   end
 
@@ -43,16 +39,92 @@ class FtProcessStatusTest < Test::Unit::TestCase
     end
 
     @engine.register_participant :alpha, Ruote::HashParticipant
-
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
-
     wait
-
     ps = @engine.process_status(wfid)
 
     assert_equal 'my process', ps.definition_name
-
     assert_equal({ 'toto' => 'nada' }, ps.variables)
+  end
+
+  def test_process_status_tree
+
+    pdef = Ruote.process_definition 'my process' do
+      sequence do
+        echo 'ok'
+        participant :ref => :alpha
+      end
+    end
+
+    @engine.register_participant :alpha, Ruote::HashParticipant
+    wfid = @engine.launch(pdef)
+    wait
+    ps = @engine.process_status(wfid)
+
+    assert_equal(
+      ["sequence", {"my process"=>nil}, [
+        ["sequence", {}, [
+          ["echo", {"ok"=>nil}, []],
+          ["participant", {"ref"=>:alpha}, []]]]]],
+      ps.current_tree)
+
+    assert_equal(
+      ["sequence", {"my process"=>nil}, [
+        ["sequence", {}, [
+          ["echo", {"ok"=>nil}, []],
+          ["participant", {"ref"=>:alpha}, []]]]]],
+      ps.original_tree)
+
+    #
+    # tinkering with trees ...
+
+    e = ps.expressions.last
+    e.tree = [ 'participant', { 'ref' => :bravo }, [] ]
+
+    assert_equal(
+      ["sequence", {"my process"=>nil}, [
+        ["sequence", {}, [
+          ["echo", {"ok"=>nil}, []],
+          ["participant", {"ref"=>:bravo}, []]]]]],
+      ps.current_tree)
+
+    assert_equal(
+      ["sequence", {"my process"=>nil}, [
+        ["sequence", {}, [
+          ["echo", {"ok"=>nil}, []],
+          ["participant", {"ref"=>:alpha}, []]]]]],
+      ps.original_tree)
+  end
+
+  def test_process_status_tree_when_define_rewrites_it
+
+    pdef = Ruote.process_definition 'my process' do
+      participant :ref => :alpha
+      define 'sub0' do
+        echo 'meh'
+      end
+    end
+
+    @engine.register_participant :alpha, Ruote::HashParticipant
+    wfid = @engine.launch(pdef)
+    wait
+    ps = @engine.process_status(wfid)
+
+    assert_equal(
+      {"sub0"=>["sequence", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]]},
+      ps.variables)
+
+    assert_equal(
+      ["sequence", {"my process"=>nil}, [
+        ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]],
+        ["participant", {"ref"=>:alpha}, []]]],
+      ps.current_tree)
+
+    assert_equal(
+      ["sequence", {"my process"=>nil}, [
+        ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]],
+        ["participant", {"ref"=>:alpha}, []]]],
+      ps.original_tree)
   end
 end
 

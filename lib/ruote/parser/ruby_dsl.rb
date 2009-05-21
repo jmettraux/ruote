@@ -66,7 +66,7 @@ module Ruote
       h = attributes.inject({}) { |h, a|
         a.is_a?(Hash) ? h.merge!(a) : h[a] = nil
         h
-      }.inject ({}) { |h, (k, v)|
+      }.inject({}) { |h, (k, v)|
         h[k.to_s] = v
         h
       }

@@ -36,10 +36,10 @@ module Ruote
     attr_accessor :fei
     attr_accessor :parent_id
 
-    attr_accessor :tree
-    attr_accessor :children
-
+    attr_accessor :original_tree
     attr_accessor :variables
+
+    attr_accessor :children
 
 
     def initialize (fei, parent_id, tree, variables)
@@ -47,7 +47,9 @@ module Ruote
       @fei = fei
       @parent_id = parent_id
 
-      @tree = tree.dup
+      @original_tree = tree.dup
+      @updated_tree = nil
+
       @children = []
 
       @variables = variables
@@ -57,24 +59,40 @@ module Ruote
       expstorage[@parent_id]
     end
 
+    #--
+    # tree
+    #++
+
+    def tree
+      @updated_tree || @original_tree
+    end
+
+    def tree= (t)
+      @updated_tree = t
+    end
+
     def name
-      @tree[0]
+      tree[0]
     end
 
     def attributes
-      @tree[1]
+      tree[1]
     end
 
-    def raw_children
-      @tree[2]
+    def tree_children
+      tree[2]
     end
 
     def attribute_text (workitem)
 
-      text = @tree[1].keys.find { |k| @tree[1][k] == nil }
+      text = attributes.keys.find { |k| attributes[k] == nil }
 
       Ruote.dosub(text.to_s, self, workitem)
     end
+
+    #--
+    # apply/reply/cancel
+    #++
 
     # The default implementation : replies to the parent expression
     #
@@ -122,7 +140,7 @@ module Ruote
 
     def has_attribute (*args)
 
-      args.each { |a| a = a.to_s; return a if @tree[1][a] != nil }
+      args.each { |a| a = a.to_s; return a if attributes[a] != nil }
 
       nil
     end
@@ -135,7 +153,7 @@ module Ruote
       escape = options[:escape]
       string = options[:to_s] || options[:string]
 
-      v = @tree[1][n]
+      v = attributes[n]
 
       v = if v == nil
         default

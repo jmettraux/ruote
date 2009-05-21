@@ -13,9 +13,9 @@
 [o] test logger always on for tests (in-memory only)
 [o] NullParticipant
 [o] NoOpParticipant
-
 [o] rufus-dollar
 [o] variables in ProcessStatus (process level only)
+[o] ProcessStatus#tree
 
 [o] subprocess binding
 [ ] subprocess lookup
@@ -51,6 +51,4 @@
 
 [ ] workitem.__result__
 [ ] smart lookup ?
-
-[ ] ProcessStatus#tree
 

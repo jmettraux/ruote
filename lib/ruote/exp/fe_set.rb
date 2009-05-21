@@ -57,7 +57,7 @@ module Ruote
       else
 
         raise ArgumentError.new(
-          "missing a variable or field target in #{@tree.inspect}")
+          "missing a variable or field target in #{tree.inspect}")
       end
 
       reply_to_parent(workitem)
