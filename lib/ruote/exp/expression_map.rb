@@ -48,6 +48,7 @@ module Ruote
       add(Ruote::EchoExpression)
       add(Ruote::ParticipantExpression)
       add(Ruote::SetExpression)
+      add(Ruote::SubprocessExpression)
     end
 
     # Returns the expression class for the given expression name

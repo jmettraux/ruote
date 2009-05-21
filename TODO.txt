@@ -44,3 +44,13 @@
 
 [ ] participants stop
 
+[ ] part/sub timeout (with Andrew's at)
+[ ] part/sub conditional (all expressions ? no, there's 'if')
+
+[ ] define without name (__result__)
+
+[ ] workitem.__result__
+[ ] smart lookup ?
+
+[ ] ProcessStatus#tree
+

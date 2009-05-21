@@ -159,6 +159,8 @@ module Ruote
 
     def lookup_variable (var)
 
+      #p [ :lv, var, @variables ]
+
       if m = PROCESS_LEVEL_VAR.match(var)
 
         return expstorage.root_expression(wfid).lookup_variable(m[1])

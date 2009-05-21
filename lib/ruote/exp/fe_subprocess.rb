@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,39 +22,27 @@
 # Made in Japan.
 #++
 
-
 require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
-  class DefineExpression < FlowExpression
+  class SubprocessExpression < FlowExpression
 
-    is_definition
+    names :subprocess
 
-    names :define, :process_definition, :workflow_definition
+    # TODO : make conditional
 
     def apply (workitem)
 
-      t = self.class.reorganize(expmap, @tree)
+      ref = attribute(:ref, workitem)
+      tree = lookup_variable(ref)
 
-      name = attribute(:name, workitem) || attribute_text(workitem)
+      # this is nice, but what about visualization ???
 
-      # TODO : what if no name ??
-
-      set_variable(name, t)
-
-      reply_to_parent(workitem)
-    end
-
-    # Used by instances of this class and also the expression pool,
-    # when launching a new process instance.
-    #
-    def self.reorganize (expmap, tree)
-
-      definitions, bodies = tree[2].partition { |b| expmap.is_definition?(b) }
-
-      [ 'sequence', tree[1], definitions + bodies ]
+      i = @fei.dup
+      i.expid = "#{i.expid}_0"
+      pool.send(:apply, tree, i, @fei, workitem, {})
     end
   end
 end

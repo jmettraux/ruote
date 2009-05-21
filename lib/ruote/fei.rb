@@ -23,6 +23,9 @@
 #++
 
 
+require 'ruote/util/misc'
+
+
 module Ruote
 
   class FlowExpressionId
@@ -78,6 +81,13 @@ module Ruote
         fei.instance_variable_set("@#{k}", h[k.to_sym] || h[k])
         fei
       end
+    end
+
+    # Returns a complete (deep) copy of this FlowExpressionId instance.
+    #
+    def dup
+
+      Ruote.fulldup(self)
     end
   end
 end

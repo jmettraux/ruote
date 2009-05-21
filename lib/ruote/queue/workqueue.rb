@@ -136,7 +136,7 @@ module Ruote
   #end
   #++
 
-  # Works well when IO is involved (this mean, almost always)
+  # Works well when IO is involved (this means, almost always)
   #
   class EmWorkQueue < WorkQueue
 
