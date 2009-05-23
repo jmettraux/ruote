@@ -26,21 +26,17 @@
 module OpenWFE
 
   #
-  # A container for the from_json() method
+  # A utility module to assist with JSON encoding/decoding using
+  # pluggable JSON backends provided by #OpenWFE::Json::Backend.
   #
   module Json
 
+    # See #decode
     def self.from_json (text)
 
-      return JSON.parse(text) \
-        if defined?(JSON)
+      # DEPRECATED : Use decode()
 
-      # WARNING : ActiveSupport is quite permissive...
-
-      return ActiveSupport::JSON.decode(text) \
-        if defined?(ActiveSupport::JSON)
-
-      nil
+      self.decode( text )
     end
 
     #
@@ -48,7 +44,168 @@ module OpenWFE
     #
     def self.as_h (h_or_json)
 
-      h_or_json.is_a?(Hash) ? h_or_json : from_json(h_or_json)
+      h_or_json.is_a?(Hash) ? h_or_json : decode(h_or_json)
+    end
+
+    # JSON encode the provided object using a pluggable JSON backend
+    def self.encode( obj )
+      Backend.proxy.encode( obj )
+    end
+
+    # Decode the provided JSON string using a pluggable JSON backend
+    def self.decode( json )
+      Backend.proxy.decode( json )
+    end
+
+    #
+    # Support for dynamically adjustable JSON backends in
+    # OpenWFE::Json.encode and OpenWFE::Json.decode.
+    #
+    # In order the following JSON backends are attempted:
+    #
+    # * JSON          - json/json_pure gems
+    # * ActiveSupport - ActiveSupport::JSON
+    #
+    # Your prefered JSON backend can be set using #prefered which
+    # takes the backend name as a string. If the prefered backend
+    # cannot be loaded, we'll fallback to loading the backends in
+    # order of priority.
+    #
+    # If no backends are available, a #LoadError will be thrown once
+    # any JSON encoding/decoding is attempted.
+    #
+    class Backend
+
+      # Where keep our available backends
+      @available_backends = nil
+
+      # Our list of backend options, in priority
+      @priorities = ['JSON', 'ActiveSupport']
+
+      # Our delegations map
+      @delegates = {
+        'JSON' => { :encode => 'dump', :decode => 'parse' },
+        'ActiveSupport' => { :encode => 'encode', :decode => 'decode', :class => 'ActiveSupport::JSON' }
+      }
+
+      # Our proxy
+      @proxy
+
+      class << self
+
+        attr_reader :priorities, :delegates
+
+        # String array of the available backends on the system
+        def available
+
+          self.load_backends
+
+          @available_backends
+        end
+
+        # A proxy object that delegates the encoding/decoding to the
+        # appropriate backend. Will raise a LoadError if no backends
+        # are available on the system.
+        def proxy
+          b = self.backend
+
+          raise LoadError, 'No supported JSON backend detected' if b.nil?
+
+          @proxy ||= BackendProxy.new( b )
+        end
+
+        # Return the first available backend, in order of priority, or
+        # nil if none are available
+        def backend
+
+          self.load_backends.first
+        end
+
+        # Set the preferred backend, overwriting the order of
+        # priority. If the preferred backend cannot be used, fallback
+        # to the backend provided by #backend.
+        def prefered=( name )
+
+          self.load_backends
+
+          if @available_backends && @available_backends.include?( name )
+            @proxy = BackendProxy.new( name )
+          end
+        end
+
+        protected
+
+        def load_backends
+          return @available_backends unless @available_backends.nil?
+
+          @priorities.each do |lib|
+            begin
+              next if lib == 'JSON' && RUBY_VERSION.to_f >= 1.9
+
+              require lib.downcase
+              @available_backends ||= []
+              @available_backends << lib
+            rescue LoadError
+              # Do nothing
+            end
+          end
+
+          if RUBY_VERSION.to_f >= 1.9
+            @available_backends.unshift 'JSON'
+          end
+
+          @available_backends
+        end
+      end
+    end
+
+    # Simple delegator that maps #encode and #decode to the selected
+    # backend via the +delegates+ attribute on #Backend.
+    class BackendProxy #:nodoc:
+
+      attr_reader :backend, :klass
+
+      def initialize( backend )
+        @backend = backend
+
+        klass = Backend.delegates[@backend][:class] || backend
+        @klass = self.constantize( klass )
+      end
+
+      def encode( object )
+        @klass.send( Backend.delegates[@backend][:encode], object )
+      end
+
+      def decode( string )
+        @klass.send( Backend.delegates[@backend][:decode], string )
+      end
+
+      protected
+
+      # Shameless lifted from the ActiveSupport::Inflector
+      if Module.method(:const_get).arity == 1
+        def constantize(camel_cased_word)
+          names = camel_cased_word.split('::')
+          names.shift if names.empty? || names.first.empty?
+
+          constant = Object
+          names.each do |name|
+            constant = constant.const_defined?(name) ? constant.const_get(name) : nil
+          end
+          constant
+        end
+      else
+        def constantize(camel_cased_word) #:nodoc:
+          names = camel_cased_word.split('::')
+          names.shift if names.empty? || names.first.empty?
+
+          constant = Object
+          names.each do |name|
+            constant = constant.const_get(name, false) || nil
+          end
+          constant
+        end
+      end
     end
   end
 end
