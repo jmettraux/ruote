@@ -83,7 +83,7 @@ class RepresentationsHashTest < Test::Unit::TestCase
     wi0.fei = new_fei
     wi0.attributes['data'] = (0..5).to_a
 
-    s = wi0.to_h.to_json
+    s = OpenWFE::Json.encode( wi0.to_h )
     #puts s
 
     #wi1 = OpenWFE::InFlowWorkItem.from_h(JSON.parse(s))

@@ -49,7 +49,7 @@ class TestJSON < Test::Unit::TestCase
 
     json = OpenWFE::Json::Backend.delegates['JSON']
 
-    assert_equal json[:encode], 'dump'
+    assert_equal json[:encode], 'generate'
     assert_equal json[:decode], 'parse'
   end
 

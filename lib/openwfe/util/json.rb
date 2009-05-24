@@ -84,7 +84,7 @@ module OpenWFE
 
       # Our delegations map
       @delegates = {
-        'JSON' => { :encode => 'dump', :decode => 'parse' },
+        'JSON' => { :encode => 'generate', :decode => 'parse' },
         'ActiveSupport' => { :encode => 'encode', :decode => 'decode', :class => 'ActiveSupport::JSON' }
       }
 
@@ -140,8 +140,6 @@ module OpenWFE
 
           @priorities.each do |lib|
             begin
-              next if lib == 'JSON' && RUBY_VERSION.to_f >= 1.9
-
               require lib.downcase
               @available_backends ||= []
               @available_backends << lib
