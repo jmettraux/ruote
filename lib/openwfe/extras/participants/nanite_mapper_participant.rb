@@ -22,7 +22,7 @@
 # Made in Africa. Kenneth Kalmer of opensourcery.co.za
 #++
 
-require 'activesupport'
+require 'openwfe/util/json'
 require 'nanite'
 
 module OpenWFE
@@ -98,13 +98,13 @@ module OpenWFE
         end
 
         ldebug { "sending workitem to #{resource}" }
-        Nanite.request( resource, ActiveSupport::JSON.encode( workitem.to_h ), workitem.params ) do |res|
+        Nanite.request( resource, OpenWFE::Json.encode( workitem.to_h ), workitem.params ) do |res|
           ldebug { "response from nanite: #{res.inspect}" }
 
           # res = { "nanite-name" => "return value" }
           json = res.values.first
 
-          hash = ActiveSupport::JSON.decode(json)
+          hash = OpenWFE::Json.decode(json)
           wi = OpenWFE.workitem_from_h( hash )
           reply_to_engine( wi )
         end

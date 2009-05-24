@@ -173,10 +173,10 @@ class EtAmqpTest < Test::Unit::TestCase
       flunk "Timeout waiting for message"
     end
 
-    wi = OpenWFE::InFlowWorkItem.from_h( ActiveSupport::JSON.decode( @msg ) )
+    wi = OpenWFE::InFlowWorkItem.from_h( OpenWFE::Json.decode( @msg ) )
     wi.attributes['foo'] = "bar"
 
-    MQ.queue( wi.attributes['reply_queue'] ).publish( ActiveSupport::JSON.encode( wi.to_h ) )
+    MQ.queue( wi.attributes['reply_queue'] ).publish( OpenWFE::Json.encode( wi.to_h ) )
 
     wait( fei )
 

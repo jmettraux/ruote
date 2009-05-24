@@ -122,7 +122,7 @@ module OpenWFE
           OpenWFE::Xml.workitem_from_xml( msg )
         # Assume JSON encoded Hash
         else
-          hash = ActiveSupport::JSON.decode(msg)
+          hash = OpenWFE::Json.decode(msg)
           OpenWFE.workitem_from_h( hash )
         end
       end

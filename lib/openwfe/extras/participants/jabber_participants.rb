@@ -27,7 +27,6 @@ require 'yaml'
 
 require 'openwfe/util/xml'
 require 'openwfe/util/json'
-require 'activesupport'
 
 require 'openwfe/extras/misc/jabber_common'
 
@@ -133,7 +132,7 @@ module OpenWFE
         h['sender_jid'] = self.class.jid
         h['reply_jid'] = JabberListener.jid
 
-        ActiveSupport::JSON.encode( h )
+        OpenWFE::Json.encode( h )
       end
 
     end

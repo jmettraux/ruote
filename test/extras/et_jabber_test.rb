@@ -11,7 +11,7 @@ require File.dirname(__FILE__) + '/base'
 
 require 'openwfe/extras/participants/jabber_participants'
 require 'openwfe/extras/listeners/jabber_listeners'
-require 'json'
+require 'openwfe/util/json'
 
 class EtJabberTest < Test::Unit::TestCase
   include FunctionalBase
@@ -173,10 +173,10 @@ class EtJabberTest < Test::Unit::TestCase
       flunk "timeout waiting for messages"
     end
 
-    wi = OpenWFE::InFlowWorkItem.from_h( ActiveSupport::JSON.decode( messages.first.body ) )
+    wi = OpenWFE::InFlowWorkItem.from_h( OpenWFE::Json.decode( messages.first.body ) )
     wi.attributes['foo'] = "bar"
 
-    @client2.deliver( @jid1, ActiveSupport::JSON.encode( wi.to_h ) )
+    @client2.deliver( @jid1, OpenWFE::Json.encode( wi.to_h ) )
 
     wait( fei )
 

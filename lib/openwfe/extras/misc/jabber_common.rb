@@ -23,9 +23,7 @@
 #++
 
 
-require 'activesupport'
 require 'xmpp4r-simple'
-
 
 module OpenWFE
   module Extras
@@ -38,20 +36,20 @@ module OpenWFE
 
         base.instance_eval do
           # JabberID to use
-          @@jabber_id = nil
-          cattr_accessor :jabber_id
+          @jabber_id = nil
 
           # Jabber password
-          @@password = nil
-          cattr_accessor :password
+          @password = nil
 
           # Jabber resource
-          @@resource = nil
-          cattr_accessor :resource
+          @resource = nil
 
           # Contacts that are always included in the participants roster
-          @@contacts = []
-          cattr_accessor :contacts
+          @contacts = []
+
+          class << self
+            attr_accessor :jabber_id, :password, :resource, :contacts
+          end
 
           def jid
             self.jabber_id.nil? ? nil : self.jabber_id + '/' + self.resource

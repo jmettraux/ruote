@@ -8,7 +8,6 @@
 require File.dirname(__FILE__) + '/base'
 
 require 'openwfe/extras/participants/nanite_mapper_participant'
-require 'activesupport'
 
 class TestAgent
   include Nanite::Actor
@@ -20,13 +19,13 @@ class TestAgent
   end
 
   def bar( payload )
-    h = JSON.parse( payload )
+    h = OpenWFE::Json.decode( payload )
     h['attributes']['foo'] = 'BAR'
-    ActiveSupport::JSON.encode( h )
+    OpenWFE::Json.encode( h )
   end
 
   def decode( workitem )
-    ActiveSupport::JSON.decode(workitem)
+    OpenWFE::Json.decode(workitem)
   end
 end
 

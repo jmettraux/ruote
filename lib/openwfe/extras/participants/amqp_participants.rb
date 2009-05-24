@@ -24,7 +24,7 @@
 
 require 'yaml'
 require 'mq'
-require 'activesupport'
+require 'openwfe/util/json'
 
 module OpenWFE
   module Extras
@@ -172,7 +172,7 @@ module OpenWFE
       # Encode (and extend) the workitem as JSON
       def encode_workitem( wi )
         wi.attributes['reply_queue'] = AMQPListener.queue
-        ActiveSupport::JSON.encode( wi.to_h )
+        OpenWFE::Json.encode( wi.to_h )
       end
 
       def ensure_reactor!
