@@ -34,8 +34,7 @@ class EftLogTest < Test::Unit::TestCase
 
     assert_trace(pdef, '')
 
-    return if defined?(ActiveRecord)
-      # log format altered by ActiveRecord... Have to fix that one day
+    # p IO.read("logs/ruote.log")
 
     assert_equal 1, OpenWFE.grep("DEBUG .*log:0", "logs/ruote.log").size
     assert_equal 1, OpenWFE.grep('log:0', 'logs/ruote.log').size

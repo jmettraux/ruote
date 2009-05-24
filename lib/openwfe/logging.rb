@@ -84,6 +84,10 @@ module OpenWFE
           end
         end
 
+        # If somebody (ActiveSupport) changed the formatter, let's
+        # undo it.
+        $OWFE_LOG.formatter = Logger::Formatter.new unless $OWFE_LOG.formatter.class == Logger::Formatter 
+
         $OWFE_LOG.send level, &logblock
       end
 
