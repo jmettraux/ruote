@@ -63,8 +63,8 @@ module OpenWFE
     #
     # In order the following JSON backends are attempted:
     #
-    # * JSON          - json/json_pure gems
     # * ActiveSupport - ActiveSupport::JSON
+    # * JSON          - json/json_pure gems
     #
     # Your prefered JSON backend can be set using #prefered which
     # takes the backend name as a string. If the prefered backend
@@ -74,18 +74,27 @@ module OpenWFE
     # If no backends are available, a #LoadError will be thrown once
     # any JSON encoding/decoding is attempted.
     #
+    # IMPORTANT NOTE: ActiveSupport and the JSON gem don't play well
+    # together. If you have ActiveSupport loaded the backend cannot be
+    # changed to the JSON gem. Rather attempt to change the
+    # ActiveSupport::JSON backend ( ActiveSupport 2.3.3 )
+    #
     class Backend
 
-      # Where keep our available backends
+      # Where keep our selected backends
       @available_backends = nil
 
       # Our list of backend options, in priority
-      @priorities = ['JSON', 'ActiveSupport']
+      @priorities = ['ActiveSupport', 'JSON']
 
       # Our delegations map
       @delegates = {
-        'JSON' => { :encode => 'generate', :decode => 'parse' },
-        'ActiveSupport' => { :encode => 'encode', :decode => 'decode', :class => 'ActiveSupport::JSON' }
+        'JSON' => {
+          :encode => 'generate', :decode => 'parse'
+        },
+        'ActiveSupport' => {
+          :encode => 'encode', :decode => 'decode', :class => 'ActiveSupport::JSON'
+        }
       }
 
       # Our proxy
@@ -129,6 +138,10 @@ module OpenWFE
           self.load_backends
 
           if @available_backends && @available_backends.include?( name )
+            if name == 'JSON' && @available_backends.include?( 'ActiveSupport' )
+              name = 'ActiveSupport'
+            end
+
             @proxy = BackendProxy.new( name )
           end
         end
@@ -140,16 +153,15 @@ module OpenWFE
 
           @priorities.each do |lib|
             begin
+              next if lib == 'JSON' && defined?( ActiveSupport )
+
               require lib.downcase
               @available_backends ||= []
               @available_backends << lib
+
             rescue LoadError
               # Do nothing
             end
-          end
-
-          if RUBY_VERSION.to_f >= 1.9
-            @available_backends.unshift 'JSON'
           end
 
           @available_backends
@@ -168,6 +180,8 @@ module OpenWFE
 
         klass = Backend.delegates[@backend][:class] || backend
         @klass = self.constantize( klass )
+
+        raise ArgumentError, "Cannot find #{klass} to use as backend" if @klass.nil?
       end
 
       def encode( object )
@@ -180,7 +194,7 @@ module OpenWFE
 
       protected
 
-      # Shameless lifted from the ActiveSupport::Inflector
+      # Shamelessly lifted from the ActiveSupport::Inflector
       if Module.method(:const_get).arity == 1
         def constantize(camel_cased_word)
           names = camel_cased_word.split('::')
@@ -188,6 +202,7 @@ module OpenWFE
 
           constant = Object
           names.each do |name|
+            return if constant.nil?
             constant = constant.const_defined?(name) ? constant.const_get(name) : nil
           end
           constant
@@ -199,6 +214,7 @@ module OpenWFE
 
           constant = Object
           names.each do |name|
+            return if constant.nil?
             constant = constant.const_get(name, false) || nil
           end
           constant

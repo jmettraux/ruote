@@ -291,7 +291,7 @@ end
 
   def test_10
 
-    require 'json'
+    require 'openwfe/util/json'
 
     assert_equal(
       ["process-definition", {"name"=>"mydef", "revision"=>"0"}, ["alpha", {}, []]],

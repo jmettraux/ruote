@@ -9,7 +9,7 @@
 
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
-require 'json'
+require 'openwfe/util/json'
 
 require 'openwfe/util/json'
 require 'openwfe/representations'

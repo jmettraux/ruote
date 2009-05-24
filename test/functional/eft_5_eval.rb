@@ -9,7 +9,7 @@
 
 require File.dirname(__FILE__) + '/base'
 
-require 'json'
+require 'openwfe/util/json'
 
 
 class EftEvalTest < Test::Unit::TestCase
