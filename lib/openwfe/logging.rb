@@ -72,39 +72,42 @@ module OpenWFE
 
     private
 
-      def do_log (level, message, &block)
+    def do_log (level, message, &block)
 
-        return unless $OWFE_LOG
+      return unless $OWFE_LOG
 
-        logblock = lambda do
-          if block
-            "#{log_prepare(message)} - #{block.call}"
-          else
-            "#{log_prepare(message)}"
-          end
-        end
-
-        # If somebody (ActiveSupport) changed the formatter, let's
-        # undo it.
-        $OWFE_LOG.formatter = Logger::Formatter.new unless $OWFE_LOG.formatter.class == Logger::Formatter 
-
-        $OWFE_LOG.send level, &logblock
-      end
-
-      def log_prepare (message)
-
-        return log_author() unless message
-        "#{log_author} - #{message}"
-      end
-
-      def log_author
-
-        if respond_to?(:service_name)
-          "#{self.class} '#{self.service_name}'"
+      logblock = lambda do
+        if block
+          "#{log_prepare(message)} - #{block.call}"
         else
-          "#{self.class}"
+          "#{log_prepare(message)}"
         end
       end
+
+      # If somebody (ActiveSupport) changed the formatter, let's
+      # undo it.
+
+      if $OWFE_LOG.respond_to?(:formatter) && $OWFE_LOG.formatter.class == Logger::Formatter
+        $OWFE_LOG.formatter = Logger::Formatter.new
+      end
+
+      $OWFE_LOG.send(level, &logblock)
+    end
+
+    def log_prepare (message)
+
+      return log_author() unless message
+      "#{log_author} - #{message}"
+    end
+
+    def log_author
+
+      if respond_to?(:service_name)
+        "#{self.class} '#{self.service_name}'"
+      else
+        "#{self.class}"
+      end
+    end
 
   end
 
