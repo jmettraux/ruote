@@ -216,7 +216,6 @@ module OpenWFE
     #
     #   {:fullpath}/
     #
-    #
     def initialize (options={})
 
       self.application_context = options[:application_context]
@@ -228,6 +227,11 @@ module OpenWFE
         options[:fullpath] || File.join(get_work_directory, @path, @dirname)
 
       FileUtils.mkdir_p(@fullpath)
+    end
+
+    def [] (fei)
+
+      load_workitem(filename_for(fei))
     end
 
     def []= (fei, workitem)
