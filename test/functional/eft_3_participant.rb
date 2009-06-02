@@ -27,5 +27,35 @@ class EftParticipantTest < Test::Unit::TestCase
     assert_equal 1, logger.log.select { |e| e[1] == :dispatching }.size
     assert_equal 1, logger.log.select { |e| e[1] == :received }.size
   end
+
+  def test_participant_att_text
+
+    pdef = Ruote.process_definition do
+      participant :alpha
+    end
+
+    @engine.register_participant :alpha do |workitem|
+      @tracer << 'alpha'
+    end
+
+    #noisy
+
+    assert_trace pdef, 'alpha'
+  end
+
+  def test_participant_exp_name
+
+    pdef = Ruote.process_definition do
+      alpha
+    end
+
+    @engine.register_participant :alpha do |workitem|
+      @tracer << 'alpha'
+    end
+
+    #noisy
+
+    assert_trace pdef, 'alpha'
+  end
 end
 

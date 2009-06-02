@@ -19,7 +19,7 @@
 
 [o] subprocess binding
 [o] subprocess lookup
-[ ] participant lookup
+[o] participant lookup
 [ ] event : launch_sub ??
 
 [ ] wfid_gen : rufus-mnemo
@@ -30,8 +30,8 @@
 [ ] fs storage
 
 [ ] tag (which implies variables)
-[ ] emit event upon setting tag !
-[ ] emit event upon leaving tag
+[ ] event : upon setting tag !
+[ ] event : upon leaving tag
 
 [ ] on_error
 [ ] on_cancel

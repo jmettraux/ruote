@@ -41,9 +41,13 @@ module Ruote
 
     def apply (workitem)
 
-      @participant_name = attribute(:ref, workitem)
+      @participant_name = attribute(:ref, workitem) || attribute_text(workitem)
 
-      participant = plist.lookup(@participant_name)
+      @participant_name, participant = if @participant_name.is_a?(Array)
+        @participant_name
+      else
+        [ @participant_name, plist.lookup(@participant_name) ]
+      end
 
       raise(
         ArgumentError.new(

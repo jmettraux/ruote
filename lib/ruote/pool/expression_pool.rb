@@ -155,6 +155,8 @@ module Ruote
 
       if sub or part
 
+        part = [ exp_name, part ] if part
+
         tree = [
           part ? 'participant' : 'subprocess',
           { 'ref' => part || sub },
