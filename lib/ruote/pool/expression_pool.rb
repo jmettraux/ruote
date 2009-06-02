@@ -29,6 +29,9 @@ require 'ruote/queue/subscriber'
 
 module Ruote
 
+  #
+  # A kind of hub for expression activity (apply/reply and launch + cancel).
+  #
   class ExpressionPool
 
     include EngineContext
@@ -56,6 +59,9 @@ module Ruote
     #def reapply (fei)
     #end
 
+    # This method is called by expressions when applying one of the child
+    # expressions.
+    #
     def apply_child (exp, child_index, workitem)
 
       fei = exp.fei.new_child_fei(child_index)
@@ -63,6 +69,8 @@ module Ruote
       apply(exp.tree.last[child_index], fei, exp, workitem, nil)
     end
 
+    # Called by expressions when replying to their parent expression.
+    #
     def reply_to_parent (exp, workitem)
 
       wqueue.emit(:expressions, :delete, :fei => exp.fei)
@@ -84,6 +92,8 @@ module Ruote
       end
     end
 
+    # Called by the subprocess expression when launching a subprocess instance.
+    #
     def launch_sub (pos, tree, parent, workitem)
 
       i = parent.fei.dup
