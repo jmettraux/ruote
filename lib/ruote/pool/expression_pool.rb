@@ -131,14 +131,14 @@ module Ruote
       rescue Exception => e
 
         # TODO : implement on_error
+        #
+        #on_error = eargs[:expression].lookup_on(:error)
+        #p on_error.collect { |x| x.class }
 
         wqueue.emit(
           :errors,
           :s_expression_pool,
-          {
-            :error => e,
-            :message => [ :expressions, emsg, eargs ]
-          })
+          { :error => e, :message => [ :expressions, emsg, eargs ] })
       end
     end
 
@@ -170,7 +170,7 @@ module Ruote
 
       raise "unknown expression '#{exp_name}'" if not exp_class
 
-      exp = exp_class.new(fei, parent_id, tree, variables)
+      exp = exp_class.new(fei, parent_id, tree, variables, workitem)
 
       wqueue.emit(:expressions, :update, :expression => exp)
 

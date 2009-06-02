@@ -41,8 +41,11 @@ module Ruote
 
     attr_accessor :children
 
+    attr_accessor :on_cancel
+    attr_accessor :on_error
 
-    def initialize (fei, parent_id, tree, variables)
+
+    def initialize (fei, parent_id, tree, variables, workitem)
 
       @fei = fei
       @parent_id = parent_id
@@ -53,6 +56,11 @@ module Ruote
       @children = []
 
       @variables = variables
+
+      @on_cancel = attribute(:on_cancel, workitem)
+      @on_error = attribute(:on_error, workitem)
+        # not very happy with those two here...
+        # merge initialize / apply ?
     end
 
     def parent
@@ -166,6 +174,21 @@ module Ruote
       v = v.to_s if v and string
 
       v
+    end
+
+    #--
+    # on_cancel / on_error
+    #++
+
+    def lookup_on (type)
+
+      if on = self.send("on_#{type}")
+        [ self, on ]
+      elsif @parent_id
+        parent.lookup_on(type)
+      else
+        nil
+      end
     end
 
     #--

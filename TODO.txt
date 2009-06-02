@@ -32,7 +32,9 @@
 [ ] tag (which implies variables)
 [ ] event : upon setting tag !
 [ ] event : upon leaving tag
+[ ] undo / redo
 
+[ ] cancel
 [ ] on_error
 [ ] on_cancel
 
@@ -51,5 +53,5 @@
 [ ] define without name (__result__)
 
 [ ] workitem.__result__
-[ ] smart lookup ?
+[ ] smart lookup ? (?)
 
