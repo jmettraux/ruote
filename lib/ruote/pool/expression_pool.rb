@@ -60,7 +60,7 @@ module Ruote
 
       fei = exp.fei.new_child_fei(child_index)
 
-      apply(exp.tree.last[child_index], fei, exp.fei, workitem, nil)
+      apply(exp.tree.last[child_index], fei, exp, workitem, nil)
     end
 
     def reply_to_parent (exp, workitem)
@@ -90,7 +90,7 @@ module Ruote
       i.wfid = "#{i.wfid}_#{get_next_sub_id(parent)}"
       i.expid = pos
 
-      apply(tree, i, parent.fei, workitem, {})
+      apply(tree, i, parent, workitem, {})
     end
 
     protected
@@ -113,7 +113,7 @@ module Ruote
 
       if eclass == :expressions
 
-        apply_reply_exp(emsg, eargs) if emsg == :apply || emsg == :reply
+        call_exp(emsg, eargs) if emsg == :apply || emsg == :reply
 
       elsif eclass == :processes
 
@@ -122,7 +122,7 @@ module Ruote
       end
     end
 
-    def apply_reply_exp (emsg, eargs)
+    def call_exp (emsg, eargs)
 
       begin
 
@@ -142,13 +142,31 @@ module Ruote
       end
     end
 
-    def apply (tree, fei, parent_id, workitem, variables)
+    def apply (tree, fei, parent, workitem, variables)
 
-      # TODO : participant and subprocess lookup
+      # NOTE : orphaning will copy vars so parent == nil is OK.
 
-      exp_class = expmap.expression_class(tree.first)
+      parent_id = parent ? parent.fei : nil
 
-      raise "unknown expression '#{tree.first}'" if not exp_class
+      exp_name = tree.first
+
+      sub = parent ? parent.lookup_variable(exp_name) : nil
+      part = plist.lookup(exp_name)
+
+      if sub or part
+
+        tree = [
+          part ? 'participant' : 'subprocess',
+          { 'ref' => part || sub },
+          []
+        ]
+
+        exp_name = tree.first
+      end
+
+      exp_class = expmap.expression_class(exp_name)
+
+      raise "unknown expression '#{exp_name}'" if not exp_class
 
       exp = exp_class.new(fei, parent_id, tree, variables)
 

@@ -18,8 +18,9 @@
 [o] ProcessStatus#tree
 
 [o] subprocess binding
-[ ] subprocess lookup
+[o] subprocess lookup
 [ ] participant lookup
+[ ] event : launch_sub ??
 
 [ ] wfid_gen : rufus-mnemo
 
