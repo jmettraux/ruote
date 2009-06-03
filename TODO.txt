@@ -35,8 +35,8 @@
 [ ] undo / redo
 
 [o] cancel_process
-[ ] cancel
-[ ] on_error
+[o] cancel
+[o] on_error
 [ ] on_cancel
 
 [ ] forget

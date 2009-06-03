@@ -113,6 +113,8 @@ module Ruote
 
     protected
 
+    # Returns the next available sub id for the given expression.
+    #
     def get_next_sub_id (parent)
 
       prefix, last_sub_id = parent.lookup_variable('/__next_sub_id__')
@@ -130,6 +132,8 @@ module Ruote
     EXP_MESSAGES = %w[ apply reply cancel ].collect { |m| m.to_sym }
     #PROCESS_MESSAGES = %w[ launch cancel ].collect { |m| m.to_sym }
 
+    # Reacting upon :expressions and :processes events.
+    #
     def receive (eclass, emsg, eargs)
 
       if eclass == :expressions
@@ -144,6 +148,8 @@ module Ruote
       end
     end
 
+    # Calling apply/reply/cancel on an expression (called by #receive).
+    #
     def call_exp (emsg, eargs)
 
       begin
@@ -156,18 +162,42 @@ module Ruote
 
       rescue Exception => e
 
-        # TODO : implement on_error
-        #
-        #on_error = eargs[:expression].lookup_on(:error)
-        #p on_error.collect { |x| x.class }
-
-        wqueue.emit(
+        handle_on_error(emsg, eargs) or wqueue.emit(
           :errors,
           :s_expression_pool,
           { :error => e, :message => [ :expressions, emsg, eargs ] })
       end
     end
 
+    def handle_on_error (emsg, eargs)
+
+      return false if emsg == :cancel
+        # no error handling for error ocurring during :cancel
+
+      on_error = eargs[:expression].lookup_on(:error)
+
+      exp, handler = on_error
+
+      return false unless exp
+
+      wqueue.emit(
+        :processes, :on_error,
+        :fei => exp.fei, :handler => handler)
+
+      return false if handler == ''
+
+      cancel_expression(exp.fei)
+
+      apply(
+        [ handler, {}, [] ],
+        exp.fei,
+        exp.parent,
+        eargs[:workitem],
+        {})
+    end
+
+    # Applying a branch (creating an expression for it and applying it).
+    #
     def apply (tree, fei, parent, workitem, variables)
 
       # NOTE : orphaning will copy vars so parent == nil is OK.
