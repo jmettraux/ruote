@@ -180,33 +180,36 @@ module Ruote
       return false if emsg == :cancel
         # no error handling for error ocurring during :cancel
 
-      on_error = eargs[:expression].lookup_on(:error)
+      exp = eargs[:expression]
+      oe_exp = exp.lookup_on(:error)
 
-      exp = on_error
+      return false unless oe_exp
 
-      return false unless exp
+      handler = oe_exp.on_error.to_s
 
-      handler = exp.on_error.to_s
-
-      wqueue.emit(:processes, :on_error, :fei => exp.fei, :handler => handler)
+      wqueue.emit(
+        :processes, :on_error, :fei => oe_exp.fei, :handler => handler)
         # just a notification
 
       return false if handler == ''
 
-      cancel_expression(exp.fei, (handler == 'undo'))
+      cancel_expression(oe_exp.fei, (handler == 'undo'))
         # remove expression only if handler is 'undo'
 
       handler = handler.to_s
 
       if handler == 'undo'
 
-         reply_to_parent(exp, exp.applied_workitem)
+         reply_to_parent(oe_exp, oe_exp.applied_workitem)
 
       else # a proper handler or 'redo'
 
-        tree = handler == 'redo' ? exp.tree : [ handler, {}, [] ]
-
-        apply(tree, exp.fei, exp.parent, eargs[:workitem], {})
+        apply(
+          handler == 'redo' ? oe_exp.tree : [ handler, {}, [] ],
+          oe_exp.fei,
+          oe_exp.parent,
+          eargs[:workitem],
+          oe_exp.variables)
 
       end
 
@@ -231,7 +234,9 @@ module Ruote
 
       exp_name = tree.first
 
-      sub = parent ? parent.lookup_variable(exp_name) : nil
+      sub = variables ? variables[exp_name] : nil
+      sub ||= parent ? parent.lookup_variable(exp_name) : nil
+
       part = plist.lookup(exp_name)
 
       if sub or part
