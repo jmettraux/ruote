@@ -38,6 +38,13 @@ module Ruote
       @fei = nil
       @attributes = attributes
     end
+
+    # Returns a deep copy of this workitem instance.
+    #
+    def dup
+
+      Ruote.fulldup(self)
+    end
   end
 end
 

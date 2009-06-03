@@ -59,6 +59,8 @@ module FunctionalBase
   #
   def assert_trace (launch_thing, expected_trace, opts={})
 
+    expected_trace = expected_trace.join("\n") if expected_trace.is_a?(Array)
+
     wfid = @engine.launch(launch_thing, opts[:launch_opts] || {})
 
     wait_for(wfid, opts)

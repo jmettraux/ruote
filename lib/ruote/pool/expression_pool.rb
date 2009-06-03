@@ -176,21 +176,32 @@ module Ruote
 
       on_error = eargs[:expression].lookup_on(:error)
 
-      exp, handler = on_error
+      exp = on_error
 
       return false unless exp
 
-      wqueue.emit(
-        :processes, :on_error,
-        :fei => exp.fei, :handler => handler)
+      handler = exp.on_error.to_s
+
+      wqueue.emit(:processes, :on_error, :fei => exp.fei, :handler => handler)
+        # just a notification
 
       return false if handler == ''
 
       cancel_expression(exp.fei)
 
-      tree = handler.to_s == 'redo' ? exp.tree : [ handler, {}, [] ]
+      handler = handler.to_s
 
-      apply(tree, exp.fei, exp.parent, eargs[:workitem], {})
+      if handler == 'undo'
+
+         reply_to_parent(exp, exp.applied_workitem)
+
+      else # a proper handler or 'redo'
+
+        tree = handler == 'redo' ? exp.tree : [ handler, {}, [] ]
+        apply(tree, exp.fei, exp.parent, eargs[:workitem], {})
+      end
+
+      true # error was handled here.
     end
 
     # Applying a branch (creating an expression for it and applying it).

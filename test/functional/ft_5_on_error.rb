@@ -70,7 +70,24 @@ class FtOnErrorTest < Test::Unit::TestCase
       @tracer << 'done.'
     end
 
-    assert_trace(pdef, %w[ 1 2 done. ].join("\n"))
+    assert_trace(pdef, %w[ 1 2 done. ])
+  end
+
+  def test_on_error_undo
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
+        sequence :on_error => :undo do
+          echo 'b'
+          nemo
+          echo 'c'
+        end
+        echo 'd'
+      end
+    end
+
+    assert_trace(pdef, %w[ a b d ])
   end
 end
 

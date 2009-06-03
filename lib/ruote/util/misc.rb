@@ -51,7 +51,7 @@ module Ruote
     rescue TypeError => te
     end
 
-    if object.kind_of?(REXML::Element)
+    if object.is_a?(REXML::Element)
       d = REXML::Document.new object.to_s
       return d if object.kind_of?(REXML::Document)
       return d.root
@@ -62,9 +62,9 @@ module Ruote
 
     # some kind of collection ?
 
-    if object.kind_of?(Array)
+    if object.is_a?(Array)
       object.each { |i| o << fulldup(i) }
-    elsif object.kind_of?(Hash)
+    elsif object.is_a?(Hash)
       object.each { |k, v| o[fulldup(k)] = fulldup(v) }
     end
 

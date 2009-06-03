@@ -44,6 +44,8 @@ module Ruote
     attr_accessor :on_cancel
     attr_accessor :on_error
 
+    attr_accessor :applied_workitem
+
 
     def initialize (fei, parent_id, tree, variables, workitem)
 
@@ -61,6 +63,8 @@ module Ruote
       @on_error = attribute(:on_error, workitem)
         # not very happy with those two here...
         # merge initialize / apply ?
+
+      @applied_workitem = (@on_cancel || @on_error) ? workitem.dup : nil
     end
 
     # Returns the parent expression of this expression instance.
@@ -206,8 +210,8 @@ module Ruote
 
     def lookup_on (type)
 
-      if on = self.send("on_#{type}")
-        [ self, on ]
+      if self.send("on_#{type}")
+        self
       elsif @parent_id
         parent.lookup_on(type)
       else
