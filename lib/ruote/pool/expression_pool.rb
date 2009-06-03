@@ -188,12 +188,9 @@ module Ruote
 
       cancel_expression(exp.fei)
 
-      apply(
-        [ handler, {}, [] ],
-        exp.fei,
-        exp.parent,
-        eargs[:workitem],
-        {})
+      tree = handler.to_s == 'redo' ? exp.tree : [ handler, {}, [] ]
+
+      apply(tree, exp.fei, exp.parent, eargs[:workitem], {})
     end
 
     # Applying a branch (creating an expression for it and applying it).

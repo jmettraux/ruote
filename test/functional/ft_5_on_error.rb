@@ -30,7 +30,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal 1, logger.log.select { |e| e[1] == :on_error }.size
   end
 
-  def test_blank_on_error
+  def test_on_error_neutralization
 
     pdef = Ruote.process_definition do
       sequence :on_error => 'catcher' do
@@ -51,6 +51,26 @@ class FtOnErrorTest < Test::Unit::TestCase
     ps = @engine.process_status(wfid)
 
     assert_equal(1, ps.errors.size)
+  end
+
+  def test_on_error_redo
+
+    pdef = Ruote.process_definition do
+      sequence :on_error => :redo do
+        troublemaker
+      end
+    end
+
+    hits = 0
+
+    @engine.register_participant :troublemaker do
+      hits += 1
+      @tracer << "#{hits.to_s}\n"
+      raise 'Houston, we have a problem !' if hits == 1
+      @tracer << 'done.'
+    end
+
+    assert_trace(pdef, %w[ 1 2 done. ].join("\n"))
   end
 end
 
