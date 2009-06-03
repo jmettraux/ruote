@@ -68,7 +68,7 @@ module Ruote
 
     def cancel
 
-      return unless @applied_workitem
+      trigger_on_cancel
 
       participant = plist.lookup(@participant_name)
 

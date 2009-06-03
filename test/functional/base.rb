@@ -45,6 +45,7 @@ module FunctionalBase
 
     @terminated_processes = []
     @engine.wqueue.subscribe(:processes) do |eclass, emsg, eargs|
+
       @terminated_processes << eargs[:wfid] if emsg == :terminate
     end
   end

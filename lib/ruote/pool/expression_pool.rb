@@ -117,6 +117,53 @@ module Ruote
       apply(tree, i, parent, workitem, {})
     end
 
+    # Applying a branch (creating an expression for it and applying it).
+    #
+    def apply (tree, fei, parent, workitem, variables)
+
+      # NOTE : orphaning will copy vars so parent == nil is OK.
+
+      parent_id = parent ? parent.fei : nil
+
+      exp_name = tree.first
+
+      sub = variables ? variables[exp_name] : nil
+      sub ||= parent ? parent.lookup_variable(exp_name) : nil
+
+      part = plist.lookup(exp_name)
+
+      if sub or part
+
+        part = [ exp_name, part ] if part
+
+        tree = [
+          part ? 'participant' : 'subprocess',
+          { 'ref' => part || sub },
+          []
+        ]
+
+        exp_name = tree.first
+      end
+
+      exp_class = expmap.expression_class(exp_name)
+
+      raise "unknown expression '#{exp_name}'" if not exp_class
+
+      exp = exp_class.new(fei, parent_id, tree, variables, workitem)
+
+      wqueue.emit(:expressions, :update, :expression => exp)
+
+      exp.context = @context
+
+      workitem.fei = fei
+
+      wqueue.emit(
+        :expressions, :apply,
+        :expression => exp, :workitem => workitem)
+
+      fei
+    end
+
     protected
 
     # Returns the next available sub id for the given expression.
@@ -222,53 +269,6 @@ module Ruote
       # TODO : maybe emit some kind of message
 
       false
-    end
-
-    # Applying a branch (creating an expression for it and applying it).
-    #
-    def apply (tree, fei, parent, workitem, variables)
-
-      # NOTE : orphaning will copy vars so parent == nil is OK.
-
-      parent_id = parent ? parent.fei : nil
-
-      exp_name = tree.first
-
-      sub = variables ? variables[exp_name] : nil
-      sub ||= parent ? parent.lookup_variable(exp_name) : nil
-
-      part = plist.lookup(exp_name)
-
-      if sub or part
-
-        part = [ exp_name, part ] if part
-
-        tree = [
-          part ? 'participant' : 'subprocess',
-          { 'ref' => part || sub },
-          []
-        ]
-
-        exp_name = tree.first
-      end
-
-      exp_class = expmap.expression_class(exp_name)
-
-      raise "unknown expression '#{exp_name}'" if not exp_class
-
-      exp = exp_class.new(fei, parent_id, tree, variables, workitem)
-
-      wqueue.emit(:expressions, :update, :expression => exp)
-
-      exp.context = @context
-
-      workitem.fei = fei
-
-      wqueue.emit(
-        :expressions, :apply,
-        :expression => exp, :workitem => workitem)
-
-      fei
     end
 
     # Launches a new process instance.

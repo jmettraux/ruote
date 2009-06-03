@@ -74,10 +74,10 @@ module Ruote
       expstorage[@parent_id]
     end
 
-    def register_child (fei)
+    def register_child (fei, do_persist=true)
 
       @children << fei
-      persist
+      persist if do_persist
     end
 
     #--
@@ -140,6 +140,8 @@ module Ruote
     def cancel
 
       @children.each { |cfei| pool.cancel_expression(cfei) }
+
+      trigger_on_cancel
     end
 
     #--
@@ -308,6 +310,16 @@ module Ruote
     def reply_to_parent (workitem)
 
       pool.reply_to_parent(self, workitem)
+    end
+
+    # if any on_cancel handler is present, will trigger it.
+    #
+    def trigger_on_cancel
+
+      return unless @on_cancel
+
+      pool.apply(
+        [ @on_cancel, {}, [] ], fei, parent, @applied_workitem, @variables)
     end
   end
 end
