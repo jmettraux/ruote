@@ -53,11 +53,15 @@ module Ruote
         :expression => expstorage[workitem.fei], :workitem => workitem)
     end
 
-    #def cancel (fei)
-    #  wqueue.emit(:expressions, :cancel, :fei => fei)
-    #end
-    #def reapply (fei)
-    #end
+    def cancel_expression (fei)
+
+      exp = expstorage[fei]
+
+      return unless exp
+
+      wqueue.emit(:expressions, :delete, :fei => fei)
+      wqueue.emit(:expressions, :cancel, :expression => exp)
+    end
 
     # This method is called by expressions when applying one of the child
     # expressions.
@@ -65,6 +69,8 @@ module Ruote
     def apply_child (exp, child_index, workitem)
 
       fei = exp.fei.new_child_fei(child_index)
+
+      exp.register_child(fei)
 
       apply(exp.tree.last[child_index], fei, exp, workitem, nil)
     end
@@ -100,6 +106,8 @@ module Ruote
       i.wfid = "#{i.wfid}_#{get_next_sub_id(parent)}"
       i.expid = pos
 
+      parent.register_child(i) if parent
+
       apply(tree, i, parent, workitem, {})
     end
 
@@ -119,15 +127,19 @@ module Ruote
       "#{prefix}#{last_sub_id}"
     end
 
+    EXP_MESSAGES = %w[ apply reply cancel ].collect { |m| m.to_sym }
+    #PROCESS_MESSAGES = %w[ launch cancel ].collect { |m| m.to_sym }
+
     def receive (eclass, emsg, eargs)
 
       if eclass == :expressions
 
-        call_exp(emsg, eargs) if emsg == :apply || emsg == :reply
+        call_exp(emsg, eargs) if EXP_MESSAGES.include?(emsg)
 
       elsif eclass == :processes
 
-        launch(eargs) if emsg == :launch
+        #launch(eargs) if emsg == :launch
+        self.send(emsg, eargs) if emsg == :launch || emsg == :cancel
 
       end
     end
@@ -136,7 +148,11 @@ module Ruote
 
       begin
 
-        eargs[:expression].send(emsg, eargs[:workitem])
+        if emsg == :cancel
+          eargs[:expression].cancel
+        else
+          eargs[:expression].send(emsg, eargs[:workitem])
+        end
 
       rescue Exception => e
 
@@ -195,6 +211,9 @@ module Ruote
       fei
     end
 
+    # Launches a new process instance.
+    # (triggered by received a [ :processes, :launch, ... ] event)
+    #
     def launch (args)
 
       fei = new_fei(args[:wfid])
@@ -205,6 +224,15 @@ module Ruote
 
       apply(tree, fei, nil, args[:workitem], {})
         # {} variables are set here
+    end
+
+    # Cancels a process instance.
+    # (triggered by received a [ :processes, :cancel, ... ] event)
+    #
+    def cancel (args)
+
+      root_fei = new_fei(args[:wfid])
+      cancel_expression(root_fei)
     end
 
     def new_fei (wfid)

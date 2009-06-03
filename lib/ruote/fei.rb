@@ -47,12 +47,14 @@ module Ruote
       to_s.hash
     end
 
-    def equal (other)
+    def == (other)
 
-      return false unless other.is_a(FlowExpressionId)
+      return false unless other.is_a?(FlowExpressionId)
 
       (hash == other.hash)
     end
+
+    alias eql? ==
 
     def child_id
 

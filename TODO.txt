@@ -34,6 +34,7 @@
 [ ] event : upon leaving tag
 [ ] undo / redo
 
+[o] cancel_process
 [ ] cancel
 [ ] on_error
 [ ] on_cancel

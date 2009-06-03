@@ -7,8 +7,6 @@
 
 require File.dirname(__FILE__) + '/base'
 
-#require 'ruote/part/hash_participant'
-
 
 class FtOnErrorTest < Test::Unit::TestCase
   include FunctionalBase

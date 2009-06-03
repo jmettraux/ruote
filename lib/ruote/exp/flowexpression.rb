@@ -63,8 +63,17 @@ module Ruote
         # merge initialize / apply ?
     end
 
+    # Returns the parent expression of this expression instance.
+    #
     def parent
+
       expstorage[@parent_id]
+    end
+
+    def register_child (fei)
+
+      @children << fei
+      persist
     end
 
     #--
@@ -91,6 +100,18 @@ module Ruote
       tree[2]
     end
 
+    # Given something like
+    #
+    #   sequence do
+    #     participant 'alpha'
+    #   end
+    #
+    # in the context of the participant expression
+    #
+    #   attribute_text(wi)
+    #
+    # will yield 'alpha'.
+    #
     def attribute_text (workitem)
 
       text = attributes.keys.find { |k| attributes[k] == nil }
@@ -109,9 +130,12 @@ module Ruote
       reply_to_parent(workitem)
     end
 
+    # This default implementation cancels all the [registered] children
+    # of this expression.
+    #
     def cancel
 
-      @children.each { |cfei| pool.cancel(cfei) }
+      @children.each { |cfei| pool.cancel_expression(cfei) }
     end
 
     #--
@@ -270,6 +294,8 @@ module Ruote
       pool.apply_child(self, child_index, workitem)
     end
 
+    # Update expstorage with new version of self.
+    #
     def persist
 
       wqueue.emit(:expressions, :update, :expression => self)

@@ -54,6 +54,11 @@ module Ruote
       @items.delete(workitem.fei)
       reply_to_engine(workitem)
     end
+
+    def size
+
+      @items.size
+    end
   end
 end
 

@@ -110,6 +110,27 @@ module Ruote
       exps.size > 0 ? ProcessStatus.new(exps, errs) : nil
     end
 
+    def cancel_process (wfid)
+
+      wqueue.emit(
+        :processes, :cancel,
+        :wfid => wfid)
+    end
+
+    def cancel_expression (fei)
+
+      pool.cancel_expression(fei)
+    end
+
+    def cancel (fei_or_wfid)
+
+      if fei_or_wfid.is_a?(FlowExpressionId)
+        cancel_expression(fei_or_wfid)
+      else
+        cancel_process(fei_or_wfid)
+      end
+    end
+
     def stop
 
       # TODO
