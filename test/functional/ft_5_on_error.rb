@@ -89,5 +89,33 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ a b d ])
   end
+
+  def test_missing_handler_triggers_regular_error
+
+    pdef = Ruote.process_definition :on_error => 'failpath' do
+      nemo
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    sleep 0.100
+    ps = @engine.process_status(wfid)
+
+    assert_not_nil ps
+    assert_equal 1, ps.errors.size
+
+    assert_equal 1, logger.log.select { |e| e[1] == :on_error }.size
+  end
+
+  #def test_on_error_at_process_level
+  #  pdef = Ruote.process_definition :on_error => 'failpath' do
+  #    nemo
+  #    define :failpath do
+  #      echo 'failed.'
+  #    end
+  #  end
+  #  assert_trace(pdef, 'failed.')
+  #end
 end
 

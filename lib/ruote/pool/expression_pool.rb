@@ -53,13 +53,19 @@ module Ruote
         :expression => expstorage[workitem.fei], :workitem => workitem)
     end
 
-    def cancel_expression (fei)
+    # Cancels an expression (removes it and calls its #cancel method).
+    #
+    # If remove is set to false, the expression will not be removed (ie
+    # not be removed from the expression storage). This is used by the
+    # on_error handling, where the expression gets overriden anyway.
+    #
+    def cancel_expression (fei, remove=true)
 
       exp = expstorage[fei]
 
       return unless exp
 
-      wqueue.emit(:expressions, :delete, :fei => fei)
+      wqueue.emit(:expressions, :delete, :fei => fei) if remove
       wqueue.emit(:expressions, :cancel, :expression => exp)
     end
 
@@ -187,7 +193,8 @@ module Ruote
 
       return false if handler == ''
 
-      cancel_expression(exp.fei)
+      cancel_expression(exp.fei, (handler == 'undo'))
+        # remove expression only if handler is 'undo'
 
       handler = handler.to_s
 
@@ -198,10 +205,20 @@ module Ruote
       else # a proper handler or 'redo'
 
         tree = handler == 'redo' ? exp.tree : [ handler, {}, [] ]
+
         apply(tree, exp.fei, exp.parent, eargs[:workitem], {})
+
       end
 
       true # error was handled here.
+
+    rescue Exception => e
+
+      # simply let fail for now
+
+      # TODO : maybe emit some kind of message
+
+      false
     end
 
     # Applying a branch (creating an expression for it and applying it).
