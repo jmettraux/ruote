@@ -65,6 +65,7 @@ module Ruote
     end
 
     def value_to_s (v)
+
       case v
       when String then v
       when Symbol then v

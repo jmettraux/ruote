@@ -37,5 +37,31 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     assert_equal 'caught', @tracer.to_s
   end
+
+  def test_on_cancel_missing_handler
+
+    pdef = Ruote.process_definition do
+      sequence :on_cancel => 'nada' do
+        nemo
+      end
+    end
+
+    @engine.register_participant :nemo, Ruote::NullParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    @engine.cancel_process(wfid)
+    wait_for(wfid)
+
+    ps = @engine.process_status(wfid)
+    assert_nil ps
+      # process has terminated anyway
+
+    assert_equal 1, logger.log.select { |e| e[0] == :errors }.size
+      # 1 error
+  end
 end
 

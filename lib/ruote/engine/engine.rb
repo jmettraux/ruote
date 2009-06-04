@@ -99,6 +99,10 @@ module Ruote
       pool.reply(workitem)
     end
 
+    # Returns the status of a process instance, takes as input the process
+    # instance id (workflow instance id).
+    # Returns nil the process doesn't exist or has already terminated.
+    #
     def process_status (wfid)
 
       exps = expstorage.find_expressions(:wfid => wfid)
@@ -120,15 +124,7 @@ module Ruote
     def cancel_expression (fei)
 
       pool.cancel_expression(fei)
-    end
-
-    def cancel (fei_or_wfid)
-
-      if fei_or_wfid.is_a?(FlowExpressionId)
-        cancel_expression(fei_or_wfid)
-      else
-        cancel_process(fei_or_wfid)
-      end
+      pool.reply_to_parent(exp, wi)
     end
 
     def stop

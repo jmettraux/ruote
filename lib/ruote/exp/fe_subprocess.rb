@@ -33,9 +33,10 @@ module Ruote
 
     # TODO : make conditional
 
-    def apply (workitem)
+    def apply
 
-      ref = attribute(:ref, workitem) || attribute_text(workitem)
+      ref =
+        attribute(:ref, @applied_workitem) || attribute_text(@applied_workitem)
 
       raise "no subprocess referred in #{tree}" unless ref
 
@@ -43,7 +44,7 @@ module Ruote
 
       raise "no subprocess named '#{ref}' found" unless pos
 
-      pool.launch_sub(pos, tree, self, workitem)
+      pool.launch_sub(pos, tree, self, @applied_workitem)
     end
   end
 end

@@ -39,6 +39,8 @@
 [o] on_error
 [ ] on_cancel
 
+[ ] stop passing full exp in message, pass only fei (maybe)
+
 [ ] forget
 [ ] timeout
 

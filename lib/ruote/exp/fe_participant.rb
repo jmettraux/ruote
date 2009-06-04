@@ -37,11 +37,11 @@ module Ruote
 
     names :participant
 
-    attr_accessor :applied_workitem
 
-    def apply (workitem)
+    def apply
 
-      @participant_name = attribute(:ref, workitem) || attribute_text(workitem)
+      @participant_name =
+        attribute(:ref, @applied_workitem) || attribute_text(@applied_workitem)
 
       @participant_name, participant = if @participant_name.is_a?(Array)
         @participant_name
@@ -54,13 +54,11 @@ module Ruote
           "pexp : no participant named #{@participant_name.inspect}")
       ) unless participant
 
-      @applied_workitem = workitem.dup
-
       persist
 
       wqueue.emit(:workitems, :dispatching, :workitem => @applied_workitem)
 
-      participant.consume(workitem)
+      participant.consume(@applied_workitem)
     end
 
     #def reply (workitem)

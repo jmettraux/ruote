@@ -32,9 +32,9 @@ module Ruote
 
     names :sequence
 
-    def apply (workitem)
+    def apply
 
-      reply(workitem)
+      reply(@applied_workitem)
     end
 
     def reply (workitem)

@@ -117,6 +117,8 @@ module Ruote
       apply(tree, i, parent, workitem, {})
     end
 
+    protected
+
     # Applying a branch (creating an expression for it and applying it).
     #
     def apply (tree, fei, parent, workitem, variables)
@@ -149,13 +151,12 @@ module Ruote
 
       raise "unknown expression '#{exp_name}'" if not exp_class
 
+      workitem.fei = fei
       exp = exp_class.new(fei, parent_id, tree, variables, workitem)
 
       wqueue.emit(:expressions, :update, :expression => exp)
 
       exp.context = @context
-
-      workitem.fei = fei
 
       wqueue.emit(
         :expressions, :apply,
@@ -163,8 +164,6 @@ module Ruote
 
       fei
     end
-
-    protected
 
     # Returns the next available sub id for the given expression.
     #
@@ -207,10 +206,10 @@ module Ruote
 
       begin
 
-        if emsg == :cancel
-          eargs[:expression].cancel
-        else
+        if emsg == :reply
           eargs[:expression].send(emsg, eargs[:workitem])
+        else
+          eargs[:expression].send(emsg)
         end
 
       rescue Exception => e
@@ -222,6 +221,8 @@ module Ruote
       end
     end
 
+    # Handling errors during apply/reply of expressions.
+    #
     def handle_on_error (emsg, eargs)
 
       return false if emsg == :cancel

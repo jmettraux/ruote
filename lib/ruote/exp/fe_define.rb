@@ -34,11 +34,12 @@ module Ruote
 
     names :define, :process_definition, :workflow_definition
 
-    def apply (workitem)
+    def apply
 
       self.tree = self.class.reorganize(expmap, tree)
 
-      name = attribute(:name, workitem) || attribute_text(workitem)
+      name =
+        attribute(:name, @applied_workitem) || attribute_text(@applied_workitem)
 
       # TODO : what if no name ??
 
@@ -47,7 +48,7 @@ module Ruote
         # fei.expid : keeping track of the expid/branch for the subprocess
         #             (so that graphical representations match)
 
-      reply_to_parent(workitem)
+      reply_to_parent(@applied_workitem)
     end
 
     # Used by instances of this class and also the expression pool,

@@ -59,12 +59,12 @@ module Ruote
 
       @variables = variables
 
+      @applied_workitem = workitem.dup
+
       @on_cancel = attribute(:on_cancel, workitem)
       @on_error = attribute(:on_error, workitem)
         # not very happy with those two here...
         # merge initialize / apply ?
-
-      @applied_workitem = (@on_cancel || @on_error) ? workitem.dup : nil
     end
 
     # Returns the parent expression of this expression instance.
@@ -318,7 +318,8 @@ module Ruote
 
       return unless @on_cancel
 
-      pool.apply(
+      pool.send(
+        :apply,
         [ @on_cancel, {}, [] ], fei, parent, @applied_workitem, @variables)
     end
   end

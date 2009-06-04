@@ -34,6 +34,10 @@ module Ruote
     include EngineContext
     include LocalParticipant
 
+    include Enumerable
+
+    #attr_reader :items
+
     def initialize (opts)
 
       @items = {}
@@ -58,6 +62,19 @@ module Ruote
     def size
 
       @items.size
+    end
+
+    def each (&block)
+
+      @items.each { |i| block.call(i) }
+    end
+
+    # A convenience method (especially when testing), returns the first
+    # (only ?) workitem in the participant.
+    #
+    def first
+
+      @items.values.first
     end
   end
 end

@@ -31,9 +31,9 @@ module Ruote
 
     names :set
 
-    def apply (workitem)
+    def apply
 
-      reply(workitem)
+      reply(@applied_workitem)
     end
 
     def reply (workitem)
