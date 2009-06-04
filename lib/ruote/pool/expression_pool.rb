@@ -48,9 +48,7 @@ module Ruote
 
     def reply (workitem)
 
-      wqueue.emit(
-        :expressions, :reply,
-        :expression => expstorage[workitem.fei], :workitem => workitem)
+      wqueue.emit(:expressions, :reply, :workitem => workitem)
     end
 
     # Cancels an expression (removes it and calls its #cancel method).
@@ -59,14 +57,10 @@ module Ruote
     # not be removed from the expression storage). This is used by the
     # on_error handling, where the expression gets overriden anyway.
     #
-    def cancel_expression (fei, remove=true)
+    def cancel_expression (fei, remove=false)
 
-      exp = expstorage[fei]
-
-      return unless exp
-
+      wqueue.emit(:expressions, :cancel, :fei => fei)
       wqueue.emit(:expressions, :delete, :fei => fei) if remove
-      wqueue.emit(:expressions, :cancel, :expression => exp)
     end
 
     # This method is called by expressions when applying one of the child
@@ -90,11 +84,9 @@ module Ruote
 
       if exp.parent_id
 
-        parent = expstorage[exp.parent_id]
-
         wqueue.emit(
           :expressions, :reply,
-          :expression => parent, :workitem => workitem)
+          :fei => exp.parent_id, :workitem => workitem)
 
       else
 
@@ -116,8 +108,6 @@ module Ruote
 
       apply(tree, i, parent, workitem, {})
     end
-
-    protected
 
     # Applying a branch (creating an expression for it and applying it).
     #
@@ -158,12 +148,12 @@ module Ruote
 
       exp.context = @context
 
-      wqueue.emit(
-        :expressions, :apply,
-        :expression => exp, :workitem => workitem)
+      wqueue.emit(:expressions, :apply, :fei => exp.fei)
 
       fei
     end
+
+    protected
 
     # Returns the next available sub id for the given expression.
     #
@@ -190,7 +180,7 @@ module Ruote
 
       if eclass == :expressions
 
-        call_exp(emsg, eargs) if EXP_MESSAGES.include?(emsg)
+        expressions_receive(emsg, eargs) if EXP_MESSAGES.include?(emsg)
 
       elsif eclass == :processes
 
@@ -202,14 +192,19 @@ module Ruote
 
     # Calling apply/reply/cancel on an expression (called by #receive).
     #
-    def call_exp (emsg, eargs)
+    def expressions_receive (emsg, eargs)
 
       begin
 
-        if emsg == :reply
-          eargs[:expression].send(emsg, eargs[:workitem])
-        else
-          eargs[:expression].send(emsg)
+        wi, fei, exp = extract_info(emsg, eargs)
+
+        #p "no exp #{fei}" unless exp
+        return unless exp # TODO : really ?
+
+        case emsg
+        when :apply then exp.apply
+        when :reply then exp.reply(wi)
+        when :cancel then exp.cancel
         end
 
       rescue Exception => e
@@ -221,6 +216,15 @@ module Ruote
       end
     end
 
+    def extract_info (emsg, eargs)
+
+      wi = eargs[:workitem]
+      fei = eargs[:fei] || wi.fei
+      exp = expstorage[fei]
+
+      [ wi, fei, exp ]
+    end
+
     # Handling errors during apply/reply of expressions.
     #
     def handle_on_error (emsg, eargs)
@@ -228,7 +232,7 @@ module Ruote
       return false if emsg == :cancel
         # no error handling for error ocurring during :cancel
 
-      exp = eargs[:expression]
+      _wi, _fei, exp = extract_info(emsg, eargs)
       oe_exp = exp.lookup_on(:error)
 
       return false unless oe_exp
@@ -241,7 +245,7 @@ module Ruote
 
       return false if handler == ''
 
-      cancel_expression(oe_exp.fei, (handler == 'undo'))
+      cancel_expression(oe_exp.fei, (handler != 'undo'))
         # remove expression only if handler is 'undo'
 
       handler = handler.to_s
@@ -256,7 +260,7 @@ module Ruote
           handler == 'redo' ? oe_exp.tree : [ handler, {}, [] ],
           oe_exp.fei,
           oe_exp.parent,
-          eargs[:workitem],
+          oe_exp.applied_workitem,
           oe_exp.variables)
 
       end
@@ -264,6 +268,11 @@ module Ruote
       true # error was handled here.
 
     rescue Exception => e
+
+      puts
+      p e
+      puts e.backtrace
+      puts
 
       # simply let fail for now
 
@@ -293,7 +302,7 @@ module Ruote
     def cancel (args)
 
       root_fei = new_fei(args[:wfid])
-      cancel_expression(root_fei)
+      cancel_expression(root_fei, true)
     end
 
     def new_fei (wfid)

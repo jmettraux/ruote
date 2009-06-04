@@ -96,7 +96,7 @@ class FtOnErrorTest < Test::Unit::TestCase
       nemo
     end
 
-    #noisy
+    noisy
 
     wfid = @engine.launch(pdef)
     sleep 0.075

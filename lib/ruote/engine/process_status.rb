@@ -28,7 +28,6 @@ module Ruote
   class ProcessStatus
 
     attr_reader :expressions
-    attr_reader :variables
     attr_reader :errors
 
     def initialize (expressions, errors)
@@ -86,6 +85,21 @@ module Ruote
       }
 
       Ruote.recompose_tree(h)
+    end
+
+    def inspect
+
+      s = "== #{self.class} ==\n"
+      s << "   expressions : #{@expressions.size}\n"
+      @expressions.each do |e|
+        s << "     #{e.fei.to_s} : #{e.class}\n"
+      end
+      s << "   errors : #{@errors.size}\n"
+      @errors.each do |e|
+        s << "     #{e.inspect}\n"
+      end
+
+      s
     end
   end
 

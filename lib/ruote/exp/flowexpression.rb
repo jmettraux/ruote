@@ -139,7 +139,7 @@ module Ruote
     #
     def cancel
 
-      @children.each { |cfei| pool.cancel_expression(cfei) }
+      @children.each { |cfei| pool.cancel_expression(cfei, true) }
 
       trigger_on_cancel
     end
@@ -318,8 +318,7 @@ module Ruote
 
       return unless @on_cancel
 
-      pool.send(
-        :apply,
+      pool.apply(
         [ @on_cancel, {}, [] ], fei, parent, @applied_workitem, @variables)
     end
   end

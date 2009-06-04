@@ -24,8 +24,8 @@ class FtCancelTest < Test::Unit::TestCase
     #noisy
 
     wfid = @engine.launch(pdef)
+    wait_for(wfid)
 
-    wait
     ps = @engine.process_status(wfid)
     assert_equal 1, alpha.size
 

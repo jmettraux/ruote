@@ -124,7 +124,7 @@ module Ruote
     def cancel_expression (fei)
 
       pool.cancel_expression(fei)
-      pool.reply_to_parent(exp, wi)
+      pool.reply_to_parent(exp, wi) # which deletes the expression
     end
 
     def stop
