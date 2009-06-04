@@ -19,7 +19,7 @@ class EftEchoTest < Test::Unit::TestCase
       echo 'a'
     end
 
-    noisy
+    #noisy
 
     assert_trace(pdef, 'a')
   end

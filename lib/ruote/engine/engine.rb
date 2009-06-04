@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -125,6 +125,13 @@ module Ruote
 
       pool.cancel_expression(fei)
       pool.reply_to_parent(exp, wi) # which deletes the expression
+    end
+
+    # Simply reemits the message (queue event) found in the error..
+    #
+    def replay_at_error (err)
+
+      wqueue.emit(*err.msg)
     end
 
     def stop

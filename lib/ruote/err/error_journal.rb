@@ -29,6 +29,29 @@ require 'ruote/queue/subscriber'
 
 module Ruote
 
+  class ProcessError
+
+    def initialize (h)
+      @h = h
+    end
+
+    def when
+      @h[:when]
+    end
+
+    def msg
+      @h[:message]
+    end
+
+    def fei
+      msg.last[:fei]
+    end
+
+    def wfid
+      fei.wfid
+    end
+  end
+
   class ErrorJournal
 
     include EngineContext
@@ -49,7 +72,7 @@ module Ruote
     #
     def errors (wfid)
 
-      @errors[wfid] || []
+      (@errors[wfid] || {}).values.collect { |e| ProcessError.new(e) }
     end
 
     protected
@@ -61,7 +84,9 @@ module Ruote
       fei = info[:fei] || (info[:expression] || info[:workitem]).fei
       wfid = info[:wfid]
 
-      (@errors[wfid || fei.wfid] ||= []) << eargs
+      eargs[:when] = Time.now
+
+      (@errors[wfid || fei.wfid] ||= {})[fei] = eargs
     end
   end
 end

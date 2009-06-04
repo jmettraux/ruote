@@ -72,7 +72,12 @@ module Ruote
 
       exp.register_child(fei)
 
-      apply(exp.tree.last[child_index], fei, exp, workitem, nil)
+      wqueue.emit(
+        :expressions, :apply,
+        :tree => exp.tree.last[child_index],
+        :fei => fei,
+        :parent_id => exp.fei,
+        :workitem => workitem)
     end
 
     # Called by expressions when replying to their parent expression.
@@ -106,21 +111,49 @@ module Ruote
 
       parent.register_child(i) if parent
 
-      apply(tree, i, parent, workitem, {})
+      wqueue.emit(
+        :expressions, :apply,
+        :tree => tree,
+        :fei => i,
+        :parent_id => parent.fei,
+        :workitem => workitem,
+        :variables => {})
+    end
+
+    protected
+
+    # Returns a temporary expression, complete with #lookup_variable and
+    # #lookup_on.
+    # For internal use only.
+    #
+    def temp_exp (parent_id, variables, workitem, tree=[ 'nada', {}, [] ])
+
+      exp = FlowExpression.new(nil, parent_id, tree, variables, workitem)
+      exp.context = context
+
+      exp
     end
 
     # Applying a branch (creating an expression for it and applying it).
     #
-    def apply (tree, fei, parent, workitem, variables)
+    def apply (eargs)
+
+      tree = eargs[:tree]
+      fei = eargs[:fei]
+      parent_id = eargs[:parent_id]
+      workitem = eargs[:workitem]
+      variables = eargs[:variables]
 
       # NOTE : orphaning will copy vars so parent == nil is OK.
 
-      parent_id = parent ? parent.fei : nil
-
       exp_name = tree.first
 
-      sub = variables ? variables[exp_name] : nil
-      sub ||= parent ? parent.lookup_variable(exp_name) : nil
+      #sub = variables ? variables[exp_name] : nil
+      #sub ||= parent_id ? expstorage[parent_id].lookup_variable(exp_name) : nil
+
+      sub = temp_exp(
+        parent_id, variables, workitem, tree
+      ).lookup_variable(exp_name)
 
       part = plist.lookup(exp_name)
 
@@ -153,8 +186,6 @@ module Ruote
       fei
     end
 
-    protected
-
     # Returns the next available sub id for the given expression.
     #
     def get_next_sub_id (parent)
@@ -184,7 +215,6 @@ module Ruote
 
       elsif eclass == :processes
 
-        #launch(eargs) if emsg == :launch
         self.send(emsg, eargs) if emsg == :launch || emsg == :cancel
 
       end
@@ -196,9 +226,10 @@ module Ruote
 
       begin
 
-        wi, fei, exp = extract_info(emsg, eargs)
+        return apply(eargs) if emsg == :apply && eargs[:tree]
 
-        #p "no exp #{fei}" unless exp
+        wi, fei, exp, = extract_info(emsg, eargs)
+
         return unless exp # TODO : really ?
 
         case emsg
@@ -233,6 +264,10 @@ module Ruote
         # no error handling for error ocurring during :cancel
 
       _wi, _fei, exp = extract_info(emsg, eargs)
+
+      exp =
+        exp || temp_exp(eargs[:parent_id], eargs[:variables], eargs[:workitem])
+
       oe_exp = exp.lookup_on(:error)
 
       return false unless oe_exp
@@ -252,17 +287,17 @@ module Ruote
 
       if handler == 'undo'
 
-         reply_to_parent(oe_exp, oe_exp.applied_workitem)
+        reply_to_parent(oe_exp, oe_exp.applied_workitem)
 
       else # a proper handler or 'redo'
 
-        apply(
-          handler == 'redo' ? oe_exp.tree : [ handler, {}, [] ],
-          oe_exp.fei,
-          oe_exp.parent,
-          oe_exp.applied_workitem,
-          oe_exp.variables)
-
+        wqueue.emit(
+          :expressions, :apply,
+          :tree => handler == 'redo' ? oe_exp.tree : [ handler, {}, [] ],
+          :fei => oe_exp.fei,
+          :parent_id => oe_exp.parent_id,
+          :workitem => oe_exp.applied_workitem,
+          :variables => oe_exp.variables)
       end
 
       true # error was handled here.
@@ -292,8 +327,12 @@ module Ruote
       tree = DefineExpression.reorganize(expmap, tree) \
         if expmap.is_definition?(tree)
 
-      apply(tree, fei, nil, args[:workitem], {})
-        # {} variables are set here
+      wqueue.emit(
+        :expressions, :apply,
+        :tree => tree,
+        :fei => fei,
+        :workitem => args[:workitem],
+        :variables => {})
     end
 
     # Cancels a process instance.

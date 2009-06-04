@@ -40,7 +40,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     @engine.register_participant :alpha, Ruote::HashParticipant
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
-    wait
+    wait_for(wfid)
     ps = @engine.process_status(wfid)
 
     assert_equal 'my process', ps.definition_name

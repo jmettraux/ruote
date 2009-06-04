@@ -20,6 +20,8 @@ class EftSequenceTest < Test::Unit::TestCase
       end
     end
 
+    #noisy
+
     assert_trace(pdef, '')
   end
 
@@ -31,6 +33,8 @@ class EftSequenceTest < Test::Unit::TestCase
         echo 'b'
       end
     end
+
+    #noisy
 
     assert_trace(pdef, "a\nb")
   end
