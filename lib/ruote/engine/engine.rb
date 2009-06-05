@@ -114,16 +114,15 @@ module Ruote
 
     def cancel_process (wfid)
 
-      wqueue.emit(
-        :processes, :cancel,
-        :wfid => wfid)
+      wqueue.emit(:processes, :cancel, :wfid => wfid)
     end
 
     def cancel_expression (fei)
 
+      exp = expstorage[fei]
+
       pool.cancel_expression(fei)
 
-      exp = expstorage[fei]
       pool.reply_to_parent(exp, exp.applied_workitem)
         # which deletes the expression
     end

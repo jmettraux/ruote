@@ -61,7 +61,9 @@ module Ruote
     def cancel_expression (fei, remove=false)
 
       wqueue.emit(:expressions, :cancel, :fei => fei)
-      wqueue.emit(:expressions, :delete, :fei => fei) if remove
+
+      #wqueue.emit(:expressions, :delete, :fei => fei) if remove
+        # done in expression#cancel
     end
 
     # This method is called by expressions when applying one of the child

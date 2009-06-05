@@ -142,6 +142,11 @@ module Ruote
       @children.each { |cfei| pool.cancel_expression(cfei, true) }
 
       trigger_on_cancel
+
+      unpersist
+
+      wqueue.emit(:processes, :cancelled, :wfid => @fei.wfid) \
+        if @fei.expid == '0'
     end
 
     #--
@@ -300,11 +305,18 @@ module Ruote
       pool.apply_child(self, child_index, workitem)
     end
 
-    # Update expstorage with new version of self.
+    # Asks expstorage[s] to store/update persisted version of self.
     #
     def persist
 
       wqueue.emit(:expressions, :update, :expression => self)
+    end
+
+    # Asks expstorage[s] to unstore persisted version of self.
+    #
+    def unpersist
+
+      wqueue.emit(:expressions, :delete, :fei => @fei)
     end
 
     def reply_to_parent (workitem)
@@ -318,8 +330,18 @@ module Ruote
 
       return unless @on_cancel
 
-      pool.apply(
-        [ @on_cancel, {}, [] ], fei, parent, @applied_workitem, @variables)
+      #puts "=" * 80
+      #p self.class
+      #p @fei
+      #p @variables
+      #puts
+
+      pool.send(:apply,
+        :tree => [ @on_cancel, {}, [] ],
+        :fei => fei,
+        :parent_id => @parent_id,
+        :workitem => @applied_workitem,
+        :variables => @variables)
     end
   end
 end

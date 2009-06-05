@@ -112,7 +112,8 @@ module FunctionalBase
 
     logger.wait_for([
       [ :processes, :terminated, { :wfid => wfid } ],
-      [ :errors, nil, { :wfid => wfid } ]
+      [ :errors, nil, { :wfid => wfid } ],
+      [ :processes, :cancelled, { :wfid => wfid } ]
     ])
   end
 

@@ -33,13 +33,13 @@ class FtCancelTest < Test::Unit::TestCase
 
     @engine.cancel_process(wfid)
 
-    wait
+    wait_for(wfid)
     ps = @engine.process_status(wfid)
 
     assert_nil ps
     assert_equal 0, alpha.size
 
-    assert_equal 2, logger.log.select { |e| e[0] == :processes }.size
+    assert_equal 3, logger.log.select { |e| e[0] == :processes }.size
     assert_equal 3, logger.log.select { |e| e[1] == :cancel }.size
   end
 

@@ -64,6 +64,8 @@ module Ruote
 
     def cancel
 
+      unpersist
+
       trigger_on_cancel
 
       participant = plist.lookup(@participant_name)

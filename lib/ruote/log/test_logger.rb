@@ -52,9 +52,13 @@ module Ruote
         sleep 0.001
         while ev = @not_seen.pop
           patterns.each do |eclass, emsg, eargs|
-            return if match?(ev, eclass, emsg, eargs || {})
+            if match?(ev, eclass, emsg, eargs || {})
+              sleep 0.050
+              return
+            end
           end
         end
+        #print " #{i}"
       end
     end
 
