@@ -110,8 +110,7 @@ module FunctionalBase
   end
 
   def wait
-    Thread.pass
-    sleep 0.001
+    sleep 0.007
   end
 
   def assert_engine_clean (wfid=nil, opts={})

@@ -84,7 +84,8 @@ class FtProcessStatusTest < Test::Unit::TestCase
     #
     # tinkering with trees ...
 
-    e = ps.expressions.last
+    e = ps.expressions.find { |e| e.fei.expid == '0_0_1' }
+
     e.tree = [ 'participant', { 'ref' => :bravo }, [] ]
 
     assert_equal(
