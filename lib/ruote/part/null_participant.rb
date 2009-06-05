@@ -45,6 +45,8 @@ module Ruote
     def consume (workitem)
 
       # do nothing
+
+      notify # maybe someone has joined
     end
 
     def cancel (fei)

@@ -47,7 +47,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     #noisy
 
     wfid = @engine.launch(pdef)
-    wait
+    wait_for(wfid)
     ps = @engine.process_status(wfid)
 
     assert_equal(1, ps.errors.size)
@@ -99,7 +99,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     noisy
 
     wfid = @engine.launch(pdef)
-    sleep 0.075
+    wait_for(wfid)
     ps = @engine.process_status(wfid)
 
     assert_not_nil ps

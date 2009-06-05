@@ -40,8 +40,8 @@ module Ruote
     def context= (c)
 
       @context = c
-
       @mutex = Mutex.new
+      @file = nil
 
       load_last
       save_last

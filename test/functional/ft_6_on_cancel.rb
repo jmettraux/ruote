@@ -7,7 +7,7 @@
 
 require File.dirname(__FILE__) + '/base'
 
-require 'ruote/part/null_participant'
+require 'ruote/part/hash_participant'
 
 
 class FtOnCancelTest < Test::Unit::TestCase
@@ -21,7 +21,7 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :nemo, Ruote::NullParticipant
+    nemo = @engine.register_participant :nemo, Ruote::JoinableHashParticipant
 
     @engine.register_participant :catcher do
       @tracer << "caught\n"
@@ -30,7 +30,7 @@ class FtOnCancelTest < Test::Unit::TestCase
     #noisy
 
     wfid = @engine.launch(pdef)
-    wait_for(wfid)
+    nemo.join
 
     @engine.cancel_process(wfid)
     wait_for(wfid)
@@ -46,12 +46,12 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :nemo, Ruote::NullParticipant
+    nemo = @engine.register_participant :nemo, Ruote::JoinableHashParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
-    wait_for(wfid)
+    nemo.join
 
     @engine.cancel_process(wfid)
     wait_for(wfid)

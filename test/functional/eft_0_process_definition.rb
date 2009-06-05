@@ -7,7 +7,7 @@
 
 require File.dirname(__FILE__) + '/base'
 
-require 'ruote/part/null_participant'
+require 'ruote/part/hash_participant'
 
 
 class EftProcessDefinitionTest < Test::Unit::TestCase
@@ -25,16 +25,16 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
     pdef = Ruote.process_definition :name => 'main' do
       define :name => 'sub0' do
       end
-      participant :ref => :null
+      participant :ref => :alpha
     end
 
-    @engine.register_participant :null, Ruote::NullParticipant
+    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
 
-    wait
+    alpha.join
 
     ps = @engine.process_status(wfid)
 

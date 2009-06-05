@@ -44,9 +44,11 @@ module FunctionalBase
     @engine.add_service(:s_logger, Ruote::TestLogger)
 
     @terminated_processes = []
+
     @engine.wqueue.subscribe(:processes) do |eclass, emsg, eargs|
 
-      @terminated_processes << eargs[:wfid] if emsg == :terminate
+      @terminated_processes << eargs[:wfid] \
+        if [ :terminated ].include?(emsg)
     end
   end
 
@@ -88,9 +90,23 @@ module FunctionalBase
   end
 
   def wait_for (wfid, opts={})
-    Thread.pass
-    return if @terminated_processes.include?(wfid)
-    @engine.wait_for(wfid)
+    #t = Thread.current
+    #seen = false
+    #@engine.wqueue.subscribe(:all) do |eclass, emsg, eargs|
+    #  if eclass != :expressions
+    #    if [ :terminated, :cancel, :s_expression_pool ].include?(emsg)
+    #      if eargs[:wfid] == wfid
+    #        seen = true
+    #        t.wakeup
+    #      end
+    #    end
+    #  end
+    #end
+    #Thread.stop unless seen
+    for i in 1..10
+      sleep 0.001
+      return if @terminated_processes.include?(wfid)
+    end
   end
 
   def wait

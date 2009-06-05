@@ -49,8 +49,8 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     wait
 
     entry = logger.log.last
-    assert_equal :unregistered, entry[1]
-    assert_equal /^alpha$/, entry.last[:regex]
+    assert_equal(:unregistered, entry[1])
+    assert_equal(/^alpha$/, entry.last[:regex])
 
     assert_equal 0, @engine.plist.list.size
   end
@@ -65,10 +65,10 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     wait
 
     entry = logger.log.last
-    assert_equal :unregistered, entry[1]
-    assert_equal /^alpha$/, entry.last[:regex]
+    assert_equal(:unregistered, entry[1])
+    assert_equal(/^alpha$/, entry.last[:regex])
 
-    assert_equal 0, @engine.plist.list.size
+    assert_equal(0, @engine.plist.list.size)
   end
 end
 

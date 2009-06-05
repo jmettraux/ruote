@@ -29,7 +29,6 @@ require 'ruote/parser'
 require 'ruote/workitem'
 require 'ruote/engine/context'
 require 'ruote/engine/process_status'
-require 'ruote/engine/misc_methods'
 require 'ruote/engine/participant_methods'
 require 'ruote/exp/expression_map'
 require 'ruote/pool/wfid_generator'
@@ -46,7 +45,6 @@ module Ruote
 
     include EngineContext
 
-    include MiscMethods
     include ParticipantMethods
 
     attr_reader :engine_id
@@ -124,7 +122,10 @@ module Ruote
     def cancel_expression (fei)
 
       pool.cancel_expression(fei)
-      pool.reply_to_parent(exp, wi) # which deletes the expression
+
+      exp = expstorage[fei]
+      pool.reply_to_parent(exp, exp.applied_workitem)
+        # which deletes the expression
     end
 
     # Simply reemits the message (queue event) found in the error..

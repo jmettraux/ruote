@@ -19,9 +19,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
       participant :ref => 'alpha'
     end
 
-    @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
-    wait
+
+    alpha.join
+
     ps = @engine.process_status(wfid)
 
     assert_equal 'my process', ps.definition_name
@@ -38,9 +40,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
-    wait_for(wfid)
+
+    alpha.join
+
     ps = @engine.process_status(wfid)
 
     assert_equal 'my process', ps.definition_name
@@ -56,9 +60,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
     wfid = @engine.launch(pdef)
-    wait
+
+    alpha.join
+
     ps = @engine.process_status(wfid)
 
     assert_equal(
@@ -105,9 +111,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
     wfid = @engine.launch(pdef)
-    wait
+
+    alpha.join
+
     ps = @engine.process_status(wfid)
 
     assert_equal(

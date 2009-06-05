@@ -224,13 +224,13 @@ module Ruote
     #
     def expressions_receive (emsg, eargs)
 
+      wi, fei, exp = extract_info(emsg, eargs)
+
       begin
 
         return apply(eargs) if emsg == :apply && eargs[:tree]
 
-        wi, fei, exp, = extract_info(emsg, eargs)
-
-        return unless exp # TODO : really ?
+        return unless exp # NOTE : really ?
 
         case emsg
         when :apply then exp.apply
@@ -243,7 +243,9 @@ module Ruote
         handle_on_error(emsg, eargs) or wqueue.emit(
           :errors,
           :s_expression_pool,
-          { :error => e, :message => [ :expressions, emsg, eargs ] })
+          { :error => e,
+            :wfid => (exp ? exp.fei : fei).wfid,
+            :message => [ :expressions, emsg, eargs ] })
       end
     end
 
