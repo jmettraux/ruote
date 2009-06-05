@@ -148,9 +148,6 @@ module Ruote
 
       exp_name = tree.first
 
-      #sub = variables ? variables[exp_name] : nil
-      #sub ||= parent_id ? expstorage[parent_id].lookup_variable(exp_name) : nil
-
       sub = temp_exp(
         parent_id, variables, workitem, tree
       ).lookup_variable(exp_name)
@@ -159,11 +156,12 @@ module Ruote
 
       if sub or part
 
-        part = [ exp_name, part ] if part
+        # pass directly the result of the lookup in case of subprocess
+        # pass the name and not the participant in case of participant
 
         tree = [
           part ? 'participant' : 'subprocess',
-          { 'ref' => part || sub },
+          { 'ref' => part ? exp_name : sub },
           []
         ]
 
@@ -220,6 +218,15 @@ module Ruote
       end
     end
 
+    def extract_info (emsg, eargs)
+
+      wi = eargs[:workitem]
+      fei = eargs[:fei] || wi.fei
+      exp = expstorage[fei]
+
+      [ wi, fei, exp ]
+    end
+
     # Calling apply/reply/cancel on an expression (called by #receive).
     #
     def expressions_receive (emsg, eargs)
@@ -247,15 +254,6 @@ module Ruote
             :wfid => (exp ? exp.fei : fei).wfid,
             :message => [ :expressions, emsg, eargs ] })
       end
-    end
-
-    def extract_info (emsg, eargs)
-
-      wi = eargs[:workitem]
-      fei = eargs[:fei] || wi.fei
-      exp = expstorage[fei]
-
-      [ wi, fei, exp ]
     end
 
     # Handling errors during apply/reply of expressions.

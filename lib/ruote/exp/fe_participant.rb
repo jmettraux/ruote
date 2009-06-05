@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,8 @@ module Ruote
     #include ConditionMixin
       # TODO
 
+    attr_reader :participant_name
+
     names :participant
 
 
@@ -43,11 +45,7 @@ module Ruote
       @participant_name =
         attribute(:ref, @applied_workitem) || attribute_text(@applied_workitem)
 
-      @participant_name, participant = if @participant_name.is_a?(Array)
-        @participant_name
-      else
-        [ @participant_name, plist.lookup(@participant_name) ]
-      end
+      participant = plist.lookup(@participant_name)
 
       raise(
         ArgumentError.new(

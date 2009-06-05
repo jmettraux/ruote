@@ -51,8 +51,15 @@ module Ruote
 
     def summarize_args (eclass, emsg, eargs)
 
-      if eargs.is_a?(Array)
-        [ eargs[0], eargs[1], summarize_args(eargs[0], eargs[1], eargs[2]) ]
+      #p eargs.inject({}) { |h, (k, v)| h[k] = v.class; h }
+
+      if msg = eargs[:message]
+        [
+          msg[0],
+          msg[1],
+          summarize_args(msg[0], msg[1], msg[2]),
+          value_to_s(eargs[:error])
+        ]
       elsif fei = eargs[:fei]
         fei.to_s
       elsif wfid = eargs[:wfid]
