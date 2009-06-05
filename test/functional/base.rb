@@ -90,6 +90,7 @@ module FunctionalBase
   end
 
   def wait_for (wfid, opts={})
+
     #t = Thread.current
     #seen = false
     #@engine.wqueue.subscribe(:all) do |eclass, emsg, eargs|
@@ -103,10 +104,16 @@ module FunctionalBase
     #  end
     #end
     #Thread.stop unless seen
-    for i in 1..50
-      sleep 0.001
-      return if @terminated_processes.include?(wfid)
-    end
+
+    #for i in 1..70
+    #  sleep 0.001
+    #  return if @terminated_processes.include?(wfid)
+    #end
+
+    logger.wait_for([
+      [ :processes, :terminated, { :wfid => wfid } ],
+      [ :errors, nil, { :wfid => wfid } ]
+    ])
   end
 
   def wait

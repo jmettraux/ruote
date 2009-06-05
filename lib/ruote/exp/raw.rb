@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,64 +22,26 @@
 # Made in Japan.
 #++
 
-
-require 'ruote/log/logger'
+require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
-  # Logs everything that occurs in the workqueue in an array.
   #
-  # DO NOT use this in production. It's testing only.
+  # Not a 'real' expression. Used to keep track of failure of [pre-]apply.
   #
-  class TestLogger < Logger
+  class RawExpression < FlowExpression
 
-    attr_reader :log
-
-    def initialize
-
-      @log = []
-      @not_seen = []
+    def initialize (fei, parent_id, tree, workitem)
+      super(fei, parent_id, tree, nil, workitem)
     end
 
-    # Some kind of busy waiting... (had bad results with thread.wakeup)
-    #
-    def wait_for (patterns, count=100)
-
-      patterns = Array(patterns)
-
-      for i in 0..count
-        sleep 0.001
-        while ev = @not_seen.pop
-          patterns.each do |eclass, emsg, eargs|
-            return if match?(ev, eclass, emsg, eargs || {})
-          end
-        end
-      end
+    def apply
+      raise "can't apply or reply [to] raw expression"
     end
 
-    protected
-
-    def receive (eclass, emsg, eargs)
-
-      data = summarize(eclass, emsg, eargs)
-
-      @log << data
-      @not_seen << data
-
-      p(data) if context[:noisy]
-    end
-
-    def match? (ev, eclass, emsg, eargs)
-
-      ec, em, ea = ev
-
-      return false if eclass && ec != eclass
-      return false if emsg && em != emsg
-
-      eargs.each { |k, v| return false if ea[k] != v }
-
-      true
+    def reply (workitem)
+      raise "can't apply or reply [to] raw expression"
     end
   end
 end

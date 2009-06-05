@@ -23,6 +23,7 @@
 #++
 
 require 'ruote/fei'
+require 'ruote/exp/raw'
 require 'ruote/engine/context'
 require 'ruote/queue/subscriber'
 
@@ -247,7 +248,20 @@ module Ruote
 
       rescue Exception => e
 
-        handle_on_error(emsg, eargs) or wqueue.emit(
+        handle_on_error(emsg, eargs) && return
+          # return if error got handled
+
+        ex = if exp
+          exp
+        else
+          RawExpression.new(fei, eargs[:parent_id], eargs[:tree], wi)
+        end
+        wqueue.emit(:expressions, :update, :expression => ex)
+          #
+          # making sure there is at least 1 expression in the storage
+          # so that engine#process_status yields something
+
+        wqueue.emit(
           :errors,
           :s_expression_pool,
           { :error => e,

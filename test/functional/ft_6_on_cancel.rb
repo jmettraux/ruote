@@ -48,7 +48,7 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     nemo = @engine.register_participant :nemo, Ruote::JoinableHashParticipant
 
-    #noisy
+    noisy
 
     wfid = @engine.launch(pdef)
     nemo.join
