@@ -45,7 +45,7 @@ module Ruote
 
     def receive (eclass, emsg, eargs)
 
-      data = [ eclass, emsg, summarize_args(eclass, emsg, eargs) ]
+      data = summarize(eclass, emsg, eargs)
 
       @log << data
 

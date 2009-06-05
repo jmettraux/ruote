@@ -46,38 +46,27 @@ module Ruote
 
     def receive (eclass, emsg, eargs)
 
-      p [ :ruote, eclass, emsg, summarize_args(eclass, emsg, eargs) ]
+      p([ :ruote ] + summarize(eclass, emsg, eargs))
     end
 
-    def summarize_args (eclass, emsg, eargs)
-
-      #p eargs.inject({}) { |h, (k, v)| h[k] = v.class; h }
-
-      if msg = eargs[:message]
-        [
-          msg[0],
-          msg[1],
-          summarize_args(msg[0], msg[1], msg[2]),
-          value_to_s(eargs[:error])
-        ]
-      elsif fei = eargs[:fei]
-        fei.to_s
-      elsif wfid = eargs[:wfid]
-        wfid
-      elsif exp = eargs[:expression]
-        exp.fei.to_s
-      else
-        eargs.inject({}) { |h, (k, v)| h[k] = value_to_s(v); h }
-      end
+    def summarize (eclass, emsg, eargs)
+      [
+        eclass,
+        emsg,
+        eargs.inject({}) { |h, (k, v)| h[k] = value_to_s(k, v); h }
+      ]
     end
 
-    def value_to_s (v)
+    def value_to_s (k, v)
+
+      return v if k == :tree
 
       case v
       when String then v
       when Symbol then v
       when Regexp then v
       when Exception then "#{v.class} >#{v.message}< at #{v.backtrace.first}"
+      when FlowExpressionId then v.to_s
       else v.class
       end
     end
