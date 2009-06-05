@@ -57,8 +57,7 @@ class FtOnCancelTest < Test::Unit::TestCase
     wait_for(wfid)
 
     ps = @engine.process_status(wfid)
-    assert (ps == nil), "process_status not nil"
-      # process has terminated anyway
+    assert_not_nil ps
 
     assert_equal 1, logger.log.select { |e| e[0] == :errors }.size
       # 1 error

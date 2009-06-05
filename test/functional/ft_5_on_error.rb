@@ -105,7 +105,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_not_nil ps
     assert_equal 1, ps.errors.size
 
-    assert_equal 1, logger.log.select { |e| e[1] == :on_error }.size
+    assert_equal 2, logger.log.select { |e| e[1] == :on_error }.size
   end
 
   def test_on_error_at_process_level

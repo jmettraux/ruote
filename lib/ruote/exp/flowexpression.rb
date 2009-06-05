@@ -144,9 +144,6 @@ module Ruote
       trigger_on_cancel
 
       unpersist
-
-      wqueue.emit(:processes, :cancelled, :wfid => @fei.wfid) \
-        if @fei.expid == '0'
     end
 
     #--

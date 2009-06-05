@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -49,13 +49,10 @@ module Ruote
       patterns = Array(patterns)
 
       for i in 0..count
-        sleep 0.001
+        sleep 0.002
         while ev = @not_seen.pop
           patterns.each do |eclass, emsg, eargs|
-            if match?(ev, eclass, emsg, eargs || {})
-              sleep 0.050
-              return
-            end
+            return if match?(ev, eclass, emsg, eargs || {})
           end
         end
         #print " #{i}"
