@@ -103,7 +103,7 @@ module FunctionalBase
     #  end
     #end
     #Thread.stop unless seen
-    for i in 1..10
+    for i in 1..50
       sleep 0.001
       return if @terminated_processes.include?(wfid)
     end

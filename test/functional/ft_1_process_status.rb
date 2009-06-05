@@ -19,7 +19,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
       participant :ref => 'alpha'
     end
 
+    #noisy
+
     alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
 
     alpha.join

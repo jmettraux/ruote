@@ -45,7 +45,12 @@ module Ruote
       return if size > 0
 
       @waiting = Thread.current
-      Thread.stop unless lonely_thread?
+
+      if lonely_thread? # covers EM flavour as well
+        sleep 0.350
+      else
+        Thread.stop
+      end
     end
 
     protected
