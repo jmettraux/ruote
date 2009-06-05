@@ -321,6 +321,7 @@ module Ruote
     rescue Exception => e
 
       puts
+      puts "== rescuing error handling"
       p e
       puts e.backtrace
       puts

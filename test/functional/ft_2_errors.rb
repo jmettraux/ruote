@@ -71,7 +71,8 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process_status(wfid)
 
     err = ps.errors.first
-    p err.fei
+    flunk
+    #p err.fei
     #exp = @engine.
 
     #@engine.replay_at_error(err)
