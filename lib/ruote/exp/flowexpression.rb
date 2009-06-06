@@ -55,6 +55,8 @@ module Ruote
       @original_tree = tree.dup
       @updated_tree = nil
 
+      @cancelled = false
+
       @children = []
 
       @variables = variables
@@ -127,6 +129,22 @@ module Ruote
     # apply/reply/cancel
     #++
 
+    def do_reply (workitem)
+
+      @children.delete(workitem.fei)
+        # NOTE : check on size before/after ?
+
+      if @cancelled
+        if @children.size < 1
+          reply_to_parent(workitem)
+        else
+          persist # for the updated @children
+        end
+      else
+        reply(workitem)
+      end
+    end
+
     # The default implementation : replies to the parent expression
     #
     def reply (workitem)
@@ -139,11 +157,13 @@ module Ruote
     #
     def cancel
 
+      @cancelled = true
+      persist
+
       @children.each { |cfei| pool.cancel_expression(cfei, true) }
 
-      trigger_on_cancel
-
-      unpersist
+      #trigger_on_cancel
+      #unpersist
     end
 
     #--
@@ -318,14 +338,16 @@ module Ruote
 
     def reply_to_parent (workitem)
 
-      pool.reply_to_parent(self, workitem)
+      if @cancelled and @on_cancel
+        trigger_on_cancel
+      else
+        pool.reply_to_parent(self, workitem)
+      end
     end
 
     # if any on_cancel handler is present, will trigger it.
     #
     def trigger_on_cancel
-
-      return unless @on_cancel
 
       #puts "=" * 80
       #p self.class

@@ -244,7 +244,7 @@ module Ruote
 
         case emsg
         when :apply then exp.apply
-        when :reply then exp.reply(wi)
+        when :reply then exp.do_reply(wi)
         when :cancel then exp.cancel
         end
 

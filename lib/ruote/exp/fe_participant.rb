@@ -64,13 +64,13 @@ module Ruote
 
     def cancel
 
-      unpersist
-
-      trigger_on_cancel
+      @cancelled = true
 
       participant = plist.lookup(@participant_name)
 
       participant.cancel(@fei)
+
+      reply_to_parent(@applied_workitem)
     end
   end
 end
