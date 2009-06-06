@@ -53,6 +53,16 @@ module Ruote
         s << "#{k.to_s} => #{v.class}\n"
       end
     end
+
+    # Returns the expression for the given fei, if any.
+    #
+    def [] (fei)
+
+      exp = super(fei)
+      exp.context = context if exp
+
+      exp
+    end
   end
 end
 
