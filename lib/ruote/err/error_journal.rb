@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2006-2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,8 @@ module Ruote
       @h[:when]
     end
 
+    # Then 'internal' bus event
+    #
     def msg
       @h[:message]
     end
@@ -49,6 +51,19 @@ module Ruote
 
     def wfid
       fei.wfid
+    end
+
+    def tree
+      msg.last[:tree]
+    end
+
+    # A shortcut for modifying the tree of an expression when it has had
+    # an error upon being applied.
+    #
+    def tree= (t)
+
+      raise "no tree in error, can't override" unless tree
+      msg.last[:tree] = t
     end
   end
 

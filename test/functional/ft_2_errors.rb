@@ -64,6 +64,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
       nada
     end
 
+    @engine.register_participant :alpha do
+      @tracer << "alpha\n"
+    end
+
     #noisy
 
     wfid = @engine.launch(pdef)
@@ -71,12 +75,15 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process_status(wfid)
 
     err = ps.errors.first
-    flunk
-    #p err.fei
-    #exp = @engine.
+    assert_equal [ 'nada', {}, [] ], err.tree
 
-    #@engine.replay_at_error(err)
-    #wait_for(wfid)
+    err.tree = [ 'alpha', {}, [] ]
+    @engine.replay_at_error(err)
+    wait_for(wfid)
+
+    assert_nil @engine.process_status(wfid)
+
+    assert_equal 'alpha', @tracer.to_s
   end
 end
 
