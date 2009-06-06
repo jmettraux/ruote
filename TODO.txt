@@ -22,7 +22,7 @@
 [o] participant lookup
 [ ] event : launch_sub ??
 
-[ ] pool cleanup
+[o] pool cleanup
 
 [ ] wfid_gen : rufus-mnemo
 
@@ -39,7 +39,7 @@
 [o] cancel_process
 [o] cancel
 [o] on_error
-[ ] on_cancel
+[o] on_cancel
 
 [ ] stop passing full exp in message, pass only fei (maybe)
 

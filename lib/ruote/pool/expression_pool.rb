@@ -322,6 +322,9 @@ module Ruote
 
       puts
       puts "== rescuing error handling"
+      puts
+      p [ emsg, eargs ]
+      puts
       p e
       puts e.backtrace
       puts
