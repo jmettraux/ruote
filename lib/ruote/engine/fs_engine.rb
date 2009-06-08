@@ -22,71 +22,23 @@
 # Made in Japan.
 #++
 
-
-require 'time'
-require 'thread'
-require 'fileutils'
-require 'rufus/mnemo' # sudo gem install rufus-mnemo
-require 'ruote/engine/context'
+require 'ruote/engine/engine'
+require 'ruote/storage/fs_storage'
 
 
 module Ruote
 
-  class WfidGenerator
-
-    include EngineContext
-
-
-    def context= (c)
-
-      @context = c
-      @mutex = Mutex.new
-      @file = nil
-
-      load_last
-      save_last
-    end
-
-    def generate
-
-      @mutex.synchronize do
-        wfid = Time.now
-        wfid = @last + 0.001 if wfid <= @last
-        @last = wfid
-        save_last
-        "#{@last.strftime('%Y%m%d%H%m%S')}-#{@last.usec}"
-      end
-    end
-
-    # Simply hands back the wfid string (this method is used by FsStorage
-    # to determine in which dir expression should be stored).
-    #
-    def split (wfid)
-
-      wfid
-    end
+  #
+  # A ruote engine with persistence to the filesystem (usually under ./work/)
+  #
+  class FsPersistedEngine < Engine
 
     protected
 
-    def file_path
+    def build_expression_storage
 
-      File.join(workdir, 'wfidgen.last')
-    end
-
-    def load_last
-
-      FileUtils.mkdir(workdir) unless File.exist?(workdir)
-      t = File.read(file_path).strip rescue ''
-      t = Time.parse(t)
-      n = Time.now
-      @last = t > n ? t : n
-    end
-
-    def save_last
-
-      @file = File.open(file_path, 'w+') if (not @file) or @file.closed?
-      @file.pos = 0
-      @file.puts("#{@last.strftime('%Y/%m/%d %H:%m:%S')}.#{@last.usec}")
+      init_storage(Ruote::FsStorage)
     end
   end
 end
+

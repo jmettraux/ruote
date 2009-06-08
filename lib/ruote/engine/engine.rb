@@ -36,6 +36,7 @@ require 'ruote/pool/expression_pool'
 require 'ruote/part/participant_list'
 require 'ruote/queue/workqueue'
 require 'ruote/storage/hash_storage'
+require 'ruote/storage/cache_storage'
 require 'ruote/err/error_journal'
 
 
@@ -176,7 +177,7 @@ module Ruote
     end
 
     def build_expression_storage
-      add_service(:s_expression_storage, Ruote::HashStorage)
+      init_storage(Ruote::HashStorage)
     end
 
     def build_expression_pool
@@ -212,6 +213,16 @@ module Ruote
 
     def build_error_journal
       add_service(:s_error_journal, Ruote::ErrorJournal)
+    end
+
+    def init_storage (storage_class)
+
+      if storage_class == Ruote::HashStorage || context[:no_expstorage_cache]
+        add_service(:s_expression_storage, storage_class)
+      else
+        add_service(:s_expression_storage, Ruote::CacheStorage)
+        add_service(:s_expression_storage__1, storage_class)
+      end
     end
   end
 end

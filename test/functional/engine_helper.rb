@@ -101,8 +101,8 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
     elsif ARGV.include?('--fs') # fast and robust
 
-      require 'openwfe/engine/fs_engine'
-      OpenWFE::FsPersistedEngine
+      require 'ruote/engine/fs_engine'
+      Ruote::FsPersistedEngine
 
     elsif ARGV.include?('--db')
 

@@ -22,71 +22,87 @@
 # Made in Japan.
 #++
 
+require 'rufus/lru'
 
-require 'time'
-require 'thread'
-require 'fileutils'
-require 'rufus/mnemo' # sudo gem install rufus-mnemo
 require 'ruote/engine/context'
+require 'ruote/queue/subscriber'
+require 'ruote/storage/base'
 
 
 module Ruote
 
-  class WfidGenerator
+  class CacheStorage
 
     include EngineContext
+    include StorageBase
+    include Subscriber
 
+    DEFAULT_SIZE = 5000
 
     def context= (c)
 
       @context = c
-      @mutex = Mutex.new
-      @file = nil
 
-      load_last
-      save_last
+      size = @context[:expression_cache_size] || DEFAULT_SIZE
+      size = DEFAULT_SIZE if size.to_s.to_i < 1
+
+      @cache = LruHash.new(size)
+
+      subscribe(:expressions)
     end
 
-    def generate
+    def find_expressions (query={})
 
-      @mutex.synchronize do
-        wfid = Time.now
-        wfid = @last + 0.001 if wfid <= @last
-        @last = wfid
-        save_last
-        "#{@last.strftime('%Y%m%d%H%m%S')}-#{@last.usec}"
+      exps = real_storage.find_expressions(query)
+      exps.each { |fexp| @cache[fexp.fei] = fexp }
+
+      exps
+    end
+
+    def [] (fei)
+
+      if fexp = @cache[fei]
+
+        return fexp
       end
+
+      if fexp = real_storage[fei]
+
+        @cache[fei] = fexp
+        return fexp
+      end
+
+      nil # miss :(
     end
 
-    # Simply hands back the wfid string (this method is used by FsStorage
-    # to determine in which dir expression should be stored).
-    #
-    def split (wfid)
+    def []= (fei, fexp)
 
-      wfid
+      @cache[fei] = fexp
+    end
+
+    def delete (fei)
+
+      @cache.delete(fei)
+    end
+
+    def size
+
+      real_storage.size
+    end
+
+    def to_s
+
+      @cache.inject('') do |s, (k, v)|
+        s << "#{k.to_s} => #{v.class}\n"
+      end
     end
 
     protected
 
-    def file_path
+    def real_storage
 
-      File.join(workdir, 'wfidgen.last')
-    end
-
-    def load_last
-
-      FileUtils.mkdir(workdir) unless File.exist?(workdir)
-      t = File.read(file_path).strip rescue ''
-      t = Time.parse(t)
-      n = Time.now
-      @last = t > n ? t : n
-    end
-
-    def save_last
-
-      @file = File.open(file_path, 'w+') if (not @file) or @file.closed?
-      @file.pos = 0
-      @file.puts("#{@last.strftime('%Y/%m/%d %H:%m:%S')}.#{@last.usec}")
+      @context[:s_expression_storage__1]
     end
   end
 end
+

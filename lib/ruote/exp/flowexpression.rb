@@ -296,6 +296,33 @@ module Ruote
       end
     end
 
+    #--
+    # serialization
+    #
+    # making sure '@context' is not serialized
+    #++
+
+    def marshal_dump #:nodoc#
+
+      iv = instance_variables
+      iv.delete(:@context)
+      iv.delete('@context')
+      iv.inject({}) { |h, vn| h[vn] = instance_variable_get(vn); h }
+    end
+
+    def marshal_load (s) #:nodoc#
+
+      s.each { |k, v| instance_variable_set(k, v) }
+    end
+
+    def to_yaml_properties #:nodoc#
+
+      l = super
+      l.delete(:@context)
+      l.delete('@context')
+      l
+    end
+
     protected
 
     VAR_PREFIX_REGEX = /^(\/*)/
