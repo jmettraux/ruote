@@ -100,16 +100,16 @@ class FtOnErrorTest < Test::Unit::TestCase
       nemo
     end
 
-    noisy
+    #noisy
 
     wfid = @engine.launch(pdef)
     wait_for(wfid)
     ps = @engine.process_status(wfid)
 
-    assert_not_nil ps
     assert_equal 1, ps.errors.size
 
-    assert_equal 2, logger.log.select { |e| e[1] == :on_error }.size
+    assert_equal 1, logger.log.select { |e| e[1] == :on_error }.size
+    assert_equal 1, logger.log.select { |e| e[0] == :errors }.size
   end
 
   def test_on_error_at_process_level

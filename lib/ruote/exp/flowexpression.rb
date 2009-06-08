@@ -46,6 +46,9 @@ module Ruote
 
     attr_accessor :applied_workitem
 
+    attr_reader :in_cancel
+    attr_reader :in_error
+
 
     def initialize (fei, parent_id, tree, variables, workitem)
 
@@ -169,7 +172,7 @@ module Ruote
 
     # Forces error handling by this expression.
     #
-    def handle_error
+    def fail
 
       @in_error = true
       persist

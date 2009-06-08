@@ -281,6 +281,8 @@ module Ruote
       exp =
         exp || temp_exp(eargs[:parent_id], eargs[:variables], eargs[:workitem])
 
+      return false if exp.in_error
+
       oe_exp = exp.lookup_on(:error)
 
       return false unless oe_exp
@@ -293,7 +295,7 @@ module Ruote
 
       return false if handler == ''
 
-      oe_exp.handle_error
+      oe_exp.fail
 
       true # error was handled here.
 
