@@ -89,14 +89,14 @@ module Ruote
 
     def all_filenames
 
-      Dir["#{@path}/**/*.ruote"].size
+      Dir["#{@path}/**/*.ruote"]
     end
 
     def dir_for (wfid)
 
       swfid = wfidgen.split(wfid)
 
-      "#{@path}/#{swfid[-2]}/#{swfid[-1]}"
+      "#{@path}/#{swfid[-2, 1]}/#{swfid[-1, 1]}"
     end
 
     def filename_for (fei, join=false)

@@ -162,7 +162,6 @@ module FunctionalBase
     return if opts[:ignore_errors]
 
     expcount = @engine.expstorage.size
-    #return if expcount == 1
     return if expcount == 0
 
     #50.times { Thread.pass }
