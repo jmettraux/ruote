@@ -160,10 +160,7 @@ module Ruote
       @cancelled = true
       persist
 
-      @children.each { |cfei| pool.cancel_expression(cfei, true) }
-
-      #trigger_on_cancel
-      #unpersist
+      @children.each { |cfei| pool.cancel_expression(cfei) }
     end
 
     #--

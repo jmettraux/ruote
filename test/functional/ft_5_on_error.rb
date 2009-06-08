@@ -87,6 +87,8 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
+    noisy
+
     assert_trace(pdef, %w[ a b d ])
   end
 

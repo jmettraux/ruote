@@ -58,12 +58,9 @@ module Ruote
     # not be removed from the expression storage). This is used by the
     # on_error handling, where the expression gets overriden anyway.
     #
-    def cancel_expression (fei, remove=false)
+    def cancel_expression (fei)
 
       wqueue.emit(:expressions, :cancel, :fei => fei)
-
-      #wqueue.emit(:expressions, :delete, :fei => fei) if remove
-        # done in expression#cancel
     end
 
     # This method is called by expressions when applying one of the child
@@ -296,8 +293,7 @@ module Ruote
 
       return false if handler == ''
 
-      cancel_expression(oe_exp.fei, (handler != 'undo'))
-        # remove expression only if handler is 'undo'
+      cancel_expression(oe_exp.fei)
 
       handler = handler.to_s
 
@@ -361,7 +357,7 @@ module Ruote
     def cancel (args)
 
       root_fei = new_fei(args[:wfid])
-      cancel_expression(root_fei, true)
+      cancel_expression(root_fei)
     end
 
     def new_fei (wfid)
