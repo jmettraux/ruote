@@ -50,7 +50,7 @@ module Ruote
     def find_expressions (query={})
 
       fnames = if wfid = query[:wfid]
-        Dir[File.join(dir_for(wfid)), '*.ruote']
+        Dir[File.join(dir_for(wfid), '*.ruote')]
       else
         all_filenames
       end
@@ -83,6 +83,13 @@ module Ruote
     def size
 
       all_filenames.size
+    end
+
+    def to_s
+
+      all_filenames.inject('') do |s, fn|
+        s << "#{fn}\n"
+      end
     end
 
     protected

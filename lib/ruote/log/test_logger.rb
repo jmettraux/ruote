@@ -52,10 +52,13 @@ module Ruote
         sleep 0.002
         while ev = @not_seen.pop
           patterns.each do |eclass, emsg, eargs|
-            return if match?(ev, eclass, emsg, eargs || {})
+            if match?(ev, eclass, emsg, eargs || {})
+              #puts "\n\n--match !!! after #{i}"
+              return
+            end
           end
         end
-        #print " #{i}"
+        #p i
       end
     end
 
@@ -85,7 +88,12 @@ module Ruote
 
     def output (eargs, data)
 
-      fei = eargs[:fei] || (eargs[:expression] ? eargs[:expression].fei : nil)
+      fei = eargs[:fei]
+      exp = eargs[:expression]
+      wi = eargs[:workitem]
+
+      fei = fei || (exp ? exp.fei : nil) || (wi ? wi.fei : nil)
+
       depth = fei ? fei.depth : 0
 
       c = data[0].to_s[0, 1]

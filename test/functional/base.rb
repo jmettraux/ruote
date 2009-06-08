@@ -54,7 +54,6 @@ module FunctionalBase
 
   def teardown
 
-    #$OWFE_LOG.level = Logger::INFO
     @engine.stop
   end
 

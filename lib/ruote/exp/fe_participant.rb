@@ -64,8 +64,6 @@ module Ruote
 
     def cancel
 
-      @cancelled = true
-
       participant = plist.lookup(@participant_name)
 
       participant.cancel(@fei)

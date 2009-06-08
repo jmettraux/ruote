@@ -247,9 +247,6 @@ module Ruote
 
       rescue Exception => e
 
-        handle_on_error(emsg, eargs) && return
-          # return if error got handled
-
         ex = if exp
           exp
         else
@@ -259,6 +256,9 @@ module Ruote
           #
           # making sure there is at least 1 expression in the storage
           # so that engine#process_status yields something
+
+        handle_on_error(emsg, eargs) && return
+          # return if error got handled
 
         wqueue.emit(
           :errors,
@@ -293,24 +293,7 @@ module Ruote
 
       return false if handler == ''
 
-      cancel_expression(oe_exp.fei)
-
-      handler = handler.to_s
-
-      if handler == 'undo'
-
-        reply_to_parent(oe_exp, oe_exp.applied_workitem)
-
-      else # a proper handler or 'redo'
-
-        wqueue.emit(
-          :expressions, :apply,
-          :tree => handler == 'redo' ? oe_exp.tree : [ handler, {}, [] ],
-          :fei => oe_exp.fei,
-          :parent_id => oe_exp.parent_id,
-          :workitem => oe_exp.applied_workitem,
-          :variables => oe_exp.variables)
-      end
+      oe_exp.handle_error
 
       true # error was handled here.
 

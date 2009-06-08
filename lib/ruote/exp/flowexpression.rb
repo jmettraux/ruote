@@ -55,7 +55,8 @@ module Ruote
       @original_tree = tree.dup
       @updated_tree = nil
 
-      @cancelled = false
+      @in_error = false
+      @in_cancel = false
 
       @children = []
 
@@ -134,13 +135,16 @@ module Ruote
       @children.delete(workitem.fei)
         # NOTE : check on size before/after ?
 
-      if @cancelled
+      if @in_cancel or @in_error
+
         if @children.size < 1
           reply_to_parent(workitem)
         else
           persist # for the updated @children
         end
+
       else
+
         reply(workitem)
       end
     end
@@ -157,7 +161,17 @@ module Ruote
     #
     def cancel
 
-      @cancelled = true
+      @in_cancel = true
+      persist
+
+      @children.each { |cfei| pool.cancel_expression(cfei) }
+    end
+
+    # Forces error handling by this expression.
+    #
+    def handle_error
+
+      @in_error = true
       persist
 
       @children.each { |cfei| pool.cancel_expression(cfei) }
@@ -362,8 +376,10 @@ module Ruote
 
     def reply_to_parent (workitem)
 
-      if @cancelled and @on_cancel
-        trigger_on_cancel
+      if @in_error
+        trigger_on_error(workitem)
+      elsif @in_cancel and @on_cancel
+        trigger_on_cancel(workitem)
       else
         pool.reply_to_parent(self, workitem)
       end
@@ -371,13 +387,7 @@ module Ruote
 
     # if any on_cancel handler is present, will trigger it.
     #
-    def trigger_on_cancel
-
-      #puts "=" * 80
-      #p self.class
-      #p @fei
-      #p @variables
-      #puts
+    def trigger_on_cancel (workitem)
 
       pool.send(:apply,
         :tree => [ @on_cancel, {}, [] ],
@@ -385,6 +395,25 @@ module Ruote
         :parent_id => @parent_id,
         :workitem => @applied_workitem,
         :variables => @variables)
+    end
+
+    def trigger_on_error (workitem)
+
+      handler = @on_error.to_s
+
+      if handler == 'undo' # which got just done (cancel)
+
+        pool.reply_to_parent(self, workitem)
+
+      else # handle
+
+        pool.send(:apply,
+          :tree => handler == 'redo' ? tree : [ handler, {}, [] ],
+          :fei => @fei,
+          :parent_id => @parent_id,
+          :workitem => @applied_workitem,
+          :variables => @variables)
+      end
     end
   end
 end

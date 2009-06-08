@@ -70,6 +70,8 @@ class FtOnErrorTest < Test::Unit::TestCase
       @tracer << 'done.'
     end
 
+    #noisy
+
     assert_trace(pdef, %w[ 1 2 done. ])
   end
 
@@ -87,7 +89,7 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    noisy
+    #noisy
 
     assert_trace(pdef, %w[ a b d ])
   end
@@ -98,7 +100,7 @@ class FtOnErrorTest < Test::Unit::TestCase
       nemo
     end
 
-    #noisy
+    noisy
 
     wfid = @engine.launch(pdef)
     wait_for(wfid)
