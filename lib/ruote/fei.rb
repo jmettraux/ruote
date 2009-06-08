@@ -94,6 +94,14 @@ module Ruote
 
       Ruote.fulldup(self)
     end
+
+    # Helper method : returns the depth of this expression in its process
+    # instance. The root expression has a depth of 0.
+    #
+    def depth
+
+      (@expid.split(CHILD_SEP).size - 1)
+    end
   end
 end
 

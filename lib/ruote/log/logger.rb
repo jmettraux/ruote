@@ -61,11 +61,15 @@ module Ruote
 
       return v if k == :tree
 
+      k = v.class.name.split('::').last
+
       case v
       when String then v
       when Symbol then v
       when Regexp then v
-      when Exception then "#{v.class} >#{v.message}< at #{v.backtrace.first}"
+      when Exception then "#{k} >#{v.message}< at #{v.backtrace.first}"
+      when Workitem then "#{k}/#{v.fei.to_s}"
+      when FlowExpression then "#{k}/#{v.fei.to_s}"
       when FlowExpressionId then v.to_s
       else v.class
       end

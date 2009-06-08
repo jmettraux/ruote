@@ -68,7 +68,7 @@ module Ruote
       @log << data
       @not_seen << data
 
-      p(data) if context[:noisy]
+      output(eargs, data) if context[:noisy]
     end
 
     def match? (ev, eclass, emsg, eargs)
@@ -81,6 +81,22 @@ module Ruote
       eargs.each { |k, v| return false if ea[k] != v }
 
       true
+    end
+
+    def output (eargs, data)
+
+      fei = eargs[:fei] || (eargs[:expression] ? eargs[:expression].fei : nil)
+      depth = fei ? fei.depth : 0
+
+      c = data[0].to_s[0, 1]
+
+      m = data[1].to_s[0, 2]
+      m = data[1].to_s if m == 'on'
+
+      puts "#{' ' * depth * 2}#{c} #{m} #{data[2].inspect}"
+      #data[2].each do |k, v|
+      #  puts "#{' ' * (depth * 2 + 4)}#{k}: #{v.inspect}"
+      #end
     end
   end
 end
