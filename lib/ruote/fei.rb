@@ -37,6 +37,8 @@ module Ruote
     attr_accessor :wfid
     attr_accessor :expid
 
+    alias :pid :wfid
+
     def to_s
 
       "#{@engine_id}|#{@wfid}|#{@expid}"
