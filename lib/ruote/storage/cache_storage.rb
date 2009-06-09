@@ -92,9 +92,13 @@ module Ruote
 
     def to_s
 
-      @cache.inject('') do |s, (k, v)|
+      r = "== #{self.class} :\n"
+      @cache.inject(r) do |s, (k, v)|
         s << "#{k.to_s} => #{v.class}\n"
       end
+
+      r << "== #{real_storage.class} :\n"
+      r << real_storage.to_s
     end
 
     protected

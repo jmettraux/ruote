@@ -88,7 +88,8 @@ module Ruote
     def to_s
 
       all_filenames.inject('') do |s, fn|
-        s << "#{fn}\n"
+        fexp = load_fexp(fn)
+        s << "#{fn} => #{fexp.class}\n"
       end
     end
 

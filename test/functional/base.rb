@@ -55,6 +55,8 @@ module FunctionalBase
   def teardown
 
     @engine.stop
+
+    purge_engine
   end
 
   # launch_thing is a process definition or a launch item
@@ -72,8 +74,6 @@ module FunctionalBase
     assert_engine_clean(wfid, opts)
 
     assert_equal(expected_trace, @tracer.to_s) if expected_trace
-
-    purge_engine unless opts[:no_purge]
 
     wfid
   end
@@ -167,9 +167,14 @@ module FunctionalBase
     #expcount = @engine.expstorage.size
     #return if expcount == 1
 
+    tf, _, tn = caller[2].split(':')
+
     puts
     puts '-' * 80
     puts 'too many expressions left in storage'
+    puts
+    puts "this test : #{tf}"
+    puts "            #{tn}"
     puts
     puts "this test's wfid : #{wfid}"
     puts

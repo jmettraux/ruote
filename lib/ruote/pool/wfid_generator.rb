@@ -50,10 +50,19 @@ module Ruote
     def generate
 
       @mutex.synchronize do
+
         wfid = Time.now
         wfid = @last + 0.001 if wfid <= @last
+
         @last = wfid
         save_last
+
+        #line = caller[4]
+        #if line.match(/\/functional\//)
+        #  p "#{@last.strftime('%Y%m%d%H%m%S')}-#{@last.usec}"
+        #  puts caller[4]
+        #end
+
         "#{@last.strftime('%Y%m%d%H%m%S')}-#{@last.usec}"
       end
     end
