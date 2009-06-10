@@ -29,6 +29,7 @@ module Ruote
 
     attr_accessor :fei
     attr_accessor :attributes
+    attr_accessor :participant_name
 
     alias :fields :attributes
     alias :fields= :attributes=

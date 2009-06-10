@@ -52,9 +52,13 @@ module Ruote
           "pexp : no participant named #{@participant_name.inspect}")
       ) unless participant
 
+      @applied_workitem.participant_name = @participant_name
+
       persist
 
-      wqueue.emit(:workitems, :dispatching, :workitem => @applied_workitem)
+      wqueue.emit(
+        :workitems, :dispatching,
+        :workitem => @applied_workitem, :pname => @participant_name)
 
       participant.consume(@applied_workitem)
     end
