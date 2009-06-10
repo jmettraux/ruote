@@ -32,8 +32,8 @@ module Ruote
   #
   class RawExpression < FlowExpression
 
-    def initialize (fei, parent_id, tree, workitem)
-      super(fei, parent_id, tree, nil, workitem)
+    def initialize (context, fei, parent_id, tree, workitem)
+      super(context, fei, parent_id, tree, nil, workitem)
     end
 
     def apply

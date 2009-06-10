@@ -51,7 +51,9 @@ module Ruote
     attr_reader :in_error
 
 
-    def initialize (fei, parent_id, tree, variables, workitem)
+    def initialize (context, fei, parent_id, tree, variables, workitem)
+
+      @context = context
 
       @fei = fei
       @parent_id = parent_id
@@ -71,8 +73,8 @@ module Ruote
 
       @on_cancel = attribute(:on_cancel, workitem)
       @on_error = attribute(:on_error, workitem)
-        # not very happy with those two here...
-        # merge initialize / apply ?
+
+      consider_tag
     end
 
     # Returns the parent expression of this expression instance.
@@ -343,6 +345,20 @@ module Ruote
     end
 
     protected
+
+    def consider_tag
+
+      return if self.class == Ruote::FlowExpression
+        # do not consider tag if this expression is only a temp exp
+
+      if tagname = attribute(:tag, @applied_workitem)
+
+        set_variable(tagname, @fei)
+      end
+
+      # [ ] message on entering tag
+      # [ ] message on leaving tag
+    end
 
     VAR_PREFIX_REGEX = /^(\/*)/
 

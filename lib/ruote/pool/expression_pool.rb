@@ -128,10 +128,7 @@ module Ruote
     #
     def temp_exp (parent_id, variables, workitem, tree=[ 'nada', {}, [] ])
 
-      exp = FlowExpression.new(nil, parent_id, tree, variables, workitem)
-      exp.context = context
-
-      exp
+      FlowExpression.new(@context, nil, parent_id, tree, variables, workitem)
     end
 
     # Applying a branch (creating an expression for it and applying it).
@@ -173,12 +170,9 @@ module Ruote
       raise "unknown expression '#{exp_name}'" if not exp_class
 
       workitem.fei = fei
-      exp = exp_class.new(fei, parent_id, tree, variables, workitem)
+      exp = exp_class.new(@context, fei, parent_id, tree, variables, workitem)
 
       wqueue.emit(:expressions, :update, :expression => exp)
-
-      exp.context = @context
-
       wqueue.emit(:expressions, :apply, :fei => exp.fei)
 
       fei
@@ -250,7 +244,7 @@ module Ruote
         ex = if exp
           exp
         else
-          RawExpression.new(fei, eargs[:parent_id], eargs[:tree], wi)
+          RawExpression.new(@context, fei, eargs[:parent_id], eargs[:tree], wi)
         end
         wqueue.emit(:expressions, :update, :expression => ex)
           #
