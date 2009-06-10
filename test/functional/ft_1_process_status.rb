@@ -32,6 +32,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal 'my process', ps.definition_name
     assert_equal nil, ps.definition_revision
     assert_equal({}, ps.variables)
+    assert_not_nil ps.launched_time
   end
 
   def test_process_status_variables

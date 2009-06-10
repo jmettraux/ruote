@@ -44,6 +44,7 @@ module Ruote
     attr_accessor :on_cancel
     attr_accessor :on_error
 
+    attr_accessor :created_time
     attr_accessor :applied_workitem
 
     attr_reader :in_cancel
@@ -65,6 +66,7 @@ module Ruote
 
       @variables = variables
 
+      @created_time = Time.now
       @applied_workitem = workitem.dup
 
       @on_cancel = attribute(:on_cancel, workitem)

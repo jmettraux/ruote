@@ -69,6 +69,13 @@ module Ruote
       root_expression.original_tree
     end
 
+    # Returns a Time instance indicating when the process instance was launched.
+    #
+    def launched_time
+
+      root_expression.created_time
+    end
+
     def to_s
 
       "(process_status wfid '#{wfid}', expressions #{@expressions.size})"
