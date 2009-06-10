@@ -44,7 +44,7 @@ class EftSetTest < Test::Unit::TestCase
       end
     end
 
-    noisy
+    #noisy
 
     assert_trace pdef, %w[ a b0 c0 d1 e0 ]
   end

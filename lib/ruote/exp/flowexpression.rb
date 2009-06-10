@@ -91,7 +91,7 @@ module Ruote
     end
 
     #--
-    # tree
+    # TREE
     #++
 
     def tree
@@ -134,7 +134,7 @@ module Ruote
     end
 
     #--
-    # apply/reply/cancel
+    # APPLY / REPLY / CANCEL
     #++
 
     def do_reply (workitem)
@@ -185,7 +185,7 @@ module Ruote
     end
 
     #--
-    # meta stuff
+    # META
     #++
 
     # Keeping track of names and aliases for the expression
@@ -213,7 +213,7 @@ module Ruote
     end
 
     #--
-    # attributes
+    # ATTRIBUTES
     #++
 
     def has_attribute (*args)
@@ -247,7 +247,7 @@ module Ruote
     end
 
     #--
-    # on_cancel / on_error
+    # ON_CANCEL / ON_ERROR
     #++
 
     def lookup_on (type)
@@ -262,7 +262,7 @@ module Ruote
     end
 
     #--
-    # variables
+    # VARIABLES
     #++
 
     # Looks up the value of a variable in expression tree
@@ -270,7 +270,7 @@ module Ruote
     #
     def lookup_variable (var, prefix=nil)
 
-      #p [ :lv, var, @fei.to_s, prefix, @variables ] if var == 'x'
+      #p [ :lv, var, @fei.to_s, prefix, @variables ]
 
       var, prefix = split_prefix(var, prefix)
 
@@ -281,8 +281,9 @@ module Ruote
 
         val = @variables[var]
         return val if val != nil
+      end
 
-      elsif @parent_id
+      if @parent_id
 
         return parent.lookup_variable(var, prefix)
 
@@ -297,7 +298,7 @@ module Ruote
     #
     def set_variable (var, val, prefix=nil)
 
-      #p [ :sv, var, @fei.to_s, val, prefix, @variables ] if var == 'x'
+      #p [ :sv, var, @fei.to_s, val, prefix, @variables ]
 
       var, prefix = split_prefix(var, prefix)
 
@@ -319,6 +320,8 @@ module Ruote
 
     def unset_variable (var, prefix=nil)
 
+      # TODO : test me !!! (:tag_left)
+
       var, prefix = split_prefix(var, prefix)
 
       return parent.unset_variable(var, prefix) \
@@ -338,7 +341,7 @@ module Ruote
     end
 
     #--
-    # serialization
+    # SERIALIZATION
     #
     # making sure '@context' is not serialized
     #++

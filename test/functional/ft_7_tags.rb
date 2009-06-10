@@ -23,7 +23,7 @@ class FtTagsTest < Test::Unit::TestCase
 
     alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
 
-    noisy
+    #noisy
 
     wfid = @engine.launch(pdef)
     alpha.join
