@@ -114,22 +114,29 @@ module Ruote
       join ? File.join(*r) : r
     end
 
+    def load_fexp (path)
+
+      return nil unless File.exist?(path)
+
+      fexp = File.open(path, 'rb') { |f| decode(f.read) }
+      fexp.context = @context if fexp
+
+      fexp
+    end
+
     def encode (fexp)
 
       @yaml ? fexp.to_yaml : Marshal.dump(fexp)
     end
 
-    def load_fexp (path)
+    def decode (s)
 
-      return nil unless File.exist?(path)
-
-      fexp = File.open(path, 'rb') { |f|
-        s = f.read
-        s[0, 5] == '--- !' ? YAML.load(s) : Marshal.load(s)
-      }
-      fexp.context = @context if fexp
-
-      fexp
+      if s[0, 5] == '--- !'
+        YAML.load(s)
+      else
+        Marshal.load(s) rescue nil
+          # returning nil in case of "marshal data too short"
+      end
     end
   end
 end

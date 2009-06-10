@@ -31,8 +31,8 @@
 
 [ ] file logger service
 
-[ ] cache storage
-[ ] fs storage
+[o] cache storage
+[o] fs storage
 
 [ ] tag (which implies variables)
 [ ] event : upon setting tag !

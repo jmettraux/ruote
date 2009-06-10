@@ -60,6 +60,8 @@ module Ruote
 
     def exp_match? (exp, query)
 
+      return false unless exp
+
       wfid = query[:wfid]
 
       (exp.fei.wfid == wfid)
