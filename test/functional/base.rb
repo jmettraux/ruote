@@ -81,6 +81,8 @@ module FunctionalBase
   protected
 
   def noisy (on=true)
+
+    puts "\nnoisy " + caller[0] if on
     @engine.context[:noisy] = on
   end
 
