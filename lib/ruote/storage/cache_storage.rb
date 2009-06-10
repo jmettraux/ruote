@@ -63,6 +63,7 @@ module Ruote
 
       if fexp = @cache[fei]
 
+        fexp.context = @context
         return fexp
       end
 

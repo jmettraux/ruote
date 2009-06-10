@@ -99,7 +99,7 @@ module Ruote
       c = data[0].to_s[0, 1]
 
       m = data[1].to_s[0, 2]
-      m = data[1].to_s if m == 'on'
+      m = data[1].to_s if m == 'on' || m == 's_'
 
       puts "#{' ' * depth * 2}#{c} #{m} #{data[2].inspect}"
       #data[2].each do |k, v|
