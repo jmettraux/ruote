@@ -47,11 +47,11 @@ module Ruote
 
     # Some kind of busy waiting... (had bad results with thread.wakeup)
     #
-    def wait_for (patterns)
+    def wait_for (patterns, count=nil)
 
-      patterns = Array(patterns)
+      #patterns = Array(patterns)
 
-      for i in 0..WAIT_COUNT
+      for i in 0..(count || WAIT_COUNT)
         sleep 0.001
         while ev = @not_seen.pop
           patterns.each do |eclass, emsg, eargs|
@@ -62,6 +62,7 @@ module Ruote
           end
         end
         #p i
+        #raise "over !"
       end
     end
 
