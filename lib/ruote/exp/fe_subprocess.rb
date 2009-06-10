@@ -42,7 +42,7 @@ module Ruote
 
       pos, tree = ref.is_a?(Array) ? ref : lookup_variable(ref)
 
-      raise "no subprocess named '#{ref}' found" unless pos
+      raise "no subprocess named '#{ref}' found" unless tree.is_a?(Array)
 
       pool.launch_sub(pos, tree, self, @applied_workitem)
     end

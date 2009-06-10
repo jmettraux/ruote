@@ -42,6 +42,8 @@ module Ruote
 
     def consume (workitem)
 
+      # TODO : different block arity ?
+
       @block.call(workitem)
 
       reply_to_engine(workitem)

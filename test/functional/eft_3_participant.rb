@@ -7,6 +7,8 @@
 
 require File.dirname(__FILE__) + '/base'
 
+require 'ruote/part/hash_participant'
+
 
 class EftParticipantTest < Test::Unit::TestCase
   include FunctionalBase
@@ -56,6 +58,22 @@ class EftParticipantTest < Test::Unit::TestCase
     #noisy
 
     assert_trace pdef, 'alpha'
+  end
+
+  def test_participant_exp_name_tree_rewriting
+
+    pdef = Ruote.process_definition do
+      alpha :tag => 'whatever'
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+
+    @engine.launch(pdef)
+    alpha.join
+
+    assert_equal(
+      ['participant', {'tag'=>'whatever', 'ref'=>'alpha'}, []],
+      @engine.expstorage[alpha.first.fei].tree)
   end
 end
 

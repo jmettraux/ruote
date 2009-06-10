@@ -27,6 +27,10 @@
 [o] fexp : created_time
 [o] ps : launched_time
 
+[ ] wi.params ?
+
+[ ] self rec for [main] process
+
 [ ] fexp : clean up attributes
 
 [ ] wfid_gen : rufus-mnemo

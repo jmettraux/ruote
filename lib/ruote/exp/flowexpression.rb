@@ -346,6 +346,9 @@ module Ruote
 
     protected
 
+    # A tag is a named pointer to an expression (name => fei).
+    # It's stored in a variable.
+    #
     def consider_tag
 
       return if self.class == Ruote::FlowExpression

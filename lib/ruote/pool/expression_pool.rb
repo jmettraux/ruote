@@ -158,7 +158,7 @@ module Ruote
 
         tree = [
           part ? 'participant' : 'subprocess',
-          { 'ref' => part ? exp_name : sub },
+          tree[1].merge('ref' => part ? exp_name : sub),
           []
         ]
 
