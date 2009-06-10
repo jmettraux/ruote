@@ -270,7 +270,7 @@ module Ruote
     #
     def lookup_variable (var, prefix=nil)
 
-      #p [ :lv, var, prefix, @variables ]
+      #p [ :lv, var, @fei.to_s, prefix, @variables ] if var == 'x'
 
       var, prefix = split_prefix(var, prefix)
 
@@ -297,6 +297,8 @@ module Ruote
     #
     def set_variable (var, val, prefix=nil)
 
+      #p [ :sv, var, @fei.to_s, val, prefix, @variables ] if var == 'x'
+
       var, prefix = split_prefix(var, prefix)
 
       return parent.set_variable(var, val, prefix) \
@@ -305,13 +307,31 @@ module Ruote
       if @variables
 
         @variables[var] = val
-
         persist
-          # very important, persisting...
 
       elsif @parent_id
 
         parent.set_variable(var, val, prefix)
+
+      #else # should not happen
+      end
+    end
+
+    def unset_variable (var, prefix=nil)
+
+      var, prefix = split_prefix(var, prefix)
+
+      return parent.unset_variable(var, prefix) \
+        if @parent_id && prefix.length > 0
+
+      if @variables
+
+        @variables.delete(var)
+        persist
+
+      elsif @parent_id
+
+        parent.unset_variable(var, prefix)
 
       #else # should not happen
       end
@@ -354,13 +374,11 @@ module Ruote
       return if self.class == Ruote::FlowExpression
         # do not consider tag if this expression is only a temp exp
 
-      if tagname = attribute(:tag, @applied_workitem)
+      if @tagname = attribute(:tag, @applied_workitem)
 
-        set_variable(tagname, @fei)
+        set_variable(@tagname, @fei)
+        wqueue.emit(:expressions, :entered_tag, :tag => @tagname, :fei => @fei)
       end
-
-      # [ ] message on entering tag
-      # [ ] message on leaving tag
     end
 
     VAR_PREFIX_REGEX = /^(\/*)/
@@ -401,10 +419,20 @@ module Ruote
     def reply_to_parent (workitem)
 
       if @in_error
+
         trigger_on_error(workitem)
+
       elsif @in_cancel and @on_cancel
+
         trigger_on_cancel(workitem)
+
       else
+
+        if @tagname
+          unset_variable(@tagname)
+          wqueue.emit(:expressions, :left_tag, :tag => @tagname, :fei => @fei)
+        end
+
         pool.reply_to_parent(self, workitem)
       end
     end

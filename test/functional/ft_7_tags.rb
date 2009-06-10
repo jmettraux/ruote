@@ -17,16 +17,16 @@ class FtTagsTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition do
       sequence :tag => 'main' do
-        nemo :tag => 'part'
+        alpha :tag => 'part'
       end
     end
 
-    nemo = @engine.register_participant :nemo, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
 
-    #noisy
+    noisy
 
     wfid = @engine.launch(pdef)
-    nemo.join
+    alpha.join
 
     ps = @engine.process_status(wfid)
 
@@ -35,7 +35,12 @@ class FtTagsTest < Test::Unit::TestCase
     assert_equal '0_0', ps.variables['main'].expid
     assert_equal '0_0_0', ps.variables['part'].expid
 
-    #assert_equal 1, logger.log.select { |e| e[1] == :on_error }.size
+    assert_equal 2, logger.log.select { |e| e[1] == :entered_tag }.size
+
+    alpha.reply(alpha.first)
+    wait_for(wfid)
+
+    assert_equal 2, logger.log.select { |e| e[1] == :left_tag }.size
   end
 end
 

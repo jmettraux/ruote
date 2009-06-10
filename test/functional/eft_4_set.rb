@@ -24,5 +24,29 @@ class EftSetTest < Test::Unit::TestCase
 
     assert_trace pdef, '-0-'
   end
+
+  def test_set_var_in_subprocess
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a${v:x}'
+        set :var => 'x', :value => '0'
+        echo 'b${v:x}'
+        sub0
+        echo 'e${v:x}'
+      end
+      define 'sub0' do
+        sequence do
+          echo 'c${v:x}'
+          set :var => 'x', :value => '1'
+          echo 'd${v:x}'
+        end
+      end
+    end
+
+    noisy
+
+    assert_trace pdef, %w[ a b0 c0 d1 e0 ]
+  end
 end
 

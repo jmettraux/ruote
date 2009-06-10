@@ -23,6 +23,7 @@
 #++
 
 
+require 'ruote/util/tree'
 require 'ruote/log/logger'
 
 
@@ -44,7 +45,7 @@ module Ruote
 
     # Some kind of busy waiting... (had bad results with thread.wakeup)
     #
-    def wait_for (patterns, count=100)
+    def wait_for (patterns, count=1400)
 
       patterns = Array(patterns)
 
@@ -98,8 +99,17 @@ module Ruote
 
       c = data[0].to_s[0, 1]
 
-      m = data[1].to_s[0, 2]
-      m = data[1].to_s if m == 'on' || m == 's_'
+      d1s = data[1].to_s
+
+      m = d1s[0, 2]
+      m = d1s if m == 'on' || m == 's_'
+      m = d1s if d1s == 'entered_tag' || d1s == 'left_tag'
+
+      if m == 'ap' && eargs[:tree] && eargs[:fei].expid == '0'
+        puts
+        puts Ruote.tree_to_s(data[2][:tree])
+        puts
+      end
 
       puts "#{' ' * depth * 2}#{c} #{m} #{data[2].inspect}"
       #data[2].each do |k, v|
