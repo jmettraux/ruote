@@ -17,25 +17,36 @@ class FtSubprocessesTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition do
       define 'sub0' do
-        echo 'result : ${nada}'
+        bravo
+        echo 'result : ${v:nada}'
       end
       sequence do
         bravo
+        sub0
       end
     end
 
-    bravo = @engine.register_participant :bravo, Ruote::JoinableHashParticipant
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
-    bravo.join
+    wait_for(:bravo)
 
     fexp = @engine.expstorage[bravo.first.fei]
 
     assert_equal(
-      ['0_0', ['sequence', {'sub0'=>nil}, [['echo', {'result : ${nada}'=>nil}, []]]]],
+      ['0_0', ['sequence', {'sub0'=>nil}, [['bravo', {}, []], ['echo', {'result : ${v:nada}'=>nil}, []]]]],
       fexp.lookup_variable('sub0'))
+
+    bravo.reply(bravo.first)
+    wait_for(:bravo)
+
+    fexp = @engine.expstorage[bravo.first.fei]
+
+    assert_equal(
+      ['sequence', {'sub0'=>nil}, [['bravo', {}, []], ['echo', {'result : ${v:nada}'=>nil}, []]]],
+      fexp.parent.tree)
   end
 end
 

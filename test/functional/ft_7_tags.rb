@@ -21,12 +21,12 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
-    alpha.join
+    wait_for(:alpha)
 
     ps = @engine.process_status(wfid)
 

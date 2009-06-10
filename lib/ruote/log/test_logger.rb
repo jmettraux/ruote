@@ -37,6 +37,8 @@ module Ruote
 
     attr_reader :log
 
+    WAIT_COUNT = 1000 # approx 1 sec
+
     def initialize
 
       @log = []
@@ -45,12 +47,12 @@ module Ruote
 
     # Some kind of busy waiting... (had bad results with thread.wakeup)
     #
-    def wait_for (patterns, count=1400)
+    def wait_for (patterns)
 
       patterns = Array(patterns)
 
-      for i in 0..count
-        sleep 0.002
+      for i in 0..WAIT_COUNT
+        sleep 0.001
         while ev = @not_seen.pop
           patterns.each do |eclass, emsg, eargs|
             if match?(ev, eclass, emsg, eargs || {})

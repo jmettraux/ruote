@@ -43,13 +43,11 @@ module FunctionalBase
 
     @engine.add_service(:s_logger, Ruote::TestLogger)
 
-    @terminated_processes = []
-
-    @engine.wqueue.subscribe(:processes) do |eclass, emsg, eargs|
-
-      @terminated_processes << eargs[:wfid] \
-        if [ :terminated ].include?(emsg)
-    end
+    #@terminated_processes = []
+    #@engine.wqueue.subscribe(:processes) do |eclass, emsg, eargs|
+    #  @terminated_processes << eargs[:wfid] \
+    #    if [ :terminated ].include?(emsg)
+    #end
   end
 
   def teardown
@@ -90,7 +88,7 @@ module FunctionalBase
     @engine.context[:s_logger]
   end
 
-  def wait_for (wfid, opts={})
+  def wait_for (wfid_or_part, opts={})
 
     #t = Thread.current
     #seen = false
@@ -111,10 +109,19 @@ module FunctionalBase
     #  return if @terminated_processes.include?(wfid)
     #end
 
-    logger.wait_for([
-      [ :processes, :terminated, { :wfid => wfid } ],
-      [ :errors, nil, { :wfid => wfid } ]
-    ])
+    if wfid_or_part.is_a?(String)
+
+      logger.wait_for([
+        [ :processes, :terminated, { :wfid => wfid_or_part } ],
+        [ :errors, nil, { :wfid => wfid_or_part } ]
+      ])
+
+    else
+
+      logger.wait_for([
+        [ :workitems, :dispatching, { :pname => wfid_or_part.to_s } ],
+      ])
+    end
   end
 
   def wait

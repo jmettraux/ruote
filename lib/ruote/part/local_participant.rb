@@ -35,41 +35,5 @@ module Ruote
       engine.reply(workitem)
     end
   end
-
-  module JoinableParticipant
-
-    def join
-
-      #p [ :joiner, Thread.current ]
-
-      return if size > 0
-
-      @waiting = Thread.current
-
-      if lonely_thread? # covers EM flavour as well
-        sleep 0.350
-      else
-        Thread.stop
-      end
-    end
-
-    protected
-
-    def notify
-
-      return unless @waiting
-
-      #p [ :notifier, Thread.current ]
-      #p [ :notified, @waiting ]
-
-      @waiting.wakeup
-      @waiting = nil
-    end
-
-    def lonely_thread?
-      others = Thread.list - [ Thread.current ]
-      (others.select { |t| t.status == 'run' }.size == 0)
-    end
-  end
 end
 

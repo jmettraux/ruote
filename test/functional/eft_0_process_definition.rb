@@ -28,13 +28,13 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
       participant :ref => :alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
 
-    alpha.join
+    wait_for(:alpha)
 
     ps = @engine.process_status(wfid)
 

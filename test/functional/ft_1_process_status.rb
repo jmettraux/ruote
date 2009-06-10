@@ -21,11 +21,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
 
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
 
-    alpha.join
+    wait_for(:alpja)
 
     ps = @engine.process_status(wfid)
 
@@ -44,10 +44,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
 
-    alpha.join
+    wait_for(:alpha)
 
     ps = @engine.process_status(wfid)
 
@@ -64,10 +64,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
     wfid = @engine.launch(pdef)
 
-    alpha.join
+    wait_for(:alpha)
 
     ps = @engine.process_status(wfid)
 
@@ -116,10 +116,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
     wfid = @engine.launch(pdef)
 
-    alpha.join
+    wait_for(:alpha)
 
     ps = @engine.process_status(wfid)
 

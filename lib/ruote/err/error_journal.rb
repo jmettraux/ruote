@@ -45,6 +45,13 @@ module Ruote
       @h[:message]
     end
 
+    def error
+      @h[:error]
+    end
+
+    def message
+    end
+
     def fei
       msg.last[:fei]
     end

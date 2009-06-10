@@ -19,12 +19,12 @@ class FtCancelTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
-    alpha.join
+    wait_for(:alpha)
 
     ps = @engine.process_status(wfid)
     assert_equal 1, alpha.size
@@ -52,18 +52,18 @@ class FtCancelTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
-    alpha.join
+    wait_for(:alpha)
 
     wi = alpha.first
 
     @engine.cancel_expression(wi.fei)
-    bravo.join
+    wait_for(:bravo)
 
     assert_not_nil bravo.first
   end

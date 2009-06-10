@@ -11,7 +11,7 @@ require File.dirname(__FILE__) + '/base'
 class FtParticipantConsumptionTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_tag
+  def test_workitems_dispatching_message
 
     pdef = Ruote.process_definition do
       sequence do
@@ -28,6 +28,26 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
     assert_trace(pdef, 'alpha')
 
     assert_equal 1, logger.log.select { |e| e[2][:pname] == 'alpha' }.size
+  end
+
+  def test_missing_participant_name
+
+    pdef = Ruote.process_definition do
+      sequence do
+        participant
+      end
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    ps = @engine.process_status(wfid)
+
+    assert_equal 1, ps.errors.size
+    assert_equal 'no participant name specified', ps.errors.first.error.to_s
   end
 end
 

@@ -46,8 +46,6 @@ module Ruote
     def consume (workitem)
 
       @items[workitem.fei] = workitem
-
-      notify
     end
 
     def cancel (fei)
@@ -78,10 +76,6 @@ module Ruote
 
       @items.values.first
     end
-  end
-
-  class JoinableHashParticipant < HashParticipant
-    include JoinableParticipant
   end
 end
 

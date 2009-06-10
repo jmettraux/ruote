@@ -66,10 +66,10 @@ class EftParticipantTest < Test::Unit::TestCase
       alpha :tag => 'whatever'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
 
     @engine.launch(pdef)
-    alpha.join
+    wait_for(:alpha)
 
     assert_equal(
       ['participant', {'tag'=>'whatever', 'ref'=>'alpha'}, []],

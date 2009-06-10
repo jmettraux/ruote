@@ -21,7 +21,7 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    nemo = @engine.register_participant :nemo, Ruote::JoinableHashParticipant
+    nemo = @engine.register_participant :nemo, Ruote::HashParticipant
 
     @engine.register_participant :catcher do
       @tracer << "caught\n"
@@ -30,7 +30,7 @@ class FtOnCancelTest < Test::Unit::TestCase
     #noisy
 
     wfid = @engine.launch(pdef)
-    nemo.join
+    wait_for(:nemo)
 
     @engine.cancel_process(wfid)
     wait_for(wfid)
@@ -46,12 +46,12 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    nemo = @engine.register_participant :nemo, Ruote::JoinableHashParticipant
+    nemo = @engine.register_participant :nemo, Ruote::HashParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
-    nemo.join
+    wait_for(:nemo)
 
     @engine.cancel_process(wfid)
     wait_for(wfid)
@@ -77,13 +77,13 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::JoinableHashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
 
-    alpha.join
+    wait_for(:alpha)
 
     assert_equal '', @tracer.to_s
 

@@ -45,11 +45,16 @@ module Ruote
       @participant_name =
         attribute(:ref, @applied_workitem) || attribute_text(@applied_workitem)
 
+      @participant_name = @participant_name.to_s
+
+      raise (
+        ArgumentError.new("no participant name specified")
+      ) if @participant_name == ''
+
       participant = plist.lookup(@participant_name)
 
       raise(
-        ArgumentError.new(
-          "pexp : no participant named #{@participant_name.inspect}")
+        ArgumentError.new("no participant named #{@participant_name.inspect}")
       ) unless participant
 
       @applied_workitem.participant_name = @participant_name
