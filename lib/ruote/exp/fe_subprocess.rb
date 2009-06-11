@@ -35,8 +35,7 @@ module Ruote
 
     def apply
 
-      ref =
-        attribute(:ref, @applied_workitem) || attribute_text(@applied_workitem)
+      ref = attribute(:ref) || attribute_text
 
       raise "no subprocess referred in #{tree}" unless ref
 

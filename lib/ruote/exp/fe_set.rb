@@ -41,7 +41,7 @@ module Ruote
       value = if val_key = has_attribute(:val, :value)
         attribute(val_key, workitem)
       else
-        child_text(workitem)
+        child_text(workitem) # TODO : test that !!!
       end
 
       if var_key = has_attribute(:v, :var, :variable)

@@ -42,8 +42,7 @@ module Ruote
 
     def apply
 
-      @participant_name =
-        attribute(:ref, @applied_workitem) || attribute_text(@applied_workitem)
+      @participant_name = attribute(:ref) || attribute_text
 
       @participant_name = @participant_name.to_s
 

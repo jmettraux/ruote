@@ -38,8 +38,7 @@ module Ruote
 
       self.tree = self.class.reorganize(expmap, tree)
 
-      name =
-        attribute(:name, @applied_workitem) || attribute_text(@applied_workitem)
+      name = attribute(:name) || attribute_text
 
       # TODO : what if no name ??
 

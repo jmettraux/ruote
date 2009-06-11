@@ -71,8 +71,8 @@ module Ruote
       @created_time = Time.now
       @applied_workitem = workitem.dup
 
-      @on_cancel = attribute(:on_cancel, workitem)
-      @on_error = attribute(:on_error, workitem)
+      @on_cancel = attribute(:on_cancel)
+      @on_error = attribute(:on_error)
 
       consider_tag
     end
@@ -122,11 +122,11 @@ module Ruote
     #
     # in the context of the participant expression
     #
-    #   attribute_text(wi)
+    #   attribute_text()
     #
     # will yield 'alpha'.
     #
-    def attribute_text (workitem)
+    def attribute_text (workitem=@applied_workitem)
 
       text = attributes.keys.find { |k| attributes[k] == nil }
 
@@ -223,7 +223,7 @@ module Ruote
       nil
     end
 
-    def attribute (n, workitem, options={})
+    def attribute (n, workitem=@applied_workitem, options={})
 
       n = n.to_s
 
@@ -377,7 +377,7 @@ module Ruote
       return if self.class == Ruote::FlowExpression
         # do not consider tag if this expression is only a temp exp
 
-      if @tagname = attribute(:tag, @applied_workitem)
+      if @tagname = attribute(:tag)
 
         set_variable(@tagname, @fei)
         wqueue.emit(:expressions, :entered_tag, :tag => @tagname, :fei => @fei)

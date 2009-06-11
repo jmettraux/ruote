@@ -46,7 +46,7 @@ module Ruote
 
     def reply (workitem)
 
-      text = "#{attribute_text(workitem)}\n"
+      text = "#{attribute_text}\n"
 
       if t = context[:s_tracer]
         t << text

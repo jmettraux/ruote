@@ -36,8 +36,8 @@ module Ruote
 
     def apply
 
-      @merge = attribute(:merge, @applied_workitem)
-      @merge_type = attribute(:merge_type, @applied_workitem)
+      @merge = attribute(:merge)
+      @merge_type = attribute(:merge_type)
 
       @merged_workitem = nil
 
