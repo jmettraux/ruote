@@ -49,7 +49,7 @@ module Ruote
 
     def find_expressions (query={})
 
-      fnames = if wfid = query[:wfid]
+      fnames = if wfid = query[:wfid] || query[:parent_wfid]
         Dir[File.join(dir_for(wfid), '*.ruote')]
       else
         all_filenames
@@ -109,7 +109,7 @@ module Ruote
 
     def filename_for (fei, join=false)
 
-      r = [ dir_for(fei.wfid), "#{fei.wfid}__#{fei.expid}.ruote" ]
+      r = [ dir_for(fei.parent_wfid), "#{fei.wfid}__#{fei.expid}.ruote" ]
 
       join ? File.join(*r) : r
     end

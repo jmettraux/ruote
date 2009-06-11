@@ -46,6 +46,17 @@ module Ruote
       root_expression.variables
     end
 
+    # Returns a hash fei => variable_hash containing all the variable bindings
+    # (expression by expression) of the process instance.
+    #
+    def all_variables
+
+      @expressions.inject({}) do |h, exp|
+        h[exp.fei] = exp.variables if exp.variables
+        h
+      end
+    end
+
     def wfid
 
       root_expression.fei.wfid

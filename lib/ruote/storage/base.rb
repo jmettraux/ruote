@@ -62,9 +62,11 @@ module Ruote
 
       return false unless exp
 
-      wfid = query[:wfid]
-
-      (exp.fei.wfid == wfid)
+      if wfid = query[:wfid]
+        (exp.fei.wfid == wfid)
+      elsif pwfid = query[:parent_wfid]
+        (exp.fei.parent_wfid == pwfid)
+      end
     end
   end
 end

@@ -30,6 +30,7 @@
 
 [ ] wi test (and fix) ${f:xyz}
 [ ] wi.params ?
+[ ] wi#to_h #from_h
 
 [ ] self rec for [main] process
 

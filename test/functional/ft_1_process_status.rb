@@ -140,5 +140,74 @@ class FtProcessStatusTest < Test::Unit::TestCase
         ["participant", {"ref"=>:alpha}, []]]],
       ps.original_tree)
   end
+
+  def test_sub_processes
+
+    pdef = Ruote.process_definition do
+      define 'sub0' do
+        alpha
+      end
+      sequence do
+        sub0
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    assert_equal "#{wfid}_0", alpha.first.fei.wfid
+
+    ps = @engine.process_status(wfid)
+
+    #ps.expressions.each { |e| puts e.fei.to_s }
+
+    assert_equal 5, ps.expressions.size
+
+    assert_equal(
+      [ wfid, "#{wfid}_0" ],
+      ps.expressions.collect { |e| e.fei.wfid }.sort.uniq)
+  end
+
+  def test_variables
+
+    pdef = Ruote.process_definition do
+      define 'sub0' do
+        sequence do
+          set :var => 'v1', :val => 1
+          alpha
+        end
+      end
+      sequence do
+        set :var => 'v0', :val => 0
+        sub0
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    ps = @engine.process_status(wfid)
+
+    assert_equal(0, ps.variables['v0'])
+    assert_equal(nil, ps.variables['v1'])
+
+    #p ps.all_variables
+    assert_equal(2, ps.all_variables.size)
+
+    h = ps.all_variables.values.inject({}) { |h, vh| h.merge!(vh) }
+
+    assert_equal(0, h['v0'])
+    assert_equal(1, h['v1'])
+  end
 end
 

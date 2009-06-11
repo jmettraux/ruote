@@ -104,7 +104,7 @@ module Ruote
     #
     def process_status (wfid)
 
-      exps = expstorage.find_expressions(:wfid => wfid)
+      exps = expstorage.find_expressions(:parent_wfid => wfid)
       errs = ejournal.errors(wfid)
 
       # NOTE : should we return a process status if there are only errors ?
