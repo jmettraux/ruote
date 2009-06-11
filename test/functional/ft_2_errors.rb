@@ -22,7 +22,8 @@ class FtProcessStatusTest < Test::Unit::TestCase
     #noisy
 
     wfid = @engine.launch(pdef)
-    wait
+    wait_for(wfid)
+
     ps = @engine.process_status(wfid)
 
     assert_equal 1, ps.errors.size
@@ -38,6 +39,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
     wait_for(wfid)
+
     ps = @engine.process_status(wfid)
 
     err = ps.errors.first
