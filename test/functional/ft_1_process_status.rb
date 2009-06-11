@@ -25,7 +25,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
 
-    wait_for(:alpja)
+    wait_for(:alpha)
 
     ps = @engine.process_status(wfid)
 
