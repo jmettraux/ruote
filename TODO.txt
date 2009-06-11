@@ -26,7 +26,7 @@
 
 [o] fexp : created_time
 [o] ps : launched_time
-[ ] ps : #tags
+[o] ps : #tags
 
 [ ] wi test (and fix) ${f:xyz}
 [ ] wi.params ?

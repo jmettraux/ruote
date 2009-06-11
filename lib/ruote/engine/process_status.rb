@@ -57,6 +57,25 @@ module Ruote
       end
     end
 
+    # Returns a hash tagname => fei of tags set at the root of the process
+    # instance.
+    #
+    def tags
+
+      variables.select { |k, v| v.is_a?(FlowExpressionId) }
+    end
+
+    # Returns a hash tagname => array of feis of all the tags set in the process
+    # instance.
+    #
+    def all_tags
+
+      all_variables.inject({}) do |h, (fei, vars)|
+        vars.each { |k, v| (h[k] ||= []) << v if v.is_a?(FlowExpressionId) }
+        h
+      end
+    end
+
     def wfid
 
       root_expression.fei.wfid

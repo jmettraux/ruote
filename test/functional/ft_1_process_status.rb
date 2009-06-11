@@ -209,5 +209,55 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal(0, h['v0'])
     assert_equal(1, h['v1'])
   end
+
+  def test_tags
+
+    pdef = Ruote.process_definition do
+      sequence :tag => 'main' do
+        alpha :tag => 'part'
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(:alpha)
+
+    ps = @engine.process_status(wfid)
+
+    assert_equal 2, ps.tags.size
+
+    assert_equal 2, ps.all_tags.size
+    assert_kind_of Array, ps.all_tags['main']
+    assert_equal 1, ps.all_tags['main'].size
+  end
+
+  def test_all_tags
+
+    pdef = Ruote.process_definition do
+      define 'sub0' do
+        sequence :tag => 'tag0' do
+          alpha
+        end
+      end
+      sequence :tag => 'tag0' do
+        sub0
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(:alpha)
+
+    ps = @engine.process_status(wfid)
+
+    assert_equal 1, ps.tags.size
+    assert_equal 2, ps.all_tags['tag0'].size
+  end
 end
 
