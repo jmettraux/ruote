@@ -32,7 +32,14 @@ module Ruote
 
     names :concurrence
 
+    attr_reader :merged_workitem
+
     def apply
+
+      @merge = attribute(:merge, @applied_workitem)
+      @merge_type = attribute(:merge_type, @applied_workitem)
+
+      @merged_workitem = nil
 
       tree_children.each_with_index do |c, i|
         apply_child(i, @applied_workitem.dup)
@@ -41,7 +48,16 @@ module Ruote
 
     def reply (workitem)
 
-      reply_to_parent(workitem) if children.size < 1
+      merge(workitem)
+
+      reply_to_parent(@merged_workitem) if children.size < 1
+    end
+
+    protected
+
+    def merge (workitem)
+
+      @merged_workitem = workitem
     end
   end
 end
