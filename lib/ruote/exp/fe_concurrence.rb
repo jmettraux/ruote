@@ -23,56 +23,25 @@
 #++
 
 
-exppath = File.dirname(__FILE__)
-
-Dir.new(exppath).entries.select { |p|
-  p.match(/^fe_.*\.rb$/)
-}.each { |p|
-  require exppath + '/' + p
-}
+require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
-  #
-  # Mapping from expression names (sequence, concurrence, ...) to expression
-  # classes (Ruote::SequenceExpression, Ruote::ConcurrenceExpression, ...)
-  #
-  class ExpressionMap
+  class ConcurrenceExpression < FlowExpression
 
-    def initialize
+    names :concurrence
 
-      @map = {}
-      add(Ruote::DefineExpression)
-      add(Ruote::SequenceExpression)
-      add(Ruote::EchoExpression)
-      add(Ruote::ParticipantExpression)
-      add(Ruote::SetExpression)
-      add(Ruote::SubprocessExpression)
-      add(Ruote::ConcurrenceExpression)
+    def apply
+
+      tree_children.each_with_index do |c, i|
+        apply_child(i, @applied_workitem.dup)
+      end
     end
 
-    # Returns the expression class for the given expression name
-    #
-    def expression_class (exp_name)
+    def reply (workitem)
 
-      @map[exp_name]
-    end
-
-    # Returns true if the argument points to a definition
-    #
-    def is_definition? (tree)
-
-      c = expression_class(tree.first)
-
-      (c && c.is_definition?)
-    end
-
-    protected
-
-    def add (exp_class)
-
-      exp_class.expression_names.each { |n| @map[n] = exp_class }
+      reply_to_parent(workitem) if children.size < 1
     end
   end
 end
