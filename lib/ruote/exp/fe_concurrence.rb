@@ -32,14 +32,14 @@ module Ruote
 
     names :concurrence
 
-    attr_reader :merged_workitem
 
     def apply
 
-      @merge = attribute(:merge)
-      @merge_type = attribute(:merge_type)
+      @merge = att(:merge, %w[ first last highest lowest ])
+      @merge_type = att(:merge_type, %w[ override mix isolate ])
+      @remaining = att(:remaining, %w[ cancel forget ])
 
-      @merged_workitem = nil
+      @workitems = nil
 
       tree_children.each_with_index do |c, i|
         apply_child(i, @applied_workitem.dup)
@@ -48,16 +48,62 @@ module Ruote
 
     def reply (workitem)
 
-      merge(workitem)
+      if @merge == 'first' || @merge == 'last'
+        (@workitems ||= []) << workitem
+      else
+        (@workitems ||= {})[workitem.fei.expid] = workitem
+      end
 
-      reply_to_parent(@merged_workitem) if children.size < 1
+      if over?
+        reply_to_parent
+      else
+        persist
+      end
     end
 
     protected
 
-    def merge (workitem)
+    def over?
 
-      @merged_workitem = workitem
+      (@children.size < 1)
+    end
+
+    def reply_to_parent
+
+      super(merge_workitems)
+    end
+
+    def merge_workitems
+
+      wis = case @merge
+      when 'first'
+        @workitems.reverse
+      when 'last'
+        @workitems
+      when 'highest', 'lowest'
+        is = @workitems.keys.sort.collect { |k| @workitems[k] }
+        @merge == 'highest' ? is.reverse : is
+      end
+
+      wis.inject(nil) { |t, wi| merge_workitem(t, wi, @merge_type) }
+    end
+
+    def merge_workitem (target, source, type)
+
+      return source if type == 'override'
+
+      source.fields = { source.fei.child_id => source.fields } \
+        if target == nil && type == 'isolate'
+
+      return source unless target
+
+      if type == 'mix'
+        source.fields.each { |k, v| target.fields[k] = v }
+      else # 'isolate'
+        target.fields[source.fei.child_id] = source.fields
+      end
+
+      target
     end
   end
 end

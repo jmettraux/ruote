@@ -70,15 +70,24 @@ class EftConcurrenceTest < Test::Unit::TestCase
     wi = run_concurrence({}, false)
 
     assert_equal '0_1', wi.fei.expid
+    assert_equal '0_0_0_0', wi.fields['seen']
+  end
+
+  def test_concurrence_merge_last
+
+    wi = run_concurrence({ :merge => :last }, false)
+
+    assert_equal '0_1', wi.fei.expid
     assert_equal '0_0_0_1', wi.fields['seen']
   end
 
-  def test_concurrence_merge_first
+  def test_concurrence_merge_type_isolate
 
-    wi = run_concurrence({ :merge => :first }, true)
+    wi = run_concurrence({ :merge_type => :isolate }, false)
 
-    assert_equal '0_1', wi.fei.expid
-    assert_equal '0_0_0_0', wi.fields['seen']
+    assert_equal(
+      {1=>{"seen"=>"0_0_0_1"}, 0=>{"seen"=>"0_0_0_0"}},
+      wi.fields)
   end
 end
 
