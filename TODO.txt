@@ -43,9 +43,9 @@
 [o] cache storage
 [o] fs storage
 
-[ ] tag (which implies variables)
-[ ] event : upon setting tag !
-[ ] event : upon leaving tag
+[o] tag (which implies variables)
+[o] event : upon setting tag !
+[o] event : upon leaving tag
 [ ] undo / redo
 
 [o] cancel_process
