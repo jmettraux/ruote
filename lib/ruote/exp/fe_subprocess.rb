@@ -40,7 +40,7 @@ module Ruote
 
       raise "no subprocess referred in #{tree}" unless ref
 
-      pos, tree = ref.is_a?(Array) ? ref : lookup_variable(ref)
+      pos, tree = lookup_variable(ref)
 
       raise "no subprocess named '#{ref}' found" unless tree.is_a?(Array)
 

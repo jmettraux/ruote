@@ -25,15 +25,14 @@
 
 module Ruote
 
-  # Pretty printing a caller() array
+  # Prints the current call stack to stdout
   #
-  def Ruote.caller_to_s (start_index, max_lines=nil)
-    s = ''
-    caller(start_index + 1).each_with_index do |line, index|
-      break if max_lines and index >= max_lines
-      s << "   #{line}\n"
-    end
-    s
+  def Ruote.p_caller (*msg)
+
+    puts
+    puts "  == #{msg.inspect} =="
+    caller(1).each { |l| puts "  #{l}" }
+    puts
   end
 
   # Deep object duplication

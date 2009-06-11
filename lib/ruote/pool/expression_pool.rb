@@ -153,12 +153,11 @@ module Ruote
 
       if sub or part
 
-        # pass directly the result of the lookup in case of subprocess
-        # pass the name and not the participant in case of participant
+        # don't bother passing the looked up value
 
         tree = [
           part ? 'participant' : 'subprocess',
-          tree[1].merge('ref' => part ? exp_name : sub),
+          tree[1].merge('ref' => exp_name),
           []
         ]
 
