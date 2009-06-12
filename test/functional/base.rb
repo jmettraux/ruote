@@ -119,7 +119,7 @@ module FunctionalBase
     else
 
       logger.wait_for([
-        [ :workitems, :dispatching, { :pname => wfid_or_part.to_s } ],
+        [ :workitems, :dispatched, { :pname => wfid_or_part.to_s } ],
       ])
     end
   end

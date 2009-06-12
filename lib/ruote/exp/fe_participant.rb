@@ -60,11 +60,11 @@ module Ruote
 
       persist
 
-      wqueue.emit(
-        :workitems, :dispatching,
-        :workitem => @applied_workitem, :pname => @participant_name)
-
       participant.consume(@applied_workitem)
+
+      wqueue.emit(
+        :workitems, :dispatched,
+        :workitem => @applied_workitem, :pname => @participant_name)
     end
 
     #def reply (workitem)

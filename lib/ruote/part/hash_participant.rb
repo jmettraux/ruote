@@ -36,8 +36,6 @@ module Ruote
 
     include Enumerable
 
-    #attr_reader :items
-
     def initialize (opts)
 
       @items = {}

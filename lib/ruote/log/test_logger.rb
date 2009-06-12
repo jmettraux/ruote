@@ -54,7 +54,7 @@ module Ruote
         while ev = @not_seen.pop
           patterns.each do |eclass, emsg, eargs|
             if match?(ev, eclass, emsg, eargs || {})
-              #puts "\n\n--match !!! after #{i}"
+              #p [ :match, ev ]
               return
             end
           end
