@@ -65,7 +65,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     wi = alpha.first
 
     ps = @engine.process_status(wi.fei.wfid)
-    assert_equal %w[ 0 0_1 ], ps.expressions.collect { |e| e.fei.expid }
+    assert_equal %w[ 0 0_1 ], ps.expressions.collect { |e| e.fei.expid }.sort
 
     wi
   end

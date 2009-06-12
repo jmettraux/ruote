@@ -32,7 +32,6 @@ module Ruote
 
     names :concurrence
 
-
     def apply
 
       @count = attribute(:count).to_i rescue nil

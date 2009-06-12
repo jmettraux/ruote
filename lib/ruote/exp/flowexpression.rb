@@ -430,14 +430,14 @@ module Ruote
     #
     def persist
 
-      wqueue.emit(:expressions, :update, :expression => self)
+      wqueue.emit!(:expressions, :update, :expression => self)
     end
 
     # Asks expstorage[s] to unstore persisted version of self.
     #
     def unpersist
 
-      wqueue.emit(:expressions, :delete, :fei => @fei)
+      wqueue.emit!(:expressions, :delete, :fei => @fei)
     end
 
     def reply_to_parent (workitem)

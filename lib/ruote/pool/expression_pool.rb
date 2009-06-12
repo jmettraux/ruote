@@ -84,7 +84,8 @@ module Ruote
     #
     def reply_to_parent (exp, workitem)
 
-      wqueue.emit(:expressions, :delete, :fei => exp.fei)
+      wqueue.emit!(:expressions, :delete, :fei => exp.fei)
+
       workitem.fei = exp.fei
 
       if exp.parent_id
@@ -171,7 +172,7 @@ module Ruote
       workitem.fei = fei
       exp = exp_class.new(@context, fei, parent_id, tree, variables, workitem)
 
-      wqueue.emit(:expressions, :update, :expression => exp)
+      wqueue.emit!(:expressions, :update, :expression => exp)
       wqueue.emit(:expressions, :apply, :fei => exp.fei)
 
       fei
@@ -245,7 +246,7 @@ module Ruote
         else
           RawExpression.new(@context, fei, eargs[:parent_id], eargs[:tree], wi)
         end
-        wqueue.emit(:expressions, :update, :expression => ex)
+        wqueue.emit!(:expressions, :update, :expression => ex)
           #
           # making sure there is at least 1 expression in the storage
           # so that engine#process_status yields something

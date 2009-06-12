@@ -85,7 +85,7 @@ module Ruote
         # TODO : rescue for each subscriber, don't care if 1+ fails,
         #        send to others anyway
 
-        p [ e.class, e ]
+        p [ :wqueue_process, e.class, e ]
         puts e.backtrace
       end
     end
@@ -104,9 +104,18 @@ module Ruote
       end
     end
 
+    # Emits event for later processing
+    #
     def emit (eclass, emsg, eargs)
 
       @queue.push([ eclass, emsg, eargs ])
+    end
+
+    # Emits event for immediate processing
+    #
+    def emit! (eclass, emsg, eargs)
+
+      process([ eclass, emsg, eargs ])
     end
   end
 
