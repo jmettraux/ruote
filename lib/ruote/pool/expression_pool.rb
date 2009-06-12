@@ -84,7 +84,7 @@ module Ruote
     #
     def reply_to_parent (exp, workitem)
 
-      wqueue.emit!(:expressions, :delete, :fei => exp.fei)
+      exp.unpersist
 
       workitem.fei = exp.fei
 
@@ -172,7 +172,7 @@ module Ruote
       workitem.fei = fei
       exp = exp_class.new(@context, fei, parent_id, tree, variables, workitem)
 
-      wqueue.emit!(:expressions, :update, :expression => exp)
+      exp.persist
       wqueue.emit(:expressions, :apply, :fei => exp.fei)
 
       fei
@@ -231,7 +231,8 @@ module Ruote
 
         return apply(eargs) if emsg == :apply && eargs[:tree]
 
-        return unless exp # NOTE : really ?
+        return unless exp
+          # can't reply to a missing expression...
 
         case emsg
         when :apply then exp.apply
@@ -246,7 +247,7 @@ module Ruote
         else
           RawExpression.new(@context, fei, eargs[:parent_id], eargs[:tree], wi)
         end
-        wqueue.emit!(:expressions, :update, :expression => ex)
+        ex.persist
           #
           # making sure there is at least 1 expression in the storage
           # so that engine#process_status yields something

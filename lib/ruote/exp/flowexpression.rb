@@ -388,6 +388,20 @@ module Ruote
       l
     end
 
+    # Asks expstorage[s] to store/update persisted version of self.
+    #
+    def persist
+
+      wqueue.emit!(:expressions, :update, :expression => self)
+    end
+
+    # Asks expstorage[s] to unstore persisted version of self.
+    #
+    def unpersist
+
+      wqueue.emit!(:expressions, :delete, :fei => @fei)
+    end
+
     protected
 
     # A tag is a named pointer to an expression (name => fei).
@@ -424,20 +438,6 @@ module Ruote
     def apply_child (child_index, workitem)
 
       pool.apply_child(self, child_index, workitem)
-    end
-
-    # Asks expstorage[s] to store/update persisted version of self.
-    #
-    def persist
-
-      wqueue.emit!(:expressions, :update, :expression => self)
-    end
-
-    # Asks expstorage[s] to unstore persisted version of self.
-    #
-    def unpersist
-
-      wqueue.emit!(:expressions, :delete, :fei => @fei)
     end
 
     def reply_to_parent (workitem)
