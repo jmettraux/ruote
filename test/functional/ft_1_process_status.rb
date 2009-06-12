@@ -13,7 +13,7 @@ require 'ruote/part/hash_participant'
 class FtProcessStatusTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_process_status
+  def test_ps
 
     pdef = Ruote.process_definition :name => 'my process' do
       participant :ref => 'alpha'
@@ -35,7 +35,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_not_nil ps.launched_time
   end
 
-  def test_process_status_variables
+  def test_variables
 
     pdef = Ruote.process_definition 'my process' do
       sequence do
@@ -55,7 +55,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal({ 'toto' => 'nada' }, ps.variables)
   end
 
-  def test_process_status_tree
+  def test_tree
 
     pdef = Ruote.process_definition 'my process' do
       sequence do
@@ -107,7 +107,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       ps.original_tree)
   end
 
-  def test_process_status_tree_when_define_rewrites_it
+  def test_tree_when_define_rewrites_it
 
     pdef = Ruote.process_definition 'my process' do
       participant :ref => :alpha
@@ -173,7 +173,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       ps.expressions.collect { |e| e.fei.wfid }.sort.uniq)
   end
 
-  def test_variables
+  def test_all_variables
 
     pdef = Ruote.process_definition do
       define 'sub0' do
