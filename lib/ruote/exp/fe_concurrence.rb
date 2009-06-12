@@ -118,11 +118,9 @@ module Ruote
 
     def handle_remaining
 
-      if @remaining == 'cancel'
-        @children.each { |fei| pool.cancel_expression(fei) }
-      else # forget
-        p "FORGET !" # TODO
-      end
+      m = @remaining == 'cancel' ? :cancel_expression : :forget_expression
+
+      @children.each { |fei| pool.send(m, fei) }
     end
   end
 end

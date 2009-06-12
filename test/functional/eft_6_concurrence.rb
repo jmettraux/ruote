@@ -31,7 +31,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_trace pdef, %w[ alpha alpha ]
   end
 
-  # A helper method
+  # helper
   #
   def run_concurrence (concurrence_attributes, noise)
 
@@ -95,32 +95,58 @@ class EftConcurrenceTest < Test::Unit::TestCase
       wi.fields)
   end
 
-  def test_count
+  # helper
+  #
+  def run_test_count (remaining, noise)
 
     pdef = Ruote.process_definition do
-      concurrence :count => 1 do
+      concurrence :count => 1, :remaining => remaining do
         alpha
         bravo
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+    @alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    @bravo = @engine.register_participant :bravo, Ruote::HashParticipant
 
-    #noisy
+    noisy if noise
 
     wfid = @engine.launch(pdef)
 
     wait_for(:alpha)
 
-    alpha.reply(alpha.first)
+    @alpha.reply(@alpha.first)
 
     wait_for(wfid)
 
+    wfid
+  end
+
+  def test_count
+
+    wfid = run_test_count('cancel', false)
+
     assert_equal 1, logger.log.select { |e| e[1] == :cancel }.size
 
-    assert_equal 0, alpha.size
-    assert_equal 0, bravo.size # remaining : cancel
+    assert_equal 0, @alpha.size
+    assert_equal 0, @bravo.size
+  end
+
+  def test_count_remaining_forget
+
+    wfid = run_test_count('forget', false)
+
+    assert_equal 1, logger.log.select { |e| e[1] == :forgotten }.size
+
+    assert_equal 0, @alpha.size
+    assert_equal 1, @bravo.size
+
+    assert_equal 1, @engine.expstorage.size
+    assert_not_nil @engine.process_status(wfid)
+
+    @bravo.reply(@bravo.first)
+
+    sleep 0.007
   end
 end
 

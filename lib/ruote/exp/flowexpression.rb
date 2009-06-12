@@ -184,6 +184,16 @@ module Ruote
       @children.each { |cfei| pool.cancel_expression(cfei) }
     end
 
+    # Nullifies the @parent_id and emits a :forgotten message
+    #
+    def forget
+
+      wqueue.emit(:expressions, :forgotten, :fei => @fei, :parent => @parent_id)
+
+      @parent_id = nil
+      persist
+    end
+
     #--
     # META
     #++

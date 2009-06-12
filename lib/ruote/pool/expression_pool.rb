@@ -63,6 +63,21 @@ module Ruote
       wqueue.emit(:expressions, :cancel, :fei => fei)
     end
 
+    # Immediately 'forgets' the expression (if still present).
+    # This sets the expression's @parent_id to nil
+    #
+    # Returns true if the expression was found and forgotten.
+    #
+    def forget_expression (fei)
+
+      if exp = expstorage[fei]
+        exp.forget
+        true
+      else
+        false
+      end
+    end
+
     # This method is called by expressions when applying one of the child
     # expressions.
     #
@@ -99,6 +114,8 @@ module Ruote
         wqueue.emit(
           :processes, :terminated,
           :wfid => exp.fei.wfid, :workitem => workitem)
+
+        # NOTE : a process can terminate multiple times ...
       end
     end
 

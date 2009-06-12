@@ -22,6 +22,8 @@
 [o] participant lookup
 [ ] event : launch_sub ??
 
+[ ] concurrence : over_if
+
 [o] pool cleanup
 
 [o] fexp : created_time
@@ -34,7 +36,7 @@
 
 [ ] self rec for [main] process
 
-[ ] fexp : clean up attributes
+[ ] fexp : clean up attributes ??
 
 [ ] wfid_gen : rufus-mnemo
 
