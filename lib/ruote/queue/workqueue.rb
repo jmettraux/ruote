@@ -64,6 +64,13 @@ module Ruote
       @subscribers.values.each { |v| v.delete(subscriber) }
     end
 
+    # Emits event for immediate processing
+    #
+    def emit! (eclass, emsg, eargs)
+
+      process([ eclass, emsg, eargs ])
+    end
+
     protected
 
     def process (event)
@@ -109,13 +116,6 @@ module Ruote
     def emit (eclass, emsg, eargs)
 
       @queue.push([ eclass, emsg, eargs ])
-    end
-
-    # Emits event for immediate processing
-    #
-    def emit! (eclass, emsg, eargs)
-
-      process([ eclass, emsg, eargs ])
     end
   end
 
