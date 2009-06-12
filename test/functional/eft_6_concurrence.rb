@@ -13,7 +13,7 @@ require 'ruote/part/hash_participant'
 class EftConcurrenceTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_concurrence
+  def test_basic
 
     pdef = Ruote.process_definition do
       concurrence do
@@ -70,7 +70,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     wi
   end
 
-  def test_concurrence_default_merge
+  def test_default_merge
 
     wi = run_concurrence({}, false)
 
@@ -78,7 +78,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal '0_0_0_0', wi.fields['seen']
   end
 
-  def test_concurrence_merge_last
+  def test_merge_last
 
     wi = run_concurrence({ :merge => :last }, false)
 
@@ -95,15 +95,32 @@ class EftConcurrenceTest < Test::Unit::TestCase
       wi.fields)
   end
 
-  def test_concurrence_count
+  def test_count
 
-    wi = run_concurrence({ :count => 1 }, false)
+    pdef = Ruote.process_definition do
+      concurrence :count => 1 do
+        alpha
+        bravo
+      end
+    end
 
-    assert_equal(
-      {"seen"=>"0_0_0_0"},
-      wi.fields)
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    alpha.reply(alpha.first)
+
+    wait_for(wfid)
 
     assert_equal 1, logger.log.select { |e| e[1] == :cancel }.size
+
+    assert_equal 0, alpha.size
+    assert_equal 0, bravo.size # remaining : cancel
   end
 end
 
