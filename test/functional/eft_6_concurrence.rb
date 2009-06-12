@@ -62,7 +62,12 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    alpha.first
+    wi = alpha.first
+
+    ps = @engine.process_status(wi.fei.wfid)
+    assert_equal %w[ 0 0_1 ], ps.expressions.collect { |e| e.fei.expid }
+
+    wi
   end
 
   def test_concurrence_default_merge
@@ -88,6 +93,17 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal(
       {1=>{"seen"=>"0_0_0_1"}, 0=>{"seen"=>"0_0_0_0"}},
       wi.fields)
+  end
+
+  def test_concurrence_count
+
+    wi = run_concurrence({ :count => 1 }, false)
+
+    assert_equal(
+      {"seen"=>"0_0_0_0"},
+      wi.fields)
+
+    assert_equal 1, logger.log.select { |e| e[1] == :cancel }.size
   end
 end
 

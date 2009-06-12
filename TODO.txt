@@ -53,6 +53,8 @@
 [o] on_error
 [o] on_cancel
 
+[ ] concurrent-iterator < concurrence
+
 [ ] stop passing full exp in message, pass only fei (maybe)
 
 [ ] forget

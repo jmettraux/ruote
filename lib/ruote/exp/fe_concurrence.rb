@@ -35,6 +35,9 @@ module Ruote
 
     def apply
 
+      @count = attribute(:count).to_i rescue nil
+      @count = nil if @count && @count < 1
+
       @merge = att(:merge, %w[ first last highest lowest ])
       @merge_type = att(:merge_type, %w[ override mix isolate ])
       @remaining = att(:remaining, %w[ cancel forget ])
@@ -47,6 +50,8 @@ module Ruote
     end
 
     def reply (workitem)
+
+      return if over?
 
       if @merge == 'first' || @merge == 'last'
         (@workitems ||= []) << workitem
@@ -65,10 +70,16 @@ module Ruote
 
     def over?
 
-      (@children.size < 1)
+      # TODO : over_if
+
+      return false unless @workitems
+
+      (@workitems.size >= (@count || tree_children.size))
     end
 
     def reply_to_parent
+
+      handle_remaining if @children
 
       super(merge_workitems)
     end
@@ -104,6 +115,15 @@ module Ruote
       end
 
       target
+    end
+
+    def handle_remaining
+
+      if @remaining == 'cancel'
+        @children.each { |fei| pool.cancel_expression(fei) }
+      else # forget
+        p "FORGET !" # TODO
+      end
     end
   end
 end
