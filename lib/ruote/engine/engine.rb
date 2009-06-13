@@ -113,11 +113,17 @@ module Ruote
       exps.size > 0 ? ProcessStatus.new(exps, errs) : nil
     end
 
+    # Cancels a whole process instance.
+    #
     def cancel_process (wfid)
 
       wqueue.emit(:processes, :cancel, :wfid => wfid)
     end
 
+    alias :cancel :cancel_process
+
+    # Cancels an expression (and all its children).
+    #
     def cancel_expression (fei)
 
       exp = expstorage[fei]

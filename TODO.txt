@@ -22,6 +22,8 @@
 [o] participant lookup
 [ ] event : launch_sub ??
 
+[ ] event : :processes, :cancelled ?
+
 [ ] concurrence : over_if
 
 [o] pool cleanup

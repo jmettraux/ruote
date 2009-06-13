@@ -112,7 +112,7 @@ module Ruote
       else
 
         wqueue.emit(
-          :processes, :terminated,
+          :processes, exp.in_cancel ? :cancelled : :terminated,
           :wfid => exp.fei.wfid, :workitem => workitem)
 
         # NOTE : a process can terminate multiple times ...
@@ -124,10 +124,12 @@ module Ruote
     def launch_sub (pos, tree, parent, workitem)
 
       i = parent.fei.dup
-      i.wfid = "#{i.wfid}_#{get_next_sub_id(parent)}"
+      i.wfid = "#{i.parent_wfid}_#{get_next_sub_id(parent)}"
       i.expid = pos
 
       parent.register_child(i) if parent
+
+      # TODO : emit launch[ed]_sub message ?
 
       wqueue.emit(
         :expressions, :apply,

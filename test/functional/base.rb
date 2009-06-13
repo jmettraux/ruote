@@ -113,6 +113,7 @@ module FunctionalBase
 
       logger.wait_for([
         [ :processes, :terminated, { :wfid => wfid_or_part } ],
+        [ :processes, :cancelled, { :wfid => wfid_or_part } ],
         [ :errors, nil, { :wfid => wfid_or_part } ]
       ])
 
@@ -167,7 +168,7 @@ module FunctionalBase
 
   def assert_no_remaining_expressions (wfid, opts)
 
-    return if opts[:ignore_errors]
+    return if opts[:ignore_remaining_expressions]
 
     expcount = @engine.expstorage.size
     return if expcount == 0
