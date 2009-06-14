@@ -321,6 +321,13 @@ module Ruote
       #else # engine level
       end
 
+      if var == (attribute('name') || attribute_text)
+        #
+        # allowing main process recursion
+        #
+        return [ @fei.expid, tree ]
+      end
+
       nil
     end
 

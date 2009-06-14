@@ -11,11 +11,6 @@ require File.dirname(__FILE__) + '/base'
 class FtRecursionTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_main_recursion
-
-    flunk
-  end
-
   class CountingParticipant
     include Ruote::EngineContext
     include Ruote::LocalParticipant
@@ -47,6 +42,26 @@ class FtRecursionTest < Test::Unit::TestCase
     end
   end
 
+  def test_main_recursion
+
+    pdef = Ruote.process_definition :name => 'def0' do
+      sequence do
+        alpha
+        def0
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, CountingParticipant
+
+    #noisy
+
+    assert_trace(pdef, %w[ 1 2 3 4 5 6 ])
+
+    alpha.wfids[1..-1].each_with_index { |wfid, i|
+      assert_match /.*\_#{i}$/, wfid
+    }
+  end
+
   def test_sub_recursion
 
     pdef = Ruote.process_definition do
@@ -59,15 +74,15 @@ class FtRecursionTest < Test::Unit::TestCase
       sub0
     end
 
-    wfids = []
-
     alpha = @engine.register_participant :alpha, CountingParticipant
 
     #noisy
 
     assert_trace(pdef, %w[ 1 2 3 4 5 6 ], :ignore_remaining_expressions => true)
 
-    alpha.wfids.each_with_index { |wfid, i| assert_match /.*\_#{i}$/, wfid }
+    alpha.wfids.each_with_index { |wfid, i|
+      assert_match /.*\_#{i}$/, wfid
+    }
   end
 end
 

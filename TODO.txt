@@ -36,7 +36,7 @@
 [ ] wi.params ?
 [ ] wi#to_h #from_h
 
-[ ] self rec for [main] process
+[o] self rec for [main] process
 
 [ ] fexp : clean up attributes ??
 
