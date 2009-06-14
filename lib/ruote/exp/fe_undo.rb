@@ -22,59 +22,42 @@
 # Made in Japan.
 #++
 
-
-exppath = File.dirname(__FILE__)
-
-Dir.new(exppath).entries.select { |p|
-  p.match(/^fe_.*\.rb$/)
-}.each { |p|
-  require exppath + '/' + p
-}
+require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
+  # Undoes (cancels) another expression referred by its tag.
   #
-  # Mapping from expression names (sequence, concurrence, ...) to expression
-  # classes (Ruote::SequenceExpression, Ruote::ConcurrenceExpression, ...)
+  #   pdef = Ruote.process_definition do
+  #     concurrence do
+  #       alpha :tag => 'kilroy'
+  #       undo :ref => 'kilroy'
+  #     end
+  #   end
   #
-  class ExpressionMap
+  # This example is rather tiny, but it shows a process branch (undo) cancelling
+  # another (alpha).
+  #
+  class UndoExpression < FlowExpression
 
-    def initialize
+    # TODO : conditional ?
 
-      @map = {}
-      add(Ruote::DefineExpression)
-      add(Ruote::SequenceExpression)
-      add(Ruote::EchoExpression)
-      add(Ruote::ParticipantExpression)
-      add(Ruote::SetExpression)
-      add(Ruote::SubprocessExpression)
-      add(Ruote::ConcurrenceExpression)
-      add(Ruote::ForgetExpression)
-      add(Ruote::UndoExpression)
+    names :undo
+
+    def apply
+
+      ref = attribute(:ref) || attribute_text
+      tag = ref ? lookup_variable(ref) : nil
+
+      pool.cancel_expression(tag) if tag
+
+      reply_to_parent(@applied_workitem)
     end
 
-    # Returns the expression class for the given expression name
-    #
-    def expression_class (exp_name)
+    def reply (workitem)
 
-      @map[exp_name]
-    end
-
-    # Returns true if the argument points to a definition
-    #
-    def is_definition? (tree)
-
-      c = expression_class(tree.first)
-
-      (c && c.is_definition?)
-    end
-
-    protected
-
-    def add (exp_class)
-
-      exp_class.expression_names.each { |n| @map[n] = exp_class }
+      # never called
     end
   end
 end

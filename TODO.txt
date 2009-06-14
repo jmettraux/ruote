@@ -50,7 +50,8 @@
 [o] tag (which implies variables)
 [o] event : upon setting tag !
 [o] event : upon leaving tag
-[ ] undo / redo
+[o] undo
+[ ] redo
 
 [o] cancel_process
 [o] cancel
