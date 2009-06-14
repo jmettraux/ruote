@@ -52,5 +52,23 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     assert_trace pdef, 'a'
   end
+
+  def test_subprocess_if
+
+    pdef = Ruote.process_definition do
+      define :sub0 do
+        echo 'a'
+      end
+      sequence do
+        subprocess :ref => 'sub0'
+        subprocess :ref => 'sub0', :if => 'true == false'
+        subprocess :ref => 'sub0'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a a ]
+  end
 end
 

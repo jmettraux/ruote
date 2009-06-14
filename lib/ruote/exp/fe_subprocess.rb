@@ -23,17 +23,39 @@
 #++
 
 require 'ruote/exp/flowexpression'
+require 'ruote/exp/condition'
 
 
 module Ruote
 
+  # An expression for invoking a subprocess.
+  #
+  #   pdef = Ruote.process_definition do
+  #     sequence do
+  #       subprocess :ref => 'delivering'
+  #       subprocess 'invoicing'
+  #       refill_stock :if => '${v:stock_size} < 10'
+  #     end
+  #     define 'delivering' do
+  #       # ...
+  #     end
+  #     define 'invoicing' do
+  #       # ...
+  #     end
+  #     define 'refill_stock' do
+  #       # ...
+  #     end
+  #   end
+  #
   class SubprocessExpression < FlowExpression
+
+    include ConditionMixin
 
     names :subprocess
 
-    # TODO : make conditional
-
     def apply
+
+      return reply_to_parent(@applied_workitem) if skip?
 
       ref = attribute(:ref) || attribute_text
 

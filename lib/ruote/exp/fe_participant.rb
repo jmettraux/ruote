@@ -24,6 +24,7 @@
 
 
 require 'ruote/exp/flowexpression'
+require 'ruote/exp/condition'
 
 
 module Ruote
@@ -32,15 +33,17 @@ module Ruote
 
     #include FilterMixin
     #include TimeoutMixin
-    #include ConditionMixin
       # TODO
+
+    include ConditionMixin
 
     attr_reader :participant_name
 
     names :participant
 
-
     def apply
+
+      return reply_to_parent(@applied_workitem) if skip?
 
       @participant_name = attribute(:ref) || attribute_text
 

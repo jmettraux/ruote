@@ -75,5 +75,24 @@ class EftParticipantTest < Test::Unit::TestCase
       ['participant', {'tag'=>'whatever', 'ref'=>'alpha'}, []],
       @engine.expstorage[alpha.first.fei].tree)
   end
+
+  def test_participant_if
+
+    pdef = Ruote.process_definition do
+      alpha
+      bravo :if => 'false == true'
+      charly
+    end
+
+    %w[ alpha bravo charly ].each do |pname|
+      @engine.register_participant pname do |workitem|
+        @tracer << "#{pname}\n"
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ alpha charly ]
+  end
 end
 

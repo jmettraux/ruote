@@ -70,7 +70,7 @@ module Ruote
       build_participant_list
       build_error_journal
 
-      build_tree_checker
+      build_treechecker
       build_parser
     end
 
@@ -205,8 +205,8 @@ module Ruote
       add_service(:s_wfid_generator, Ruote::WfidGenerator)
     end
 
-    def build_tree_checker
-      #add_service(:s_tree_checker, ...
+    def build_treechecker
+      #add_service(:s_treechecker, ...
     end
 
     def build_parser
