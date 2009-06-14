@@ -190,7 +190,13 @@ module Ruote
 
       wqueue.emit(:expressions, :forgotten, :fei => @fei, :parent => @parent_id)
 
+      @variables = compile_variables
+        # gather a copy of all the currently visible variables
+        # else when @parent_id is cut, there is no looking back
+
       @parent_id = nil
+        # cut the ombilical cord
+
       persist
     end
 
@@ -295,6 +301,18 @@ module Ruote
     #--
     # VARIABLES
     #++
+
+    # Returns a fresh hash of all the variables visible from this expression.
+    #
+    # This is used mainly when forgetting an expression.
+    #
+    def compile_variables
+
+      vars = @parent_id ? parent.compile_variables : {}
+      vars.merge!(@variables) if @variables
+
+      vars.dup
+    end
 
     # Looks up the value of a variable in expression tree
     # (seen from a leave, it looks more like a stack than a tree)

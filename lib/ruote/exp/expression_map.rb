@@ -50,6 +50,7 @@ module Ruote
       add(Ruote::SetExpression)
       add(Ruote::SubprocessExpression)
       add(Ruote::ConcurrenceExpression)
+      add(Ruote::ForgetExpression)
     end
 
     # Returns the expression class for the given expression name

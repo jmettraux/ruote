@@ -22,58 +22,40 @@
 # Made in Japan.
 #++
 
-
-require 'ruote/engine/context'
-require 'ruote/queue/subscriber'
+require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
-  # Plain logger (outputs to stdout)
-  #
-  class Logger
+  class ForgetExpression < FlowExpression
 
-    include EngineContext
-    include Subscriber
+    names :forget
 
-    def context= (c)
+    def apply
 
-      @context = c
-      subscribe(:all)
+      tree_children.each_with_index { |t, i| apply_and_forget(t, i) }
+
+      reply_to_parent(@applied_workitem)
+    end
+
+    def reply (workitem)
+
+      # will never get called
     end
 
     protected
 
-    def receive (eclass, emsg, eargs)
+    def apply_and_forget (child_tree, child_index)
 
-      p([ :ruote ] + summarize(eclass, emsg, eargs))
-    end
+      vars = compile_variables
 
-    def summarize (eclass, emsg, eargs)
-      [
-        eclass,
-        emsg,
-        eargs.inject({}) { |h, (k, v)| h[k] = value_to_s(k, v); h }
-      ]
-    end
-
-    def value_to_s (k, v)
-
-      return v if k == :tree
-
-      k = v.class.name.split('::').last
-
-      case v
-      when String then v
-      when Symbol then v
-      when Regexp then v
-      when Exception then "#{k} >#{v.message}< at #{v.backtrace.first}"
-      when Workitem then "#{k}/#{v.fei.to_s}"
-      when FlowExpression then "#{k}/#{v.fei.to_s}"
-      when FlowExpressionId then v.to_s
-      when NilClass then nil
-      else v.class
-      end
+      wqueue.emit(
+        :expressions, :apply,
+        :tree => child_tree,
+        :fei => @fei.new_child_fei(child_index),
+        :parent_id => nil,
+        :workitem => @applied_workitem.dup,
+        :variables => vars.dup)
     end
   end
 end
