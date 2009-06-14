@@ -20,7 +20,9 @@
 [o] subprocess binding
 [o] subprocess lookup
 [o] participant lookup
-[ ] event : launch_sub ??
+[o] event : launch_sub
+
+[ ] launch_sub : forget=false ?
 
 [ ] event : :processes, :cancelled ?
 

@@ -47,6 +47,8 @@ class FtSubprocessesTest < Test::Unit::TestCase
     assert_equal(
       ['sequence', {'sub0'=>nil}, [['bravo', {}, []], ['echo', {'result : ${v:nada}'=>nil}, []]]],
       fexp.parent.tree)
+
+    assert_equal 1, logger.log.select { |e| e[1] == :launch_sub }.size
   end
 end
 

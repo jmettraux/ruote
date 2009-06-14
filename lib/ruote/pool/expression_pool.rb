@@ -130,7 +130,7 @@ module Ruote
 
       parent.register_child(i) if parent
 
-      # TODO : emit launch[ed]_sub message ?
+      wqueue.emit(:processes, :launch_sub, :fei => i)
 
       wqueue.emit(
         :expressions, :apply,

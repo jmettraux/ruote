@@ -106,7 +106,7 @@ module Ruote
 
       m = d1s[0, 2]
       m = d1s if m == 'on' || m == 's_'
-      m = d1s if d1s == 'entered_tag' || d1s == 'left_tag'
+      m = d1s if %w[ entered_tag left_tag launch_sub ].include?(d1s)
 
       if m == 'ap' && eargs[:tree] && eargs[:fei].expid == '0'
         puts
