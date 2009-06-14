@@ -22,9 +22,7 @@
 [o] participant lookup
 [o] event : launch_sub
 
-[ ] launch_sub : forget=false ?
-
-[ ] event : :processes, :cancelled ?
+[o] event : :processes, :cancelled ?
 
 [ ] concurrence : over_if
 
@@ -45,6 +43,7 @@
 [ ] wfid_gen : rufus-mnemo
 
 [ ] file logger service
+[ ] fs_error_journal
 
 [o] cache storage
 [o] fs storage
@@ -62,14 +61,11 @@
 
 [ ] concurrent-iterator < concurrence
 
-[ ] stop passing full exp in message, pass only fei (maybe)
+[o] stop passing full exp in message, except for expression updates
 
-[ ] forget
-[ ] timeout
+[ ] forget : participant ? subprocess ?
 
 [ ] engine#reload
-
-[ ] fs_error_journal
 
 [ ] participants stop
 
