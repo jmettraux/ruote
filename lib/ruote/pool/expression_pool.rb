@@ -81,18 +81,19 @@ module Ruote
     # This method is called by expressions when applying one of the child
     # expressions.
     #
-    def apply_child (exp, child_index, workitem)
+    def apply_child (exp, child_index, workitem, forget)
 
       fei = exp.fei.new_child_fei(child_index)
 
-      exp.register_child(fei)
+      exp.register_child(fei) unless forget
 
       wqueue.emit(
         :expressions, :apply,
         :tree => exp.tree.last[child_index],
         :fei => fei,
-        :parent_id => exp.fei,
-        :workitem => workitem)
+        :parent_id => forget ? nil : exp.fei,
+        :workitem => workitem,
+        :variables => forget ? exp.compile_variables : nil)
     end
 
     # Called by expressions when replying to their parent expression.

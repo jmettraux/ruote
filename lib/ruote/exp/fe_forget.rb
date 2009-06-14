@@ -33,7 +33,9 @@ module Ruote
 
     def apply
 
-      tree_children.each_with_index { |t, i| apply_and_forget(t, i) }
+      tree_children.each_with_index do |t, index|
+        apply_child(index, @applied_workitem.dup, true)
+      end
 
       reply_to_parent(@applied_workitem)
     end
@@ -41,21 +43,6 @@ module Ruote
     def reply (workitem)
 
       # will never get called
-    end
-
-    protected
-
-    def apply_and_forget (child_tree, child_index)
-
-      vars = compile_variables
-
-      wqueue.emit(
-        :expressions, :apply,
-        :tree => child_tree,
-        :fei => @fei.new_child_fei(child_index),
-        :parent_id => nil,
-        :workitem => @applied_workitem.dup,
-        :variables => vars.dup)
     end
   end
 end

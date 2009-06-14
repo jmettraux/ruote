@@ -186,6 +186,9 @@ module Ruote
 
     # Nullifies the @parent_id and emits a :forgotten message
     #
+    # This is used to forget an expression after it's been applied (see the
+    # concurrence expression for example).
+    #
     def forget
 
       wqueue.emit(:expressions, :forgotten, :fei => @fei, :parent => @parent_id)
@@ -470,9 +473,9 @@ module Ruote
       [ var, prefix ]
     end
 
-    def apply_child (child_index, workitem)
+    def apply_child (child_index, workitem, forget=false)
 
-      pool.apply_child(self, child_index, workitem)
+      pool.apply_child(self, child_index, workitem, forget)
     end
 
     def reply_to_parent (workitem)

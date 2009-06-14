@@ -173,9 +173,9 @@ module FunctionalBase
     expcount = @engine.expstorage.size
     return if expcount == 0
 
-    #50.times { Thread.pass }
-    #expcount = @engine.expstorage.size
-    #return if expcount == 1
+    50.times { Thread.pass }
+    expcount = @engine.expstorage.size
+    return if expcount == 0
 
     tf, _, tn = caller[2].split(':')
 
