@@ -52,7 +52,7 @@
 [o] event : upon setting tag !
 [o] event : upon leaving tag
 [o] undo
-[ ] redo
+[o] redo
 
 [o] cancel_process
 [o] cancel

@@ -1,4 +1,4 @@
-#--
+
 # Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -88,6 +88,16 @@ module Ruote
 
       @children << fei
       persist if do_persist
+    end
+
+    # Returns true if the given fei points to an expression in the parent
+    # chain of this expression.
+    #
+    def ancestor? (fei)
+
+      return false unless @parent_id
+      return true if @parent_id == fei
+      parent.ancestor?(fei)
     end
 
     #--
@@ -503,8 +513,10 @@ module Ruote
     #
     def trigger_on_cancel (workitem)
 
+      tree = @on_cancel.is_a?(String) ? [ @on_cancel, {}, [] ] : @on_cancel
+
       pool.send(:apply,
-        :tree => [ @on_cancel, {}, [] ],
+        :tree => tree,
         :fei => fei,
         :parent_id => @parent_id,
         :workitem => @applied_workitem,

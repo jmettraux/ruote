@@ -22,60 +22,47 @@
 # Made in Japan.
 #++
 
-
-exppath = File.dirname(__FILE__)
-
-Dir.new(exppath).entries.select { |p|
-  p.match(/^fe_.*\.rb$/)
-}.each { |p|
-  require exppath + '/' + p
-}
+require 'ruote/exp/flowexpression'
 
 
 module Ruote
 
-  #
-  # Mapping from expression names (sequence, concurrence, ...) to expression
-  # classes (Ruote::SequenceExpression, Ruote::ConcurrenceExpression, ...)
-  #
-  class ExpressionMap
+  class RedoExpression < FlowExpression
 
-    def initialize
+    # TODO : conditional ?
 
-      @map = {}
-      add(Ruote::DefineExpression)
-      add(Ruote::SequenceExpression)
-      add(Ruote::EchoExpression)
-      add(Ruote::ParticipantExpression)
-      add(Ruote::SetExpression)
-      add(Ruote::SubprocessExpression)
-      add(Ruote::ConcurrenceExpression)
-      add(Ruote::ForgetExpression)
-      add(Ruote::UndoExpression)
-      add(Ruote::RedoExpression)
+    names :redo, :_redo
+
+    def apply
+
+      ref = attribute(:ref) || attribute_text
+      tag = ref ? lookup_variable(ref) : nil
+
+      if tag and exp = expstorage[tag]
+
+        # wire exp's tree to itself on_cancel and cancel
+
+        exp.on_cancel = exp.tree
+        exp.persist
+
+        pool.cancel_expression(tag)
+
+        reply_to_parent(@applied_workitem) unless ancestor?(tag)
+
+      else
+
+        reply_to_parent(@applied_workitem)
+      end
     end
 
-    # Returns the expression class for the given expression name
-    #
-    def expression_class (exp_name)
+    def reply (workitem)
 
-      @map[exp_name]
+      # never called
     end
 
-    # Returns true if the argument points to a definition
-    #
-    def is_definition? (tree)
+    def cancel
 
-      c = expression_class(tree.first)
-
-      (c && c.is_definition?)
-    end
-
-    protected
-
-    def add (exp_class)
-
-      exp_class.expression_names.each { |n| @map[n] = exp_class }
+      reply_to_parent(@applied_workitem)
     end
   end
 end
