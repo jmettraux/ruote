@@ -6,7 +6,8 @@ require 'fileutils'
 require 'rake'
 require 'rake/clean'
 require 'rake/packagetask'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
+#require 'rake/gempackagetask'
 require 'rake/testtask'
 
 #require 'rake/rdoctask'
@@ -56,7 +57,7 @@ end
 #
 # Create the various ruote[-.*] gems
 #
-Rake::GemPackageTask.new(gemspec) do |pkg|
+Gem::PackageTask.new(gemspec) do |pkg|
   #pkg.need_tar = true
 end
 
