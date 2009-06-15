@@ -1,0 +1,8 @@
+
+= ruote (OpenWFEru) - CHANGELOG.txt
+
+== ruote - 2.0.0    not yet released
+
+== OpenWFEru - 0.9.2      released 2007/01/26
+== openwfe-ruby - 1.7.0   released 2006-05-08
+

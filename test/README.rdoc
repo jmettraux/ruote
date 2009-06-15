@@ -1,0 +1,23 @@
+
+= ruote testing
+
+running all the tests
+
+  $ ruby19 test/test.rb
+
+running a specific test
+
+  $ ruby19 test/functional/ft_1_process_status.rb
+
+running a test with the EventMachine queue :
+
+  $ ruby19 test/functional/ft_1_process_status.rb -- --em
+
+running a test with file persistence :
+
+  $ ruby19 test/functional/eft_2_sequence.rb -- --fs
+
+running a test with file persistence (but no cache) :
+
+  $ ruby19 test/functional/eft_2_sequence.rb -- --fs -C
+

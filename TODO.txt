@@ -1,0 +1,86 @@
+
+[o] port load26 (requires BlockParticipant)
+[o] logger service
+[o] test logger
+[o] object full_dup
+[o] engine#remove_service
+[o] :receive or :receive_back for when workitems come back from participant
+[o] emit :processes :launch :wfid
+[o] emit :processes :terminate :wfid only
+[o] arch doc
+[o] verbose always on
+[o] ev : :participants :register/:unregister
+[o] test logger always on for tests (in-memory only)
+[o] NullParticipant
+[o] NoOpParticipant
+[o] rufus-dollar
+[o] variables in ProcessStatus (process level only)
+[o] ProcessStatus#tree
+
+[o] subprocess binding
+[o] subprocess lookup
+[o] participant lookup
+[o] event : launch_sub
+
+[o] event : :processes, :cancelled ?
+
+[ ] concurrence : over_if
+
+[o] pool cleanup
+
+[o] fexp : created_time
+[o] ps : launched_time
+[o] ps : #tags
+
+[o] wi test (and fix) ${f:xyz}
+[ ] wi.params ?
+[ ] wi#to_h #from_h
+
+[o] self rec for [main] process
+
+[ ] fexp : clean up attributes ??
+
+[ ] wfid_gen : rufus-mnemo
+
+[ ] file logger service
+[ ] fs_error_journal
+
+[o] cache storage
+[o] fs storage
+
+[o] tag (which implies variables)
+[o] event : upon setting tag !
+[o] event : upon leaving tag
+[o] undo
+[ ] redo
+
+[o] cancel_process
+[o] cancel
+[o] on_error
+[o] on_cancel
+
+[ ] concurrent-iterator < concurrence
+
+[o] stop passing full exp in message, except for expression updates
+
+[ ] forget : participant ? subprocess ?
+
+[ ] engine#reload
+
+[ ] participants stop
+
+[ ] part/sub timeout (with Andrew's at)
+[ ] part/sub conditional (all expressions ? no, there's 'if')
+
+[ ] define without name (__result__)
+
+[ ] workitem.__result__
+[ ] smart lookup ? (?)
+
+[ ] exploded scheduler
+[ ] sleep
+[ ] when
+[ ] listen
+
+[x] wfid --> piid (stick with the funny old name)
+

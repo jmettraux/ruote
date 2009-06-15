@@ -1,0 +1,75 @@
+
+= ruote
+
+('ruota' is a temporary repository for ruote (http://github.com/jmettraux/ruote/) 2.0. will probably integrate into ruote proper soon)
+
+
+Ruote is a Ruby workflow engine. It's thus a workflow definition interpreter. If you're enterprisey, you might say business process definition.
+
+Instances of these definitions are meant to run for a long time, so Ruote is oriented towards persistency / modifiability instead of transience / performance like a regular interpreter is. A Ruote engine may run multiple instances of workflow definitions.
+
+Persistent mostly means that you can stop Ruote and later restart it without losing processes. Modifiability means that you can modify a workflow instance on the fly.
+
+Process definitions are mainly describing how workitems are routed to participants. These participants may represent worklists for users or group of users, pieces of code, ...
+
+
+== usage
+
+  require 'rubygems'
+  require 'ruote/engine'
+
+  # preparing the engine
+
+  engine = Ruote::FsPersistedEngine.new
+
+  # registering participants
+
+  engine.register_participant :alpha do |workitem|
+    workitem.fields['message'] = { 'text' => 'hello !', 'author' => 'Alice' }
+  end
+
+  engine.register_participant :bravo do |workitem|
+    puts "I received a message from #{workitem.fields['message']['author']}"
+  end
+
+  # defining a process
+
+  pdef = Ruote.process_definition :name => 'test' do
+    sequence do
+      participant :alpha
+      participant :bravo
+    end
+  end
+
+  # launching, creating a process instance
+
+  pid = engine.launch(pdef)
+
+  sleep 1
+
+  # => 'I received a message from Alice'
+
+
+== test suite
+
+see http://github.com/jmettraux/ruota/tree/master/test
+
+
+== license
+
+MIT
+
+
+== Links
+
+http://openwferu.rubyforge.org
+http://rubyforge.org/projects/openwferu
+
+http://jmettraux.wordpress.com (blog)
+
+
+== feedback
+
+mailing list : http://groups.google.com/group/openwferu-users
+irc : irc.freenode.net #ruote
+
