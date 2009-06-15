@@ -70,6 +70,25 @@ module Ruote
 
       Ruote.fulldup(self)
     end
+
+    def to_h
+
+      h = {}
+      h['fei'] = @fei.to_h
+      h['participant_name'] = @participant_name
+      h['attributes'] = @attributes
+
+      h
+    end
+
+    def self.from_h (h)
+
+      wi = Workitem.new(h['attributes'])
+      wi.fei = FlowExpressionId.from_h(h['fei'])
+      wi.participant_name = h['participant_name']
+
+      wi
+    end
   end
 end
 

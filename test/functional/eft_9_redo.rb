@@ -24,7 +24,7 @@ class EftRedoTest < Test::Unit::TestCase
 
     alpha = @engine.register_participant :alpha, Ruote::HashParticipant
 
-    noisy
+    #noisy
 
     wfid = @engine.launch(pdef)
     wait_for(:alpha)

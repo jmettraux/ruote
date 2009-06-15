@@ -33,8 +33,8 @@
 [o] ps : #tags
 
 [o] wi test (and fix) ${f:xyz}
+[o] wi#to_h #from_h
 [ ] wi.params ?
-[ ] wi#to_h #from_h
 
 [o] self rec for [main] process
 

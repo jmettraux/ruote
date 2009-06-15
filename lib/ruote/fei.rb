@@ -82,12 +82,20 @@ module Ruote
       ss.size > 1 ? ss.last : nil
     end
 
+    def to_h
+
+      %w[ engine_id wfid expid ].inject({ 'class' => self.class.to_s }) { |h, k|
+        h[k] = instance_variable_get("@#{k}")
+        h
+      }
+    end
+
     def self.from_h (h)
 
-      %w[ engine_id wfid expid ].inject(FlowExpressionId.new) do |fei, k|
+      %w[ engine_id wfid expid ].inject(FlowExpressionId.new) { |fei, k|
         fei.instance_variable_set("@#{k}", h[k.to_sym] || h[k])
         fei
-      end
+      }
     end
 
     # Returns a complete (deep) copy of this FlowExpressionId instance.
