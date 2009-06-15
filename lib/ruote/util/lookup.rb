@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,54 +22,48 @@
 # Made in Japan.
 #++
 
-require 'ruote/util/misc'
-require 'ruote/util/lookup'
-
 
 module Ruote
 
-  class Workitem
+  def Ruote.lookup (collection, key)
 
-    attr_accessor :fei
-    attr_accessor :attributes
-    attr_accessor :participant_name
+    key, rest = pop_key(key)
+    value = flookup(collection, key)
 
-    alias :fields :attributes
-    alias :fields= :attributes=
+    return value unless rest
+    return nil if value == nil
 
-    def initialize (attributes={})
+    lookup(value, rest)
+  end
 
-      @fei = nil
-      @attributes = attributes
+  protected
+
+  def Ruote.pop_key (key)
+
+    i = key.index('.')
+
+    i ? [ narrow_key(key[0..i-1]), key[i+1..-1] ] : [ narrow_key(key), nil ]
+  end
+
+  def Ruote.narrow_key (key)
+
+    return 0 if key == '0'
+
+    i = key.to_i
+    return i if i != 0
+
+    key
+  end
+
+  def Ruote.flookup (collection, key)
+
+    value = (collection[key] rescue nil)
+
+    if value == nil and key.is_a?(Fixnum)
+      value = (collection[key.to_s] rescue nil)
     end
 
-    # For a simple key
-    #
-    #   workitem.lookup('toto')
-    #
-    # is equivalent to
-    #
-    #   workitem.fields['toto']
-    #
-    # but for a complex key
-    #
-    #   workitem.lookup('toto.address')
-    #
-    # is equivalent to
-    #
-    #   workitem.fields['toto']['address']
-    #
-    def lookup (key)
-
-      Ruote.lookup(@attributes, key)
-    end
-
-    # Returns a deep copy of this workitem instance.
-    #
-    def dup
-
-      Ruote.fulldup(self)
-    end
+    value
   end
 end
 

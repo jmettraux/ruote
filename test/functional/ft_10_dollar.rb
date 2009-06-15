@@ -11,7 +11,7 @@ require File.dirname(__FILE__) + '/base'
 class FtDollarTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_dollar
+  def test_v
 
     pdef = Ruote.process_definition do
       sequence do
@@ -23,9 +23,25 @@ class FtDollarTest < Test::Unit::TestCase
       end
     end
 
-    assert_trace(
-      pdef,
-      %w[ a b0 c0 d0 ])
+    #noisy
+
+    assert_trace(pdef, %w[ a b0 c0 d0 ])
+  end
+
+  def test_f
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :field => 'f', :val => { 'name' => 'toto', 'address' => %w[ KL Asia ]}
+        echo 'a${f:missing}'
+        echo 'b${f:f.name}'
+        echo 'c${f:f.address.1}'
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ a btoto cAsia ])
   end
 end
 

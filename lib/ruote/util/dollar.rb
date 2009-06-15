@@ -121,7 +121,7 @@ module Ruote
 
       case pr
         when 'v' then @fexp.lookup_variable(key)
-        when 'f' then @workitem.lookup_attribute(key) # TODO : fix
+        when 'f' then @workitem.lookup(key)
         when 'r' then call_ruby(key)
         else nil
       end
