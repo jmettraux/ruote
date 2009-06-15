@@ -14,9 +14,10 @@ require 'rubygems'
 
 require File.dirname(__FILE__) + '/../path_helper'
 require File.dirname(__FILE__) + '/../functional/engine_helper'
+require 'ruote/log/test_logger'
 
 ac = {
-  :definition_in_launchitem_allowed => true
+  #:definition_in_launchitem_allowed => true
 }
 
 engine = determine_engine_class(ac).new(ac)
@@ -36,6 +37,8 @@ engine.register_participant("count") do |workitem|
   #print '.'
 end
 
+engine.add_service(:s_logger, Ruote::TestLogger)
+
 Benchmark.benchmark(' ' * 20 + Benchmark::Tms::CAPTION, 20) do |bench|
 
   bench.report('run') do
@@ -49,7 +52,9 @@ Benchmark.benchmark(' ' * 20 + Benchmark::Tms::CAPTION, 20) do |bench|
         end
       }#, :wait_for => true)
     )
-    engine.wait_for(wfid)
+    engine.context[:s_logger].wait_for([
+      [ :processes, :terminated, { :wfid => wfid } ],
+    ])
   end
 
 end
