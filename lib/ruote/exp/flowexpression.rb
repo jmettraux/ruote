@@ -50,6 +50,8 @@ module Ruote
     attr_reader :in_cancel
     attr_reader :in_error
 
+    attr_reader :modified_time
+
 
     def initialize (context, fei, parent_id, tree, variables, workitem)
 
@@ -69,6 +71,8 @@ module Ruote
       @variables = variables
 
       @created_time = Time.now
+      @modified_time = @created_time
+
       @applied_workitem = workitem.dup
 
       @on_cancel = attribute(:on_cancel)
@@ -446,6 +450,8 @@ module Ruote
     # Asks expstorage[s] to store/update persisted version of self.
     #
     def persist
+
+      @modified_time = Time.now
 
       wqueue.emit!(:expressions, :update, :expression => self)
     end

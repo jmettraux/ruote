@@ -38,7 +38,8 @@
 
 [o] self rec for [main] process
 
-[ ] fexp : clean up attributes ?
+[ ] fexp : clean up attributes (attr_reader/_accessor stuff)
+[ ] fexp.last_modified
 
 [ ] wfid_gen : rufus-mnemo
 
