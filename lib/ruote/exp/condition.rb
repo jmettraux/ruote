@@ -59,9 +59,14 @@ module Ruote
       begin
         return to_b(ruby_eval(conditional))
       rescue Exception => e
+        #p e
       end
 
-      to_b(ruby_eval(do_quote(conditional)))
+      #to_b(ruby_eval(do_quote(conditional)))
+        #
+        # do_quote could be too naive
+
+      true
     end
 
     protected
@@ -73,7 +78,7 @@ module Ruote
 
     def ruby_eval (s)
 
-      # TODO : treechecker !
+      treechecker.check_conditional(s)
 
       eval(s)
     end

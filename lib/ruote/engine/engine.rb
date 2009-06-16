@@ -206,7 +206,7 @@ module Ruote
     end
 
     def build_treechecker
-      #add_service(:s_treechecker, ...
+      add_service(:s_treechecker, Ruote::TreeChecker)
     end
 
     def build_parser

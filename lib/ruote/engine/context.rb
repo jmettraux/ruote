@@ -78,6 +78,9 @@ module Ruote
     def ejournal
       @context[:s_error_journal]
     end
+    def treechecker
+      @context[:s_treechecker]
+    end
   end
 end
 

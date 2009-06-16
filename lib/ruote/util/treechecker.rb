@@ -26,6 +26,7 @@
 #require 'rufus/treechecker'
   # is loaded only when needed
 
+require 'fileutils'
 require 'ruote/engine/context'
 
 
@@ -73,10 +74,10 @@ module Ruote
         exclude_access_to(
           IO, File, FileUtils, Process, Signal, Thread, ThreadGroup)
 
-        exclude_class_tinkering :except => OpenWFE::ProcessDefinition
+        #exclude_class_tinkering :except => Ruote::ProcessDefinition
           #
           # excludes defining/opening any class except
-          # OpenWFE::ProcessDefinition
+          # Ruote::ProcessDefinition
 
         exclude_call_to :instance_variable_get, :instance_variable_set
       end

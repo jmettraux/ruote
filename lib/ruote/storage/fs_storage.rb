@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'fileutils'
 require 'yaml'
 
 require 'ruote/engine/context'

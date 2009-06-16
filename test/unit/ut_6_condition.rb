@@ -8,6 +8,7 @@
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
 require 'ruote/exp/condition'
+require 'ruote/util/treechecker'
 
 
 class ConditionTest < Test::Unit::TestCase
@@ -20,6 +21,12 @@ class ConditionTest < Test::Unit::TestCase
     end
     def attribute (k)
       @h[k]
+    end
+    def treechecker
+      return @tc if @tc
+      @tc = Ruote::TreeChecker.new
+      @tc.context = {}
+      @tc
     end
   end
 
@@ -53,6 +60,11 @@ class ConditionTest < Test::Unit::TestCase
     assert_not_skip true, :if => '"true" is set'
     assert_not_skip true, :if => "'true' is set"
     assert_not_skip false, :if => 'true is not set'
+  end
+
+  def test_illegal_code
+
+    assert_not_skip true, :if => 'exit'
   end
 end
 
