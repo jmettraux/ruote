@@ -22,61 +22,33 @@
 # Made in Japan.
 #++
 
-
-exppath = File.dirname(__FILE__)
-
-Dir.new(exppath).entries.select { |p|
-  p.match(/^fe_.*\.rb$/)
-}.each { |p|
-  require exppath + '/' + p
-}
+require 'ruote/exp/flowexpression'
+require 'ruote/exp/condition'
 
 
 module Ruote
 
-  #
-  # Mapping from expression names (sequence, concurrence, ...) to expression
-  # classes (Ruote::SequenceExpression, Ruote::ConcurrenceExpression, ...)
-  #
-  class ExpressionMap
+  class CancelProcessExpression < FlowExpression
 
-    def initialize
+    include ConditionMixin
 
-      @map = {}
-      add(Ruote::DefineExpression)
-      add(Ruote::SequenceExpression)
-      add(Ruote::EchoExpression)
-      add(Ruote::ParticipantExpression)
-      add(Ruote::SetExpression)
-      add(Ruote::SubprocessExpression)
-      add(Ruote::ConcurrenceExpression)
-      add(Ruote::ForgetExpression)
-      add(Ruote::UndoExpression)
-      add(Ruote::RedoExpression)
-      add(Ruote::CancelProcessExpression)
+    names :cancel_process
+
+    def apply
+
+      return reply_to_parent(@applied_workitem) if skip?
+
+      wqueue.emit(:processes, :cancel, :wfid => root_expression.fei.wfid)
     end
 
-    # Returns the expression class for the given expression name
-    #
-    def expression_class (exp_name)
+    def reply (workitem)
 
-      @map[exp_name]
+      # never called
     end
 
-    # Returns true if the argument points to a definition
-    #
-    def is_definition? (tree)
+    def cancel
 
-      c = expression_class(tree.first)
-
-      (c && c.is_definition?)
-    end
-
-    protected
-
-    def add (exp_class)
-
-      exp_class.expression_names.each { |n| @map[n] = exp_class }
+      reply_to_parent(@applied_workitem)
     end
   end
 end

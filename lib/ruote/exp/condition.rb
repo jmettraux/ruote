@@ -34,15 +34,13 @@ module Ruote
     def skip? (attname=:if, nattname=:unless)
 
       positive = eval_cond(attname)
-      return true if positive == false
+      return (not positive) if positive != nil
 
       negative = eval_cond(nattname)
-      return false if negative == true
+      return (negative) if negative != nil
 
       false
     end
-
-    protected
 
     def eval_cond (attname)
 
@@ -56,7 +54,7 @@ module Ruote
       return nil if not conditional
 
       r = eval_is_set(conditional)
-      return (not r) if r != nil
+      return r if r != nil
 
       begin
         return to_b(ruby_eval(conditional))
@@ -65,6 +63,8 @@ module Ruote
 
       to_b(ruby_eval(do_quote(conditional)))
     end
+
+    protected
 
     def unescape (s)
 

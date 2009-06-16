@@ -100,6 +100,13 @@ module Ruote
       parent.ancestor?(fei)
     end
 
+    # Returns the root expression for this expression (top parent).
+    #
+    def root_expression
+
+      @parent_id == nil ? self : parent.root_expression
+    end
+
     #--
     # TREE
     #++

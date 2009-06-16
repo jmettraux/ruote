@@ -53,6 +53,7 @@
 [o] event : upon leaving tag
 [o] undo
 [o] redo
+[ ] cancel-process (exp)
 
 [o] cancel_process
 [o] cancel

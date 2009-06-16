@@ -23,35 +23,36 @@ class ConditionTest < Test::Unit::TestCase
     end
   end
 
-  def assert_skip (result, h)
+  def assert_not_skip (result, h)
 
     fe = FakeExpression.new(h)
 
-    assert_equal result, fe.skip?
+    assert_equal result, (not fe.skip?)
   end
 
   def test_if
 
-    assert_skip true, :if => 'true == false'
-    assert_skip true, :if => "'true' == 'false'"
-    assert_skip true, :if => '"true" == "false"'
+    assert_not_skip false, :if => 'true == false'
+    assert_not_skip false, :if => "'true' == 'false'"
+    assert_not_skip false, :if => '"true" == "false"'
   end
 
   def test_unless
 
-    assert_skip false, :unless => 'true == false'
+    assert_not_skip true, :unless => 'true == false'
+    assert_not_skip false, :unless => 'false == false'
   end
 
   def test_set
 
-    assert_skip true, :if => 'true set'
-    assert_skip true, :if => "'true' set"
-    assert_skip true, :if => '"true" set'
+    assert_not_skip true, :if => 'true set'
+    assert_not_skip true, :if => "'true' set"
+    assert_not_skip true, :if => '"true" set'
 
-    assert_skip true, :if => 'true is set'
-    assert_skip true, :if => '"true" is set'
-    assert_skip true, :if => "'true' is set"
-    assert_skip false, :if => 'true is not set'
+    assert_not_skip true, :if => 'true is set'
+    assert_not_skip true, :if => '"true" is set'
+    assert_not_skip true, :if => "'true' is set"
+    assert_not_skip false, :if => 'true is not set'
   end
 end
 
