@@ -380,7 +380,7 @@ module Ruote
 
       #p [ :sv, var, @fei.to_s, val, prefix, @variables ]
 
-      var, prefix = split_prefix(var.to_s, prefix)
+      var, prefix = split_prefix(var, prefix)
 
       return parent.set_variable(var, val, prefix) \
         if @parent_id && prefix.length > 0
@@ -488,6 +488,7 @@ module Ruote
     def split_prefix (var, prefix)
 
       if (not prefix)
+        var = var.to_s
         m = VAR_PREFIX_REGEX.match(var)
         prefix = m ? m[1][0, 2] : ''
         var = var[prefix.length..-1]

@@ -19,8 +19,6 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       @tracer << 'alpha'
     end
 
-    wait
-
     entry = logger.log.last
     assert_equal :registered, entry[1]
     assert_equal :alpha, entry.last[:regex]
@@ -46,8 +44,6 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     @engine.unregister_participant :alpha
 
-    wait
-
     entry = logger.log.last
     assert_equal(:unregistered, entry[1])
     assert_equal(/^alpha$/, entry.last[:regex])
@@ -61,8 +57,6 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     end
 
     @engine.unregister_participant pa
-
-    wait
 
     entry = logger.log.last
     assert_equal(:unregistered, entry[1])

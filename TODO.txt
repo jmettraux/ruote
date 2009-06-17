@@ -73,6 +73,7 @@
 
 [ ] part/sub timeout (with Andrew's at)
 [ ] part/sub conditional (all expressions ? no, there's 'if')
+[ ] stalled [participant] expressions restart (apply/reply ?)
 
 [ ] define without name (__result__)
 
@@ -85,4 +86,6 @@
 [ ] listen
 
 [x] wfid --> piid (stick with the funny old name)
+
+[ ] pooltool.ru
 

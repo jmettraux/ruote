@@ -125,10 +125,6 @@ module FunctionalBase
     end
   end
 
-  def wait
-    sleep 0.007
-  end
-
   def assert_engine_clean (wfid=nil, opts={})
 
     assert_no_errors(wfid, opts)
