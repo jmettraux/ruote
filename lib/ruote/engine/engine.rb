@@ -38,6 +38,7 @@ require 'ruote/queue/workqueue'
 require 'ruote/storage/hash_storage'
 require 'ruote/storage/cache_storage'
 require 'ruote/err/error_journal'
+require 'ruote/sc/scheduler'
 
 
 module Ruote
@@ -175,7 +176,7 @@ module Ruote
     protected
 
     def build_scheduler
-      #add_service(:s_scheduler, Rufus::Scheduler.start_new)
+      add_service(:s_scheduler, Ruote::Scheduler)
     end
 
     def build_expression_map

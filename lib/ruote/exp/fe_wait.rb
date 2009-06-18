@@ -28,34 +28,55 @@ require 'ruote/exp/flowexpression'
 
 module Ruote
 
-  # An expression for echoing text to STDOUT or to a :s_tracer service
-  # (if there is one bound in the engine context).
-  #
-  #   sequence do
-  #     participant :ref => 'toto'
-  #     echo 'toto replied'
-  #   end
-  #
-  class EchoExpression < FlowExpression
+  class WaitExpression < FlowExpression
 
-    names :echo
+    names :wait, :sleep
 
     def apply
 
-      reply(@applied_workitem)
-    end
+      sfor = attribute(:for) || attribute_text
+      suntil = attribute(:until)
 
-    def reply (workitem)
-
-      text = "#{attribute_text}\n"
-
-      if t = context[:s_tracer]
-        t << text
+      @until = if suntil
+        Rufus.to_ruby_time(suntil)# rescue nil
+      elsif sfor
+        (Time.now.to_f + Rufus.parse_time_string(sfor))# rescue nil
       else
-        print(text)
+        nil
       end
 
-      reply_to_parent(workitem)
+      if @until
+        schedule
+      else
+        reply_to_parent(@applied_workitem)
+      end
+    end
+
+    #--
+    # no need to override, simply reply to parent expression.
+    #def reply (workitem)
+    #end
+    #++
+
+    def cancel
+
+      unschedule
+
+      reply_to_parent(@applied_workitem)
+    end
+
+    protected
+
+    def schedule
+
+      scheduler.at(@until, @fei)
+
+      wqueue.emit(:expressions, :schedule_at, :until => @until)
+    end
+
+    def unschedule
+
+      raise "implement me !"
     end
   end
 end

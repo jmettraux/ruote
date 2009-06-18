@@ -262,6 +262,11 @@ module Ruote
 
       rescue Exception => e
 
+        #puts
+        #p e
+        #e.backtrace.each { |l| puts l }
+        #puts
+
         ex = if exp
           exp
         else

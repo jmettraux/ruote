@@ -23,39 +23,54 @@
 #++
 
 
-require 'ruote/exp/flowexpression'
+require 'rufus/scheduler'
+require 'ruote/engine/context'
+
+
+# Opening the rufus-scheduler job class to deal with FlowExpressionIds
+# Keeping the original options available.
+#
+class Rufus::Scheduler::Job
+
+  def trigger_block
+
+    if @block.is_a?(Ruote::FlowExpressionId)
+      fexp = scheduler.options[:context][:s_expression_storage][@block]
+      fexp.reply(fexp.applied_workitem)
+    elsif @block.respond_to?(:call)
+      @block.call(self)
+    else
+      @block.trigger(@params.merge(:job => self))
+    end
+  end
+end
 
 
 module Ruote
 
-  # An expression for echoing text to STDOUT or to a :s_tracer service
-  # (if there is one bound in the engine context).
-  #
-  #   sequence do
-  #     participant :ref => 'toto'
-  #     echo 'toto replied'
-  #   end
-  #
-  class EchoExpression < FlowExpression
+  class Scheduler
 
-    names :echo
+    include EngineContext
 
-    def apply
+    #def initialize
+    #end
 
-      reply(@applied_workitem)
+    def context= (c)
+
+      @context = c
+
+      @scheduler = Rufus::Scheduler.start_new(:context => @context)
+        #:job_queue => {}, :cron_job_queue => [])
     end
 
-    def reply (workitem)
+    def stop
 
-      text = "#{attribute_text}\n"
+      @scheduler.stop
+    end
 
-      if t = context[:s_tracer]
-        t << text
-      else
-        print(text)
-      end
+    def at (t, fei)
 
-      reply_to_parent(workitem)
+      @scheduler.at(t, :schedulable => fei)
     end
   end
 end
