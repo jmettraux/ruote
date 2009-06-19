@@ -23,66 +23,55 @@
 #++
 
 
+require 'ruote/exp/flowexpression'
+
+
 module Ruote
 
-  module EngineContext
+  class ListenExpression < FlowExpression
 
-    attr_accessor :context
+    # TODO : implement where=
+    # TODO : implement merge=
 
-    alias :ac :context
-    alias :application_context :context
+    names :listen, :receive
 
-    #++
-    # misc
-    #--
+    def apply
 
-    def engine_id
-      @context[:engine_id] || 'default'
+      to = attribute(:to) || attribute(:on)
+      upon = attribute(:upon) || 'apply'
+
+      tracker.register(
+        @fei,
+        :workitems,
+        upon == 'reply' ? :received : :dispatched,
+        :pname => to)
+
+      # block if no children
     end
 
-    def workdir
-      @context[:work_directory] || 'work'
+    def reply (workitem)
+
+      # TODO : merge !
+
+      if tree_children.size > 0
+        raise "implement me !"
+      else
+        reply_to_parent(@applied_workitem)
+      end
     end
 
-    #++
-    # services
-    #--
+    def cancel
 
-    def engine
-      @context[:s_engine]
+      reply_to_parent(@applied_workitem)
     end
-    def pool
-      @context[:s_expression_pool]
-    end
-    def expmap
-      @context[:s_expression_map]
-    end
-    def expstorage
-      @context[:s_expression_storage]
-    end
-    def wqueue
-      @context[:s_work_queue]
-    end
-    def parser
-      @context[:s_parser]
-    end
-    def scheduler
-      @context[:s_scheduler]
-    end
-    def wfidgen
-      @context[:s_wfid_generator]
-    end
-    def plist
-      @context[:s_participant_list]
-    end
-    def ejournal
-      @context[:s_error_journal]
-    end
-    def treechecker
-      @context[:s_treechecker]
-    end
-    def tracker
-      @context[:s_tracker]
+
+    protected
+
+    def reply_to_parent (workitem)
+
+      tracker.unregister(@fei)
+
+      super(workitem)
     end
   end
 end

@@ -67,7 +67,7 @@
 
 [ ] forget : participant ? subprocess ?
 
-[ ] engine#reload
+[x] engine#reload
 
 [ ] participants stop
 
@@ -80,7 +80,7 @@
 [ ] workitem.__result__
 [ ] smart lookup ? (?)
 
-[ ] tracker
+[o] tracker
 
 [ ] exploded scheduler
 [ ] sleep

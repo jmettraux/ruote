@@ -52,9 +52,6 @@ module Ruote
 
     include EngineContext
 
-    #def initialize
-    #end
-
     def context= (c)
 
       @context = c
@@ -62,7 +59,7 @@ module Ruote
       @scheduler = Rufus::Scheduler.start_new(:context => @context)
         #:job_queue => {}, :cron_job_queue => [])
 
-      #@scheduler.every(0.400) { event
+      @scheduler.every(0.400) { tracker.step }
     end
 
     def stop

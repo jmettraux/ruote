@@ -38,6 +38,7 @@ require 'ruote/queue/workqueue'
 require 'ruote/storage/hash_storage'
 require 'ruote/storage/cache_storage'
 require 'ruote/err/error_journal'
+require 'ruote/evt/tracker'
 require 'ruote/time/scheduler'
 
 
@@ -63,7 +64,6 @@ module Ruote
       build_work_queue
         # building it first, it's the event hub
 
-      build_scheduler
       build_expression_map
       build_expression_storage
       build_expression_pool
@@ -73,6 +73,9 @@ module Ruote
 
       build_treechecker
       build_parser
+
+      build_tracker
+      build_scheduler
     end
 
     def launch (definition, opts={})
@@ -94,7 +97,9 @@ module Ruote
 
     def reply (workitem)
 
-      wqueue.emit(:workitems, :received, :workitem => workitem)
+      wqueue.emit(
+        :workitems, :received,
+        :workitem => workitem, :pname => workitem.participant_name)
 
       pool.reply(workitem)
     end
@@ -220,6 +225,10 @@ module Ruote
 
     def build_error_journal
       add_service(:s_error_journal, Ruote::ErrorJournal)
+    end
+
+    def build_tracker
+      add_service(:s_tracker, Ruote::Tracker)
     end
 
     def init_storage (storage_class)

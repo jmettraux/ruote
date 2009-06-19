@@ -27,7 +27,7 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
 
     assert_trace(pdef, 'alpha')
 
-    assert_equal 1, logger.log.select { |e| e[2][:pname] == 'alpha' }.size
+    assert_equal 2, logger.log.select { |e| e[2][:pname] == 'alpha' }.size
   end
 
   def test_missing_participant_name
