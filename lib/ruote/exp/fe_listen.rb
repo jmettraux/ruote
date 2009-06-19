@@ -54,8 +54,11 @@ module Ruote
       # TODO : merge !
 
       if tree_children.size > 0
-        raise "implement me !"
+
+        pool.launch_sub(
+          "#{@fei.expid}_0", tree_children[0], self, @applied_workitem.dup, true)
       else
+
         reply_to_parent(@applied_workitem)
       end
     end
