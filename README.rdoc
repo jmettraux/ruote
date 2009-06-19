@@ -1,9 +1,6 @@
 
 = ruote
 
-('ruota' is a temporary repository for ruote (http://github.com/jmettraux/ruote/) 2.0. will probably integrate into ruote proper soon)
-
-
 Ruote is a Ruby workflow engine. It's thus a workflow definition interpreter. If you're enterprisey, you might say business process definition.
 
 Instances of these definitions are meant to run for a long time, so Ruote is oriented towards persistency / modifiability instead of transience / performance like a regular interpreter is. A Ruote engine may run multiple instances of workflow definitions.
