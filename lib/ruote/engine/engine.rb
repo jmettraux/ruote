@@ -38,7 +38,7 @@ require 'ruote/queue/workqueue'
 require 'ruote/storage/hash_storage'
 require 'ruote/storage/cache_storage'
 require 'ruote/err/error_journal'
-require 'ruote/sc/scheduler'
+require 'ruote/time/scheduler'
 
 
 module Ruote
