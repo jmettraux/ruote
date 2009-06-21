@@ -39,18 +39,22 @@ module Ruote
 
     names :listen, :receive
 
+    attr_reader :pattern
+
     def apply
 
       to = attribute(:to) || attribute(:on)
+
       upon = attribute(:upon) || 'apply'
+      upon = upon == 'reply' ? :received : :dispatched
 
-      tracker.register(
-        @fei,
-        :workitems,
-        upon == 'reply' ? :received : :dispatched,
-        :pname => to)
+      @merge = (attribute(:merge) || 'false').to_s
 
-      # block if no children
+      @pattern = [ @fei, [ :workitems, upon, { :pname => to } ] ]
+
+      persist
+
+      tracker.register(self)
     end
 
     def reply (workitem)
@@ -61,11 +65,9 @@ module Ruote
 
       wi = @applied_workitem.dup
 
-      merge = (attribute(:merge) || 'false').to_s
-
-      if merge == 'true'
+      if @merge == 'true'
         wi.fields.merge!(workitem.fields)
-      elsif merge == 'override'
+      elsif @merge == 'override'
         wi.fields = workitem.fields
       #else don't touch
       end

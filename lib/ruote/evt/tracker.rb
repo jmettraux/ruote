@@ -41,7 +41,9 @@ module Ruote
 
     def match? (pclass, pmsg, pargs)
 
-      return false if pclass && pclass != @class
+      #return false if pclass && pclass != @class
+        # for now, we're only tracking :workitems events
+
       return false if pmsg && pmsg != @msg
 
       return true unless pargs
@@ -60,6 +62,8 @@ module Ruote
   #
   # Tracking events for the 'listen' expression.
   #
+  # Could be adapted later for tracking other events.
+  #
   class Tracker
 
     include EngineContext
@@ -67,6 +71,7 @@ module Ruote
 
     def initialize
 
+      @reloaded = false
       @listeners = []
       @mutex = Mutex.new
     end
@@ -77,9 +82,10 @@ module Ruote
       subscribe(:workitems)
     end
 
-    def register (fei, eclass, emsg, eargs)
+    def register (fexp)
 
-      @listeners << [ fei, [ eclass, emsg, eargs ] ]
+      #@listeners << [ fei, [ eclass, emsg, eargs ] ]
+      @listeners << fexp.pattern
     end
 
     def unregister (fei)
@@ -91,6 +97,8 @@ module Ruote
 
     def receive (eclass, emsg, eargs)
 
+      reload unless @reloaded
+
       return unless @listeners.size > 0
 
       evt = Event.new(eclass, emsg, eargs)
@@ -101,6 +109,21 @@ module Ruote
           :expressions, :reply, :fei => fei, :workitem => evt.workitem
         ) if evt.match?(*pattern)
       end
+    end
+
+    # Reload listeners from expstorage
+    #
+    def reload
+
+      exps = expstorage.find_expressions(:class => Ruote::ListenExpression)
+
+      ls = @listeners.inject({}) { |h, l| h[l.first] = l; h }
+      exps.each { |e| ls[e.fei] = e.pattern }
+      @listeners = ls.values
+        #
+        # made sure to remove duplicates.
+
+      @reloaded = true
     end
   end
 end
