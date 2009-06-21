@@ -13,20 +13,24 @@ require 'ruote/util/treechecker'
 
 class ConditionTest < Test::Unit::TestCase
 
-  class FakeExpression
+  class Conditional
     include Ruote::ConditionMixin
+
+    def treechecker
+      return @tc if @tc
+      @tc = Ruote::TreeChecker.new
+      @tc.context = {}
+      @tc
+    end
+  end
+
+  class FakeExpression < Conditional
 
     def initialize (h)
       @h = h
     end
     def attribute (k)
       @h[k]
-    end
-    def treechecker
-      return @tc if @tc
-      @tc = Ruote::TreeChecker.new
-      @tc.context = {}
-      @tc
     end
   end
 
@@ -37,11 +41,22 @@ class ConditionTest < Test::Unit::TestCase
     assert_equal result, (not fe.skip?)
   end
 
+  def assert_b (b, conditional)
+
+    assert_equal(
+      b,
+      Conditional.new.true?(conditional),
+      ">#{conditional}< was expected to be #{b}")
+  end
+
   def test_if
 
     assert_not_skip false, :if => 'true == false'
     assert_not_skip false, :if => "'true' == 'false'"
     assert_not_skip false, :if => '"true" == "false"'
+
+    assert_not_skip true, :if => 'a == a'
+    assert_not_skip true, :if => '"a" == "a"'
   end
 
   def test_unless
@@ -65,6 +80,18 @@ class ConditionTest < Test::Unit::TestCase
   def test_illegal_code
 
     assert_not_skip true, :if => 'exit'
+  end
+
+  def test_true
+
+    assert_b true, 'true == true'
+    assert_b true, 'alpha == alpha'
+
+    assert_b true, 'true is set'
+    assert_b true, 'false is set'
+
+    assert_b false, 'true is not set'
+    #assert_b false, 'is set'
   end
 end
 

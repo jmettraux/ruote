@@ -31,81 +31,59 @@ module Ruote
   #
   module ConditionMixin
 
+    SET_REGEX = /(\S*?)( +is)?( +not)?( +set)$/
+    COMPARISON_REGEX = /(.*?) *(==|!=|>=|<=|>|<|=~) *(.*)/
+
     def skip? (attname=:if, nattname=:unless)
 
-      positive = eval_cond(attname)
-      return (not positive) if positive != nil
+      sif = attribute(attname)
+      sunless = attribute(nattname)
 
-      negative = eval_cond(nattname)
-      return (negative) if negative != nil
+      return (not true?(sif)) if sif
+      return (true?(sunless)) if sunless
 
       false
     end
 
-    def eval_cond (attname)
+    # TODO : rconditional
 
-      conditional = attribute(attname)
-      rconditional = attribute("r#{attname}")
+    def true? (conditional)
 
       conditional = unescape(conditional)
-      rconditional = unescape(rconditional)
 
-      return ruby_eval(rconditional) if rconditional and not conditional
-      return nil if not conditional
-
-      r = eval_is_set(conditional)
-      return r if r != nil
-
-      begin
-        return to_b(ruby_eval(conditional))
-      rescue Exception => e
-        #p e
+      if m = SET_REGEX.match(conditional)
+        eval_is(m[1..-1])
+      elsif m = COMPARISON_REGEX.match(conditional)
+        m[1].send(m[2], m[3])
+      else
+        to_b(conditional)
       end
-
-      #to_b(ruby_eval(do_quote(conditional)))
-        #
-        # do_quote could be too naive
-
-      true
     end
 
     protected
+
+    def eval_is (match)
+
+      is_set = match.pop.strip != ''
+      negative = match.find { |m| m == ' not' }
+
+      negative ? (not is_set) : is_set
+    end
 
     def unescape (s)
 
       s ? s.to_s.gsub('&amp;', '&').gsub('&gt;', '>').gsub('&lt;', '<') : nil
     end
 
-    def ruby_eval (s)
-
-      treechecker.check_conditional(s)
-
-      eval(s)
-    end
-
-    SET_REGEX = /(\S*?)( +is)?( +not)?( +set)$/
-
-    def eval_is_set (s)
-
-      m = SET_REGEX.match(s)
-
-      return nil unless m
-
-      val = m[1]
-      val = val.strip if val
-
-      n = m[-2]
-      n = n.strip if n
-
-      val = (val != '')
-      n = (n == 'not')
-
-      n ? (not val) : val
-    end
+    #def ruby_eval (s)
+    #  treechecker.check_conditional(s)
+    #  eval(s)
+    #end
 
     def to_b (o)
 
       o = o.strip if o.is_a?(String)
+
       not (o == nil || o == false || o == 'false' || o == '')
     end
   end
