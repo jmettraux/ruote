@@ -57,6 +57,8 @@ module Ruote
 
     def reply (workitem)
 
+      # TODO : where
+
       wi = @applied_workitem.dup
 
       if @merge == 'true'

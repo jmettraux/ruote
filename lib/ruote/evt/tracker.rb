@@ -67,7 +67,6 @@ module Ruote
 
     def initialize
 
-      @events = []
       @listeners = []
       @mutex = Mutex.new
     end
@@ -88,34 +87,19 @@ module Ruote
       @listeners.delete_if { |l| l.first == fei }
     end
 
-    def step
-
-      evts = latest_events
-
-      @listeners.each do |fei, pattern| # no listeners, no loop
-        evts.each do |evt|
-          wqueue.emit(
-            :expressions, :reply, :fei => fei, :workitem => evt.workitem
-          ) if evt.match?(*pattern)
-        end
-      end
-    end
-
     protected
 
     def receive (eclass, emsg, eargs)
 
-      @mutex.synchronize do
-        @events << Event.new(eclass, emsg, eargs)
-      end
-    end
+      return unless @listeners.size > 0
 
-    def latest_events
+      evt = Event.new(eclass, emsg, eargs)
 
-      @mutex.synchronize do
-        r = @events
-        @events = []
-        r
+      @listeners.each do |fei, pattern|
+
+        wqueue.emit(
+          :expressions, :reply, :fei => fei, :workitem => evt.workitem
+        ) if evt.match?(*pattern)
       end
     end
   end

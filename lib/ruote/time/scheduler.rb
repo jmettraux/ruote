@@ -58,8 +58,6 @@ module Ruote
 
       @scheduler = Rufus::Scheduler.start_new(:context => @context)
         #:job_queue => {}, :cron_job_queue => [])
-
-      @scheduler.every(0.400) { tracker.step }
     end
 
     def stop

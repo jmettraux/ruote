@@ -16,7 +16,6 @@ class EftListenTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       concurrence do
         sequence do
-          echo '0'
           listen :to => '^al.*'
           echo '1'
         end
@@ -32,7 +31,7 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "alpha\n"
     end
 
-    assert_trace(pdef, %w[ 0 alpha 1 ])
+    assert_trace(pdef, %w[ alpha 1 ])
   end
 
   def test_listen_with_child
@@ -61,7 +60,7 @@ class EftListenTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 1.0
+    sleep 0.5
 
     assert_equal "a\na\n#{wfid}_0\n#{wfid}_1", @tracer.to_s
 
@@ -99,7 +98,7 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "bravo:#{workitem.fields['seen']}\n"
     end
 
-    assert_trace(pdef, %w[ alpha bravo: bravo:yes ], :sleep => 1.0)
+    assert_trace(pdef, %w[ alpha bravo:yes bravo: ])
   end
 
   def test_merge_override
@@ -130,6 +129,39 @@ class EftListenTest < Test::Unit::TestCase
     end
 
     assert_trace(pdef, "alpha\nname:William Mandella other:nothing")
+  end
+
+  def test_where
+
+    pdef = Ruote.process_definition do
+      concurrence do
+        listen :to => 'alpha', :where => '${f:who} == toto' do
+          echo 'toto'
+        end
+        sequence do
+          alpha
+        end
+        sequence do
+          alpha
+        end
+      end
+    end
+
+    noisy
+
+    count = 0
+
+    @engine.register_participant :alpha do |wi|
+      @tracer << "alpha\n"
+      wi.fields['who'] = 'toto' if count > 0
+      count = count + 1
+    end
+
+    wfid = @engine.launch(pdef)
+
+    sleep 1.7
+
+    assert_equal %w[ alpha alpha toto ].join("\n"), @tracer.to_s
   end
 end
 
