@@ -70,5 +70,66 @@ class EftListenTest < Test::Unit::TestCase
     assert_equal 3, ps.expressions.size
     assert_equal 0, ps.errors.size
   end
+
+  def test_upon
+
+    pdef = Ruote.process_definition do
+      concurrence do
+        sequence do
+          listen :to => '^al.*'
+          bravo
+        end
+        sequence do
+          listen :to => '^al.*', :upon => 'reply', :merge => true
+          bravo
+        end
+        sequence do
+          alpha
+        end
+      end
+    end
+
+    #noisy
+
+    @engine.register_participant :alpha do |workitem|
+      @tracer << "alpha\n"
+      workitem.fields['seen'] = 'yes'
+    end
+    @engine.register_participant :bravo do |workitem|
+      @tracer << "bravo:#{workitem.fields['seen']}\n"
+    end
+
+    assert_trace(pdef, %w[ alpha bravo: bravo:yes ], :sleep => 1.0)
+  end
+
+  def test_merge_override
+
+    pdef = Ruote.process_definition do
+      set :f => 'name', :val => 'Kilroy'
+      set :f => 'other', :val => 'nothing'
+      concurrence do
+        sequence do
+          listen :to => '^al.*', :merge => 'override'
+          bravo
+        end
+        sequence do
+          alpha
+        end
+      end
+    end
+
+    #noisy
+
+    @engine.register_participant :alpha do |wi|
+      @tracer << "alpha\n"
+      wi.fields['name'] = 'William Mandella'
+    end
+    @engine.register_participant :bravo do |wi|
+      @tracer << "name:#{wi.fields['name']} "
+      @tracer << "other:#{wi.fields['other']}\n"
+    end
+
+    assert_trace(pdef, "alpha\nname:William Mandella other:nothing")
+  end
 end
 

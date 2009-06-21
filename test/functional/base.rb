@@ -65,6 +65,8 @@ module FunctionalBase
 
     wfid = @engine.launch(launch_thing, opts[:launch_opts] || {})
 
+    if t = opts[:sleep]; sleep t; end
+
     wait_for(wfid, opts)
 
     yield(@engine) if block_given?

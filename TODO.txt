@@ -77,7 +77,7 @@
 
 [ ] define without name (__result__)
 
-[ ] workitem.__result__
+[x] workitem.__result__ / why, the workitem itself is the result
 [ ] smart lookup ? (?)
 
 [o] tracker

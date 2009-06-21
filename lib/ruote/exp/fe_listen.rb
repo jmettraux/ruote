@@ -28,10 +28,13 @@ require 'ruote/exp/flowexpression'
 
 module Ruote
 
+  #
+  # Listens for activity (incoming or outgoing workitems) on a (set of)
+  # participant(s).
+  #
   class ListenExpression < FlowExpression
 
     # TODO : implement where=
-    # TODO : implement merge=
 
     names :listen, :receive
 
@@ -39,6 +42,9 @@ module Ruote
 
       to = attribute(:to) || attribute(:on)
       upon = attribute(:upon) || 'apply'
+      @merge = (attribute(:merge) || 'false').to_s
+
+      persist
 
       tracker.register(
         @fei,
@@ -51,15 +57,19 @@ module Ruote
 
     def reply (workitem)
 
-      # TODO : merge !
+      wi = @applied_workitem.dup
+
+      if @merge == 'true'
+        wi.fields.merge!(workitem.fields)
+      elsif @merge == 'override'
+        wi.fields = workitem.fields
+      #else don't touch
+      end
 
       if tree_children.size > 0
-
-        pool.launch_sub(
-          "#{@fei.expid}_0", tree_children[0], self, @applied_workitem.dup, true)
+        pool.launch_sub("#{@fei.expid}_0", tree_children[0], self, wi, true)
       else
-
-        reply_to_parent(@applied_workitem)
+        reply_to_parent(wi)
       end
     end
 
