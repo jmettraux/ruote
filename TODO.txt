@@ -54,7 +54,7 @@
 [o] event : upon leaving tag
 [o] undo
 [o] redo
-[ ] cancel-process (exp)
+[o] cancel-process (exp)
 
 [o] cancel_process
 [o] cancel
@@ -82,10 +82,12 @@
 
 [o] tracker
 
+[o] sleep
+[o] listen
 [ ] exploded scheduler
-[ ] sleep
 [ ] when
-[ ] listen
+
+[ ] save / restore
 
 [x] wfid --> piid (stick with the funny old name)
 
