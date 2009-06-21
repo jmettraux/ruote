@@ -147,7 +147,7 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    noisy
+    #noisy
 
     count = 0
 

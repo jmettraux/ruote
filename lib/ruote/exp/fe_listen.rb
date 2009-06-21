@@ -24,6 +24,7 @@
 
 
 require 'ruote/exp/flowexpression'
+require 'ruote/exp/condition'
 
 
 module Ruote
@@ -34,7 +35,7 @@ module Ruote
   #
   class ListenExpression < FlowExpression
 
-    # TODO : implement where=
+    include ConditionMixin
 
     names :listen, :receive
 
@@ -42,9 +43,6 @@ module Ruote
 
       to = attribute(:to) || attribute(:on)
       upon = attribute(:upon) || 'apply'
-      @merge = (attribute(:merge) || 'false').to_s
-
-      persist
 
       tracker.register(
         @fei,
@@ -57,13 +55,17 @@ module Ruote
 
     def reply (workitem)
 
-      # TODO : where
+      where = attribute(:where, workitem)
+
+      return if where && (not true?(where))
 
       wi = @applied_workitem.dup
 
-      if @merge == 'true'
+      merge = (attribute(:merge) || 'false').to_s
+
+      if merge == 'true'
         wi.fields.merge!(workitem.fields)
-      elsif @merge == 'override'
+      elsif merge == 'override'
         wi.fields = workitem.fields
       #else don't touch
       end
