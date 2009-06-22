@@ -95,6 +95,17 @@ module Ruote
 
     protected
 
+    # IDEA :
+    # load each listener fexp = expstorage[fei]
+    # pattern.match?(evt)
+    # remove is fexp == nil
+    #
+    # use an array/set and store only feis
+    #
+    # could get expensive...
+    #
+    # remove if fexp == nil makes #unregister uncessary
+
     def receive (eclass, emsg, eargs)
 
       reload unless @reloaded

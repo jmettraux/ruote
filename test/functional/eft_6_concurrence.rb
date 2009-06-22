@@ -31,6 +31,37 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_trace pdef, %w[ alpha alpha ]
   end
 
+  def test_over_if
+
+    pdef = Ruote.process_definition do
+      concurrence :over_if => "${f:seen}", :merge_type => :isolate do
+        alpha
+        alpha
+        alpha
+      end
+      bravo
+    end
+
+    count = 0
+
+    @engine.register_participant :alpha do |workitem|
+      workitem.fields['seen'] = 'indeed' if count == 1
+      @tracer << "alpha\n"
+      count = count + 1
+    end
+
+    fields = nil
+
+    @engine.register_participant :bravo do |workitem|
+      fields = workitem.fields
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ alpha ] * 3)
+    assert_equal({ 1 => { 'seen' => 'indeed' }, 0 => {} }, fields)
+  end
+
   # helper
   #
   def run_concurrence (concurrence_attributes, noise)

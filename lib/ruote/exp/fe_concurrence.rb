@@ -24,11 +24,14 @@
 
 
 require 'ruote/exp/flowexpression'
+require 'ruote/exp/condition'
 
 
 module Ruote
 
   class ConcurrenceExpression < FlowExpression
+
+    include ConditionMixin
 
     names :concurrence
 
@@ -43,6 +46,8 @@ module Ruote
 
       @workitems = nil
 
+      @over = false
+
       tree_children.each_with_index do |c, i|
         apply_child(i, @applied_workitem.dup)
       end
@@ -50,7 +55,7 @@ module Ruote
 
     def reply (workitem)
 
-      return if over?
+      return if @over
 
       if @merge == 'first' || @merge == 'last'
         (@workitems ||= []) << workitem
@@ -58,22 +63,24 @@ module Ruote
         (@workitems ||= {})[workitem.fei.expid] = workitem
       end
 
-      if over?
-        reply_to_parent
-      else
-        persist
-      end
+      @over = over?(workitem)
+
+      persist
+
+      reply_to_parent if @over
     end
 
     protected
 
-    def over?
+    def over? (workitem)
 
-      # TODO : over_if
+      over_if = attribute(:over_if, workitem)
 
-      return false unless @workitems
-
-      (@workitems.size >= (@count || tree_children.size))
+      if over_if && true?(over_if)
+        true
+      else
+        @workitems && (@workitems.size >= (@count || tree_children.size))
+      end
     end
 
     def reply_to_parent

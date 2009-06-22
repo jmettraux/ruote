@@ -24,7 +24,7 @@
 
 [o] event : :processes, :cancelled ?
 
-[ ] concurrence : over_if
+[o] concurrence : over_if
 
 [o] pool cleanup
 
