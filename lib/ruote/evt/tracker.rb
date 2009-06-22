@@ -23,41 +23,12 @@
 #++
 
 
+require 'set'
 require 'ruote/engine/context'
 require 'ruote/queue/subscriber'
 
 
 module Ruote
-
-  #
-  # Used by the Tracker to keep decorate events with useful methods.
-  #
-  class Event
-
-    def initialize (eclass, emsg, eargs)
-
-      @class, @msg, @args = eclass, emsg, eargs
-    end
-
-    def match? (pclass, pmsg, pargs)
-
-      #return false if pclass && pclass != @class
-        # for now, we're only tracking :workitems events
-
-      return false if pmsg && pmsg != @msg
-
-      return true unless pargs
-
-      pargs.each { |k, v| return false unless @args[k].match(v) }
-
-      true
-    end
-
-    def workitem
-
-      @args[:workitem]
-    end
-  end
 
   #
   # Tracking events for the 'listen' expression.
@@ -72,7 +43,7 @@ module Ruote
     def initialize
 
       @reloaded = false
-      @listeners = []
+      @listeners = Set.new
       @mutex = Mutex.new
     end
 
@@ -82,43 +53,36 @@ module Ruote
       subscribe(:workitems)
     end
 
-    def register (fexp)
+    def register (fei)
 
-      #@listeners << [ fei, [ eclass, emsg, eargs ] ]
-      @listeners << fexp.pattern
+      @listeners << fei
     end
 
     def unregister (fei)
 
-      @listeners.delete_if { |l| l.first == fei }
+      @listeners.delete(fei)
     end
 
     protected
-
-    # IDEA :
-    # load each listener fexp = expstorage[fei]
-    # pattern.match?(evt)
-    # remove is fexp == nil
-    #
-    # use an array/set and store only feis
-    #
-    # could get expensive...
-    #
-    # remove if fexp == nil makes #unregister uncessary
 
     def receive (eclass, emsg, eargs)
 
       reload unless @reloaded
 
-      return unless @listeners.size > 0
+      @listeners.to_a.each do |fei|
 
-      evt = Event.new(eclass, emsg, eargs)
+        fexp = expstorage[fei]
 
-      @listeners.each do |fei, pattern|
+        if fexp
 
-        wqueue.emit(
-          :expressions, :reply, :fei => fei, :workitem => evt.workitem
-        ) if evt.match?(*pattern)
+          wqueue.emit(
+            :expressions, :reply, :fei => fei, :workitem => eargs[:workitem]
+          ) if fexp.match_event?(eclass, emsg, eargs)
+
+        else
+
+          @listeners.delete(fei)
+        end
       end
     end
 
@@ -127,12 +91,7 @@ module Ruote
     def reload
 
       exps = expstorage.find_expressions(:class => Ruote::ListenExpression)
-
-      ls = @listeners.inject({}) { |h, l| h[l.first] = l; h }
-      exps.each { |e| ls[e.fei] = e.pattern }
-      @listeners = ls.values
-        #
-        # made sure to remove duplicates.
+      exps.each { |e| @listeners << e.fei }
 
       @reloaded = true
     end

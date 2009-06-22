@@ -37,24 +37,20 @@ module Ruote
 
     include ConditionMixin
 
-    names :listen, :receive
-
-    attr_reader :pattern
+    names :listen, :receive, :intercept
 
     def apply
 
-      to = attribute(:to) || attribute(:on)
+      @to = attribute(:to) || attribute(:on)
 
       upon = attribute(:upon) || 'apply'
-      upon = upon == 'reply' ? :received : :dispatched
+      @upon = upon == 'reply' ? :received : :dispatched
 
       @merge = (attribute(:merge) || 'false').to_s
 
-      @pattern = [ @fei, [ :workitems, upon, { :pname => to } ] ]
-
       persist
 
-      tracker.register(self)
+      tracker.register(@fei)
     end
 
     def reply (workitem)
@@ -82,6 +78,17 @@ module Ruote
     def cancel
 
       reply_to_parent(@applied_workitem)
+    end
+
+    def match_event? (eclass, emsg, eargs)
+
+      return false unless eclass == :workitems
+      return false unless emsg == @upon
+      return false unless eargs[:pname].match(@to)
+
+      # TODO : wfid ==
+
+      true
     end
 
     protected
