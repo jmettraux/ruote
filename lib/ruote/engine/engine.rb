@@ -23,8 +23,6 @@
 #++
 
 
-#require 'rufus/scheduler' # sudo gem install rufus-scheduler
-
 require 'ruote/parser'
 require 'ruote/workitem'
 require 'ruote/engine/context'

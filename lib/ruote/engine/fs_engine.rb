@@ -22,7 +22,9 @@
 # Made in Japan.
 #++
 
+
 require 'ruote/engine/engine'
+require 'ruote/evt/fs_tracker'
 require 'ruote/storage/fs_storage'
 
 
@@ -38,6 +40,11 @@ module Ruote
     def build_expression_storage
 
       init_storage(Ruote::FsStorage)
+    end
+
+    def build_tracker
+
+      add_service(:s_tracker, Ruote::FsTracker)
     end
   end
 end

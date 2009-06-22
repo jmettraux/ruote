@@ -23,93 +23,33 @@
 #++
 
 
-require 'set'
-require 'ruote/engine/context'
-require 'ruote/queue/subscriber'
-
-
 module Ruote
 
   #
-  # Tracking events for the 'listen' expression.
+  # A version of the Tracker that persists to disk.
+  # It's meant for engines sharing storage.
   #
-  # Could be adapted later for tracking other events.
+  # It stores its list of listeners to work/tracker.ruote
   #
-  class Tracker
+  class FsTracker < Tracker
 
-    include EngineContext
-    include Subscriber
-
-    def initialize
-
-      @reloaded = false
-    end
-
-    def context= (c)
-
-      @context = c
-      subscribe(:workitems)
-    end
-
-    def register (fei)
-
-      save(listeners << fei)
-    end
-
-    def unregister (fei)
-
-      save(listeners.delete(fei))
-    end
+    # TODO : keep track of file.mtime and load only if necessary
 
     protected
 
     def listeners
 
-      @listeners ||= Set.new
+      File.open(filename, 'rb') { |f| Marshal.load(f.read) } rescue Set.new
     end
 
     def save (listeners)
 
-      # do nothing, transience
+      File.open(filename, 'wb') { |f| f.write(Marshal.dump(listeners)) }
     end
 
-    def receive (eclass, emsg, eargs)
+    def filename
 
-      reload unless @reloaded
-
-      ls = listeners
-
-      ls.to_a.each do |fei|
-
-        fexp = expstorage[fei]
-
-        if fexp
-
-          wqueue.emit(
-            :expressions, :reply, :fei => fei, :workitem => eargs[:workitem]
-          ) if fexp.match_event?(eclass, emsg, eargs)
-
-        else
-
-          ls.delete(fei)
-        end
-      end
-
-      save(ls)
-    end
-
-    # Reload listeners from expstorage
-    #
-    def reload
-
-      ls = listeners
-
-      exps = expstorage.find_expressions(:class => Ruote::ListenExpression)
-      exps.each { |e| ls << e.fei }
-
-      save(ls)
-
-      @reloaded = true
+      @filename ||= File.join(workdir, 'tracker.ruote')
     end
   end
 end

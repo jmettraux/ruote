@@ -88,7 +88,8 @@
 [ ] exploded scheduler
 [ ] when
 
-[ ] persisted Tracker
+[o] persisted tracker
+[ ] persisted tracker : load only if necessary
 
 [ ] save / restore
 
