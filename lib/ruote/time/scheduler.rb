@@ -37,6 +37,9 @@ class Rufus::Scheduler::Job
     if @block.is_a?(Ruote::FlowExpressionId)
       fexp = scheduler.options[:context][:s_expression_storage][@block]
       fexp.reply(fexp.applied_workitem)
+      #
+      # TODO : what about timeouts and cancel ?
+      #
     elsif @block.respond_to?(:call)
       @block.call(self)
     else

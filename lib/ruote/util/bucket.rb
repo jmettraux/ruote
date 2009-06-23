@@ -31,11 +31,11 @@ module Ruote
   #
   class Bucket
 
-    # TODO : flock management, polling :(
-
     def initialize (fname, default_class)
 
       @fname = fname
+      @file = nil
+
       @data = nil
       @mtime = nil
       @default_class = default_class
@@ -47,6 +47,8 @@ module Ruote
 
       if (not @mtime) or (not mt) or (mt > @mtime)
 
+        file.flock(File::LOCK_EX) # exclusive !
+
         @data = File.open(@fname, 'rb') { |f|
           Marshal.load(f.read)
         } rescue @default_class.new
@@ -54,21 +56,37 @@ module Ruote
         @mtime = mtime
       end
 
-      @data
+      return @data
+
+    ensure
+      file.flock(File::LOCK_UN)
     end
 
     def save (data)
 
+      file.flock(File::LOCK_EX)
+
       File.open(@fname, 'wb') { |f| f.write(Marshal.dump(data)) }
       @data = data
       @mtime = mtime
+
+    ensure
+      file.flock(File::LOCK_UN)
     end
 
     protected
 
     def mtime
 
-      File.new(@fname).mtime rescue nil
+      file.mtime rescue nil
+    end
+
+    def file
+
+      return @file if @file
+      FileUtils.touch(@fname) unless File.exist?(@fname)
+
+      @file = File.new(@fname)
     end
   end
 end
