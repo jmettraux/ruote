@@ -23,35 +23,52 @@
 #++
 
 
-require 'ruote/util/bucket'
-
-
 module Ruote
 
   #
-  # A version of the Tracker that persists to disk.
-  # It's meant for engines sharing storage.
+  # A 'bucket' is a kind of cache file. It may be shared by multiple processes,
+  # it reloads only if necessary.
   #
-  # It stores its list of listeners to work/tracker.ruote
-  #
-  class FsTracker < Tracker
+  class Bucket
 
-    def context= (c)
+    # TODO : flock management, polling :(
 
-      super(c)
-      @bucket = Bucket.new(File.join(workdir, 'tracker.ruote'), Set)
+    def initialize (fname, default_class)
+
+      @fname = fname
+      @data = nil
+      @mtime = nil
+      @default_class = default_class
+    end
+
+    def load
+
+      mt = mtime
+
+      if (not @mtime) or (not mt) or (mt > @mtime)
+
+        @data = File.open(@fname, 'rb') { |f|
+          Marshal.load(f.read)
+        } rescue @default_class.new
+
+        @mtime = mtime
+      end
+
+      @data
+    end
+
+    def save (data)
+
+      File.open(@fname, 'wb') { |f| f.write(Marshal.dump(data)) }
+      @data = data
+      @mtime = mtime
     end
 
     protected
 
-    def listeners
+    def mtime
 
-      @bucket.load
-    end
-
-    def save (listeners)
-
-      @bucket.save(listeners)
+      File.new(@fname).mtime rescue nil
     end
   end
 end

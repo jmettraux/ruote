@@ -78,6 +78,7 @@ module Ruote
       reload unless @reloaded
 
       ls = listeners
+      modified = false
 
       ls.to_a.each do |fei|
 
@@ -92,10 +93,11 @@ module Ruote
         else
 
           ls.delete(fei)
+          modified = true
         end
       end
 
-      save(ls)
+      save(ls) if modified
     end
 
     # Reload listeners from expstorage
