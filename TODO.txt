@@ -84,7 +84,7 @@
 
 [o] sleep
 [o] listen
-[ ] listen wfid="x"
+[o] listen wfid="x"
 [ ] exploded scheduler
 [ ] when
 

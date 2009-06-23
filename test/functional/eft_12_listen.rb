@@ -170,9 +170,21 @@ class EftListenTest < Test::Unit::TestCase
 
   def test_listen_cancel
 
-    # concurrence count=1, child listen, gets cancelled, no more listeners
+    pdef = Ruote.process_definition do
+      listen :to => 'alpha'
+    end
 
-    flunk
+    wfid = @engine.launch(pdef)
+
+    sleep 0.500
+
+    assert_equal(1, @engine.tracker.send(:listeners).size)
+
+    @engine.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    assert_equal(0, @engine.tracker.send(:listeners).size)
   end
 
   def test_cross
