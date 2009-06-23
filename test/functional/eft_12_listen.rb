@@ -32,6 +32,8 @@ class EftListenTest < Test::Unit::TestCase
     end
 
     assert_trace(pdef, %w[ alpha 1 ])
+
+    assert_equal(0, @engine.tracker.send(:listeners).size)
   end
 
   def test_listen_with_child
@@ -68,6 +70,8 @@ class EftListenTest < Test::Unit::TestCase
 
     assert_equal 3, ps.expressions.size
     assert_equal 0, ps.errors.size
+
+    assert_equal(1, @engine.tracker.send(:listeners).size)
   end
 
   def test_upon
