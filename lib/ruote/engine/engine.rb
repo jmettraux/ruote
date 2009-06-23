@@ -82,7 +82,8 @@ module Ruote
 
       tree = parser.parse(definition)
 
-      workitem = Workitem.new(opts[:workitem] || {})
+      workitem = Workitem.new(
+        opts[:workitem] || opts[:launchitem] || {})
 
       wqueue.emit(
         :processes, :launch,
