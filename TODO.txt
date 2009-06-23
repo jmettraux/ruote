@@ -89,7 +89,6 @@
 [ ] when
 
 [o] persisted tracker
-[ ] persisted tracker : load only if necessary
 
 [ ] save / restore
 

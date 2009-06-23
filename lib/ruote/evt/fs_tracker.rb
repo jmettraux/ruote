@@ -33,23 +33,39 @@ module Ruote
   #
   class FsTracker < Tracker
 
-    # TODO : keep track of file.mtime and load only if necessary
-
     protected
 
     def listeners
 
-      File.open(filename, 'rb') { |f| Marshal.load(f.read) } rescue Set.new
+      mtime = file_mtime
+
+      if (not @mtime) or (not mtime) or (mtime > @mtime)
+
+        @listeners = File.open(filename, 'rb') { |f|
+          Marshal.load(f.read)
+        } rescue Set.new
+
+        @mtime = mtime
+      end
+
+      @listeners
     end
 
     def save (listeners)
 
       File.open(filename, 'wb') { |f| f.write(Marshal.dump(listeners)) }
+      @mtime = file_mtime
+      @listeners = listeners
     end
 
     def filename
 
       @filename ||= File.join(workdir, 'tracker.ruote')
+    end
+
+    def file_mtime
+
+      File.new(filename).mtime rescue nil
     end
   end
 end
