@@ -58,10 +58,6 @@ module Ruote
 
     def reply (workitem)
 
-      where = attribute(:where, workitem)
-
-      return if where && (not true?(where))
-
       wi = @applied_workitem.dup
 
       if @merge == 'true'
@@ -89,8 +85,13 @@ module Ruote
       return false unless emsg == @upon
       return false unless eargs[:pname].match(@to)
 
-      return false \
-        if @wfid && @fei.parent_wfid != eargs[:workitem].fei.parent_wfid
+      wi = eargs[:workitem]
+
+      return false if @wfid && @fei.parent_wfid != wi.fei.parent_wfid
+
+      where = attribute(:where, wi)
+
+      return false if where && (not true?(where))
 
       true
     end
