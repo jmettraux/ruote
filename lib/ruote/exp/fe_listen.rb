@@ -48,6 +48,9 @@ module Ruote
 
       @merge = (attribute(:merge) || 'false').to_s
 
+      @wfid = attribute(:wfid).to_s
+      @wfid = (@wfid == 'same' || @wfid == 'current')
+
       persist
 
       tracker.register(@fei)
@@ -86,7 +89,8 @@ module Ruote
       return false unless emsg == @upon
       return false unless eargs[:pname].match(@to)
 
-      # TODO : wfid ==
+      return false \
+        if @wfid && @fei.parent_wfid != eargs[:workitem].fei.parent_wfid
 
       true
     end

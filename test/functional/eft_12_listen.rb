@@ -163,5 +163,69 @@ class EftListenTest < Test::Unit::TestCase
 
     assert_equal %w[ alpha alpha toto ].join("\n"), @tracer.to_s
   end
+
+  def test_listen_cancel
+
+    # concurrence count=1, child listen, gets cancelled, no more listeners
+
+    flunk
+  end
+
+  def test_cross
+
+    listening = Ruote.process_definition do
+      sequence do
+        listen :to => 'alpha'
+        echo 'ldone.'
+      end
+    end
+    emitting = Ruote.process_definition do
+      sequence do
+        alpha
+        echo 'edone.'
+      end
+    end
+
+    @engine.register_participant :alpha do
+      # nothing
+    end
+
+    lwfid = @engine.launch(listening)
+    ewfid = @engine.launch(emitting)
+
+    wait_for(lwfid)
+
+    assert_equal("edone.\nldone.", @tracer.to_s)
+  end
+
+  def test_not_cross
+
+    listening = Ruote.process_definition do
+      sequence do
+        listen :to => 'alpha', :wfid => :same
+        echo 'ldone.'
+      end
+    end
+    emitting = Ruote.process_definition do
+      sequence do
+        alpha
+        echo 'edone.'
+      end
+    end
+
+    @engine.register_participant :alpha do
+      # nothing
+    end
+
+    lwfid = @engine.launch(listening)
+    ewfid = @engine.launch(emitting)
+
+    sleep 1
+
+    assert_equal("edone.", @tracer.to_s)
+
+    ps = @engine.process_status(lwfid)
+    assert_equal(3, ps.expressions.size)
+  end
 end
 
