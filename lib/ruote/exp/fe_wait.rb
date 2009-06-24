@@ -69,14 +69,16 @@ module Ruote
 
     def schedule
 
-      scheduler.at(@until, @fei)
+      @job_id = scheduler.at(@until, @fei, :reply)
+
+      persist
 
       wqueue.emit(:expressions, :schedule_at, :until => @until)
     end
 
     def unschedule
 
-      raise "implement me !"
+      raise "implement me !" # TODO
     end
   end
 end

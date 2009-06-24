@@ -27,30 +27,38 @@ require 'rufus/scheduler'
 require 'ruote/engine/context'
 
 
-# Opening the rufus-scheduler job class to deal with FlowExpressionIds
-# Keeping the original options available.
-#
-class Rufus::Scheduler::Job
-
-  def trigger_block
-
-    if @block.is_a?(Ruote::FlowExpressionId)
-      fexp = scheduler.options[:context][:s_expression_storage][@block]
-      fexp.reply(fexp.applied_workitem)
-      #
-      # TODO : what about timeouts and cancel ?
-      #
-    elsif @block.respond_to?(:call)
-      @block.call(self)
-    else
-      @block.trigger(@params.merge(:job => self))
-    end
-  end
-end
-
-
 module Ruote
 
+  #
+  # Ruote encapsulates a pointer to a flow expression (fei) and a method
+  # name in an instance of RuoteSchedulable. When the scheduler determines
+  # the time has come, the flow expression is retrieved and the method is
+  # called.
+  #
+  class RuoteSchedulable
+
+    def initialize (fei, m)
+
+      @fei = fei
+      @method = m
+    end
+
+    def call (rufus_job)
+
+      fexp = rufus_job.scheduler.options[:context][:s_expression_storage][@fei]
+
+      if @method == :cancel
+        fexp.cancel
+      else # method == :reply
+        fexp.reply(fexp.applied_workitem)
+      end
+    end
+  end
+
+  #
+  # Wrapping a rufus-scheduler instance, for handling all the time-related
+  # things in ruote ('wait', timeouts, ...)
+  #
   class Scheduler
 
     include EngineContext
@@ -68,9 +76,9 @@ module Ruote
       @scheduler.stop
     end
 
-    def at (t, fei)
+    def at (t, fei, method)
 
-      @scheduler.at(t, :schedulable => fei)
+      @scheduler.at(t, :schedulable => RuoteSchedulable.new(fei, method))
     end
   end
 end
