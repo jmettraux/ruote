@@ -69,7 +69,7 @@ module Ruote
 
     def schedule
 
-      @job_id = scheduler.at(@until, @fei, :reply)
+      @job_id = scheduler.at(@until, @fei, :reply).job_id
 
       persist
 
@@ -78,7 +78,7 @@ module Ruote
 
     def unschedule
 
-      raise "implement me !" # TODO
+      scheduler.unschedule(@job_id) if @job_id
     end
   end
 end

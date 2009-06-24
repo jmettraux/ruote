@@ -80,6 +80,16 @@ module Ruote
 
       @scheduler.at(t, :schedulable => RuoteSchedulable.new(fei, method))
     end
+
+    def unschedule (job_id)
+
+      @scheduler.unschedule(job_id)
+    end
+
+    def jobs
+
+      @scheduler.jobs
+    end
   end
 end
 

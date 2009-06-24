@@ -40,18 +40,25 @@ class EftWaitTest < Test::Unit::TestCase
   def test_cancel_wait
 
     pdef = Ruote.process_definition do
-      concurrence do
-        alpha
-        sequence do
-          wait :for => '3s'
-          bravo
-        end
+      sequence do
+        echo 'a'
+        wait :for => '3s'
+        echo 'b'
       end
     end
 
     #noisy
 
-    assert true
+    wfid = @engine.launch(pdef)
+
+    sleep 0.300
+
+    @engine.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    assert_equal 'a', @tracer.to_s
+    assert_equal 0, @engine.scheduler.jobs.size
   end
 end
 
