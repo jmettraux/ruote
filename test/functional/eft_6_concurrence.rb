@@ -179,5 +179,33 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     sleep 0.007
   end
+
+  def test_cancel
+
+    pdef = Ruote.process_definition do
+      concurrence do
+        alpha
+        alpha
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    assert_equal 2, alpha.size
+
+    @engine.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    ps = @engine.process_status(wfid)
+
+    assert_nil ps
+  end
 end
 

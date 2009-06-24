@@ -67,7 +67,7 @@ module Ruote
 
       persist
 
-      reply_to_parent if @over
+      reply_to_parent(nil) if @over
     end
 
     protected
@@ -83,7 +83,7 @@ module Ruote
       end
     end
 
-    def reply_to_parent
+    def reply_to_parent (_workitem)
 
       handle_remaining if @children
 
@@ -91,6 +91,8 @@ module Ruote
     end
 
     def merge_workitems
+
+      return @applied_workitem unless @workitems
 
       wis = case @merge
       when 'first'
