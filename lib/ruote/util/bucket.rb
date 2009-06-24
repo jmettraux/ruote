@@ -31,7 +31,7 @@ module Ruote
   #
   class Bucket
 
-    def initialize (fname, default_class)
+    def initialize (fname, default_class, skip_when_locked=false)
 
       @fname = fname
       @file = nil
@@ -39,6 +39,7 @@ module Ruote
       @data = nil
       @mtime = nil
       @default_class = default_class
+      @skip = skip_when_locked
     end
 
     def load
@@ -46,6 +47,8 @@ module Ruote
       mt = mtime
 
       if (not @mtime) or (not mt) or (mt > @mtime)
+
+        return nil if @skip and locked?
 
         file.flock(File::LOCK_EX) # exclusive !
 
@@ -87,6 +90,11 @@ module Ruote
       FileUtils.touch(@fname) unless File.exist?(@fname)
 
       @file = File.new(@fname)
+    end
+
+    def locked?
+
+      (file.flock(File::LOCK_EX | File::LOCK_NB) == false)
     end
   end
 end
