@@ -53,6 +53,8 @@ module Ruote
 
     names :subprocess
 
+    # TODO : forget
+
     def apply
 
       return reply_to_parent(@applied_workitem) if skip?
