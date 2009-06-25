@@ -150,121 +150,122 @@ module OpenWFE
 
     private
 
-      def self.to_httpdate (t)
+    def self.to_httpdate (t)
 
-        return "" unless t
-        t.httpdate
-      end
+      return '' unless t
+      t = Time.parse(t) if t.is_a?(String) # :(
+      t.httpdate
+    end
 
-      def self.from_httpdate (s)
+    def self.from_httpdate (s)
 
-        return nil unless s
-        return nil if s.strip == ""
+      return nil unless s
+      return nil if s.strip == ''
 
-        Time.httpdate s
-      end
+      Time.httpdate(s)
+    end
 
-      #--
-      # OUT
-      #++
+    #--
+    # OUT
+    #++
 
-      def self.to_element (xml, root_name=nil)
+    def self.to_element (xml, root_name=nil)
 
-        xml = if xml.is_a?(REXML::Element)
-          xml
-        elsif xml.is_a?(REXML::Document)
-          xml.root
-        else
-          REXML::Document.new(xml).root
-        end
-
-        #raise "not the XML of a #{root_name} ('#{xml.name}')" \
-        #  if root_name and (xml.name != root_name)
-        return nil if root_name and (xml.name != root_name)
-
+      xml = if xml.is_a?(REXML::Element)
         xml
+      elsif xml.is_a?(REXML::Document)
+        xml.root
+      else
+        REXML::Document.new(xml).root
       end
 
-      def self.hash_to_xml (h, options={})
+      #raise "not the XML of a #{root_name} ('#{xml.name}')" \
+      #  if root_name and (xml.name != root_name)
+      return nil if root_name and (xml.name != root_name)
 
-        tagname = options.delete(:tag) || 'hash'
+      xml
+    end
 
-        builder(options) do |xml|
-          xml.tag!(tagname) do
-            h.each do |k, v|
-              xml.entry do
-                object_to_xml(k, options)
-                object_to_xml(v, options)
-              end
+    def self.hash_to_xml (h, options={})
+
+      tagname = options.delete(:tag) || 'hash'
+
+      builder(options) do |xml|
+        xml.tag!(tagname) do
+          h.each do |k, v|
+            xml.entry do
+              object_to_xml(k, options)
+              object_to_xml(v, options)
             end
           end
         end
       end
+    end
 
-      def self.array_to_xml (a, options={})
+    def self.array_to_xml (a, options={})
 
-        builder(options) do |xml|
-          xml.array do
-            a.each { |o| object_to_xml(o, options) }
-          end
+      builder(options) do |xml|
+        xml.array do
+          a.each { |o| object_to_xml(o, options) }
         end
       end
+    end
 
-      #--
-      # IN
-      #++
+    #--
+    # IN
+    #++
 
-      #
-      # Returns the text wrapped in the child elt with the given
-      # name.
-      #
-      def self.text (parent, elt_name)
+    #
+    # Returns the text wrapped in the child elt with the given
+    # name.
+    #
+    def self.text (parent, elt_name)
 
-        elt = parent.elements[elt_name]
-        elt ? elt.text : nil
+      elt = parent.elements[elt_name]
+      elt ? elt.text : nil
+    end
+
+    def self.object_from_xml (elt)
+
+      name = elt.name
+      text = elt.text
+
+      return true if name == 'true'
+      return false if name == 'false'
+      return nil if name == 'null'
+
+      if name == 'number'
+        return text.to_f if text.index('.')
+        return text.to_i
       end
 
-      def self.object_from_xml (elt)
+      return hash_from_xml(elt) if name == 'hash'
+      return array_from_xml(elt) if name == 'array'
 
-        name = elt.name
-        text = elt.text
+      text # string / object
+    end
 
-        return true if name == 'true'
-        return false if name == 'false'
-        return nil if name == 'null'
+    def self.hash_from_xml (elt)
 
-        if name == 'number'
-          return text.to_f if text.index('.')
-          return text.to_i
-        end
+      elt.owfe_elt_children.inject({}) do |r, e|
 
-        return hash_from_xml(elt) if name == 'hash'
-        return array_from_xml(elt) if name == 'array'
+        children = e.owfe_elt_children
 
-        text # string / object
+        k = object_from_xml children[0]
+        v = object_from_xml children[1]
+
+        r[k] = v
+
+        r
       end
+    end
 
-      def self.hash_from_xml (elt)
+    def self.array_from_xml (elt)
 
-        elt.owfe_elt_children.inject({}) do |r, e|
-
-          children = e.owfe_elt_children
-
-          k = object_from_xml children[0]
-          v = object_from_xml children[1]
-
-          r[k] = v
-
-          r
-        end
+      elt.owfe_elt_children.inject([]) do |r, e|
+        r << object_from_xml(e)
       end
-
-      def self.array_from_xml (elt)
-
-        elt.owfe_elt_children.inject([]) do |r, e|
-          r << object_from_xml(e)
-        end
-      end
+    end
   end
 end
 
