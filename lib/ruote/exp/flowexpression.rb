@@ -158,6 +158,9 @@ module Ruote
     # APPLY / REPLY / CANCEL
     #++
 
+    # Called directly by the expression pool. See #reply for the (overridable)
+    # default behaviour.
+    #
     def do_reply (workitem)
 
       @children.delete(workitem.fei)
@@ -177,6 +180,17 @@ module Ruote
       end
     end
 
+    # Called directly by the expression pool. See #cancel for the (overridable)
+    # default behaviour.
+    #
+    def do_cancel
+
+      @in_cancel = true
+      persist
+
+      cancel
+    end
+
     # The default implementation : replies to the parent expression
     #
     def reply (workitem)
@@ -188,9 +202,6 @@ module Ruote
     # of this expression.
     #
     def cancel
-
-      @in_cancel = true
-      persist
 
       @children.each { |cfei| pool.cancel_expression(cfei) }
     end

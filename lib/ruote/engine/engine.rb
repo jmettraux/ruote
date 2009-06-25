@@ -94,6 +94,9 @@ module Ruote
       wfid
     end
 
+    # Use this method to pipe back workitems into the engine (workitems
+    # coming back from a[n external] participant.
+    #
     def reply (workitem)
 
       wqueue.emit(
@@ -101,6 +104,17 @@ module Ruote
         :workitem => workitem, :pname => workitem.participant_name)
 
       pool.reply(workitem)
+    end
+
+    # Use in case of stalled expression (mainly participant expression),
+    # re-applies the given expression.
+    #
+    # If the optional cancel parameter is set to true, this method
+    # cancel the expression and then re-apply it.
+    #
+    def re_apply (fei, cancel=false)
+
+      pool.re_apply(fei, cancel)
     end
 
     # Returns the status of a process instance, takes as input the process

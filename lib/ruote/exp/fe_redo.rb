@@ -38,14 +38,9 @@ module Ruote
       ref = attribute(:ref) || attribute_text
       tag = ref ? lookup_variable(ref) : nil
 
-      if tag and exp = expstorage[tag]
+      if tag
 
-        # wire exp's tree to itself on_cancel and cancel
-
-        exp.on_cancel = exp.tree
-        exp.persist
-
-        pool.cancel_expression(tag)
+        pool.re_apply(tag, true)
 
         reply_to_parent(@applied_workitem) unless ancestor?(tag)
 

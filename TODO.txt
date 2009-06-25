@@ -74,10 +74,10 @@
 [ ] part/sub timeout (with Andrew's at)
 [ ] part/sub conditional (all expressions ? no, there's 'if')
 
-[ ] stalled [participant] expressions restart (apply/reply ?)
+[o] stalled [participant] expressions restart (apply/reply ?)
     "re-apply on reload"
     http://groups.google.com/group/openwferu-users/browse_thread/thread/c2aa4b53d1664d45
-[ ] expression replay, particularily participant expression
+[ ] auto-participant re-apply
 
 [ ] define without name (__result__)
 

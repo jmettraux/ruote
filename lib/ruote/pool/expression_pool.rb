@@ -47,6 +47,8 @@ module Ruote
       subscribe(:processes)
     end
 
+    # Workitem coming back from outside [the engine].
+    #
     def reply (workitem)
 
       wqueue.emit(:expressions, :reply, :workitem => workitem)
@@ -139,6 +141,35 @@ module Ruote
         :parent_id => forget ? nil : parent.fei,
         :workitem => workitem,
         :variables => forget ? parent.compile_variables : {})
+    end
+
+    # Re-applies the given expression.
+    #
+    # If cancel is set to true, will cancel then re-apply.
+    #
+    def re_apply (fei, cancel)
+
+      exp = expstorage[fei]
+
+      return unless exp
+
+      if cancel
+
+        # wire exp's tree to itself on_cancel and cancel
+
+        exp.on_cancel = exp.tree
+        exp.persist
+        cancel_expression(exp.fei)
+
+      else
+
+        apply(
+          :tree => exp.tree,
+          :fei => exp.fei,
+          :parent_id => exp.parent_id,
+          :workitem => exp.applied_workitem,
+          :variables => exp.variables)
+      end
     end
 
     protected
@@ -257,7 +288,7 @@ module Ruote
         case emsg
         when :apply then exp.apply
         when :reply then exp.do_reply(wi)
-        when :cancel then exp.cancel
+        when :cancel then exp.do_cancel
         end
 
       rescue Exception => e
