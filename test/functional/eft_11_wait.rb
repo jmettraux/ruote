@@ -31,7 +31,7 @@ class EftWaitTest < Test::Unit::TestCase
 
     @engine.launch(pdef)
 
-    sleep 1.5
+    sleep 1.6
 
     #p ts
     assert ts[1] - ts[0] > 1.0

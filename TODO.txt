@@ -104,3 +104,5 @@ restart tests :
 
 [ ] pooltool.ru
 
+[ ] wfidgen.stop (close wfidgen.last)
+

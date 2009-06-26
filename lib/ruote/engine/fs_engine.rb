@@ -25,6 +25,7 @@
 
 require 'ruote/engine/engine'
 require 'ruote/evt/fs_tracker'
+require 'ruote/time/fs_scheduler'
 require 'ruote/storage/fs_storage'
 
 
@@ -45,6 +46,11 @@ module Ruote
     def build_tracker
 
       add_service(:s_tracker, Ruote::FsTracker)
+    end
+
+    def build_scheduler
+
+      add_service(:s_scheduler, Ruote::FsScheduler)
     end
   end
 end

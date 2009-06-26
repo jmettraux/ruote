@@ -63,15 +63,16 @@ module Ruote
     # Expects a block. Data is read then fed to block. Data is saved once
     # the block is over. (no save if no changes).
     #
-    # If the bucket is already locked, will simply skip (this method is
-    # intended for fs_scheduler.rb
+    # If skip is set to true, this method will exit immediately (block not
+    # called) if the bucket is already locked.
     #
-    def operate (&block)
+    def operate (skip, &block)
 
-      lock(true) do
+      lock(skip) do
         read
-        block.call(@data)
+        r = block.call(@data)
         save(@data)
+        r
       end
     end
 
@@ -109,6 +110,9 @@ module Ruote
       @data = data
       @raw = raw
 
+      #puts
+      #puts `lsof | grep ruota.work`
+      #puts
       File.open(@fpath, 'wb') { |f| f.write(@raw) }
 
       @mtime = file.mtime
