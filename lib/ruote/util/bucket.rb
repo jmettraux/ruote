@@ -25,71 +25,101 @@
 
 module Ruote
 
-  #
-  # A 'bucket' is a kind of cache file. It may be shared by multiple processes,
-  # it reloads only if necessary.
-  #
   class Bucket
 
-    def initialize (fname, default_class, skip_when_locked=false)
+    def initialize (fpath)
 
-      @fname = fname
-      @file = nil
-
-      @data = nil
-      @mtime = nil
-      @default_class = default_class
-      @skip = skip_when_locked
+      @fpath = fpath
     end
 
+    #--
+    # LOAD and SAVE
+    #++
+
+    # Exclusive, blocking lock while reading. Doesn't read if the file
+    # hasn't changed.
+    #
     def load
 
-      mt = mtime
+      mt = file.mtime rescue nil
 
-      if (not @mtime) or (not mt) or (mt > @mtime)
+      lock { read } if (not @mtime) or (not mt) or (mt > @mtime)
 
-        return nil if @skip and locked?
-
-        file.flock(File::LOCK_EX) # exclusive !
-
-        @data = File.open(@fname, 'rb') { |f|
-          Marshal.load(f.read)
-        } rescue @default_class.new
-
-        @mtime = mtime
-      end
-
-      return @data
-
-    ensure
-      file.flock(File::LOCK_UN)
+      @data
     end
 
+    # Exclusive, blocking lock while writing. Doesn't save if the file
+    # hasn't changed since last load or save.
+    #
     def save (data)
 
-      file.flock(File::LOCK_EX)
+      lock { write(data) }
+    end
 
-      File.open(@fname, 'wb') { |f| f.write(Marshal.dump(data)) }
-      @data = data
-      @mtime = mtime
+    #--
+    # OPERATE
+    #++
 
-    ensure
-      file.flock(File::LOCK_UN)
+    # Expects a block. Data is read then fed to block. Data is saved once
+    # the block is over. (no save if no changes).
+    #
+    # If the bucket is already locked, will simply skip (this method is
+    # intended for fs_scheduler.rb
+    #
+    def operate (&block)
+
+      lock(true) do
+        read
+        block.call(@data)
+        save(@data)
+      end
     end
 
     protected
 
-    def mtime
+    def lock (skip=false, &block)
 
-      file.mtime rescue nil
+      return if skip and locked?
+
+      begin
+        file.flock(File::LOCK_EX)
+        block.call
+      ensure
+        file.flock(File::LOCK_UN)
+      end
+    end
+
+    def read
+
+      begin
+        @raw = File.open(@fpath, 'rb') { |f| f.read }
+        @data = Marshal.load(@raw)
+        @mtime = file.mtime
+      rescue Exception => e
+        @raw, @data, @mtime = nil
+      end
+    end
+
+    def write (data)
+
+      raw = Marshal.dump(data)
+
+      return if raw == @raw # no changes
+
+      @data = data
+      @raw = raw
+
+      File.open(@fpath, 'wb') { |f| f.write(@raw) }
+
+      @mtime = file.mtime
     end
 
     def file
 
       return @file if @file
-      FileUtils.touch(@fname) unless File.exist?(@fname)
+      FileUtils.touch(@fpath) unless File.exist?(@fpath)
 
-      @file = File.new(@fname)
+      @file = File.new(@fpath)
     end
 
     def locked?

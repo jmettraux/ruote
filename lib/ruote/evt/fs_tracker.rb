@@ -24,6 +24,7 @@
 
 
 require 'ruote/util/bucket'
+require 'ruote/evt/tracker'
 
 
 module Ruote
@@ -39,14 +40,15 @@ module Ruote
     def context= (c)
 
       super(c)
-      @bucket = Bucket.new(File.join(workdir, 'tracker.ruote'), Set)
+
+      @bucket = Bucket.new(File.join(workdir, 'tracker.ruote'))
     end
 
     protected
 
     def listeners
 
-      @bucket.load
+      @bucket.load || Set.new
     end
 
     def save (listeners)
