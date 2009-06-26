@@ -45,13 +45,17 @@ module Ruote
 
     def call (rufus_job)
 
-      fexp = rufus_job.scheduler.options[:context][:s_expression_storage][@fei]
+      context = rufus_job.scheduler.options[:context]
 
-      if @method == :cancel
-        fexp.cancel
-      else # method == :reply
-        fexp.reply(fexp.applied_workitem)
+      opts = { :fei => @fei }
+
+      if @method == :reply
+
+        fexp = context[:s_expression_storage][@fei]
+        opts[:workitem] = fexp.applied_workitem
       end
+
+      context[:s_workqueue].emit!(:expressions, @method, opts)
     end
   end
 

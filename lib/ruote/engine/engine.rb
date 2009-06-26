@@ -59,7 +59,7 @@ module Ruote
 
       @context[:s_engine] = self
 
-      build_work_queue
+      build_workqueue
         # building it first, it's the event hub
 
       build_expression_map
@@ -209,14 +209,14 @@ module Ruote
       add_service(:s_expression_pool, Ruote::ExpressionPool)
     end
 
-    def build_work_queue
+    def build_workqueue
 
-      #add_service(:s_work_queue, Ruote::FiberWorkQueue)
+      #add_service(:s_workqueue, Ruote::FiberWorkqueue)
 
       if defined?(EM) && EM.reactor_running?
-        add_service(:s_work_queue, Ruote::EmWorkQueue)
+        add_service(:s_workqueue, Ruote::EmWorkqueue)
       else
-        add_service(:s_work_queue, Ruote::ThreadWorkQueue)
+        add_service(:s_workqueue, Ruote::ThreadWorkqueue)
       end
     end
 

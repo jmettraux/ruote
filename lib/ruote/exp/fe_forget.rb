@@ -27,6 +27,9 @@ require 'ruote/exp/flowexpression'
 
 module Ruote
 
+  #
+  # NOTE : deprecate in favour of 'forget' or 'orphan' attribute ?
+  #
   class ForgetExpression < FlowExpression
 
     names :forget

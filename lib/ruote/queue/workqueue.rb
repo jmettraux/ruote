@@ -38,7 +38,7 @@ module Ruote
     end
   end
 
-  class WorkQueue
+  class Workqueue
 
     include EngineContext
 
@@ -98,7 +98,7 @@ module Ruote
     end
   end
 
-  class ThreadWorkQueue < WorkQueue
+  class ThreadWorkqueue < Workqueue
 
     def initialize
 
@@ -122,7 +122,7 @@ module Ruote
   #--
   # Not very interesting
   #
-  #class FiberWorkQueue < WorkQueue
+  #class FiberWorkqueue < Workqueue
   #  def initialize
   #    @queue = Queue.new
   #    @unit = nil
@@ -146,9 +146,10 @@ module Ruote
   #end
   #++
 
+  #
   # Works well when IO is involved (this means, almost always)
   #
-  class EmWorkQueue < WorkQueue
+  class EmWorkqueue < Workqueue
 
     def emit (eclass, emsg, eargs)
 
