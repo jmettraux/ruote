@@ -63,6 +63,10 @@
 
 [ ] concurrent-iterator < concurrence
 
+restart tests :
+[ ] wait
+[ ] listen
+
 [o] stop passing full exp in message, except for expression updates
 
 [ ] forget : participant ? subprocess ?

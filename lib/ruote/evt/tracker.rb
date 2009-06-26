@@ -106,7 +106,7 @@ module Ruote
 
       ls = listeners
 
-      exps = expstorage.find_expressions(:class => Ruote::ListenExpression)
+      exps = expstorage.find_expressions(:responding_to => :match_event?)
       exps.each { |e| ls << e.fei }
 
       save(ls)

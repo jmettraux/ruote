@@ -72,7 +72,8 @@ module Ruote
       @context = c
 
       @scheduler = Rufus::Scheduler.start_new(:context => @context)
-        #:job_queue => {}, :cron_job_queue => [])
+
+      reload
     end
 
     def stop
@@ -93,6 +94,14 @@ module Ruote
     def jobs
 
       @scheduler.jobs
+    end
+
+    protected
+
+    def reload
+
+      exps = expstorage.find_expressions(:responding_to => :reschedule)
+      exps.each { |exp| exp.reschedule }
     end
   end
 end

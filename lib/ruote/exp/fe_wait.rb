@@ -61,24 +61,26 @@ module Ruote
     def cancel
 
       unschedule
-
       reply_to_parent(@applied_workitem)
     end
 
     protected
 
-    def schedule
+    def reschedule
 
       @job_id = scheduler.at(@until, @fei, :reply).job_id
-
       persist
+    end
 
+    def schedule
+
+      reschedule
       wqueue.emit(:expressions, :schedule_at, :until => @until)
     end
 
     def unschedule
 
-      scheduler.unschedule(@job_id) if @job_id
+      scheduler.unschedule(@job_id)
     end
   end
 end

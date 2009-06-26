@@ -69,6 +69,13 @@ module Ruote
         return false unless (exp.fei.parent_wfid == pwfid)
       end
 
+      if m = query[:responding_to]
+        return false unless exp.respond_to?(m)
+      end
+      #if m = query[:having_non_nil]
+      #  return false unless exp.respond_to?(m)
+      #  return false if exp.send(m) == nil
+      #end
       if k = query[:class]
         return false unless exp.class == k
       end
