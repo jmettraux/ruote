@@ -515,6 +515,11 @@ module Ruote
 
     def reply_to_parent (workitem)
 
+      if @tagname
+        unset_variable(@tagname)
+        wqueue.emit(:expressions, :left_tag, :tag => @tagname, :fei => @fei)
+      end
+
       if @in_error
 
         trigger_on_error(workitem)
@@ -524,11 +529,6 @@ module Ruote
         trigger_on_cancel(workitem)
 
       else
-
-        if @tagname
-          unset_variable(@tagname)
-          wqueue.emit(:expressions, :left_tag, :tag => @tagname, :fei => @fei)
-        end
 
         pool.reply_to_parent(self, workitem)
       end
