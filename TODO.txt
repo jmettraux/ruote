@@ -75,9 +75,6 @@ restart tests :
 
 [ ] participants stop
 
-[ ] part/sub timeout (with Andrew's at)
-[ ] part/sub conditional (all expressions ? no, there's 'if')
-
 [o] stalled [participant] expressions restart (apply/reply ?)
     "re-apply on reload"
     http://groups.google.com/group/openwferu-users/browse_thread/thread/c2aa4b53d1664d45
@@ -105,4 +102,12 @@ restart tests :
 [ ] pooltool.ru
 
 [o] wfidgen.shutdown (close wfidgen.last)
+
+[ ] part/sub timeout (with Andrew's at)
+[o] timeout for everybody
+[ ] __timeout__ = true ? (wi.fields)
+[ ] part/sub conditional (all expressions ? no, there's 'if')
+[ ] conditional for everybody
+
+[ ] do_apply instead of if self.class == FlowExp
 

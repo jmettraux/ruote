@@ -72,6 +72,8 @@ module Ruote
       when FlowExpression then "#{k}/#{v.fei.to_s}"
       when FlowExpressionId then v.to_s
       when NilClass then nil
+      when TrueClass then true
+      when FalseClass then false
       else v.class
       end
     end

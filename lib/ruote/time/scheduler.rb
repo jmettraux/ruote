@@ -47,7 +47,7 @@ module Ruote
 
       context = rufus_job.scheduler.options[:context]
 
-      opts = { :fei => @fei }
+      opts = { :fei => @fei, :scheduler => true }
 
       if @method == :reply
 
@@ -84,6 +84,11 @@ module Ruote
     def at (t, fei, method)
 
       @scheduler.at(t, :schedulable => RuoteSchedulable.new(fei, method))
+    end
+
+    def in (t, fei, method)
+
+      @scheduler.in(t, :schedulable => RuoteSchedulable.new(fei, method))
     end
 
     def unschedule (job_id)

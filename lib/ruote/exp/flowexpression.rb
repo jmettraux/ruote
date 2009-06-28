@@ -73,12 +73,18 @@ module Ruote
       @created_time = Time.now
       @modified_time = @created_time
 
-      @applied_workitem = workitem.dup
+      @applied_workitem = workitem
+
+      return if self.class == Ruote::FlowExpression
+        # do not continue if it's only a temporary expression
+
+      @applied_workitem = workitem.dup # now, we need a dup
 
       @on_cancel = attribute(:on_cancel)
       @on_error = attribute(:on_error)
 
       consider_tag
+      consider_timeout
     end
 
     # Returns the parent expression of this expression instance.
@@ -481,13 +487,17 @@ module Ruote
     #
     def consider_tag
 
-      return if self.class == Ruote::FlowExpression
-        # do not consider tag if this expression is only a temp exp
-
       if @tagname = attribute(:tag)
 
         set_variable(@tagname, @fei)
         wqueue.emit(:expressions, :entered_tag, :tag => @tagname, :fei => @fei)
+      end
+    end
+
+    def consider_timeout
+
+      if timeout = attribute(:timeout)
+        @timeout_job_id = scheduler.in(timeout, @fei, :cancel).job_id
       end
     end
 
@@ -518,6 +528,10 @@ module Ruote
       if @tagname
         unset_variable(@tagname)
         wqueue.emit(:expressions, :left_tag, :tag => @tagname, :fei => @fei)
+      end
+
+      if @timeout_job_id
+        scheduler.unschedule(@timeout_job_id)
       end
 
       if @in_error
