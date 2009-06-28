@@ -145,12 +145,7 @@ module Ruote
     #
     def cancel_expression (fei)
 
-      exp = expstorage[fei]
-
       pool.cancel_expression(fei)
-
-      pool.reply_to_parent(exp, exp.applied_workitem)
-        # which deletes the expression
     end
 
     # Simply reemits the message (queue event) found in the error..

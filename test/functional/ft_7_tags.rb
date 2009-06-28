@@ -42,5 +42,38 @@ class FtTagsTest < Test::Unit::TestCase
 
     assert_equal 2, logger.log.select { |e| e[1] == :left_tag }.size
   end
+
+  # making sure a tag is removed in case of on_cancel
+  #
+  def _test_on_cancel
+
+    pdef = Ruote.process_definition do
+      sequence :tag => 'a', :on_cancel => 'decom' do
+        alpha
+      end
+      define 'decom' do
+        bravo
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+
+    noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    assert_equal 1, @engine.process_status(wfid).tags.size
+
+    fei = alpha.first.fei.dup
+    fei.expid = '0_1'
+    @engine.cancel_expression(fei)
+
+    wait_for(:bravo)
+
+    assert_equal 0, @engine.process_status(wfid).tags.size
+  end
 end
 

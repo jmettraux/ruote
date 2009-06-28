@@ -39,7 +39,7 @@
 [o] self rec for [main] process
 
 [ ] fexp : clean up attributes (attr_reader/_accessor stuff)
-[ ] fexp.last_modified
+[o] fexp.modified_time
 
 [ ] wfid_gen : rufus-mnemo
 

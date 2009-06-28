@@ -95,5 +95,34 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     assert_equal "d0\nd1", @tracer.to_s
   end
+
+  def test_on_cancel_expression
+
+    pdef = Ruote.process_definition do
+      sequence :on_cancel => 'decom' do
+        alpha
+      end
+      define 'decom' do
+        bravo
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    fei = alpha.first.fei.dup
+    fei.expid = '0_1'
+    @engine.cancel_expression(fei)
+
+    wait_for(:bravo)
+
+    assert_equal 1, bravo.size
+  end
 end
 

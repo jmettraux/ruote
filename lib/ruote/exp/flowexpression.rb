@@ -354,7 +354,7 @@ module Ruote
     #
     def lookup_variable (var, prefix=nil)
 
-      #p [ :lv, var, @fei.to_s, prefix, @variables ]
+      #p [ :lv, var, self.class, @fei.to_s, @parent_id ? @parent_id.to_s : '', prefix, @variables ]
 
       var, prefix = split_prefix(var, prefix)
 
@@ -545,7 +545,8 @@ module Ruote
         :fei => fei,
         :parent_id => @parent_id,
         :workitem => @applied_workitem,
-        :variables => @variables)
+        :variables => @variables,
+        :on_cancel => true)
     end
 
     def trigger_on_error (workitem)
@@ -563,7 +564,8 @@ module Ruote
           :fei => @fei,
           :parent_id => @parent_id,
           :workitem => @applied_workitem,
-          :variables => @variables)
+          :variables => @variables,
+          :on_error => true)
       end
     end
   end
