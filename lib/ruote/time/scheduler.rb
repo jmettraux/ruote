@@ -55,6 +55,8 @@ module Ruote
         opts[:workitem] = fexp.applied_workitem
       end
 
+      # TODO : maybe setting __timed_out__ here...
+
       context[:s_workqueue].emit!(:expressions, @method, opts)
     end
   end
