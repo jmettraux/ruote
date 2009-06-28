@@ -75,6 +75,11 @@ module Ruote
       wfid
     end
 
+    def shutdown
+
+      @file.close
+    end
+
     protected
 
     def file_path

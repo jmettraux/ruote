@@ -163,11 +163,16 @@ module Ruote
     def stop
 
       # TODO
+      # stop != shutdown
     end
 
     def shutdown
 
-      @context.keys.each { |k| remove_service(k) }
+      @context.values.each do |service|
+        next if service == self
+        service.shutdown if service.respond_to?(:shutdown)
+        service.unsubscribe if service.respond_to?(:unsubscribe)
+      end
     end
 
     def add_service (key, o)

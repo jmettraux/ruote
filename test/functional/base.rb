@@ -52,7 +52,7 @@ module FunctionalBase
 
   def teardown
 
-    @engine.stop
+    @engine.shutdown
 
     purge_engine
   end

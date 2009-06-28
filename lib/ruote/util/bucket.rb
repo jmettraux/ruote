@@ -111,7 +111,8 @@ module Ruote
       @raw = raw
 
       #puts
-      #puts `lsof | grep ruota.work`
+      ##puts `lsof | grep ruota.work`
+      #puts `lsof | grep wfidgen.last`
       #puts
       File.open(@fpath, 'wb') { |f| f.write(@raw) }
 
