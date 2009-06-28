@@ -32,18 +32,13 @@ module Ruote
   class ParticipantExpression < FlowExpression
 
     #include FilterMixin
-    #include TimeoutMixin
       # TODO
-
-    include ConditionMixin
 
     attr_reader :participant_name
 
     names :participant
 
     def apply
-
-      return reply_to_parent(@applied_workitem) if skip?
 
       @participant_name = attribute(:ref) || attribute_text
 

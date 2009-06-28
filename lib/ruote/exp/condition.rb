@@ -25,19 +25,12 @@
 
 module Ruote
 
-  #
-  # Adding the skip? method to some expressions (like participant, subprocess,
-  # and so on)
-  #
-  module ConditionMixin
+  module Condition
 
     SET_REGEX = /(\S*?)( +is)?( +not)?( +set)$/
     COMPARISON_REGEX = /(.*?) *(==|!=|>=|<=|>|<|=~) *(.*)/
 
-    def skip? (attname=:if, nattname=:unless)
-
-      sif = attribute(attname)
-      sunless = attribute(nattname)
+    def self.skip? (sif, sunless)
 
       return (not true?(sif)) if sif
       return (true?(sunless)) if sunless
@@ -47,7 +40,7 @@ module Ruote
 
     # TODO : rconditional
 
-    def true? (conditional)
+    def self.true? (conditional)
 
       conditional = unescape(conditional)
 
@@ -62,7 +55,7 @@ module Ruote
 
     protected
 
-    def eval_is (match)
+    def self.eval_is (match)
 
       is_set = match.pop.strip != ''
       negative = match.find { |m| m == ' not' }
@@ -70,17 +63,17 @@ module Ruote
       negative ? (not is_set) : is_set
     end
 
-    def unescape (s)
+    def self.unescape (s)
 
       s ? s.to_s.gsub('&amp;', '&').gsub('&gt;', '>').gsub('&lt;', '<') : nil
     end
 
-    #def ruby_eval (s)
+    #def self.ruby_eval (s)
     #  treechecker.check_conditional(s)
     #  eval(s)
     #end
 
-    def to_b (o)
+    def self.to_b (o)
 
       o = o.strip if o.is_a?(String)
 

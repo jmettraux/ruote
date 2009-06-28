@@ -35,8 +35,6 @@ module Ruote
   #
   class ListenExpression < FlowExpression
 
-    include ConditionMixin
-
     names :listen, :receive, :intercept
 
     def apply
@@ -91,7 +89,7 @@ module Ruote
 
       where = attribute(:where, wi)
 
-      return false if where && (not true?(where))
+      return false if where && (not Condition.true?(where))
 
       true
     end

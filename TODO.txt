@@ -106,8 +106,5 @@ restart tests :
 [ ] part/sub timeout (with Andrew's at)
 [o] timeout for everybody
 [ ] __timeout__ = true ? (wi.fields)
-[ ] part/sub conditional (all expressions ? no, there's 'if')
-[ ] conditional for everybody
-
-[ ] do_apply instead of if self.class == FlowExp
+[o] conditional for everybody
 

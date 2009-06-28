@@ -23,7 +23,6 @@
 #++
 
 require 'ruote/exp/flowexpression'
-require 'ruote/exp/condition'
 
 
 module Ruote
@@ -49,15 +48,11 @@ module Ruote
   #
   class SubprocessExpression < FlowExpression
 
-    include ConditionMixin
-
     names :subprocess
 
     # TODO : forget
 
     def apply
-
-      return reply_to_parent(@applied_workitem) if skip?
 
       ref = attribute(:ref) || attribute_text
 

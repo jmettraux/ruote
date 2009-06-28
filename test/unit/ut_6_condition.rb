@@ -14,7 +14,6 @@ require 'ruote/util/treechecker'
 class ConditionTest < Test::Unit::TestCase
 
   class Conditional
-    include Ruote::ConditionMixin
 
     def treechecker
       return @tc if @tc
@@ -38,14 +37,17 @@ class ConditionTest < Test::Unit::TestCase
 
     fe = FakeExpression.new(h)
 
-    assert_equal result, (not fe.skip?)
+    sif = fe.attribute(:if)
+    sunless = fe.attribute(:unless)
+
+    assert_equal result, (not Ruote::Condition.skip?(sif, sunless))
   end
 
   def assert_b (b, conditional)
 
     assert_equal(
       b,
-      Conditional.new.true?(conditional),
+      Ruote::Condition.true?(conditional),
       ">#{conditional}< was expected to be #{b}")
   end
 

@@ -23,20 +23,15 @@
 #++
 
 require 'ruote/exp/flowexpression'
-require 'ruote/exp/condition'
 
 
 module Ruote
 
   class CancelProcessExpression < FlowExpression
 
-    include ConditionMixin
-
     names :cancel_process
 
     def apply
-
-      return reply_to_parent(@applied_workitem) if skip?
 
       wqueue.emit(:processes, :cancel, :wfid => root_expression.fei.wfid)
     end

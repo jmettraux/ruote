@@ -31,8 +31,6 @@ module Ruote
 
   class ConcurrenceExpression < FlowExpression
 
-    include ConditionMixin
-
     names :concurrence
 
     def apply
@@ -76,7 +74,7 @@ module Ruote
 
       over_if = attribute(:over_if, workitem)
 
-      if over_if && true?(over_if)
+      if over_if && Condition.true?(over_if)
         true
       else
         @workitems && (@workitems.size >= (@count || tree_children.size))

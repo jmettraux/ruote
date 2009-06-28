@@ -164,6 +164,15 @@ module Ruote
     # APPLY / REPLY / CANCEL
     #++
 
+    def do_apply
+
+      if Condition.skip?(attribute(:if), attribute(:unless))
+        reply_to_parent(@applied_workitem)
+      else
+        apply
+      end
+    end
+
     # Called directly by the expression pool. See #reply for the (overridable)
     # default behaviour.
     #
