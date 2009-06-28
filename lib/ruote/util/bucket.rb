@@ -30,6 +30,15 @@ module Ruote
     def initialize (fpath)
 
       @fpath = fpath
+
+      FileUtils.touch(@fpath) unless File.exist?(@fpath)
+
+      @file = File.open(@fpath, 'wb+')
+    end
+
+    def close
+
+      @file.close
     end
 
     #--
@@ -83,20 +92,25 @@ module Ruote
       return if skip and locked?
 
       begin
-        file.flock(File::LOCK_EX)
+        @file.flock(File::LOCK_EX)
         block.call
       ensure
-        file.flock(File::LOCK_UN)
+        @file.flock(File::LOCK_UN)
       end
     end
 
     def read
 
       begin
-        @raw = File.open(@fpath, 'rb') { |f| f.read }
+
+        @file.pos = 0
+        @raw = @file.read
+
         @data = Marshal.load(@raw)
-        @mtime = file.mtime
+        @mtime = @file.mtime
+
       rescue Exception => e
+
         @raw, @data, @mtime = nil
       end
     end
@@ -111,25 +125,19 @@ module Ruote
       @raw = raw
 
       #puts
-      ##puts `lsof | grep ruota.work`
-      #puts `lsof | grep wfidgen.last`
+      #puts `lsof | grep ruota.work | awk '{ print $9 }' | sort`
       #puts
-      File.open(@fpath, 'wb') { |f| f.write(@raw) }
 
-      @mtime = file.mtime
-    end
+      @file.pos = 0
+      l = @file.syswrite(raw)
+      @file.truncate(l)
 
-    def file
-
-      return @file if @file
-      FileUtils.touch(@fpath) unless File.exist?(@fpath)
-
-      @file = File.new(@fpath)
+      @mtime = @file.mtime
     end
 
     def locked?
 
-      (file.flock(File::LOCK_EX | File::LOCK_NB) == false)
+      (@file.flock(File::LOCK_EX | File::LOCK_NB) == false)
     end
   end
 end

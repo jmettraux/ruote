@@ -44,6 +44,11 @@ module Ruote
       @bucket = Bucket.new(File.join(workdir, 'tracker.ruote'))
     end
 
+    def shutdown
+
+      @bucket.close
+    end
+
     protected
 
     def listeners

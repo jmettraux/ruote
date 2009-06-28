@@ -100,7 +100,8 @@ module Ruote
 
       @file = File.open(file_path, 'w+') if (not @file) or @file.closed?
       @file.pos = 0
-      @file.puts("#{@last.strftime('%Y/%m/%d %H:%m:%S')}.#{@last.usec}")
+      l = @file.syswrite("#{@last.strftime('%Y/%m/%d %H:%m:%S')}.#{@last.usec}")
+      @file.truncate(l)
     end
   end
 end

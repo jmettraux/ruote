@@ -42,6 +42,11 @@ module Ruote
       @bucket.save([])
     end
 
+    def shutdown
+
+      @bucket.close
+    end
+
     def trigger_matching_jobs
 
       operate(true) do |jobs|
@@ -139,11 +144,17 @@ module Ruote
 
       @context = c
 
-      jq = JobQueue.new(File.join(workdir, 'at.ruote'))
-      cjq = CronJobQueue.new(File.join(workdir, 'cron.ruote'))
+      @jq = JobQueue.new(File.join(workdir, 'at.ruote'))
+      @cjq = CronJobQueue.new(File.join(workdir, 'cron.ruote'))
 
       @scheduler = Rufus::Scheduler.start_new(
-        :context => @context, :job_queue => jq, :cron_job_queue => cjq)
+        :context => @context, :job_queue => @jq, :cron_job_queue => @cjq)
+    end
+
+    def shutdown
+
+      @jq.shutdown
+      @cjq.shutdown
     end
 
     protected
