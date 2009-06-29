@@ -61,6 +61,9 @@
 [o] on_error
 [o] on_cancel
 
+[o] iterator
+[ ] iterator : break, cancel, ...
+
 [ ] concurrent-iterator < concurrence
 [ ] cursor
 [ ] loop

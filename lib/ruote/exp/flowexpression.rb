@@ -25,6 +25,7 @@
 require 'ruote/util/ometa'
 require 'ruote/util/dollar'
 require 'ruote/engine/context'
+require 'ruote/exp/attribute'
 
 
 module Ruote
@@ -32,6 +33,8 @@ module Ruote
   class FlowExpression < ObjectWithMeta
 
     include EngineContext
+    include AttributeMixin
+
 
     attr_accessor :fei
     attr_accessor :parent_id
@@ -280,58 +283,9 @@ module Ruote
 
     #--
     # ATTRIBUTES
-    #++
-
-    def has_attribute (*args)
-
-      args.each { |a| a = a.to_s; return a if attributes[a] != nil }
-
-      nil
-    end
-
-    def attribute (n, workitem=@applied_workitem, options={})
-
-      n = n.to_s
-
-      default = options[:default]
-      escape = options[:escape]
-      string = options[:to_s] || options[:string]
-
-      v = attributes[n]
-
-      v = if v == nil
-        default
-      elsif escape
-        v
-      else
-        Ruote.dosub(v, self, workitem)
-      end
-
-      v = v.to_s if v and string
-
-      v
-    end
-
-    # Returns the value for attribute 'key', this value should be present
-    # in the array list 'values'. If not, the default value is returned.
-    # By default, the default value is the first element of 'values'.
     #
-    def att (key, values, opts={})
-
-      default = opts[:default] || values.first
-
-      val = attribute(key)
-      val = val.to_s if val
-
-      #raise(
-      #  ArgumentError.new("attribute '#{key}' missing in #{tree}")
-      #) if opts[:mandatory] && val == nil
-      #raise(
-      #  ArgumentError.new("attribute '#{key}' has invalid value in #{tree}")
-      #) if opts[:enforce] && (not values.include?(val))
-
-      values.include?(val) ? val : default
-    end
+    # include AttributeMixin
+    #++
 
     #--
     # ON_CANCEL / ON_ERROR

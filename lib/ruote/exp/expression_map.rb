@@ -56,6 +56,7 @@ module Ruote
       add(Ruote::CancelProcessExpression)
       add(Ruote::WaitExpression)
       add(Ruote::ListenExpression)
+      add(Ruote::IteratorExpression)
     end
 
     # Returns the expression class for the given expression name
