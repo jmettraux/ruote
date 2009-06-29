@@ -65,9 +65,9 @@
 [o] iterator : break, cancel, ...
 
 [ ] concurrent-iterator < concurrence
-[ ] cursor
-[ ] cursor : jump to tag
-[ ] loop
+[o] cursor
+[o] cursor : jump to tag
+[o] loop
 
 restart tests :
 [ ] wait
@@ -113,4 +113,6 @@ restart tests :
 [o] conditional for everybody
 
 [ ] forget : participant ? subprocess ? everybody
+
+[ ] participant : do thread (and do_not_thread)
 

@@ -25,6 +25,10 @@
 
 module Ruote
 
+  #
+  # Those methods are mixed in FlowExpression. They were put here to offload
+  # FlowExpression and especially, to gather them around their attribute topic.
+  #
   module AttributeMixin
 
     # Given a list of attribute names, returns the first attribute name for
