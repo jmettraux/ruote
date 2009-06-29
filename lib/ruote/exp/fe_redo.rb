@@ -29,9 +29,7 @@ module Ruote
 
   class RedoExpression < FlowExpression
 
-    # TODO : conditional ?
-
-    names :redo, :_redo
+    names :redo
 
     def apply
 

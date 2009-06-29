@@ -99,15 +99,15 @@ class RubyParserTest < Test::Unit::TestCase
   #    tree)
   #end
 
-  #def test_escaping_ruby_keywords
-  #  tree = Ruote.define do
-  #    _redo 'nada'
-  #  end
-  #  assert_equal(
-  #    [ ... ],
-  #    tree)
-  #end
-    #
-    # not necessary since, expression is bound under names :redo and :_redo
+  def test_escaping_ruby_keywords
+
+    tree = Ruote.define do
+      _redo 'nada'
+    end
+
+    assert_equal(
+      ["define", {}, [["redo", {"nada"=>nil}, []]]],
+      tree)
+  end
 end
 

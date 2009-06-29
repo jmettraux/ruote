@@ -66,6 +66,7 @@
 
 [ ] concurrent-iterator < concurrence
 [ ] cursor
+[ ] cursor : jump to tag
 [ ] loop
 
 restart tests :

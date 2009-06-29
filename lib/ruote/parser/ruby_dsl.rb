@@ -63,6 +63,10 @@ module Ruote
 
     def self.create_branch (name, attributes, &block)
 
+      while name[0] == '_'
+        name = name[1..-1]
+      end
+
       h = attributes.inject({}) { |h, a|
         a.is_a?(Hash) ? h.merge!(a) : h[a] = nil
         h
