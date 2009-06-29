@@ -196,27 +196,33 @@ module Ruote
       # NOTE : orphaning will copy vars so parent == nil is OK.
 
       exp_name = tree.first
-
-      sub = temp_exp(
-        parent_id, variables, workitem, tree
-      ).lookup_variable(exp_name)
-
-      part = plist.lookup(exp_name)
-
-      if sub or part
-
-        # don't bother passing the looked up value
-
-        tree = [
-          part ? 'participant' : 'subprocess',
-          tree[1].merge('ref' => exp_name),
-          []
-        ]
-
-        exp_name = tree.first
-      end
-
       exp_class = expmap.expression_class(exp_name)
+
+      # expressions have priority over participants and subprocesses
+
+      if not exp_class
+
+        sub = temp_exp(
+          parent_id, variables, workitem, tree
+        ).lookup_variable(exp_name)
+
+        part = plist.lookup(exp_name)
+
+        if sub or part
+
+          # don't bother passing the looked up value
+
+          tree = [
+            part ? 'participant' : 'subprocess',
+            tree[1].merge('ref' => exp_name),
+            []
+          ]
+
+          exp_name = tree.first
+        end
+
+        exp_class = expmap.expression_class(exp_name)
+      end
 
       raise "unknown expression '#{exp_name}'" if not exp_class
 

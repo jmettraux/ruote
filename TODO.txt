@@ -62,14 +62,14 @@
 [o] on_cancel
 
 [ ] concurrent-iterator < concurrence
+[ ] cursor
+[ ] loop
 
 restart tests :
 [ ] wait
 [ ] listen
 
 [o] stop passing full exp in message, except for expression updates
-
-[ ] forget : participant ? subprocess ?
 
 [x] engine#reload
 
@@ -107,4 +107,6 @@ restart tests :
 [o] timeout for everybody
 [ ] __timeout__ = true ? (wi.fields)
 [o] conditional for everybody
+
+[ ] forget : participant ? subprocess ? everybody
 

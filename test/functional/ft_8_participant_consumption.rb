@@ -49,5 +49,20 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
     assert_equal 1, ps.errors.size
     assert_equal 'no participant name specified', ps.errors.first.error.to_s
   end
+
+  def test_dot_star
+
+    pdef = Ruote.process_definition do
+      sequence do
+        alpha
+      end
+    end
+
+    @engine.register_participant '.*' do |workitem|
+      @tracer << "#{workitem.participant_name} #{workitem.fei.expid}\n"
+    end
+
+    assert_trace(pdef, 'alpha 0_0_0')
+  end
 end
 
