@@ -25,22 +25,20 @@
 
 module Ruote
 
-  module IteratorMixin
+  module CommandMixin
+
+    F_COMMAND = '__command__'
 
     protected
 
-    def determine_list
+    def get_command (workitem)
 
-      list = lookup_value('on')
+      workitem.fields.delete(F_COMMAND)
+    end
 
-      if list.is_a?(String)
-        sep = attribute(:separator) || attribute(:sep) || ','
-        list.split(sep).collect { |e| e.strip }
-      elsif list.respond_to?(:[]) and list.respond_to?(:length)
-        list
-      else
-        nil
-      end
+    def set_command (workitem, command, step=nil)
+
+      workitem.fields[F_COMMAND] = [ command, step ]
     end
   end
 end

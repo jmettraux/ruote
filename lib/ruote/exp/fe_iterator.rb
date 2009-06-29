@@ -24,6 +24,7 @@
 
 
 require 'ruote/exp/flowexpression'
+require 'ruote/exp/command'
 require 'ruote/exp/iterator'
 
 
@@ -39,6 +40,8 @@ module Ruote
   #   end
   #
   class IteratorExpression < FlowExpression
+
+    include CommandMixin
     include IteratorMixin
 
     names :iterator
@@ -47,41 +50,34 @@ module Ruote
 
       return reply_to_parent(@applied_workitem) if tree_children.size < 1
 
-      @list = nil
+      @list = determine_list
+      @to_v = attribute(:to_v) || attribute(:to_var) || attribute(:to_variable)
+      @to_f = attribute(:to_f) || attribute(:to_fld) || attribute(:to_field)
+      @position = -1
 
       reply(@applied_workitem)
     end
 
     def reply (workitem)
 
-      unless @list
+      com, step = get_command(workitem)
 
-        @list = determine_list
-        @to_v = attribute(:to_v) || attribute(:to_var) || attribute(:to_variable)
-        @to_f = attribute(:to_f) || attribute(:to_fld) || attribute(:to_field)
-        @position = 0
+      return reply_to_parent(workitem) if com == 'break'
+      @position = -1 if com == 'rewind' or com == 'continue'
 
-      else
-
-        @position += 1
-      end
+      @position += 1
 
       val = (@list || [])[@position]
 
-      if val != nil
+      return reply_to_parent(workitem) if val == nil
 
-        if @to_v
-          (@variables ||= {})[@to_v] = val
-        else #@to_f
-          workitem.fields[@to_f] = val
-        end
-
-        apply_child(0, workitem)
-
-      else
-
-        reply_to_parent(workitem)
+      if @to_v
+        (@variables ||= {})[@to_v] = val
+      else #@to_f
+        workitem.fields[@to_f] = val
       end
+
+      apply_child(0, workitem)
     end
   end
 end
