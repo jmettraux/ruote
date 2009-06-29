@@ -134,5 +134,25 @@ class EftIteratorTest < Test::Unit::TestCase
 
     assert_trace(PDEF0, %w[ alice charly done.])
   end
+
+  def test_skip_command
+
+    pdef = Ruote.process_definition :name => 'test' do
+      iterator :on_val => 'alice, bob, charly', :to_var => 'v' do
+        sequence do
+          participant '${v:v}'
+          skip 1, :if => '${v:v} == alice'
+        end
+      end
+    end
+
+    @engine.register_participant '.*' do |workitem|
+      @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ alice/0_0_0_0 charly/0_0_0_0 ])
+  end
 end
 
