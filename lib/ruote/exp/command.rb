@@ -33,7 +33,18 @@ module Ruote
 
     def get_command (workitem)
 
-      workitem.fields.delete(F_COMMAND)
+      command, step = workitem.fields.delete(F_COMMAND)
+
+      return nil if command == nil
+
+      if command == 'back'
+        command == 'skip'
+        step = step ? -step : -1
+      elsif command == 'skip'
+        step ||= 1
+      end
+
+      [ command, step ]
     end
 
     def set_command (workitem, command, step=nil)

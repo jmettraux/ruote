@@ -83,7 +83,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(PDEF0, %w[ alice bob done.])
+    assert_trace(PDEF0, %w[ alice bob done. ])
   end
 
   def test_rewind
@@ -102,7 +102,37 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(PDEF0, %w[ alice bob alice bob charly done.])
+    assert_trace(PDEF0, %w[ alice bob alice bob charly done. ])
+  end
+
+  def test_skip
+
+    @engine.register_participant '.*' do |workitem|
+
+      @tracer << "#{workitem.participant_name}\n"
+
+      workitem.fields['__command__'] = [ 'skip', 1 ] \
+        if workitem.participant_name == 'alice'
+    end
+
+    #noisy
+
+    assert_trace(PDEF0, %w[ alice charly done.])
+  end
+
+  def test_jump
+
+    @engine.register_participant '.*' do |workitem|
+
+      @tracer << "#{workitem.participant_name}\n"
+
+      workitem.fields['__command__'] = [ 'jump', -1 ] \
+        if workitem.participant_name == 'alice'
+    end
+
+    #noisy
+
+    assert_trace(PDEF0, %w[ alice charly done.])
   end
 end
 

@@ -39,7 +39,7 @@ module Ruote
       elsif list.respond_to?(:[]) and list.respond_to?(:length)
         list
       else
-        nil
+        []
       end
     end
   end

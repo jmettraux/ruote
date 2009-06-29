@@ -62,7 +62,7 @@
 [o] on_cancel
 
 [o] iterator
-[ ] iterator : break, cancel, ...
+[o] iterator : break, cancel, ...
 
 [ ] concurrent-iterator < concurrence
 [ ] cursor

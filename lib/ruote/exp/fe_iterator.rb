@@ -60,14 +60,21 @@ module Ruote
 
     def reply (workitem)
 
-      com, step = get_command(workitem)
-
-      return reply_to_parent(workitem) if com == 'break'
-      @position = -1 if com == 'rewind' or com == 'continue'
-
       @position += 1
 
-      val = (@list || [])[@position]
+      com, arg = get_command(workitem)
+
+      return reply_to_parent(workitem) if com == 'break'
+
+      case com
+      when 'rewind', 'continue' then @position = 0
+      when 'skip' then @position += arg
+      when 'jump' then @position = arg
+      end
+
+      @position = @list.length + @position if @position < 0
+
+      val = @list[@position]
 
       return reply_to_parent(workitem) if val == nil
 
