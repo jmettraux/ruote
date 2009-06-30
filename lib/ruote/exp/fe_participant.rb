@@ -58,11 +58,7 @@ module Ruote
 
       persist
 
-      participant.consume(@applied_workitem)
-
-      wqueue.emit(
-        :workitems, :dispatched,
-        :workitem => @applied_workitem, :pname => @participant_name)
+      dispatch_to(participant)
     end
 
     #def reply (workitem)
@@ -75,6 +71,39 @@ module Ruote
       participant.cancel(@fei)
 
       reply_to_parent(@applied_workitem)
+    end
+
+    protected
+
+    def dispatch_to (participant)
+
+      if participant.respond_to?(:do_not_thread) and participant.do_not_thread
+
+        do_dispatch(participant)
+
+      else
+
+        Thread.new do
+          begin
+            do_dispatch(participant)
+          rescue Exception => e
+            pool.send(
+              :handle_exception,
+              :apply,
+              { :fei => @fei, :workitem => @applied_workitem },
+              e)
+          end
+        end
+      end
+    end
+
+    def do_dispatch (participant)
+
+      participant.consume(@applied_workitem)
+
+      wqueue.emit(
+        :workitems, :dispatched,
+        :workitem => @applied_workitem, :pname => @participant_name)
     end
   end
 end

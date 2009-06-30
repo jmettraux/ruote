@@ -41,6 +41,10 @@ module Ruote
       @items = {}
     end
 
+    # No need for a separate thread when delivering to this participant.
+    #
+    def do_not_thread; true; end
+
     def consume (workitem)
 
       @items[workitem.fei] = workitem

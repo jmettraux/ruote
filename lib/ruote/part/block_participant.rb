@@ -34,10 +34,13 @@ module Ruote
     include EngineContext
     include LocalParticipant
 
+    attr_accessor :do_not_thread
+
     def initialize (block, opts)
 
       @opts = opts
       @block = block
+      @do_not_thread = false
     end
 
     def consume (workitem)
