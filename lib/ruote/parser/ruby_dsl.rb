@@ -63,7 +63,7 @@ module Ruote
 
     def self.create_branch (name, attributes, &block)
 
-      while name[0] == '_'
+      while name[0, 1] == '_'
         name = name[1..-1]
       end
 
