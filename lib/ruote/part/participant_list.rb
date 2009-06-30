@@ -88,6 +88,11 @@ module Ruote
       @list.delete(entry)
     end
 
+    def shutdown
+
+      @list.each { |re, pa| pa.shutdown if pa.respond_to?(:shutdown) }
+    end
+
     protected
 
     def prepare (p, opts, block)

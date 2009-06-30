@@ -70,5 +70,24 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     assert_equal(0, @engine.plist.list.size)
   end
+
+  class MyParticipant
+    attr_reader :down
+    def initialize (opts)
+      @down = false
+    end
+    def shutdown
+      @down = true
+    end
+  end
+
+  def test_participant_shutdown
+
+    alpha = @engine.register_participant :alpha, MyParticipant
+
+    @engine.plist.shutdown
+
+    assert_equal true, alpha.down
+  end
 end
 

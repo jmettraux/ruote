@@ -77,7 +77,7 @@ restart tests :
 
 [x] engine#reload
 
-[ ] participants stop
+[o] participants shutdown
 
 [o] stalled [participant] expressions restart (apply/reply ?)
     "re-apply on reload"
@@ -114,5 +114,5 @@ restart tests :
 
 [ ] forget : participant ? subprocess ? everybody
 
-[ ] participant : do thread (and do_not_thread)
+[o] participant : do thread (and do_not_thread)
 
