@@ -314,33 +314,32 @@ module Ruote
           # making sure there is at least 1 expression in the storage
           # so that engine#process_status yields something
 
-        handle_on_error(emsg, eargs) && return
-          # return if error got handled
-
-        wqueue.emit(
-          :errors,
-          :s_expression_pool,
-          { :error => e,
-            :wfid => (exp ? exp.fei : fei).wfid,
-            :message => [ :expressions, emsg, eargs ] })
+        handle_exception(emsg, eargs, e)
       end
+    end
+
+    def handle_exception (emsg, eargs, exception)
+
+      wi, fei, exp = extract_info(emsg, eargs)
+
+      (emsg != :cancel) && handle_on_error(exp) && return
+        # return if error got handled
+
+      wqueue.emit(
+        :errors,
+        :s_expression_pool,
+        { :error => exception,
+          :wfid => (exp ? exp.fei : fei).wfid,
+          :message => [ :expressions, emsg, eargs ] })
     end
 
     # Handling errors during apply/reply of expressions.
     #
-    def handle_on_error (emsg, eargs)
+    def handle_on_error (fexp)
 
-      return false if emsg == :cancel
-        # no error handling for error ocurring during :cancel
+      return false if fexp.in_error
 
-      _wi, _fei, exp = extract_info(emsg, eargs)
-
-      exp =
-        exp || temp_exp(eargs[:parent_id], eargs[:variables], eargs[:workitem])
-
-      return false if exp.in_error
-
-      oe_exp = exp.lookup_on(:error)
+      oe_exp = fexp.lookup_on(:error)
 
       return false unless oe_exp
 
@@ -361,7 +360,7 @@ module Ruote
       puts
       puts "== rescuing error handling"
       puts
-      p [ emsg, eargs ]
+      p [ fexp.class, fexp.fei ]
       puts
       p e
       puts e.backtrace
