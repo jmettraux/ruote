@@ -44,6 +44,7 @@
 
 [ ] file logger service
 [ ] fs_error_journal
+[ ] fs_error_journal : restart test
 
 [o] cache storage
 [o] fs storage
@@ -114,4 +115,6 @@ restart tests :
 [ ] forget : participant ? subprocess ? everybody
 
 [o] participant : do thread (and do_not_thread)
+
+[o] add test for error replay in participant
 
