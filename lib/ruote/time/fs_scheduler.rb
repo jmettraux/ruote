@@ -28,6 +28,9 @@ require 'ruote/time/scheduler'
 
 module Ruote
 
+  #
+  # A persistable job queue (at/in/every) for Ruote
+  #
   class JobQueue < Rufus::Scheduler::JobQueue
 
     attr_reader :bucket
@@ -113,6 +116,9 @@ module Ruote
     end
   end
 
+  #
+  # A persistable job queue (cron) for Ruote
+  #
   class CronJobQueue < JobQueue
 
     def trigger_matching_jobs
@@ -138,6 +144,9 @@ module Ruote
     end
   end
 
+  #
+  # A persisted scheduler for Ruote.
+  #
   class FsScheduler < Scheduler
 
     def context= (c)
@@ -155,13 +164,6 @@ module Ruote
 
       @jq.shutdown
       @cjq.shutdown
-    end
-
-    protected
-
-    def reload
-
-      # TODO : implement me !
     end
   end
 end
