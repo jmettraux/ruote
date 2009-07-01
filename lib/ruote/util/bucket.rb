@@ -95,7 +95,7 @@ module Ruote
         @file.flock(File::LOCK_EX)
         block.call
       ensure
-        @file.flock(File::LOCK_UN)
+        @file.flock(File::LOCK_UN) rescue nil
       end
     end
 
