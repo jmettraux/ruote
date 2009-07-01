@@ -69,6 +69,7 @@
 [o] cursor : jump to tag
 [o] loop
 
+[ ] wait : implement reload
 restart tests :
 [ ] wait
 [ ] listen
@@ -117,4 +118,6 @@ restart tests :
 [o] participant : do thread (and do_not_thread)
 
 [o] add test for error replay in participant
+
+[ ] participant dispatch thread throttling ?
 

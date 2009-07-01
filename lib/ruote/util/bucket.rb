@@ -36,6 +36,8 @@ module Ruote
       @file = File.open(@fpath, 'wb+')
     end
 
+    # Closes this bucket (the File instance specifically).
+    #
     def close
 
       @file.close
@@ -50,7 +52,7 @@ module Ruote
     #
     def load
 
-      mt = file.mtime rescue nil
+      mt = @file.mtime rescue nil
 
       lock { read } if (not @mtime) or (not mt) or (mt > @mtime)
 
