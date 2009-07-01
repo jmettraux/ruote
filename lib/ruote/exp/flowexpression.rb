@@ -42,7 +42,7 @@ module Ruote
     attr_accessor :original_tree
     attr_accessor :variables
 
-    attr_accessor :children
+    attr_reader :children
 
     attr_accessor :on_cancel
     attr_accessor :on_error
