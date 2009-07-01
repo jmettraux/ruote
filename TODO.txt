@@ -120,4 +120,7 @@ restart tests :
 [o] add test for error replay in participant
 
 [ ] participant dispatch thread throttling ?
+[ ] func tests : wire assert_no_errors back in
+
+[ ] engine.process_statuses (or sthing like that)
 
