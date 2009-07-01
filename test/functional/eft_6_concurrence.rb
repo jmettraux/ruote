@@ -123,7 +123,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     wi = run_concurrence({ :merge_type => :isolate }, false)
 
     assert_equal(
-      {1=>{"seen"=>"0_0_0_1"}, 0=>{"seen"=>"0_0_0_0"}},
+      {1=>{"seen"=>"0_0_0_1"}, 0=>{"seen"=>"0_0_0_0"}, "params"=>{"ref"=>"alpha"}},
       wi.fields)
   end
 

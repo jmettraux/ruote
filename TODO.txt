@@ -34,7 +34,7 @@
 
 [o] wi test (and fix) ${f:xyz}
 [o] wi#to_h #from_h
-[ ] wi.params ?
+[o] wi.params
 
 [o] self rec for [main] process
 

@@ -29,7 +29,7 @@ module Ruote
   # Those methods are mixed in FlowExpression. They were put here to offload
   # FlowExpression and especially, to gather them around their attribute topic.
   #
-  module AttributeMixin
+  module AttributesMixin
 
     # Given a list of attribute names, returns the first attribute name for
     # which there is a value.
@@ -110,6 +110,14 @@ module Ruote
 
         nil
       end
+    end
+
+    # Returns a Hash containing all attributes set for an expression with
+    # their values resolved.
+    #
+    def lookup_attributes
+
+      attributes.keys.inject({}) { |h, k| h[k] = attribute(k); h }
     end
 
     protected

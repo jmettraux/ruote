@@ -25,7 +25,7 @@
 require 'ruote/util/ometa'
 require 'ruote/util/dollar'
 require 'ruote/engine/context'
-require 'ruote/exp/attribute'
+require 'ruote/exp/attributes'
 
 
 module Ruote
@@ -33,7 +33,7 @@ module Ruote
   class FlowExpression < ObjectWithMeta
 
     include EngineContext
-    include AttributeMixin
+    include AttributesMixin
 
 
     attr_accessor :fei

@@ -55,14 +55,12 @@ module Ruote
       ) unless participant
 
       @applied_workitem.participant_name = @participant_name
+      @applied_workitem.fields['params'] = lookup_attributes
 
       persist
 
       dispatch_to(participant)
     end
-
-    #def reply (workitem)
-    #end
 
     def cancel
 
@@ -71,6 +69,12 @@ module Ruote
       participant.cancel(@fei)
 
       reply_to_parent(@applied_workitem)
+    end
+
+    def reply_to_parent (workitem)
+
+      workitem.fields.delete('params')
+      super(workitem)
     end
 
     protected
