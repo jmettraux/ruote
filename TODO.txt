@@ -125,3 +125,5 @@ restart tests :
 
 [ ] engine.process_statuses (or sthing like that)
 
+[ ] kill_process != cancel_process (need a way to not trigger on_cancel)
+
