@@ -192,8 +192,10 @@ module Ruote
         # shutdown previous service
 
       service = o.is_a?(Class) ? o.new : o
-      service.context = @context if service.respond_to?(:context=)
+
       @context[key] = service
+
+      service.context = @context if service.respond_to?(:context=)
 
       #service
     end

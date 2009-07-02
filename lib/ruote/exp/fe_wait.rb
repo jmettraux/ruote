@@ -64,13 +64,13 @@ module Ruote
       reply_to_parent(@applied_workitem)
     end
 
-    protected
-
     def reschedule
 
       @job_id = scheduler.at(@until, @fei, :reply).job_id
       persist
     end
+
+    protected
 
     def schedule
 

@@ -71,9 +71,8 @@
 [o] cursor : jump to tag
 [o] loop
 
-[ ] wait : implement reload
 restart tests :
-[ ] wait
+[o] wait
 [ ] listen
 
 [o] stop passing full exp in message, except for expression updates

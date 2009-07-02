@@ -158,6 +158,8 @@ module Ruote
 
       @scheduler = Rufus::Scheduler.start_new(
         :context => @context, :job_queue => @jq, :cron_job_queue => @cjq)
+
+      reload
     end
 
     def shutdown
