@@ -132,6 +132,22 @@ module Ruote
       exps.size > 0 ? ProcessStatus.new(exps, errs) : nil
     end
 
+    # Returns a list of all the processes currently running in the engine.
+    # (Array of ProcessStatus instances).
+    #
+    def processes
+
+      exps = expstorage.find_expressions
+      errs = ejournal.errors
+
+      ps = exps.inject({}) do |h, exp|
+        (h[exp.fei.parent_wfid] ||= []) << exp
+        h
+      end
+
+      ps.collect { |wfid, exps| ProcessStatus.new(exps, errs[wfid] || []) }
+    end
+
     # Cancels a whole process instance.
     #
     def cancel_process (wfid)

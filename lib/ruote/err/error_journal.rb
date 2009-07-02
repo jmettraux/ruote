@@ -105,11 +105,14 @@ module Ruote
 
     # Returns all the current errors
     #
-    # { wfid => { fei => ProcessError instance } }
+    # { wfid => [ ProcessError instances ] }
     #
     def errors
 
-      @errors
+      @errors.inject({}) do |h, (wfid, errs)|
+        h[wfid] = errs.values.collect { |e| ProcessError.new(e) }
+        h
+      end
     end
 
     protected
@@ -124,6 +127,8 @@ module Ruote
       eargs[:when] = Time.now
 
       (@errors[wfid || fei.parent_wfid] ||= {})[fei] = eargs
+
+      # could a lonely wfid be a sub wfid ? ...
     end
   end
 end

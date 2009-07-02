@@ -259,5 +259,28 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal 1, ps.tags.size
     assert_equal 2, ps.all_tags['tag0'].size
   end
+
+  def test_processes
+
+    pdef = Ruote.process_definition :name => 'my process' do
+      participant :ref => 'alpha'
+    end
+
+    #noisy
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    wfid0 = @engine.launch(pdef)
+    wfid1 = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    ps = @engine.processes
+
+    assert_equal 2, ps.size
+    assert_equal [ wfid0, wfid1 ], ps.collect { |e| e.wfid }.sort
+
+    assert_equal 2, alpha.size
+  end
 end
 
