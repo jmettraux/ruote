@@ -29,6 +29,9 @@ require 'ruote/queue/subscriber'
 
 module Ruote
 
+  #
+  # Encapsulating all the information about an error in a process instance.
+  #
   class ProcessError
 
     def initialize (h)
@@ -74,6 +77,9 @@ module Ruote
     end
   end
 
+  #
+  # Keeping track of the errors plaguing processes.
+  #
   class ErrorJournal
 
     include EngineContext
@@ -92,9 +98,18 @@ module Ruote
 
     # Returns the list of errors for a given process instance
     #
-    def errors (wfid)
+    def process_errors (wfid)
 
       (@errors[wfid] || {}).values.collect { |e| ProcessError.new(e) }
+    end
+
+    # Returns all the current errors
+    #
+    # { wfid => { fei => ProcessError instance } }
+    #
+    def errors
+
+      @errors
     end
 
     protected
@@ -108,7 +123,7 @@ module Ruote
 
       eargs[:when] = Time.now
 
-      (@errors[wfid || fei.wfid] ||= {})[fei] = eargs
+      (@errors[wfid || fei.parent_wfid] ||= {})[fei] = eargs
     end
   end
 end

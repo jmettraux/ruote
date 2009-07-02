@@ -35,7 +35,7 @@ class EftRedoTest < Test::Unit::TestCase
     alpha.reply(alpha.first)
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 0, ps.errors.size
     assert_equal 3, ps.expressions.size

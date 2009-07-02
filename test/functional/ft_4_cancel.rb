@@ -26,7 +26,7 @@ class FtCancelTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
     assert_equal 1, alpha.size
 
     assert_not_nil ps
@@ -34,7 +34,7 @@ class FtCancelTest < Test::Unit::TestCase
     @engine.cancel_process(wfid)
 
     wait_for(wfid)
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_nil ps
     assert_equal 0, alpha.size

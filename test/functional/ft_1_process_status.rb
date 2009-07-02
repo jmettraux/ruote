@@ -27,7 +27,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 'my process', ps.definition_name
     assert_equal nil, ps.definition_revision
@@ -49,7 +49,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 'my process', ps.definition_name
     assert_equal({ 'toto' => 'nada' }, ps.variables)
@@ -69,7 +69,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal(
       ["sequence", {"my process"=>nil}, [
@@ -121,7 +121,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal(
       {"sub0" => [
@@ -162,7 +162,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal "#{wfid}_0", alpha.first.fei.wfid
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     #ps.expressions.each { |e| puts e.fei.to_s }
 
@@ -196,7 +196,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal(0, ps.variables['v0'])
     assert_equal(nil, ps.variables['v1'])
@@ -225,7 +225,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 2, ps.tags.size
 
@@ -254,7 +254,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 1, ps.tags.size
     assert_equal 2, ps.all_tags['tag0'].size

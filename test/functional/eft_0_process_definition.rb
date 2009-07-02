@@ -36,7 +36,7 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal(
       {"sub0"=>["0_0", ["sequence", {"name"=>"sub0"}, []]]},

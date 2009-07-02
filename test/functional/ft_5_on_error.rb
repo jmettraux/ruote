@@ -48,7 +48,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
     wait_for(wfid)
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal(1, ps.errors.size)
   end
@@ -104,7 +104,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
     wait_for(wfid)
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 1, ps.errors.size
 

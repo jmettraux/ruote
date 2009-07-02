@@ -312,7 +312,7 @@ module Ruote
         ex.persist
           #
           # making sure there is at least 1 expression in the storage
-          # so that engine#process_status yields something
+          # so that engine#process yields something
 
         handle_exception(emsg, eargs, e)
       end

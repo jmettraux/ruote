@@ -66,7 +66,7 @@ class EftListenTest < Test::Unit::TestCase
 
     assert_equal "a\na\n#{wfid}_0\n#{wfid}_1", @tracer.to_s
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 3, ps.expressions.size
     assert_equal 0, ps.errors.size
@@ -240,7 +240,7 @@ class EftListenTest < Test::Unit::TestCase
 
     assert_equal("edone.", @tracer.to_s)
 
-    ps = @engine.process_status(lwfid)
+    ps = @engine.process(lwfid)
     assert_equal(3, ps.expressions.size)
   end
 end

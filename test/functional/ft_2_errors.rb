@@ -24,7 +24,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(wfid)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 1, ps.errors.size
   end
@@ -40,14 +40,14 @@ class FtProcessStatusTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(wfid)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     err = ps.errors.first
 
     @engine.replay_at_error(err)
 
     wait_for(wfid)
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     #p ps
 
@@ -74,7 +74,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
     wait_for(wfid)
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     err = ps.errors.first
     assert_equal [ 'nada', {}, [] ], err.tree
@@ -83,7 +83,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     @engine.replay_at_error(err)
     wait_for(wfid)
 
-    assert_nil @engine.process_status(wfid)
+    assert_nil @engine.process(wfid)
 
     assert_equal 'alpha', @tracer.to_s
   end
@@ -109,7 +109,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 1, ps.errors.size
 
@@ -142,7 +142,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 1, ps.errors.size
 

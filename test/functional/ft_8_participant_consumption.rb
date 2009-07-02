@@ -44,7 +44,7 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_equal 1, ps.errors.size
     assert_equal 'no participant name specified', ps.errors.first.error.to_s

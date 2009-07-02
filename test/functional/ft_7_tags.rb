@@ -28,7 +28,7 @@ class FtTagsTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     #p ps.variables
     #ps.expressions.each { |e| p [ e.fei, e.variables ] }
@@ -67,7 +67,7 @@ class FtTagsTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    assert_equal 1, @engine.process_status(wfid).tags.size
+    assert_equal 1, @engine.process(wfid).tags.size
 
     fei = alpha.first.fei.dup
     fei.expid = '0_1_0'
@@ -75,13 +75,13 @@ class FtTagsTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    assert_equal 0, @engine.process_status(wfid).tags.size
+    assert_equal 0, @engine.process(wfid).tags.size
 
     alpha.reply(alpha.first)
 
     wait_for(:alpha)
 
-    assert_equal 0, @engine.process_status(wfid).tags.size
+    assert_equal 0, @engine.process(wfid).tags.size
   end
 end
 

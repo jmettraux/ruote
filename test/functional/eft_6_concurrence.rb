@@ -96,7 +96,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wi = alpha.first
 
-    ps = @engine.process_status(wi.fei.wfid)
+    ps = @engine.process(wi.fei.wfid)
     assert_equal %w[ 0 0_1 ], ps.expressions.collect { |e| e.fei.expid }.sort
 
     wi
@@ -174,7 +174,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal 1, @bravo.size
 
     assert_equal 1, @engine.expstorage.size
-    assert_not_nil @engine.process_status(wfid)
+    assert_not_nil @engine.process(wfid)
 
     @bravo.reply(@bravo.first)
 
@@ -204,7 +204,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     assert_nil ps
   end

@@ -15,7 +15,10 @@ efts = Dir.new(dirpath).entries.select { |e| e.match(/^eft\_.*\.rb$/) }.sort
 fts = Dir.new(dirpath).entries.select { |e| e.match(/^ft\_.*\.rb$/) }.sort
   # functional tests targetting features rather than expressions
 
-tests = efts + fts
+rts = Dir.new(dirpath).entries.select { |e| e.match(/^rt\_.*\.rb$/) }.sort
+  # restart tests, start sthing, stop engine, restart, expect thing to resume
+
+tests = efts + fts + rts
 
 tests.each { |e| load(File.join(dirpath, e)) }
 

@@ -121,10 +121,10 @@ module Ruote
     # instance id (workflow instance id).
     # Returns nil the process doesn't exist or has already terminated.
     #
-    def process_status (wfid)
+    def process (wfid)
 
       exps = expstorage.find_expressions(:parent_wfid => wfid)
-      errs = ejournal.errors(wfid)
+      errs = ejournal.process_errors(wfid)
 
       # NOTE : should we return a process status if there are only errors ?
       # (no expressions ?)

@@ -56,7 +56,7 @@ class FtOnCancelTest < Test::Unit::TestCase
     @engine.cancel_process(wfid)
     wait_for(wfid)
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
     assert_not_nil ps
 
     assert_equal 1, logger.log.select { |e| e[0] == :errors }.size
@@ -91,7 +91,7 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    assert_nil @engine.process_status(wfid)
+    assert_nil @engine.process(wfid)
 
     assert_equal "d0\nd1", @tracer.to_s
   end

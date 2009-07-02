@@ -33,7 +33,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
     # ... flow stalled ...
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     stalled_exp = ps.expressions.find { |fexp| fexp.fei.expid == '0_0_0' }
 
@@ -71,7 +71,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
     # ... flow stalled ...
 
-    ps = @engine.process_status(wfid)
+    ps = @engine.process(wfid)
 
     stalled_exp = ps.expressions.find { |fexp| fexp.fei.expid == '0_0_0' }
 
