@@ -73,7 +73,7 @@
 
 restart tests :
 [o] wait
-[ ] listen
+[o] listen
 
 [o] stop passing full exp in message, except for expression updates
 
