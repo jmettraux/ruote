@@ -155,13 +155,27 @@ module Ruote
       wqueue.emit(:processes, :cancel, :wfid => wfid)
     end
 
-    alias :cancel :cancel_process
+    # Kills a whole process instance. Like a cancel, but no "on_cancel" is
+    # triggered.
+    #
+    def kill_process (wfid)
+
+      wqueue.emit(:processes, :kill, :wfid => wfid)
+    end
 
     # Cancels an expression (and all its children).
     #
     def cancel_expression (fei)
 
-      pool.cancel_expression(fei)
+      pool.cancel_expression(fei, false)
+    end
+
+    # Cancels an expression (and all its children), but makes sure that
+    # no on_cancel block is called (hence the 'kill' label).
+    #
+    def kill_expression (fei)
+
+      pool.cancel_expression(fei, true)
     end
 
     # Simply reemits the message (queue event) found in the error..

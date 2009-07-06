@@ -91,6 +91,7 @@ module FunctionalBase
       logger.wait_for([
         [ :processes, :terminated, { :wfid => wfid_or_part } ],
         [ :processes, :cancelled, { :wfid => wfid_or_part } ],
+        [ :processes, :killed, { :wfid => wfid_or_part } ],
         [ :errors, nil, { :wfid => wfid_or_part } ]
       ])
 

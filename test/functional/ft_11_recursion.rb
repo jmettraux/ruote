@@ -32,7 +32,7 @@ class FtRecursionTest < Test::Unit::TestCase
       @context[:s_tracer] << workitem.fields['count'].to_s + "\n"
 
       if workitem.fields['count'] > 5
-        engine.cancel(workitem.fei.parent_wfid)
+        engine.cancel_process(workitem.fei.parent_wfid)
       else
         reply_to_engine(workitem)
       end

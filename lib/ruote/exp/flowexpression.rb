@@ -201,12 +201,12 @@ module Ruote
     # Called directly by the expression pool. See #cancel for the (overridable)
     # default behaviour.
     #
-    def do_cancel
+    def do_cancel (kill)
 
-      @in_cancel = true
+      @in_cancel = kill ? :kill : true
       persist
 
-      cancel
+      cancel(kill)
     end
 
     # The default implementation : replies to the parent expression
@@ -219,9 +219,9 @@ module Ruote
     # This default implementation cancels all the [registered] children
     # of this expression.
     #
-    def cancel
+    def cancel (kill)
 
-      @children.each { |cfei| pool.cancel_expression(cfei) }
+      @children.each { |cfei| pool.cancel_expression(cfei, kill) }
     end
 
     # Forces error handling by this expression.
@@ -231,7 +231,7 @@ module Ruote
       @in_error = true
       persist
 
-      @children.each { |cfei| pool.cancel_expression(cfei) }
+      @children.each { |cfei| pool.cancel_expression(cfei, false) }
     end
 
     # Nullifies the @parent_id and emits a :forgotten message
@@ -501,7 +501,8 @@ module Ruote
 
         trigger_on_error(workitem)
 
-      elsif @in_cancel and @on_cancel
+      elsif (@in_cancel == true) and @on_cancel
+        # @in_cancel == :kill doesn't trigger @on_cancel
 
         trigger_on_cancel(workitem)
 

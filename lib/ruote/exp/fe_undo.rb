@@ -41,8 +41,6 @@ module Ruote
   #
   class UndoExpression < FlowExpression
 
-    # TODO : conditional ?
-
     names :undo
 
     def apply
@@ -50,7 +48,7 @@ module Ruote
       ref = attribute(:ref) || attribute_text
       tag = ref ? lookup_variable(ref) : nil
 
-      pool.cancel_expression(tag) if tag
+      pool.cancel_expression(tag, false) if tag
 
       reply_to_parent(@applied_workitem)
     end

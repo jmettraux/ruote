@@ -53,7 +53,7 @@ module Ruote
       # never called
     end
 
-    def cancel
+    def cancel (kill)
 
       reply_to_parent(@applied_workitem)
     end

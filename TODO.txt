@@ -125,5 +125,8 @@ restart tests :
 
 [ ] engine.process_statuses (or sthing like that)
 
-[ ] kill_process != cancel_process (need a way to not trigger on_cancel)
+[o] kill_process != cancel_process (need a way to not trigger on_cancel)
+
+[ ] pdef.to_dot
+[ ] expstorage.to_dot
 

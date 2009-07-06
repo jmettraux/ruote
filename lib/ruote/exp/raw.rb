@@ -44,7 +44,7 @@ module Ruote
       raise "can't apply or reply [to] raw expression"
     end
 
-    def cancel
+    def cancel (kill)
       reply_to_parent(@applied_workitem)
     end
   end

@@ -274,6 +274,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     wfid1 = @engine.launch(pdef)
 
     wait_for(:alpha)
+    wait_for(:alpha)
 
     ps = @engine.processes
 

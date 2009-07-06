@@ -54,15 +54,14 @@ module Ruote
       wqueue.emit(:expressions, :reply, :workitem => workitem)
     end
 
-    # Cancels an expression (removes it and calls its #cancel method).
+    # Cancels an expression (and its expression children)
     #
-    # If remove is set to false, the expression will not be removed (ie
-    # not be removed from the expression storage). This is used by the
-    # on_error handling, where the expression gets overriden anyway.
+    # If kill is set to true, no on_cancel handler will be considered, the
+    # expression and its tree will get killed.
     #
-    def cancel_expression (fei)
+    def cancel_expression (fei, kill)
 
-      wqueue.emit(:expressions, :cancel, :fei => fei)
+      wqueue.emit(:expressions, :cancel, :fei => fei, :kill => kill)
     end
 
     # Immediately 'forgets' the expression (if still present).
@@ -114,11 +113,14 @@ module Ruote
 
       else
 
-        wqueue.emit(
-          :processes, exp.in_cancel ? :cancelled : :terminated,
-          :wfid => exp.fei.wfid, :workitem => workitem)
+        msg = case exp.in_cancel
+        when true then :cancelled
+        when :kill then :killed
+        else :terminated
+        end
 
-        # NOTE : a process can terminate multiple times ...
+        wqueue.emit(
+          :processes, msg, :wfid => exp.fei.wfid, :workitem => workitem)
       end
     end
 
@@ -159,7 +161,7 @@ module Ruote
 
         exp.on_cancel = exp.tree
         exp.persist
-        cancel_expression(exp.fei)
+        cancel_expression(exp.fei, false)
 
       else
 
@@ -252,7 +254,7 @@ module Ruote
     end
 
     EXP_MESSAGES = %w[ apply reply cancel ].collect { |m| m.to_sym }
-    #PROCESS_MESSAGES = %w[ launch cancel ].collect { |m| m.to_sym }
+    PROCESS_MESSAGES = %w[ launch cancel kill ].collect { |m| m.to_sym }
 
     # Reacting upon :expressions and :processes events.
     #
@@ -264,7 +266,7 @@ module Ruote
 
       elsif eclass == :processes
 
-        self.send(emsg, eargs) if emsg == :launch || emsg == :cancel
+        self.send(emsg, emsg, eargs) if PROCESS_MESSAGES.include?(emsg)
 
       end
     end
@@ -294,7 +296,7 @@ module Ruote
         case emsg
         when :apply then exp.do_apply
         when :reply then exp.do_reply(wi)
-        when :cancel then exp.do_cancel
+        when :cancel then exp.do_cancel(eargs[:kill] == true)
         end
 
       rescue Exception => e
@@ -376,11 +378,11 @@ module Ruote
     # Launches a new process instance.
     # (triggered by received a [ :processes, :launch, ... ] event)
     #
-    def launch (args)
+    def launch (emsg, eargs)
 
-      fei = new_fei(args[:wfid])
+      fei = new_fei(eargs[:wfid])
 
-      tree = args[:tree]
+      tree = eargs[:tree]
       tree = DefineExpression.reorganize(expmap, tree) \
         if expmap.is_definition?(tree)
 
@@ -388,19 +390,26 @@ module Ruote
         :expressions, :apply,
         :tree => tree,
         :fei => fei,
-        :workitem => args[:workitem],
+        :workitem => eargs[:workitem],
         :variables => {})
     end
 
     # Cancels a process instance.
-    # (triggered by received a [ :processes, :cancel, ... ] event)
+    # (triggered by received a [ :processes, :cancel|:kill, ... ] event)
     #
-    def cancel (args)
+    # If the message is :kill (instead of :cancel), a 'kill' is performed.
+    # It's like a cancel, but no on_cancel handler is considered.
+    #
+    def cancel (emsg, eargs)
 
-      root_fei = new_fei(args[:wfid])
-      cancel_expression(root_fei)
+      root_fei = new_fei(eargs[:wfid])
+      cancel_expression(root_fei, emsg == :kill)
     end
+    alias :kill :cancel
 
+    # Generates a new FlowExpressionId instance (used when lauching a new
+    # process instance).
+    #
     def new_fei (wfid)
 
       fei = FlowExpressionId.new
