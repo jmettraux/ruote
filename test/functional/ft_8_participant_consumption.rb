@@ -27,6 +27,10 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
 
     assert_trace(pdef, 'alpha')
 
+    Thread.pass
+      # making sure the reply to the participant expression is intercepted
+      # as well
+
     assert_equal 2, logger.log.select { |e| e[2][:pname] == 'alpha' }.size
   end
 

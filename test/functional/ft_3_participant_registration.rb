@@ -24,7 +24,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     entry = logger.log.last
     assert_equal :registered, entry[1]
     assert_equal :alpha, entry.last[:regex]
-    assert_equal Ruote::BlockParticipant, entry.last[:participant]
+    assert_equal Ruote::BlockParticipant, entry.last[:participant].class
 
     assert_equal [ /^alpha$/ ], @engine.plist.list.collect { |e| e.first }
   end

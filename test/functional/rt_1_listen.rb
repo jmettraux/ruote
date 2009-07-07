@@ -30,7 +30,7 @@ class RtListenTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
+    #puts; noisy
 
     alpha = @engine.register_participant :alpha, Ruote::HashParticipant
 
@@ -44,7 +44,7 @@ class RtListenTest < Test::Unit::TestCase
 
     start_new_engine
 
-    #noisy
+    #puts; noisy
 
     sleep 0.100
 
@@ -54,6 +54,7 @@ class RtListenTest < Test::Unit::TestCase
     @engine.reply(alpha.first)
 
     sleep 0.100
+    #wait_for(wfid)
 
     assert_equal 'done.', @tracer.to_s
   end

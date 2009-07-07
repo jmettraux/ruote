@@ -132,4 +132,5 @@ restart tests :
 
 [ ] @in_cancel, @in_error --> @sate (active|cancelling|killing)
 [ ] tailcall
+[ ] subprocesses participants (alias ?)
 

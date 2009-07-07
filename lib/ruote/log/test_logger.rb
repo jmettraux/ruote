@@ -37,55 +37,67 @@ module Ruote
 
     attr_reader :log
 
-    WAIT_COUNT = 1000 # approx 1 sec
-
     def initialize
 
       @log = []
-      @not_seen = []
+
+      @index = 0
+      @mutex = Mutex.new
+      @queue = Queue.new
     end
 
-    # Some kind of busy waiting... (had bad results with thread.wakeup)
-    #
-    def wait_for (patterns, count=WAIT_COUNT)
+    def wait_for (patterns)
+      @mutex.synchronize do
 
-      for i in 0..count
-        sleep 0.001
-        while ev = @not_seen.pop
-          patterns.each do |eclass, emsg, eargs|
-            if match?(ev, eclass, emsg, eargs || {})
-              #p [ :match, ev ]
-              return
-            end
-          end
+        while evt = @log[@index]
+          @index += 1
+          return evt if pats_match?(evt, patterns)
         end
+
+        @wait_patterns = patterns
       end
-      puts
-      puts "over after #{count} at #{caller[3]}"
-      p patterns
-      puts
+      @queue.shift
+    end
+
+    def to_stdout
+
+      @log.each { |evt| output(evt.last, summarize(*evt)) }
     end
 
     protected
 
-    def receive (eclass, emsg, eargs)
+    def receive (*event)
+      @mutex.synchronize do
 
-      data = summarize(eclass, emsg, eargs)
+        @log << event
+        output(event.last, summarize(*event)) if context[:noisy]
 
-      @log << data
-      @not_seen << data
+        if @wait_patterns
 
-      output(eargs, data) if context[:noisy]
+          @index = @log.size
+
+          if pats_match?(event, @wait_patterns)
+            @wait_patterns = nil
+            @queue.push(event)
+          end
+        end
+      end
     end
 
-    def match? (ev, eclass, emsg, eargs)
+    def pats_match? (event, patterns)
 
-      ec, em, ea = ev
+      patterns.find { |pat| pat_match?(event, pat) }
+    end
 
-      return false if eclass && ec != eclass
-      return false if emsg && em != emsg
+    def pat_match? (event, pattern)
 
-      eargs.each { |k, v| return false if ea[k] != v }
+      pc, pm, pa = pattern
+      ec, em, ea = event
+
+      return false if pc && ec != pc
+      return false if pm && em != pm
+
+      pa.each { |k, v| return false if ea[k] != v }
 
       true
     end
