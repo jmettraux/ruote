@@ -130,3 +130,6 @@ restart tests :
 [ ] pdef.to_dot
 [ ] expstorage.to_dot
 
+[ ] @in_cancel, @in_error --> @sate (active|cancelling|killing)
+[ ] tailcall
+
