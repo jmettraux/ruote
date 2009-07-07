@@ -103,11 +103,12 @@ module Ruote
 
     def do_dispatch (participant)
 
-      participant.consume(@applied_workitem)
+      wi = @applied_workitem.dup
+
+      participant.consume(wi)
 
       wqueue.emit(
-        :workitems, :dispatched,
-        :workitem => @applied_workitem, :pname => @participant_name)
+        :workitems, :dispatched, :workitem => wi, :pname => @participant_name)
     end
   end
 end
