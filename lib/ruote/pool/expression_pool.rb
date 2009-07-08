@@ -113,9 +113,9 @@ module Ruote
 
       else
 
-        msg = case exp.in_cancel
-        when true then :cancelled
-        when :kill then :killed
+        msg = case exp.state
+        when :cancelling then :cancelled
+        when :dying then :killed
         else :terminated
         end
 
@@ -339,7 +339,7 @@ module Ruote
     #
     def handle_on_error (fexp)
 
-      return false if fexp.in_error
+      return false if fexp.state == :failing
 
       oe_exp = fexp.lookup_on(:error)
 

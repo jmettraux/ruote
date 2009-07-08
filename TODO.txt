@@ -123,14 +123,14 @@ restart tests :
 [ ] participant dispatch thread throttling ?
 [ ] func tests : wire assert_no_errors back in
 
-[ ] engine.process_statuses (or sthing like that)
+[o] engine.processes()
 
 [o] kill_process != cancel_process (need a way to not trigger on_cancel)
 
 [ ] pdef.to_dot
 [ ] expstorage.to_dot
 
-[ ] @in_cancel, @in_error --> @sate (active|cancelling|killing)
+[o] @in_cancel, @in_error --> @state (active|cancelling|killing)
 [ ] tailcall
 [ ] subprocesses participants (alias ?)
 

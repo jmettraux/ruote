@@ -50,8 +50,7 @@ module Ruote
     attr_accessor :created_time
     attr_accessor :applied_workitem
 
-    attr_reader :in_cancel
-    attr_reader :in_error
+    attr_reader :state
 
     attr_reader :modified_time
 
@@ -66,8 +65,7 @@ module Ruote
       @original_tree = tree.dup
       @updated_tree = nil
 
-      @in_error = false
-      @in_cancel = false
+      @state = nil # the default state of an 'active' expression
 
       @children = []
 
@@ -184,7 +182,7 @@ module Ruote
       @children.delete(workitem.fei)
         # NOTE : check on size before/after ?
 
-      if @in_cancel or @in_error
+      if @state != nil # :failing, :cancelling or :dying
 
         if @children.size < 1
           reply_to_parent(workitem)
@@ -203,7 +201,7 @@ module Ruote
     #
     def do_cancel (kill)
 
-      @in_cancel = kill ? :kill : true
+      @state = kill ? :dying : :cancelling
       persist
 
       cancel(kill)
@@ -228,7 +226,7 @@ module Ruote
     #
     def fail
 
-      @in_error = true
+      @state = :failing
       persist
 
       @children.each { |cfei| pool.cancel_expression(cfei, false) }
@@ -497,12 +495,12 @@ module Ruote
         scheduler.unschedule(@timeout_job_id)
       end
 
-      if @in_error
+      if @state == :failing
 
         trigger_on_error(workitem)
 
-      elsif (@in_cancel == true) and @on_cancel
-        # @in_cancel == :kill doesn't trigger @on_cancel
+      elsif (@state == :cancelling) and @on_cancel
+        # @state == :dying doesn't trigger @on_cancel
 
         trigger_on_cancel(workitem)
 
