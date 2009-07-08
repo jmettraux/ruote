@@ -427,11 +427,23 @@ module Ruote
 
     # Asks expstorage[s] to store/update persisted version of self.
     #
-    def persist
+    # If probe is set to true, will check if there is a new version (from
+    # another instance of the engine) in the storage. If yes, will not persist
+    # and will return the current version of the expression. The expression
+    # implementation has then to sort out this 'collision' issue.
+    #
+    def persist (probe=false)
+
+      if probe
+        current = expstorage[@fei]
+        return current if current && current.modified_time != @modified_time
+      end
 
       @modified_time = Time.now
 
       wqueue.emit!(:expressions, :update, :expression => self)
+
+      nil
     end
 
     # Asks expstorage[s] to unstore persisted version of self.

@@ -137,5 +137,5 @@ restart tests :
 [o] listen
 [ ] when
 
-[ ] Jason Allen's check about concurrence
+[o] Jason Allen's check about concurrence
 

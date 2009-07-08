@@ -63,7 +63,12 @@ module Ruote
 
       @over = over?(workitem)
 
-      persist
+      if newer_exp_version = persist(true)
+        #
+        # oops, collision detected (with other instance of the same engine)
+        #
+        return newer_exp_version.reply(workitem)
+      end
 
       reply_to_parent(nil) if @over
     end
