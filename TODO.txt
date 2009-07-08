@@ -66,14 +66,14 @@
 [o] iterator
 [o] iterator : break, cancel, ...
 
-[ ] concurrent-iterator < concurrence
 [o] cursor
 [o] cursor : jump to tag
 [o] loop
 
-restart tests :
-[o] wait
-[o] listen
+[ ] concurrent-iterator < concurrence
+[ ] if
+[ ] save / restore
+[ ] when
 
 [o] stop passing full exp in message, except for expression updates
 
@@ -96,12 +96,10 @@ restart tests :
 [o] sleep
 [o] listen
 [o] listen wfid="x"
-[ ] exploded scheduler
-[ ] when
+[o] exploded scheduler
 
 [o] persisted tracker
 
-[ ] save / restore
 
 [x] wfid --> piid (stick with the funny old name)
 
@@ -109,10 +107,10 @@ restart tests :
 
 [o] wfidgen.shutdown (close wfidgen.last)
 
-[ ] part/sub timeout (with Andrew's at)
-[o] timeout for everybody
-[ ] __timeout__ = true ? (wi.fields)
 [o] conditional for everybody
+[o] timeout for everybody
+[ ] Andrew's at for timeouts (Chronic maybe)
+[ ] __timeout__ = true ? (wi.fields)
 
 [ ] forget : participant ? subprocess ? everybody
 
@@ -133,4 +131,11 @@ restart tests :
 [o] @in_cancel, @in_error --> @state (active|cancelling|killing)
 [ ] tailcall
 [ ] subprocesses participants (alias ?)
+
+restart tests :
+[o] wait
+[o] listen
+[ ] when
+
+[ ] Jason Allen's check about concurrence
 
