@@ -18,6 +18,9 @@ fts = Dir.new(dirpath).entries.select { |e| e.match(/^ft\_.*\.rb$/) }.sort
 rts = Dir.new(dirpath).entries.select { |e| e.match(/^rt\_.*\.rb$/) }.sort
   # restart tests, start sthing, stop engine, restart, expect thing to resume
 
+cts = Dir.new(dirpath).entries.select { |e| e.match(/^ct\_.*\.rb$/) }.sort
+  # concurrence/collision tests, tests about 2+ instances of ruote colliding
+
 tests = efts + fts + rts
 
 tests.each { |e| load(File.join(dirpath, e)) }
