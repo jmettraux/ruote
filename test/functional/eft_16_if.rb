@@ -71,5 +71,51 @@ class EftIfTest < Test::Unit::TestCase
 
     assert_trace(pdef, 'done.')
   end
+
+  def test_equals_true
+
+    pdef = Ruote.process_definition :name => 'test' do
+      _if do
+        equals :val => 'a', :other_value => 'a'
+        echo 'then'
+        echo 'else'
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, 'then')
+  end
+
+  def test_equals_false
+
+    pdef = Ruote.process_definition :name => 'test' do
+      _if do
+        equals :val => 'a', :other_value => 'z'
+        echo 'then'
+        echo 'else'
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, 'else')
+  end
+
+  def test_equals_true_no_then
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        _if do
+          equals :val => 'a', :other_value => 'z'
+        end
+        echo 'done.'
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, 'done.')
+  end
 end
 

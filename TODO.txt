@@ -71,7 +71,7 @@
 [o] loop
 
 [o] if
-[ ] equals
+[o] equals
 [ ] concurrent-iterator < concurrence
 [ ] save / restore
 [ ] when

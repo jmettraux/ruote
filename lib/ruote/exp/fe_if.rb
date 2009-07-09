@@ -34,28 +34,44 @@ module Ruote
 
     def apply
 
-      @test = attribute(:test)
+      @state = nil
 
-      index = Condition.true?(@test) ? 0 : 1
-
-      apply_consequence(index)
+      reply(@applied_workitem)
     end
 
     # called by 'else', 'then' or perhaps 'equals'
     #
     def reply (workitem)
 
-      reply_to_parent(workitem)
+      if workitem.fei == @fei # apply --> reply
+
+        @test = attribute(:test)
+        persist
+
+        if @test
+          apply_child_if_present(Condition.true?(@test) ? 0 : 1, workitem)
+        else
+          apply_child_if_present(0, workitem)
+        end
+
+      else # reply from a child
+
+        if @test or workitem.fei.child_id != 0
+          reply_to_parent(workitem)
+        else
+          apply_child_if_present(workitem.result == true ? 1 : 2, workitem)
+        end
+      end
     end
 
     protected
 
-    def apply_consequence (index)
+    def apply_child_if_present (index, workitem)
 
       if tree_children[index]
-        apply_child(index, @applied_workitem)
+        apply_child(index, workitem)
       else
-        reply_to_parent(@applied_workitem)
+        reply_to_parent(workitem)
       end
     end
   end
