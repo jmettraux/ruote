@@ -70,8 +70,9 @@
 [o] cursor : jump to tag
 [o] loop
 
+[o] if
+[ ] equals
 [ ] concurrent-iterator < concurrence
-[ ] if
 [ ] save / restore
 [ ] when
 

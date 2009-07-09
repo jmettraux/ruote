@@ -59,6 +59,7 @@ module Ruote
       add(Ruote::CommandExpression)
       add(Ruote::IteratorExpression)
       add(Ruote::CursorExpression)
+      add(Ruote::IfExpression)
     end
 
     # Returns the expression class for the given expression name
