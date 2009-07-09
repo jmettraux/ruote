@@ -34,8 +34,6 @@ module Ruote
 
     def apply
 
-      @state = nil
-
       reply(@applied_workitem)
     end
 
