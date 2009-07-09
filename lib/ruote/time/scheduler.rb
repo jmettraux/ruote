@@ -54,6 +54,7 @@ module Ruote
         fexp = context[:s_expression_storage][@fei]
         opts[:workitem] = fexp.applied_workitem
       end
+      #else @method == :cancel
 
       # TODO : maybe setting __timed_out__ here...
 
