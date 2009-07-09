@@ -75,6 +75,7 @@
 [ ] concurrent-iterator < concurrence
 [ ] save / restore
 [ ] when
+[ ] error
 
 [o] stop passing full exp in message, except for expression updates
 
@@ -141,4 +142,5 @@ restart tests :
 [o] Jason Allen's check about concurrence
 
 [ ] on_timeout ?
+[ ] on_cancel => 'error'
 

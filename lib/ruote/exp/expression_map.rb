@@ -60,6 +60,7 @@ module Ruote
       add(Ruote::IteratorExpression)
       add(Ruote::CursorExpression)
       add(Ruote::IfExpression)
+      add(Ruote::EqualsExpression)
     end
 
     # Returns the expression class for the given expression name

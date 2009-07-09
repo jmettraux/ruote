@@ -54,6 +54,8 @@ module Ruote
 
     attr_reader :modified_time
 
+    COMMON_ATT_KEYS = %w[ if unless timeout on_error on_cancel on_timeout ]
+
 
     def initialize (context, fei, parent_id, tree, variables, workitem)
 

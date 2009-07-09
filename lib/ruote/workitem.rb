@@ -64,6 +64,25 @@ module Ruote
       Ruote.lookup(@attributes, key)
     end
 
+    # A shortcut to the value in the field named __result__
+    #
+    # This field is used by the if expression for instance to determine
+    # if it should branch to its 'then' or its 'else'.
+    #
+    def result
+
+      @attributes['__result__']
+    end
+
+    # Sets the value of the 'special' field __result__
+    #
+    # See #result
+    #
+    def result= (r)
+
+      @attributes['__result__'] = r
+    end
+
     # Returns a deep copy of this workitem instance.
     #
     def dup
