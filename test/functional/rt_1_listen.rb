@@ -37,6 +37,7 @@ class RtListenTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
 
     wait_for(:alpha)
+    sleep 0.100
 
     assert_equal '', @tracer.to_s
 

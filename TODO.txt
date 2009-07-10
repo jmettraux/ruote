@@ -76,6 +76,7 @@
 [ ] save / restore
 [ ] when
 [ ] error
+[ ] reserve (enhanced ?)
 
 [o] stop passing full exp in message, except for expression updates
 

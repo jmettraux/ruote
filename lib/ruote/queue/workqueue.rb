@@ -117,6 +117,13 @@ module Ruote
 
       @queue.push([ eclass, emsg, eargs ])
     end
+
+    # Makes sure the queue is empty before shutdown is complete.
+    #
+    def shutdown
+
+      while @queue.size > 0; Thread.pass; end
+    end
   end
 
   #--
@@ -155,6 +162,13 @@ module Ruote
 
       EM.next_tick { process([ eclass, emsg, eargs ]) }
         # that's all there is to it
+    end
+
+    # Makes sure to give some time to the queue to get flushed.
+    #
+    def shutdown
+
+      10.times { sleep 0.001 }
     end
   end
 
