@@ -48,5 +48,21 @@ class EftSetTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ a b0 c0 d1 e0 ]
   end
+
+  def test_unset_var
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :var => 'x', :value => '0'
+        echo '-${v:x}-'
+        unset :var => 'x'
+        echo '-${v:x}-'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ -0- -- ]
+  end
 end
 

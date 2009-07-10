@@ -22,5 +22,25 @@ class FtVariablesTest < Test::Unit::TestCase
 
     assert_equal "at:#{wfid}:0_0", @tracer.to_s
   end
+
+  def test_variables_event
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :var => 'v', :val => 'x'
+        unset :var => 'v'
+        echo 'done.'
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, 'done.')
+
+    assert_equal(
+      1, logger.log.select { |e| e[0] == :variables && e[1] == :set }.size)
+    assert_equal(
+      1, logger.log.select { |e| e[0] == :variables && e[1] == :unset }.size)
+  end
 end
 

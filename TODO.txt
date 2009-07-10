@@ -72,11 +72,14 @@
 
 [o] if
 [o] equals
+[ ] unset
 [ ] concurrent-iterator < concurrence
 [ ] save / restore
-[ ] when
+[ ] when (exploit :var :set event)
 [ ] error
 [ ] reserve (enhanced ?)
+
+[ ] conditional : rprefix !
 
 [o] stop passing full exp in message, except for expression updates
 
@@ -144,4 +147,6 @@ restart tests :
 
 [ ] on_timeout => 'part|sub|error' (idea by hassox)
 [x] on_cancel => 'error' NO
+
+[o] event on [un]setting variable
 

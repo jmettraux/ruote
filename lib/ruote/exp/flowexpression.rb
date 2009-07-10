@@ -370,6 +370,8 @@ module Ruote
         @variables[var] = val
         persist
 
+        wqueue.emit(:variables, :set, :var => var, :fei => @fei)
+
       elsif @parent_id
 
         parent.set_variable(var, val, prefix)
@@ -391,6 +393,8 @@ module Ruote
 
         @variables.delete(var)
         persist
+
+        wqueue.emit(:variables, :unset, :var => var, :fei => @fei)
 
       elsif @parent_id
 

@@ -29,7 +29,7 @@ module Ruote
 
   class SetExpression < FlowExpression
 
-    names :set
+    names :set, :unset
 
     def apply
 
@@ -38,7 +38,9 @@ module Ruote
 
     def reply (workitem)
 
-      value = if val_key = has_attribute(:val, :value)
+      value = if name == 'unset'
+        nil
+      elsif val_key = has_attribute(:val, :value)
         attribute(val_key, workitem)
       else
         child_text(workitem) # TODO : test that !!!
@@ -47,12 +49,22 @@ module Ruote
       if var_key = has_attribute(:v, :var, :variable)
 
         var = attribute(var_key, workitem)
-        set_variable(var, value)
+
+        if name == 'unset'
+          unset_variable(var)
+        else
+          set_variable(var, value)
+        end
 
       elsif field_key = has_attribute(:f, :fld, :field)
 
         field = attribute(field_key, workitem)
-        workitem.attributes[field] = value
+
+        if name == 'unset'
+          workitem.attributes.delete(field)
+        else
+          workitem.attributes[field] = value
+        end
 
       else
 
