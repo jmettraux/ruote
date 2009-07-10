@@ -42,5 +42,28 @@ class EftLoopTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ a b a b a b ])
   end
+
+  def test_repeat
+
+    pdef = Ruote.process_definition :name => 'test' do
+      repeat do
+        alpha
+      end
+    end
+
+    #noisy
+
+    @engine.register_participant :alpha do |workitem|
+
+      @tracer << "a\n"
+      (workitem.fields['count'] ||= 0)
+      workitem.fields['count'] += 1
+
+      workitem.fields['__command__'] = [ 'break', nil ] \
+        if workitem.fields['count'] > 5
+    end
+
+    assert_trace(pdef, %w[ a a a a a a ])
+  end
 end
 

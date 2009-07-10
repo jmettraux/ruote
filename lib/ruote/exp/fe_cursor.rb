@@ -33,7 +33,7 @@ module Ruote
 
     include CommandMixin
 
-    names :cursor, :loop
+    names :cursor, :loop, :repeat
 
     def apply
 
@@ -55,7 +55,7 @@ module Ruote
       when 'jump' then position = jump_to(workitem, position, arg)
       end
 
-      position = 0 if position == tree_children.size && name == 'loop'
+      position = 0 if position >= tree_children.size && is_loop?
 
       if position < tree_children.size
         apply_child(position, workitem)
@@ -65,6 +65,11 @@ module Ruote
     end
 
     protected
+
+    def is_loop?
+
+      name == 'loop' || name == 'repeat'
+    end
 
     def jump_to (workitem, position, arg)
 
