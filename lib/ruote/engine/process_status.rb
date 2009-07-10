@@ -105,7 +105,9 @@ module Ruote
 
     def to_s
 
-      "(process_status wfid '#{wfid}', expressions #{@expressions.size})"
+      "(process_status wfid '#{wfid}', " +
+      "expressions #{@expressions.size}, " +
+      "errors #{@errors.size})"
     end
 
     def current_tree

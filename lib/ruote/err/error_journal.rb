@@ -42,7 +42,7 @@ module Ruote
       @h[:when]
     end
 
-    # Then 'internal' bus event
+    # The 'internal' bus event
     #
     def msg
       @h[:message]
@@ -53,6 +53,7 @@ module Ruote
     end
 
     def message
+      error.to_s
     end
 
     def fei
