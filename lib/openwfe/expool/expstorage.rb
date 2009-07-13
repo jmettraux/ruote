@@ -133,7 +133,7 @@ module OpenWFE
       return false \
         if cs and fei.sub_instance_id != ''
       return false \
-        if wfid and fei.wfid != wfid
+        if wfid and fei.parent_wfid != wfid
       return false \
         if wfid_prefix and not fei.wfid.match("^#{wfid_prefix}")
       return false \
