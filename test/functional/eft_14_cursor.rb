@@ -104,5 +104,28 @@ class EftCursorTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ a b d ])
   end
+
+  def test_rewind_if
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        set :f => 'counter', :val => 0
+        set :f => 'rewind', :val => false
+        cursor :rewind_if => '${f:rewind}' do
+          alpha
+        end
+      end
+    end
+
+    @engine.register_participant :alpha do |workitem|
+      workitem.fields['counter'] += 1
+      workitem.fields['rewind'] = workitem.fields['counter'] < 5
+      @tracer << "a\n"
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ a ] * 5)
+  end
 end
 

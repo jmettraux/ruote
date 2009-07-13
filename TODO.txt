@@ -79,6 +79,8 @@
 [ ] error
 [ ] reserve (enhanced ?)
 
+[o] cursor/loop/iterator : break-if rewind-if
+
 [ ] conditional : rprefix !
 
 [o] stop passing full exp in message, except for expression updates
@@ -149,4 +151,8 @@ restart tests :
 [x] on_cancel => 'error' NO
 
 [o] event on [un]setting variable
+
+[ ] __command__ + tag (rewind that cursor there, not the current one)
+
+[ ] condition : != ~= >= ....
 

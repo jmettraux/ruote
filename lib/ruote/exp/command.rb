@@ -25,15 +25,20 @@
 
 module Ruote
 
+  #
+  # Commands are understood by the cursor, loop and iterator expressions.
+  #
   module CommandMixin
 
     F_COMMAND = '__command__'
+    ATT_COMMANDS = %w[ break rewind ]
 
     protected
 
     def get_command (workitem)
 
       command, step = workitem.fields.delete(F_COMMAND)
+      command, step = lookup_attribute_command(workitem) unless command
 
       return nil if command == nil
 
@@ -50,6 +55,30 @@ module Ruote
     def set_command (workitem, command, step=nil)
 
       workitem.fields[F_COMMAND] = [ command, step ]
+    end
+
+    def lookup_attribute_command (workitem)
+
+      lookup_att_com('if', workitem) || lookup_att_com('unless', workitem)
+    end
+
+    def lookup_att_com (dir, workitem)
+
+      ATT_COMMANDS.each do |com|
+
+        c =
+          attribute("#{com}_#{dir}", workitem) ||
+          attribute("#{com}-#{dir}", workitem)
+
+        next unless c
+
+        c = Condition.true?(c)
+
+        return [ com, nil ] \
+          if (dir == 'if' && c) || (dir == 'unless' && ( ! c))
+      end
+
+      nil
     end
   end
 end

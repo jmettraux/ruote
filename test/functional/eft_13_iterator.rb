@@ -154,5 +154,40 @@ class EftIteratorTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ alice/0_0_0_0 charly/0_0_0_0 ])
   end
+
+  def test_break_if
+
+    pdef = Ruote.process_definition :name => 'test' do
+      iterator :on_val => 'a, b, c', :to_var => 'v', :break_if => '${v:v} == b' do
+        participant '${v:v}'
+      end
+    end
+
+    @engine.register_participant '.*' do |workitem|
+      @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ a/0_0_0 b/0_0_0 ])
+  end
+
+  def test_break_unless
+
+    pdef = Ruote.process_definition :name => 'test' do
+      set :var => 'v', :val => 'a'
+      iterator :on_val => 'a, b, c', :to_var => 'v', :break_unless => '${v:v} == a' do
+        participant '${v:v}'
+      end
+    end
+
+    @engine.register_participant '.*' do |workitem|
+      @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ a/0_1_0 b/0_1_0 ])
+  end
 end
 
