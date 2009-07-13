@@ -165,12 +165,12 @@ module OpenWFE
 
       values = if wfid = options.delete(:wfid)
         @db.query { |q|
-          q.add('wfid', :equals, wfid)
+          q.add('pwfid', :equals, wfid)
         }
-      elsif pwfid = options.delete(:parent_wfid)
-        @db.query { |q|
-          q.add('pwfid', :equals, pwfid)
-        }
+      #elsif pwfid = options.delete(:parent_wfid)
+      #  @db.query { |q|
+      #    q.add('pwfid', :equals, pwfid)
+      #  }
       elsif wfidp = options.delete(:wfid_prefix)
         @db.query { |q|
           q.add('wfid', :starts_with, wfidp)
