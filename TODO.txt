@@ -117,8 +117,8 @@
 
 [o] conditional for everybody
 [o] timeout for everybody
+[o] __timed_out__ = true ? (wi.fields)
 [ ] Andrew's at for timeouts (Chronic maybe)
-[ ] __timed_out__ = true ? (wi.fields)
 
 [ ] forget : participant ? subprocess ? everybody
 

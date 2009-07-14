@@ -47,16 +47,21 @@ module Ruote
 
       context = rufus_job.scheduler.options[:context]
 
+      fexp = context[:s_expression_storage][@fei]
+
       opts = { :fei => @fei, :scheduler => true }
 
       if @method == :reply
 
-        fexp = context[:s_expression_storage][@fei]
         opts[:workitem] = fexp.applied_workitem
-      end
-      #else @method == :cancel
 
-      # TODO : maybe setting __timed_out__ here...
+      else @method == :cancel
+
+        fexp.applied_workitem.fields['__timed_out__'] =
+          "#{Time.now} / #{@fei.to_s}"
+
+        fexp.persist
+      end
 
       context[:s_workqueue].emit!(:expressions, @method, opts)
     end

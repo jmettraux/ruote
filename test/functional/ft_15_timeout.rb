@@ -34,6 +34,8 @@ class FtTimeoutTest < Test::Unit::TestCase
     assert_equal 1, bravo.size
     assert_equal 1, logger.log.select { |e| e[2][:scheduler] == true }.size
     assert_equal 0, @engine.scheduler.jobs.size
+
+    assert_not_nil bravo.first.fields['__timed_out__']
   end
 
   def test_cancel_timeout
