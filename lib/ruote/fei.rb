@@ -31,7 +31,7 @@ module Ruote
   class FlowExpressionId
 
     CHILD_SEP = '_'
-    SUBP_SEP = '_'
+    SUBP_REGEX = /^(.+)\_(\d+)$/
 
     attr_accessor :engine_id
     attr_accessor :wfid
@@ -73,13 +73,12 @@ module Ruote
 
     def parent_wfid
 
-      @wfid.split(SUBP_SEP).first
+      self.class.wfid_split(@wfid)[0]
     end
 
     def sub_wfid
 
-      ss = @wfid.split(SUBP_SEP)
-      ss.size > 1 ? ss.last : nil
+      self.class.wfid_split(@wfid)[1]
     end
 
     def to_h
@@ -111,6 +110,29 @@ module Ruote
     def depth
 
       (@expid.split(CHILD_SEP).size - 1)
+    end
+
+    def self.parent_wfid (wfid)
+
+      wfid_split(wfid)[0]
+    end
+
+    def self.sub_wfid (wfid)
+
+      wfid_split(wfid)[1]
+    end
+
+    protected
+
+    # Splits the wfid into [ parent_wfid, subprocess_id ]
+    #
+    def self.wfid_split (wfid)
+
+      if m = SUBP_REGEX.match(wfid)
+        [ m[1], m[2] ]
+      else
+        [ wfid ]
+      end
     end
   end
 end
