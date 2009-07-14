@@ -95,5 +95,26 @@ class ConditionTest < Test::Unit::TestCase
     assert_b false, 'true is not set'
     #assert_b false, 'is set'
   end
+
+  def test_bang_equal
+
+    assert_b false, 'true != true'
+    assert_b true, 'true != false'
+  end
+
+  def test_match
+
+    assert_b false, 'alpha =~ bravo'
+    assert_b true, 'alpha =~ al'
+  end
+
+  def test_number_comparision
+
+    assert_b true, 'b > a'
+    assert_b false, 'a > b'
+    assert_b true, '100 > 10'
+    assert_b true, '100 > 90'
+    assert_b true, '100.0 > 90'
+  end
 end
 

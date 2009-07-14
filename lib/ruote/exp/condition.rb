@@ -47,7 +47,7 @@ module Ruote
       if m = SET_REGEX.match(conditional)
         eval_is(m[1..-1])
       elsif m = COMPARISON_REGEX.match(conditional)
-        m[1].send(m[2], m[3])
+        compare(m)
       else
         to_b(conditional)
       end
@@ -78,6 +78,26 @@ module Ruote
       o = o.strip if o.is_a?(String)
 
       not (o == nil || o == false || o == 'false' || o == '')
+    end
+
+    def self.compare (m)
+
+      return (m[1].=~(Regexp.new(m[3])) != nil) if m[2] == '=~'
+
+      a = narrow(m[1])
+      b = narrow(m[3])
+
+      if a.class != b.class
+        a = m[1]
+        b = m[3]
+      end
+
+      a.send(m[2], b)
+    end
+
+    def self.narrow (s)
+
+      Float(s) rescue s
     end
   end
 end

@@ -118,7 +118,7 @@
 [o] conditional for everybody
 [o] timeout for everybody
 [ ] Andrew's at for timeouts (Chronic maybe)
-[ ] __timeout__ = true ? (wi.fields)
+[ ] __timed_out__ = true ? (wi.fields)
 
 [ ] forget : participant ? subprocess ? everybody
 
@@ -154,5 +154,5 @@ restart tests :
 
 [ ] __command__ + tag (rewind that cursor there, not the current one)
 
-[ ] condition : != ~= >= ....
+[o] condition : != ~= >= ....
 
