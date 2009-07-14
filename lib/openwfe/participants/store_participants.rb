@@ -160,7 +160,9 @@ module OpenWFE
     # get woken up.
     #
     def notify_waiting_threads
+
       return unless @waiting_threads
+
       @waiting_threads.each { |t| t.wakeup }
       @waiting_threads.clear
     end

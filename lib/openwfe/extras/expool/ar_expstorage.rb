@@ -255,8 +255,10 @@ module OpenWFE::Extras
       conditions = []
 
       if wfid
-        query << 'wfid = ?'
-        conditions << wfid
+        #query << 'wfid = ?'
+        #conditions << wfid
+        query << 'wfid LIKE ?'
+        conditions << "#{wfid}%"
       elsif wfid_prefix
         query << 'wfid LIKE ?'
         conditions << "#{wfid_prefix}%"
