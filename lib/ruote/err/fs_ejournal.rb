@@ -85,6 +85,28 @@ module Ruote
       File.join(@path, "#{wfid}_ejournal.yaml")
     end
 
+    def save (wfid, errors)
+
+      File.open(path_for(wfid), 'w') { |f| f.puts(errors.to_yaml) }
+    end
+
+    def remove (fei)
+
+      @monitor.synchronize do
+
+        errors = process_errors(fei.parent_wfid, true)
+          # re-entry...
+
+        err = errors.find { |e| e[:fei] == fei }
+
+        return unless err
+
+        errors.delete(err)
+
+        save(fei.parent_wfid, errors)
+      end
+    end
+
     def record (fei, eargs)
 
       @monitor.synchronize do
@@ -95,9 +117,7 @@ module Ruote
         errors = errors.inject({}) { |h, e| h[e[:fei]] = e; h }
         errors[fei] = eargs
 
-        File.open(path_for(fei.parent_wfid), 'w') do |f|
-          f.puts(errors.values.to_yaml)
-        end
+        save(fei.parent_wfid, errors.values)
       end
     end
   end

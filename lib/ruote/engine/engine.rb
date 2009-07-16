@@ -183,7 +183,7 @@ module Ruote
     #
     def replay_at_error (err)
 
-      wqueue.emit(*err.msg)
+      ejournal.replay_at_error(err)
     end
 
     def stop

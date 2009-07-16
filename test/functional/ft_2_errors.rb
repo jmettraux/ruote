@@ -86,6 +86,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_nil @engine.process(wfid)
 
     assert_equal 'alpha', @tracer.to_s
+
+    # check if error is really gone from error journal...
+
+    assert_equal [], @engine.ejournal.process_errors(wfid)
   end
 
   def test_error_in_participant

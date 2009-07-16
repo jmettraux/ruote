@@ -103,6 +103,12 @@ module Ruote
       (@errors[wfid] || {}).values.collect { |e| ProcessError.new(e) }
     end
 
+    def replay_at_error (err)
+
+      remove(err.fei)
+      wqueue.emit(*err.msg)
+    end
+
     # Removes the errors corresponding to a process.
     #
     # Returns true if there was actually some errors that got purged.
@@ -127,6 +133,13 @@ module Ruote
     def record (fei, eargs)
 
       (@errors[fei.parent_wfid] ||= {})[fei] = eargs
+    end
+
+    def remove (fei)
+
+      if errs = @errors[fei.parent_wfid]
+        errs.delete(fei)
+      end
     end
 
     def receive (eclass, emsg, eargs)

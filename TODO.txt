@@ -45,8 +45,8 @@
 [ ] file logger service
 
 [o] fs_error_journal
-[ ] fs_error_journal : restart test
-[ ] do errors get removed after being replayed ?
+[o] fs_error_journal : restart test
+[o] do errors get removed after being replayed ? yes.
 
 [o] cache storage
 [o] fs storage
