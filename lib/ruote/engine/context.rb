@@ -76,7 +76,7 @@ module Ruote
       @context[:s_participant_list]
     end
     def ejournal
-      @context[:s_error_journal]
+      @context[:s_ejournal]
     end
     def treechecker
       @context[:s_treechecker]

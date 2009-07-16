@@ -48,14 +48,6 @@ module Ruote
       @h[:message]
     end
 
-    def error
-      @h[:error]
-    end
-
-    def message
-      error.to_s
-    end
-
     def fei
       msg.last[:fei]
     end
@@ -66,6 +58,16 @@ module Ruote
 
     def tree
       msg.last[:tree]
+    end
+
+    def error_class
+      @h[:error][0]
+    end
+    def error_message
+      @h[:error][1]
+    end
+    def error_backtrace
+      @h[:error][2]
     end
 
     # A shortcut for modifying the tree of an expression when it has had
@@ -81,19 +83,16 @@ module Ruote
   #
   # Keeping track of the errors plaguing processes.
   #
-  class ErrorJournal
+  class HashErrorJournal
 
     include EngineContext
     include Subscriber
 
-    def initialize
-
-      @errors = {}
-    end
-
     def context= (c)
 
+      @errors = {}
       @context = c
+
       subscribe(:errors)
     end
 
@@ -104,32 +103,49 @@ module Ruote
       (@errors[wfid] || {}).values.collect { |e| ProcessError.new(e) }
     end
 
-    # Returns all the current errors
+    # Removes the errors corresponding to a process.
     #
-    # { wfid => [ ProcessError instances ] }
+    # Returns true if there was actually some errors that got purged.
     #
-    def errors
+    def purge_process (wfid)
 
-      @errors.inject({}) do |h, (wfid, errs)|
-        h[wfid] = errs.values.collect { |e| ProcessError.new(e) }
-        h
+      (@errors.delete(wfid) != nil)
+    end
+
+    # Removes all the errors whose process is not active anymore.
+    #
+    def purge_processes
+
+      @errors.keys.each do |wfid|
+        exps = expstorage.find_expressions(:wfid => wfid)
+        purge_process(wfid) if exps.size < 1
       end
     end
 
     protected
 
+    def record (fei, eargs)
+
+      (@errors[fei.parent_wfid] ||= {})[fei] = eargs
+    end
+
     def receive (eclass, emsg, eargs)
+
+      eargs = eargs.dup
 
       info = eargs[:message].last
 
       fei = info[:fei] || (info[:expression] || info[:workitem]).fei
       wfid = info[:wfid]
 
+      err = eargs[:error]
+      eargs[:error] = [ err.class.name, err.message, err.backtrace ]
+        # since Exception#to_yaml is not reliable...
+
+      eargs[:fei] = fei
       eargs[:when] = Time.now
 
-      (@errors[wfid || fei.parent_wfid] ||= {})[fei] = eargs
-
-      # could a lonely wfid be a sub wfid ? ...
+      record(fei, eargs)
     end
   end
 end

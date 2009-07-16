@@ -44,7 +44,7 @@
 
 [ ] file logger service
 
-[ ] fs_error_journal
+[o] fs_error_journal
 [ ] fs_error_journal : restart test
 [ ] do errors get removed after being replayed ?
 

@@ -24,6 +24,7 @@
 
 
 require 'ruote/engine/engine'
+require 'ruote/err/fs_ejournal'
 require 'ruote/evt/fs_tracker'
 require 'ruote/time/fs_scheduler'
 require 'ruote/storage/fs_storage'
@@ -51,6 +52,11 @@ module Ruote
     def build_scheduler
 
       add_service(:s_scheduler, Ruote::FsScheduler)
+    end
+
+    def build_error_journal
+
+      add_service(:s_ejournal, Ruote::FsErrorJournal)
     end
   end
 end

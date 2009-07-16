@@ -35,7 +35,7 @@ require 'ruote/part/participant_list'
 require 'ruote/queue/workqueue'
 require 'ruote/storage/hash_storage'
 require 'ruote/storage/cache_storage'
-require 'ruote/err/error_journal'
+require 'ruote/err/ejournal'
 require 'ruote/evt/tracker'
 require 'ruote/time/scheduler'
 
@@ -123,7 +123,7 @@ module Ruote
     #
     def process (wfid)
 
-      exps = expstorage.find_expressions(:parent_wfid => wfid)
+      exps = expstorage.find_expressions(:wfid => wfid)
       errs = ejournal.process_errors(wfid)
 
       # NOTE : should we return a process status if there are only errors ?
@@ -138,14 +138,15 @@ module Ruote
     def processes
 
       exps = expstorage.find_expressions
-      errs = ejournal.errors
 
       ps = exps.inject({}) do |h, exp|
         (h[exp.fei.parent_wfid] ||= []) << exp
         h
       end
 
-      ps.collect { |wfid, exps| ProcessStatus.new(exps, errs[wfid] || []) }
+      ps.collect do |wfid, exps|
+        ProcessStatus.new(exps, ejournal.process_errors(wfid))
+      end
     end
 
     # Cancels a whole process instance.
@@ -269,7 +270,7 @@ module Ruote
     end
 
     def build_error_journal
-      add_service(:s_error_journal, Ruote::ErrorJournal)
+      add_service(:s_ejournal, Ruote::HashErrorJournal)
     end
 
     def build_tracker
