@@ -54,7 +54,9 @@ module Ruote
         ArgumentError.new("no participant named #{@participant_name.inspect}")
       ) unless participant
 
-      @applied_workitem.participant_name = @participant_name
+      @applied_workitem.participant_name =
+        attribute(:original_ref) || @participant_name
+
       @applied_workitem.fields['params'] = lookup_attributes
 
       persist

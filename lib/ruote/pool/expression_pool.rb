@@ -204,21 +204,21 @@ module Ruote
 
       if not exp_class
 
-        sub = temp_exp(
+        k, v = temp_exp(
           parent_id, variables, workitem, tree
-        ).lookup_variable(exp_name)
+        ).iterative_var_lookup(exp_name)
 
-        part = plist.lookup(exp_name)
+        sub = v
+        part = plist.lookup(k)
 
         if sub or part
 
           # don't bother passing the looked up value
 
-          tree = [
-            part ? 'participant' : 'subprocess',
-            tree[1].merge('ref' => exp_name),
-            []
-          ]
+          tree_opts = tree[1].merge('ref' => k)
+          tree_opts.merge!('original_ref' => exp_name) if k != exp_name
+
+          tree = [ part ? 'participant' : 'subprocess', tree_opts, [] ]
 
           exp_name = tree.first
         end

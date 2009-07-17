@@ -404,6 +404,18 @@ module Ruote
       end
     end
 
+    # This method is mostly used by the expression pool when looking up
+    # a process name or participant name bound under a variable.
+    #
+    def iterative_var_lookup (k)
+
+      v = lookup_variable(k)
+
+      return [ k, v ] unless (v.is_a?(String) or v.is_a?(Symbol))
+
+      iterative_var_lookup(v)
+    end
+
     #--
     # SERIALIZATION
     #
