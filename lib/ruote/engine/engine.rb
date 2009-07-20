@@ -42,6 +42,8 @@ require 'ruote/time/scheduler'
 
 module Ruote
 
+  VERSION = '2.0.0'
+
   class Engine
 
     include EngineContext

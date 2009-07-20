@@ -72,7 +72,7 @@
 
 [o] if
 [o] equals
-[ ] unset
+[o] unset
 [ ] concurrent-iterator < concurrence
 [ ] save / restore
 [ ] when (exploit :var :set event)
@@ -155,4 +155,10 @@ restart tests :
 [ ] __command__ + tag (rewind that cursor there, not the current one)
 
 [o] condition : != ~= >= ....
+
+[ ] Ruote.VERSION = "2.0.0" for Kenneth
+
+[ ] beanstalk [as a] workqueue ?
+
+[ ] fs_participant
 
