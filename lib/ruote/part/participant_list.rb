@@ -50,6 +50,8 @@ module Ruote
     #
     def register (name, participant, options, block)
 
+      options[:participant_name] = name
+
       entry = [
         name.is_a?(Regexp) ? name : Regexp.new("^#{name}$"),
         prepare(participant, options, block)
