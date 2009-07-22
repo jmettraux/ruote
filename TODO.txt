@@ -40,7 +40,7 @@
 
 [o] fexp.modified_time
 
-[ ] wfid_gen : rufus-mnemo
+[o] wfid_gen : rufus-mnemo
 
 [ ] file logger service
 
@@ -160,5 +160,5 @@ restart tests :
 
 [ ] beanstalk [as a] workqueue ?
 
-[ ] fs_participant
+[o] fs_participant
 

@@ -29,7 +29,7 @@ require 'ruote/engine/context'
 require 'ruote/engine/process_status'
 require 'ruote/engine/participant_methods'
 require 'ruote/exp/expression_map'
-require 'ruote/pool/wfid_generator'
+require 'ruote/pool/mnemo_wfid_generator'
 require 'ruote/pool/expression_pool'
 require 'ruote/part/participant_list'
 require 'ruote/queue/workqueue'
@@ -256,7 +256,8 @@ module Ruote
     end
 
     def build_wfid_generator
-      add_service(:s_wfid_generator, Ruote::WfidGenerator)
+      #add_service(:s_wfid_generator, Ruote::WfidGenerator)
+      add_service(:s_wfid_generator, Ruote::MnemoWfidGenerator)
     end
 
     def build_treechecker

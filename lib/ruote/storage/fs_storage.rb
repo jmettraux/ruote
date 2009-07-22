@@ -104,10 +104,9 @@ module Ruote
     def dir_for (wfid)
 
       wfid = FlowExpressionId.parent_wfid(wfid)
-
       swfid = wfidgen.split(wfid)
 
-      "#{@path}/#{swfid[-2, 1]}/#{swfid[-1, 1]}"
+      "#{@path}/#{swfid[-2]}/#{swfid[-1]}"
     end
 
     def filename_for (fei, join=false)

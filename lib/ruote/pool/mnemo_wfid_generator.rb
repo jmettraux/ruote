@@ -22,32 +22,20 @@
 # Made in Japan.
 #++
 
-
-require 'time'
-require 'thread'
-require 'fileutils'
-require 'ruote/engine/context'
+require 'rufus/mnemo' # sudo gem install rufus-mnemo
+require 'ruote/pool/wfid_generator'
 
 
 module Ruote
 
   #
-  # A simple wfid generator. The pattern is "%Y%m%d%H%m%S-usec".
+  # A rufus-mnemo based wfid generator.
   #
-  class WfidGenerator
+  class MnemoWfidGenerator < WfidGenerator
 
     include EngineContext
 
-
-    def context= (c)
-
-      @context = c
-      @mutex = Mutex.new
-      @file = nil
-
-      load_last
-      save_last
-    end
+    SPLIT_REGEX = /-(.+)$/
 
     # Generates a wfid (workflow instance id (process instance id))
     #
@@ -61,13 +49,9 @@ module Ruote
         @last = wfid
         save_last
 
-        #line = caller[4]
-        #if line.match(/\/functional\//)
-        #  p "#{@last.strftime('%Y%m%d%H%m%S')}-#{@last.usec}"
-        #  puts caller[4]
-        #end
+        m = ((@last.to_f % 60 * 60 * 24) * 1000).to_i
 
-        "#{@last.strftime('%Y%m%d%H%M%S')}-#{@last.usec}"
+        "#{@last.strftime('%Y%m%d')}-#{Rufus::Mnemo.from_integer(m)}"
       end
     end
 
@@ -76,36 +60,10 @@ module Ruote
     #
     def split (wfid)
 
-      (0..wfid.length - 1).collect { |i| wfid[i, 1] } # 1.8 and 1.9
-    end
+      m = wfid.match(SPLIT_REGEX)
 
-    def shutdown
-
-      @file.close
-    end
-
-    protected
-
-    def file_path
-
-      File.join(workdir, 'wfidgen.last')
-    end
-
-    def load_last
-
-      FileUtils.mkdir(workdir) unless File.exist?(workdir)
-      t = File.read(file_path).strip rescue ''
-      t = Time.parse(t)
-      n = Time.now
-      @last = t > n ? t : n
-    end
-
-    def save_last
-
-      @file = File.open(file_path, 'w+') if (not @file) or @file.closed?
-      @file.pos = 0
-      l = @file.syswrite("#{@last.strftime('%Y/%m/%d %H:%m:%S')}.#{@last.usec}")
-      @file.truncate(l)
+      Rufus::Mnemo.split(m[1]) rescue super(wfid)
     end
   end
 end
+
