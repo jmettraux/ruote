@@ -31,8 +31,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal 'my process', ps.definition_name
     assert_equal nil, ps.definition_revision
-    assert_equal({}, ps.variables)
     assert_not_nil ps.launched_time
+
+    assert_equal(
+      {"my process"=>["0", ["sequence", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]]]},
+      ps.variables)
   end
 
   def test_variables
@@ -52,7 +55,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     assert_equal 'my process', ps.definition_name
-    assert_equal({ 'toto' => 'nada' }, ps.variables)
+
+    assert_equal(
+      {"my process"=>["0", ["sequence", {"my process"=>nil}, [["sequence", {}, [["set", {"var"=>"toto", "val"=>"nada"}, []], ["participant", {"ref"=>"alpha"}, []]]]]]], "toto"=>"nada"},
+      ps.variables)
   end
 
   def test_tree
@@ -124,8 +130,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     assert_equal(
-      {"sub0" => [
-        "0_0", ["sequence", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]]]},
+      {"my process"=>["0", ["sequence", {"my process"=>nil}, [["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]], ["participant", {"ref"=>:alpha}, []]]]], "sub0"=>["0_0", ["sequence", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]]]},
       ps.variables)
 
     assert_equal(

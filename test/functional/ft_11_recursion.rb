@@ -84,5 +84,27 @@ class FtRecursionTest < Test::Unit::TestCase
       assert_match /.*\_#{i}$/, wfid
     }
   end
+
+  def test_forgotten_main_recursion
+
+    pdef = Ruote.process_definition :name => 'def0' do
+      sequence do
+        alpha
+        forget do
+          def0
+        end
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, CountingParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    sleep 0.350
+
+    assert_equal (1..6).to_a.join("\n"), @tracer.to_s
+  end
 end
 

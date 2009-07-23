@@ -162,3 +162,5 @@ restart tests :
 
 [o] fs_participant
 
+[ ] recursion : should cope with modified trees 'main' => :tree ??
+

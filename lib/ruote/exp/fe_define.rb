@@ -36,7 +36,7 @@ module Ruote
 
     def apply
 
-      self.tree = self.class.reorganize(expmap, tree)
+      self.tree = self.class.reorganize(expmap, tree).last
 
       name = attribute(:name) || attribute_text
 
@@ -57,7 +57,9 @@ module Ruote
 
       definitions, bodies = tree[2].partition { |b| expmap.is_definition?(b) }
 
-      [ 'sequence', tree[1], definitions + bodies ]
+      name = tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil }
+
+      [ name, [ 'sequence', tree[1], definitions + bodies ] ]
     end
   end
 end

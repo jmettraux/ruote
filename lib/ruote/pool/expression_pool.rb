@@ -383,15 +383,19 @@ module Ruote
       fei = new_fei(eargs[:wfid])
 
       tree = eargs[:tree]
-      tree = DefineExpression.reorganize(expmap, tree) \
-        if expmap.is_definition?(tree)
+      vars = {}
+
+      if expmap.is_definition?(tree)
+        name, tree = DefineExpression.reorganize(expmap, tree)
+        vars[name] = [ '0', tree ] if name
+      end
 
       wqueue.emit(
         :expressions, :apply,
         :tree => tree,
         :fei => fei,
         :workitem => eargs[:workitem],
-        :variables => {})
+        :variables => vars)
     end
 
     # Cancels a process instance.

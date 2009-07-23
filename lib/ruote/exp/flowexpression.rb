@@ -330,6 +330,11 @@ module Ruote
       return parent.lookup_variable(var, prefix) \
         if @parent_id && prefix.length > 0
 
+      #if var == (attribute('name') || attribute_text)
+      #  # allowing main process recursion (with the up-to-date tree)
+      #  return [ @fei.expid, tree ]
+      #end
+
       if @variables
 
         val = @variables[var]
@@ -341,13 +346,6 @@ module Ruote
         return parent.lookup_variable(var, prefix)
 
       #else # engine level
-      end
-
-      if var == (attribute('name') || attribute_text)
-        #
-        # allowing main process recursion
-        #
-        return [ @fei.expid, tree ]
       end
 
       nil

@@ -39,7 +39,8 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     assert_equal(
-      {"sub0"=>["0_0", ["sequence", {"name"=>"sub0"}, []]]},
+      {"sub0"=> ["0_0", ["sequence", {"name"=>"sub0"}, []]],
+       "main"=> ["0", ["sequence", {"name"=>"main"}, [["define", {"name"=>"sub0"}, []], ["participant", {"ref"=>:alpha}, []]]]]},
       ps.variables)
   end
 
