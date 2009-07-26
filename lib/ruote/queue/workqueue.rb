@@ -23,7 +23,6 @@
 #++
 
 
-require 'thread'
 require 'ruote/engine/context'
 
 
@@ -97,80 +96,5 @@ module Ruote
       end
     end
   end
-
-  class ThreadWorkqueue < Workqueue
-
-    def initialize
-
-      super()
-
-      @queue = Queue.new
-
-      @thread = Thread.new do
-        loop { process(@queue.pop) }
-      end
-    end
-
-    # Emits event for later processing
-    #
-    def emit (eclass, emsg, eargs)
-
-      @queue.push([ eclass, emsg, eargs ])
-    end
-
-    # Makes sure the queue is empty before shutdown is complete.
-    #
-    def shutdown
-
-      while @queue.size > 0; Thread.pass; end
-    end
-  end
-
-  #--
-  # Not very interesting
-  #
-  #class FiberWorkqueue < Workqueue
-  #  def initialize
-  #    @queue = Queue.new
-  #    @unit = nil
-  #    @thread = Thread.new do
-  #      unit = nil
-  #      fiber = Fiber.new do
-  #        loop do
-  #          process(unit)
-  #          Fiber.yield
-  #        end
-  #      end
-  #      loop do
-  #        unit = @queue.pop
-  #        fiber.resume
-  #      end
-  #    end
-  #  end
-  #  def push (target, method, *args)
-  #    @queue.push([ target, method, args ])
-  #  end
-  #end
-  #++
-
-  #
-  # Works well when IO is involved (this means, almost always)
-  #
-  class EmWorkqueue < Workqueue
-
-    def emit (eclass, emsg, eargs)
-
-      EM.next_tick { process([ eclass, emsg, eargs ]) }
-        # that's all there is to it
-    end
-
-    # Makes sure to give some time to the queue to get flushed.
-    #
-    def shutdown
-
-      10.times { sleep 0.001 }
-    end
-  end
-
 end
 

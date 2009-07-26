@@ -32,7 +32,7 @@ require 'ruote/exp/expression_map'
 require 'ruote/pool/mnemo_wfid_generator'
 require 'ruote/pool/expression_pool'
 require 'ruote/part/participant_list'
-require 'ruote/queue/workqueue'
+require 'ruote/queue/thread_workqueue'
 require 'ruote/storage/hash_storage'
 require 'ruote/storage/cache_storage'
 require 'ruote/err/ejournal'
@@ -249,9 +249,12 @@ module Ruote
       #add_service(:s_workqueue, Ruote::FiberWorkqueue)
 
       if defined?(EM) && EM.reactor_running?
+        require 'ruote/queue/em_workqueue'
         add_service(:s_workqueue, Ruote::EmWorkqueue)
       else
         add_service(:s_workqueue, Ruote::ThreadWorkqueue)
+        #require 'ruote/queue/fiber_workqueue'
+        #add_service(:s_workqueue, Ruote::FiberWorkqueue)
       end
     end
 
