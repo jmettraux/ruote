@@ -60,9 +60,13 @@ module FunctionalBase
 
   # launch_thing is a process definition or a launch item
   #
-  def assert_trace (launch_thing, expected_trace, opts={})
+  def assert_trace (launch_thing, *expected_traces)
 
-    expected_trace = expected_trace.join("\n") if expected_trace.is_a?(Array)
+    opts = expected_traces.last.is_a?(Hash) ? expected_traces.pop : {}
+
+    expected_traces = expected_traces.collect do |et|
+      et.is_a?(Array) ? et.join("\n") : et
+    end
 
     wfid = @engine.launch(launch_thing, opts[:launch_opts] || {})
 
@@ -74,7 +78,10 @@ module FunctionalBase
 
     assert_engine_clean(wfid, opts)
 
-    assert_equal(expected_trace, @tracer.to_s) if expected_trace
+    if expected_traces.length > 0
+      ok, nok = expected_traces.partition { |et| @tracer.to_s == et }
+      assert_equal(nok.first, @tracer.to_s) if ok.empty?
+    end
 
     wfid
   end

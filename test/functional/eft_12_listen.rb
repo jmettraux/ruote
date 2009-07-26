@@ -102,7 +102,8 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "bravo:#{workitem.fields['seen']}\n"
     end
 
-    assert_trace(pdef, %w[ alpha bravo:yes bravo: ])
+    assert_trace(
+      pdef, %w[ alpha bravo:yes bravo: ], %w[ alpha bravo: bravo:yes ])
   end
 
   def test_merge_override
