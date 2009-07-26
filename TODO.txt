@@ -16,151 +16,119 @@
 [o] rufus-dollar
 [o] variables in ProcessStatus (process level only)
 [o] ProcessStatus#tree
-
 [o] subprocess binding
 [o] subprocess lookup
 [o] participant lookup
 [o] event : launch_sub
-
 [o] event : :processes, :cancelled ?
-
 [o] concurrence : over_if
-
 [o] pool cleanup
-
 [o] fexp : created_time
 [o] ps : launched_time
 [o] ps : #tags
-
 [o] wi test (and fix) ${f:xyz}
 [o] wi#to_h #from_h
 [o] wi.params
-
 [o] self rec for [main] process
-
 [o] fexp.modified_time
-
 [o] wfid_gen : rufus-mnemo
-
-[ ] file logger service
-
 [o] fs_error_journal
 [o] fs_error_journal : restart test
 [o] do errors get removed after being replayed ? yes.
-
 [o] cache storage
 [o] fs storage
-
 [o] tag (which implies variables)
 [o] event : upon setting tag !
 [o] event : upon leaving tag
 [o] undo
 [o] redo
 [o] cancel-process (exp)
-
 [o] cancel_process
 [o] cancel
 [o] on_error
 [o] on_cancel
-
 [o] iterator
 [o] iterator : break, cancel, ...
-
 [o] cursor
 [o] cursor : jump to tag
 [o] loop
-
 [o] if
 [o] equals
 [o] unset
+[o] cursor/loop/iterator : break-if rewind-if
+[o] stop passing full exp in message, except for expression updates
+[x] engine#reload
+[o] participants shutdown
+[o] stalled [participant] expressions restart (apply/reply ?)
+    "re-apply on reload"
+    http://groups.google.com/group/openwferu-users/browse_thread/thread/c2aa4b53d1664d45
+[x] workitem.__result__ / why, the workitem itself is the result
+[o] tracker
+[o] sleep
+[o] listen
+[o] listen wfid="x"
+[o] exploded scheduler
+[x] wfid --> piid (stick with the funny old name)
+[o] persisted tracker
+[o] wfidgen.shutdown (close wfidgen.last)
+[o] conditional for everybody
+[o] timeout for everybody
+[o] __timed_out__ = true ? (wi.fields)
+[o] engine.processes()
+[o] kill_process != cancel_process (need a way to not trigger on_cancel)
+[o] pdef.to_dot (a beginning)
+[o] @in_cancel, @in_error --> @state (active|cancelling|killing)
+[o] wait
+[o] listen
+[o] Jason Allen's check about concurrence
+[x] on_cancel => 'error' NO
+[o] event on [un]setting variable
+[o] condition : != ~= >= ....
+[o] fs_participant
+[o] participant : do thread (and do_not_thread)
+[o] add test for error replay in participant
+
+[ ] forget : participant ? subprocess ? everybody
+
+[ ] file logger service
+
 [ ] concurrent-iterator < concurrence
 [ ] save / restore
 [ ] when (exploit :var :set event)
 [ ] error
 [ ] reserve (enhanced ?)
 
-[o] cursor/loop/iterator : break-if rewind-if
-
 [ ] conditional : rprefix !
 
-[o] stop passing full exp in message, except for expression updates
-
-[x] engine#reload
-
-[o] participants shutdown
-
-[o] stalled [participant] expressions restart (apply/reply ?)
-    "re-apply on reload"
-    http://groups.google.com/group/openwferu-users/browse_thread/thread/c2aa4b53d1664d45
 [ ] auto-participant re-apply
 
 [ ] define without name (__result__)
 
-[x] workitem.__result__ / why, the workitem itself is the result
 [ ] smart lookup ? (?)
-
-[o] tracker
-
-[o] sleep
-[o] listen
-[o] listen wfid="x"
-[o] exploded scheduler
-
-[o] persisted tracker
-
-
-[x] wfid --> piid (stick with the funny old name)
 
 [ ] pooltool.ru
 
-[o] wfidgen.shutdown (close wfidgen.last)
-
-[o] conditional for everybody
-[o] timeout for everybody
-[o] __timed_out__ = true ? (wi.fields)
 [ ] Andrew's at for timeouts (Chronic maybe)
-
-[ ] forget : participant ? subprocess ? everybody
-
-[o] participant : do thread (and do_not_thread)
-
-[o] add test for error replay in participant
 
 [ ] participant dispatch thread throttling ?
 [ ] func tests : wire assert_no_errors back in
 
-[o] engine.processes()
-
-[o] kill_process != cancel_process (need a way to not trigger on_cancel)
-
-[o] pdef.to_dot (a beginning)
 [ ] expstorage.to_dot
 
-[o] @in_cancel, @in_error --> @state (active|cancelling|killing)
 [ ] tailcall
 [ ] subprocesses participants (alias ?)
 
 restart tests :
-[o] wait
-[o] listen
 [ ] when
 
-[o] Jason Allen's check about concurrence
-
 [ ] on_timeout => 'part|sub|error' (idea by hassox)
-[x] on_cancel => 'error' NO
-
-[o] event on [un]setting variable
 
 [ ] __command__ + tag (rewind that cursor there, not the current one)
 
-[o] condition : != ~= >= ....
 
 [ ] Ruote.VERSION = "2.0.0" for Kenneth
 
 [ ] beanstalk [as a] workqueue ?
-
-[o] fs_participant
 
 [ ] recursion : should cope with modified trees 'main' => :tree ??
 
