@@ -102,7 +102,7 @@ class FtRecursionTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.350
+    6.times { wait_for(:alpha) }
 
     assert_equal (1..6).to_a.join("\n"), @tracer.to_s
   end

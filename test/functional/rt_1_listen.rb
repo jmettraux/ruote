@@ -47,14 +47,14 @@ class RtListenTest < Test::Unit::TestCase
 
     #puts; noisy
 
-    sleep 0.100
+    sleep 0.200
 
     #@engine.tracker.send(:reload)
     #assert_equal 1, @engine.tracker.send(:listeners).size
 
     @engine.reply(alpha.first)
 
-    sleep 0.100
+    sleep 0.200
     #wait_for(wfid)
 
     assert_equal 'done.', @tracer.to_s

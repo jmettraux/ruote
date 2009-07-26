@@ -62,7 +62,7 @@ class EftListenTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.5
+    sleep 0.750
 
     assert_equal "a\na\n#{wfid}_0\n#{wfid}_1", @tracer.to_s
 
