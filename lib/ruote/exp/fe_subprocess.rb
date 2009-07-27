@@ -50,7 +50,6 @@ module Ruote
 
     names :subprocess
 
-    # TODO : forget
 
     def apply
 

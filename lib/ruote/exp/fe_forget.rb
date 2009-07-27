@@ -30,6 +30,8 @@ module Ruote
   #
   # NOTE : deprecate in favour of 'forget' or 'orphan' attribute ?
   #
+  # Forgets all of its children.
+  #
   class ForgetExpression < FlowExpression
 
     names :forget

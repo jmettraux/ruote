@@ -80,8 +80,6 @@ module Ruote
 
       @on_cancel = attribute(:on_cancel)
       @on_error = attribute(:on_error)
-
-      # TODO : forget
     end
 
     # Returns the parent expression of this expression instance.
@@ -164,8 +162,16 @@ module Ruote
     def do_apply
 
       if Condition.skip?(attribute(:if), attribute(:unless))
-        reply_to_parent(@applied_workitem)
+
+        pool.reply_to_parent(self, @applied_workitem)
         return
+      end
+
+      if attribute(:forget).to_s == 'true'
+
+        pid = @parent_id
+        forget
+        pool.reply(@applied_workitem, pid)
       end
 
       consider_tag

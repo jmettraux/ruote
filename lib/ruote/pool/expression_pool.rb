@@ -49,9 +49,11 @@ module Ruote
 
     # Workitem coming back from outside [the engine].
     #
-    def reply (workitem)
+    def reply (workitem, fei=nil)
 
-      wqueue.emit(:expressions, :reply, :workitem => workitem)
+      wqueue.emit(
+        :expressions, :reply,
+        :workitem => workitem, :fei => fei || workitem.fei)
     end
 
     # Cancels an expression (and its expression children)

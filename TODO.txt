@@ -87,8 +87,7 @@
 [o] fs_participant
 [o] participant : do thread (and do_not_thread)
 [o] add test for error replay in participant
-
-[ ] forget : participant ? subprocess ? everybody
+[o] forget : participant ? subprocess ? everybody
 
 [ ] file logger service
 
@@ -131,4 +130,6 @@ restart tests :
 [ ] beanstalk [as a] workqueue ?
 
 [ ] recursion : should cope with modified trees 'main' => :tree ??
+
+[ ] participant : if EM is present use next_ or defer instead of Thread.new
 
