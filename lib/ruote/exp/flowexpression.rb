@@ -76,18 +76,12 @@ module Ruote
       @created_time = Time.now
       @modified_time = @created_time
 
-      @applied_workitem = workitem
-
-      return if self.class == Ruote::FlowExpression
-        # do not continue if it's only a temporary expression
-
-      @applied_workitem = workitem.dup # now, we need a dup
+      @applied_workitem = workitem.dup
 
       @on_cancel = attribute(:on_cancel)
       @on_error = attribute(:on_error)
 
-      consider_tag
-      consider_timeout
+      # TODO : forget
     end
 
     # Returns the parent expression of this expression instance.
@@ -171,9 +165,13 @@ module Ruote
 
       if Condition.skip?(attribute(:if), attribute(:unless))
         reply_to_parent(@applied_workitem)
-      else
-        apply
+        return
       end
+
+      consider_tag
+      consider_timeout
+
+      apply
     end
 
     # Called directly by the expression pool. See #reply for the (overridable)
