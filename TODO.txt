@@ -88,9 +88,8 @@
 [o] participant : do thread (and do_not_thread)
 [o] add test for error replay in participant
 [o] forget : participant ? subprocess ? everybody
-
 [o] on_timeout => 'part|sub' (idea by hassox)
-[ ] on_timeout => 'error' (idea by hassox)
+[o] on_timeout => 'error' (idea by hassox)
 
 [ ] file logger service
 
@@ -132,4 +131,6 @@ restart tests :
 [ ] recursion : should cope with modified trees 'main' => :tree ??
 
 [ ] participant : if EM is present use next_ or defer instead of Thread.new
+
+[ ] test for wfids of errors in subprocesses !
 

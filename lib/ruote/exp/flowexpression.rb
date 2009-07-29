@@ -30,6 +30,21 @@ require 'ruote/exp/attributes'
 
 module Ruote
 
+  #
+  # A simple timeout error. Only used when :on_timeout => 'error' for now.
+  #
+  class TimeoutError < RuntimeError
+    def backtrace
+      [ '---' ]
+    end
+  end
+
+  #
+  # The root class for all the expressions in Ruote.
+  #
+  # Contains lots of default behaviour, extending classes primarily
+  # override #apply, #reply and #cancel.
+  #
   class FlowExpression < ObjectWithMeta
 
     include EngineContext
@@ -46,7 +61,7 @@ module Ruote
 
     attr_accessor :on_cancel
     attr_accessor :on_error
-    #attr_accessor :on_timeout
+    attr_accessor :on_timeout
 
     attr_accessor :created_time
     attr_accessor :applied_workitem
@@ -601,7 +616,21 @@ module Ruote
 
       if handler == 'error'
 
-        # which direction for the error ?
+        # building and emitting an 'artifical' error
+
+        message = [ :expressions, :apply, {
+          :tree => tree,
+          :fei => @fei,
+          :workitem => @applied_workitem,
+          :variables => @variables } ]
+
+        wqueue.emit(
+          :errors,
+          :s_expression_pool, # somehow...
+          { :error => TimeoutError.new(attribute(:timeout)),
+            :wfid => @fei.wfid, # parent wfid ?
+            :message => message })
+
       else
 
         apply_tree(

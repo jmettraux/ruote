@@ -66,24 +66,6 @@ class FtTimeoutTest < Test::Unit::TestCase
     assert_equal 0, @engine.scheduler.jobs.size
   end
 
-  def _test_on_timeout_error
-
-    pdef = Ruote.process_definition do
-      alpha :timeout => '500', :on_timeout => 'error'
-    end
-
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-
-    noisy
-
-    wfid = @engine.launch(pdef)
-    wait_for(wfid)
-
-    ps = @engine.process(wfid)
-
-    assert_equal 1, ps.errors.size
-  end
-
   def test_on_timeout_redo
 
     pdef = Ruote.process_definition do
@@ -128,6 +110,32 @@ class FtTimeoutTest < Test::Unit::TestCase
     assert_equal 'timed out', @tracer.to_s
     assert_equal 0, @engine.expstorage.size
     assert_equal 0, alpha.size
+  end
+
+  def test_on_timeout_error
+
+    pdef = Ruote.process_definition do
+      alpha :timeout => '500', :on_timeout => 'error'
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    assert_equal 1, ps.errors.size
+
+    err = ps.errors.first
+    err.tree = [ 'alpha', {}, [] ]
+
+    @engine.replay_at_error(err)
+    wait_for(:alpha)
+
+    assert_equal 1, alpha.size
   end
 end
 
