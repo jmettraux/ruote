@@ -170,7 +170,7 @@ module Ruote
     #
     def cancel_expression (fei)
 
-      pool.cancel_expression(fei, false)
+      pool.cancel_expression(fei, nil)
     end
 
     # Cancels an expression (and all its children), but makes sure that
@@ -178,7 +178,7 @@ module Ruote
     #
     def kill_expression (fei)
 
-      pool.cancel_expression(fei, true)
+      pool.cancel_expression(fei, :kill)
     end
 
     # Simply reemits the message (queue event) found in the error..

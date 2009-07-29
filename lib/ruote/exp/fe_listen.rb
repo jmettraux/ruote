@@ -72,7 +72,7 @@ module Ruote
       end
     end
 
-    def cancel (kill)
+    def cancel (flavour)
 
       reply_to_parent(@applied_workitem)
     end

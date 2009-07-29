@@ -58,7 +58,7 @@ module Ruote
     #end
     #++
 
-    def cancel (kill)
+    def cancel (flavour)
 
       unschedule
       reply_to_parent(@applied_workitem)

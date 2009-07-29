@@ -61,9 +61,9 @@ module Ruote
     # If kill is set to true, no on_cancel handler will be considered, the
     # expression and its tree will get killed.
     #
-    def cancel_expression (fei, kill)
+    def cancel_expression (fei, flavour)
 
-      wqueue.emit(:expressions, :cancel, :fei => fei, :kill => kill)
+      wqueue.emit(:expressions, :cancel, :fei => fei, :flavour => flavour)
     end
 
     # Immediately 'forgets' the expression (if still present).
@@ -163,7 +163,7 @@ module Ruote
 
         exp.on_cancel = exp.tree
         exp.persist
-        cancel_expression(exp.fei, false)
+        cancel_expression(exp.fei, nil) # flavour is nil, regular cancel
 
       else
 
@@ -298,7 +298,7 @@ module Ruote
         case emsg
         when :apply then exp.do_apply
         when :reply then exp.do_reply(wi)
-        when :cancel then exp.do_cancel(eargs[:kill] == true)
+        when :cancel then exp.do_cancel(eargs[:flavour])
         end
 
       rescue Exception => e
@@ -409,7 +409,8 @@ module Ruote
     def cancel (emsg, eargs)
 
       root_fei = new_fei(eargs[:wfid])
-      cancel_expression(root_fei, emsg == :kill)
+
+      cancel_expression(root_fei, emsg == :kill ? :kill : nil)
     end
     alias :kill :cancel
 

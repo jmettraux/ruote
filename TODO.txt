@@ -89,6 +89,9 @@
 [o] add test for error replay in participant
 [o] forget : participant ? subprocess ? everybody
 
+[o] on_timeout => 'part|sub' (idea by hassox)
+[ ] on_timeout => 'error' (idea by hassox)
+
 [ ] file logger service
 
 [ ] concurrent-iterator < concurrence
@@ -120,10 +123,7 @@
 restart tests :
 [ ] when
 
-[ ] on_timeout => 'part|sub|error' (idea by hassox)
-
 [ ] __command__ + tag (rewind that cursor there, not the current one)
-
 
 [ ] Ruote.VERSION = "2.0.0" for Kenneth
 

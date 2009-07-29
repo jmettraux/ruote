@@ -284,7 +284,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.processes
 
     assert_equal 2, ps.size
-    assert_equal [ wfid0, wfid1 ], ps.collect { |e| e.wfid }.sort
+    assert_equal [ wfid0, wfid1 ].sort, ps.collect { |e| e.wfid }.sort
 
     assert_equal 2, alpha.size
   end

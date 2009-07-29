@@ -64,7 +64,7 @@ module Ruote
       dispatch_to(participant)
     end
 
-    def cancel (kill)
+    def cancel (flavour)
 
       participant = plist.lookup(@participant_name)
 

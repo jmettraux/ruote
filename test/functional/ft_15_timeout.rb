@@ -65,5 +65,69 @@ class FtTimeoutTest < Test::Unit::TestCase
     assert_equal 1, bravo.size
     assert_equal 0, @engine.scheduler.jobs.size
   end
+
+  def _test_on_timeout_error
+
+    pdef = Ruote.process_definition do
+      alpha :timeout => '500', :on_timeout => 'error'
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    assert_equal 1, ps.errors.size
+  end
+
+  def test_on_timeout_redo
+
+    pdef = Ruote.process_definition do
+      alpha :timeout => '500', :on_timeout => 'redo'
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    sleep 1.6
+
+    assert logger.log.select { |e| e[1] == :cancel }.size >= 2
+
+    @engine.cancel_process(wfid)
+
+    sleep 0.500
+
+    assert_nil @engine.process(wfid)
+  end
+
+  def test_on_timeout_cancel_nested
+
+    pdef = Ruote.process_definition do
+      sequence :timeout => '500', :on_timeout => 'timedout' do
+        alpha
+      end
+      define 'timedout' do
+        echo 'timed out'
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    assert_nil @engine.process(wfid)
+    assert_equal 'timed out', @tracer.to_s
+    assert_equal 0, @engine.expstorage.size
+    assert_equal 0, alpha.size
+  end
 end
 

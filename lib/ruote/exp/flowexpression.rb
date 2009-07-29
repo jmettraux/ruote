@@ -46,6 +46,7 @@ module Ruote
 
     attr_accessor :on_cancel
     attr_accessor :on_error
+    #attr_accessor :on_timeout
 
     attr_accessor :created_time
     attr_accessor :applied_workitem
@@ -54,7 +55,9 @@ module Ruote
 
     attr_reader :modified_time
 
-    COMMON_ATT_KEYS = %w[ if unless timeout on_error on_cancel on_timeout ]
+    COMMON_ATT_KEYS = %w[
+      if unless timeout on_error on_cancel on_timeout forget
+    ]
 
 
     def initialize (context, fei, parent_id, tree, variables, workitem)
@@ -80,6 +83,7 @@ module Ruote
 
       @on_cancel = attribute(:on_cancel)
       @on_error = attribute(:on_error)
+      @on_timeout = attribute(:on_timeout)
     end
 
     # Returns the parent expression of this expression instance.
@@ -205,12 +209,20 @@ module Ruote
     # Called directly by the expression pool. See #cancel for the (overridable)
     # default behaviour.
     #
-    def do_cancel (kill)
+    def do_cancel (flavour)
 
-      @state = kill ? :dying : :cancelling
+      @state = case flavour
+        when :kill then :dying
+        when :timeout then :timing_out
+        else :cancelling
+      end
+
+      @applied_workitem.fields['__timed_out__'] = [ @fei, Time.now ] \
+        if @state == :timing_out
+
       persist
 
-      cancel(kill)
+      cancel(flavour)
     end
 
     # The default implementation : replies to the parent expression
@@ -223,9 +235,9 @@ module Ruote
     # This default implementation cancels all the [registered] children
     # of this expression.
     #
-    def cancel (kill)
+    def cancel (flavour)
 
-      @children.each { |cfei| pool.cancel_expression(cfei, kill) }
+      @children.each { |cfei| pool.cancel_expression(cfei, flavour) }
     end
 
     # Forces error handling by this expression.
@@ -527,7 +539,7 @@ module Ruote
         scheduler.unschedule(@timeout_job_id)
       end
 
-      if @state == :failing
+      if @state == :failing # @on_error is implicit (#fail got called)
 
         trigger_on_error(workitem)
 
@@ -536,24 +548,34 @@ module Ruote
 
         trigger_on_cancel(workitem)
 
+      elsif (@state == :timing_out) and @on_timeout
+
+        trigger_on_timeout(workitem)
+
       else
 
         pool.reply_to_parent(self, workitem)
       end
     end
 
+    # Shared by the trigger_on_ methods. No external use.
+    #
+    def apply_tree (tree, opts)
+
+      pool.send(:apply, opts.merge(
+        :tree => tree,
+        :fei => @fei,
+        :parent_id => @parent_id,
+        :workitem => @applied_workitem,
+        :variables => @variables))
+    end
+
     # if any on_cancel handler is present, will trigger it.
     #
     def trigger_on_cancel (workitem)
 
-      tree = @on_cancel.is_a?(String) ? [ @on_cancel, {}, [] ] : @on_cancel
-
-      pool.send(:apply,
-        :tree => tree,
-        :fei => fei,
-        :parent_id => @parent_id,
-        :workitem => @applied_workitem,
-        :variables => @variables,
+      apply_tree(
+        @on_cancel.is_a?(String) ? [ @on_cancel, {}, [] ] : @on_cancel,
         :on_cancel => true)
     end
 
@@ -567,13 +589,24 @@ module Ruote
 
       else # handle
 
-        pool.send(:apply,
-          :tree => handler == 'redo' ? tree : [ handler, {}, [] ],
-          :fei => @fei,
-          :parent_id => @parent_id,
-          :workitem => @applied_workitem,
-          :variables => @variables,
+        apply_tree(
+          handler == 'redo' ? tree : [ handler, {}, [] ],
           :on_error => true)
+      end
+    end
+
+    def trigger_on_timeout (workitem)
+
+      handler = @on_timeout.to_s
+
+      if handler == 'error'
+
+        # which direction for the error ?
+      else
+
+        apply_tree(
+          handler == 'redo' ? tree : [ handler, {}, [] ],
+          :on_timeout => true)
       end
     end
   end
