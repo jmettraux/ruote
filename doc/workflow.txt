@@ -1,0 +1,25 @@
+
+= terminology
+
+== workflow
+
+Used indifferently to point at 'workflow definition' or 'workflow instance'
+
+== workflow definition
+
+== workflow instance
+
+a running instance of a workflow
+
+== process instance
+
+see 'workflow instance'
+
+== workflow engine
+
+an operating system for workflows.
+
+== participant
+
+== activity
+
