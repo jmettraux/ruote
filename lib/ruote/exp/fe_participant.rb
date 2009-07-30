@@ -86,20 +86,25 @@ module Ruote
       if participant.respond_to?(:do_not_thread) and participant.do_not_thread
 
         do_dispatch(participant)
+        return
+      end
 
-      else
-
-        Thread.new do
-          begin
-            do_dispatch(participant)
-          rescue Exception => e
-            pool.send(
-              :handle_exception,
-              :apply,
-              { :fei => @fei, :workitem => @applied_workitem },
-              e)
-          end
+      block = lambda {
+        begin
+          do_dispatch(participant)
+        rescue Exception => e
+          pool.send(
+            :handle_exception,
+            :apply,
+            { :fei => @fei, :workitem => @applied_workitem },
+            e)
         end
+      }
+
+      if defined?(EM) && EM.reactor_running?
+        EM.next_tick(&block)
+      else
+        Thread.new(&block)
       end
     end
 

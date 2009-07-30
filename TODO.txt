@@ -92,6 +92,7 @@
 [o] on_timeout => 'part|sub' (idea by hassox)
 [o] on_timeout => 'error' (idea by hassox)
 [o] concurrent-iterator < concurrence
+[o] participant : if EM is present use next_ or defer instead of Thread.new
 
 [ ] file logger service
 
@@ -128,8 +129,6 @@ restart tests :
 [ ] beanstalk [as a] workqueue ?
 
 [ ] recursion : should cope with modified trees 'main' => :tree ??
-
-[ ] participant : if EM is present use next_ or defer instead of Thread.new
 
 [ ] test for wfids of errors in subprocesses !
 
