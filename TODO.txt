@@ -132,3 +132,5 @@ restart tests :
 
 [ ] test for wfids of errors in subprocesses !
 
+[ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
+
