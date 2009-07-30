@@ -302,9 +302,9 @@ module Ruote
           # can't reply to a missing expression...
 
         case emsg
-        when :apply then exp.do_apply
-        when :reply then exp.do_reply(wi)
-        when :cancel then exp.do_cancel(eargs[:flavour])
+          when :apply then exp.do_apply
+          when :reply then exp.do_reply(wi)
+          when :cancel then exp.do_cancel(eargs[:flavour])
         end
 
       rescue Exception => e

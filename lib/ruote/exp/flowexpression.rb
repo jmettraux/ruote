@@ -190,7 +190,9 @@ module Ruote
 
         pid = @parent_id
         forget
-        pool.reply(@applied_workitem, pid)
+        pool.reply(@applied_workitem.dup, pid)
+          # replying with a copy of the workitem is imperative since
+          # the forgotten expression (branch) now executes 'in parallel'
       end
 
       consider_tag

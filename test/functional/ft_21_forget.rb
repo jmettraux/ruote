@@ -33,6 +33,10 @@ class FtForgetTest < Test::Unit::TestCase
 
     assert_equal %w[ alpha alpha ].join("\n"), @tracer.to_s
 
+    #if logger.log.select { |e| e[1] == :terminated }.size != 2
+    #  puts logger.to_stdout
+    #end
+
     assert_equal 2, logger.log.select { |e| e[1] == :terminated }.size
       # process ended 2 times
   end
