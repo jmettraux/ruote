@@ -88,12 +88,13 @@
 [o] participant : do thread (and do_not_thread)
 [o] add test for error replay in participant
 [o] forget : participant ? subprocess ? everybody
+[o] Ruote.VERSION = "2.0.0" for Kenneth
 [o] on_timeout => 'part|sub' (idea by hassox)
 [o] on_timeout => 'error' (idea by hassox)
+[o] concurrent-iterator < concurrence
 
 [ ] file logger service
 
-[ ] concurrent-iterator < concurrence
 [ ] save / restore
 [ ] when (exploit :var :set event)
 [ ] error
@@ -123,8 +124,6 @@ restart tests :
 [ ] when
 
 [ ] __command__ + tag (rewind that cursor there, not the current one)
-
-[ ] Ruote.VERSION = "2.0.0" for Kenneth
 
 [ ] beanstalk [as a] workqueue ?
 

@@ -128,15 +128,21 @@ module Ruote
 
     # Called by the subprocess expression when launching a subprocess instance.
     #
-    def launch_sub (pos, tree, parent, workitem, forget=false)
+    def launch_sub (pos, tree, parent, workitem, opts={})
 
       i = parent.fei.dup
       i.wfid = "#{i.parent_wfid}_#{get_next_sub_id(parent)}"
       i.expid = pos
 
+      forget = opts[:forget]
+
       parent.register_child(i) unless forget
 
       wqueue.emit(:processes, :launch_sub, :fei => i)
+
+      variables = (
+        forget ? parent.compile_variables : {}
+      ).merge(opts[:variables] || {})
 
       wqueue.emit(
         :expressions, :apply,
@@ -144,7 +150,7 @@ module Ruote
         :fei => i,
         :parent_id => forget ? nil : parent.fei,
         :workitem => workitem,
-        :variables => forget ? parent.compile_variables : {})
+        :variables => variables)
     end
 
     # Re-applies the given expression.

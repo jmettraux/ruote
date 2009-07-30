@@ -29,6 +29,15 @@ require 'ruote/exp/condition'
 
 module Ruote
 
+  #
+  # The 'concurrence' expression applies its child branches in parallel
+  # (well it makes a best effort to make them run in parallel).
+  #
+  #    concurrence do
+  #      alpha
+  #      bravo
+  #    end
+  #
   class ConcurrenceExpression < FlowExpression
 
     names :concurrence
@@ -46,9 +55,7 @@ module Ruote
 
       @over = false
 
-      tree_children.each_with_index do |c, i|
-        apply_child(i, @applied_workitem.dup)
-      end
+      apply_children
     end
 
     def reply (workitem)
@@ -74,6 +81,13 @@ module Ruote
     end
 
     protected
+
+    def apply_children
+
+      tree_children.each_with_index do |c, i|
+        apply_child(i, @applied_workitem.dup)
+      end
+    end
 
     def over? (workitem)
 
@@ -131,7 +145,7 @@ module Ruote
     def handle_remaining
 
       b = @remaining == 'cancel' ?
-        lambda { |fei| pool.cancel_expression(fei, false) } :
+        lambda { |fei| pool.cancel_expression(fei, nil) } :
         lambda { |fei| pool.forget_expression(fei) }
 
       @children.each(&b)

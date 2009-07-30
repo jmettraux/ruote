@@ -51,8 +51,7 @@ module Ruote
       return reply_to_parent(@applied_workitem) if tree_children.size < 1
 
       @list = determine_list
-      @to_v = attribute(:to_v) || attribute(:to_var) || attribute(:to_variable)
-      @to_f = attribute(:to_f) || attribute(:to_fld) || attribute(:to_field)
+      @to_v, @to_f = determine_tos
       @position = -1
 
       reply(@applied_workitem)

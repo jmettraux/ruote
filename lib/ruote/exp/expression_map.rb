@@ -50,6 +50,7 @@ module Ruote
       add(Ruote::SetExpression)
       add(Ruote::SubprocessExpression)
       add(Ruote::ConcurrenceExpression)
+      add(Ruote::ConcurrentIteratorExpression)
       add(Ruote::ForgetExpression)
       add(Ruote::UndoExpression)
       add(Ruote::RedoExpression)

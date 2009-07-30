@@ -66,8 +66,11 @@ module Ruote
       end
 
       if tree_children.size > 0
-        pool.launch_sub("#{@fei.expid}_0", tree_children[0], self, wi, true)
+
+        pool.launch_sub(
+          "#{@fei.expid}_0", tree_children[0], self, wi, :forget => true)
       else
+
         reply_to_parent(wi)
       end
     end

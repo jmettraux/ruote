@@ -23,30 +23,49 @@
 #++
 
 
+require 'ruote/exp/fe_concurrence'
+require 'ruote/exp/iterator'
+
+
 module Ruote
 
-  module IteratorMixin
+  class ConcurrentIteratorExpression < ConcurrenceExpression
+
+    include IteratorMixin
+
+    names :concurrent_iterator
 
     protected
 
-    def determine_list
+    def apply_children
 
-      list = lookup_value('on')
+      return reply_to_parent(@applied_workitem) unless tree_children[0]
 
-      if list.is_a?(String)
-        sep = attribute(:separator) || attribute(:sep) || ','
-        list.split(sep).collect { |e| e.strip }
-      elsif list.respond_to?(:[]) and list.respond_to?(:length)
-        list
-      else
-        []
+      list = determine_list
+      to_v, to_f = determine_tos
+
+      return reply_to_parent(@applied_workitem) if list.empty?
+
+      list.each_with_index do |e, i|
+
+        val = list[i]
+
+        variables = {}
+        workitem  = @applied_workitem.dup
+
+        if to_v
+          variables[to_v] = val
+        else #if to_f
+          workitem.fields[to_f] = val
+        end
+
+        pool.launch_sub(
+          "#{@fei.expid}_0",
+          tree_children[0],
+          self,
+          workitem,
+          :variables => variables)
       end
-    end
-
-    def determine_tos
-
-      [ attribute(:to_v) || attribute(:to_var) || attribute(:to_variable),
-        attribute(:to_f) || attribute(:to_fld) || attribute(:to_field) ]
     end
   end
 end
