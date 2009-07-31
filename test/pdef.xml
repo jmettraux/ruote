@@ -1,0 +1,7 @@
+<!-- testing local process definitions -->
+<process-definition name="test">
+  <sequence>
+    <echo>a</echo>
+    <echo>b</echo>
+  </sequence>
+</process-definition>

@@ -93,7 +93,8 @@
 [o] on_timeout => 'error' (idea by hassox)
 [o] exp : concurrent-iterator < concurrence
 [o] participant : if EM is present use next_ or defer instead of Thread.new
-[o] XML
+[o] XML process definitions
+[o] remote process definitions
 
 [ ] file logger service
 
@@ -152,5 +153,5 @@ restart tests :
 
 [ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
 
-[ ] remote process definitions
+[ ] json process definitions
 

@@ -23,6 +23,9 @@
 #++
 
 
+require 'uri'
+require 'open-uri'
+require 'ruote/engine/context'
 require 'ruote/parser/ruby_dsl' # just making sure it's loaded
 require 'ruote/parser/xml'
 
@@ -34,6 +37,8 @@ module Ruote
   #
   class Parser
 
+    include EngineContext
+
     def parse (definition)
 
       return definition if definition.is_a?(Array) and definition.size == 3
@@ -42,6 +47,17 @@ module Ruote
       # TODO : yaml (maybe)
 
       (return XmlParser.parse(definition)) rescue nil
+
+      if definition.index("\n") == nil
+
+        u = URI.parse(definition)
+
+        raise ArgumentError.new(
+          "remote process definitions are not allowed"
+        ) if u.scheme != nil && @context[:remote_definition_allowed] != true
+
+        return parse(open(definition))
+      end
 
       raise ArgumentError.new(
         "doesn't know how to parse definition (#{definition.class})")
