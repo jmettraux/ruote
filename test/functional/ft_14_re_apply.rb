@@ -88,5 +88,45 @@ class FtReApplyTest < Test::Unit::TestCase
 
     assert_equal 'done.', @tracer.to_s
   end
+
+  def test_update_expression_and_re_apply
+
+    pdef = Ruote.process_definition do
+      sequence do
+        alpha
+        echo 'done.'
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(:alpha)
+
+    id0 = alpha.first.object_id
+
+    # ... flow stalled ...
+
+    ps = @engine.process(wfid)
+
+    stalled_exp = ps.expressions.find { |fexp| fexp.fei.expid == '0_0_0' }
+
+    stalled_exp.tree = [
+      'participant', { 'ref' => 'alpha', 'activity' => 'mow lawn' }, [] ]
+
+    @engine.re_apply(stalled_exp.fei)
+
+    wait_for(:alpha)
+
+    assert_equal 'mow lawn', alpha.first.fields['params']['activity']
+
+    alpha.reply(alpha.first)
+
+    wait_for(wfid)
+
+    assert_equal 'done.', @tracer.to_s
+  end
 end
 
