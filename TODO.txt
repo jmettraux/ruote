@@ -95,6 +95,7 @@
 [o] participant : if EM is present use next_ or defer instead of Thread.new
 [o] XML process definitions
 [o] remote process definitions
+[o] json process definitions
 
 [ ] file logger service
 
@@ -152,6 +153,4 @@ restart tests :
 [ ] test for wfids of errors in subprocesses !
 
 [ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
-
-[ ] json process definitions
 

@@ -53,5 +53,26 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
 
     assert_trace(path, %w[ a b ])
   end
+
+  def test_json_definition
+
+    require 'json'
+    Ruote::Json.decoder = Ruote::Json::JSON
+
+    #pdef = Ruote.process_definition :name => 'test' do
+    #  sequence do
+    #    echo 'a'
+    #    echo 'b'
+    #  end
+    #end
+    #p pdef.to_json
+
+    assert_trace(
+      "[\"define\",{\"name\":\"test\"},[[\"sequence\",{},[[\"echo\",{\"a\":null},[]],[\"echo\",{\"b\":null},[]]]]]]",
+      %w[ a b ])
+
+    Ruote::Json.decoder = Ruote::Json::NONE
+      # back to initial state
+  end
 end
 

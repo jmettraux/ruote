@@ -23,45 +23,50 @@
 #++
 
 
-require 'uri'
-require 'open-uri'
-require 'ruote/engine/context'
-require 'ruote/util/json'
-require 'ruote/parser/ruby_dsl' # just making sure it's loaded
-require 'ruote/parser/xml'
-
-
 module Ruote
 
-  #
-  # A process definition parser.
-  #
-  class Parser
+  module Json
 
-    include EngineContext
+    # The JSON / JSON pure decoder
+    #
+    JSON = lambda { |s| ::JSON.parse(s) }
 
-    def parse (definition)
+    # The Rails ActiveSupport::JSON decoder
+    #
+    ACTIVE_SUPPORT = lambda { |s| ActiveSupport::JSON.decode(s) }
 
-      return definition if definition.is_a?(Array) and definition.size == 3
+    # The "raise an exception because there's no decoder" decoder
+    #
+    NONE = lambda { |s| raise "no JSON decoding backend found" }
 
-      # TODO : yaml (maybe)
+    @decoder = if defined?(ActiveSupport::JSON)
+      ACTIVE_SUPPORT
+    elsif defined?(::JSON)
+      JSON
+    else
+      NONE
+    end
 
-      (return XmlParser.parse(definition)) rescue nil
-      (return Ruote::Json.decode(definition)) rescue nil
+    # Forces a decoder JSON/ACTIVE_SUPPORT or any lambda that knows
+    # how to deal with JSON.
+    #
+    def self.decoder= (d)
 
-      if definition.index("\n") == nil
+      @decoder = d
+    end
 
-        u = URI.parse(definition)
+    #--
+    #def self.encode (o)
+    #end
+      # no need for that, as most of the modules
+      # add #to_json to the Object class.
+    #++
 
-        raise ArgumentError.new(
-          "remote process definitions are not allowed"
-        ) if u.scheme != nil && @context[:remote_definition_allowed] != true
+    # Decodes the given JSON string.
+    #
+    def self.decode (s)
 
-        return parse(open(definition))
-      end
-
-      raise ArgumentError.new(
-        "doesn't know how to parse definition (#{definition.class})")
+      @decoder.call(s)
     end
   end
 end
