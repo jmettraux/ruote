@@ -22,63 +22,65 @@
 # Made in Japan.
 #++
 
+require 'rexml/parsers/sax2parser'
+require 'rexml/sax2listener'
+
 
 module Ruote
 
-  # Not really a parser, more an AST builder.
   #
-  def self.define (*attributes, &block)
-
-    RubyDsl.create_branch('define', attributes, &block)
-  end
-
-  def self.process_definition (*attributes, &block)
-
-    define(*attributes, &block)
-  end
-
-  # :nodoc:
+  # Turns an XML string into a process definition tree.
   #
-  module RubyDsl
+  module XmlParser
 
-    class BranchContext
+    #
+    # A helper class to store the temporary tree while it gets parsed.
+    #
+    class Node
 
-      def initialize (name, attributes)
+      attr_reader :parent, :attributes, :children
 
+      def initialize (parent, name, attributes)
+        @parent = parent
         @name = name
         @attributes = attributes
         @children = []
-      end
-
-      def method_missing (m, *args, &block)
-
-        @children.push(
-          Ruote::RubyDsl.create_branch(m.to_s, args, &block))
+        parent.children << self if parent
       end
 
       def to_a
-
-        [ @name, @attributes, @children ]
+        [ @name, @attributes, @children.collect { |c| c.to_a } ]
       end
     end
 
-    def self.create_branch (name, attributes, &block)
+    #
+    # Parses the XML string into a process definition tree (array of arrays).
+    #
+    def self.parse (s)
 
-      while name[0, 1] == '_'
-        name = name[1..-1]
+      parser = REXML::Parsers::SAX2Parser.new(s)
+
+      root = nil
+      current = nil
+
+      # u, l, q, a <=> url, local, qname, attributes
+
+      parser.listen(:start_element) do |u, l, q, a|
+        current = Node.new(current, l.gsub(/-/, '_'), a)
+        root ||= current
+      end
+      parser.listen(:end_element) do |u, l, q, a|
+        current = current.parent
       end
 
-      h = attributes.inject({}) { |h, a|
-        a.is_a?(Hash) ? h.merge!(a) : h[a] = nil
-        h
-      }.inject({}) { |h, (k, v)|
-        h[k.to_s] = v
-        h
-      }
+      parser.listen(:characters) do |text|
+        t = text.strip
+        current.attributes[t] = nil if t.size > 0
+      end
 
-      c = BranchContext.new(name, h)
-      c.instance_eval(&block) if block
-      c.to_a
+      parser.parse
+
+      root.to_a
     end
   end
 end

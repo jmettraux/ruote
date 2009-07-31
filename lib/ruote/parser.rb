@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,28 @@
 #++
 
 
-require 'ruote/parser/ruby_dsl'
+require 'ruote/parser/ruby_dsl' # just making sure it's loaded
+require 'ruote/parser/xml'
 
 
 module Ruote
 
+  #
+  # A process definition parser.
+  #
   class Parser
 
     def parse (definition)
 
-      definition
+      return definition if definition.is_a?(Array) and definition.size == 3
+
+      # TODO : json
+      # TODO : yaml (maybe)
+
+      (return XmlParser.parse(definition)) rescue nil
+
+      raise ArgumentError.new(
+        "doesn't know how to parse definition (#{definition.class})")
     end
   end
 end
