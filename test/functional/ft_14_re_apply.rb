@@ -115,6 +115,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
     stalled_exp.tree = [
       'participant', { 'ref' => 'alpha', 'activity' => 'mow lawn' }, [] ]
+    stalled_exp.persist
 
     @engine.re_apply(stalled_exp.fei)
 
