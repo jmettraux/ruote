@@ -91,15 +91,32 @@
 [o] Ruote.VERSION = "2.0.0" for Kenneth
 [o] on_timeout => 'part|sub' (idea by hassox)
 [o] on_timeout => 'error' (idea by hassox)
-[o] concurrent-iterator < concurrence
+[o] exp : concurrent-iterator < concurrence
 [o] participant : if EM is present use next_ or defer instead of Thread.new
 
 [ ] file logger service
 
-[ ] save / restore
-[ ] when (exploit :var :set event)
-[ ] error
-[ ] reserve (enhanced ?)
+[ ] exp : exp
+[ ] exp : save
+[ ] exp : restore (and its set-fields alias)
+[ ] exp : when (exploit :var :set event)
+[ ] exp : error
+[ ] exp : reserve (enhanced ?)
+[ ] exp : case
+[ ] exp : cron
+[ ] exp : defined (not really necessary)
+[ ] exp : quote (not really necessary)
+[ ] exp : field / attribute (not really necessary)
+[ ] exp : variable (not really necessary)
+[ ] exp : filter
+[ ] exp : filter-definition
+[ ] exp : lose ?
+[x] exp : parameter
+[ ] exp : eval
+[ ] exp : reval
+[ ] exp : unset
+[ ] exp : log
+[ ] exp : step (jump to cursor tag ?)
 
 [ ] conditional : rprefix !
 
