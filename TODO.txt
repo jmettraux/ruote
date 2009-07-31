@@ -92,6 +92,7 @@
 [o] on_timeout => 'part|sub' (idea by hassox)
 [o] on_timeout => 'error' (idea by hassox)
 [o] exp : concurrent-iterator < concurrence
+[o] exp : reserve
 [o] participant : if EM is present use next_ or defer instead of Thread.new
 [o] XML process definitions
 [o] remote process definitions
@@ -104,7 +105,6 @@
 [ ] exp : restore (and its set-fields alias)
 [ ] exp : when (exploit :var :set event)
 [ ] exp : error
-[ ] exp : reserve (enhanced ?)
 [ ] exp : case
 [ ] exp : cron
 [ ] exp : defined (not really necessary)
@@ -113,13 +113,16 @@
 [ ] exp : variable (not really necessary)
 [ ] exp : filter
 [ ] exp : filter-definition
-[ ] exp : lose ?
+[x] exp : lose ?
 [x] exp : parameter
 [ ] exp : eval
 [ ] exp : reval
 [ ] exp : unset
 [ ] exp : log
 [ ] exp : step (jump to cursor tag ?)
+
+restart tests :
+[ ] when
 
 [ ] conditional : rprefix !
 
@@ -140,9 +143,6 @@
 
 [ ] tailcall
 [ ] subprocesses participants (alias ?)
-
-restart tests :
-[ ] when
 
 [ ] __command__ + tag (rewind that cursor there, not the current one)
 
