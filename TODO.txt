@@ -126,7 +126,7 @@
 restart tests :
 [ ] when
 
-[ ] conditional : rprefix !
+[ ] conditional : rprefix ! ${r:x} is perhaps sufficient
 
 [ ] auto-participant re-apply
 

@@ -43,5 +43,33 @@ class FtDollarTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ a btoto cAsia ])
   end
+
+  def test_no_r
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo '>${r:1 + 2}<'
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, '><')
+  end
+
+  def test_r
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo '>${r:1 + 2}<'
+      end
+    end
+
+    #noisy
+
+    @engine.context[:ruby_eval_allowed] = true
+
+    assert_trace(pdef, '>3<')
+  end
 end
 
