@@ -29,15 +29,28 @@ module Ruote
   #
   #   p Ruote.lookup(h, 'a.b.1') # => 3
   #
-  def Ruote.lookup (collection, key)
+  def Ruote.lookup (collection, key, container_lookup=false)
 
     key, rest = pop_key(key)
     value = flookup(collection, key)
 
+    return [ rest.first, value ] if container_lookup && rest.size == 1
     return value if rest.empty?
     return nil if value == nil
 
     lookup(value, rest)
+  end
+
+  def Ruote.set (collection, key, value)
+
+    k, c = lookup(collection, key, true)
+
+    if c
+      k = k.to_i if c.is_a?(Array)
+      c[k] = value
+    else
+      collection[key] = value
+    end
   end
 
   protected

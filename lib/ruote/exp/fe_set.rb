@@ -63,7 +63,7 @@ module Ruote
         if name == 'unset'
           workitem.attributes.delete(field)
         else
-          workitem.attributes[field] = value
+          Ruote.set(workitem.fields, field, value)
         end
 
       else

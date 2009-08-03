@@ -158,7 +158,8 @@ restart tests :
 
 [ ] timeout set by participant [implementation]
 
-[ ] nested set/save wi.fields['a.b.0'] = x (since we have a nested read already)
+[o] nested set wi.fields['a.b.0'] = x
+[ ] nested save wi.fields['a.b.0'] = x
 
 [ ] set :var => 'y' { '2342342' }
 

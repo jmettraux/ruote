@@ -21,13 +21,13 @@ class WorkitemTest < Test::Unit::TestCase
       'engine_id' => 'toto', 'wfid' => '12345-4566', 'expid' => '0_1_0')
 
     assert_equal(
-      {"fei"=>{"class"=>"Ruote::FlowExpressionId", "engine_id"=>"toto", "wfid"=>"12345-4566", "expid"=>"0_1_0"}, "participant_name"=>nil, "attributes"=>{}},
+      {"fei"=>{"class"=>"Ruote::FlowExpressionId", "engine_id"=>"toto", "wfid"=>"12345-4566", "expid"=>"0_1_0"}, "participant_name"=>nil, "fields"=>{}},
       wi.to_h)
   end
 
   def test_from_h
 
-    wi = Ruote::Workitem.from_h({"fei"=>{"class"=>"Ruote::FlowExpressionId", "engine_id"=>"toto", "wfid"=>"12345-4566", "expid"=>"0_1_0"}, "participant_name"=>nil, "attributes"=>{}})
+    wi = Ruote::Workitem.from_h({"fei"=>{"class"=>"Ruote::FlowExpressionId", "engine_id"=>"toto", "wfid"=>"12345-4566", "expid"=>"0_1_0"}, "participant_name"=>nil, "fields"=>{}})
 
     assert_equal 0, wi.fields.size
     assert_equal '0_1_0', wi.fei.expid

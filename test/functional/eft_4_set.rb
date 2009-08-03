@@ -64,5 +64,48 @@ class EftSetTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ -0- -- ]
   end
+
+  def test_set_field
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :field => 'f', :value => '0'
+        echo '-${f:f}-'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, '-0-'
+  end
+
+  def test_set_field_to_array
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :field => 'f', :value => %w[ a b c ]
+        echo '-${f:f.1}-'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, '-b-'
+  end
+
+  def test_set_field_deep
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :field => 'f', :value => %w[ a b c ]
+        set :field => 'f.1', :val => 'B'
+        echo '-${f:f.0}${f:f.1}${f:f.2}-'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, '-aBc-'
+  end
 end
 
