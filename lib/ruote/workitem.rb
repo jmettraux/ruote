@@ -59,9 +59,9 @@ module Ruote
     #
     #   workitem.fields['toto']['address']
     #
-    def lookup (key)
+    def lookup (key, container_lookup=false)
 
-      Ruote.lookup(@fields, key)
+      Ruote.lookup(@fields, key, container_lookup)
     end
 
     # A shortcut to the value in the field named __result__
@@ -71,7 +71,7 @@ module Ruote
     #
     def result
 
-      @attributes['__result__']
+      @fields['__result__']
     end
 
     # Sets the value of the 'special' field __result__
@@ -80,7 +80,7 @@ module Ruote
     #
     def result= (r)
 
-      @attributes['__result__'] = r
+      @fields['__result__'] = r
     end
 
     # Returns a deep copy of this workitem instance.
@@ -95,7 +95,7 @@ module Ruote
       h = {}
       h['fei'] = @fei.to_h
       h['participant_name'] = @participant_name
-      h['fields'] = @attributes
+      h['fields'] = @fields
 
       h
     end
