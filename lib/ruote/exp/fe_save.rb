@@ -28,6 +28,19 @@ require 'ruote/exp/flowexpression'
 
 module Ruote
 
+  #
+  # Saves the current workitem fields into a variable or into a field.
+  #
+  #   save :to_field => 'old_workitem'
+  #     #
+  #     # saves a copy of the fields of the current workitem into itself,
+  #     # in the field named 'old_workitem'
+  #
+  #   save :to_variable => '/wix'
+  #     #
+  #     # saves a copy of the current workitem in the varialbe 'wix' at
+  #     # the root of the process
+  #
   class SaveExpression < FlowExpression
 
     names :save
@@ -48,8 +61,10 @@ module Ruote
 
       elsif tk.match(/^to_f/)
 
-        @applied_workitem.attributes[key] =
-          Ruote.fulldup(@applied_workitem.attributes)
+        Ruote.set(
+          @applied_workitem.fields,
+          key,
+          Ruote.fulldup(@applied_workitem.fields))
       end
 
       reply_to_parent(@applied_workitem)

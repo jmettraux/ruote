@@ -53,5 +53,26 @@ class EftSaveTest < Test::Unit::TestCase
 
     assert_equal 'surf', alpha.first.fields['f']['nada']
   end
+
+  def test_save_to_field_deep
+
+    pdef = Ruote.process_definition :name => 'test' do
+      set :field => 'nada', :value => 'surf'
+      set :field => 'h', :value => {}
+      save :to_f => 'h.wi_as_before'
+      alpha
+    end
+
+    #noisy
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    #p alpha.first.fields
+    assert_equal 'surf', alpha.first.fields['h']['wi_as_before']['nada']
+  end
 end
 

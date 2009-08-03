@@ -101,6 +101,8 @@
 [o] json process definitions
 [o] check nested ${f:a.b.c}
 [o] test : participant in error timeout (error should cancel timeout)
+[o] nested set wi.fields['a.b.0'] = x
+[o] nested save wi.fields['a.b.0'] = x
 
 [ ] file logger service
 
@@ -157,9 +159,6 @@ restart tests :
 [ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
 
 [ ] timeout set by participant [implementation]
-
-[o] nested set wi.fields['a.b.0'] = x
-[ ] nested save wi.fields['a.b.0'] = x
 
 [ ] set :var => 'y' { '2342342' }
 
