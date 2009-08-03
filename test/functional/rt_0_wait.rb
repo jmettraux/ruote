@@ -15,6 +15,8 @@ class RtWaitTest < Test::Unit::TestCase
 
   def test_wait_and_restart
 
+    #FileUtils.rm_f('work')
+
     start_new_engine
 
     pdef = Ruote.process_definition :name => 'test' do
@@ -27,7 +29,7 @@ class RtWaitTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.100
+    sleep 0.200
 
     assert_equal 1, @engine.processes.size
     assert_equal 1, @engine.scheduler.jobs.size
@@ -38,14 +40,14 @@ class RtWaitTest < Test::Unit::TestCase
 
     start_new_engine
 
-    sleep 0.100
+    sleep 0.200
 
     assert_equal 1, @engine.processes.size
     assert_equal 1, @engine.scheduler.jobs.size
 
     @engine.cancel_process(wfid)
 
-    sleep 0.100
+    sleep 0.200
 
     assert_equal 0, @engine.processes.size
   end

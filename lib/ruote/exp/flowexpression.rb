@@ -228,6 +228,9 @@ module Ruote
     #
     def do_cancel (flavour)
 
+      return if @state == :failed and flavour == :timeout
+        # do not timeout expressions that are "in error" (failed)
+
       @state = case flavour
         when :kill then :dying
         when :timeout then :timing_out

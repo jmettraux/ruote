@@ -335,6 +335,9 @@ module Ruote
       (emsg != :cancel) && handle_on_error(exp) && return
         # return if error got handled
 
+      exp.instance_variable_set(:@state, :failed)
+      exp.persist
+
       wqueue.emit(
         :errors,
         :s_expression_pool,

@@ -137,5 +137,25 @@ class FtTimeoutTest < Test::Unit::TestCase
 
     assert_equal 1, alpha.size
   end
+
+  def test_timeout_then_error
+
+    pdef = Ruote.process_definition do
+      sequence :timeout => '700' do
+        toto
+      end
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    sleep 1.1
+
+    ps = @engine.process(wfid)
+
+    assert_equal 1, ps.errors.size
+    assert_equal 0, @engine.scheduler.jobs.size
+  end
 end
 

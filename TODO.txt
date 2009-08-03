@@ -97,10 +97,13 @@
 [o] XML process definitions
 [o] remote process definitions
 [o] json process definitions
+[o] check nested ${f:a.b.c}
+[o] test : participant in error timeout (error should cancel timeout)
 
 [ ] file logger service
 
-[ ] exp : exp
+[ ] exp : exp (restricted form of eval ?)
+[ ] exp : eval
 [ ] exp : save
 [ ] exp : restore (and its set-fields alias)
 [ ] exp : when (exploit :var :set event)
@@ -115,7 +118,6 @@
 [ ] exp : filter-definition
 [x] exp : lose ?
 [x] exp : parameter
-[ ] exp : eval
 [ ] exp : reval
 [ ] exp : unset
 [ ] exp : log
@@ -153,4 +155,6 @@ restart tests :
 [ ] test for wfids of errors in subprocesses !
 
 [ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
+
+[ ] timeout set by participant [implementation]
 
