@@ -25,12 +25,16 @@
 
 module Ruote
 
+  #   h = { 'a' => { 'b' => [ 1, 3, 4 ] } }
+  #
+  #   p Ruote.lookup(h, 'a.b.1') # => 3
+  #
   def Ruote.lookup (collection, key)
 
     key, rest = pop_key(key)
     value = flookup(collection, key)
 
-    return value unless rest
+    return value if rest.empty?
     return nil if value == nil
 
     lookup(value, rest)
@@ -40,9 +44,9 @@ module Ruote
 
   def Ruote.pop_key (key)
 
-    i = key.index('.')
+    ks = key.is_a?(String) ? key.split('.') : key
 
-    i ? [ narrow_key(key[0..i-1]), key[i+1..-1] ] : [ narrow_key(key), nil ]
+    [ narrow_key(ks.first), ks[1..-1] ]
   end
 
   def Ruote.narrow_key (key)

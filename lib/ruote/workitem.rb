@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2009, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2005-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,16 +31,16 @@ module Ruote
   class Workitem
 
     attr_accessor :fei
-    attr_accessor :attributes
+    attr_accessor :fields
     attr_accessor :participant_name
 
-    alias :fields :attributes
-    alias :fields= :attributes=
+    alias :attributes :fields
+    alias :attributes= :fields=
 
-    def initialize (attributes={})
+    def initialize (fields={})
 
       @fei = nil
-      @attributes = attributes
+      @fields = fields
     end
 
     # For a simple key
@@ -61,7 +61,7 @@ module Ruote
     #
     def lookup (key)
 
-      Ruote.lookup(@attributes, key)
+      Ruote.lookup(@fields, key)
     end
 
     # A shortcut to the value in the field named __result__
@@ -95,14 +95,14 @@ module Ruote
       h = {}
       h['fei'] = @fei.to_h
       h['participant_name'] = @participant_name
-      h['attributes'] = @attributes
+      h['fields'] = @attributes
 
       h
     end
 
     def self.from_h (h)
 
-      wi = Workitem.new(h['attributes'])
+      wi = Workitem.new(h['fields'])
       wi.fei = FlowExpressionId.from_h(h['fei'])
       wi.participant_name = h['participant_name']
 
