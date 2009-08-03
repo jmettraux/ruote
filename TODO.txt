@@ -93,6 +93,8 @@
 [o] on_timeout => 'error' (idea by hassox)
 [o] exp : concurrent-iterator < concurrence
 [o] exp : reserve
+[o] exp : unset
+[o] exp : save
 [o] participant : if EM is present use next_ or defer instead of Thread.new
 [o] XML process definitions
 [o] remote process definitions
@@ -104,7 +106,6 @@
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : eval
-[ ] exp : save
 [ ] exp : restore (and its set-fields alias)
 [ ] exp : when (exploit :var :set event)
 [ ] exp : error
@@ -119,7 +120,6 @@
 [x] exp : lose ?
 [x] exp : parameter
 [ ] exp : reval
-[ ] exp : unset
 [ ] exp : log
 [ ] exp : step (jump to cursor tag ?)
 
@@ -157,4 +157,8 @@ restart tests :
 [ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
 
 [ ] timeout set by participant [implementation]
+
+[ ] nested set/save wi.fields['a.b.0'] = x (since we have a nested read already)
+
+[ ] set :var => 'y' { '2342342' }
 

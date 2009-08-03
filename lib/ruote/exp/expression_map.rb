@@ -63,6 +63,7 @@ module Ruote
       add(Ruote::IfExpression)
       add(Ruote::EqualsExpression)
       add(Ruote::ReserveExpression)
+      add(Ruote::SaveExpression)
     end
 
     # Returns the expression class for the given expression name
