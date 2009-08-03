@@ -24,7 +24,7 @@
 
 
 require 'ruote/exp/flowexpression'
-require 'ruote/exp/condition'
+require 'ruote/exp/merge'
 
 
 module Ruote
@@ -39,6 +39,8 @@ module Ruote
   #    end
   #
   class ConcurrenceExpression < FlowExpression
+
+    include MergeMixin
 
     names :concurrence
 
@@ -104,10 +106,10 @@ module Ruote
 
       handle_remaining if @children
 
-      super(merge_workitems)
+      super(merge_all_workitems)
     end
 
-    def merge_workitems
+    def merge_all_workitems
 
       return @applied_workitem unless @workitems
 
@@ -121,25 +123,7 @@ module Ruote
         @merge == 'highest' ? is.reverse : is
       end
 
-      wis.inject(nil) { |t, wi| merge_workitem(t, wi, @merge_type) }
-    end
-
-    def merge_workitem (target, source, type)
-
-      return source if type == 'override'
-
-      source.fields = { source.fei.child_id => source.fields } \
-        if target == nil && type == 'isolate'
-
-      return source unless target
-
-      if type == 'mix'
-        source.fields.each { |k, v| target.fields[k] = v }
-      else # 'isolate'
-        target.fields[source.fei.child_id] = source.fields
-      end
-
-      target
+      wis.inject(nil) { |t, wi| merge_workitems(t, wi, @merge_type) }
     end
 
     def handle_remaining
