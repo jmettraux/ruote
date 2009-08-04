@@ -107,5 +107,20 @@ class EftSetTest < Test::Unit::TestCase
 
     assert_trace pdef, '-aBc-'
   end
+
+  def test_missing_value
+
+    pdef = Ruote.process_definition do
+      set :field => 'f'
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    sleep 0.450
+
+    assert_equal 1, @engine.process(wfid).errors.size
+  end
 end
 

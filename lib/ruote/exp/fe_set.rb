@@ -43,7 +43,8 @@ module Ruote
       elsif val_key = has_attribute(:val, :value)
         attribute(val_key, workitem)
       else
-        child_text(workitem) # TODO : test that !!!
+        #child_text(workitem) # NO
+        raise ArgumentError.new("'set' is missing a value")
       end
 
       if var_key = has_attribute(:v, :var, :variable)
