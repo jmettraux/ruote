@@ -95,6 +95,7 @@
 [o] exp : reserve
 [o] exp : unset
 [o] exp : save
+[o] exp : restore (and its set-fields alias)
 [o] participant : if EM is present use next_ or defer instead of Thread.new
 [o] XML process definitions
 [o] remote process definitions
@@ -108,10 +109,9 @@
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : eval
-[ ] exp : restore (and its set-fields alias)
 [ ] exp : when (exploit :var :set event)
 [ ] exp : error
-[ ] exp : case
+[ ] exp : case (is it necessary ?)
 [ ] exp : cron
 [ ] exp : defined (not really necessary)
 [ ] exp : quote (not really necessary)

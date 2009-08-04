@@ -64,6 +64,11 @@ module Ruote
       Ruote.lookup(@fields, key, container_lookup)
     end
 
+    def set_field (key, value)
+
+      Ruote.set(@fields, key, value)
+    end
+
     # A shortcut to the value in the field named __result__
     #
     # This field is used by the if expression for instance to determine

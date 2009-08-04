@@ -61,8 +61,7 @@ module Ruote
 
       elsif tk.match(/^to_f/)
 
-        Ruote.set(
-          @applied_workitem.fields,
+        @applied_workitem.set_field(
           key,
           Ruote.fulldup(@applied_workitem.fields))
       end

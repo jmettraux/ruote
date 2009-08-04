@@ -22,58 +22,65 @@
 # Made in Japan.
 #++
 
+
 require 'ruote/exp/flowexpression'
+require 'ruote/exp/merge'
 
 
 module Ruote
 
-  class SetExpression < FlowExpression
+  #
+  # Restores the fields of the current workitem. That means usually copying
+  # them from a saved version in a variable or in a separate field.
+  #
+  #   restore :from_var => 'v'
+  #
+  # or
+  #
+  #   restore :from_f => 'customer.address.street', :to_f => 'delivery.street'
+  #
+  class RestoreExpression < FlowExpression
 
-    names :set, :unset
+    include MergeMixin
+
+    names :restore, :set_fields
 
     def apply
 
-      reply(@applied_workitem)
+      from =
+        has_attribute(*%w[ v var variable ].map { |k| "from_#{k}" }) ||
+        has_attribute(*%w[ f fld field ].map { |k| "from_#{k}" }) ||
+        has_attribute(*%w[ val value ])
+
+      to =
+        has_attribute(*%w[ f fld field ].map { |k| "to_#{k}" }) ||
+        has_attribute('to')
+
+      from = 'from_var' if from == 'from_v'
+
+      afrom = attribute(from)
+
+      fields = if from.match(/var/)
+        lookup_variable(afrom).fields
+      elsif from.match(/f/)
+        workitem.lookup(afrom)
+      else # val
+        afrom
+      end
+
+      if to
+        @applied_workitem.set_field(attribute(to), fields)
+      else
+        @applied_workitem.fields = fields
+      end
+
+      # TODO : merge strategies
+
+      reply_to_parent(@applied_workitem)
     end
 
     def reply (workitem)
-
-      value = if name == 'unset'
-        nil
-      elsif val_key = has_attribute(:val, :value)
-        attribute(val_key, workitem)
-      else
-        #child_text(workitem) # NO
-        raise ArgumentError.new("'set' is missing a value")
-      end
-
-      if var_key = has_attribute(:v, :var, :variable)
-
-        var = attribute(var_key, workitem)
-
-        if name == 'unset'
-          unset_variable(var)
-        else
-          set_variable(var, value)
-        end
-
-      elsif field_key = has_attribute(:f, :fld, :field)
-
-        field = attribute(field_key, workitem)
-
-        if name == 'unset'
-          workitem.attributes.delete(field)
-        else
-          workitem.set_field(field, value)
-        end
-
-      else
-
-        raise ArgumentError.new(
-          "missing a variable or field target in #{tree.inspect}")
-      end
-
-      reply_to_parent(workitem)
+      # empty, never called
     end
   end
 end
