@@ -226,6 +226,14 @@ module Ruote
       (service != nil)
     end
 
+    #
+    # Loads a process definition from a path or a URL
+    #
+    def load_definition (path)
+
+      parser.parse(path)
+    end
+
     protected
 
     def build_scheduler

@@ -48,6 +48,7 @@ module Ruote
 
       (return XmlParser.parse(definition)) rescue nil
       (return Ruote::Json.decode(definition)) rescue nil
+      (return ruby_eval(definition)) rescue nil
 
       if definition.index("\n") == nil
 
@@ -57,11 +58,24 @@ module Ruote
           "remote process definitions are not allowed"
         ) if u.scheme != nil && @context[:remote_definition_allowed] != true
 
-        return parse(open(definition))
+        return parse(open(definition).read)
       end
 
       raise ArgumentError.new(
         "doesn't know how to parse definition (#{definition.class})")
+    end
+
+    protected
+
+    def ruby_eval (s)
+
+      treechecker.check(s)
+      eval(s)
+
+    rescue Exception => e
+      #puts e
+      #e.backtrace.each { |l| puts l }
+      raise ArgumentError.new('probably not ruby')
     end
   end
 end

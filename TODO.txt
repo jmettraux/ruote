@@ -104,6 +104,7 @@
 [o] test : participant in error timeout (error should cancel timeout)
 [o] nested set wi.fields['a.b.0'] = x
 [o] nested save wi.fields['a.b.0'] = x
+[o] parser.rb : test security check
 
 [ ] file logger service
 
