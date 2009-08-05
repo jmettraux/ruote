@@ -5,7 +5,7 @@
 # Tue Jun 23 10:55:16 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class FtLaunchitemTest < Test::Unit::TestCase

@@ -5,7 +5,7 @@
 # Mon Jul 20 22:07:33 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 require 'ruote/part/fs_participant'
 

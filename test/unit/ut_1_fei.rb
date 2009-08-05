@@ -5,7 +5,7 @@
 # Fri May 15 10:08:51 JST 2009
 #
 
-require File.dirname(__FILE__) + '/../test_helper.rb'
+require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 require 'ruote/fei'
 

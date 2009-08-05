@@ -5,7 +5,7 @@
 # Thu May 21 15:29:48 JST 2009
 #
 
-require File.dirname(__FILE__) + '/../test_helper.rb'
+require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 require 'ruote/engine/process_status'
 

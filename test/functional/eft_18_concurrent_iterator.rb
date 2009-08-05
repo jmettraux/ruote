@@ -2,12 +2,10 @@
 #
 # Testing Ruote (OpenWFEru)
 #
-# John Mettraux at openwfe.org
-#
 # Wed Jul 29 23:25:44 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class EftConcurrentIteratorTest < Test::Unit::TestCase

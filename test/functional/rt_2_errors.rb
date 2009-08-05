@@ -5,8 +5,8 @@
 # Thu Jul 16 13:49:09 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
-require File.dirname(__FILE__) + '/restart_base'
+require File.join(File.dirname(__FILE__), 'base')
+require File.join(File.dirname(__FILE__), 'restart_base')
 
 
 class RtErrorsTest < Test::Unit::TestCase

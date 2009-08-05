@@ -5,7 +5,7 @@
 # Wed Jun 10 22:57:18 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class FtDollarTest < Test::Unit::TestCase

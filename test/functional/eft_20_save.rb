@@ -2,12 +2,10 @@
 #
 # Testing Ruote (OpenWFEru)
 #
-# John Mettraux at openwfe.org
-#
 # Mon Aug  3 12:13:11 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 require 'ruote/part/hash_participant'
 

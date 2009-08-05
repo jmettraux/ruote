@@ -5,8 +5,8 @@
 # Thu Jul  2 12:51:54 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
-require File.dirname(__FILE__) + '/restart_base'
+require File.join(File.dirname(__FILE__), 'base')
+require File.join(File.dirname(__FILE__), 'restart_base')
 
 
 require 'ruote/part/hash_participant'

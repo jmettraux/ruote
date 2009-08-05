@@ -2,14 +2,12 @@
 #
 # Testing Ruote (OpenWFEru)
 #
-# John Mettraux at openwfe.org
-#
 # Fri Jul 31 10:21:51 JST 2009
 #
 
 require 'socket' # just for SocketError
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class FtProcessDefinitionTest < Test::Unit::TestCase

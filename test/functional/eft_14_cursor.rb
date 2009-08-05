@@ -2,12 +2,10 @@
 #
 # Testing Ruote (OpenWFEru)
 #
-# John Mettraux at openwfe.org
-#
 # Mon Jun 29 18:34:02 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class EftCursorTest < Test::Unit::TestCase

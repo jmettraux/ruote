@@ -2,14 +2,10 @@
 #
 # Testing Ruote (OpenWFEru)
 #
-# John Mettraux at openwfe.org
-#
 # Tue Aug  4 08:53:33 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
-
-#require 'ruote/part/hash_participant'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class EftRestoreTest < Test::Unit::TestCase

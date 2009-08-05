@@ -5,7 +5,7 @@
 # Sat Jun 13 22:43:16 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class FtRecursionTest < Test::Unit::TestCase

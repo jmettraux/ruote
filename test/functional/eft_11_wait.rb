@@ -5,7 +5,7 @@
 # Thu Jun 18 11:03:45 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class EftWaitTest < Test::Unit::TestCase

@@ -5,7 +5,7 @@
 # Fri Jul  3 19:46:22 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class FtConditionalTest < Test::Unit::TestCase

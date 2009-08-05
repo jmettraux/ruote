@@ -5,7 +5,7 @@
 # Sun Jun 28 16:45:57 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 require 'ruote/part/hash_participant'
 

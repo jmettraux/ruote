@@ -5,8 +5,7 @@
 # Tue May 19 17:58:51 JST 2009
 #
 
-
-require File.dirname(__FILE__) + '/../test_helper.rb'
+require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 require 'ruote/pool/wfid_generator'
 require 'ruote/pool/mnemo_wfid_generator'

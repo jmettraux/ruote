@@ -9,8 +9,8 @@
 
 require 'fileutils'
 
-require File.dirname(__FILE__) + '/../test_helper.rb'
-require File.dirname(__FILE__) + '/engine_helper.rb'
+require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
+require File.join(File.dirname(__FILE__), 'engine_helper.rb')
 
 require 'ruote/engine'
 require 'ruote/log/test_logger'

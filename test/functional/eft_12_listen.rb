@@ -5,7 +5,7 @@
 # Fri Jun 19 15:26:33 JST 2009
 #
 
-require File.dirname(__FILE__) + '/base'
+require File.join(File.dirname(__FILE__), 'base')
 
 
 class EftListenTest < Test::Unit::TestCase

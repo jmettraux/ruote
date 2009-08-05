@@ -5,7 +5,7 @@
 # Sun Jun 14 17:30:43 JST 2009
 #
 
-require File.dirname(__FILE__) + '/../test_helper.rb'
+require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 require 'ruote/exp/condition'
 require 'ruote/util/treechecker'

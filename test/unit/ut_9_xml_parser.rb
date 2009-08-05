@@ -5,7 +5,7 @@
 # Fri Jul 31 09:50:13 JST 2009
 #
 
-require File.dirname(__FILE__) + '/../test_helper.rb'
+require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 require 'ruote/parser/xml'
 

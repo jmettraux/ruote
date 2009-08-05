@@ -5,7 +5,7 @@
 # Mon Aug  3 19:19:58 JST 2009
 #
 
-require File.dirname(__FILE__) + '/../test_helper.rb'
+require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 require 'ruote/util/lookup'
 
