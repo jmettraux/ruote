@@ -25,6 +25,7 @@
 
 require 'ruote/parser'
 require 'ruote/workitem'
+require 'ruote/launchitem'
 require 'ruote/engine/context'
 require 'ruote/engine/process_status'
 require 'ruote/engine/participant_methods'
@@ -80,12 +81,16 @@ module Ruote
 
     def launch (definition, opts={})
 
-      wfid = wfidgen.generate
+      if definition.is_a?(Launchitem)
+        opts[:fields] = definition.fields
+        definition = definition.definition
+      end
 
       tree = parser.parse(definition)
 
-      workitem = Workitem.new(
-        opts[:workitem] || opts[:launchitem] || {})
+      workitem = Workitem.new(opts[:fields] || {})
+
+      wfid = wfidgen.generate
 
       wqueue.emit(
         :processes, :launch,

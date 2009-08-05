@@ -105,6 +105,7 @@
 [o] nested set wi.fields['a.b.0'] = x
 [o] nested save wi.fields['a.b.0'] = x
 [o] parser.rb : test security check
+[o] add Ruote::Launchitem
 
 [ ] file logger service
 
