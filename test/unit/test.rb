@@ -12,7 +12,7 @@ huts = Dir.new(dirpath).entries.select { |e| e.match(/^hut\_.*\.rb$/) }.sort
 
 tests = uts + huts
 
-tests.each { |e| load "#{dirpath}/#{e}" }
+tests.each { |e| load(File.join(dirpath, e)) }
 
 #tests.each { |e| puts `ruby #{dirpath}/#{e}` }
   # making sure that each test is runnable standalone

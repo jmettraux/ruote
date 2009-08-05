@@ -59,7 +59,7 @@ MIT
 
 == Links
 
-http://openwferu.rubyforge.org
+http://ruote.rubyforge.org
 http://rubyforge.org/projects/openwferu
 
 http://jmettraux.wordpress.com (blog)
