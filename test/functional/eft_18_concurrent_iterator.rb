@@ -60,7 +60,12 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ])
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    trace = @tracer.to_s.split("\n").sort
+    assert_equal %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ], trace
   end
 
   def test_iterator_to_f
@@ -79,7 +84,12 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ])
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    trace = @tracer.to_s.split("\n").sort
+    assert_equal %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ], trace
   end
 end
 

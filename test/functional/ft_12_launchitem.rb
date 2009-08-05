@@ -11,7 +11,7 @@ require File.dirname(__FILE__) + '/base'
 class FtLaunchitemTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_launchitem
+  def test_launch
 
     pdef = Ruote.process_definition do
       alpha
@@ -26,11 +26,24 @@ class FtLaunchitemTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef, :workitem => { 'a' => 0, 'b' => 1 })
+    wfid = @engine.launch(pdef, :fields => { 'a' => 0, 'b' => 1 })
     wait_for(wfid)
 
     assert_equal('a', @tracer.to_s)
     assert_equal({ 'a' => 0, 'b' => 1 }, fields)
+  end
+
+  def test_launchitem
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        echo '${f:car}'
+      end
+    end
+
+    li = Ruote::Launchitem.new(pdef, 'car' => 'benz')
+
+    assert_trace(li, 'benz')
   end
 end
 
