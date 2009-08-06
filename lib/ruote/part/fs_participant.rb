@@ -92,6 +92,15 @@ module Ruote
       each { |workitem| return workitem }
     end
 
+    # Returns all the workitems stored here that have a given wfid
+    #
+    def by_wfid (wfid)
+
+      Dir.glob(File.join(@path, "*_#{wfid}_*.yaml")).collect do |path|
+        YAML.load_file(path)
+      end
+    end
+
     protected
 
     def path_for (fei)

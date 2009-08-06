@@ -41,5 +41,27 @@ class FtFsParticipantTest < Test::Unit::TestCase
     assert_equal 2, Dir.new('work/fs_participants/').entries.size
     assert_equal 0, alpha.size
   end
+
+  def test_find_by_wfid
+
+    pdef = Ruote.process_definition :name => 'def0' do
+      concurrence do
+        alpha
+        alpha
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::FsParticipant
+
+    wfid0 = @engine.launch(pdef)
+    wfid1 = @engine.launch(pdef)
+
+    sleep 0.500
+
+    assert_equal 4, alpha.size
+
+    assert_equal 2, alpha.by_wfid(wfid0).size
+    assert_equal Ruote::Workitem, alpha.by_wfid(wfid1).first.class
+  end
 end
 
