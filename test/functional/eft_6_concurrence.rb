@@ -115,7 +115,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     wi = run_concurrence({ :merge => :last }, false)
 
     assert_equal '0_1', wi.fei.expid
-    assert_equal '0_0_0_1', wi.fields['seen']
+    assert_not_nil wi.fields['seen']
   end
 
   def test_concurrence_merge_type_isolate
