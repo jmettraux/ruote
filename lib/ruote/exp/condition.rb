@@ -92,7 +92,10 @@ module Ruote
         b = m[3]
       end
 
-      a.send(m[2], b)
+      #a.send(m[2], b)
+        # ruby 1.8.x doesn't like that one
+
+      m[2] == '!=' ? ( ! a.send('==', b)) : a.send(m[2], b)
     end
 
     def self.narrow (s)
