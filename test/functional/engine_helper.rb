@@ -5,6 +5,9 @@
 # since Mon Oct  9 22:19:44 JST 2006
 #
 
+require 'ruote/engine'
+
+
 if ARGV.include?('--em')
   puts
   puts 'starting EM'
@@ -49,27 +52,30 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     exit 0
   end
 
-  require 'ruote/engine'
-
   application_context[:persist_as_yaml] = true if ARGV.include?('-y')
   application_context[:no_expstorage_cache] = true if ARGV.include?('-C')
 
-  klass = if $ruote_engine_class
+  klass = $ruote_engine_class
 
-    $ruote_engine_class
+  klass ||= $ruote_engines.find { |k, v| ARGV.include?("--#{k}") }
 
-  else
+  #p klass
 
-    if ARGV.include?('--fs') # fast and robust
+  if klass.is_a?(Array)
 
-      require 'ruote/engine/fs_engine'
-      Ruote::FsPersistedEngine
+    prefix, v = klass
+    path, libpath, lib = v
 
-    else # in-memory, use only for testing !
+    $:.unshift(File.join(libpath, 'lib'))
 
-      Ruote::Engine
-    end
+    require(File.join(libpath, 'test', 'connection'))
+    require(path)
+
+    klass =
+      eval("Ruote::#{lib.capitalize}::#{prefix.capitalize}PersistedEngine")
   end
+
+  klass ||= Ruote::Engine
 
   unless $advertised
 
@@ -85,4 +91,28 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   klass
 end
+
+#
+# detect persistence alternatives
+
+ruote_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+ruote_parent_dir = File.expand_path(File.join(ruote_dir, '..'))
+
+ruotes = Dir.new(ruote_parent_dir).entries.select { |fn| fn.match(/^ruote-/) }
+
+$ruote_engines = ruotes.inject({}) do |h, dir|
+
+  path = File.join(ruote_parent_dir, dir)
+  lib = dir.match(/^ruote-(.+)$/)[1]
+  Dir.glob(File.join(path, 'lib', '**', '*_engine.rb')).each do |epath|
+    prefix = epath.match(/([^\/\_]+)_engine.rb$/)[1]
+    h[prefix] = [ epath, path, lib ]
+  end
+
+  h
+end
+
+$ruote_engines['fs'] = Ruote::FsPersistedEngine
+
+#p $ruote_engines
 
