@@ -41,17 +41,6 @@ ARGUMENTS for functional tests :
   --fs  : uses Ruote::FsPersistedEngine (fast)
      -y : makes 'fs' store expressions as YAML (slow)
 
-  --tc  : uses Ruote::TcPersistedEngine (fast) (rufu/edo if possible)
-  --tt  : uses Ruote::TtPersistedEngine (fast) (rufus/tokyo Tyrant)
-  --TC  : uses Ruote::TcPersistedEngine (fast) (rufus/tokyo)
-
-  --fp  : uses Ruote::FilePersistedEngine (slow and deprecated)
-  --cfp : uses Ruote::CachedFilePersistedEngine (fast and deprecated)
-
-  --db  : uses Ruote::Extras::DbPersistedEngine
-  --ar  : uses Ruote::Extras::ArPersistedEngine (ActiveRecord)
-  --dm  : uses Ruote::Extras::DmPersistedEngine (DataMapper)
-
   -C    : disable caching (used for thorough persistence testing)
 
 else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
@@ -71,56 +60,10 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   else
 
-    if ARGV.include?('--fp') # very slow
-
-      require 'openwfe/engine/file_persisted_engine'
-      OpenWFE::FilePersistedEngine
-
-    elsif ARGV.include?('--cfp') # fast but not 100% robust
-
-      require 'openwfe/engine/file_persisted_engine'
-      OpenWFE::CachedFilePersistedEngine
-
-    elsif ARGV.include?('--tc') # fast and robust
-
-      application_context[:use_rufus_tokyo] = true
-        # forces to use FFI based bindings (2 times slower)
-
-      require 'openwfe/engine/tc_engine'
-      OpenWFE::TcPersistedEngine
-
-    elsif ARGV.include?('--TC') # fast and robust, fastest
-
-      require 'openwfe/engine/tc_engine'
-      OpenWFE::TcPersistedEngine
-
-    elsif ARGV.include?('--tt') # not slow, robust, remote
-
-      require 'openwfe/engine/tt_engine'
-      OpenWFE::TtPersistedEngine
-
-    elsif ARGV.include?('--fs') # fast and robust
+    if ARGV.include?('--fs') # fast and robust
 
       require 'ruote/engine/fs_engine'
       Ruote::FsPersistedEngine
-
-    elsif ARGV.include?('--db')
-
-      require File.dirname(__FILE__) + '/../ar_test_connection'
-      require 'openwfe/extras/engine/db_persisted_engine'
-      OpenWFE::Extras::DbPersistedEngine
-
-    elsif ARGV.include?('--ar')
-
-      require File.dirname(__FILE__) + '/../ar_test_connection'
-      require 'openwfe/extras/engine/ar_engine'
-      OpenWFE::Extras::ArPersistedEngine
-
-    elsif ARGV.include?('--dm')
-
-      require File.dirname(__FILE__) + '/../dm_test_connection'
-      require 'openwfe/extras/engine/dm_engine'
-      OpenWFE::Extras::DmPersistedEngine
 
     else # in-memory, use only for testing !
 
