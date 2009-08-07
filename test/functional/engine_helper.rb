@@ -59,9 +59,11 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   klass ||= $ruote_engines.find { |k, v| ARGV.include?("--#{k}") }
 
-  #p klass
+  if klass.is_a?(Array) and klass[1].is_a?(Class)
 
-  if klass.is_a?(Array)
+    klass = klass[1]
+
+  elsif klass.is_a?(Array)
 
     prefix, v = klass
     path, libpath, lib = v
