@@ -50,11 +50,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*' do |workitem|
-      @tracer << [
-        workitem.participant_name, workitem.fei.sub_wfid, workitem.fei.expid
-      ].join('/') + "\n"
-    end
+    register_catchall_participant
 
     #noisy
 
@@ -74,11 +70,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*' do |workitem|
-      @tracer << [
-        workitem.participant_name, workitem.fei.sub_wfid, workitem.fei.expid
-      ].join('/') + "\n"
-    end
+    register_catchall_participant
 
     #noisy
 
@@ -88,6 +80,40 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     trace = @tracer.to_s.split("\n").sort
     assert_equal %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ], trace
+  end
+
+  def test_iterator_with_array_param
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        concurrent_iterator :on_val => %w[ a b c ], :to_field => 'f' do
+          participant '${f:f}'
+        end
+        echo 'done.'
+      end
+    end
+
+    register_catchall_participant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    trace = @tracer.to_s.split("\n").sort
+    assert_equal %w[ a/0/0_0_0_0 b/1/0_0_0_0 c/2/0_0_0_0 done. ], trace
+  end
+
+  protected
+
+  def register_catchall_participant
+
+    @engine.register_participant '.*' do |workitem|
+      @tracer << [
+        workitem.participant_name, workitem.fei.sub_wfid, workitem.fei.expid
+      ].join('/') + "\n"
+    end
   end
 end
 
