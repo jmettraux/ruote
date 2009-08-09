@@ -52,7 +52,7 @@ module Ruote
       reply_to_engine(workitem)
     end
 
-    def cancel (fei)
+    def cancel (fei, flavour)
       # do nothing
     end
   end

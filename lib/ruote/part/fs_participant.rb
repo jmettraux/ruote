@@ -57,7 +57,7 @@ module Ruote
       File.open(path_for(workitem.fei), 'w') { |f| YAML.dump(workitem, f) }
     end
 
-    def cancel (fei)
+    def cancel (fei, flavour)
 
       File.delete(path_for(fei))
     end

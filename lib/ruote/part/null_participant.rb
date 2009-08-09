@@ -49,7 +49,7 @@ module Ruote
       notify # maybe someone has joined
     end
 
-    def cancel (fei)
+    def cancel (fei, flavour)
 
       # do nothing
     end

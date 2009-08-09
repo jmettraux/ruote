@@ -106,6 +106,7 @@
 [o] nested save wi.fields['a.b.0'] = x
 [o] parser.rb : test security check
 [o] add Ruote::Launchitem
+[o] participant#cancel pass flavour as well nil|:kill|:timeout
 
 [ ] file logger service
 

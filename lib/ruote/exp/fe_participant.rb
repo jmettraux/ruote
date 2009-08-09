@@ -68,7 +68,7 @@ module Ruote
 
       participant = plist.lookup(@participant_name)
 
-      participant.cancel(@fei)
+      participant.cancel(@fei, flavour)
 
       reply_to_parent(@applied_workitem)
     end

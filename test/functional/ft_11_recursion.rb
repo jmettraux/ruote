@@ -38,7 +38,7 @@ class FtRecursionTest < Test::Unit::TestCase
       end
     end
 
-    def cancel (fei)
+    def cancel (fei, flavour)
     end
   end
 

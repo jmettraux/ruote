@@ -50,7 +50,7 @@ module Ruote
       @items[workitem.fei] = workitem
     end
 
-    def cancel (fei)
+    def cancel (fei, flavour)
 
       @items.delete(fei)
     end
