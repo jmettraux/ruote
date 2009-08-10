@@ -25,8 +25,40 @@
 
 module Ruote
 
+  #
+  # Engine methods for [un]registering participants.
+  #
   module ParticipantMethods
 
+    # Registers a participant in the engine. Returns the participant instance.
+    #
+    # Some examples :
+    #
+    #   require 'ruote/part/hash_participant'
+    #   alice = engine.register_participant 'alice', Ruote::HashParticipant
+    #     # register an in-memory (hash) store for Alice's workitems
+    #
+    #   engine.register_participant 'compute_sum' do |wi|
+    #     wi.fields['sum'] = wi.fields['articles'].inject(0) do |s, (c, v)|
+    #       s + c * v # sum + count * value
+    #     end
+    #     # a block participant implicitely replies to the engine immediately
+    #   end
+    #
+    #   class MyParticipant
+    #     def initialize (name)
+    #       @name = name
+    #     end
+    #     def consume (workitem)
+    #       workitem.fields['rocket_name'] = @name
+    #       send_to_the_moon(workitem)
+    #     end
+    #     def cancel (fei, flavour)
+    #       # do nothing
+    #     end
+    #   end
+    #   engine.register_participant /^moon-.+/, MyParticipant.new('Saturn-V')
+    #
     def register_participant (regex, participant=nil, opts={}, &block)
 
       pa = plist.register(regex, participant, opts, block)
@@ -38,6 +70,8 @@ module Ruote
       pa
     end
 
+    # Removes/unregisters a participant from the engine.
+    #
     def unregister_participant (name_or_participant)
 
       entry = plist.unregister(name_or_participant)
