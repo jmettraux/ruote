@@ -90,6 +90,7 @@ module Ruote
     def first
 
       each { |workitem| return workitem }
+      nil
     end
 
     # Returns all the workitems stored here that have a given wfid
@@ -106,7 +107,7 @@ module Ruote
     def path_for (fei)
 
       File.join(
-        @path, "#{@name}__#{fei.engine_id}_#{fei.wfid}_#{fei.expid}.yaml")
+        @path, "#{@name}__#{fei.engine_id}_#{fei.wfid}__#{fei.expid}.yaml")
     end
 
     def neutralize (s)
