@@ -78,7 +78,7 @@ module OpenWFE
     #
     def read_uri (uri)
 
-      return File.read(uri) if uri.match(/^[a-zA-Z]:[\/\\]/)
+      return File.read(uri) if uri.to_s.match(/^[a-zA-Z]:[\/\\]/)
         # seems like we're on windows, well... A:/ ?
 
       u = URI.parse(uri.to_s)
