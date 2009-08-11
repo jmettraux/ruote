@@ -41,14 +41,17 @@ module Ruote
 
       return reply_to_parent(@applied_workitem) unless tree_children[0]
 
-      list = determine_list
+      @list = determine_list
+
+      persist
+
       to_v, to_f = determine_tos
 
-      return reply_to_parent(@applied_workitem) if list.empty?
+      return reply_to_parent(@applied_workitem) if @list.empty?
 
-      list.each_with_index do |e, i|
+      @list.each_with_index do |e, i|
 
-        val = list[i]
+        val = @list[i]
 
         variables = {}
         workitem  = @applied_workitem.dup
@@ -66,6 +69,13 @@ module Ruote
           workitem,
           :variables => variables)
       end
+    end
+
+    # Overrides the implementation found in ConcurrenceExpression
+    #
+    def expected_count
+
+      @count ? [ @count, @list.size ].min : @list.size
     end
   end
 end

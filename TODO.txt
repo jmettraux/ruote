@@ -165,3 +165,6 @@ restart tests :
 
 [ ] set :var => 'y' { '2342342' }
 
+[ ] pause engine
+[ ] pause process instance
+

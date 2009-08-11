@@ -98,8 +98,15 @@ module Ruote
       if over_if && Condition.true?(over_if)
         true
       else
-        @workitems && (@workitems.size >= (@count || tree_children.size))
+        @workitems && (@workitems.size >= expected_count)
       end
+    end
+
+    # How many branch replies are expected before the concurrence is over ?
+    #
+    def expected_count
+
+      @count ? [ @count, tree_children.size ].min : tree_children.size
     end
 
     def reply_to_parent (_workitem)
