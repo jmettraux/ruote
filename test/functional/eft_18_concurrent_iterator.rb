@@ -141,7 +141,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
   #  assert_nil @engine.process(wfid)
   #end
 
-  def test_iterator_with_nested_sequence_and_hash_participants
+  def test_iterator_with_branches_finishing_before_others
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
@@ -182,6 +182,26 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal 0, p3.size
     assert_equal 1, p1.size
     assert_equal 0, p2.size
+  end
+
+  def test_passing_non_array_as_thing_to_iterate
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        concurrent_iterator :on_val => { 'a' => 'A' }, :to_f => 'f' do
+          p1
+        end
+        echo 'out'
+      end
+    end
+
+    @engine.register_participant :p1 do |workitem|
+      @tracer << "p1:#{workitem.fields['f'].join(':')}\n"
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ p1:a:A out ]
   end
 
   protected

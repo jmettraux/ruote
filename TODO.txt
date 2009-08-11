@@ -168,3 +168,5 @@ restart tests :
 [ ] pause engine
 [ ] pause process instance
 
+[ ] BlockParticipant : |workitem, fexp|
+

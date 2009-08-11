@@ -25,6 +25,10 @@
 
 module Ruote
 
+  #
+  # A Mixin shared by Ruote::IteratorExpression and
+  # Ruote::ConcurrentIteratorExpression
+  #
   module IteratorMixin
 
     protected
@@ -34,11 +38,21 @@ module Ruote
       list = lookup_value('on')
 
       if list.is_a?(String)
+
         sep = attribute(:separator) || attribute(:sep) || ','
         list.split(sep).collect { |e| e.strip }
+
+      #elsif list.is_a?(Hash)
+      elsif list.respond_to?(:to_a)
+
+        list.to_a
+
       elsif list.respond_to?(:[]) and list.respond_to?(:length)
+
         list
+
       else
+
         []
       end
     end

@@ -187,5 +187,23 @@ class EftIteratorTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ a/0_1_0 b/0_1_0 ])
   end
+
+  def test_iterator_with_hash_as_input
+
+    pdef = Ruote.process_definition :name => 'test' do
+      iterator :on_val => { 'a' => 'A', 'b' => 'B' }, :to_f => 'f' do
+        p1
+      end
+    end
+
+    @engine.register_participant :p1 do |wi|
+      @tracer << wi.fields['f'].join(':')
+      @tracer << "\n"
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a:A b:B ]
+  end
 end
 
