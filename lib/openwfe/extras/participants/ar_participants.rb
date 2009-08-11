@@ -248,7 +248,7 @@ module OpenWFE::Extras
       if o.is_a?(Hash)
         "|#{o.collect { |k, v| "#{fk(k)}:#{fk(v)}" }.join('|')}|"
       elsif o.is_a?(Array)
-        "|#{o.collect { |e| fk(e)}.join('|')}|"
+        "|#{o.collect { |e| fk(e) }.join('|')}|"
       else
         o.to_s.gsub('|', '').gsub(':', '')
       end

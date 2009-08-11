@@ -21,6 +21,7 @@ Richard Jennings
 Contributors
 ------------
 
+Enrico Bianco - uri.to_s issue
 Andrew Timberlake - timeout 'at'
 Torsten Schoenebaum - ActiveResourceParticipant
 Raphael Simon - error handling mechanism design and QA
@@ -30,18 +31,6 @@ Sakaguchi Masa - japanese website and articles in Japanese magazines
 Patrice Cappelaere - lots of feedback and ideas
 Nicolas Modrzyk ( senior developer )
 David Lee ( senior developer )
-
-
-Sponsors
---------
-
-(none)
-
-
-Donators
---------
-
-(none)
 
 
 Feedback
