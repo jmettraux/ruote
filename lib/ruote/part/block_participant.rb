@@ -45,9 +45,11 @@ module Ruote
 
     def consume (workitem)
 
-      # TODO : different block arity ?
-
-      @block.call(workitem)
+      if @block.arity == 1
+        @block.call(workitem)
+      else
+        @block.call(workitem, expstorage[workitem.fei])
+      end
 
       reply_to_engine(workitem)
     end

@@ -107,6 +107,7 @@
 [o] parser.rb : test security check
 [o] add Ruote::Launchitem
 [o] participant#cancel pass flavour as well nil|:kill|:timeout
+[o] BlockParticipant : |workitem, fexp|
 
 [ ] file logger service
 
@@ -167,6 +168,4 @@ restart tests :
 
 [ ] pause engine
 [ ] pause process instance
-
-[ ] BlockParticipant : |workitem, fexp|
 
