@@ -94,6 +94,11 @@ module Ruote
       @scheduler.in(t, :schedulable => RuoteSchedulable.new(fei, method))
     end
 
+    def listen_every (freq, listener)
+
+      @scheduler.every(freq, :schedulable => listener)
+    end
+
     def unschedule (job_id)
 
       @scheduler.unschedule(job_id)
