@@ -20,16 +20,15 @@ task :default => [ :clean, :repackage ]
 
 task :rdoc do
   sh %{
-    #yardoc 'lib/**/*.rb' -o rdoc --files README.rdoc,CREDITS.txt
-    rm -fR rdoc
-    yardoc 'lib/**/*.rb' -o rdoc --title 'ruote 2.0'
+    rm -fR ruote_rdoc
+    yardoc 'lib/**/*.rb' -o ruote_rdoc --title 'ruote 2.0'
   }
 end
 
 task :upload_rdoc => :rdoc do
   sh %{
     rsync -azv -e ssh \
-      rdoc \
+      ruote_rdoc \
       jmettraux@rubyforge.org:/var/www/gforge-projects/ruote/
   }
 end
@@ -52,14 +51,14 @@ Rake::PackageTask.new('ruote', gemspec.version) do |pkg|
   pkg.package_files = FileList[
     'Rakefile',
     '*.txt',
-    'bin/**/*',
+    #'bin/**/*',
     'doc/**/*',
-    'examples/**/*',
+    #'examples/**/*',
     'lib/**/*',
     'test/**/*'
   ].to_a
-  pkg.package_files.delete('rc.txt')
-  pkg.package_files.delete('MISC.txt')
+  #pkg.package_files.delete('rc.txt')
+  #pkg.package_files.delete('MISC.txt')
   class << pkg
     def package_name
       "#{@name}-#{@version}-src"

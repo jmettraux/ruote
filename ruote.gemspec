@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
 
   #files = FileList[ '{bin,docs,lib,test,examples}/**/*' ]
   files = FileList[ '{lib}/**/*' ]
-  files.exclude 'rdoc'
+  files.exclude 'ruote_rdoc'
   #files.exclude 'extras'
   s.files = files.to_a
 end
