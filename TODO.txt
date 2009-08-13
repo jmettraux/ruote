@@ -109,6 +109,7 @@
 [o] participant#cancel pass flavour as well nil|:kill|:timeout
 [o] BlockParticipant : |workitem, fexp|
 [o] listeners
+[o] engine.wait_for
 
 [ ] file logger service
 
@@ -171,4 +172,7 @@ restart tests :
 [ ] pause process instance
 
 [ ] file/fs_listener [example] ?
+
+[ ] tree.to_xml (require builder ?)
+[ ] tree.to_rb
 

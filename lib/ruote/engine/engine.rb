@@ -30,6 +30,7 @@ require 'ruote/engine/context'
 require 'ruote/engine/process_status'
 require 'ruote/engine/participant_methods'
 require 'ruote/engine/listener_methods'
+require 'ruote/engine/wait_methods'
 require 'ruote/exp/expression_map'
 require 'ruote/pool/mnemo_wfid_generator'
 require 'ruote/pool/expression_pool'
@@ -51,6 +52,7 @@ module Ruote
     include EngineContext
     include ParticipantMethods
     include ListenerMethods
+    include WaitMethods
 
     attr_reader :engine_id
 
@@ -232,7 +234,6 @@ module Ruote
       (service != nil)
     end
 
-    #
     # Loads a process definition from a path or a URL
     #
     def load_definition (path)
