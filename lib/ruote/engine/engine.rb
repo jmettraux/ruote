@@ -49,8 +49,8 @@ module Ruote
   class Engine
 
     include EngineContext
-
     include ParticipantMethods
+    include ListenerMethods
 
     attr_reader :engine_id
 

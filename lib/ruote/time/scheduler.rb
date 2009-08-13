@@ -31,11 +31,11 @@ module Ruote
 
   #
   # Ruote encapsulates a pointer to a flow expression (fei) and a method
-  # name in an instance of RuoteSchedulable. When the scheduler determines
+  # name in an instance of FexpSchedulable. When the scheduler determines
   # the time has come, the flow expression is retrieved and the method is
   # called.
   #
-  class RuoteSchedulable
+  class FexpSchedulable
 
     def initialize (fei, m)
 
@@ -63,6 +63,30 @@ module Ruote
   end
 
   #
+  # Keeping track of a service (found in the ruote engine context) that
+  # has to be scheduled from time to time (for example, a listener).
+  #
+  # Only the name of the 'service' is kept (for easy serialization).
+  #
+  # The service is only expected to respond to #call (with one argument,
+  # the rufus-scheduler job itself)
+  #
+  class ServiceSchedulable
+
+    def initialize (service_name)
+
+      @service_name = service_name
+    end
+
+    def call (rufus_job)
+
+      context = rufus_job.scheduler.options[:context]
+
+      context[@service_name].call(rufus_job)
+    end
+  end
+
+  #
   # Wrapping a rufus-scheduler instance, for handling all the time-related
   # things in ruote ('wait', timeouts, ...)
   #
@@ -84,19 +108,19 @@ module Ruote
       @scheduler.stop
     end
 
-    def at (t, fei, method)
+    def at (t, *args)
 
-      @scheduler.at(t, :schedulable => RuoteSchedulable.new(fei, method))
+      @scheduler.at(t, :schedulable => new_schedulable(args))
     end
 
-    def in (t, fei, method)
+    def in (t, *args)
 
-      @scheduler.in(t, :schedulable => RuoteSchedulable.new(fei, method))
+      @scheduler.in(t, :schedulable => new_schedulable(args))
     end
 
-    def listen_every (freq, listener)
+    def every (freq, *args)
 
-      @scheduler.every(freq, :schedulable => listener)
+      @scheduler.every(freq, :schedulable => new_schedulable(args))
     end
 
     def unschedule (job_id)
@@ -115,6 +139,15 @@ module Ruote
 
       exps = expstorage.find_expressions(:responding_to => :reschedule)
       exps.each { |exp| exp.reschedule }
+    end
+
+    def new_schedulable (args)
+
+      if args.size > 1
+        FexpSchedulable.new(args[0], args[1]) # fei, method
+      else
+        ServiceSchedulable.new(args[0]) # service_name
+      end
     end
   end
 end

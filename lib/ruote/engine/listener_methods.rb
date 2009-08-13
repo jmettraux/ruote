@@ -38,6 +38,10 @@ module Ruote
 
       set_listener_name(listener, opts) # as opts[:name]
 
+      raise(ArgumentError.new(
+        "There is already a service bound under the name '#{opts[:name]}'"
+      )) if @context[opts[:name]]
+
       l = listener.is_a?(Class) ? listener.new(opts) : listener
       l.context = @context if l.respond_to?(:context)
       class << l
@@ -57,7 +61,7 @@ module Ruote
 
         freq = freq.to_s.strip
 
-        job_id = scheduler.listen_every(freq, l)
+        job_id = scheduler.every(freq, opts[:name]).job_id
 
         l.scheduler_job_id = job_id
       end
@@ -73,7 +77,7 @@ module Ruote
     #
     def unregister_listener (listener)
 
-      k, v = @context.select { |k, v| v == listener }
+      k, v = @context.find { |k, v| v == listener }
 
       @context.delete(k)
 
@@ -86,12 +90,12 @@ module Ruote
     #
     def listeners
 
-      @context.values.select { |v| v.listener? }
+      @context.values.select { |v| v.respond_to?(:listener?) }
     end
 
     protected
 
-    def determine_listener_name (listener, opts)
+    def set_listener_name (listener, opts)
 
       opts[:name] ||= "listener_#{opts.object_id}"
     end

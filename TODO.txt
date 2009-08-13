@@ -108,6 +108,7 @@
 [o] add Ruote::Launchitem
 [o] participant#cancel pass flavour as well nil|:kill|:timeout
 [o] BlockParticipant : |workitem, fexp|
+[o] listeners
 
 [ ] file logger service
 
@@ -169,5 +170,5 @@ restart tests :
 [ ] pause engine
 [ ] pause process instance
 
-[ ] listeners
+[ ] file/fs_listener [example] ?
 
