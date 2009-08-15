@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'ruote/queue/subscriber'
+
 
 module Ruote
 
@@ -36,6 +38,7 @@ module Ruote
     # A helper class for the #wait_for method.
     #
     class Waiting
+
       include EngineContext
       include Subscriber
 

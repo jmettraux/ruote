@@ -110,6 +110,7 @@
 [o] BlockParticipant : |workitem, fexp|
 [o] listeners
 [o] engine.wait_for
+[o] func tests : wire assert_no_errors back in
 
 [ ] file logger service
 
@@ -147,7 +148,6 @@ restart tests :
 [ ] Andrew's at for timeouts (Chronic maybe)
 
 [ ] participant dispatch thread throttling ?
-[ ] func tests : wire assert_no_errors back in
 
 [ ] expstorage.to_dot
 

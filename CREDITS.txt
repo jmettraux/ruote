@@ -23,7 +23,7 @@ Nick Petrella - socket listener issues and Python interactivity, dollar patch
 Sakaguchi Masa - japanese website and articles in Japanese magazines
 Patrice Cappelaere - lots of feedback and ideas
 Tomaso Tosolini - database persisted engine implementation and patches
-Alain Hoang ( configuration managaer )
+Alain Hoang (configuration managaer)
 Matt Zukowski (senior developer)
 Jamandru Reynolds (http://geometron.net)
 Frederic Piccand
