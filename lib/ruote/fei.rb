@@ -122,6 +122,29 @@ module Ruote
       wfid_split(wfid)[1]
     end
 
+    # Turns a string back into a FlowExpressionId.
+    #
+    #   s = fei.to_s
+    #   fei1 = Ruote::FlowExpressionId.from_s(s)
+    #   p fei1 == fei # => true
+    #
+    def self.from_s (s)
+
+      ss = s.split('|')
+
+      raise(ArgumentError.new(
+        "string '#{s}' can't be turned back into a " +
+        "Ruote::FlowExpressionId instance"
+      )) if ss.length != 3
+
+      fei = FlowExpressionId.new
+      fei.engine_id = ss[0]
+      fei.wfid = ss[1]
+      fei.expid = ss[2]
+
+      fei
+    end
+
     protected
 
     # Splits the wfid into [ parent_wfid, subprocess_id ]

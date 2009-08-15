@@ -20,6 +20,15 @@ class FeiTest < Test::Unit::TestCase
     assert_equal 'ei|wfid|0', fei.to_s
   end
 
+  def test_from_s
+
+    fei = Ruote::FlowExpressionId.from_s('ei|wfid|0')
+
+    assert_equal 'ei', fei.engine_id
+    assert_equal 'wfid', fei.wfid
+    assert_equal '0', fei.expid
+  end
+
   def test_sub_wfid
 
     fei = Ruote::FlowExpressionId.from_h(
