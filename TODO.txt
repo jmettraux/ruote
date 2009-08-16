@@ -118,10 +118,10 @@
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : eval
+[ ] exp : reval
 [ ] exp : when (exploit :var :set event)
 [ ] exp : error
 [ ] exp : case (is it necessary ?)
-[ ] exp : cron
 [ ] exp : defined (not really necessary)
 [ ] exp : quote (not really necessary)
 [ ] exp : field / attribute (not really necessary)
@@ -130,9 +130,12 @@
 [ ] exp : filter-definition
 [x] exp : lose ?
 [x] exp : parameter
-[ ] exp : reval
 [ ] exp : log
+
 [ ] exp : step (jump to cursor tag ?)
+
+[ ] exp : cron
+[ ] exp : every
 
 restart tests :
 [ ] when

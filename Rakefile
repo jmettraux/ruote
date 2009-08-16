@@ -24,6 +24,12 @@ task :rdoc do
     yardoc 'lib/**/*.rb' -o ruote_rdoc --title 'ruote 2.0'
   }
 end
+#task :exp_rdoc do
+#  sh %{
+#    rm -fR ruote_rdoc
+#    yardoc 'lib/ruote/exp/*.rb' -o ruote_exp_rdoc --title 'ruote 2.0 expressions'
+#  }
+#end
 
 task :upload_rdoc => :rdoc do
   sh %{
