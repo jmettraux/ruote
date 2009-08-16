@@ -29,6 +29,91 @@ require 'ruote/exp/condition'
 
 module Ruote
 
+  #
+  # The 'participant' expression is very special. It sits on the fence between
+  # the engine and the external world.
+  #
+  # The participant expression is used to pass workitems to participants
+  # from the engine. Those participants are bound at start time (usually) in
+  # the engine via its register_participant method.
+  #
+  # Here's an example of two concurrent participant expressions in use :
+  #
+  #   concurrence do
+  #     participant :ref => 'alice'
+  #     participant :ref => 'bob'
+  #   end
+  #
+  # Upon encountering the two expressions, the engine will lookup their name
+  # in the participant map and hand the workitems to the participant instances
+  # registered for those names.
+  #
+  #
+  # == attributes passed as arguments
+  #
+  # All the attributes passed to a participant will be fed to the outgoing
+  # workitem under a new 'params' field.
+  #
+  # Thus, with
+  #
+  #     participant :ref => 'alice', :task => 'maw the lawn', :timeout => '2d'
+  #
+  # Alice will receive a workitem with a field params set to
+  #
+  #     { :ref => 'alice', :task => 'maw the lawn', :timeout => '2d' }
+  #
+  # The fields named 'params' will be deleted before the workitems resumes
+  # in the flow (with the engine replying to the parent expression of this
+  # participant expression).
+  #
+  #
+  # == simplified participant notation
+  #
+  # This process definition is equivalent to the one above. Less to write.
+  #
+  #   concurrence do
+  #     participant 'alice'
+  #     bob
+  #   end
+  #
+  # Please note that 'bob' alone could stand for the participant 'bob' or
+  # the subprocess named 'bob'. Subprocesses do take precedence over
+  # participants (if there is a subprocess named 'bob' and a participant
+  # named 'bob'.
+  #
+  #
+  # == participant defined timeout
+  #
+  # Usually, timeouts are given for an expression in the process definition.
+  #
+  #   participant 'alice', :timeout => '2d'
+  #
+  # where alice as two days to complete her task (send back the workitem).
+  #
+  # But it's OK for participant classes registered in the engine to provide
+  # their own timeout value. The participant instance simply has to reply to
+  # the #timeout method and provide a meaningful timeout value.
+  #
+  # Note however, that the process definition timeout (if any) will take
+  # precedence over the participant specified one.
+  #
+  #
+  # == asynchronous
+  #
+  # The expression will make sure to dispatch to the participant in an
+  # asynchronous way. This means that the dispatch will occur in a dedicated
+  # thread. If EventMachine is available, a new thread won't be created,
+  # but the dispatch will thanks to EventMachine.next_tick() method.
+  #
+  # Since the dispatching to the participant could take a long time and block
+  # the engine for too long, this 'do thread' policy is used by default.
+  #
+  # If the participant itself replies to the method #do_not_thread and replies
+  # positively to it, a new thread (or a next_tick) won't get used. This is
+  # practical for tiny participants that don't do IO and reply immediately
+  # (after a few operations). By default, BlockParticipant instances do not
+  # thread.
+  #
   class ParticipantExpression < FlowExpression
 
     #include FilterMixin
@@ -129,12 +214,17 @@ module Ruote
         :workitems, :dispatched, :workitem => wi, :pname => @participant_name)
     end
 
+    # Overriden with an empty behaviour. The work is now done a bit later
+    # via the #schedule_timeout method.
+    #
     def consider_timeout
-
-      # do nothing, the timeout schedule (if any) occurs a bit later
-      # in #schedule_timeout
     end
 
+    # Determines and schedules timeout if any.
+    #
+    # Note that process definition timeout has priority over participant
+    # specified timeout.
+    #
     def schedule_timeout (participant)
 
       timeout =
