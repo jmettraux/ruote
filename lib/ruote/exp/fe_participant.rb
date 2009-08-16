@@ -40,6 +40,9 @@ module Ruote
 
     def apply
 
+      #
+      # determine participant
+
       @participant_name = attribute(:ref) || attribute_text
 
       @participant_name = @participant_name.to_s
@@ -53,6 +56,14 @@ module Ruote
       raise(
         ArgumentError.new("no participant named #{@participant_name.inspect}")
       ) unless participant
+
+      #
+      # participant found, consider timeout
+
+      schedule_timeout(participant)
+
+      #
+      # dispatch to participant
 
       @applied_workitem.participant_name =
         attribute(:original_ref) || @participant_name
@@ -116,6 +127,22 @@ module Ruote
 
       wqueue.emit(
         :workitems, :dispatched, :workitem => wi, :pname => @participant_name)
+    end
+
+    def consider_timeout
+
+      # do nothing, the timeout schedule (if any) occurs a bit later
+      # in #schedule_timeout
+    end
+
+    def schedule_timeout (participant)
+
+      timeout =
+        attribute(:timeout) ||
+        (participant.respond_to?(:timeout) ? participant.timeout : nil)
+
+      @timeout_job_id = scheduler.in(timeout, @fei, :cancel).job_id \
+        if timeout
     end
   end
 end

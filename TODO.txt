@@ -111,6 +111,7 @@
 [o] listeners
 [o] engine.wait_for
 [o] func tests : wire assert_no_errors back in
+[o] timeout set by participant [implementation]
 
 [ ] file logger service
 
@@ -163,8 +164,6 @@ restart tests :
 [ ] test for wfids of errors in subprocesses !
 
 [ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
-
-[ ] timeout set by participant [implementation]
 
 [ ] set :var => 'y' { '2342342' }
 
