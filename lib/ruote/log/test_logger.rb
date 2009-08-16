@@ -97,7 +97,10 @@ module Ruote
       return false if pc && ec != pc
       return false if pm && em != pm
 
-      pa.each { |k, v| return false if ea[k] != v }
+      pa.each do |k, v|
+        next if k == :wfid && ea[:parent_wfid] == v
+        return false if ea[k] != v
+      end
 
       true
     end

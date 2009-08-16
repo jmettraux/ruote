@@ -112,6 +112,7 @@
 [o] engine.wait_for
 [o] func tests : wire assert_no_errors back in
 [o] timeout set by participant [implementation]
+[o] test for wfids of errors in subprocesses !
 
 [ ] file logger service
 
@@ -161,8 +162,6 @@ restart tests :
 
 [ ] recursion : should cope with modified trees 'main' => :tree ??
 
-[ ] test for wfids of errors in subprocesses !
-
 [ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
 
 [ ] set :var => 'y' { '2342342' }
@@ -174,4 +173,6 @@ restart tests :
 
 [ ] tree.to_xml (require builder ?)
 [ ] tree.to_rb
+
+[ ] concurrence / concurrent_iterator merge plugin ?
 

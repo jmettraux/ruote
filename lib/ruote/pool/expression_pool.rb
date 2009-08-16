@@ -338,11 +338,14 @@ module Ruote
       exp.instance_variable_set(:@state, :failed)
       exp.persist
 
+      efei = exp ? exp.fei : fei
+
       wqueue.emit(
         :errors,
         :s_expression_pool,
         { :error => exception,
-          :wfid => (exp ? exp.fei : fei).wfid,
+          :wfid => efei.wfid,
+          :parent_wfid => efei.parent_wfid,
           :message => [ :expressions, emsg, eargs ] })
     end
 

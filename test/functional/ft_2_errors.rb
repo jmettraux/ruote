@@ -156,5 +156,47 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal %w[ alpha alpha done. ].join("\n"), @tracer.to_s
   end
+
+  def test_errors_and_subprocesses
+
+    pdef = Ruote.process_definition do
+      sequence do
+        sub0
+        echo 'done.'
+      end
+      define 'sub0' do
+        alpha
+      end
+    end
+
+    count = 0
+
+    alpha = @engine.register_participant :alpha do
+      count += 1
+      @tracer << "alpha\n"
+      raise "something went wrong" if count == 1
+    end
+    alpha.do_not_thread = true
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    assert_equal 1, ps.errors.size
+
+    err = ps.errors.first
+
+    assert_equal "#{wfid}_0", err.fei.wfid
+
+    @engine.replay_at_error(err)
+
+    wait_for(wfid)
+
+    assert_equal %w[ alpha alpha done. ].join("\n"), @tracer.to_s
+  end
 end
 
