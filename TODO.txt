@@ -179,3 +179,5 @@ restart tests :
 
 [ ] concurrence / concurrent_iterator merge plugin ?
 
+[ ] Ruote::Exp:: namespace for expressions
+

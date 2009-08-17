@@ -125,5 +125,37 @@ class EftCursorTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ a ] * 5)
   end
+
+  def test_jump_to
+
+    pdef = Ruote.process_definition :name => 'test' do
+      cursor do
+        author
+        reviewer
+        jump :to => 'author', :if => '${not_ok}'
+        publisher
+      end
+    end
+
+    count = 0
+      # closures ftw
+
+    @engine.register_participant :author do |workitem|
+      @tracer << "a\n"
+      count = count + 1
+    end
+    @engine.register_participant :reviewer do |workitem|
+      @tracer << "r\n"
+      workitem.fields['not_ok'] = (count < 3)
+    end
+    @engine.register_participant :publisher do |workitem|
+      @tracer << "p\n"
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a r a r a r p ]
+      # ARP nostalgy....
+  end
 end
 

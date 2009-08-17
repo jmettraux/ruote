@@ -35,6 +35,8 @@ module Ruote
 
     protected
 
+    # TODO : :ignore_workitem / :disallow => 'workitem' thing ?
+
     def get_command (workitem)
 
       command, step = workitem.fields.delete(F_COMMAND)
