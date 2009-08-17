@@ -113,6 +113,7 @@
 [o] func tests : wire assert_no_errors back in
 [o] timeout set by participant [implementation]
 [o] test for wfids of errors in subprocesses !
+[o] Ruote::Exp:: namespace for expressions
 
 [ ] file logger service
 
@@ -178,6 +179,4 @@ restart tests :
 [ ] tree.to_rb
 
 [ ] concurrence / concurrent_iterator merge plugin ?
-
-[ ] Ruote::Exp:: namespace for expressions
 

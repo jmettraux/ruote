@@ -190,7 +190,8 @@ module Ruote
     #
     def temp_exp (parent_id, variables, workitem, tree=[ 'nada', {}, [] ])
 
-      FlowExpression.new(@context, nil, parent_id, tree, variables, workitem)
+      Ruote::Exp::FlowExpression.new(
+        @context, nil, parent_id, tree, variables, workitem)
     end
 
     # Applying a branch (creating an expression for it and applying it).
@@ -317,7 +318,8 @@ module Ruote
         ex = if exp
           exp
         else
-          RawExpression.new(@context, fei, eargs[:parent_id], eargs[:tree], wi)
+          Ruote::Exp::RawExpression.new(
+            @context, fei, eargs[:parent_id], eargs[:tree], wi)
         end
         ex.persist
           #
@@ -400,7 +402,7 @@ module Ruote
       vars = {}
 
       if expmap.is_definition?(tree)
-        name, tree = DefineExpression.reorganize(expmap, tree)
+        name, tree = Ruote::Exp::DefineExpression.reorganize(expmap, tree)
         vars[name] = [ '0', tree ] if name
       end
 

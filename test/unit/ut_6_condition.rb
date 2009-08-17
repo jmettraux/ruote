@@ -40,14 +40,14 @@ class ConditionTest < Test::Unit::TestCase
     sif = fe.attribute(:if)
     sunless = fe.attribute(:unless)
 
-    assert_equal result, (not Ruote::Condition.skip?(sif, sunless))
+    assert_equal result, (not Ruote::Exp::Condition.skip?(sif, sunless))
   end
 
   def assert_b (b, conditional)
 
     assert_equal(
       b,
-      Ruote::Condition.true?(conditional),
+      Ruote::Exp::Condition.true?(conditional),
       ">#{conditional}< was expected to be #{b}")
   end
 

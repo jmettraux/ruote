@@ -27,7 +27,7 @@ require 'ruote/exp/flowexpression'
 require 'ruote/exp/merge'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # Restores the fields of the current workitem. That means usually copying

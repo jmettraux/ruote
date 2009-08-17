@@ -26,8 +26,17 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
+  #
+  # Waits (sleeps) for a given period of time before resuming the flow.
+  #
+  #   sequence do
+  #     accounting :task => 'invoice'
+  #     wait '30d' # 30 days
+  #     accounting :task => 'check if customer paid'
+  #   end
+  #
   class WaitExpression < FlowExpression
 
     names :wait, :sleep

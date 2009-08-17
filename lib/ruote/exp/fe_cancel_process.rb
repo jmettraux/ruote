@@ -25,7 +25,7 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
   class CancelProcessExpression < FlowExpression
 

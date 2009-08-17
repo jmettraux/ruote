@@ -23,7 +23,7 @@
 #++
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # A Mixin shared by Ruote::IteratorExpression and

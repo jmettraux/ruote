@@ -20,7 +20,7 @@ class EftNoOpTest < Test::Unit::TestCase
       end
     end
 
-    noisy
+    #noisy
 
     assert_trace(pdef, 'done.')
   end

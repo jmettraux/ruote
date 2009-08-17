@@ -25,8 +25,11 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
+  #
+  # Undoes and the redoes (re-applies) an expression identified by a tag.
+  #
   class RedoExpression < FlowExpression
 
     names :redo

@@ -25,8 +25,9 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
+  #
   # Undoes (cancels) another expression referred by its tag.
   #
   #   pdef = Ruote.process_definition do

@@ -69,7 +69,7 @@ module Ruote
       when Regexp then v
       when Exception then "#{k} >#{v.message}< at #{v.backtrace.first}"
       when Workitem then "#{k}/#{v.fei.to_s}"
-      when FlowExpression then "#{k}/#{v.fei.to_s}"
+      when Ruote::Exp::FlowExpression then "#{k}/#{v.fei.to_s}"
       when FlowExpressionId then v.to_s
       when NilClass then nil
       when TrueClass then true

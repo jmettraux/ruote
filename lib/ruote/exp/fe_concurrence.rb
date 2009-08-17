@@ -27,7 +27,7 @@ require 'ruote/exp/flowexpression'
 require 'ruote/exp/merge'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # The 'concurrence' expression applies its child branches in parallel

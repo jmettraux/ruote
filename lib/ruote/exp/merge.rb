@@ -23,7 +23,7 @@
 #++
 
 
-module Ruote
+module Ruote::Exp
 
   module MergeMixin
 

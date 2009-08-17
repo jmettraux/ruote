@@ -25,7 +25,7 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # Not a 'real' expression. Used to keep track of failure of [pre-]apply.

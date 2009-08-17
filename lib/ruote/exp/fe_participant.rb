@@ -27,7 +27,7 @@ require 'ruote/exp/flowexpression'
 require 'ruote/exp/condition'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # The 'participant' expression is very special. It sits on the fence between

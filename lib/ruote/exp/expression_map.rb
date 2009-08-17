@@ -23,6 +23,13 @@
 #++
 
 
+module Ruote
+module Exp
+  # just introducing the namespace
+end
+end
+
+
 exppath = File.dirname(__FILE__)
 
 Dir.new(exppath).entries.select { |p|
@@ -43,29 +50,29 @@ module Ruote
     def initialize
 
       @map = {}
-      add(Ruote::DefineExpression)
-      add(Ruote::SequenceExpression)
-      add(Ruote::EchoExpression)
-      add(Ruote::ParticipantExpression)
-      add(Ruote::SetExpression)
-      add(Ruote::SubprocessExpression)
-      add(Ruote::ConcurrenceExpression)
-      add(Ruote::ConcurrentIteratorExpression)
-      add(Ruote::ForgetExpression)
-      add(Ruote::UndoExpression)
-      add(Ruote::RedoExpression)
-      add(Ruote::CancelProcessExpression)
-      add(Ruote::WaitExpression)
-      add(Ruote::ListenExpression)
-      add(Ruote::CommandExpression)
-      add(Ruote::IteratorExpression)
-      add(Ruote::CursorExpression)
-      add(Ruote::IfExpression)
-      add(Ruote::EqualsExpression)
-      add(Ruote::ReserveExpression)
-      add(Ruote::SaveExpression)
-      add(Ruote::RestoreExpression)
-      add(Ruote::NoOpExpression)
+      add(Ruote::Exp::DefineExpression)
+      add(Ruote::Exp::SequenceExpression)
+      add(Ruote::Exp::EchoExpression)
+      add(Ruote::Exp::ParticipantExpression)
+      add(Ruote::Exp::SetExpression)
+      add(Ruote::Exp::SubprocessExpression)
+      add(Ruote::Exp::ConcurrenceExpression)
+      add(Ruote::Exp::ConcurrentIteratorExpression)
+      add(Ruote::Exp::ForgetExpression)
+      add(Ruote::Exp::UndoExpression)
+      add(Ruote::Exp::RedoExpression)
+      add(Ruote::Exp::CancelProcessExpression)
+      add(Ruote::Exp::WaitExpression)
+      add(Ruote::Exp::ListenExpression)
+      add(Ruote::Exp::CommandExpression)
+      add(Ruote::Exp::IteratorExpression)
+      add(Ruote::Exp::CursorExpression)
+      add(Ruote::Exp::IfExpression)
+      add(Ruote::Exp::EqualsExpression)
+      add(Ruote::Exp::ReserveExpression)
+      add(Ruote::Exp::SaveExpression)
+      add(Ruote::Exp::RestoreExpression)
+      add(Ruote::Exp::NoOpExpression)
     end
 
     # Returns the expression class for the given expression name

@@ -27,7 +27,7 @@ require 'ruote/exp/fe_concurrence'
 require 'ruote/exp/iterator'
 
 
-module Ruote
+module Ruote::Exp
 
   class ConcurrentIteratorExpression < ConcurrenceExpression
 

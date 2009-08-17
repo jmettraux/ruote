@@ -26,7 +26,7 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
   class EqualsExpression < FlowExpression
 

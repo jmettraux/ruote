@@ -23,7 +23,7 @@
 #++
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # Those methods are mixed in FlowExpression. They were put here to offload

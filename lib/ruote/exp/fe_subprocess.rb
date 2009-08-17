@@ -25,8 +25,9 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
+  #
   # An expression for invoking a subprocess.
   #
   #   pdef = Ruote.process_definition do

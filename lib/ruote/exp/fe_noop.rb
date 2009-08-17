@@ -26,7 +26,7 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # 'No Operation' expression. Does nothing, immediately replies to

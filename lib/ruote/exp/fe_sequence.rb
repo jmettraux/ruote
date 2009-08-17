@@ -26,8 +26,17 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
+  #
+  # The plain 'sequence' expression.
+  #
+  #   sequence do
+  #     participant 'alpha'
+  #     participant 'bravo'
+  #     participant 'charly'
+  #   end
+  #
   class SequenceExpression < FlowExpression
 
     names :sequence

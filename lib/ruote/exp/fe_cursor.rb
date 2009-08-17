@@ -27,7 +27,7 @@ require 'ruote/exp/flowexpression'
 require 'ruote/exp/command'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # This class implements the 'cursor' and the 'repeat' (loop) expressions.

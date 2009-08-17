@@ -27,7 +27,7 @@ require 'ruote/exp/flowexpression'
 require 'ruote/exp/condition'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # Listens for activity (incoming or outgoing workitems) on a (set of)

@@ -28,7 +28,7 @@ require 'ruote/engine/context'
 require 'ruote/exp/attributes'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # A simple timeout error. Only used when :on_timeout => 'error' for now.
@@ -45,9 +45,9 @@ module Ruote
   # Contains lots of default behaviour, extending classes primarily
   # override #apply, #reply and #cancel.
   #
-  class FlowExpression < ObjectWithMeta
+  class FlowExpression < Ruote::ObjectWithMeta
 
-    include EngineContext
+    include Ruote::EngineContext
     include AttributesMixin
 
 

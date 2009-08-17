@@ -25,8 +25,17 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
+  #
+  # Setting a workitem field or a process variable.
+  #
+  #   sequence do
+  #     set :field => 'subject', :value => 'food and beverage'
+  #     set :field => 'date', :val => 'tomorrow'
+  #     participant :ref => 'attendees'
+  #   end
+  #
   class SetExpression < FlowExpression
 
     names :set, :unset

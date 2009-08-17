@@ -26,7 +26,7 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # Saves the current workitem fields into a variable or into a field.

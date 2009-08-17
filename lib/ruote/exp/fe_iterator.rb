@@ -28,7 +28,7 @@ require 'ruote/exp/command'
 require 'ruote/exp/iterator'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # Iterating on a list of values

@@ -23,7 +23,7 @@
 #++
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # Commands are understood by the cursor, loop and iterator expressions.

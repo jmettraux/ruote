@@ -26,7 +26,7 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
   # An expression for echoing text to STDOUT or to a :s_tracer service
   # (if there is one bound in the engine context).

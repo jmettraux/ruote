@@ -26,7 +26,7 @@
 require 'ruote/exp/flowexpression'
 
 
-module Ruote
+module Ruote::Exp
 
   #
   # Prevents two process branches from executing at the same time.
