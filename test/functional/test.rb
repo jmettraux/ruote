@@ -5,26 +5,18 @@
 # since Mon Oct  9 22:19:44 JST 2006
 #
 
-dirpath = File.dirname(__FILE__)
 
 # TODO : rft_ as well...
 
-efts = Dir.new(dirpath).entries.select { |e| e.match(/^eft\_.*\.rb$/) }.sort
-  # functional tests targetting specifing expressions
-
-fts = Dir.new(dirpath).entries.select { |e| e.match(/^ft\_.*\.rb$/) }.sort
-  # functional tests targetting features rather than expressions
-
-rts = Dir.new(dirpath).entries.select { |e| e.match(/^rt\_.*\.rb$/) }.sort
-  # restart tests, start sthing, stop engine, restart, expect thing to resume
-
-cts = Dir.new(dirpath).entries.select { |e| e.match(/^ct\_.*\.rb$/) }.sort
+Dir.glob(File.join(File.dirname(__FILE__), 'ct_*.rb')).sort.each { |t| load(t) }
   # concurrence/collision tests, tests about 2+ instances of ruote colliding
 
-tests = efts + fts + rts
+Dir.glob(File.join(File.dirname(__FILE__), 'ft_*.rb')).sort.each { |t| load(t) }
+  # functional tests targetting features rather than expressions
 
-tests.each { |e| load(File.join(dirpath, e)) }
+Dir.glob(File.join(File.dirname(__FILE__), 'rt_*.rb')).sort.each { |t| load(t) }
+  # restart tests, start sthing, stop engine, restart, expect thing to resume
 
-#tests.each { |e| puts `ruby #{dirpath}/#{e}` }
-  # making sure that each test is runnable standalone
+Dir.glob(File.join(File.dirname(__FILE__), 'eft_*.rb')).sort.each { |t| load(t) }
+  # functional tests targetting specifing expressions
 

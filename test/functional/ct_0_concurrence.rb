@@ -129,7 +129,7 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
   def change_concurrence_expression
 
-    Ruote::ConcurrenceExpression.module_eval do
+    Ruote::Exp::ConcurrenceExpression.module_eval do
       alias :original_persist :persist
       def persist (probe=false)
         sleep 0.010
@@ -140,7 +140,7 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
   def unchange_concurrence_expression
 
-    Ruote::ConcurrenceExpression.module_eval do
+    Ruote::Exp::ConcurrenceExpression.module_eval do
       alias :persist :original_persist
     end
   end

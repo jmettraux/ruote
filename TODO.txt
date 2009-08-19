@@ -180,3 +180,5 @@ restart tests :
 
 [ ] concurrence / concurrent_iterator merge plugin ?
 
+[ ] one file, no multi-process, persistence ?
+

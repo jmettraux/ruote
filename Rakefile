@@ -21,7 +21,9 @@ task :default => [ :clean, :repackage ]
 task :rdoc do
   sh %{
     rm -fR ruote_rdoc
-    yardoc 'lib/**/*.rb' -o ruote_rdoc --title 'ruote 2.0'
+    yardoc 'lib/**/*.rb' \
+      -o ruote_rdoc \
+      --title 'ruote 2.0'
   }
 end
 #task :exp_rdoc do
