@@ -42,11 +42,6 @@ module Ruote::Exp
 
     def apply
 
-      reply(@applied_workitem)
-    end
-
-    def reply (workitem)
-
       text = "#{attribute_text}\n"
 
       if t = context[:s_tracer]
@@ -55,7 +50,12 @@ module Ruote::Exp
         print(text)
       end
 
-      reply_to_parent(workitem)
+      reply_to_parent(@applied_workitem)
+    end
+
+    def reply (workitem)
+
+      # never called
     end
   end
 end
