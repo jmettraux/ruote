@@ -182,3 +182,9 @@ restart tests :
 
 [ ] one file, no multi-process, persistence ?
 
+[ ] subprocess :ref => 'uri'
+[ ] subprocess :ref => 'x' { block } => needs a 'yield'
+
+[ ] concurrent_iterator :times => X
+[ ] concurrent_iterator defaults to :to_v => 'i'
+

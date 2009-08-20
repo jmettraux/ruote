@@ -33,6 +33,7 @@ Richard Jennings
 Feedback
 --------
 
+jpr5 + asm
 Daniel Neighman "hassox" - :on_timeout => "error"
 Jason Allen - multi-instance considerations
 Petia Wohed - workflow patterns implementation evaluation
