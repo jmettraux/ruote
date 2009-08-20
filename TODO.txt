@@ -114,11 +114,11 @@
 [o] timeout set by participant [implementation]
 [o] test for wfids of errors in subprocesses !
 [o] Ruote::Exp:: namespace for expressions
+[o] exp : apply (ex-eval)
 
 [ ] file logger service
 
 [ ] exp : exp (restricted form of eval ?)
-[ ] exp : eval
 [ ] exp : reval
 [ ] exp : when (exploit :var :set event)
 [ ] exp : error
@@ -183,8 +183,10 @@ restart tests :
 [ ] one file, no multi-process, persistence ?
 
 [ ] subprocess :ref => 'uri'
-[ ] subprocess :ref => 'x' { block } => needs a 'yield'
 
+[ ] subprocess : attributes to variables
+[ ] apply : attributes to variables
+[ ] apply : ruby or xml (instead of just ast) ?
 [ ] concurrent_iterator :times => X
 [ ] concurrent_iterator defaults to :to_v => 'i'
 

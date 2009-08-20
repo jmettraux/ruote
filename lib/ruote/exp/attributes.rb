@@ -104,7 +104,7 @@ module Ruote::Exp
       elsif key = has_attribute(*list_att_keys(prefix, %w[ f fld field ]))
 
         key = attribute(key, @applied_workitem)
-        workitem.attributes[key]
+        @applied_workitem.attributes[key]
 
       else
 

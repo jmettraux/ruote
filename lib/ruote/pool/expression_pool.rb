@@ -182,18 +182,6 @@ module Ruote
       end
     end
 
-    protected
-
-    # Returns a temporary expression, complete with #lookup_variable and
-    # #lookup_on.
-    # For internal use only.
-    #
-    def temp_exp (parent_id, variables, workitem, tree=[ 'nada', {}, [] ])
-
-      Ruote::Exp::FlowExpression.new(
-        @context, nil, parent_id, tree, variables, workitem)
-    end
-
     # Applying a branch (creating an expression for it and applying it).
     #
     def apply (eargs)
@@ -244,6 +232,18 @@ module Ruote
       wqueue.emit(:expressions, :apply, :fei => exp.fei)
 
       fei
+    end
+
+    protected
+
+    # Returns a temporary expression, complete with #lookup_variable and
+    # #lookup_on.
+    # For internal use only.
+    #
+    def temp_exp (parent_id, variables, workitem, tree=[ 'nada', {}, [] ])
+
+      Ruote::Exp::FlowExpression.new(
+        @context, nil, parent_id, tree, variables, workitem)
     end
 
     # Returns the next available sub id for the given expression.
