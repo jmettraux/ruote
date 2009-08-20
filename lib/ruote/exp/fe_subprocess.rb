@@ -47,6 +47,20 @@ module Ruote::Exp
   #     end
   #   end
   #
+  # == passing attributes as variables
+  #
+  # The attributes of the subprocess expression are passed as variables of
+  # the new subprocess instance.
+  #
+  #   Ruote.process_definition do
+  #     subprocess 'sub0', :a => 'A', :b => 'B'
+  #     define :sub0 do
+  #       echo '${v:a}:${v:b}'
+  #     end
+  #   end
+  #
+  # This example (and useless) process example will output "A:B" to STDOUT.
+  #
   class SubprocessExpression < FlowExpression
 
     names :subprocess
@@ -62,7 +76,8 @@ module Ruote::Exp
 
       raise "no subprocess named '#{ref}' found" unless tree.is_a?(Array)
 
-      pool.launch_sub(pos, tree, self, @applied_workitem)
+      pool.launch_sub(
+        pos, tree, self, @applied_workitem, :variables => compile_attributes)
     end
   end
 end

@@ -116,6 +116,7 @@
 [o] Ruote::Exp:: namespace for expressions
 [o] exp : apply (ex-eval)
 [o] apply : attributes to variables
+[o] subprocess : attributes to variables
 
 [ ] file logger service
 
@@ -185,7 +186,6 @@ restart tests :
 
 [ ] subprocess :ref => 'uri'
 
-[ ] subprocess : attributes to variables
 [ ] apply : ruby or xml (instead of just ast) ?
 [ ] concurrent_iterator :times => X
 [ ] concurrent_iterator defaults to :to_v => 'i'

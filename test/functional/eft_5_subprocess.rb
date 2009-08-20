@@ -70,5 +70,19 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ a a ]
   end
+
+  def test_subprocess_atts_to_vars
+
+    pdef = Ruote.process_definition do
+      subprocess 'sub0', :a => 'A', :b => 'B'
+      define :sub0 do
+        echo '${v:a}:${v:b}'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, 'A:B'
+  end
 end
 
