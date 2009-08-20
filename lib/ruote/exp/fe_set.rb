@@ -36,29 +36,49 @@ module Ruote::Exp
   #     participant :ref => 'attendees'
   #   end
   #
+  # :field can be abbreviated to :f or :fld. :variable can be abbreviated to
+  # :v or :var. Likewise, :val and :value are interchangeable.
+  #
+  # == field_value, variable_value
+  #
+  # Usually, grabbing a value from a field or a value will look like
+  #
+  #   set :f => 'my_field', :value => '${v:my_variable}'
+  #
+  # But doing those ${} substitutions always result in a string result. What
+  # if the variable or the field holds a non-string value ?
+  #
+  #   set :f => 'my_field', :var_value => 'my_variable'
+  #
+  # Is the way to go then. 'set' understands v_value, var_value, variable_value
+  # and f_value, fld_value and field_value.
+  #
+  # == :escape
+  #
+  # If the value to insert contains ${} stuff but this has to be preserved,
+  # setting the attribute :escape to true will do the trick.
+  #
+  #   set :f => 'my_field', :value => 'oh and ${whatever}', :escape => true
+  #
   class SetExpression < FlowExpression
 
     names :set, :unset
 
     def apply
 
-      reply(@applied_workitem)
-    end
-
-    def reply (workitem)
+      opts = { :escape => attribute(:escape) }
 
       value = if name == 'unset'
         nil
-      elsif val_key = has_attribute(:val, :value)
-        attribute(val_key, workitem)
       else
-        #child_text(workitem) # NO
-        raise ArgumentError.new("'set' is missing a value")
+        v = lookup_val(opts)
+        raise(ArgumentError.new("'set' is missing a value")) if v == nil
+        v
       end
 
       if var_key = has_attribute(:v, :var, :variable)
 
-        var = attribute(var_key, workitem)
+        var = attribute(var_key, @applied_workitem)
 
         if name == 'unset'
           unset_variable(var)
@@ -68,12 +88,12 @@ module Ruote::Exp
 
       elsif field_key = has_attribute(:f, :fld, :field)
 
-        field = attribute(field_key, workitem)
+        field = attribute(field_key, @applied_workitem)
 
         if name == 'unset'
-          workitem.attributes.delete(field)
+          @applied_workitem.fields.delete(field)
         else
-          workitem.set_field(field, value)
+          @applied_workitem.set_field(field, value)
         end
 
       else
@@ -82,7 +102,12 @@ module Ruote::Exp
           "missing a variable or field target in #{tree.inspect}")
       end
 
-      reply_to_parent(workitem)
+      reply_to_parent(@applied_workitem)
+    end
+
+    def reply (workitem)
+
+      # never called
     end
   end
 end

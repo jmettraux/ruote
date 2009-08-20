@@ -79,5 +79,31 @@ class EftApplyTest < Test::Unit::TestCase
 
     assert_trace(pdef, 'nada')
   end
+
+  def test_apply_attributes_as_variables
+
+    pdef = Ruote.process_definition :name => 'test' do
+      apply :tree => [ 'echo', { 'a:${v:a}' => nil }, [] ], :a => 'surf'
+    end
+
+    #noisy
+
+    assert_trace(pdef, 'a:surf')
+  end
+
+  def test_apply_default_with_attributes_as_variables
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        set :var => 'tree', :val => [ 'echo', { 'a:${v:a}' => nil }, [] ], :escape => true
+        apply
+        apply :a => 'surf'
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ a: a:surf ])
+  end
 end
 

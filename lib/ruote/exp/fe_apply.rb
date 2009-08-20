@@ -66,20 +66,30 @@ module Ruote::Exp
 
     def apply
 
+      #
       # find 'tree'
 
-      tree = lookup_value('tree') || lookup_variable('tree')
+      tree =
+        lookup_val_prefix('tree', :escape => true) || lookup_variable('tree')
 
       return reply_to_parent(@applied_workitem) unless tree
+
+      #
+      # apply 'tree'
 
       afei = @fei.dup
       afei.expid = "#{@fei.expid}_0"
 
-      pool.apply(
-        :tree => tree,
-        :fei => afei,
-        :parent_id => @fei,
-        :workitem => @applied_workitem)
+      wqueue.emit(
+        :expressions,
+        :apply,
+        {
+          :tree => tree,
+          :fei => afei,
+          :parent_id => @fei,
+          :workitem => @applied_workitem,
+          :variables => compile_attributes(:escape => true)
+        })
     end
   end
 end

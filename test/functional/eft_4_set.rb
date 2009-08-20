@@ -118,9 +118,45 @@ class EftSetTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.450
+    sleep 0.400
 
     assert_equal 1, @engine.process(wfid).errors.size
+  end
+
+  def test_field_value
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :f => 'f', :value => 'toto'
+        set :v => 'v', :field_value => 'f'
+        echo '${f:f}:${v:v}'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, 'toto:toto'
+  end
+
+  def test_escape
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :f => 'f', :val => 'nada:${nada}', :escape => true
+        alpha
+        set :f => 'ff', :field_value => 'f'
+        alpha
+      end
+    end
+
+    @engine.register_participant :alpha do |workitem|
+      @tracer << workitem.fields['f']
+      @tracer << "\n"
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ nada:${nada} nada:${nada} ]
   end
 end
 

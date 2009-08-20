@@ -35,14 +35,13 @@ module Ruote::Exp
 
     def determine_list
 
-      list = lookup_value('on')
+      list = lookup_val_prefix('on')
 
       if list.is_a?(String)
 
         sep = attribute(:separator) || attribute(:sep) || ','
         list.split(sep).collect { |e| e.strip }
 
-      #elsif list.is_a?(Hash)
       elsif list.respond_to?(:to_a)
 
         list.to_a

@@ -41,6 +41,8 @@ module Ruote::Exp
       nil
     end
 
+    alias :has_att :has_attribute
+
     # Looks up the value for attribute n.
     #
     def attribute (n, workitem=@applied_workitem, options={})
@@ -90,41 +92,64 @@ module Ruote::Exp
     # prefix = 'on' => will lookup on, on_val, on_value, on_v, on_var,
     # on_variable, on_f, on_fld, on_field...
     #
-    def lookup_value (prefix)
+    def lookup_val_prefix (prefix, att_options={})
 
-      if key = has_attribute(*list_att_keys(prefix, [ '', 'val', 'value' ]))
+      lval(
+        [ prefix ] + [ 'val', 'value' ].map { |s| "#{prefix}_#{s}" },
+        %w[ v var variable ].map { |s| "#{prefix}_#{s}" },
+        %w[ f fld field ].map { |s| "#{prefix}_#{s}" },
+        att_options)
+    end
 
-        attribute(key, @applied_workitem)
+    def lookup_val (att_options={})
 
-      elsif key = has_attribute(*list_att_keys(prefix, %w[ v var variable ]))
-
-        key = attribute(key, @applied_workitem)
-        lookup_variable(key)
-
-      elsif key = has_attribute(*list_att_keys(prefix, %w[ f fld field ]))
-
-        key = attribute(key, @applied_workitem)
-        @applied_workitem.attributes[key]
-
-      else
-
-        nil
-      end
+      lval(
+        VV,
+        s_cartesian(%w[ v var variable ], VV),
+        s_cartesian(%w[ f fld field ], VV),
+        att_options)
     end
 
     # Returns a Hash containing all attributes set for an expression with
     # their values resolved.
     #
-    def lookup_attributes
+    def compile_attributes (opts={})
 
-      attributes.keys.inject({}) { |h, k| h[k] = attribute(k); h }
+      attributes.keys.inject({}) { |h, k|
+        h[k] = attribute(k, @applied_workitem, opts)
+        h
+      }
     end
 
     protected
 
-    def list_att_keys (prefix, suffixes)
+    VV = %w[ val value ]
 
-      suffixes.collect { |s| s.length < 1 ? prefix : "#{prefix}_#{s}" }
+    def s_cartesian (a0, a1)
+
+      a0.inject([]) { |a, e0| a + a1.collect { |e1| "#{e0}_#{e1}" } }
+    end
+
+    def lval (vals, vars, flds, att_options)
+
+      if k = has_att(*vals)
+
+        attribute(k, @applied_workitem, att_options)
+
+      elsif k = has_att(*vars)
+
+        k = attribute(k, @applied_workitem, att_options)
+        lookup_variable(k)
+
+      elsif k = has_att(*flds)
+
+        k = attribute(k, @applied_workitem, att_options)
+        @applied_workitem.attributes[k]
+
+      else
+
+        nil
+      end
     end
   end
 end

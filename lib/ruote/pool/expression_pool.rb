@@ -182,6 +182,8 @@ module Ruote
       end
     end
 
+    protected
+
     # Applying a branch (creating an expression for it and applying it).
     #
     def apply (eargs)
@@ -233,8 +235,6 @@ module Ruote
 
       fei
     end
-
-    protected
 
     # Returns a temporary expression, complete with #lookup_variable and
     # #lookup_on.

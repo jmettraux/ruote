@@ -153,7 +153,7 @@ module Ruote::Exp
       @applied_workitem.participant_name =
         attribute(:original_ref) || @participant_name
 
-      @applied_workitem.fields['params'] = lookup_attributes
+      @applied_workitem.fields['params'] = compile_attributes
 
       persist
 
