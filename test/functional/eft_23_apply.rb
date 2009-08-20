@@ -41,7 +41,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
-        set :var => 'tree', :val => [ 'echo', { 'nada' => nil }, [] ]
+        set :var => '__tree__', :val => [ 'echo', { 'nada' => nil }, [] ]
         apply
       end
     end
@@ -95,7 +95,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
-        set :var => 'tree', :val => [ 'echo', { 'a:${v:a}' => nil }, [] ], :escape => true
+        set :var => '__tree__', :val => [ 'echo', { 'a:${v:a}' => nil }, [] ], :escape => true
         apply
         apply :a => 'surf'
       end
@@ -104,6 +104,42 @@ class EftApplyTest < Test::Unit::TestCase
     #noisy
 
     assert_trace(pdef, %w[ a: a:surf ])
+  end
+
+  def test_apply_within_subprocess
+
+    pdef = Ruote.process_definition 'test' do
+      sub0 do
+        echo 'nada'
+      end
+      define 'sub0' do
+        sequence do
+          apply
+          apply
+          apply
+        end
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ nada ] * 3)
+  end
+
+  def test_apply_within_subprocess_2
+
+    pdef = Ruote.process_definition 'test' do
+      subprocess :ref => 'sub0' do
+        echo 'nada'
+      end
+      define 'sub0' do
+        apply
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, 'nada')
   end
 end
 

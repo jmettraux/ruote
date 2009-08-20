@@ -217,7 +217,7 @@ module Ruote
           tree_opts = tree[1].merge('ref' => k)
           tree_opts.merge!('original_ref' => exp_name) if k != exp_name
 
-          tree = [ part ? 'participant' : 'subprocess', tree_opts, [] ]
+          tree = [ part ? 'participant' : 'subprocess', tree_opts, tree[2] ]
 
           exp_name = tree.first
         end

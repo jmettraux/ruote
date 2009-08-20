@@ -47,6 +47,7 @@ module Ruote::Exp
   #     end
   #   end
   #
+  #
   # == passing attributes as variables
   #
   # The attributes of the subprocess expression are passed as variables of
@@ -61,6 +62,35 @@ module Ruote::Exp
   #
   # This example (and useless) process example will output "A:B" to STDOUT.
   #
+  #
+  # == passing 'blocks' to subprocesses
+  #
+  # When the subprocess expression has children, the first of them is passed
+  # to the subprocess instance as the __tree__ variable, readily available for
+  # an 'apply' expression.
+  #
+  #   Ruote.process_definition :name => 'double review' do
+  #     sequence do
+  #       sub0 do
+  #         review_board
+  #       end
+  #       sub0 do
+  #         review_board
+  #       end
+  #     end
+  #     define 'sub0' do
+  #       concurrence do
+  #         apply :i => 0
+  #         apply :i => 1
+  #         apply :i => 2
+  #       end
+  #     end
+  #   end
+  #
+  # This example will send 2 x 3 concurrent workitems to the participant
+  # named 'review_board' (note that it could also be the name of another
+  # subprocess).
+  #
   class SubprocessExpression < FlowExpression
 
     names :subprocess
@@ -72,12 +102,14 @@ module Ruote::Exp
 
       raise "no subprocess referred in #{tree}" unless ref
 
-      pos, tree = lookup_variable(ref)
+      pos, subtree = lookup_variable(ref)
 
-      raise "no subprocess named '#{ref}' found" unless tree.is_a?(Array)
+      raise "no subprocess named '#{ref}' found" unless subtree.is_a?(Array)
 
-      pool.launch_sub(
-        pos, tree, self, @applied_workitem, :variables => compile_attributes)
+      vars = compile_attributes
+      vars.merge!('__tree__' => tree_children.first)
+
+      pool.launch_sub(pos, subtree, self, @applied_workitem, :variables => vars)
     end
   end
 end

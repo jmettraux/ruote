@@ -84,5 +84,29 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     assert_trace pdef, 'A:B'
   end
+
+  def test_subprocess_passing_tree
+
+    pdef = Ruote.process_definition do
+      subprocess 'sub0' do
+        noop
+      end
+      define :sub0 do
+        alpha
+      end
+    end
+
+    tree = nil
+
+    @engine.register_participant :alpha do |workitem, fexp|
+      tree = fexp.lookup_variable('__tree__')
+    end
+
+    #noisy
+
+    assert_trace pdef, ''
+
+    assert_equal ["noop", {}, []], tree
+  end
 end
 
