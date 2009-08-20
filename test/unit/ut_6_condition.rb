@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
-require 'ruote/exp/condition'
+require 'ruote/exp/expression_map'
 require 'ruote/util/treechecker'
 
 
@@ -115,6 +115,13 @@ class ConditionTest < Test::Unit::TestCase
     assert_b true, '100 > 10'
     assert_b true, '100 > 90'
     assert_b true, '100.0 > 90'
+  end
+
+  def test_emptiness
+
+    assert_b true, ' == '
+    assert_b false, " == ''"
+    assert_b false, ' == ""'
   end
 end
 
