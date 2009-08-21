@@ -91,6 +91,22 @@ module Ruote::Exp
   # named 'review_board' (note that it could also be the name of another
   # subprocess).
   #
+  #
+  # == passing 'parameters' to subprocess
+  #
+  #   Ruote.process_definition :name => 'whatever' do
+  #
+  #     call :who => 'the cops', :when => 'if I\'m not back at 3'
+  #
+  #     process_definition 'call' do
+  #       participant :ref => '${v:who}', :msg => 'this is a call'
+  #     end
+  #   end
+  #
+  # This binds the variables 'who' and 'when' in the subprocess instance.
+  #
+  # Of course you can combine parameters and blocks passing.
+  #
   class SubprocessExpression < FlowExpression
 
     names :subprocess
