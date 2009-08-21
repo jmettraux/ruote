@@ -25,6 +25,20 @@ class EftSetTest < Test::Unit::TestCase
     assert_trace pdef, '-0-'
   end
 
+  def test_set_to_nil
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :var => 'x', :value => nil
+        echo '-${v:x}-'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, '--'
+  end
+
   def test_set_var_in_subprocess
 
     pdef = Ruote.process_definition do

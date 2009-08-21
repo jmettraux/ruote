@@ -33,6 +33,7 @@ Richard Jennings
 Feedback
 --------
 
+dlamotte - set :val => nil
 jpr5 + asm
 Daniel Neighman "hassox" - :on_timeout => "error"
 Jason Allen - multi-instance considerations

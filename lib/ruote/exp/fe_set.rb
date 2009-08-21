@@ -72,7 +72,8 @@ module Ruote::Exp
         nil
       else
         v = lookup_val(opts)
-        raise(ArgumentError.new("'set' is missing a value")) if v == nil
+        raise(ArgumentError.new("'set' is missing a value")) \
+          if v == nil && not(attributes.has_key?('val') || attributes.has_key?('value'))
         v
       end
 
