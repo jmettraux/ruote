@@ -126,15 +126,15 @@ class EftSetTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition do
       set :field => 'f'
+      alpha
     end
 
-    #noisy
+    @engine.register_participant :alpha do |workitem|
+      workitem.fields.delete('params')
+      @tracer << workitem.fields.inspect
+    end
 
-    wfid = @engine.launch(pdef)
-
-    sleep 0.400
-
-    assert_equal 1, @engine.process(wfid).errors.size
+    assert_trace pdef, "{\"f\"=>nil}"
   end
 
   def test_field_value

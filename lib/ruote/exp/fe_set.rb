@@ -68,14 +68,8 @@ module Ruote::Exp
 
       opts = { :escape => attribute(:escape) }
 
-      value = if name == 'unset'
-        nil
-      else
-        v = lookup_val(opts)
-        raise(ArgumentError.new("'set' is missing a value")) \
-          if v == nil && not(attributes.has_key?('val') || attributes.has_key?('value'))
-        v
-      end
+      value = lookup_val(opts)
+        # a nil value is totally OK
 
       if var_key = has_attribute(:v, :var, :variable)
 
