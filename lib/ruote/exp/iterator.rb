@@ -35,6 +35,19 @@ module Ruote::Exp
 
     def determine_list
 
+      #
+      # :times or :branches
+
+      if count = attribute(:times) || attribute(:branches)
+
+        list = ((1..count.to_i).to_a rescue nil)
+
+        return list if list
+      end
+
+      #
+      # :on{_...}
+
       list = lookup_val_prefix('on')
 
       if list.is_a?(String)

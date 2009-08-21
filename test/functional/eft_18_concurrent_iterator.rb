@@ -204,6 +204,32 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_trace pdef, %w[ p1:a:A out ]
   end
 
+  def test_without_to
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :on_value => (1..2).to_a do
+        echo 'a'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a a ]
+  end
+
+  def test_branches_att
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :branches => '2' do
+        echo 'a'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a a ]
+  end
+
   protected
 
   def register_catchall_participant

@@ -29,6 +29,9 @@ require 'ruote/exp/iterator'
 
 module Ruote::Exp
 
+  #
+  # TODO : document me !
+  #
   class ConcurrentIteratorExpression < ConcurrenceExpression
 
     include IteratorMixin
