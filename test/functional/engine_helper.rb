@@ -52,8 +52,8 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     exit 0
   end
 
-  application_context[:persist_as_yaml] = true if ARGV.include?('-y')
-  application_context[:no_expstorage_cache] = true if ARGV.include?('-C')
+  application_context[:persist_as_yaml] = ARGV.include?('-y')
+  application_context[:no_expstorage_cache] = ARGV.include?('-C')
 
   klass = $ruote_engine_class
 
