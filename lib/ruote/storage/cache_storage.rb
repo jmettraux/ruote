@@ -102,6 +102,12 @@ module Ruote
       r << real_storage.to_s
     end
 
+    def purge
+
+      @cache.clear
+      real_storage.purge if real_storage.respond_to?(:purge)
+    end
+
     protected
 
     def real_storage

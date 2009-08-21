@@ -32,6 +32,9 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
   def teardown
 
+    #@engine0.storage.purge if @engine0.storage.respond_to?(:purge)
+    #@engine1.storage.purge if @engine1.storage.respond_to?(:purge)
+
     @engine0.shutdown
     @engine1.shutdown
 
@@ -64,9 +67,9 @@ class CtConcurrenceTest < Test::Unit::TestCase
     assert_equal 0, alpha1.size
 
     @engine1.reply(alpha0.pop)
-    sleep 0.200
+    sleep 0.300
     @engine0.reply(alpha0.pop)
-    sleep 0.200
+    sleep 0.300
 
     assert_equal nil, @engine0.process(wfid)
     assert_equal nil, @engine1.process(wfid)
@@ -86,13 +89,13 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
     wfid = @engine0.launch(pdef)
 
-    sleep 0.200
+    sleep 0.300
 
     @engine1.reply(alpha0.pop)
       # and immediately...
     @engine0.reply(alpha0.pop)
 
-    sleep 0.200
+    sleep 0.300
 
     assert_nil @engine0.process(wfid)
     assert_nil @engine1.process(wfid)
