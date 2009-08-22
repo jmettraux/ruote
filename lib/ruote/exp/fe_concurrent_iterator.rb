@@ -32,6 +32,8 @@ module Ruote::Exp
   #
   # TODO : document me !
   #
+  # TODO : document :times and :branches
+  #
   class ConcurrentIteratorExpression < ConcurrenceExpression
 
     include IteratorMixin
@@ -64,6 +66,7 @@ module Ruote::Exp
         else #if to_f
           workitem.fields[to_f] = val
         end
+          # TODO : add implicit to_v 'i' here
 
         pool.launch_sub(
           "#{@fei.expid}_0",

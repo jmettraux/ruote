@@ -117,6 +117,7 @@
 [o] exp : apply (ex-eval)
 [o] apply : attributes to variables
 [o] subprocess : attributes to variables
+[o] concurrent_iterator :times => X
 
 [ ] file logger service
 
@@ -185,8 +186,7 @@ restart tests :
 [ ] one file, no multi-process, persistence ?
 
 [ ] subprocess :ref => 'uri'
-
+[ ] engine#register_subprocess
 [ ] apply : ruby or xml (instead of just ast) ?
-[ ] concurrent_iterator :times => X
 [ ] concurrent_iterator defaults to :to_v => 'i'
 

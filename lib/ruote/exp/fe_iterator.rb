@@ -39,6 +39,8 @@ module Ruote::Exp
   #     end
   #   end
   #
+  # TODO : document :times and :branches
+  #
   class IteratorExpression < FlowExpression
 
     include CommandMixin
@@ -82,6 +84,7 @@ module Ruote::Exp
       else #@to_f
         workitem.fields[@to_f] = val
       end
+        # TODO : add implicit to_v 'i' here
 
       apply_child(0, workitem)
     end

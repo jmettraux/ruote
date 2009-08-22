@@ -89,13 +89,13 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
     wfid = @engine0.launch(pdef)
 
-    sleep 0.300
+    sleep 0.350
 
     @engine1.reply(alpha0.pop)
       # and immediately...
     @engine0.reply(alpha0.pop)
 
-    sleep 0.300
+    sleep 0.350
 
     assert_nil @engine0.process(wfid)
     assert_nil @engine1.process(wfid)
@@ -105,6 +105,8 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
   protected
 
+  # Makes sure to start a new engine, with persistence on and no caching.
+  #
   def start_new_engine
 
     ac = {}
@@ -116,13 +118,17 @@ class CtConcurrenceTest < Test::Unit::TestCase
     #ac[:engine_id] = engine_id
       # not relevant for multiple instances of the 'same' engine
 
-    ac[:no_expstorage_cache] = true
-      # !! very important for the 2 engines to share the same storage
-
     #ac[:noisy] = true
 
     engine_class = determine_engine_class(ac)
     engine_class = Ruote::FsPersistedEngine if engine_class == Ruote::Engine
+
+    ac[:no_expstorage_cache] = true
+      #
+      # override the setting in determine_engine_class
+      #
+      # !! very important for the 2 engines to share the same storage
+
     engine = engine_class.new(ac)
 
     engine.add_service(:s_logger, Ruote::TestLogger)
