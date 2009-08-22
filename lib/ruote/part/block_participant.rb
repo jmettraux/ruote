@@ -29,6 +29,41 @@ require 'ruote/part/local_participant'
 
 module Ruote
 
+  #
+  # One of the simplest participants. Simply passes a workitem to a block
+  # of ruby code.
+  #
+  #   engine.register_participant :alpha do |workitem|
+  #     workitem.fields['time'] = Time.now
+  #   end
+  #
+  # This participant implicitely replies to the engine when the block execution
+  # is over.
+  #
+  # You can pass the flow_expression (participant expression) as well.
+  #
+  #   engine.register_participant :alpha do |workitem, flow_exp|
+  #     workitem.fields['amount'] = flow_exp.lookup_variable('amount')
+  #   end
+  #
+  #
+  # == do_not_thead
+  #
+  # By default, this participant (like most other participants) is executed
+  # in its own thread (in a Ruby runtime where EventMachine is running,
+  # EM.next_tick is used instead of a new thread).
+  #
+  # You can change that behaviour (beware block thats monopolises the whole
+  # engine !) by doing
+  #
+  #   alpha = engine.register_participant :alpha do |workitem|
+  #     workitem.fields['time'] = Time.now
+  #   end
+  #
+  #   alpha.do_not_thread = true
+  #
+  # (you could also override do_not_thread, the method ...)
+  #
   class BlockParticipant
 
     include EngineContext
