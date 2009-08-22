@@ -38,6 +38,8 @@ module Ruote::Exp
   #      bravo
   #    end
   #
+  # TODO : document me !
+  #
   class ConcurrenceExpression < FlowExpression
 
     include MergeMixin

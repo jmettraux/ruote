@@ -39,8 +39,44 @@ module Ruote::Exp
   #     end
   #   end
   #
-  # TODO : document :times and :branches
-  # TODO : document implicit 'i' and 'ii' variables
+  # This expression expects at list an 'on' attribute, which can be :on,
+  # :on_val, :on_value for a value (usually a comma separated list), :on_v,
+  # :on_var, :on_variable for a list contained in the designated variable and
+  # :on_f, :on_fld, :on_field for a list contained in the designated workitem
+  # field.
+  #
+  # The 'on' attribute is used to instruct the expression on which list/array
+  # it should iterate.
+  #
+  # The 'to' attribute takes two forms, :to_v, :to_var, :to_variable or
+  # :to_f, :to_fld, :to_field.
+  #
+  # The 'to' attribute instructs the iterator into which variable or field
+  # it should place the current value (the value being iterated over).
+  #
+  # If there is no 'to' specified, the current value is placed in the variable
+  # named 'i'.
+  #
+  # The variables 'ii' contains the index (from 0 to ...) of the current value
+  # (think Ruby's #each_with_index).
+  #
+  # The 'on' attribute can be replaced by a :time or a :branches attribute.
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     iterator :times => '3'
+  #       participant 'accounting'
+  #     end
+  #   end
+  #
+  # will be equivalent to
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     sequence do
+  #       participant 'accounting'
+  #       participant 'accounting'
+  #       participant 'accounting'
+  #     end
+  #   end
   #
   class IteratorExpression < FlowExpression
 

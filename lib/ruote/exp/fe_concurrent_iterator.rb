@@ -30,10 +30,63 @@ require 'ruote/exp/iterator'
 module Ruote::Exp
 
   #
-  # TODO : document me !
+  # This expression is a cross between 'concurrence' and 'iterator'.
   #
-  # TODO : document :times and :branches
-  # TODO : document implicit 'i' and 'ii' variables
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     concurrent_iterator :on_val => 'alice, bob, charly', :to_var => 'v' do
+  #       participant '${v:v}'
+  #     end
+  #   end
+  #
+  # will be equivalent to
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     concurrence do
+  #       participant 'alice'
+  #       participant 'bob'
+  #       participant 'charly'
+  #     end
+  #   end
+  #
+  # The 'on' and the 'to' attributes follow exactly the ones for the iterator
+  # expression.
+  #
+  # When there is no 'to', the current iterated value is placed in the variable
+  # named 'i'.
+  #
+  # The variable named 'ii' contains the current iterated index (an int bigger
+  # or egal to 0).
+  #
+  #
+  # == :times and :branches
+  #
+  # Similarly to the iterator expression, the :times or the :branches attribute
+  # may be used in stead of the 'on' attribute.
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     concurrent_iterator :times => 3
+  #       participant 'user${v:i}'
+  #     end
+  #   end
+  #
+  # is equivalent to
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     concurrence do
+  #       participant 'user0'
+  #       participant 'user1'
+  #       participant 'user2'
+  #     end
+  #   end
+  #
+  #
+  # == options
+  #
+  # the concurrent_iterator accepts the same options for merging as its bigger
+  # brother, the concurrence expression.
+  #
+  # :count, :merge (override, mix, isolate), remaining (cancel, forget) and
+  # :over.
   #
   class ConcurrentIteratorExpression < ConcurrenceExpression
 
