@@ -210,7 +210,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition :name => 'test' do
       iterator :on_val => 'alice, bob, charly' do
-        participant '${v:i}'
+        participant '${v:i}:${v:ii}'
       end
     end
 
@@ -220,7 +220,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ])
+    assert_trace(pdef, %w[ alice:0/0_0_0 bob:1/0_0_0 charly:2/0_0_0 ])
   end
 end
 

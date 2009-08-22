@@ -33,7 +33,7 @@ module Ruote::Exp
   # TODO : document me !
   #
   # TODO : document :times and :branches
-  # TODO : document implicit 'i' index variable
+  # TODO : document implicit 'i' and 'ii' variables
   #
   class ConcurrentIteratorExpression < ConcurrenceExpression
 
@@ -56,12 +56,14 @@ module Ruote::Exp
       to_v, to_f = determine_tos
       to_v = 'i' if to_v == nil && to_f == nil
 
-      @list.each_with_index do |e, i|
+      @list.each_with_index do |e, ii|
 
-        val = @list[i]
+        val = @list[ii]
 
         variables = {}
         workitem  = @applied_workitem.dup
+
+        variables['ii'] = ii
 
         if to_v
           variables[to_v] = val

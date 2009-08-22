@@ -234,7 +234,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition :name => 'test' do
       concurrent_iterator :on_val => 'alice, bob, charly' do
-        participant '${v:i}'
+        participant '${v:i}:${v:ii}'
       end
     end
 
@@ -247,7 +247,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     wait_for(wfid)
 
     trace = @tracer.to_s.split("\n").sort
-    assert_equal %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ], trace
+    assert_equal %w[ alice:0/0/0_0_0 bob:1/1/0_0_0 charly:2/2/0_0_0 ], trace
   end
 
   protected

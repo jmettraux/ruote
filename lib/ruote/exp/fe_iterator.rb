@@ -40,7 +40,7 @@ module Ruote::Exp
   #   end
   #
   # TODO : document :times and :branches
-  # TODO : document implicit 'i' index variable
+  # TODO : document implicit 'i' and 'ii' variables
   #
   class IteratorExpression < FlowExpression
 
@@ -82,8 +82,10 @@ module Ruote::Exp
 
       return reply_to_parent(workitem) if val == nil
 
+      (@variables ||= {})['ii'] = @position
+
       if @to_v
-        (@variables ||= {})[@to_v] = val
+        @variables[@to_v] = val
       else #if @to_f
         workitem.fields[@to_f] = val
       end
