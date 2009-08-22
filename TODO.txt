@@ -118,6 +118,8 @@
 [o] apply : attributes to variables
 [o] subprocess : attributes to variables
 [o] concurrent_iterator :times => X
+[o] iterator defaults to :to_v => 'i'
+[o] concurrent_iterator defaults to :to_v => 'i'
 
 [ ] file logger service
 
@@ -188,5 +190,6 @@ restart tests :
 [ ] subprocess :ref => 'uri'
 [ ] engine#register_subprocess
 [ ] apply : ruby or xml (instead of just ast) ?
-[ ] concurrent_iterator defaults to :to_v => 'i'
+
+[ ] FIX : issue with dm and eft_23_apply.rb (seems cache-on only)
 

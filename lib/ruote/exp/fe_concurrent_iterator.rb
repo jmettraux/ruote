@@ -33,6 +33,7 @@ module Ruote::Exp
   # TODO : document me !
   #
   # TODO : document :times and :branches
+  # TODO : document implicit 'i' index variable
   #
   class ConcurrentIteratorExpression < ConcurrenceExpression
 
@@ -48,11 +49,12 @@ module Ruote::Exp
 
       @list = determine_list
 
+      return reply_to_parent(@applied_workitem) if @list.empty?
+
       persist
 
       to_v, to_f = determine_tos
-
-      return reply_to_parent(@applied_workitem) if @list.empty?
+      to_v = 'i' if to_v == nil && to_f == nil
 
       @list.each_with_index do |e, i|
 
@@ -66,7 +68,6 @@ module Ruote::Exp
         else #if to_f
           workitem.fields[to_f] = val
         end
-          # TODO : add implicit to_v 'i' here
 
         pool.launch_sub(
           "#{@fei.expid}_0",

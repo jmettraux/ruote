@@ -205,5 +205,22 @@ class EftIteratorTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ a:A b:B ]
   end
+
+  def test_implicit_i_variable
+
+    pdef = Ruote.process_definition :name => 'test' do
+      iterator :on_val => 'alice, bob, charly' do
+        participant '${v:i}'
+      end
+    end
+
+    @engine.register_participant '.*' do |workitem|
+      @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ])
+  end
 end
 

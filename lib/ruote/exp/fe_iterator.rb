@@ -40,6 +40,7 @@ module Ruote::Exp
   #   end
   #
   # TODO : document :times and :branches
+  # TODO : document implicit 'i' index variable
   #
   class IteratorExpression < FlowExpression
 
@@ -55,6 +56,8 @@ module Ruote::Exp
       @list = determine_list
       @to_v, @to_f = determine_tos
       @position = -1
+
+      @to_v = 'i' if @to_v == nil && @to_f == nil
 
       reply(@applied_workitem)
     end
@@ -81,10 +84,9 @@ module Ruote::Exp
 
       if @to_v
         (@variables ||= {})[@to_v] = val
-      else #@to_f
+      else #if @to_f
         workitem.fields[@to_f] = val
       end
-        # TODO : add implicit to_v 'i' here
 
       apply_child(0, workitem)
     end

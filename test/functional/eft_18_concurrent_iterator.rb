@@ -230,6 +230,26 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_trace pdef, %w[ a a ]
   end
 
+  def test_implicit_i_variable
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :on_val => 'alice, bob, charly' do
+        participant '${v:i}'
+      end
+    end
+
+    register_catchall_participant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    trace = @tracer.to_s.split("\n").sort
+    assert_equal %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ], trace
+  end
+
   protected
 
   def register_catchall_participant
