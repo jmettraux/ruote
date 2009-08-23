@@ -66,7 +66,7 @@ module Ruote::Exp
   # == passing 'blocks' to subprocesses
   #
   # When the subprocess expression has children, the first of them is passed
-  # to the subprocess instance as the __tree__ variable, readily available for
+  # to the subprocess instance as the 'tree' variable, readily available for
   # an 'apply' expression.
   #
   #   Ruote.process_definition :name => 'double review' do
@@ -123,7 +123,7 @@ module Ruote::Exp
       raise "no subprocess named '#{ref}' found" unless subtree.is_a?(Array)
 
       vars = compile_atts
-      vars.merge!('__tree__' => tree_children.first)
+      vars.merge!('tree' => tree_children.first)
 
       pool.launch_sub(pos, subtree, self, @applied_workitem, :variables => vars)
     end

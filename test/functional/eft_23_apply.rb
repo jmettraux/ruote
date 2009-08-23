@@ -41,7 +41,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
-        set :var => '__tree__', :val => [ 'echo', { 'nada' => nil }, [] ]
+        set :var => 'tree', :val => [ 'echo', { 'nada' => nil }, [] ]
         apply
       end
     end
@@ -95,7 +95,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
-        set :var => '__tree__', :val => [ 'echo', { 'a:${v:a}' => nil }, [] ], :escape => true
+        set :var => 'tree', :val => [ 'echo', { 'a:${v:a}' => nil }, [] ], :escape => true
         apply
         apply :a => 'surf'
       end

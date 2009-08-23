@@ -99,7 +99,7 @@ class EftSubprocessTest < Test::Unit::TestCase
     tree = nil
 
     @engine.register_participant :alpha do |workitem, fexp|
-      tree = fexp.lookup_variable('__tree__')
+      tree = fexp.lookup_variable('tree')
     end
 
     #noisy

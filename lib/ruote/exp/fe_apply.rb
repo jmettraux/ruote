@@ -71,7 +71,7 @@ module Ruote::Exp
 
       tree =
         lookup_val_prefix('tree', :escape => true) ||
-        lookup_variable('__tree__')
+        lookup_variable('tree')
 
       return reply_to_parent(@applied_workitem) unless tree
 
