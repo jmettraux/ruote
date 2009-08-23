@@ -123,5 +123,15 @@ class ConditionTest < Test::Unit::TestCase
     assert_b false, " == ''"
     assert_b false, ' == ""'
   end
+
+  def test_strip
+
+    assert_not_skip true, :if => 'a == a '
+    assert_not_skip true, :if => ' a == a '
+    assert_not_skip true, :if => ' a == a'
+    assert_not_skip true, :if => 'a ==  a'
+    assert_not_skip true, :if => 'a  == a'
+    assert_not_skip true, :if => 'a==a'
+  end
 end
 

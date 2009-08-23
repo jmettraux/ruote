@@ -95,12 +95,20 @@ module Ruote::Exp
       #a.send(m[2], b)
         # ruby 1.8.x doesn't like that one
 
+      a = strip(a)
+      b = strip(b)
+
       m[2] == '!=' ? ( ! a.send('==', b)) : a.send(m[2], b)
     end
 
     def self.narrow (s)
 
       Float(s) rescue s
+    end
+
+    def self.strip (s)
+
+      s.respond_to?(:strip) ? s.strip : s
     end
   end
 end
