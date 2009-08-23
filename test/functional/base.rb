@@ -125,8 +125,6 @@ module FunctionalBase
 
   def assert_no_errors (wfid, opts)
 
-    return # TODO : wire back in when
-
     return if opts[:ignore_errors]
 
     ps = @engine.process(wfid)
@@ -136,11 +134,15 @@ module FunctionalBase
 
     # TODO : implement 'banner' function
 
+    puts
     puts '-' * 80
     puts 'caught process error(s)'
     puts
-    ps.errors.values.each do |e|
-      puts "  ** error : #{e.error_class} \"#{e.stacktrace}\""
+    ps.errors.each do |e|
+      puts "  ** #{e.error_class} : #{e.error_message}"
+      e.error_backtrace.each do |l|
+        puts l
+      end
     end
     puts '-' * 80
 
@@ -197,7 +199,7 @@ module FunctionalBase
     puts '---8<---'
     puts @tracer.to_s
     puts '--->8---'
-    puts '. ' * 40
+    puts
   end
 end
 
