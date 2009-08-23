@@ -108,5 +108,41 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     assert_equal ["noop", {}, []], tree
   end
+
+  def test_subprocess_uri
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'in'
+        subprocess :ref => File.join(File.dirname(__FILE__), '..', 'pdef.xml')
+        echo 'out.'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ in a b out. ]
+  end
+
+  def test_missing_uri
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'in'
+        subprocess :ref => 'nada'
+        echo 'out.'
+      end
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    assert_equal(
+      "no subprocess named 'nada' found",
+      @engine.process(wfid).errors.first.error_message)
+  end
 end
 

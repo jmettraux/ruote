@@ -121,6 +121,7 @@
 [o] iterator defaults to :to_v => 'i'
 [o] concurrent_iterator defaults to :to_v => 'i'
 [o] set "f:x" => "blah"; set "v:y" => [ 1, 2 ] (defaults to f:)
+[o] subprocess :ref => uri
 
 [ ] file logger service
 
@@ -188,7 +189,6 @@ restart tests :
 
 [ ] one file, no multi-process, persistence ?
 
-[ ] subprocess :ref => 'uri'
 [ ] engine#register_subprocess
 [ ] apply : ruby or xml (instead of just ast) ?
 

@@ -107,6 +107,25 @@ module Ruote::Exp
   #
   # Of course you can combine parameters and blocks passing.
   #
+  #
+  # == pointing to subprocesses via their URI
+  #
+  # It's OK to invoke subprocesses via a URI
+  #
+  #   subprocess :ref => 'pdefs/definition1.rb'
+  #
+  # or
+  #
+  #   subprocess :ref => 'http://pdefs.example.org/account/def1.xml'
+  #
+  # Remember that the :remote_definition_allowed option of the engine has
+  # to be set to true for the latter to work, else the engine will refuse
+  # to load definitions over HTTP.
+  #
+  # Shorter :
+  #
+  #   subprocess 'http://pdefs.example.org/account/def1.xml'
+  #
   class SubprocessExpression < FlowExpression
 
     names :subprocess
@@ -118,14 +137,39 @@ module Ruote::Exp
 
       raise "no subprocess referred in #{tree}" unless ref
 
-      pos, subtree = lookup_variable(ref)
-
-      raise "no subprocess named '#{ref}' found" unless subtree.is_a?(Array)
+      #pos, subtree = lookup_variable(ref)
+      #raise "no subprocess named '#{ref}' found" unless subtree.is_a?(Array)
+      pos, subtree = lookup_subprocess(ref)
 
       vars = compile_atts
       vars.merge!('tree' => tree_children.first)
+        # NOTE : we're taking the first child here...
 
       pool.launch_sub(pos, subtree, self, @applied_workitem, :variables => vars)
+    end
+
+    protected
+
+    def lookup_subprocess (ref)
+
+      # a classical subprocess stored in a variable ?
+
+      pos, subtree = lookup_variable(ref)
+
+      return [ pos, subtree ] if subtree.is_a?(Array) && subtree.size == 3
+
+      # maybe subprocess :ref => 'uri'
+
+      subtree = parser.parse(ref) rescue nil
+
+      _, subtree = Ruote::Exp::DefineExpression.reorganize(expmap, subtree) \
+        if subtree && expmap.is_definition?(subtree)
+
+      return [ '0', subtree ] if subtree.is_a?(Array) && subtree.size == 3
+
+      # no luck ...
+
+      raise "no subprocess named '#{ref}' found"
     end
   end
 end

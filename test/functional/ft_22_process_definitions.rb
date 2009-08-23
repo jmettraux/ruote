@@ -45,13 +45,6 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
     end
   end
 
-  def test_local_definition
-
-    path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'pdef.xml'))
-
-    assert_trace(path, %w[ a b ])
-  end
-
   def test_json_definition
 
     require 'json'
@@ -71,6 +64,13 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
 
     Ruote::Json.decoder = Ruote::Json::NONE
       # back to initial state
+  end
+
+  def test_local_definition
+
+    path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'pdef.xml'))
+
+    assert_trace(path, %w[ a b ])
   end
 end
 

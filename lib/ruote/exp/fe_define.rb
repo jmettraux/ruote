@@ -28,6 +28,9 @@ require 'ruote/exp/flowexpression'
 
 module Ruote::Exp
 
+  #
+  # TODO : document me
+  #
   class DefineExpression < FlowExpression
 
     is_definition
