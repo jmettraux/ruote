@@ -122,7 +122,7 @@ module Ruote::Exp
 
       raise "no subprocess named '#{ref}' found" unless subtree.is_a?(Array)
 
-      vars = compile_attributes
+      vars = compile_atts
       vars.merge!('__tree__' => tree_children.first)
 
       pool.launch_sub(pos, subtree, self, @applied_workitem, :variables => vars)

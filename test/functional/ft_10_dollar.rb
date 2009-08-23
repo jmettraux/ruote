@@ -11,6 +11,21 @@ require File.join(File.dirname(__FILE__), 'base')
 class FtDollarTest < Test::Unit::TestCase
   include FunctionalBase
 
+  def test_default
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set :var => 'x', :val => 'variable'
+        set :field => 'x', :val => 'field'
+        echo '${x}'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, 'field'
+  end
+
   def test_v
 
     pdef = Ruote.process_definition do

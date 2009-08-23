@@ -113,10 +113,25 @@ module Ruote::Exp
     # Returns a Hash containing all attributes set for an expression with
     # their values resolved.
     #
-    def compile_attributes (opts={})
+    def compile_atts (opts={})
 
       attributes.keys.inject({}) { |h, k|
         h[k] = attribute(k, @applied_workitem, opts)
+        h
+      }
+    end
+
+    # Like compile_atts, but the keys are expanded as well.
+    #
+    # Useful for things like
+    #
+    #   set "f:${v:field_name}" => "${v:that_variable}"
+    #
+    def expand_atts (opts={})
+
+      attributes.keys.inject({}) { |h, k|
+        kk = Ruote.dosub(k, self, @applied_workitem)
+        h[kk] = attribute(k, @applied_workitem, opts)
         h
       }
     end

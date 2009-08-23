@@ -172,5 +172,42 @@ class EftSetTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ nada:${nada} nada:${nada} ]
   end
+
+  def test_simpler_set
+
+    pdef = Ruote.process_definition do
+      sequence do
+
+        set 'f0' => '0'
+        set 'f:f1' => '1'
+        set 'v:v' => '2'
+        echo '${f:f0}/${f:f1}/${v:v}'
+
+        unset 'f0'
+        unset 'f:f1'
+        unset 'v:v'
+        echo '${f:f0}/${f:f1}/${v:v}'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ 0/1/2 // ]
+  end
+
+  def test_simpler_and_nested
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set 'v:v' => '0'
+        set 'v:v${v:v}' => 1
+        echo '${v:v}/${v:v0}'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, '0/1'
+  end
 end
 

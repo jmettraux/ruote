@@ -89,7 +89,7 @@ module Ruote::Exp
           :fei => afei,
           :parent_id => @fei,
           :workitem => @applied_workitem,
-          :variables => compile_attributes(:escape => true)
+          :variables => compile_atts(:escape => true)
         })
     end
   end

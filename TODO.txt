@@ -120,6 +120,7 @@
 [o] concurrent_iterator :times => X
 [o] iterator defaults to :to_v => 'i'
 [o] concurrent_iterator defaults to :to_v => 'i'
+[o] set "f:x" => "blah"; set "v:y" => [ 1, 2 ] (defaults to f:)
 
 [ ] file logger service
 

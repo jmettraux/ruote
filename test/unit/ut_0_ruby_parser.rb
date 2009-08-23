@@ -12,6 +12,13 @@ require 'ruote/parser/ruby_dsl'
 
 class RubyParserTest < Test::Unit::TestCase
 
+  #def test_whatever
+  #  tree = Ruote.define do
+  #    set "f:x" => 12
+  #  end
+  #  p tree
+  #end
+
   def test_sequence
 
     tree = Ruote.define :name => 'nada' do

@@ -97,7 +97,7 @@ module Ruote
 
     def []= (key, value)
 
-      pr, k = extract_prefix key
+      pr, k = extract_prefix(key)
       pr = pr[0, 1]
 
       if pr == 'f'
@@ -112,7 +112,7 @@ module Ruote
 
     def has_key? (key)
 
-      pr, k = extract_prefix key
+      pr, k = extract_prefix(key)
 
       return true if pr == 'r'
 
