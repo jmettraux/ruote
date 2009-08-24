@@ -32,8 +32,12 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
   def teardown
 
-    #@engine0.storage.purge if @engine0.storage.respond_to?(:purge)
-    #@engine1.storage.purge if @engine1.storage.respond_to?(:purge)
+    begin
+      @engine0.expstorage.purge if @engine0.expstorage.respond_to?(:purge)
+      @engine1.expstorage.purge if @engine1.expstorage.respond_to?(:purge)
+    rescue Exception => e
+      p e
+    end
 
     @engine0.shutdown
     @engine1.shutdown
