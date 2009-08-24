@@ -198,3 +198,5 @@ restart tests :
 
 [ ] FIX : issue with dm and eft_23_apply.rb (seems cache-on only)
 
+[ ] participants : pass the &block under the option :block
+
