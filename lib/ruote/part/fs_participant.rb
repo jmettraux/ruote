@@ -29,6 +29,37 @@ require 'ruote/part/local_participant'
 
 module Ruote
 
+  #
+  # This participant stores the workitems it receives in the filesystem (each
+  # in its own file).
+  #
+  # By default, the location for these files is under work/fs_participants/ but
+  # this can be changed by setting the :fs_participant_path of the engine
+  # configuration (the hash passed at engine initialization) to some other
+  # path (the participant takes care of mkdir'ing non-existent dirs).
+  #
+  # It's also possible to pass this :fs_participant_path as a participant
+  # registration/instantiation option.
+  #
+  # An example of FsParticipant registration :
+  #
+  #   alfred = engine.register_participant :alfred, Ruote::FsParticipant
+  #
+  # Querying the participant for work[items] is quite straightforward :
+  #
+  #   puts "workitems count : #{alfred.size}"
+  #
+  #   alfred.each do |workitem|
+  #     puts "#{workitem.fei.to_s} --> #{workitem.fields['customer']}"
+  #   end
+  #
+  #   wi = alfred.first
+  #   wi.fields['approved'] = true
+  #
+  #   alfred.reply(wi)
+  #     # removes the workitem from 'alfred' and hands it back to the engine
+  #     # so that it may resume its travel in the workflow instance.
+  #
   class FsParticipant
 
     include EngineContext
@@ -39,15 +70,17 @@ module Ruote
     def initialize (opts)
 
       @name = neutralize(opts[:participant_name])
+
+      @path = opts[:fs_participant_path]
     end
 
     def context= (c)
 
       @context = c
 
-      @path =
-        @context[:fs_participant_path] ||
-        File.join(workdir, '/fs_participants')
+      @path ||=
+        (@context[:fs_participant_path] ||
+         File.join(workdir, '/fs_participants'))
 
       FileUtils.mkdir_p(@path) unless File.exist?(@path)
     end
@@ -101,6 +134,9 @@ module Ruote
         YAML.load_file(path)
       end
     end
+
+    # TODO : what about #all and #fist a la dm ?
+    # TODO : include Enumerable ?
 
     protected
 
