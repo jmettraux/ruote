@@ -24,22 +24,13 @@ module FunctionalBase
 
     ac = {}
 
-    #class << ac
-    #  alias :old_put :[]=
-    #  def []= (k, v)
-    #    raise("!!!!! #{k.class}\n#{k.inspect}") \
-    #      if k.class != String and k.class != Symbol
-    #    old_put(k, v)
-    #  end
-    #end
-    #  #
-    #  # useful for tracking misuses of the application context
-
     ac[:s_tracer] = @tracer
     #ac[:ruby_eval_allowed] = true
     #ac[:definition_in_launchitem_allowed] = true
 
     @engine = determine_engine_class(ac).new(ac)
+
+    #FunctionalBase.track_wfids(@engine)
 
     @engine.add_service(:s_logger, Ruote::TestLogger)
   end
@@ -200,6 +191,26 @@ module FunctionalBase
     puts @tracer.to_s
     puts '--->8---'
     puts
+  end
+
+  # decorates the launch method of the engine so that
+  # wfids are placed in a wfids.txt file
+  #
+  def self.track_wfids (engine)
+
+    class << engine
+      alias :old_launch :launch
+      def launch (definition, opts={})
+        wfid = old_launch(definition, opts)
+        File.open('wfids.txt', 'a') do |fids|
+          fids.puts
+          fids.puts("=== #{wfid}")
+          caller.each { |l| fids.puts(l) }
+          fids.puts
+        end
+        wfid
+      end
+    end
   end
 end
 

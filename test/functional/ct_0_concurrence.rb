@@ -133,6 +133,8 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
     engine.add_service(:s_logger, Ruote::TestLogger)
 
+    #FunctionalBase.track_wfids(engine)
+
     engine
   end
 
