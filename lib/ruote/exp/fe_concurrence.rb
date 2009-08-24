@@ -33,18 +33,107 @@ module Ruote::Exp
   # The 'concurrence' expression applies its child branches in parallel
   # (well it makes a best effort to make them run in parallel).
   #
-  #    concurrence do
-  #      alpha
-  #      bravo
-  #    end
+  #   concurrence do
+  #     alpha
+  #     bravo
+  #   end
   #
-  # TODO : document me !
+  # == attributes
+  #
+  # The concurrence expression takes a number of attributes that allow for
+  # sophisticated control (especially at merge time).
+  #
+  # === :count
+  #
+  #   concurrence :count => 1 do
+  #     alpha
+  #     bravo
+  #   end
+  #
+  # in that example, the concurrence will terminate as soon as 1 (count) of
+  # the branches replies. The other branch will get cancelled.
+  #
+  # === :remaining
+  #
+  # As said for :count, the remaining branches get cancelled. By setting
+  # :remaining to :forget (or 'forget'), the remaining branches will continue
+  # their execution, forgotten.
+  #
+  #   concurrence :count => 1, :remaining => :forget do
+  #     alpha
+  #     bravo
+  #   end
+  #
+  # === :merge
+  #
+  # By default, the workitems override each others. By default, the first
+  # workitem to reply will win.
+  #
+  #   sequence do
+  #     concurrence do
+  #       alpha
+  #       bravo
+  #     end
+  #     charly
+  #   end
+  #
+  # In that example, if 'alpha' replied first, the workitem that reaches
+  # 'charly' once 'bravo' replied will have the payload as seen/modified by
+  # 'alpha'.
+  #
+  # The :merge attribute determines which branch wins the merge.
+  #
+  # * first (default)
+  # * last
+  # * highest
+  # * lowest
+  #
+  # highest and lowest refer to the position in the list of branch. It's useful
+  # to set a fixed winner.
+  #
+  #   concurrence :merge => highest do
+  #     alpha
+  #     bravo
+  #   end
+  #
+  # makes sure that alpha's version of the workitem wins.
+  #
+  # === :merge_type
+  #
+  # By default, the merge type is set to 'override', which means that the
+  # 'winning' workitem's payload supplants all other workitems' payloads.
+  #
+  # Setting :merge_type to :mix, will actually attempt to merge field by field,
+  # making sure that the field value of the winner(s) are used.
+  #
+  # :isolate will rearrange the resulting workitem payload so that there is
+  # a new field for each branch. The name of each field is the index of the
+  # branch from '0' to ...
+  #
+  #
+  # === :over_if
+  #
+  # Like the :count attribute controls how many branches have to reply before
+  # a concurrence ends, the :over attribute is used to specify a condition
+  # upon which the concurrence will [prematurely] end.
+  #
+  #   concurrence :over_if => '${f:over}'
+  #     alpha
+  #     bravo
+  #     charly
+  #   end
+  #
+  # will end the concurrence as soon as one of the branches replies with a
+  # workitem whose field 'over' is set to true. (the remaining branches will
+  # get cancelled unless :remaining => :forget is set).
   #
   class ConcurrenceExpression < FlowExpression
 
     include MergeMixin
 
     names :concurrence
+
+    # TODO : implement :over_unless
 
     def apply
 

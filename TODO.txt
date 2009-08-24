@@ -192,7 +192,9 @@ restart tests :
 [ ] engine#register_subprocess
 [ ] apply : ruby or xml (instead of just ast) ?
 
-[ ] FIX : issue with dm and eft_23_apply.rb (seems cache-on only)
-
 [ ] FsParticipant : what about #first and #all a la dm ?
+
+[ ] concurrence : :over_unless
+
+[ ] FIX : issue with dm and eft_23_apply.rb (seems cache-on only)
 
