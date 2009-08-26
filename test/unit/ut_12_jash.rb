@@ -32,6 +32,13 @@ class Bike
   end
 end
 
+class Ship
+  attr_reader :name
+  def initialize (name)
+    @name = name
+  end
+end
+
 class JashTest < Test::Unit::TestCase
 
   #def setup
@@ -55,16 +62,20 @@ class JashTest < Test::Unit::TestCase
     assert_equal([], Ruote::Jash.encode([]))
 
     assert_equal(
-      {"_ruote_jash_class_"=>"Car", "@brand"=>"citroen", "@doors"=>["left", "right"]},
+      {"!k"=>"Car", "@brand"=>"citroen", "@doors"=>["left", "right"]},
       Ruote::Jash.encode(Car.new))
 
     assert_equal(
-      {"_ruote_jash_class_"=>"Bike", "@brand"=>"piaggio"},
+      {"!k"=>"Bike", "@brand"=>"piaggio"},
       Ruote::Jash.encode(Bike.new))
 
     assert_raise ArgumentError do
       Ruote::Jash.encode({ :a => 'A' })
     end
+
+    assert_equal(
+      {"@name"=>"surprise", "!k"=>"Ship"},
+      Ruote::Jash.encode(Ship.new('surprise')))
   end
 
   def test_decode
@@ -82,13 +93,17 @@ class JashTest < Test::Unit::TestCase
     assert_equal({}, Ruote::Jash.decode({}))
     assert_equal([], Ruote::Jash.decode([]))
 
-    c = Ruote::Jash.decode({
-      "_ruote_jash_class_" => "Car",
-      "@brand" => "citroen",
-      "@doors" => [ "left", "right" ]})
+    c = Ruote::Jash.decode(
+      { "!k" => "Car", "@brand" => "citroen", "@doors" => [ "left", "right" ] })
 
     assert_equal Car, c.class
     assert_equal 2, c.doors.size
+
+    s = Ruote::Jash.decode(
+      {"@name"=>"surprise", "!k"=>"Ship"})
+
+    assert_equal Ship, s.class
+    assert_equal 'surprise', s.name
   end
 
   def test_constantize

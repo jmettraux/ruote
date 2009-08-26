@@ -34,7 +34,7 @@ module Ruote
   #
   module Jash
 
-    K = '_ruote_jash_class_'
+    K = '!k'
 
     PASS = [ NilClass, String, Fixnum, Float, TrueClass, FalseClass ]
     NOPASS = [ Symbol ]
@@ -111,7 +111,7 @@ module Ruote
 
       return h.inject({}) { |hh, (k, v)| hh[k] = decode(v); hh } unless k
 
-      o = constantize(k).new
+      o = constantize(k).allocate
 
       h.inject(o) { |o, (k, v)| o.instance_variable_set(k, decode(v)); o }
     end
