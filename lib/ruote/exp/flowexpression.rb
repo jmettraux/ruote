@@ -471,9 +471,13 @@ module Ruote::Exp
 
     def to_yaml_properties #:nodoc#
 
-      l = super
+      #l = super
+      l = instance_variables.sort
+        # behind the scenes ;-)
+
       l.delete(:@context)
       l.delete('@context')
+
       l
     end
 

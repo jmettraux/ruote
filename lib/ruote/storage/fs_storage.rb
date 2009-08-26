@@ -32,6 +32,9 @@ require 'ruote/storage/base'
 
 module Ruote
 
+  #
+  # Storing flow expressions in a tree of directories.
+  #
   class FsStorage
 
     include EngineContext
