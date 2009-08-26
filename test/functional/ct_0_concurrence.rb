@@ -95,6 +95,7 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
     sleep 0.350
 
+    #p :replies_1_then_0
     @engine1.reply(alpha0.pop)
       # and immediately...
     @engine0.reply(alpha0.pop)
@@ -148,6 +149,8 @@ class CtConcurrenceTest < Test::Unit::TestCase
       alias :original_persist :persist
       def persist (probe=false)
         sleep 0.010
+        #sleep 0.010 if probe
+        #sleep(rand / 10) if probe
         original_persist(probe)
       end
     end

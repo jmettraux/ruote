@@ -200,3 +200,6 @@ restart tests :
 
 [ ] participants : pass the &block under the option :block
 
+[ ] switch to JSON friendly pers format for flow expressions
+[ ] switch to JSON friendly pers format for workitems
+

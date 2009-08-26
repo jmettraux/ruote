@@ -486,8 +486,11 @@ module Ruote::Exp
     #
     def persist (probe=false)
 
+      #pout :pers, self.object_id, @fei.to_s
+
       if probe
         current = expstorage[@fei]
+        #pout :collided if current && current.modified_time != @modified_time
         return current if current && current.modified_time != @modified_time
       end
 
@@ -497,6 +500,14 @@ module Ruote::Exp
 
       nil
     end
+
+    #--
+    #def pout (*args)
+    #  i = engine.object_id % 100
+    #  ind = ' ' * (engine.object_id % 10)
+    #  puts "#{ind} #{i} #{args.inspect}"
+    #end
+    #++
 
     # Asks expstorage[s] to unstore persisted version of self.
     #
