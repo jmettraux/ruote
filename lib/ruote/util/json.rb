@@ -29,44 +29,57 @@ module Ruote
 
     # The JSON / JSON pure decoder
     #
-    JSON = lambda { |s| ::JSON.parse(s) }
+    JSON = [
+      lambda { |o| o.to_json },
+      lambda { |s| ::JSON.parse(s) }
+    ]
 
     # The Rails ActiveSupport::JSON decoder
     #
-    ACTIVE_SUPPORT = lambda { |s| ActiveSupport::JSON.decode(s) }
+    ACTIVE_SUPPORT = [
+      lambda { |o| o.to_json },
+      lambda { |s| ActiveSupport::JSON.decode(s) }
+    ]
 
-    # The "raise an exception because there's no decoder" decoder
+    # http://github.com/brianmario/yajl-ruby/
     #
-    NONE = lambda { |s| raise "no JSON decoding backend found" }
+    YAJL = [
+      lambda { |o| Yajl::Encoder.encode(o) },
+      lambda { |s| Yajl::Parser.parse(s) }
+    ]
 
-    @decoder = if defined?(ActiveSupport::JSON)
+    # The "raise an exception because there's no backend" backend
+    #
+    NONE = [ lambda { |s| raise 'no JSON backend found' } ] * 2
+
+    @backend = if defined?(ActiveSupport::JSON)
       ACTIVE_SUPPORT
     elsif defined?(::JSON)
       JSON
+    elsif defined?(::Yajl)
+      YAJL
     else
       NONE
     end
 
-    # Forces a decoder JSON/ACTIVE_SUPPORT or any lambda that knows
+    # Forces a decoder JSON/ACTIVE_SUPPORT or any lambda pair that knows
     # how to deal with JSON.
     #
-    def self.decoder= (d)
+    def self.backend= (b)
 
-      @decoder = d
+      @backend = b
     end
 
-    #--
-    #def self.encode (o)
-    #end
-      # no need for that, as most of the modules
-      # add #to_json to the Object class.
-    #++
+    def self.encode (o)
+
+      @backend[0].call(o)
+    end
 
     # Decodes the given JSON string.
     #
     def self.decode (s)
 
-      @decoder.call(s)
+      @backend[1].call(s)
     end
   end
 end
