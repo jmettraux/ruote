@@ -60,7 +60,6 @@ jjashed = jashed.to_json
 #puts yamled
 #puts "=" * 80
 #puts jjashed
-#exit 0
 
 puts
 puts "marshalled.length      : #{marshalled.length}"

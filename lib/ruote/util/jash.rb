@@ -62,9 +62,11 @@ module Ruote
         if o.is_a?(Array)
 
       return o.inject({}) { |h, (k, v)|
+
         raise(
           ArgumentError.new("can't encode hash with a non-string key")
         ) unless k.is_a?(String)
+
         h[k] = encode(v)
         h
       } if o.is_a?(Hash)
@@ -79,7 +81,11 @@ module Ruote
         o.to_yaml_properties :
         o.instance_variables.sort
 
-      vs.inject(h) { |h, k| h[k.to_s] = encode(o.instance_variable_get(k)); h }
+      vs.inject(h) do |h, k|
+        v = encode(o.instance_variable_get(k))
+        h[k.to_s] = v if v != nil
+        h
+      end
     end
 
     # Turns something that just got parsed from a JSON string into a tree

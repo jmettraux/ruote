@@ -112,5 +112,15 @@ class JashTest < Test::Unit::TestCase
       Test::Unit::TestCase,
       Ruote::Jash.constantize('Test::Unit::TestCase'))
   end
+
+  def test_nil_instance_variable
+
+    assert_equal({"!k"=>"Ship"}, Ruote::Jash.encode(Ship.new(nil)))
+
+    s = Ruote::Jash.decode({"!k"=>"Ship"})
+
+    assert_equal Ship, s.class
+    assert_equal nil, s.name
+  end
 end
 
