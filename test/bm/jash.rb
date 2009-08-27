@@ -11,9 +11,9 @@ require 'yaml'
 require 'ruote/engine'
 require 'ruote/util/jash'
 
-yamled = %{--- !ruby/object:Ruote::Exp::SequenceExpression 
-applied_workitem: !ruby/object:Ruote::Workitem 
-  fei: !ruby/object:Ruote::FlowExpressionId 
+yamled = %{--- !ruby/object:Ruote::Exp::SequenceExpression
+applied_workitem: !ruby/object:Ruote::Workitem
+  fei: !ruby/object:Ruote::FlowExpressionId
     engine_id: engine
     expid: 0_0_0
     wfid: 20090826-berutodiko
@@ -22,40 +22,45 @@ applied_workitem: !ruby/object:Ruote::Workitem
 children: []
 
 created_time: 2009-08-26 19:04:28.545854 +09:00
-fei: !ruby/object:Ruote::FlowExpressionId 
+fei: !ruby/object:Ruote::FlowExpressionId
   engine_id: engine
   expid: 0_0
   wfid: 20090826-berutodiko
 modified_time: 2009-08-26 19:04:28.550609 +09:00
-on_cancel: 
-on_error: 
-on_timeout: 
-original_tree: 
+on_cancel:
+on_error:
+on_timeout:
+original_tree:
 - sequence
 - {}
 
 - - - echo
-    - a: 
+    - a:
     - []
 
   - - echo
-    - b: 
+    - b:
     - []
 
-parent_id: !ruby/object:Ruote::FlowExpressionId 
+parent_id: !ruby/object:Ruote::FlowExpressionId
   engine_id: engine
   expid: "0"
   wfid: 20090826-berutodiko
 state: failed
-tagname: 
-updated_tree: 
-variables: 
+tagname:
+updated_tree:
+variables:
 }
 
 exp = YAML.load(yamled)
 jashed = Ruote::Jash.encode(exp)
 marshalled = Marshal.dump(exp)
 jjashed = jashed.to_json
+
+#puts yamled
+#puts "=" * 80
+#puts jjashed
+#exit 0
 
 puts
 puts "marshalled.length      : #{marshalled.length}"
@@ -95,6 +100,9 @@ Benchmark.benchmark(' ' * 31 + Benchmark::Tms::CAPTION, 31) do |b|
   end
   b.report('yaml dump') do
     N.times { YAML.dump(exp) }
+  end
+  b.report('yaml load') do
+    N.times { YAML.load(yamled) }
   end
 end
 
