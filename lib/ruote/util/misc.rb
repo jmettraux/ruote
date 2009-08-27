@@ -57,7 +57,7 @@ module Ruote
     end
       # avoiding "TypeError: singleton can't be dumped"
 
-    o = object.class.new
+    o = object.class.allocate
 
     # some kind of collection ?
 
