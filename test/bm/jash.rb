@@ -8,6 +8,7 @@ puts
 require 'yajl/json_gem'; puts 'yjal'
 
 require 'yaml'
+require 'base64'
 require 'ruote/engine'
 require 'ruote/util/jash'
 
@@ -55,6 +56,7 @@ variables:
 exp = YAML.load(yamled)
 jashed = Ruote::Jash.encode(exp)
 marshalled = Marshal.dump(exp)
+marshalled64 = Base64.encode64(marshalled)
 jjashed = jashed.to_json
 
 #puts yamled
@@ -63,6 +65,7 @@ jjashed = jashed.to_json
 
 puts
 puts "marshalled.length      : #{marshalled.length}"
+puts "marshalled64.length    : #{marshalled64.length}"
 puts "jashed.to_json.length  : #{jjashed.length}"
 puts "yamled.length          : #{YAML.dump(exp).length}"
 
@@ -78,6 +81,12 @@ Benchmark.benchmark(' ' * 31 + Benchmark::Tms::CAPTION, 31) do |b|
   end
   b.report('marshal load') do
     N.times { Marshal.load(marshalled) }
+  end
+  b.report('marshal dump 64') do
+    N.times { Base64.encode64(Marshal.dump(exp)) }
+  end
+  b.report('marshal load 64') do
+    N.times { Marshal.load(Base64.decode64(marshalled64)) }
   end
   b.report('jash dump') do
     N.times { Ruote::Jash.encode(exp) }
