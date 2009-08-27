@@ -89,5 +89,25 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     assert_equal true, alpha.down
   end
+
+  class OptsParticipant
+    attr_reader :opts
+    def initialize (opts)
+      @opts = opts
+    end
+  end
+
+  def test_pass_block_to_participant
+
+    alpha = @engine.register_participant :alpha, OptsParticipant
+
+    bravo = @engine.register_participant :alpha, OptsParticipant do
+      # nada
+    end
+
+    assert_nil alpha.opts[:block]
+    assert_not_nil bravo.opts[:block]
+    assert_equal Proc, bravo.opts[:block].class
+  end
 end
 

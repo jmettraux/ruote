@@ -122,6 +122,7 @@
 [o] concurrent_iterator defaults to :to_v => 'i'
 [o] set "f:x" => "blah"; set "v:y" => [ 1, 2 ] (defaults to f:)
 [o] subprocess :ref => uri
+[o] participants : pass the &block under the option :block
 
 [ ] file logger service
 
@@ -198,11 +199,10 @@ restart tests :
 
 [ ] FIX : issue with dm and eft_23_apply.rb (seems cache-on only)
 
-[ ] participants : pass the &block under the option :block
-
 [x] switch to JSON friendly pers format for flow expressions
 [o] switch to JSON friendly pers format for workitems
 
 [ ] unify ruote/util/json and ruote/util/serializer
-[ ] switch :expstorage_cache as an option (default to no cache)
+
+[ ] jash : Time and DateTime and co ?
 

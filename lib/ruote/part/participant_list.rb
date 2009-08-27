@@ -97,19 +97,19 @@ module Ruote
 
     protected
 
-    def prepare (p, opts, block)
+    def prepare (pa, opts, block)
 
-      p = if block
+      pa = if pa.class == Class
+        pa.new(opts.merge(:block => block))
+      elsif block
         BlockParticipant.new(block, opts)
-      elsif p.class == Class
-        p.new(opts)
       else
-        p
+        pa
       end
 
-      p.context = @context if p.respond_to?(:context=)
+      pa.context = @context if pa.respond_to?(:context=)
 
-      p
+      pa
     end
   end
 end
