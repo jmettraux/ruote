@@ -200,6 +200,9 @@ restart tests :
 
 [ ] participants : pass the &block under the option :block
 
-[ ] switch to JSON friendly pers format for flow expressions
+[x] switch to JSON friendly pers format for flow expressions
 [o] switch to JSON friendly pers format for workitems
+
+[ ] unify ruote/util/json and ruote/util/serializer
+[ ] switch :expstorage_cache as an option (default to no cache)
 

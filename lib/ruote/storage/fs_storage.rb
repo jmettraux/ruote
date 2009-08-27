@@ -28,6 +28,7 @@ require 'yaml'
 require 'ruote/engine/context'
 require 'ruote/queue/subscriber'
 require 'ruote/storage/base'
+require 'ruote/util/serializer'
 
 
 module Ruote
@@ -46,7 +47,9 @@ module Ruote
       @context = c
 
       @path = @context[:expstorage_path] || workdir + '/expool'
-      @yaml = (@context[:persist_as_yaml] == true)
+
+      @serializer = Ruote::Serializer.new(
+        @context[:expstorage_format] || :marshal)
 
       subscribe(:expressions)
     end
@@ -71,7 +74,9 @@ module Ruote
       d, fn = filename_for(fei)
       FileUtils.mkdir_p(d) unless File.exist?(d)
 
-      File.open(File.join(d, fn), 'wb') { |f| f.write(encode(fexp)) }
+      File.open(File.join(d, fn), 'wb') { |f|
+        f.write(@serializer.encode(fexp))
+      }
     end
 
     def [] (fei)
@@ -123,25 +128,10 @@ module Ruote
 
       return nil unless File.exist?(path)
 
-      fexp = File.open(path, 'rb') { |f| decode(f.read) }
+      fexp = File.open(path, 'rb') { |f| @serializer.decode(f.read) rescue nil }
       fexp.context = @context if fexp
 
       fexp
-    end
-
-    def encode (fexp)
-
-      @yaml ? fexp.to_yaml : Marshal.dump(fexp)
-    end
-
-    def decode (s)
-
-      if s[0, 5] == '--- !'
-        YAML.load(s)
-      else
-        Marshal.load(s) rescue nil
-          # returning nil in case of "marshal data too short"
-      end
     end
   end
 end
