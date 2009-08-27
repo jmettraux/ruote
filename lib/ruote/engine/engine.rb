@@ -300,11 +300,11 @@ module Ruote
 
     def init_storage (storage_class)
 
-      if storage_class == Ruote::HashStorage || context[:no_expstorage_cache]
-        add_service(:s_expression_storage, storage_class)
-      else
+      if storage_class != Ruote::HashStorage && context[:expstorage_cache]
         add_service(:s_expression_storage, Ruote::CacheStorage)
         add_service(:s_expression_storage__1, storage_class)
+      else
+        add_service(:s_expression_storage, storage_class)
       end
     end
   end

@@ -128,7 +128,7 @@ class CtConcurrenceTest < Test::Unit::TestCase
     engine_class = determine_engine_class(ac)
     engine_class = Ruote::FsPersistedEngine if engine_class == Ruote::Engine
 
-    ac[:no_expstorage_cache] = true
+    ac[:expstorage_cache] = false
       #
       # override the setting in determine_engine_class
       #

@@ -44,7 +44,7 @@ ARGUMENTS for functional tests :
   --fs  : uses Ruote::FsPersistedEngine (fast)
      -y : makes 'fs' store expressions as YAML (slow)
 
-  -C    : disable caching (used for thorough persistence testing)
+  -c    : enable caching (faster expstorage)
 
 else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
@@ -53,7 +53,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
   end
 
   application_context[:expstorage_format] = ARGV.include?('-y') ? :yaml : nil
-  application_context[:no_expstorage_cache] = ARGV.include?('-C')
+  application_context[:expstorage_cache] = ARGV.include?('-c')
 
   klass = $ruote_engine_class
 
@@ -82,7 +82,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
   unless $advertised
 
     yaml = (application_context[:expstorage_format] == :yaml) ? ' (yaml)' : ''
-    cache = application_context[:no_expstorage_cache] ? ' (no cache)' : ''
+    cache = application_context[:expstorage_cache] ? '' : ' (no cache)'
 
     puts
     puts "  using engine of class #{klass}#{yaml}#{cache}"
