@@ -163,12 +163,15 @@ module Ruote::Exp
 
       @over = over?(workitem)
 
-      if newer_exp_version = persist(true)
+      current = expstorage[@fei]
+      if current && current.modified_time != @modified_time
         #
-        # oops, collision detected (with other instance of the same engine)
+        # collision detected
         #
-        return newer_exp_version.reply(workitem)
+        return current.reply(workitem)
       end
+
+      persist
 
       reply_to_parent(nil) if @over
     end

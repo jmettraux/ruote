@@ -140,6 +140,9 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
     #FunctionalBase.track_wfids(engine)
 
+    #p engine.class
+    #p engine.expstorage.class
+
     engine
   end
 
