@@ -63,6 +63,41 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal({ 1 => { 'seen' => 'indeed' }, 0 => {} }, fields)
   end
 
+  def test_over_unless
+
+    pdef = Ruote.process_definition do
+      set 'f:ok' => 'true'
+      concurrence :over_unless => '${f:ok}', :merge_type => :isolate do
+        alpha
+        alpha
+        alpha
+      end
+      echo 'done.'
+    end
+
+    count = 0
+
+    alpha = @engine.register_participant :alpha do |workitem|
+      if count > 1
+        workitem.fields['ok'] = false
+      else
+        @tracer << "a\n"
+        count = count + 1
+      end
+    end
+    alpha.do_not_thread = true
+
+    fields = nil
+
+    @engine.register_participant :bravo do |workitem|
+      fields = workitem.fields
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ a a done. ])
+  end
+
   # helper
   #
   def run_concurrence (concurrence_attributes, noise)

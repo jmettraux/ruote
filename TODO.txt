@@ -123,6 +123,7 @@
 [o] set "f:x" => "blah"; set "v:y" => [ 1, 2 ] (defaults to f:)
 [o] subprocess :ref => uri
 [o] participants : pass the &block under the option :block
+[o] concurrence : :over_unless
 
 [ ] file logger service
 
@@ -186,7 +187,7 @@ restart tests :
 [ ] tree.to_xml (require builder ?)
 [ ] tree.to_rb
 
-[ ] concurrence / concurrent_iterator merge plugin ?
+[ ] concurrence / concurrent_iterator : merge plugin ?
 
 [ ] one file, no multi-process, persistence ?
 
@@ -195,7 +196,6 @@ restart tests :
 
 [ ] FsParticipant : what about #first and #all a la dm ?
 
-[ ] concurrence : :over_unless
 
 [x] switch to JSON friendly pers format for flow expressions
 [o] switch to JSON friendly pers format for workitems

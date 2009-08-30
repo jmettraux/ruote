@@ -111,7 +111,7 @@ module Ruote::Exp
   # branch from '0' to ...
   #
   #
-  # === :over_if
+  # === :over_if (and :over_unless)
   #
   # Like the :count attribute controls how many branches have to reply before
   # a concurrence ends, the :over attribute is used to specify a condition
@@ -126,6 +126,8 @@ module Ruote::Exp
   # will end the concurrence as soon as one of the branches replies with a
   # workitem whose field 'over' is set to true. (the remaining branches will
   # get cancelled unless :remaining => :forget is set).
+  #
+  # :over_unless needs no explanation.
   #
   class ConcurrenceExpression < FlowExpression
 
@@ -211,8 +213,11 @@ module Ruote::Exp
     def over? (workitem)
 
       over_if = attribute(:over_if, workitem)
+      over_unless = attribute(:over_unless, workitem)
 
       if over_if && Condition.true?(over_if)
+        true
+      elsif over_unless && (not Condition.true?(over_unless))
         true
       else
         (@workitems.size >= expected_count)
@@ -220,6 +225,8 @@ module Ruote::Exp
     end
 
     # How many branch replies are expected before the concurrence is over ?
+    #
+    # (note : concurrent_iterator overrides it)
     #
     def expected_count
 
