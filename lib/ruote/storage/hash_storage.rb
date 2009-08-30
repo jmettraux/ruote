@@ -63,6 +63,28 @@ module Ruote
 
       exp
     end
+
+    #--
+    # ticket stuff
+    #++
+
+    class HashTicket
+      def consumable?
+        true
+      end
+      def consume
+      end
+    end
+
+    def draw_ticket (fexp)
+
+      HashTicket.new
+    end
+
+    def discard_all_tickets (fei)
+
+      # nothing to do
+    end
   end
 end
 

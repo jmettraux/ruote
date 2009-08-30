@@ -102,6 +102,34 @@ module Ruote
       end
     end
 
+    #--
+    # ticket stuff
+    #++
+
+    class FsTicket
+      def initialize (expstorage, fexp)
+        @expstorage = expstorage
+        @fexp = fexp
+        @file = File.new(@expstorage.send(:filename_for, @fexp.fei, true))
+      end
+      def consumable?
+        @file.flock(File::LOCK_EX | File::LOCK_NB)
+      end
+      def consume
+        @file.flock(File::LOCK_UN)
+      end
+    end
+
+    def draw_ticket (fexp)
+
+      FsTicket.new(self, fexp)
+    end
+
+    def discard_all_tickets (fei)
+
+      # nothing to do
+    end
+
     protected
 
     def all_filenames

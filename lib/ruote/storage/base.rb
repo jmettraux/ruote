@@ -28,6 +28,9 @@ require 'ruote/engine/context'
 
 module Ruote
 
+  #
+  # Some methods shared by all expression storage implementations.
+  #
   module StorageBase
 
     # Overriding #context= to make sure #observe pool is called once the
@@ -54,10 +57,8 @@ module Ruote
       end
     end
 
-    def fei_match? (fei, query)
-      # TODO : if necessary ?
-    end
-
+    # Returns true if the expression matches the query.
+    #
     def exp_match? (exp, query)
 
       return false unless exp

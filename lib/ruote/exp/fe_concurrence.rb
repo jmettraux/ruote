@@ -144,39 +144,62 @@ module Ruote::Exp
       @merge_type = att(:merge_type, %w[ override mix isolate ])
       @remaining = att(:remaining, %w[ cancel forget ])
 
-      @workitems = nil
+      @workitems = (@merge == 'first' || @merge == 'last') ? [] : {}
 
       @over = false
 
       apply_children
     end
 
-    def reply (workitem)
+    def reply (workitem, ticket=nil)
 
-      return if @over
+      ticket ||= expstorage.draw_ticket(self)
 
-      if @merge == 'first' || @merge == 'last'
-        (@workitems ||= []) << workitem
+      if ticket.consumable?
+
+        t_reply(workitem, ticket)
+
       else
-        (@workitems ||= {})[workitem.fei.expid] = workitem
-      end
 
-      @over = over?(workitem)
-
-      current = expstorage[@fei]
-      if current && current.modified_time != @modified_time
+        # we have a collision here, another engine is holding the ticket
+        # for this concurrence expression. Let's wait a bit and then retry
+        # with the new version of the expression.
         #
-        # collision detected
-        #
-        return current.reply(workitem)
+        # if the expression replied to its parent meanwhile, let's forget
+        # the reply (the ticket will have been discarded).
+
+        sleep 0.014
+
+        if exp = expstorage[@fei]
+          exp.reply(workitem, ticket)
+        end
       end
-
-      persist
-
-      reply_to_parent(nil) if @over
     end
 
     protected
+
+    # The real 'reply' work happens here. The reply method seen a few lines
+    # before is all about preventing collisions in case of multi engines.
+    #
+    def t_reply (workitem, ticket)
+
+      if not @over
+
+        if @merge == 'first' || @merge == 'last'
+          @workitems << workitem
+        else
+          @workitems[workitem.fei.expid] = workitem
+        end
+
+        @over = over?(workitem)
+
+        persist
+
+        reply_to_parent(nil) if @over
+      end
+
+      ticket.consume
+    end
 
     def apply_children
 
@@ -192,7 +215,7 @@ module Ruote::Exp
       if over_if && Condition.true?(over_if)
         true
       else
-        @workitems && (@workitems.size >= expected_count)
+        (@workitems.size >= expected_count)
       end
     end
 
@@ -207,12 +230,14 @@ module Ruote::Exp
 
       handle_remaining if @children
 
+      expstorage.discard_all_tickets(@fei)
+
       super(merge_all_workitems)
     end
 
     def merge_all_workitems
 
-      return @applied_workitem unless @workitems
+      return @applied_workitem if @workitems.size < 1
 
       wis = case @merge
       when 'first'
