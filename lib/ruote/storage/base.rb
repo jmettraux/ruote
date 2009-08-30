@@ -81,5 +81,32 @@ module Ruote
       true
     end
   end
+
+  #
+  # A dummy implementation of the ticketing mechanism used by concurrence
+  # expressions.
+  # Dummy since it's intended for HashStorage and CacheStorage, both of
+  # which don't require ticketing.
+  #
+  module DummyTickets
+
+    class HashTicket
+      def consumable?
+        true
+      end
+      def consume
+      end
+    end
+
+    def draw_ticket (fexp)
+
+      HashTicket.new
+    end
+
+    def discard_all_tickets (fei)
+
+      # nothing to do
+    end
+  end
 end
 

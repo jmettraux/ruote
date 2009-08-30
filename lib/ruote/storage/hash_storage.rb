@@ -40,6 +40,7 @@ module Ruote
 
     include EngineContext
     include StorageBase # which overrides #context=
+    include DummyTickets
     include Subscriber
 
     def find_expressions (query={})
@@ -62,28 +63,6 @@ module Ruote
       exp.context = context if exp
 
       exp
-    end
-
-    #--
-    # ticket stuff
-    #++
-
-    class HashTicket
-      def consumable?
-        true
-      end
-      def consume
-      end
-    end
-
-    def draw_ticket (fexp)
-
-      HashTicket.new
-    end
-
-    def discard_all_tickets (fei)
-
-      # nothing to do
     end
   end
 end

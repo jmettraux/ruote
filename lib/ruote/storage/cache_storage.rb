@@ -39,10 +39,14 @@ module Ruote
   # and stuff like this). If you have a simple 1 process ruby install, then
   # this cache will speed up your ruote engine.
   #
+  # Since it's a cache system that prevents used on a multi-process ruby
+  # framework, the ticket system used is the dummy one.
+  #
   class CacheStorage
 
     include EngineContext
     include StorageBase
+    include DummyTickets
     include Subscriber
 
     DEFAULT_SIZE = 5000
@@ -114,22 +118,6 @@ module Ruote
 
       @cache.clear
       real_storage.purge if real_storage.respond_to?(:purge)
-    end
-
-    #--
-    # ticket stuff
-    #
-    # simply passes requests to the underlying 'real' expression storage.
-    #++
-
-    def draw_ticket (fexp)
-
-      real_storage.draw_ticket(fexp)
-    end
-
-    def discard_all_tickets (fei)
-
-      real_storage.discard_all_tickets(fei)
     end
 
     protected
