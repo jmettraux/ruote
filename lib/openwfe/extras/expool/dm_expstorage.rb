@@ -210,7 +210,7 @@ module OpenWFE::Extras
 
        DmExpression.all(
         :wfid => wfid,
-        :expclass => OpenWFE::Definition.to_s,
+        :expclass => OpenWFE::DefineExpression.to_s,
         :order => [ :expid.asc ])
       }
 
