@@ -31,6 +31,14 @@ require 'ruote/storage/base'
 
 module Ruote
 
+  #
+  # This storage is places in front of a 'real' expression storage. It will
+  # simply cache reads.
+  #
+  # Do not use this storage in a multi-process setting (think Rails + Passenger
+  # and stuff like this). If you have a simple 1 process ruby install, then
+  # this cache will speed up your ruote engine.
+  #
   class CacheStorage
 
     include EngineContext
@@ -106,6 +114,22 @@ module Ruote
 
       @cache.clear
       real_storage.purge if real_storage.respond_to?(:purge)
+    end
+
+    #--
+    # ticket stuff
+    #
+    # simply passes requests to the underlying 'real' expression storage.
+    #++
+
+    def draw_ticket (fexp)
+
+      real_storage.draw_ticket(fexp)
+    end
+
+    def discard_all_tickets (fei)
+
+      real_storage.discard_all_tickets(fei)
     end
 
     protected
