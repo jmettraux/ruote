@@ -206,16 +206,13 @@ module OpenWFE::Extras
     #
     def fetch_root (wfid)
 
-      exps = DataMapper.repository(@dm_repository) {
+      e = DataMapper.repository(@dm_repository) {
 
-       DmExpression.all(
-        :wfid => wfid,
-        :expclass => OpenWFE::DefineExpression.to_s,
-        :order => [ :expid.asc ])
+        DmExpression.first(
+          :wfid => wfid,
+          :expclass => OpenWFE::DefineExpression.to_s,
+          :order => [ :expid.asc ])
       }
-
-      #e = exps.sort { |fe1, fe2| fe1.fei.expid <=> fe2.fei.expid }[0]
-      e = exps.first
 
       e ? e.as_owfe_expression(self.application_context) : nil
     end
