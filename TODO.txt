@@ -197,8 +197,6 @@ restart tests :
 
 [ ] concurrence : :over_unless
 
-[ ] FIX : issue with dm and eft_23_apply.rb (seems cache-on only)
-
 [x] switch to JSON friendly pers format for flow expressions
 [o] switch to JSON friendly pers format for workitems
 

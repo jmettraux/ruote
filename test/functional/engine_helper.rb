@@ -81,8 +81,10 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   unless $advertised
 
-    yaml = (application_context[:expstorage_format] == :yaml) ? ' (yaml)' : ''
-    cache = application_context[:expstorage_cache] ? '' : ' (no cache)'
+    yaml = (application_context[:expstorage_format] == :yaml) ?
+       ' (yaml)' : ''
+    cache = application_context[:expstorage_cache] ?
+       ' (cache on)' : ' (cache off)'
 
     puts
     puts "  using engine of class #{klass}#{yaml}#{cache}"
