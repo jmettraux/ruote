@@ -93,7 +93,10 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
     wfid = @engine0.launch(pdef)
 
-    sleep 0.350
+    #sleep 0.350
+    while alpha0.size < 2
+      sleep 0.100
+    end
 
     #p :replies_1_then_0
     @engine1.reply(alpha0.pop)
