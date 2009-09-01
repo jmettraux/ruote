@@ -124,8 +124,9 @@
 [o] subprocess :ref => uri
 [o] participants : pass the &block under the option :block
 [o] concurrence : :over_unless
-
-[ ] file logger service
+[x] engine#register_subprocess (replaced by engine#variables)
+[x] switch to JSON friendly pers format for flow expressions
+[o] switch to JSON friendly pers format for workitems
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : reval
@@ -149,6 +150,8 @@
 
 restart tests :
 [ ] when
+
+[ ] file logger service
 
 [ ] conditional : rprefix ! ${r:x} is perhaps sufficient
 
@@ -191,19 +194,13 @@ restart tests :
 
 [ ] one file, no multi-process, persistence ?
 
-[ ] engine#register_subprocess
 [ ] apply : ruby or xml (instead of just ast) ?
 
 [ ] FsParticipant : what about #first and #all a la dm ?
-
-
-[x] switch to JSON friendly pers format for flow expressions
-[o] switch to JSON friendly pers format for workitems
 
 [ ] unify ruote/util/json and ruote/util/serializer
 
 [ ] jash : Time and DateTime and co ?
 
-[ ] variables : process root
-[ ] variables : transient engine level
+[ ] Sun Hao's up-to-date-tree idea ${f:participant_name} ps#resolved_tree
 
