@@ -66,5 +66,26 @@ class FtVariablesTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ a0:b0:a0:b0 a1:b1:a0:b1 a0:b1:a0:b1 ])
   end
+
+  def test_engine_variables
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set 'v:va' => 'a0'
+        echo '${v:va}:${v://va}'
+        echo '${v:vb}:${v://vb}'
+        echo 'done.'
+      end
+    end
+
+    #noisy
+
+    @engine.variables['vb'] = 'b0'
+
+    assert_trace(pdef, %w[ a0: b0:b0 done. ])
+
+    assert_equal(
+      2, logger.log.select { |e| e[0] == :variables && e[1] == :set }.size)
+  end
 end
 

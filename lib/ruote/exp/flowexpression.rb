@@ -359,12 +359,13 @@ module Ruote::Exp
     #
     def lookup_variable (var, prefix=nil)
 
-      #p [ :lv, var, self.class, @fei.to_s, @parent_id ? @parent_id.to_s : '', prefix, @variables ]
-
       var, prefix = split_prefix(var, prefix)
 
+      return engine.variables[var] \
+        if prefix.length >= 2
+
       return parent.lookup_variable(var, prefix) \
-        if @parent_id && prefix.length > 0
+        if @parent_id && prefix.length >= 1
 
       #if var == (attribute('name') || attribute_text)
       #  # allowing main process recursion (with the up-to-date tree)
@@ -380,11 +381,9 @@ module Ruote::Exp
       if @parent_id
 
         return parent.lookup_variable(var, prefix)
-
-      #else # engine level
       end
 
-      nil
+      engine.variables[var]
     end
 
     # Sets a variable to a given value.
@@ -415,8 +414,6 @@ module Ruote::Exp
     end
 
     def unset_variable (var, prefix=nil)
-
-      # TODO : test me !!! (:tag_left)
 
       var, prefix = split_prefix(var, prefix)
 

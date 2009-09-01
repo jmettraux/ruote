@@ -47,6 +47,11 @@ module Ruote
 
   VERSION = '2.0.0'
 
+  #
+  # The base class for all engines. This particular core version is an
+  # 'in memory' engine, totally transient. Look at FsPersistedEngine for
+  # a non-transient implementation.
+  #
   class Engine
 
     include EngineContext
@@ -54,7 +59,18 @@ module Ruote
     include ListenerMethods
     include WaitMethods
 
+    # Defaults to 'engine'. A unique identifier for the engine.
+    #
+    # Set by passing the :engine_id option at initialization time.
+    #
     attr_reader :engine_id
+
+    # Variables set at the engine level.
+    #
+    # Accessible read-only from the process instance, via the same mechanism
+    # as process variables ${v://varname}
+    #
+    attr_reader :variables
 
 
     def initialize (context={})
@@ -64,6 +80,10 @@ module Ruote
       @engine_id = @context[:engine_id] || 'engine'
 
       @context[:s_engine] = self
+
+      @variables = EngineVariables.new(self)
+        # EngineVarialbes is an extension of Hash that emits a wqueue message
+        # when a variable is set. Audit, audit, audit.
 
       build_workqueue
         # building it first, it's the event hub
@@ -306,6 +326,31 @@ module Ruote
       else
         add_service(:s_expression_storage, storage_class)
       end
+    end
+  end
+
+  # An extension of Hash that emits a wqueue message when a variable is set.
+  #
+  class EngineVariables < Hash
+
+    def initialize (engine)
+
+      super()
+
+      @engine = engine
+    end
+
+    def []= (var, value)
+
+      super(var, value)
+
+      @engine.wqueue.emit(:variables, :set, :var => var)
+
+      # a refinement could keep track of where the assignement took place
+      #
+      #@engine.wqueue.emit(
+      #  :variables, :set,
+      #  :var => var, :source => caller.collect)
     end
   end
 end
