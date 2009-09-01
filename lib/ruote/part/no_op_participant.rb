@@ -29,6 +29,7 @@ require 'ruote/part/local_participant'
 
 module Ruote
 
+  #
   # A participant that simply replies immediately to the engine.
   #
   # For testing purposes, but could be useful when used in conjunction with
