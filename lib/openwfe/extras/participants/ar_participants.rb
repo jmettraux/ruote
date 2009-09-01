@@ -260,23 +260,28 @@ module OpenWFE::Extras
 
     attr_reader :store_name
 
-    def initialize (store_name=nil)
+    def initialize (opts=nil)
+
       super()
-      @store_name = store_name
+
+      @store_name = opts[:store_name]
     end
 
-    ##
+    #--
     ## Forces ruote to not spawn a thread when dispatching to this participant.
     ##
     #def do_not_thread
     #  true
     #end
+    #++
 
     def consume (workitem)
+
       ArWorkitem.from_owfe_workitem(workitem, @store_name)
     end
 
     def cancel (cancelitem)
+
       ArWorkitem.destroy_all([ 'fei = ?', cancelitem.fei.to_s ])
     end
   end
