@@ -204,3 +204,6 @@ restart tests :
 
 [ ] jash : Time and DateTime and co ?
 
+[ ] variables : process root
+[ ] variables : transient engine level
+
