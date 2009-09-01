@@ -81,5 +81,12 @@ module Ruote
 
     o
   end
+
+  # Returns true if the string seems to correpond to a URI
+  #
+  def self.is_uri? (s)
+
+    s && (s.index('/') || s.match(/\.[^ ]+$/))
+  end
 end
 

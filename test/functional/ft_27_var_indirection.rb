@@ -48,16 +48,19 @@ class FtVarIndirectionTest < Test::Unit::TestCase
     assert_trace pdef, 'a'
   end
 
-  #def test_subprocess_indirection_uri
-  #  pdef = Ruote.process_definition do
-  #    sequence do
-  #      set 'v:v' => File.join(File.dirname(__FILE__), '..', 'pdef.xml')
-  #      #subprocess '${v:v}'
-  #      v
-  #    end
-  #  end
-  #  #noisy
-  #  assert_trace pdef, %w[ a b ]
-  #end
+  def test_subprocess_indirection_uri
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set 'v:v' => File.join(File.dirname(__FILE__), '..', 'pdef.xml')
+        #subprocess '${v:v}'
+        v
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a b ]
+  end
 end
 

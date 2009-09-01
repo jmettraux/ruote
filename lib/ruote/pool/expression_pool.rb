@@ -210,6 +210,9 @@ module Ruote
         sub = v
         part = plist.lookup(k)
 
+        sub = k if (not sub) && (not part) && Ruote.is_uri?(k)
+          # for when a variable points to the URI of a[n external] subprocess
+
         if sub or part
 
           # don't bother passing the looked up value
