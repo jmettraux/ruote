@@ -25,9 +25,20 @@
 
 module Ruote
 
+  #
+  # A 'view' on the status of a process instance.
+  #
+  # Returned by the #process and the #processes methods of the Engine.
+  #
   class ProcessStatus
 
+    # The expressions that compose the process instance.
+    #
     attr_reader :expressions
+
+    # An array of errors currently plaguing the process instance. Hopefully,
+    # this array is empty.
+    #
     attr_reader :errors
 
     def initialize (expressions, errors)
@@ -36,11 +47,15 @@ module Ruote
       @errors = errors
     end
 
+    # Returns the expression at the root of the process instance.
+    #
     def root_expression
 
       @expressions.find { |e| e.fei.expid == '0' && e.fei.sub_wfid == nil }
     end
 
+    # Returns the process variables set for this process instance.
+    #
     def variables
 
       root_expression.variables
@@ -76,6 +91,8 @@ module Ruote
       end
     end
 
+    # Returns the unique identifier for this process instance.
+    #
     def wfid
 
       root_expression.fei.wfid
@@ -91,6 +108,9 @@ module Ruote
       root_expression.attribute('revision')
     end
 
+    # Returns the process definition tree as it was when this process instance
+    # was launched.
+    #
     def original_tree
 
       root_expression.original_tree
@@ -110,6 +130,10 @@ module Ruote
       "errors #{@errors.size})"
     end
 
+    # Returns the current version of the process definition tree. If no
+    # manipulation (gardening) was performed on the tree, this method yields
+    # the same result as the #original_tree method.
+    #
     def current_tree
 
       h = Ruote.decompose_tree(original_tree)
