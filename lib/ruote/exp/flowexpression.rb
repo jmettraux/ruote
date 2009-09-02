@@ -55,6 +55,8 @@ module Ruote::Exp
     attr_accessor :parent_id
 
     attr_accessor :original_tree
+    attr_reader :updated_tree
+
     attr_accessor :variables
 
     attr_reader :children
@@ -135,12 +137,31 @@ module Ruote::Exp
     # TREE
     #++
 
+    # Returns the current version of the tree (returns the updated version
+    # if it got updated.
+    #
     def tree
       @updated_tree || @original_tree
     end
 
-    def tree= (t)
-      @updated_tree = t
+    # Updates the tree of this expression
+    #
+    #   update_tree(t)
+    #
+    # will set the updated tree to t
+    #
+    #   update_tree
+    #
+    # will copy (deep copy) the original tree as the updated_tree.
+    #
+    # Adding a child to a sequence expression :
+    #
+    #   seq.update_tree
+    #   seq.updated_tree[2] << [ 'participant', { 'ref' => 'bob' }, [] ]
+    #   seq.persist
+    #
+    def update_tree (t=nil)
+      @updated_tree = t || Ruote.fulldup(@original_tree)
     end
 
     def name
@@ -564,6 +585,19 @@ module Ruote::Exp
         trigger_on_timeout(workitem)
 
       else
+
+        if @updated_tree && @parent_id
+
+          # updates the tree of the parent expression with the changes
+          # made to the tree in this expression
+
+          pexp = parent
+            # making sure to call #parent 1! especially in no cache envs
+
+          pexp.update_tree
+          pexp.updated_tree[2][@fei.child_id] = @updated_tree
+          pexp.persist
+        end
 
         pool.reply_to_parent(self, workitem)
       end

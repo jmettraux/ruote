@@ -96,7 +96,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     e = ps.expressions.find { |e| e.fei.expid == '0_0_1' }
 
-    e.tree = [ 'participant', { 'ref' => :bravo }, [] ]
+    e.update_tree([ 'participant', { 'ref' => :bravo }, [] ])
 
     assert_equal(
       ["sequence", {"my process"=>nil}, [
@@ -287,6 +287,55 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal [ wfid0, wfid1 ].sort, ps.collect { |e| e.wfid }.sort
 
     assert_equal 2, alpha.size
+  end
+
+  def test_tree_rewrite
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        alpha
+        bravo
+        charly
+      end
+      delta
+    end
+
+    tree0 = nil
+    tree1 = nil
+
+    @engine.register_participant :alpha do |wi, fexp|
+
+      @tracer << "a\n"
+
+      parent = fexp.parent
+      parent.update_tree
+      parent.updated_tree[2][1] = [ 'charly', {}, [] ]
+      parent.persist
+    end
+
+    @engine.register_participant :bravo do |wi, fexp|
+      @tracer << "b\n"
+    end
+    @engine.register_participant :charly do |wi, fexp|
+      @tracer << "c\n"
+      tree0 = fexp.engine.process(fexp.fei.wfid).current_tree
+    end
+    @engine.register_participant :delta do |wi, fexp|
+      @tracer << "d\n"
+      tree1 = fexp.engine.process(fexp.fei.wfid).current_tree
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a c c d ]
+
+    assert_equal(
+      ["sequence", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["participant", {"ref"=>"charly"}, []]]], ["delta", {}, []]]],
+      tree0)
+
+    assert_equal(
+      ["sequence", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["charly", {}, []]]], ["participant", {"ref"=>"delta"}, []]]],
+      tree1)
   end
 end
 

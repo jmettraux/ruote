@@ -39,13 +39,13 @@ module Ruote::Exp
 
     def apply
 
-      self.tree = self.class.reorganize(expmap, tree).last
+      t = self.class.reorganize(expmap, tree).last
 
       name = attribute(:name) || attribute_text
 
       # TODO : what if no name ??
 
-      set_variable(name, [ fei.expid, tree ])
+      set_variable(name, [ fei.expid, t ])
         #
         # fei.expid : keeping track of the expid/branch for the subprocess
         #             (so that graphical representations match)

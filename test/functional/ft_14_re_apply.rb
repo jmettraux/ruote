@@ -113,8 +113,8 @@ class FtReApplyTest < Test::Unit::TestCase
 
     stalled_exp = ps.expressions.find { |fexp| fexp.fei.expid == '0_0_0' }
 
-    stalled_exp.tree = [
-      'participant', { 'ref' => 'alpha', 'activity' => 'mow lawn' }, [] ]
+    stalled_exp.update_tree([
+      'participant', { 'ref' => 'alpha', 'activity' => 'mow lawn' }, [] ])
     stalled_exp.persist
 
     @engine.re_apply(stalled_exp.fei)
