@@ -34,6 +34,9 @@ end
 #
 def determine_engine_class (application_context)
 
+  # Don't run unneccesarily
+  return $ruote_engine_class unless $ruote_engine_class.nil?
+
   if ARGV.include?('--help')
     puts %{
 
@@ -55,7 +58,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
   application_context[:expstorage_format] = ARGV.include?('-y') ? :yaml : nil
   application_context[:expstorage_cache] = ARGV.include?('-c')
 
-  klass = $ruote_engine_class
+  klass = $ruote_default_engine_class
 
   klass ||= $ruote_engines.find { |k, v| ARGV.include?("--#{k}") }
 
@@ -70,11 +73,23 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
     $:.unshift(File.join(libpath, 'lib'))
 
-    require(File.join(libpath, 'test', 'connection'))
     require(path)
 
-    klass =
-      eval("Ruote::#{lib.capitalize}::#{prefix.capitalize}PersistedEngine")
+    ruote_engine_class = nil
+
+    [ 'test', 'spec' ].each do |test_framework|
+      if File.exists?( conn = File.join(libpath, test_framework, 'integration_connection.rb') )
+        eval IO.read( conn )
+      end
+    end
+
+    if !ruote_engine_class.nil?
+      klass = ruote_engine_class
+
+    else
+      klass =
+        eval("Ruote::#{lib.capitalize}::#{prefix.capitalize}PersistedEngine")
+    end
   end
 
   klass ||= Ruote::Engine
@@ -93,7 +108,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     $advertised = true
   end
 
-  klass
+  $ruote_engine_class = klass
 end
 
 #
