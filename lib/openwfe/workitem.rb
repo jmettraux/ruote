@@ -511,6 +511,7 @@ module OpenWFE
     def self.from_h (h)
 
       li = super
+
       li.definition_url =
         h['workflow_definition_url'] ||
         h['definition_url'] ||
@@ -518,7 +519,9 @@ module OpenWFE
       li.definition =
         h['workflow_definition'] ||
         h['definition'] ||
-        h['pdef']
+        h['pdef'] ||
+        h['attributes']['__definition']
+
       li
     end
   end

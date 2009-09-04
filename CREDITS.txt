@@ -21,6 +21,8 @@ Richard Jennings
 Contributors
 ------------
 
+Gonzalo Suarez - enhanced authentication, JSON
+Nando Sola - enhanced authentication, JSON
 Enrico Bianco - uri.to_s issue
 Andrew Timberlake - timeout 'at'
 Torsten Schoenebaum - ActiveResourceParticipant
