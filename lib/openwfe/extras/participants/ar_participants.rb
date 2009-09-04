@@ -260,7 +260,7 @@ module OpenWFE::Extras
 
     attr_reader :store_name
 
-    def initialize (opts=nil)
+    def initialize (opts={})
 
       super()
 
