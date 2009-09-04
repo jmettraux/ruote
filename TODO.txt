@@ -151,7 +151,7 @@
 restart tests :
 [ ] when
 
-[ ] file logger service
+[ ] file logger / history service
 
 [ ] conditional : rprefix ! ${r:x} is perhaps sufficient
 
@@ -202,5 +202,7 @@ restart tests :
 
 [ ] jash : Time and DateTime and co ?
 
-[ ] Sun Hao's up-to-date-tree idea ${f:participant_name} ps#resolved_tree
+[x] Sun Hao's up-to-date-tree idea ${f:participant_name} ps#resolved_tree
+
+[ ] history.to_tree ?
 
