@@ -36,5 +36,23 @@ class EftSequenceTest < Test::Unit::TestCase
 
     assert_trace(pdef, "a\nb")
   end
+
+  def test_alice_bob_sequence
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        participant :ref => 'alice'
+        participant :ref => 'bob'
+      end
+    end
+
+    @engine.register_participant '.+' do |workitem|
+      @tracer << workitem.participant_name + "\n"
+    end
+
+    #noisy
+
+    assert_trace(pdef, "alice\nbob")
+  end
 end
 
