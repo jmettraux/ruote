@@ -206,3 +206,8 @@ restart tests :
 
 [ ] history.to_tree ?
 
+[ ] Ruote.process_definition ... Ruote.method_missing or sequence ?
+
+[ ] equals : equals "v:v" => "true"
+[ ] if : _if "v:v" => "true" ?
+

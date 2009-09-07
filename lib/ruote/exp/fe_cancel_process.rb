@@ -27,6 +27,30 @@ require 'ruote/exp/flowexpression'
 
 module Ruote::Exp
 
+  #
+  # Cancels a whole process instance.
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     sequence do
+  #       participant :ref => 'editor'
+  #       concurrence do
+  #         participant :ref => 'reviewer1'
+  #         participant :ref => 'reviewer2'
+  #         sequence do
+  #           participant :ref => 'main_reviewer'
+  #           cancel_process :if => '${f:over} == true'
+  #         end
+  #       end
+  #       participant :ref => 'editor'
+  #     end
+  #   end
+  #
+  # This example has a 'main_reviewer' with the ability to cancel the whole
+  # process, if he sets the workitem field 'over' to 'true'.
+  #
+  # If the goal is to cancel only a segment of a process instance, the
+  # expression 'undo' (Ruote::Exp::UndoExpression) is better suited.
+  #
   class CancelProcessExpression < FlowExpression
 
     names :cancel_process

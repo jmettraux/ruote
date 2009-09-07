@@ -18,6 +18,8 @@ class EftEqualsTest < Test::Unit::TestCase
 
         equals :field_value => 'missing', :other_value => 'nada'
         echo '${f:__result__}'
+        equals :variable_value => 'missing', :other_value => 'nada'
+        echo '${f:__result__}'
 
         equals :value => 'missing', :other_value => 'nada'
         echo '${f:__result__}'
@@ -28,7 +30,7 @@ class EftEqualsTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ false false false ])
+    assert_trace(pdef, %w[ false ] * 4)
   end
 
   def test_true
@@ -38,12 +40,16 @@ class EftEqualsTest < Test::Unit::TestCase
 
         equals :value => 'nada', :other_value => 'nada'
         echo '${f:__result__}'
+
+        set 'v:nada' => 'nada'
+        equals :variable_value => 'nada', :other_value => 'nada'
+        echo '${f:__result__}'
       end
     end
 
     #noisy
 
-    assert_trace(pdef, %w[ true ])
+    assert_trace(pdef, %w[ true ] * 2)
   end
 end
 

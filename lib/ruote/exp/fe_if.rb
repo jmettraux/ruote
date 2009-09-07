@@ -28,6 +28,39 @@ require 'ruote/exp/flowexpression'
 
 module Ruote::Exp
 
+  #
+  # Here are examples of the 'if' expression in use :
+  #
+  #   _if do
+  #     equals :field_value => 'customer', :other_value => 'British Petroleum'
+  #     participant :ref => 'Allister'
+  #   end
+  #
+  # and :
+  #
+  #   _if :test => '${f:customer} == British Petroleum' do
+  #     participant :ref => 'Allister'
+  #   end
+  #
+  # An else clause is accepted :
+  #
+  #   _if do
+  #     equals :field_value => 'customer', :other_value => 'British Petroleum'
+  #     participant :ref => 'Allister'
+  #     participant :ref => 'Bernardo'
+  #   end
+  #
+  # or :
+  #
+  #   _if :test => '${f:customer} == British Petroleum' do
+  #     participant :ref => 'Allister'
+  #     participant :ref => 'Bernardo'
+  #   end
+  #
+  # Note that any expression accepts an :if attribute :
+  #
+  #   participant :ref => 'Al', :if => '${f:customer} == British Petroleum'
+  #
   class IfExpression < FlowExpression
 
     names :if

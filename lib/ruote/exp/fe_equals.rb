@@ -28,6 +28,49 @@ require 'ruote/exp/flowexpression'
 
 module Ruote::Exp
 
+  #
+  # This expression fell out of favour a long ago. At first it was used with
+  # the 'if' expression :
+  #
+  #   _if do
+  #     equals :field_value => 'customer', :other_value => 'British Petroleum'
+  #     participant :ref => 'Allister'
+  #   end
+  #
+  # but lately, the :test attribute of the 'if' expression is used :
+  #
+  #   _if :test => '${f:customer} == British Petroleum' do
+  #     participant :ref => 'Allister'
+  #   end
+  #
+  # In some cases, the 'if' expression vanishes and the :if attribute shared
+  # by all expressions is used :
+  #
+  #   participant :ref => 'Al', :if => '${f:customer} == British Petroleum'
+  #
+  #
+  # == attributes
+  #
+  # The 'equals' expression accepts those attributes :
+  #
+  # * :value
+  # * :field_value
+  # * :variable_value
+  # * :val
+  # * :field_val
+  # * :variable_val
+  #
+  # and
+  #
+  # * :other_value
+  # * :other_field_value
+  # * :other_variable_value
+  # * :other_val
+  # * :other_field_val
+  # * :other_variable_val
+  #
+  # With a bit of luck, they make sense on their own.
+  #
   class EqualsExpression < FlowExpression
 
     names :equals

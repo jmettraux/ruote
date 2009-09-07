@@ -29,7 +29,50 @@ require 'ruote/exp/flowexpression'
 module Ruote::Exp
 
   #
-  # TODO : document me
+  # The main names for this expression are 'define' and 'process_definition'.
+  # It simply encloses a process definition (and gives it a name and revision
+  # if needed).
+  #
+  #   pdef = Ruote.process_definition :name => 'test', :revision => '0' do
+  #     sequence do
+  #       participant :ref => 'alice'
+  #       participant :ref => 'bob'
+  #     end
+  #   end
+  #
+  # It's used for subprocess definitions as well.
+  #
+  #   pdef = Ruote.process_definition :name => 'test', :revision => '0' do
+  #     sequence do
+  #       buy_food
+  #       cook_food
+  #     end
+  #     define 'buy_food' do
+  #       participant :ref => 'alice'
+  #     end
+  #     define :name => 'cook_food' do
+  #       participant :ref => 'bob'
+  #     end
+  #   end
+  #
+  # == like a sequence
+  #
+  # Ruote 2.0 treats the child expressions of a 'define' expression like a
+  # 'sequence' expression does. Thus, this
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     sequence do
+  #       buy_food
+  #       cook_food
+  #     end
+  #   end
+  #
+  # is equivalent to
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     buy_food
+  #     cook_food
+  #   end
   #
   class DefineExpression < FlowExpression
 

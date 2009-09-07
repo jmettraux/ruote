@@ -74,6 +74,9 @@ module FunctionalBase
       assert_equal(nok.first, @tracer.to_s) if ok.empty?
     end
 
+    assert(true)
+      # so that the assertion count matche
+
     wfid
   end
 
