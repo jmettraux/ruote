@@ -192,6 +192,8 @@ restart tests :
 
 [ ] concurrence / concurrent_iterator : merge plugin ?
 
+[ ] restore : implement merge strategies
+
 [ ] one file, no multi-process, persistence ?
 
 [ ] apply : ruby or xml (instead of just ast) ?

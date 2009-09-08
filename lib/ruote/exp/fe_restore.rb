@@ -39,6 +39,8 @@ module Ruote::Exp
   #
   #   restore :from_f => 'customer.address.street', :to_f => 'delivery.street'
   #
+  # TODO : merge strategies
+  #
   class RestoreExpression < FlowExpression
 
     include MergeMixin

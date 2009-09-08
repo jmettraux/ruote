@@ -37,6 +37,12 @@ module Ruote::Exp
   #     accounting :task => 'check if customer paid'
   #   end
   #
+  # '_sleep' is also OK
+  #
+  #   _sleep '7d10h' # 7 days and 10 hours
+  #
+  # (the underscore prevents collision with Ruby's sleep method)
+  #
   class WaitExpression < FlowExpression
 
     names :wait, :sleep

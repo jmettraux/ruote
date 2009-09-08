@@ -33,6 +33,75 @@ module Ruote::Exp
   # Listens for activity (incoming or outgoing workitems) on a (set of)
   # participant(s).
   #
+  # This expression is an advanced one. It allows for cross process instance
+  # communication or at least cross branch communication within the same
+  # process instance.
+  #
+  # DO NOT confuse the listen expression with the 'listener' concept. They are
+  # not directly related. The listen expression listens to workitem activity
+  # inside of the engine, while a listener listens for workitems or launchitems
+  # from sources external to the ruote workflow engine.
+  #
+  # It can be used in two ways : 'blocking' or 'triggering'. In both cases
+  # the listen expression 'reacts' upon activity (incoming or outgoing workitem)
+  # happening on a channel (a participant name).
+  #
+  # == blocking
+  #
+  # A blocking example :
+  #
+  #   sequence do
+  #     participant 'alice'
+  #     listen :to => 'bob'
+  #     participant 'charly'
+  #   end
+  #
+  # Once the listen expression got applied, this process will block until a
+  # workitem (in any other process instance in the same engine) is dispatched
+  # to participant 'bob'. It then proceeds to charly.
+  #
+  # == triggering
+  #
+  # This way of using 'listen' is useful for launching processes that "stalk"
+  # other processes :
+  #
+  #   Ruote.process_definition :name => 'stalker' do
+  #     listen :to => 'bob'
+  #       participant :ref => 'charly'
+  #     end
+  #   end
+  #
+  # This small process will never exits and will send a workitem to charly
+  # each time the ruote engine sends a workitem to bob.
+  #
+  # Nice, it's good to know that the neighbour received a letter, but what's
+  # the content ?
+  #
+  #   Ruote.process_definition :name => 'stalker' do
+  #     listen :to => 'bob', :merge => 'override'
+  #       participant :ref => 'charly'
+  #     end
+  #   end
+  #
+  # will hand charly a workitem whose fields are the same as the ones of the
+  # workitem send to bob.
+  #
+  # == :merge
+  #
+  # TODO
+  #
+  # == :upon
+  #
+  # TODO
+  #
+  # == :to and :on
+  #
+  # TODO
+  #
+  # == :wfid
+  #
+  # TODO
+  #
   class ListenExpression < FlowExpression
 
     names :listen, :receive, :intercept

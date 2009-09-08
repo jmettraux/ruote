@@ -41,6 +41,8 @@ module Ruote::Exp
   #     # saves a copy of the current workitem in the varialbe 'wix' at
   #     # the root of the process
   #
+  # See also the 'restore' expression (Ruote::Exp::RestoreExpression).
+  #
   class SaveExpression < FlowExpression
 
     names :save

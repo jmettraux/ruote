@@ -28,9 +28,38 @@ require 'ruote/exp/flowexpression'
 module Ruote::Exp
 
   #
-  # NOTE : deprecate in favour of 'forget' or 'orphan' attribute ?
-  #
   # Forgets all of its children.
+  #
+  # This expression is somehow deprecated in favour of the :forget attribute
+  # that any expression understands.
+  #
+  #   sequence do
+  #     participant 'alpha'
+  #     forget do
+  #       sequence do
+  #         participant 'bravo'
+  #         participant 'charly'
+  #       end
+  #     end
+  #     participant 'delta'
+  #   end
+  #
+  # In this example above, the flow goes from alpha to bravo and delta. The
+  # bravo-charly segment is independent of the main process flow. Charly's
+  # reply will be forgotten.
+  #
+  # Now the equivalent process definition, but using the :forget attribute :
+  #
+  #   sequence do
+  #     participant 'alpha'
+  #     sequence :forget => true do
+  #       participant 'bravo'
+  #       participant 'charly'
+  #     end
+  #     participant 'delta'
+  #   end
+  #
+  # This expression can be useful for fire-and-forget parallelism in processes.
   #
   class ForgetExpression < FlowExpression
 
