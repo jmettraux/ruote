@@ -92,5 +92,55 @@ class EftIfTest < Test::Unit::TestCase
       },
       (0..4).collect { |i| "ok#{i}" }.join("\n"))
   end
+
+  def test_rtest
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      sequence do
+
+        set :field => 'f', :value => 'val0'
+        set :variable => 'v', :value => 'val1'
+
+        echo '0'
+        _if :rtest => "wi.f == 'val0'" do
+          echo 'then'
+          echo 'else'
+        end
+
+        echo '1'
+        _if :rtest => "fe.lookup_variable('v') == 'val1'" do
+          echo 'then'
+          echo 'else'
+        end
+
+        echo '2'
+        _if :rtest => "fe.lv('v') == 'val1'" do
+          echo 'then'
+          echo 'else'
+        end
+
+        echo '3'
+        _if :rtest => "fe.lv('v') == 'val1' && wi.f == 'val0'" do
+          echo 'then'
+          echo 'else'
+        end
+
+        echo '4'
+        _if :rtest => "fe.lv('v') == 'val0' && wi.f == 'val1'" do
+          echo 'then'
+          echo 'else'
+        end
+
+        echo '5'
+        _if :rtest => "wi.fields['nada'] == 'val2'" do
+          echo 'then'
+          echo 'else'
+        end
+      end
+    end
+
+    assert_trace(
+      pdef, %w[ 0 then 1 then 2 then 3 then 4 else 5 else ].join("\n"))
+  end
 end
 
