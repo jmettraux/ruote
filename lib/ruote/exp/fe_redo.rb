@@ -30,7 +30,25 @@ module Ruote::Exp
   #
   # Undoes and the redoes (re-applies) an expression identified by a tag.
   #
-  # TODO
+  #   pdef = Ruote.process_definition do
+  #     sequence do
+  #       alpha :tag => 'kilroy'
+  #       _redo :ref => 'kilroy', :unless => '${f:ok} == true'
+  #     end
+  #   end
+  #
+  # will redo at tag 'kilroy' if the field 'ok' is not set to true.
+  #
+  # (redo is escaped as _redo not to conflict with the "redo" Ruby keyword)
+  #
+  # Maybe this case is better served by a cursor/rewind combination
+  #
+  #   pdef = Ruote.process_definition do
+  #     cursor do
+  #       alpha :tag => 'kilroy'
+  #       rewind :unless => '${f:ok} == true'
+  #     end
+  #   end
   #
   class RedoExpression < FlowExpression
 

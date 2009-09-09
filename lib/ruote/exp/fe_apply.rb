@@ -58,11 +58,11 @@ module Ruote::Exp
   #   echo 'nada'
   #
   #
-  # TODO : maybe accept directly ruby and xml (and json)
-  #
   class ApplyExpression < FlowExpression
 
     names :apply
+
+    # TODO : maybe accept directly ruby and xml (and json)
 
     def apply
 

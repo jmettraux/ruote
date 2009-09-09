@@ -39,7 +39,20 @@ module Ruote::Exp
   #
   #   restore :from_f => 'customer.address.street', :to_f => 'delivery.street'
   #
-  # TODO : merge strategies
+  # (yes, this sets the field 'street' inside of the field 'delivery')
+  #
+  # == set_fields
+  #
+  # This expressions has a 'set_fields' alias. It can be handy (and readable)
+  # to set a bunch of workitem fields in one sweep somewhere in a process :
+  #
+  #   Ruote.process_definition :name => 'working hard' do
+  #     sequence do
+  #       set_fields :val => { 'customer' => { 'name' => 'Fred', 'age' => 40 } }
+  #       participant :ref => 'delivery'
+  #       participant :ref => 'invoincing'
+  #     end
+  #   end
   #
   class RestoreExpression < FlowExpression
 
