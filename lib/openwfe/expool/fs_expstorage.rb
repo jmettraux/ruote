@@ -70,7 +70,16 @@ module OpenWFE
 
       FileUtils.mkdir_p(d) unless File.exist?(d)
 
-      File.open("#{d}/#{fn}", 'wb') { |f| f.write(encode(fexp)) }
+      fn = File.join(d, fn)
+
+      t = 0
+      begin
+        File.open(fn, 'wb') { |f| f.write(encode(fexp)) }
+      rescue Exception => e
+        t += 1
+        lerror("failed to write to #{fn}, because of #{e} (try #{t})")
+        retry unless t == 2
+      end
     end
 
     # Retrieves an expression
