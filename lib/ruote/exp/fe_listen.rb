@@ -74,33 +74,38 @@ module Ruote::Exp
   # This small process will never exits and will send a workitem to charly
   # each time the ruote engine sends a workitem to bob.
   #
-  # Nice, it's good to know that the neighbour received a letter, but what's
-  # the content ?
-  #
-  #   Ruote.process_definition :name => 'stalker' do
-  #     listen :to => 'bob', :merge => 'override'
-  #       participant :ref => 'charly'
-  #     end
-  #   end
-  #
-  # will hand charly a workitem whose fields are the same as the ones of the
-  # workitem send to bob.
+  # The workitems passed to charly will be copies of the workitem initially
+  # applied to the 'listen' expression, but with a copy of the fields of the
+  # workitem passed to bob, merged in.
   #
   # == :merge
   #
-  # TODO
+  # By default, :merge is set to true, the listened for workitems see their
+  # values merged into a copy of the workitem held in the listen expression
+  # and this copy is delivered to the expressions that are client to the
+  # 'listen'.
   #
   # == :upon
   #
-  # TODO
+  # There are two kinds of main events in ruote, apply and reply. Thus,
+  # a listen expression may listen to 'apply' and to 'reply' and this is
+  # defined by the :upon attribute.
+  #
+  # By default, listens upon 'apply' (engine handing workitem to participant).
+  #
+  # Can be set to 'reply', to react on workitems being handed back to the
+  # engine by the participant.
   #
   # == :to and :on
   #
-  # TODO
+  # The :to attribute has already been seen, it can be replaced by the :on one.
   #
   # == :wfid
   #
-  # TODO
+  # By default, a listen expression listens for any workitem/participant event
+  # in the engine. Setting the :wfid attribute to 'true' or 'same' or 'current'
+  # will make the listen expression only care for events belonging to the
+  # same process instance (same wfid).
   #
   class ListenExpression < FlowExpression
 
@@ -113,10 +118,11 @@ module Ruote::Exp
       upon = attribute(:upon) || 'apply'
       @upon = upon == 'reply' ? :received : :dispatched
 
-      @merge = (attribute(:merge) || 'false').to_s
+      @merge = attribute(:merge)
+      @merge = @merge.nil? ? 'true' : @merge.to_s
 
       @wfid = attribute(:wfid).to_s
-      @wfid = (@wfid == 'same' || @wfid == 'current')
+      @wfid = %w[ same current true ].include?(@wfid)
 
       persist
 

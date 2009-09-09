@@ -79,11 +79,11 @@ class EftListenTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       concurrence do
         sequence do
-          listen :to => '^al.*'
+          listen :to => '^al.*', :merge => false
           bravo
         end
         sequence do
-          listen :to => '^al.*', :upon => 'reply', :merge => true
+          listen :to => '^al.*', :upon => 'reply'
           bravo
         end
         sequence do
