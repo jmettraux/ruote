@@ -85,7 +85,7 @@ module Ruote
         return fexp
       end
 
-      nil # miss :(
+      nil
     end
 
     def []= (fei, fexp)

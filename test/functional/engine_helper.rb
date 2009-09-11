@@ -34,9 +34,6 @@ end
 #
 def determine_engine_class (application_context)
 
-  # Don't run unnecessarily
-  return $ruote_engine_class unless $ruote_engine_class.nil?
-
   if ARGV.include?('--help')
     puts %{
 
@@ -55,8 +52,11 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     exit 0
   end
 
-  application_context[:expstorage_format] = ARGV.include?('-y') ? :yaml : nil
+  application_context[:expstorage_format] = (ARGV.include?('-y') ? :yaml : nil)
   application_context[:expstorage_cache] = ARGV.include?('-c')
+
+  return $ruote_engine_class unless $ruote_engine_class.nil?
+    # don't run unnecessarily
 
   klass = $ruote_engines.find { |k, v| ARGV.include?("--#{k}") }
 
