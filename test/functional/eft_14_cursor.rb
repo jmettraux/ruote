@@ -157,5 +157,28 @@ class EftCursorTest < Test::Unit::TestCase
     assert_trace pdef, %w[ a r a r a r p ]
       # ARP nostalgy....
   end
+
+  def test_tagged_command
+
+    pdef = Ruote.process_definition :name => 'test' do
+      cursor :tag => 'main' do
+        sequence do
+          echo 'a'
+          rewind :ref => 'main'
+          echo 'b'
+        end
+      end
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    sleep 0.350
+
+    #p @tracer.to_s
+
+    assert_equal 1, @tracer.to_s.split("\n").uniq.size
+  end
 end
 

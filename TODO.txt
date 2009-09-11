@@ -213,7 +213,8 @@ restart tests :
 [ ] equals : equals "v:v" => "true"
 [ ] if : _if "v:v" => "true" ?
 
-[ ] rewind :ref => 'tag_of_cursor_exp' (direct) :tag oriented.
-
-[ ] check "cache on", seems to have no effect
+[o] rewind :ref => 'tag_of_cursor_exp' (direct) :tag oriented.
+[ ] rewind :ref => true ? (first enclosing) or :direct => true
+[ ] rewind :ref => 'x' : test from outside cursor/loop
+[ ] rewind :ref => 'x' : test with iterator
 
