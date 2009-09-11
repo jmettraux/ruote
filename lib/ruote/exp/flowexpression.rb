@@ -110,6 +110,9 @@ module Ruote::Exp
       expstorage[@parent_id]
     end
 
+    # This method is called by expool#apply_child and expool#launch_sub,
+    # it helps an expression keep track of its currently active children.
+    #
     def register_child (fei, do_persist=true)
 
       @children << fei
@@ -348,6 +351,8 @@ module Ruote::Exp
     # ON_CANCEL / ON_ERROR
     #++
 
+    # Looks up an "on_" attribute
+    #
     def lookup_on (type)
 
       if self.send("on_#{type}")
@@ -434,6 +439,8 @@ module Ruote::Exp
       end
     end
 
+    # Unbinds a variables.
+    #
     def unset_variable (var, prefix=nil)
 
       var, prefix = split_prefix(var, prefix)
@@ -555,11 +562,17 @@ module Ruote::Exp
       [ var, prefix ]
     end
 
+    # Applies a given child (given by its index in the child list)
+    #
     def apply_child (child_index, workitem, forget=false)
 
       pool.apply_child(self, child_index, workitem, forget)
     end
 
+    # Replies to the parent expression.
+    #
+    # This method contains lots of logic.
+    #
     def reply_to_parent (workitem)
 
       if @tagname
@@ -624,6 +637,8 @@ module Ruote::Exp
         :on_cancel => true)
     end
 
+    # Triggers the :on_error handler attached to this expression.
+    #
     def trigger_on_error (workitem)
 
       handler = @on_error.to_s
@@ -640,6 +655,8 @@ module Ruote::Exp
       end
     end
 
+    # Triggers the :on_timeout handler attached to this expression.
+    #
     def trigger_on_timeout (workitem)
 
       handler = @on_timeout.to_s
