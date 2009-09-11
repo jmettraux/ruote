@@ -213,3 +213,5 @@ restart tests :
 [ ] equals : equals "v:v" => "true"
 [ ] if : _if "v:v" => "true" ?
 
+[ ] rewind :tag => 'tag_of_cursor_exp'
+

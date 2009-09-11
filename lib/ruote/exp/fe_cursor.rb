@@ -120,7 +120,34 @@ module Ruote::Exp
   #     participant :ref => 'publisher'
   #   end
   #
-  # == repeat (loop)
+  # == IMPORTANT note about cursor commands
+  #
+  # Those commands are "interpreted" each time the cursor is replied to, not
+  # when they are applied themselves.
+  #
+  #   cursor do
+  #     author
+  #     reviewer
+  #     rewind :if => '${f:not_ok}'
+  #     publisher
+  #   end
+  #
+  # will behave as expected, while
+  #
+  #   cursor do
+  #     author
+  #     reviewer
+  #     sequence do
+  #       rewind :if => '${f:not_ok}'
+  #       wait '1d'
+  #     end
+  #     publisher
+  #   end
+  #
+  # will only rewind after 1 day, when the sequence containing the rewind and
+  # the wait will have replied to the cursor.
+  #
+  # = repeat (loop)
   #
   # A 'cursor' expression exits implicitely as soon as its last child replies
   # to it.
