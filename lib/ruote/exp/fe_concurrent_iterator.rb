@@ -94,6 +94,14 @@ module Ruote::Exp
 
     names :concurrent_iterator
 
+    # Overrides FlowExpression#register_child to make sure that persist is
+    # not called.
+    #
+    def register_child (fei, do_persist=true)
+
+      @children << fei
+    end
+
     protected
 
     def apply_children
@@ -103,8 +111,6 @@ module Ruote::Exp
       @list = determine_list
 
       return reply_to_parent(@applied_workitem) if @list.empty?
-
-      persist
 
       to_v, to_f = determine_tos
       to_v = 'i' if to_v == nil && to_f == nil
@@ -131,6 +137,8 @@ module Ruote::Exp
           workitem,
           :variables => variables)
       end
+
+      persist
     end
 
     # Overrides the implementation found in ConcurrenceExpression

@@ -250,6 +250,32 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal %w[ alice:0/0/0_0_0 bob:1/1/0_0_0 charly:2/2/0_0_0 ], trace
   end
 
+  def test_persist_count
+
+    n = 3
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :branches => n do
+        echo 'a'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a ] * n
+
+    update_count = logger.log.select { |e|
+      e[0] == :expressions &&
+      e[1] == :update &&
+      e[2][:expression].class == Ruote::Exp::ConcurrentIteratorExpression
+    }.size
+
+    #p update_count
+
+    #assert_equal 2 + n * 2, update_count
+    assert_equal 2 + n, update_count
+  end
+
   protected
 
   def register_catchall_participant
