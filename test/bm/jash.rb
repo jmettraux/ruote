@@ -4,13 +4,14 @@ $:.unshift('lib')
 require 'rubygems'
 
 puts
-#require 'json'; puts 'json'
-require 'yajl/json_gem'; puts 'yjal'
+require 'json'; puts 'json'
+#require 'yajl/json_gem'; puts 'yjal'
 
 require 'yaml'
 require 'base64'
 require 'ruote/engine'
 require 'ruote/util/jash'
+require 'zlib'
 
 yamled = %{--- !ruby/object:Ruote::Exp::SequenceExpression
 applied_workitem: !ruby/object:Ruote::Workitem
@@ -58,6 +59,8 @@ jashed = Ruote::Jash.encode(exp)
 marshalled = Marshal.dump(exp)
 marshalled64 = Base64.encode64(marshalled)
 jjashed = jashed.to_json
+zmarshalled = Zlib::Deflate.deflate(marshalled)
+zmarshalled64 = Base64.encode64(zmarshalled)
 
 #puts yamled
 #puts "=" * 80
@@ -68,6 +71,8 @@ puts "marshalled.length      : #{marshalled.length}"
 puts "marshalled64.length    : #{marshalled64.length}"
 puts "jashed.to_json.length  : #{jjashed.length}"
 puts "yamled.length          : #{YAML.dump(exp).length}"
+puts "zmarshalled.length     : #{zmarshalled.length}"
+puts "zmarshalled64.length   : #{zmarshalled64.length}"
 
 
 require 'benchmark'
@@ -85,8 +90,14 @@ Benchmark.benchmark(' ' * 31 + Benchmark::Tms::CAPTION, 31) do |b|
   b.report('marshal dump 64') do
     N.times { Base64.encode64(Marshal.dump(exp)) }
   end
+  b.report('marshal dump z 64') do
+    N.times { Base64.encode64(Zlib::Deflate.deflate(Marshal.dump(exp))) }
+  end
   b.report('marshal load 64') do
     N.times { Marshal.load(Base64.decode64(marshalled64)) }
+  end
+  b.report('marshal load z 64') do
+    N.times { Marshal.load(Zlib::Inflate.inflate(Base64.decode64(zmarshalled64))) }
   end
   b.report('jash dump') do
     N.times { Ruote::Jash.encode(exp) }
