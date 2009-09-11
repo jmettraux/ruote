@@ -48,7 +48,16 @@ module Ruote::Exp
       #
       # :on{_...}
 
-      list = lookup_val_prefix('on')
+      split_list(lookup_val_prefix('on'))
+    end
+
+    def determine_tos
+
+      [ attribute(:to_v) || attribute(:to_var) || attribute(:to_variable),
+        attribute(:to_f) || attribute(:to_fld) || attribute(:to_field) ]
+    end
+
+    def split_list (list)
 
       if list.is_a?(String)
 
@@ -67,12 +76,6 @@ module Ruote::Exp
 
         []
       end
-    end
-
-    def determine_tos
-
-      [ attribute(:to_v) || attribute(:to_var) || attribute(:to_variable),
-        attribute(:to_f) || attribute(:to_fld) || attribute(:to_field) ]
     end
   end
 end

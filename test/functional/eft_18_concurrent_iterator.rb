@@ -276,6 +276,19 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal 2 + n, update_count
   end
 
+  def test_on_only
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :on => 'a, b, c' do
+        echo '${v:i}'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a b c ]
+  end
+
   protected
 
   def register_catchall_participant

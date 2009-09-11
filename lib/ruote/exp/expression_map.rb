@@ -74,6 +74,7 @@ module Ruote
       add(Ruote::Exp::RestoreExpression)
       add(Ruote::Exp::NoOpExpression)
       add(Ruote::Exp::ApplyExpression)
+      add(Ruote::Exp::AddBranchesExpression)
     end
 
     # Returns the expression class for the given expression name

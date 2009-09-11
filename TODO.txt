@@ -213,5 +213,7 @@ restart tests :
 [ ] equals : equals "v:v" => "true"
 [ ] if : _if "v:v" => "true" ?
 
-[ ] rewind :tag => 'tag_of_cursor_exp'
+[ ] rewind :ref => 'tag_of_cursor_exp' (direct) :tag oriented.
+
+[ ] check "cache on", seems to have no effect
 

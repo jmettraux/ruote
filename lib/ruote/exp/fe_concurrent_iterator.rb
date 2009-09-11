@@ -88,6 +88,24 @@ module Ruote::Exp
   # :count, :merge (override, mix, isolate), remaining (cancel, forget) and
   # :over.
   #
+  #
+  # == add branches
+  #
+  # The 'add_branches'/'add_branch' expression can be used to add branches
+  # to a concurrent-iterator while it is running.
+  #
+  #   concurrent_iterator :on => 'a, b, c' do
+  #     sequence do
+  #       participant :ref => 'worker_${v:i}'
+  #       add_branches 'd, e', :if => '${v:/not_sufficient}'
+  #     end
+  #   end
+  #
+  # In this example, if the process level variable 'not_sufficient' is set to
+  # true, workers d and e will be added to the iterated elements.
+  #
+  # Read more at the 'add_branches' expression description.
+  #
   class ConcurrentIteratorExpression < ConcurrenceExpression
 
     include IteratorMixin
@@ -102,32 +120,64 @@ module Ruote::Exp
       @children << fei
     end
 
+    def add_branches (branches, ticket=nil)
+
+      # this method is subject to ticketing since, in a multi-process env,
+      # a branch could be replied to in another process, meanwhile...
+
+      ticket ||= expstorage.draw_ticket(self)
+
+      if ticket.consumable?
+
+        do_add_branches(branches)
+
+        ticket.consume
+          # over
+
+      else
+
+        sleep 0.014
+
+        if exp = expstorage[@fei]
+          exp.add_branches(branches, ticket)
+        end
+        # else just forget it, the concurrent_iterator is over.
+
+      end
+    end
+
     protected
 
     def apply_children
 
       return reply_to_parent(@applied_workitem) unless tree_children[0]
 
-      @list = determine_list
+      list = determine_list
 
-      return reply_to_parent(@applied_workitem) if @list.empty?
+      return reply_to_parent(@applied_workitem) if list.empty?
 
-      to_v, to_f = determine_tos
-      to_v = 'i' if to_v == nil && to_f == nil
+      @to_v, @to_f = determine_tos
+      @to_v = 'i' if @to_v == nil && @to_f == nil
 
-      @list.each_with_index do |e, ii|
+      @list = []
 
-        val = @list[ii]
+      do_add_branches(list)
+    end
 
-        variables = {}
+    def do_add_branches (list)
+
+      list.each do |val|
+
+        @list << val
+
         workitem  = @applied_workitem.dup
 
-        variables['ii'] = ii
+        variables = { 'ii' => @list.size - 1 }
 
-        if to_v
-          variables[to_v] = val
+        if @to_v
+          variables[@to_v] = val
         else #if to_f
-          workitem.fields[to_f] = val
+          workitem.fields[@to_f] = val
         end
 
         pool.launch_sub(

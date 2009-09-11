@@ -54,6 +54,8 @@ module Ruote::Exp
     attr_accessor :fei
     attr_accessor :parent_id
 
+    attr_reader :tagname
+
     attr_accessor :original_tree
     attr_reader :updated_tree
 
