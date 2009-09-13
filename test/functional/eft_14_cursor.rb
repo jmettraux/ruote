@@ -210,9 +210,9 @@ class EftCursorTest < Test::Unit::TestCase
       cursor :tag => 'cu' do
         echo 'a'
         cursor do
-           echo 'b'
-           _break :ref => 'cu'
-           echo 'c'
+          echo 'b'
+          _break :ref => 'cu'
+          echo 'c'
         end
         echo 'd'
       end

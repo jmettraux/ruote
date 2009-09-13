@@ -243,5 +243,25 @@ class EftIteratorTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ 0_a 1_a ]
   end
+
+  def test_external_break
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrence do
+        iterator :on => (1..1000).to_a, :tag => 'it' do
+          echo '${v:i}'
+        end
+        sequence do
+          sequence do
+            _break :ref => 'it'
+          end
+        end
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ 1 2 ]
+  end
 end
 
