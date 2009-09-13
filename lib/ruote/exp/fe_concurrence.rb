@@ -161,6 +161,8 @@ module Ruote::Exp
 
         t_reply(workitem, ticket)
 
+        ticket.consume
+
       else
 
         # we have a collision here, another engine is holding the ticket
@@ -199,8 +201,6 @@ module Ruote::Exp
 
         reply_to_parent(nil) if @over
       end
-
-      ticket.consume
     end
 
     def apply_children
