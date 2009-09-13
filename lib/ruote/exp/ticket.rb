@@ -25,9 +25,12 @@
 
 module Ruote::Exp
 
+  #
+  # A mixin for expressions, adds methods about tickets to expressions.
+  #
   module TicketMixin
 
-    # when the TicketMixin gets included, it adds a with_ticket class method
+    # When the TicketMixin gets included, it adds a with_ticket class method
     # that can be used to 'tag' methods that are to be wrapped with the
     # ticket mechanism.
     #

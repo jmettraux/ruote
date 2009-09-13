@@ -82,6 +82,14 @@ module Ruote::Exp
 
       nil
     end
+
+    # Sets the @command_workitem and persists.
+    #
+    def set_command_workitem (wi)
+
+      @command_workitem = wi
+      persist
+    end
   end
 end
 

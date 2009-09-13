@@ -158,13 +158,13 @@ class EftCursorTest < Test::Unit::TestCase
       # ARP nostalgy....
   end
 
-  def test_tagged_command
+  def test_deep_rewind
 
     pdef = Ruote.process_definition :name => 'test' do
-      cursor :tag => 'main' do
+      cursor do
         sequence do
           echo 'a'
-          rewind :ref => 'main'
+          rewind
           echo 'b'
         end
       end
@@ -179,6 +179,48 @@ class EftCursorTest < Test::Unit::TestCase
     #p @tracer.to_s
 
     assert_equal 1, @tracer.to_s.split("\n").uniq.size
+  end
+
+  def test_external_break
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrence do
+        repeat :tag => 'cu' do
+          echo 'a'
+        end
+        sequence do
+          wait '500'
+          _break :ref => 'cu'
+        end
+      end
+    end
+
+    wfid = @engine.launch(pdef)
+
+    sleep 1.000
+
+    #p @tracer.to_s
+
+    assert_nil @engine.process(wfid)
+  end
+
+  def test_nested_break
+
+    pdef = Ruote.process_definition :name => 'test' do
+      cursor :tag => 'cu' do
+        echo 'a'
+        cursor do
+           echo 'b'
+           _break :ref => 'cu'
+           echo 'c'
+        end
+        echo 'd'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a b ]
   end
 end
 

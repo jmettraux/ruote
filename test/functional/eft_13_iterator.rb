@@ -222,5 +222,26 @@ class EftIteratorTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ alice:0/0_0_0 bob:1/0_0_0 charly:2/0_0_0 ])
   end
+
+  def test_nested_break
+
+    pdef = Ruote.process_definition :name => 'test' do
+      iterator :on => 'a, b, c', :tag => 'it' do
+        sequence do
+          echo '0_${v:i}'
+          cursor do
+            echo '1_${v:i}'
+            _break :ref => 'it'
+            echo '11_${v:i}'
+          end
+          echo '2_${v:i}'
+        end
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ 0_a 1_a ]
+  end
 end
 

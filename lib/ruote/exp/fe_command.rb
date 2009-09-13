@@ -59,11 +59,40 @@ module Ruote::Exp
 
       set_command(@applied_workitem, name, param)
 
+      persist
+        # to keep track of the command set in the @applied_workitem fields
+
+      target = parent
+      ancestor = true
+
       if ref = attribute(:ref)
-        pass_command_directly(ref) && return
+
+        fei = lookup_variable(ref)
+
+        target = fei.is_a?(Ruote::FlowExpressionId) ? expstorage[fei] : nil
+        target = target.respond_to?(:set_command) ? target : nil
+
+        ancestor = target ? ancestor?(target.fei) : false
+
+      else
+
+        target = fetch_command_target
       end
 
-      reply(@applied_workitem)
+      if target.nil? || target.fei == @parent_id
+
+        reply_to_parent(@applied_workitem)
+        return
+      end
+
+      target.set_command_workitem(@applied_workitem)
+
+      child_fei = target.children.first
+
+      pool.cancel_expression(child_fei, nil) if child_fei
+        # flavour is nil, regular cancel
+
+      reply_to_parent(@applied_workitem) if not ancestor
     end
 
     # Necessary in case of 'pass_command_directly'
@@ -75,42 +104,21 @@ module Ruote::Exp
 
     protected
 
-    # cancels the current branch so that the command is passed directly
-    # to the cursor.
+    # Walks up the expression tree (process instance and returns the first
+    # expression that includes the CommandMixin
     #
-    def pass_command_directly (ref)
+    # (CommandExpression includes CommandMixin, but since it doesn't have
+    # children, no need to 'evince' it)
+    #
+    def fetch_command_target (exp=parent)
 
-      # TODO : :ref => true // :direct => true trick
+      return nil \
+        unless exp
 
-      # TODO : make sure this work from outside the cursor/loop tree
-      #        (issue with passing the command via @applied_workitem)
+      return exp \
+        if exp.class.included_modules.include?(Ruote::Exp::CommandMixin)
 
-      # TODO : test with an iterator
-
-      # TODO : @command_workitem taking precedence over reply(workitem)
-      #        (but it's Cursor@command_workitem and Iterator@command_workitem)
-
-      persist
-        # to keep track of the command set inside of the @applied_workitem
-
-      fei = lookup_variable(ref)
-
-      raise(
-        "ref '#{ref}' doesn't correspond to an expression"
-      ) if (fei.nil? || (not fei.is_a?(FlowExpressionId)))
-
-      exp = expstorage[fei]
-
-      return false unless exp
-        # don't complain, expression simply is gone...
-
-      child_fei = exp.children.first
-
-      pool.cancel_expression(child_fei, nil)
-        # flavour is nil, regular cancel
-
-      true
-        # success
+      fetch_command_target(exp.parent)
     end
   end
 end

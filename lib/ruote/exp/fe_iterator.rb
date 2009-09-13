@@ -26,6 +26,7 @@
 require 'ruote/exp/flowexpression'
 require 'ruote/exp/command'
 require 'ruote/exp/iterator'
+require 'ruote/exp/ticket'
 
 
 module Ruote::Exp
@@ -78,10 +79,19 @@ module Ruote::Exp
   #     end
   #   end
   #
+  # == break/rewind/continue/skip/jump
+  #
+  # TODO
+  #
+  # == break/rewind/continue/skip/jump with :ref
+  #
+  # TODO
+  #
   class IteratorExpression < FlowExpression
 
     include CommandMixin
     include IteratorMixin
+    include TicketMixin
 
     names :iterator
 
@@ -99,6 +109,9 @@ module Ruote::Exp
     end
 
     def reply (workitem)
+
+      workitem = @command_workitem || workitem
+      @command_workitem = nil
 
       @position += 1
 
@@ -128,6 +141,9 @@ module Ruote::Exp
 
       apply_child(0, workitem)
     end
+
+    with_ticket :reply
+    with_ticket :set_command_workitem
   end
 end
 

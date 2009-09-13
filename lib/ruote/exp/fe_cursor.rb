@@ -25,6 +25,7 @@
 
 require 'ruote/exp/flowexpression'
 require 'ruote/exp/command'
+require 'ruote/exp/ticket'
 
 
 module Ruote::Exp
@@ -120,32 +121,9 @@ module Ruote::Exp
   #     participant :ref => 'publisher'
   #   end
   #
-  # == IMPORTANT note about cursor commands
+  # == cursor command with :ref
   #
-  # Those commands are "interpreted" each time the cursor is replied to, not
-  # when they are applied themselves.
-  #
-  #   cursor do
-  #     author
-  #     reviewer
-  #     rewind :if => '${f:not_ok}'
-  #     publisher
-  #   end
-  #
-  # will behave as expected, while
-  #
-  #   cursor do
-  #     author
-  #     reviewer
-  #     sequence do
-  #       rewind :if => '${f:not_ok}'
-  #       wait '1d'
-  #     end
-  #     publisher
-  #   end
-  #
-  # will only rewind after 1 day, when the sequence containing the rewind and
-  # the wait will have replied to the cursor.
+  # TODO
   #
   # = repeat (loop)
   #
@@ -167,6 +145,7 @@ module Ruote::Exp
   class CursorExpression < FlowExpression
 
     include CommandMixin
+    include TicketMixin
 
     names :cursor, :loop, :repeat
 
@@ -176,6 +155,9 @@ module Ruote::Exp
     end
 
     def reply (workitem)
+
+      workitem = @command_workitem || workitem
+      @command_workitem = nil
 
       position = workitem.fei == self.fei ? -1 : workitem.fei.child_id
       position += 1
@@ -198,6 +180,9 @@ module Ruote::Exp
         reply_to_parent(workitem)
       end
     end
+
+    with_ticket :reply
+    with_ticket :set_command_workitem
 
     protected
 
