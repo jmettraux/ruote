@@ -81,8 +81,14 @@ module Ruote::Exp
     def pass_command_directly (ref)
 
       # TODO : :ref => true // :direct => true trick
+
       # TODO : make sure this work from outside the cursor/loop tree
+      #        (issue with passing the command via @applied_workitem)
+
       # TODO : test with an iterator
+
+      # TODO : @command_workitem taking precedence over reply(workitem)
+      #        (but it's Cursor@command_workitem and Iterator@command_workitem)
 
       persist
         # to keep track of the command set inside of the @applied_workitem

@@ -217,4 +217,5 @@ restart tests :
 [ ] rewind :ref => true ? (first enclosing) or :direct => true
 [ ] rewind :ref => 'x' : test from outside cursor/loop
 [ ] rewind :ref => 'x' : test with iterator
+[ ] rewind : place tag into the command string
 
