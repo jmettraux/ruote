@@ -120,51 +120,7 @@ module Ruote::Exp
       @children << fei
     end
 
-    def add_branches (branches, ticket=nil)
-
-      # this method is subject to ticketing since, in a multi-process env,
-      # a branch could be replied to in another process, meanwhile...
-
-      ticket ||= expstorage.draw_ticket(self)
-
-      if ticket.consumable?
-
-        do_add_branches(branches)
-
-        ticket.consume
-          # over
-
-      else
-
-        sleep 0.014
-
-        if exp = expstorage[@fei]
-          exp.add_branches(branches, ticket)
-        end
-        # else just forget it, the concurrent_iterator is over.
-
-      end
-    end
-
-    protected
-
-    def apply_children
-
-      return reply_to_parent(@applied_workitem) unless tree_children[0]
-
-      list = determine_list
-
-      return reply_to_parent(@applied_workitem) if list.empty?
-
-      @to_v, @to_f = determine_tos
-      @to_v = 'i' if @to_v == nil && @to_f == nil
-
-      @list = []
-
-      do_add_branches(list)
-    end
-
-    def do_add_branches (list)
+    def add_branches (list)
 
       list.each do |val|
 
@@ -189,6 +145,28 @@ module Ruote::Exp
       end
 
       persist
+    end
+
+    # wraps the add_branches method with the ticket mechanism
+    #
+    with_ticket :add_branches
+
+    protected
+
+    def apply_children
+
+      return reply_to_parent(@applied_workitem) unless tree_children[0]
+
+      list = determine_list
+
+      return reply_to_parent(@applied_workitem) if list.empty?
+
+      @to_v, @to_f = determine_tos
+      @to_v = 'i' if @to_v == nil && @to_f == nil
+
+      @list = []
+
+      add_branches(list)
     end
 
     # Overrides the implementation found in ConcurrenceExpression

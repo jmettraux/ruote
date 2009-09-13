@@ -25,6 +25,7 @@
 
 require 'ruote/exp/flowexpression'
 require 'ruote/exp/merge'
+require 'ruote/exp/ticket'
 
 
 module Ruote::Exp
@@ -132,6 +133,7 @@ module Ruote::Exp
   class ConcurrenceExpression < FlowExpression
 
     include MergeMixin
+    include TicketMixin
 
     names :concurrence
 
@@ -153,39 +155,7 @@ module Ruote::Exp
       apply_children
     end
 
-    def reply (workitem, ticket=nil)
-
-      ticket ||= expstorage.draw_ticket(self)
-
-      if ticket.consumable?
-
-        t_reply(workitem, ticket)
-
-        ticket.consume
-
-      else
-
-        # we have a collision here, another engine is holding the ticket
-        # for this concurrence expression. Let's wait a bit and then retry
-        # with the new version of the expression.
-        #
-        # if the expression replied to its parent meanwhile, let's forget
-        # the reply (the ticket will have been discarded).
-
-        sleep 0.014
-
-        if exp = expstorage[@fei]
-          exp.reply(workitem, ticket)
-        end
-      end
-    end
-
-    protected
-
-    # The real 'reply' work happens here. The reply method seen a few lines
-    # before is all about preventing collisions in case of multi engines.
-    #
-    def t_reply (workitem, ticket)
+    def reply (workitem)
 
       if not @over
 
@@ -202,6 +172,12 @@ module Ruote::Exp
         reply_to_parent(nil) if @over
       end
     end
+
+    # wraps the reply method with the ticket mechanism
+    #
+    with_ticket :reply
+
+    protected
 
     def apply_children
 
@@ -237,7 +213,7 @@ module Ruote::Exp
 
       handle_remaining if @children
 
-      expstorage.discard_all_tickets(@fei)
+      discard_all_tickets
 
       super(merge_all_workitems)
     end
