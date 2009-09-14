@@ -73,6 +73,13 @@ module Ruote::Exp
   # The add_branches expression refers to the 'main' concurrent_iterator via
   # the :ref => 'main' attribute.
   #
+  #
+  # == missing concurrent_iterator
+  #
+  # If :ref points to nothing or add_branch has no :ref and is not placed
+  # inside of a concurrent_iterator, the expression will silently have no
+  # effect.
+  #
   class AddBranchesExpression < FlowExpression
 
     include IteratorMixin
@@ -81,11 +88,11 @@ module Ruote::Exp
 
     def apply
 
-      iterator = find_concurrent_iterator
-
       list = split_list(lookup_val_prefix('on') || attribute_text)
 
-      iterator.add_branches(list) if list
+      iterator = find_concurrent_iterator
+
+      iterator.add_branches(list) if list && iterator
 
       reply_to_parent(@applied_workitem)
     end
@@ -109,7 +116,8 @@ module Ruote::Exp
 
         return exp if exp && exp.is_a?(ConcurrentIteratorExpression)
 
-        raise "no concurrent iterator found for tag '#{ref}'"
+        #raise "no concurrent iterator found for tag '#{ref}'"
+        return nil
       end
 
       #
@@ -126,7 +134,8 @@ module Ruote::Exp
         exp = exp.parent
       end
 
-      exp || raise("add_branches did not find any concurrent_iterator")
+      #exp || raise("add_branches did not find any concurrent_iterator")
+      exp
     end
   end
 end
