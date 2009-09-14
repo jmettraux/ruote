@@ -28,8 +28,17 @@ require 'ruote/part/local_participant'
 
 module Ruote
 
+  #
+  # Provides methods for 'local' participants.
+  #
+  # Assumes the class that includes this module has an 'engine' method
+  # which returns the ruote engine.
+  #
   module LocalParticipant
 
+    #
+    # Sends back the workitem to the ruote engine.
+    #
     def reply_to_engine (workitem)
 
       engine.reply(workitem)

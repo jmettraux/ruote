@@ -22,7 +22,7 @@
 # Made in Japan.
 #++
 
-
+#require 'ruote/utils/misc'
 require 'ruote/engine/context'
 require 'ruote/part/local_participant'
 
@@ -69,7 +69,7 @@ module Ruote
 
     def initialize (opts)
 
-      @name = neutralize(opts[:participant_name])
+      @name = Ruote.neutralize(opts[:participant_name])
 
       @path = opts[:fs_participant_path]
     end
@@ -90,17 +90,23 @@ module Ruote
       File.open(path_for(workitem.fei), 'w') { |f| YAML.dump(workitem, f) }
     end
 
+    # Simply deletes the workitem file.
+    #
     def cancel (fei, flavour)
 
       File.delete(path_for(fei))
     end
 
+    # Deletes the workitem file and replies to the engine.
+    #
     def reply (workitem)
 
       File.delete(path_for(workitem.fei))
       reply_to_engine(workitem)
     end
 
+    # Returns the count of workitems currently stored in this participant.
+    #
     def size
 
       Dir.new(@path).entries.inject(0) do |i, path|
@@ -108,6 +114,9 @@ module Ruote
       end
     end
 
+    # Iterates over the workitems stored in here (warning, if workitems
+    # vanish and come meanwhile...)
+    #
     def each (&block)
 
       Dir.new(@path).entries.each do |entry|
@@ -135,20 +144,17 @@ module Ruote
       end
     end
 
-    # TODO : what about #all and #fist a la dm ?
+    # TODO : what about #all and #first a la dm ?
     # TODO : include Enumerable ?
 
     protected
 
+    # Returns the filepath for a given fei (FlowExpressionId).
+    #
     def path_for (fei)
 
       File.join(
         @path, "#{@name}__#{fei.engine_id}_#{fei.wfid}__#{fei.expid}.yaml")
-    end
-
-    def neutralize (s)
-
-      s.to_s.gsub(/[ \/:;\*\\\+\?]/, '_')
     end
   end
 end

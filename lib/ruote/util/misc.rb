@@ -88,5 +88,12 @@ module Ruote
 
     s && (s.index('/') || s.match(/\.[^ ]+$/))
   end
+
+  # Returns a neutralized version of s, suitable as a filename.
+  #
+  def self.neutralize (s)
+
+    s.to_s.strip.gsub(/[ \/:;\*\\\+\?]/, '_')
+  end
 end
 

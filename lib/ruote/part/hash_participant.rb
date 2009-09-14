@@ -29,6 +29,10 @@ require 'ruote/part/local_participant'
 
 module Ruote
 
+  #
+  # Storing workitems in-memory. Mainly used for testing purposes, but could
+  # prove useful for a transient ruote engine.
+  #
   class HashParticipant
 
     include EngineContext
@@ -50,22 +54,30 @@ module Ruote
       @items[workitem.fei] = workitem
     end
 
+    # Makes sure to remove the workitem from the in-memory hash.
+    #
     def cancel (fei, flavour)
 
       @items.delete(fei)
     end
 
+    # Removes the workitem from the in-memory hash and replies to the engine.
+    #
     def reply (workitem)
 
       @items.delete(workitem.fei)
       reply_to_engine(workitem)
     end
 
+    # Returns the count of workitems stored in this participant.
+    #
     def size
 
       @items.size
     end
 
+    # Iterates over the workitems stored in here.
+    #
     def each (&block)
 
       @items.each { |i| block.call(i) }

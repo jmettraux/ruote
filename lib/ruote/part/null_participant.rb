@@ -29,6 +29,7 @@ require 'ruote/part/local_participant'
 
 module Ruote
 
+  #
   # A /dev/null participant, simply discards the workitems it receives,
   # without doing anything.
   #
@@ -42,16 +43,14 @@ module Ruote
     def initialize (opts)
     end
 
+    # Does nothing, discards the workitem it receives.
+    #
     def consume (workitem)
-
-      # do nothing
-
-      notify # maybe someone has joined
     end
 
+    # Does nothing.
+    #
     def cancel (fei, flavour)
-
-      # do nothing
     end
   end
 end

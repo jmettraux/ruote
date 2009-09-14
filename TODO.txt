@@ -143,11 +143,13 @@
 [x] exp : lose ?
 [x] exp : parameter
 [ ] exp : log
+[ ] exp : inc ?
 
 [ ] exp : step (jump to cursor tag ?)
 
 [ ] exp : cron
 [ ] exp : every
+
 
 restart tests :
 [ ] when

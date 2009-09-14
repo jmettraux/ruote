@@ -72,6 +72,7 @@ module Ruote
     def lookup (participant_name)
 
       re, pa = @list.find { |re, pa| re.match(participant_name) }
+
       pa
     end
 

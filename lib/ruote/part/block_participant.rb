@@ -90,6 +90,7 @@ module Ruote
     end
 
     def cancel (fei, flavour)
+
       # do nothing
     end
   end

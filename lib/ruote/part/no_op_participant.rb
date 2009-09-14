@@ -45,6 +45,9 @@ module Ruote
       @items = {}
     end
 
+    #
+    # No operation : simply replies immediately to the engine.
+    #
     def consume (workitem)
 
       reply_to_engine(workitem)
