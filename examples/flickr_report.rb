@@ -1,4 +1,6 @@
 
+$:.unshift('lib')
+
 require 'rubygems'
 require 'ruote/engine' # sudo gem install ruote
 require 'atom/feed' # sudo gem install atom-tools
