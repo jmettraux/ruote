@@ -37,9 +37,52 @@ module Ruote::Exp
   # Look at the 'cursor' expression Ruote::Exp::Cursor for a discussion of
   # each of those [sub]expressions.
   #
+  # The expression that understand commands are 'cursor', 'repeat' ('loop') and
+  # 'iterator'.
+  # 'concurrent_iterator' does not understand commands since it fires all its
+  # branches when applied.
+  #
   # == :ref => 'tag'
   #
-  # TODO
+  # It's OK to tag a cursor/loop/iterator with the :tag attribute and then
+  # point a command to it via :ref :
+  #
+  #   concurrence do
+  #
+  #     cursor :tag => 'main' do
+  #       author
+  #       editor
+  #       publisher
+  #     end
+  #
+  #     # meanwhile ...
+  #
+  #     sequence do
+  #       sponsor
+  #       rewind :ref => 'main', :if => '${f:stop}'
+  #     end
+  #   end
+  #
+  # This :ref technique may also be used with nested cursor/loop/iterator
+  # constructs :
+  #
+  #   cursor :tag => 'main' do
+  #     cursor do
+  #       author
+  #       editor
+  #       rewind :if => '${f:not_ok}'
+  #       _break :ref => 'main', :if => '${f:abort_everything}'
+  #     end
+  #     head_of_edition
+  #     rewind :if => '${f:not_ok}'
+  #     publisher
+  #   end
+  #
+  # this example features two nested cursors. There is a "_break" in the inner
+  # cursor, but it will break the main 'cursor' (and thus break the whole
+  # review process).
+  #
+  # :ref works with the 'iterator' expression as well.
   #
   class CommandExpression < FlowExpression
 

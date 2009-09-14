@@ -57,6 +57,9 @@ module Ruote::Exp
   # The variable named 'ii' contains the current iterated index (an int bigger
   # or egal to 0).
   #
+  # 'concurrent_iterator' does not understand commands like
+  # rewind/break/jump/... like 'iterator' does, since it fires all its
+  # branches when applied.
   #
   # == :times and :branches
   #

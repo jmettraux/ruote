@@ -76,7 +76,7 @@ module Ruote::Exp
   #     author
   #     reviewer
   #     rewind :if => '${f:review} == fix'
-  #     break :if => '${f:review} == abort'
+  #     _break :if => '${f:review} == abort'
   #     publisher
   #   end
   #
@@ -90,7 +90,7 @@ module Ruote::Exp
   #     author
   #     reviewer
   #     rewind :if => '${f:review} == fix'
-  #     skip 2 :if => '${f:reviwer} == 'publish'
+  #     skip 2 :if => '${f:review} == publish'
   #     reviewer2
   #     rewind :if => '${f:review} == fix'
   #     publisher
@@ -123,7 +123,44 @@ module Ruote::Exp
   #
   # == cursor command with :ref
   #
-  # TODO
+  # It's OK to tag a cursor/repeat/loop with the :tag attribute and then
+  # point a command to it via :ref :
+  #
+  #   concurrence do
+  #
+  #     cursor :tag => 'main' do
+  #       author
+  #       editor
+  #       publisher
+  #     end
+  #
+  #     # meanwhile ...
+  #
+  #     sequence do
+  #       sponsor
+  #       rewind :ref => 'main', :if => '${f:stop}'
+  #     end
+  #   end
+  #
+  # This :ref technique may also be used with nested cursor/loop/iterator
+  # constructs :
+  #
+  #   cursor :tag => 'main' do
+  #     cursor do
+  #       author
+  #       editor
+  #       rewind :if => '${f:not_ok}'
+  #       _break :ref => 'main', :if => '${f:abort_everything}'
+  #     end
+  #     head_of_edition
+  #     rewind :if => '${f:not_ok}'
+  #     publisher
+  #   end
+  #
+  # this example features two nested cursors. There is a "_break" in the inner
+  # cursor, but it will break the main 'cursor' (and thus break the whole
+  # review process).
+  #
   #
   # = repeat (loop)
   #
@@ -137,7 +174,7 @@ module Ruote::Exp
   #     repeat do
   #       author
   #       reviewer
-  #       break :if => '${f:review} == ok'
+  #       _break :if => '${f:review} == ok'
   #     end
   #     publisher
   #   end

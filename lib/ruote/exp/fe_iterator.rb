@@ -79,13 +79,64 @@ module Ruote::Exp
   #     end
   #   end
   #
+  #
   # == break/rewind/continue/skip/jump
   #
-  # TODO
+  # The 'iterator' expression understands a certain the following commands :
+  #
+  # * break (_break) : exits the iteration
+  # * rewind : places the iteration back at the first iterated value
+  # * continue : same as 'rewind'
+  # * skip : skips a certain number of steps (relative)
+  # * jump : jump to certain step (absolute)
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     iterator :times => '3'
+  #       sequence do
+  #         participant 'accounting', :review => '${v:i}
+  #         rewind :if => '${f:redo_everything} == true'
+  #       end
+  #     end
+  #   end
+  #
   #
   # == break/rewind/continue/skip/jump with :ref
   #
-  # TODO
+  # An iterator can be tagged (with the :tag attribute) and directly referenced
+  # from a break/rewind/continue/skip/jump command.
+  #
+  # It's very useful when iterators (and cursors/loops) are nested within each
+  # other or when one has to act on an iterator from outside of it.
+  #
+  #   concurrence do
+  #
+  #     iterator :on => 'alpha, bravo, charly', :tag => 'review' do
+  #       participant '${v:i}'
+  #     end
+  #
+  #     # meanwhile ...
+  #
+  #     sequence do
+  #       participant 'main control program'
+  #       _break :ref => 'review', :if => '${f:cancel_review} == yes'
+  #     end
+  #   end
+  #
+  # in this example, the participant 'main control program' may cancel the
+  # review.
+  #
+  #   iterator :on => 'c1, c2, c3', :to_f => 'client', :tag => 'main' do
+  #     cursor do
+  #       participant :ref => '${f:client}'
+  #       _break :ref => 'main', :if => '${f:cancel_everything}'
+  #       participant :ref => 'salesclerk'
+  #       participant :ref => 'salesclerk'
+  #     end
+  #   end
+  #
+  # in this weird process, if one customer says "cancel everything" (set the
+  # workitem field "cancel_everything" to true), then the whole iterator
+  # gets 'broken' out of.
   #
   class IteratorExpression < FlowExpression
 

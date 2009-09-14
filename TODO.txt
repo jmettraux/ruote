@@ -127,6 +127,7 @@
 [x] engine#register_subprocess (replaced by engine#variables)
 [x] switch to JSON friendly pers format for flow expressions
 [o] switch to JSON friendly pers format for workitems
+[o] rewind :ref => 'tag_of_cursor_exp' (direct) :tag oriented.
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : reval
@@ -213,9 +214,7 @@ restart tests :
 [ ] equals : equals "v:v" => "true"
 [ ] if : _if "v:v" => "true" ?
 
-[o] rewind :ref => 'tag_of_cursor_exp' (direct) :tag oriented.
-[ ] rewind :ref => true ? (first enclosing) or :direct => true
-[ ] rewind :ref => 'x' : test from outside cursor/loop
-[ ] rewind :ref => 'x' : test with iterator
-[ ] rewind : place tag into the command string
+[ ] wait 0.500 / wait 60
+
+[ ] still something wrong with "cache on"
 
