@@ -414,6 +414,14 @@ module Ruote::Exp
       engine.variables[var]
     end
 
+    # A shortcut for #lookup_variable
+    #
+    alias :v :lookup_variable
+
+    # A shortcut for #lookup_variable
+    #
+    alias :lv :lookup_variable
+
     # Sets a variable to a given value.
     # (will set at the appropriate level).
     #
