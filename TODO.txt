@@ -128,11 +128,11 @@
 [x] switch to JSON friendly pers format for flow expressions
 [o] switch to JSON friendly pers format for workitems
 [o] rewind :ref => 'tag_of_cursor_exp' (direct) :tag oriented.
+[o] exp : error
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : reval
 [ ] exp : when (exploit :var :set event)
-[ ] exp : error
 [ ] exp : case (is it necessary ?)
 [ ] exp : defined (not really necessary)
 [ ] exp : quote (not really necessary)
@@ -219,4 +219,7 @@ restart tests :
 [ ] wait 0.500 / wait 60
 
 [ ] still something wrong with "cache on"
+
+[ ] error : when an error expression is cancelled, should the err get removed
+    from the process status ?
 
