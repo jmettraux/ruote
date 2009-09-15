@@ -34,6 +34,7 @@ module Ruote
     attr_accessor :fields
     attr_accessor :participant_name
 
+    alias :f :fields
     alias :attributes :fields
     alias :attributes= :fields=
 
@@ -63,6 +64,10 @@ module Ruote
 
       Ruote.lookup(@fields, key, container_lookup)
     end
+
+    # 'lf' for 'lookup field'
+    #
+    alias :lf :lookup
 
     def set_field (key, value)
 
