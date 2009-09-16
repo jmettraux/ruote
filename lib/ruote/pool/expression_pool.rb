@@ -293,7 +293,8 @@ module Ruote
 
       wi = eargs[:workitem]
       fei = eargs[:fei] || wi.fei
-      exp = expstorage[fei]
+
+      exp = (emsg == :apply && eargs[:tree]) ? nil : expstorage[fei]
 
       [ wi, fei, exp ]
     end
