@@ -231,10 +231,16 @@ module Ruote
       raise "unknown expression '#{exp_name}'" if not exp_class
 
       workitem.fei = fei
-      exp = exp_class.new(@context, fei, parent_id, tree, variables, workitem)
 
+      exp = exp_class.new(@context, fei, parent_id, tree, variables, workitem)
       exp.persist
+
       wqueue.emit(:expressions, :apply, :fei => exp.fei)
+
+      # instantiating, persisting and then triggering the apply
+      #
+      # it's a bit indirect, but necessary in case of error (to allow for
+      # error replaying)
 
       fei
     end
