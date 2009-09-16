@@ -67,7 +67,7 @@ module Ruote::Exp
   # may be used in stead of the 'on' attribute.
   #
   #   pdef = Ruote.process_definition :name => 'test' do
-  #     concurrent_iterator :times => 3
+  #     concurrent_iterator :times => 3 do
   #       participant 'user${v:i}'
   #     end
   #   end
