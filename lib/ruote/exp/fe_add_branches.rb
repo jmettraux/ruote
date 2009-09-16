@@ -65,8 +65,8 @@ module Ruote::Exp
   #
   #     sequence do
   #       subprocess :ref => 'supervise_work'
-  #       add_branches 'd, e', :ref => 'main', :if => '${f:more_steam}'
-  #       rewind :if => '${f:more_steam}'
+  #       add_branches 'd, e', :ref => 'main', :if => '${f:more_cowbell}'
+  #       rewind :if => '${f:more_cowbell}'
   #     end
   #   end
   #

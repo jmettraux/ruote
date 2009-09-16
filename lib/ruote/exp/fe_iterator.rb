@@ -93,7 +93,7 @@ module Ruote::Exp
   #   pdef = Ruote.process_definition :name => 'test' do
   #     iterator :times => '3'
   #       sequence do
-  #         participant 'accounting', :review => '${v:i}
+  #         participant 'accounting', :review => '${v:i}'
   #         rewind :if => '${f:redo_everything} == true'
   #       end
   #     end

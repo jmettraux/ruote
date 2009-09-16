@@ -289,6 +289,27 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_trace pdef, %w[ a b c ]
   end
 
+  def test_merge_type_isolate
+
+    pdef = Ruote.process_definition do
+      concurrent_iterator :on => 'a, b, c', :to_f => 'f', :merge_type => 'isolate' do
+        echo '.'
+      end
+      bravo
+    end
+
+    merged_fields = nil
+
+    @engine.register_participant :bravo do |workitem|
+      merged_fields = workitem.fields
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w{ . . . })
+    assert_equal({0=>{"f"=>"a"}, 1=>{"f"=>"b"}, 2=>{"f"=>"c"}}, merged_fields)
+  end
+
   protected
 
   def register_catchall_participant

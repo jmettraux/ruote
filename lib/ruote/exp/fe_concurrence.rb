@@ -231,8 +231,11 @@ module Ruote::Exp
         is = @workitems.keys.sort.collect { |k| @workitems[k] }
         @merge == 'highest' ? is.reverse : is
       end
+      rwis = wis.reverse
 
-      wis.inject(nil) { |t, wi| merge_workitems(t, wi, @merge_type) }
+      wis.inject(nil) { |t, wi|
+        merge_workitems(rwis.index(wi), t, wi, @merge_type)
+      }
     end
 
     def handle_remaining

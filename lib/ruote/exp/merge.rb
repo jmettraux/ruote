@@ -25,6 +25,9 @@
 
 module Ruote::Exp
 
+  #
+  # Gathering methods for merging workitems.
+  #
   module MergeMixin
 
     #
@@ -38,11 +41,11 @@ module Ruote::Exp
     # in the target workitem. The name of this field is the child_id of the
     # source workitem (a string from '0' to '99999' and beyond)
     #
-    def merge_workitems (target, source, type)
+    def merge_workitems (index, target, source, type)
 
       return source if type == 'override'
 
-      source.fields = { source.fei.child_id => source.fields } \
+      source.fields = { index => source.fields } \
         if target == nil && type == 'isolate'
 
       return source unless target
@@ -51,7 +54,7 @@ module Ruote::Exp
         #source.fields.each { |k, v| target.fields[k] = v }
         target.fields.merge!(source.fields)
       else # 'isolate'
-        target.fields[source.fei.child_id] = source.fields
+        target.fields[index] = source.fields
       end
 
       target
