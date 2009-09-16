@@ -127,11 +127,13 @@ module Ruote::Exp
 
       list.each do |val|
 
-        @list << val
+        #@list << val
+        @list_size += 1
 
         workitem  = @applied_workitem.dup
 
-        variables = { 'ii' => @list.size - 1 }
+        #variables = { 'ii' => @list.size - 1 }
+        variables = { 'ii' => @list_size - 1 }
 
         if @to_v
           variables[@to_v] = val
@@ -167,7 +169,8 @@ module Ruote::Exp
       @to_v, @to_f = determine_tos
       @to_v = 'i' if @to_v == nil && @to_f == nil
 
-      @list = []
+      #@list = []
+      @list_size = 0
 
       add_branches(list)
     end
@@ -176,7 +179,8 @@ module Ruote::Exp
     #
     def expected_count
 
-      @count ? [ @count, @list.size ].min : @list.size
+      #@count ? [ @count, @list.size ].min : @list.size
+      @count ? [ @count, @list_size ].min : @list_size
     end
   end
 end
