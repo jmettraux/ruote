@@ -222,3 +222,8 @@ restart tests :
 [ ] error : when an error expression is cancelled, should the err get removed
     from the process status ?
 
+[ ] concurrence / concurrent_iterator : merge_type => 'discard' / 'ignore'
+    keep track of the first "process sub id" ?
+
+[ ] "switch off" for the ticket mecha
+

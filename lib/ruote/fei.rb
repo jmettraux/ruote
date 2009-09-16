@@ -112,6 +112,36 @@ module Ruote
       (@expid.split(CHILD_SEP).size - 1)
     end
 
+    def diff (fei)
+
+      return fei \
+        if fei.engine_id != @engine_id
+      return fei \
+        if fei.parent_wfid != self.parent_wfid
+
+      return fei.child_id.to_i \
+        if fei.wfid == @wfid && fei.parent_expid == @expid
+      return fei.sub_wfid \
+        if fei.expid == '0'
+
+      fei
+    end
+
+    def undiff (i)
+
+      return i if i.is_a?(FlowExpressionId)
+
+      fei = self.dup
+
+      if i.is_a?(String)
+        fei.wfid = "#{fei.parent_wfid}#{CHILD_SEP}#{i}"
+      else # i is an number
+        fei.expid = "#{fei.expid}#{CHILD_SEP}#{i}"
+      end
+
+      fei
+    end
+
     def self.parent_wfid (wfid)
 
       wfid_split(wfid)[0]
@@ -156,6 +186,11 @@ module Ruote
       else
         [ wfid ]
       end
+    end
+
+    def parent_expid
+
+      @expid.split(CHILD_SEP)[0..-2].join(CHILD_SEP)
     end
   end
 end
