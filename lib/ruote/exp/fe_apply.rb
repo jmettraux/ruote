@@ -75,6 +75,8 @@ module Ruote::Exp
 
       return reply_to_parent(@applied_workitem) unless tree
 
+      persist
+
       #
       # apply 'tree'
 

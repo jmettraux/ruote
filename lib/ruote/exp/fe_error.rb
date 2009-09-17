@@ -49,22 +49,26 @@ module Ruote::Exp
 
     def apply
 
+      persist
+      pool.reply(@applied_workitem)
+
+      # the error occurs in the reply() phase
+      # so that the replay_at_error targets the reply and not the apply
+    end
+
+    def reply (workitem)
+
       return reply_to_parent(@applied_workitem) if @triggered
+
+      msg = attribute(:msg) || attribute(:message) || attribute_text
+      msg = 'error triggered from process definition' if msg.strip == ''
 
       @triggered = true
 
       persist
         # to keep track of @triggered
 
-      msg = attribute(:msg) || attribute(:message) || attribute_text
-      msg = 'error triggered from process definition' if msg.strip == ''
-
       raise(Ruote::ForcedError.new(msg))
-    end
-
-    def reply (workitem)
-
-      # never called
     end
 
     def cancel (flavour)

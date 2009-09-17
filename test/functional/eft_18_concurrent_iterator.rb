@@ -273,7 +273,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     #p update_count
 
     #assert_equal 2 + n * 2, update_count
-    assert_equal 2 + n, update_count
+    #assert_equal 2 + n, update_count
+    assert_equal 1 + n, update_count
   end
 
   def test_on_only

@@ -232,15 +232,12 @@ module Ruote
 
       workitem.fei = fei
 
-      exp = exp_class.new(@context, fei, parent_id, tree, variables, workitem)
-      exp.persist
-
-      wqueue.emit(:expressions, :apply, :fei => exp.fei)
-
-      # instantiating, persisting and then triggering the apply
-      #
-      # it's a bit indirect, but necessary in case of error (to allow for
-      # error replaying)
+      #exp = exp_class.new(@context, fei, parent_id, tree, variables, workitem)
+      #exp.persist
+      #wqueue.emit(:expressions, :apply, :fei => exp.fei)
+      exp_class.new(
+        @context, fei, parent_id, tree, variables, workitem
+      ).do_apply
 
       fei
     end
@@ -313,9 +310,14 @@ module Ruote
           # can't reply to a missing expression...
 
         case emsg
-          when :apply then exp.do_apply
+
           when :reply then exp.do_reply(wi)
           when :cancel then exp.do_cancel(eargs[:flavour])
+
+          when :apply then exp.do_apply
+            # called in case of replay_at_error
+
+          # else do nothing
         end
 
       rescue Exception => e
@@ -325,16 +327,9 @@ module Ruote
         #e.backtrace.each { |l| puts l }
         #puts
 
-        ex = if exp
-          exp
-        else
-          Ruote::Exp::RawExpression.new(
-            @context, fei, eargs[:parent_id], eargs[:tree], wi)
-        end
-        ex.persist
-          #
-          # making sure there is at least 1 expression in the storage
-          # so that engine#process yields something
+        Ruote::Exp::RawExpression.new(
+          @context, fei, eargs[:parent_id], eargs[:tree], wi
+        ).persist unless exp
 
         handle_exception(emsg, eargs, e)
       end
@@ -342,7 +337,10 @@ module Ruote
 
     def handle_exception (emsg, eargs, exception)
 
-      wi, fei, exp = extract_info(emsg, eargs)
+      fei = eargs[:fei] || (eargs[:wi].fei rescue nil)
+      exp = expstorage[fei]
+
+      p fei unless exp
 
       (emsg != :cancel) && handle_on_error(exp) && return
         # return if error got handled
@@ -388,7 +386,7 @@ module Ruote
       puts
       puts "== rescuing error handling"
       puts
-      p [ fexp.class, fexp.fei ]
+      p [ fexp.class, fexp.fei ] if fexp
       puts
       p e
       puts e.backtrace

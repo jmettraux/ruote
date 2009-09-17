@@ -56,6 +56,8 @@ module Ruote::Exp
 
     def apply
 
+      persist
+
       ref = attribute(:ref) || attribute_text
       tag = ref ? lookup_variable(ref) : nil
 

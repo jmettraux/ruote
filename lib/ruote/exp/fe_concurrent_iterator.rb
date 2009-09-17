@@ -172,7 +172,8 @@ module Ruote::Exp
       #@list = []
       @list_size = 0
 
-      add_branches(list)
+      without_ticket__add_branches(list)
+        # no need for a ticket at apply time
     end
 
     # Overrides the implementation found in ConcurrenceExpression

@@ -206,6 +206,8 @@ module Ruote::Exp
 
     def do_apply
 
+      initial = Ruote.fulldup(self)
+
       if Condition.skip?(attribute(:if), attribute(:unless))
 
         pool.reply_to_parent(self, @applied_workitem)
@@ -224,7 +226,15 @@ module Ruote::Exp
       consider_tag
       consider_timeout
 
-      apply
+      begin
+
+        apply
+
+      rescue Exception => e
+        initial.context = @context
+        initial.persist
+        raise e
+      end
     end
 
     # Called directly by the expression pool. See #reply for the (overridable)

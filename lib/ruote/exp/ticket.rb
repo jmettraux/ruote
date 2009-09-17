@@ -40,7 +40,7 @@ module Ruote::Exp
 
         def self.with_ticket (method_name)
 
-          alias_method "ticketted_#{method_name}", method_name
+          alias_method "without_ticket__#{method_name}", method_name
 
           class_eval(%{
             def #{method_name} (*args)
@@ -62,7 +62,7 @@ module Ruote::Exp
 
       if ticket.consumable?
 
-        send("ticketted_#{method_name}", *args)
+        send("without_ticket__#{method_name}", *args)
         ticket.consume
 
       else

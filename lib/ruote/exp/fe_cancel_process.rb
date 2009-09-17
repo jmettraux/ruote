@@ -57,6 +57,8 @@ module Ruote::Exp
 
     def apply
 
+      persist
+
       wqueue.emit(:processes, :cancel, :wfid => root_expression.fei.wfid)
     end
 

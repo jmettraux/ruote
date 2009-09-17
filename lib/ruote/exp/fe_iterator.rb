@@ -156,7 +156,8 @@ module Ruote::Exp
 
       @to_v = 'i' if @to_v == nil && @to_f == nil
 
-      reply(@applied_workitem)
+      without_ticket__reply(@applied_workitem)
+        # no ticket at apply time
     end
 
     def reply (workitem)

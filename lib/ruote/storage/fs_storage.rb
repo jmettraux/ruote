@@ -113,10 +113,10 @@ module Ruote
         @file = File.new(@expstorage.send(:filename_for, @fexp.fei, true))
       end
       def consumable?
-        @file.flock(File::LOCK_EX | File::LOCK_NB)
+        @file ? @file.flock(File::LOCK_EX | File::LOCK_NB) : true
       end
       def consume
-        @file.flock(File::LOCK_UN)
+        @file.flock(File::LOCK_UN) if @file
       end
     end
 

@@ -188,7 +188,10 @@ module Ruote::Exp
 
     def apply
 
-      reply(@applied_workitem)
+      persist
+
+      without_ticket__reply(@applied_workitem)
+        # no need for a ticket at apply time
     end
 
     def reply (workitem)
