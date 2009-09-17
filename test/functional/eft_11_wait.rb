@@ -60,5 +60,18 @@ class EftWaitTest < Test::Unit::TestCase
     assert_equal 'a', @tracer.to_s
     assert_equal 0, @engine.scheduler.jobs.size
   end
+
+  def test_wait_for_number
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
+        wait 0.500
+        echo 'b'
+      end
+    end
+
+    assert_trace pdef, %w[ a b ]
+  end
 end
 

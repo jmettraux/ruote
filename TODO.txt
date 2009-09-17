@@ -129,6 +129,7 @@
 [o] switch to JSON friendly pers format for workitems
 [o] rewind :ref => 'tag_of_cursor_exp' (direct) :tag oriented.
 [o] exp : error
+[o] wait 0.500 / wait 60
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : reval
@@ -214,8 +215,6 @@ restart tests :
 
 [ ] equals : equals "v:v" => "true"
 [ ] if : _if "v:v" => "true" ?
-
-[ ] wait 0.500 / wait 60
 
 [ ] still something wrong with "cache on"
 

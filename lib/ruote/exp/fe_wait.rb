@@ -53,10 +53,17 @@ module Ruote::Exp
       suntil = attribute(:until)
 
       @until = if suntil
+
         Rufus.to_ruby_time(suntil)# rescue nil
+
       elsif sfor
-        (Time.now.to_f + Rufus.parse_time_string(sfor))# rescue nil
+
+        duration = sfor.index('.') ? sfor.to_f : Rufus.parse_time_string(sfor)
+
+        Time.now.to_f + duration
+
       else
+
         nil
       end
 
