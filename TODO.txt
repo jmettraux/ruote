@@ -162,8 +162,6 @@ restart tests :
 
 [ ] define without name (__result__)
 
-[ ] smart lookup ? (?)
-
 [ ] pooltool.ru
 
 [ ] Andrew's at for timeouts (Chronic maybe)
@@ -194,6 +192,7 @@ restart tests :
 [ ] tree.to_rb
 
 [ ] concurrence / concurrent_iterator : merge plugin ?
+    use participant for that ?
 
 [ ] restore : implement merge strategies
 
@@ -215,8 +214,6 @@ restart tests :
 
 [ ] equals : equals "v:v" => "true"
 [ ] if : _if "v:v" => "true" ?
-
-[ ] still something wrong with "cache on"
 
 [ ] error : when an error expression is cancelled, should the err get removed
     from the process status ?

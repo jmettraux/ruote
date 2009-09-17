@@ -46,7 +46,7 @@ module Ruote
 
       @context = c
 
-      @path = @context[:expstorage_path] || workdir + '/expool'
+      @path = @context[:expstorage_path] || File.join(workdir, 'expool')
 
       @serializer = Ruote::Serializer.new(
         @context[:expstorage_format] || :marshal)

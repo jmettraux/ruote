@@ -93,7 +93,6 @@ module Ruote
 
     def load_last
 
-      FileUtils.mkdir(workdir) unless File.exist?(workdir)
       t = File.read(file_path).strip rescue ''
       t = Time.parse(t)
       n = Time.now

@@ -80,7 +80,7 @@ module Ruote
 
       @path ||=
         (@context[:fs_participant_path] ||
-         File.join(workdir, '/fs_participants'))
+         File.join(workdir, 'fs_participants'))
 
       FileUtils.mkdir_p(@path) unless File.exist?(@path)
     end
