@@ -76,5 +76,17 @@ class FtConditionalTest < Test::Unit::TestCase
 
     assert_trace(pdef, "some dude\natrue\nbtrue\ncfalse\ndtrue")
   end
+
+  def test_equality_when_field_is_missing
+
+    pdef = OpenWFE.process_definition :name => 'test' do
+      sequence do
+        cancel_process :if => '${f:_action} == cancel'
+        echo 'ok'
+      end
+    end
+
+    assert_trace(pdef, 'ok')
+  end
 end
 

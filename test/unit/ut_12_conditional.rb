@@ -53,6 +53,9 @@ class ConditionalTest < Test::Unit::TestCase
     assert_F ' == 1 '
     assert_F ' == 1'
     assert_F '== 1'
+
+    assert_F ' == cancel'
+    assert_F '== cancel'
   end
 
   def test_0b
