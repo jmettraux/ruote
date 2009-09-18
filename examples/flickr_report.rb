@@ -69,7 +69,7 @@ end
 engine.register_participant :generate_result_pdf do |workitem|
 
   entries = workitem.fields.inject([]) do |a, (k, v)|
-    a << [ k, v.last ] if k.match(/^user-.*$/)
+    a << [ k, v.last ] if k.match(/^user\_.+$/)
     a
   end
 
@@ -104,5 +104,5 @@ fei = engine.launch(li)
 # (here we wait for a particular process)
 
 outcome = engine.wait_for(fei)
-p outcome
+#p outcome
 
