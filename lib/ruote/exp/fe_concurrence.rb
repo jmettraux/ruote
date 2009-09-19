@@ -141,8 +141,8 @@ module Ruote::Exp
 
     def apply
 
-      @count = attribute(:count).to_i rescue nil
-      @count = nil if @count && @count < 1
+      @count = attribute(:count).to_i rescue 0
+      @count = nil if @count < 1
 
       @merge = att(:merge, %w[ first last highest lowest ])
       @merge_type = att(:merge_type, %w[ override mix isolate ])
