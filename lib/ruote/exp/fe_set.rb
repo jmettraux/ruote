@@ -100,11 +100,11 @@ module Ruote::Exp
 
       if var_key = has_attribute(:v, :var, :variable)
 
-        set_v(attribute(var_key, @applied_workitem), value)
+        set_v(attribute(var_key), value)
 
       elsif field_key = has_attribute(:f, :fld, :field)
 
-        set_f(attribute(field_key, @applied_workitem), value)
+        set_f(attribute(field_key), value)
 
       elsif value == nil && kv = expand_atts(opts).find { |k, v| k != 'escape' }
 
