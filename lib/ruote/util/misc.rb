@@ -27,7 +27,7 @@ module Ruote
 
   # Prints the current call stack to stdout
   #
-  def Ruote.p_caller (*msg)
+  def self.p_caller (*msg)
 
     puts
     puts "  == #{msg.inspect} =="
@@ -37,7 +37,7 @@ module Ruote
 
   # Deep object duplication
   #
-  def Ruote.fulldup (object)
+  def self.fulldup (object)
 
     return object.fulldup if object.respond_to?(:fulldup)
       # trusting client objects providing a fulldup() implementation
@@ -94,6 +94,17 @@ module Ruote
   def self.neutralize (s)
 
     s.to_s.strip.gsub(/[ \/:;\*\\\+\?]/, '_')
+  end
+
+  # Tries to return an Integer or a Float from the given input. Returns
+  #
+  def self.narrow_to_number (o)
+
+    return o if [ Fixnum, Bignum, Float ].include?(o.class)
+
+    s = o.to_s
+
+    (s.index('.') ? Float(s) : Integer(s)) rescue nil
   end
 end
 

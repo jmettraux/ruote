@@ -84,8 +84,8 @@ module Ruote::Exp
 
       return (m[1].=~(Regexp.new(m[3])) != nil) if m[2] == '=~'
 
-      a = narrow(m[1])
-      b = narrow(m[3])
+      a = narrow_to_f(m[1])
+      b = narrow_to_f(m[3])
 
       if a.class != b.class
         a = m[1]
@@ -101,7 +101,7 @@ module Ruote::Exp
       m[2] == '!=' ? ( ! a.send('==', b)) : a.send(m[2], b)
     end
 
-    def self.narrow (s)
+    def self.narrow_to_f (s)
 
       Float(s) rescue s
     end
