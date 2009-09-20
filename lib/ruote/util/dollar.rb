@@ -154,6 +154,7 @@ module Ruote
       wi = @workitem
       workitem = @workitem
 
+      fe = @fexp
       fexp = @fexp
       flow_expression = @fexp
       fei = @fexp.fei

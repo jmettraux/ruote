@@ -138,6 +138,12 @@ module Ruote::Exp
 
     protected
 
+    def determine_tos
+
+      [ attribute(:to_v) || attribute(:to_var) || attribute(:to_variable),
+        attribute(:to_f) || attribute(:to_fld) || attribute(:to_field) ]
+    end
+
     VV = %w[ val value ]
 
     def s_cartesian (a0, a1)

@@ -130,9 +130,11 @@
 [o] rewind :ref => 'tag_of_cursor_exp' (direct) :tag oriented.
 [o] exp : error
 [o] wait 0.500 / wait 60
+[x] exp : reval : not needed, participants are here
+[o] exp : inc ? if target is array, becomes append (not cons)
+[o] exp : dec ? if target is array, then pop (not car)
 
 [ ] exp : exp (restricted form of eval ?)
-[ ] exp : reval
 [ ] exp : when (exploit :var :set event)
 [ ] exp : case (is it necessary ?)
 [ ] exp : defined (not really necessary)
@@ -144,7 +146,6 @@
 [x] exp : lose ?
 [x] exp : parameter
 [ ] exp : log
-[ ] exp : inc ?
 
 [ ] exp : step (jump to cursor tag ?)
 
@@ -224,4 +225,13 @@ restart tests :
 [ ] "switch off" for the ticket mecha
 
 [ ] @children diff/undiff idea ?
+
+[ ] write doc about engine options (multi-process !)
+
+[ ] _if '${f:x} == ${f:y}'
+[ ] _if '${f:x} == ${f:y} || ${f:x} == ${f:z}'
+
+[ ] document the dollar notation / substitution / extrapolation
+
+[ ] condition : "${f:x} [is] empty"
 
