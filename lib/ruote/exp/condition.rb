@@ -39,6 +39,7 @@ module Ruote::Exp
     end
 
     # TODO : rconditional
+    #        is it really necessary ? there is already ${r:xxx}
 
     def self.true? (conditional)
 

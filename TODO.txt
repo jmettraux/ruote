@@ -133,6 +133,9 @@
 [x] exp : reval : not needed, participants are here
 [o] exp : inc ? if target is array, becomes append (not cons)
 [o] exp : dec ? if target is array, then pop (not car)
+[o] _if '${f:x} == ${f:y}'
+[x] equals : equals "v:v" => "true"  NO => evokes assignment
+[x] if : _if "v:v" => "true" ?  NO => evokes assignement
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : when (exploit :var :set event)
@@ -213,9 +216,6 @@ restart tests :
 
 [ ] Ruote.process_definition ... Ruote.method_missing or sequence ?
 
-[ ] equals : equals "v:v" => "true"
-[ ] if : _if "v:v" => "true" ?
-
 [ ] error : when an error expression is cancelled, should the err get removed
     from the process status ?
 
@@ -227,11 +227,9 @@ restart tests :
 [ ] @children diff/undiff idea ?
 
 [ ] write doc about engine options (multi-process !)
-
-[ ] _if '${f:x} == ${f:y}'
 [ ] _if '${f:x} == ${f:y} || ${f:x} == ${f:z}'
 
 [ ] document the dollar notation / substitution / extrapolation
 
-[ ] condition : "${f:x} [is] empty"
+[ ] condition : "${f:x} [is] empty" / this one is hard
 

@@ -115,5 +115,33 @@ class EftIfTest < Test::Unit::TestCase
 
     assert_trace(pdef, 'done.')
   end
+
+  def test_attribute_text
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        _if 'true' do
+          echo 'then'
+          echo 'else'
+        end
+        _if 'false' do
+          echo 'then'
+          echo 'else'
+        end
+        _if false do
+          echo 'then'
+          echo 'else'
+        end
+        _if :test => false do
+          echo 'then'
+          echo 'else'
+        end
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ then else else else ])
+  end
 end
 

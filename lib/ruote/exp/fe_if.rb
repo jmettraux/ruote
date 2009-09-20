@@ -61,6 +61,16 @@ module Ruote::Exp
   #
   #   participant :ref => 'Al', :if => '${f:customer} == British Petroleum'
   #
+  #
+  # == shorter
+  #
+  # It's ok to shortcircuit the _if expression like this :
+  #
+  #   _if '${f:customer.name} == Fred' do
+  #     subprocess 'premium_course'
+  #     subprocess 'regular_course'
+  #   end
+  #
   class IfExpression < FlowExpression
 
     names :if
@@ -77,17 +87,22 @@ module Ruote::Exp
       if workitem.fei == @fei # apply --> reply
 
         @test = attribute(:test)
+        @test = attribute_text if @test.nil?
+        @test = nil if @test == ''
+
         persist
 
-        if @test
-          apply_child_if_present(Condition.true?(@test) ? 0 : 1, workitem)
+        offset = if @test != nil
+          Condition.true?(@test) ? 0 : 1
         else
-          apply_child_if_present(0, workitem)
+          0
         end
+
+        apply_child_if_present(offset, workitem)
 
       else # reply from a child
 
-        if @test or workitem.fei.child_id != 0
+        if @test != nil || workitem.fei.child_id != 0
           reply_to_parent(workitem)
         else
           apply_child_if_present(workitem.result == true ? 1 : 2, workitem)
