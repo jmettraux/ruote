@@ -28,15 +28,28 @@ require 'ruote/engine/context'
 
 module Ruote
 
+  #
+  # A help class for WorkQueue. Used from Workqueue#subscribe
+  #
   class BlockSubscriber
+
     def initialize (block)
       @block = block
     end
+
     def receive (eclass, emessage, args)
       @block.call(eclass, emessage, args)
     end
   end
 
+  #
+  # Ruote uses a workqueue. All apply/reply/cancel operations are performed
+  # asynchronously, one after the other.
+  #
+  # The heart of ruote is here.
+  #
+  # See ThreadWorkqueue for the main implementation.
+  #
   class Workqueue
 
     include EngineContext
@@ -63,7 +76,9 @@ module Ruote
       @subscribers.values.each { |v| v.delete(subscriber) }
     end
 
-    # Emits event for immediate processing
+    # Emits event for immediate processing (no queueing). This is used
+    # for persistence events (the expression wants its state to be persisted
+    # ASAP.
     #
     def emit! (eclass, emsg, eargs)
 

@@ -29,6 +29,11 @@ require 'ruote/queue/workqueue'
 
 module Ruote
 
+  #
+  # The simplest of the queue implementation for ruote.
+  #
+  # Relies on the Queue class provided by ruby.
+  #
   class ThreadWorkqueue < Workqueue
 
     def initialize
