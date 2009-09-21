@@ -233,5 +233,5 @@ restart tests :
 
 [ ] condition : "${f:x} [is] empty" / this one is hard
 
-[ ] deferred apply technique / not OK, with EM and next_tick
+[ ] deferred apply technique / not OK, with EM and next_tick / pro
 
