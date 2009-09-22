@@ -42,7 +42,7 @@ module Ruote
 
     def workdir
 
-      d = @context[:work_directory] || 'work'
+      d = @context[:work_directory] || @context[:workdir] || 'work'
       FileUtils.mkdir_p(d) unless File.exist?(d)
 
       d
