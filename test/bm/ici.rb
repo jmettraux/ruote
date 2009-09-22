@@ -32,9 +32,11 @@ engine.add_service(:s_logger, Ruote::TestLogger)
 
 launched = nil
 reached = nil
+count = 0
 
 engine.register_participant :alpha do |workitem|
   reached ||= Time.now
+  count += 1
 end
 
 launched = Time.now
@@ -48,9 +50,11 @@ launched = Time.now
 #)
 wfid = engine.launch(
   Ruote.process_definition(:name => 'ci') do
-    iterator :on => (1..(N/10).to_i).to_a do
+    concurrent_iterator :branches => 10 do
       concurrent_iterator :branches => 10 do
-        alpha
+        concurrent_iterator :branches => 10 do
+          alpha
+        end
       end
     end
   end
@@ -63,6 +67,7 @@ engine.context[:s_logger].wait_for([
 
 puts "whole process took #{Time.now - launched} s"
 puts "workitem reached first participant after #{reached - launched} s"
+puts "seen #{count} workitems"
 puts "#{N} branches"
 
 engine.stop
