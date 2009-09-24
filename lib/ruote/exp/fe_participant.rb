@@ -197,11 +197,15 @@ module Ruote::Exp
         end
       }
 
-      if defined?(EM) && EM.reactor_running?
-        EM.next_tick(&block)
-      else
-        Thread.new(&block)
-      end
+      #if defined?(EM) && EM.reactor_running?
+      #  EM.next_tick(&block)
+      #else
+      #  Thread.new(&block)
+      #end
+        #
+        # not good : executing in next_tick will block the whole engine
+
+      Thread.new(&block)
     end
 
     def do_dispatch (participant)

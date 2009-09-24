@@ -33,6 +33,7 @@ Richard Jennings
 Feedback
 --------
 
+David Goldhirsch - EM participant block
 dlamotte - set :val => nil
 jpr5 + asm
 Daniel Neighman "hassox" - :on_timeout => "error"
