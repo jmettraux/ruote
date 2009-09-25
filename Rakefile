@@ -74,3 +74,14 @@ Rake::PackageTask.new('ruote', gemspec.version) do |pkg|
   end
 end
 
+namespace :deps do
+
+  # installs the gems required by ruote
+  #
+  task :install do
+    sh(
+      "sudo gem install " +
+      "rufus-lru rufus-mnemo rufus-treechecker rufus-dollar rufus-scheduler")
+  end
+end
+
