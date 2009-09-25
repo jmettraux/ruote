@@ -1,6 +1,11 @@
 
 = Ruote (OpenWFEru)
 
+NOTA BENE : active development of ruote has switched from this 0.9.x branch to the 2.0.0 branch available at :
+
+http://github.com/jmettraux/ruote/tree/ruote2.0
+
+
 == Overview
 
 Ruote is an open source workflow engine written in Ruby.
