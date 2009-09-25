@@ -53,25 +53,18 @@ module Ruote::Exp
       return reply_to_parent(@applied_workitem) if tree_children.empty?
 
       @mutex_name = attribute(:mutex) || attribute_text
-      @mutex_name = nil if @mutex_name.strip == ''
+      @mutex_name = 'reserve' if @mutex_name.strip == ''
 
       persist
 
-      if @mutex_name
+      mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
 
-        mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
-
-        mutex.register(self)
-
-      else
-
-        enter
-      end
+      mutex.register(self)
     end
 
     def reply (workitem)
 
-      lookup_variable(@mutex_name).release(self) if @mutex_name
+      lookup_variable(@mutex_name).release(self)
 
       reply_to_parent(workitem)
     end
@@ -80,7 +73,7 @@ module Ruote::Exp
 
       super
 
-      lookup_variable(@mutex_name).release(self) if @mutex_name
+      lookup_variable(@mutex_name).release(self)
     end
 
     def enter

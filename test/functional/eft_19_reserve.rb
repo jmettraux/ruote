@@ -109,17 +109,19 @@ class EftReserveTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    wait_for(:alpha)
-    wait_for(:alpha)
+    2.times do
 
-    assert_equal 2, alpha.size
+      wait_for(:alpha)
 
-    ps = @engine.process(wfid)
+      assert_equal 1, alpha.size
 
-    assert_equal 1, ps.variables.size
+      ps = @engine.process(wfid)
 
-    alpha.reply(alpha.first)
-    alpha.reply(alpha.first)
+      assert_equal 2, ps.variables.size
+      assert_not_nil ps.variables['reserve']
+
+      alpha.reply(alpha.first)
+    end
 
     wait_for(wfid)
   end
