@@ -37,6 +37,11 @@ class EftReserveTest < Test::Unit::TestCase
     assert_equal 1, alpha.size
     assert_equal '0_0_0_0', alpha.first.fei.expid
 
+    ps = @engine.process(wfid)
+
+    assert_equal 2, ps.variables.size
+    assert_equal Ruote::Exp::FlowMutex, ps.variables['a'].class
+
     alpha.reply(alpha.first)
 
     wait_for(:alpha)
@@ -80,6 +85,40 @@ class EftReserveTest < Test::Unit::TestCase
     assert_equal 1, alpha.size
     assert_equal '0_0_1_0', alpha.first.fei.expid
 
+    alpha.reply(alpha.first)
+
+    wait_for(wfid)
+  end
+
+  def test_reserve_but_no_name
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrence do
+        reserve do
+          alpha
+        end
+        reserve do
+          alpha
+        end
+      end
+    end
+
+    #noisy
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+    wait_for(:alpha)
+
+    assert_equal 2, alpha.size
+
+    ps = @engine.process(wfid)
+
+    assert_equal 1, ps.variables.size
+
+    alpha.reply(alpha.first)
     alpha.reply(alpha.first)
 
     wait_for(wfid)

@@ -53,17 +53,25 @@ module Ruote::Exp
       return reply_to_parent(@applied_workitem) if tree_children.empty?
 
       @mutex_name = attribute(:mutex) || attribute_text
-
-      mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
+      @mutex_name = nil if @mutex_name.strip == ''
 
       persist
 
-      mutex.register(self)
+      if @mutex_name
+
+        mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
+
+        mutex.register(self)
+
+      else
+
+        enter
+      end
     end
 
     def reply (workitem)
 
-      lookup_variable(@mutex_name).release(self)
+      lookup_variable(@mutex_name).release(self) if @mutex_name
 
       reply_to_parent(workitem)
     end
@@ -72,7 +80,7 @@ module Ruote::Exp
 
       super
 
-      lookup_variable(@mutex_name).release(self)
+      lookup_variable(@mutex_name).release(self) if @mutex_name
     end
 
     def enter
