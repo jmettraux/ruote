@@ -25,7 +25,6 @@
 
 require 'ruote/exp/flowexpression'
 require 'ruote/exp/command'
-require 'ruote/exp/ticket'
 
 
 module Ruote::Exp
@@ -182,7 +181,6 @@ module Ruote::Exp
   class CursorExpression < FlowExpression
 
     include CommandMixin
-    include TicketMixin
 
     names :cursor, :loop, :repeat
 

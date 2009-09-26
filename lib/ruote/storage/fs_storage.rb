@@ -107,15 +107,24 @@ module Ruote
     #++
 
     class FsTicket
+
       def initialize (expstorage, fexp)
+
         @expstorage = expstorage
         @fexp = fexp
-        @file = File.new(@expstorage.send(:filename_for, @fexp.fei, true))
+
+        @file = File.new(
+          @expstorage.send(:filename_for, @fexp.fei, true)
+        ) rescue nil
       end
+
       def consumable?
+
         @file ? @file.flock(File::LOCK_EX | File::LOCK_NB) : true
       end
+
       def consume
+
         @file.flock(File::LOCK_UN) if @file
       end
     end

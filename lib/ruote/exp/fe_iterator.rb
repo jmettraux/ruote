@@ -26,7 +26,6 @@
 require 'ruote/exp/flowexpression'
 require 'ruote/exp/command'
 require 'ruote/exp/iterator'
-require 'ruote/exp/ticket'
 
 
 module Ruote::Exp
@@ -142,7 +141,6 @@ module Ruote::Exp
 
     include CommandMixin
     include IteratorMixin
-    include TicketMixin
 
     names :iterator
 

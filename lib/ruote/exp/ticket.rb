@@ -44,7 +44,7 @@ module Ruote::Exp
 
           class_eval(%{
             def #{method_name} (*args)
-              with_ticket(:#{method_name}, *args)
+              with_ticket("without_ticket__#{method_name}", *args)
             end
           })
         end
@@ -62,7 +62,7 @@ module Ruote::Exp
 
       if ticket.consumable?
 
-        send("without_ticket__#{method_name}", *args)
+        self.send(method_name, *args)
         ticket.consume
 
       else

@@ -25,7 +25,6 @@
 
 require 'ruote/exp/flowexpression'
 require 'ruote/exp/merge'
-require 'ruote/exp/ticket'
 
 
 module Ruote::Exp
@@ -133,7 +132,6 @@ module Ruote::Exp
   class ConcurrenceExpression < FlowExpression
 
     include MergeMixin
-    include TicketMixin
 
     names :concurrence
 

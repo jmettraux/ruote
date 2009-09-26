@@ -26,6 +26,7 @@ require 'ruote/util/ometa'
 require 'ruote/util/dollar'
 require 'ruote/engine/context'
 require 'ruote/exp/attributes'
+require 'ruote/exp/ticket'
 
 
 module Ruote::Exp
@@ -49,6 +50,7 @@ module Ruote::Exp
 
     include Ruote::EngineContext
     include AttributesMixin
+    include TicketMixin
 
 
     attr_accessor :fei
@@ -77,7 +79,6 @@ module Ruote::Exp
     COMMON_ATT_KEYS = %w[
       if unless timeout on_error on_cancel on_timeout forget
     ]
-
 
     def initialize (context, fei, parent_id, tree, variables, workitem)
 
@@ -446,10 +447,7 @@ module Ruote::Exp
 
       if @variables
 
-        @variables[var] = val
-        persist
-
-        wqueue.emit(:variables, :set, :var => var, :fei => @fei)
+        with_ticket(:local_set_variable, var, val)
 
       elsif @parent_id
 
@@ -545,6 +543,14 @@ module Ruote::Exp
     end
 
     protected
+
+    def local_set_variable (var, val)
+
+      @variables[var] = val
+      persist
+
+      wqueue.emit(:variables, :set, :var => var, :fei => @fei)
+    end
 
     # A tag is a named pointer to an expression (name => fei).
     # It's stored in a variable.
