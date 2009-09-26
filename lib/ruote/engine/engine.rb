@@ -28,9 +28,6 @@ require 'ruote/workitem'
 require 'ruote/launchitem'
 require 'ruote/engine/context'
 require 'ruote/engine/process_status'
-require 'ruote/engine/participant_methods'
-require 'ruote/engine/listener_methods'
-require 'ruote/engine/wait_methods'
 require 'ruote/exp/expression_map'
 require 'ruote/pool/mnemo_wfid_generator'
 require 'ruote/pool/expression_pool'
@@ -55,9 +52,10 @@ module Ruote
   class Engine
 
     include EngineContext
-    include ParticipantMethods
-    include ListenerMethods
-    include WaitMethods
+
+    require 'ruote/engine/participant_methods'
+    require 'ruote/engine/listener_methods'
+    require 'ruote/engine/wait_methods'
 
     # Defaults to 'engine'. A unique identifier for the engine.
     #

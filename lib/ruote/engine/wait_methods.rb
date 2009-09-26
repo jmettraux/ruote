@@ -28,11 +28,10 @@ require 'ruote/queue/subscriber'
 module Ruote
 
   #
-  # The ruote engine includes this method to gain the #wait_for method used
-  # in some command line examples. Not relevant for a classical ruote server
-  # setting.
+  # The #wait_for method used in some command line examples.
+  # Not relevant for a classical ruote server setting.
   #
-  module WaitMethods
+  class Engine
 
     #
     # A helper class for the #wait_for method.

@@ -28,7 +28,7 @@ module Ruote
   #
   # Engine methods for [un]registering participants.
   #
-  module ListenerMethods
+  class Engine
 
     # Accepts a Listener instance or a Listener class and some options
     #
