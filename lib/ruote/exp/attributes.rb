@@ -29,7 +29,7 @@ module Ruote::Exp
   # Those methods are mixed in FlowExpression. They were put here to offload
   # FlowExpression and especially, to gather them around their attribute topic.
   #
-  module AttributesMixin
+  class FlowExpression
 
     # Given a list of attribute names, returns the first attribute name for
     # which there is a value.

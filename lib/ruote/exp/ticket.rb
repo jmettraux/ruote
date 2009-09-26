@@ -28,28 +28,28 @@ module Ruote::Exp
   #
   # A mixin for expressions, adds methods about tickets to expressions.
   #
-  module TicketMixin
+  class FlowExpression
+  #module TicketMixin
 
     # When the TicketMixin gets included, it adds a with_ticket class method
     # that can be used to 'tag' methods that are to be wrapped with the
     # ticket mechanism.
     #
-    def self.included (target_module)
+    #def self.included (target_module)
+    #  target_module.module_eval do
 
-      target_module.module_eval do
+    def self.with_ticket (method_name)
 
-        def self.with_ticket (method_name)
+      alias_method "without_ticket__#{method_name}", method_name
 
-          alias_method "without_ticket__#{method_name}", method_name
-
-          class_eval(%{
-            def #{method_name} (*args)
-              with_ticket("without_ticket__#{method_name}", *args)
-            end
-          })
+      class_eval(%{
+        def #{method_name} (*args)
+          with_ticket("without_ticket__#{method_name}", *args)
         end
-      end
+      })
     end
+    #  end
+    #end
 
     protected
 
