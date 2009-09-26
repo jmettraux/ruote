@@ -28,7 +28,7 @@ module Ruote
   #
   # Engine methods for [un]registering participants.
   #
-  module ParticipantMethods
+  class Engine
 
     # Registers a participant in the engine. Returns the participant instance.
     #
