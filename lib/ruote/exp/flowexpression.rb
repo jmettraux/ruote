@@ -48,8 +48,9 @@ module Ruote::Exp
 
     include Ruote::EngineContext
 
-    require 'ruote/exp/attributes'
-    require 'ruote/exp/ticket'
+    require 'ruote/exp/ro_tickets'
+    require 'ruote/exp/ro_attributes'
+    require 'ruote/exp/ro_variables'
 
 
     attr_accessor :fei
@@ -354,12 +355,6 @@ module Ruote::Exp
     end
 
     #--
-    # ATTRIBUTES
-    #
-    # include AttributeMixin
-    #++
-
-    #--
     # ON_CANCEL / ON_ERROR
     #++
 
@@ -374,122 +369,6 @@ module Ruote::Exp
       else
         nil
       end
-    end
-
-    #--
-    # VARIABLES
-    #++
-
-    # Returns a fresh hash of all the variables visible from this expression.
-    #
-    # This is used mainly when forgetting an expression.
-    #
-    def compile_variables
-
-      vars = @parent_id ? parent.compile_variables : {}
-      vars.merge!(@variables) if @variables
-
-      vars.dup
-    end
-
-    # Looks up the value of a variable in expression tree
-    # (seen from a leave, it looks more like a stack than a tree)
-    #
-    def lookup_variable (var, prefix=nil)
-
-      var, prefix = split_prefix(var, prefix)
-
-      return engine.variables[var] \
-        if prefix.length >= 2
-
-      return parent.lookup_variable(var, prefix) \
-        if @parent_id && prefix.length >= 1
-
-      #if var == (attribute('name') || attribute_text)
-      #  # allowing main process recursion (with the up-to-date tree)
-      #  return [ @fei.expid, tree ]
-      #end
-
-      if @variables
-
-        val = @variables[var]
-        return val if val != nil
-      end
-
-      if @parent_id
-
-        return parent.lookup_variable(var, prefix)
-      end
-
-      engine.variables[var]
-    end
-
-    # A shortcut for #lookup_variable
-    #
-    alias :v :lookup_variable
-
-    # A shortcut for #lookup_variable
-    #
-    alias :lv :lookup_variable
-
-    # Sets a variable to a given value.
-    # (will set at the appropriate level).
-    #
-    def set_variable (var, val, prefix=nil)
-
-      #p [ :sv, var, @fei.to_s, val, prefix, @variables ]
-
-      var, prefix = split_prefix(var, prefix)
-
-      return parent.set_variable(var, val, prefix) \
-        if @parent_id && prefix.length > 0
-
-      if @variables
-
-        with_ticket(:local_set_variable, var, val)
-
-      elsif @parent_id
-
-        parent.set_variable(var, val, prefix)
-
-      #else # should not happen
-      end
-    end
-
-    # Unbinds a variables.
-    #
-    def unset_variable (var, prefix=nil)
-
-      var, prefix = split_prefix(var, prefix)
-
-      return parent.unset_variable(var, prefix) \
-        if @parent_id && prefix.length > 0
-
-      if @variables
-
-        @variables.delete(var)
-        persist
-
-        wqueue.emit(:variables, :unset, :var => var, :fei => @fei)
-
-      elsif @parent_id
-
-        parent.unset_variable(var, prefix)
-
-      #else # should not happen
-      end
-    end
-
-    # This method is mostly used by the expression pool when looking up
-    # a process name or participant name bound under a variable.
-    #
-    def iterative_var_lookup (k)
-
-      v = lookup_variable(k)
-
-      return [ k, v ] unless (v.is_a?(String) or v.is_a?(Symbol))
-
-      iterative_var_lookup(v)
     end
 
     #--
