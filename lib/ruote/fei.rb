@@ -28,6 +28,9 @@ require 'ruote/util/misc'
 
 module Ruote
 
+  #
+  # Uniquely identifying FlowExpression instances.
+  #
   class FlowExpressionId
 
     CHILD_SEP = '_'
@@ -58,11 +61,17 @@ module Ruote
 
     alias eql? ==
 
+    # Returns the last number in the expid. For instance, if the expid is
+    # '0_5_7', the child_id will be '7'.
+    #
     def child_id
 
       @expid.split(CHILD_SEP).last.to_i
     end
 
+    # Given a child index, returns a copy of this FlowExpression, but with
+    # the child index appended to the original expid.
+    #
     def new_child_fei (child_index)
 
       cfei = self.dup
@@ -71,11 +80,17 @@ module Ruote
       cfei
     end
 
+    # If this fei's wfid is the wfid of a 'root' process, the wfid is returned.
+    # If this is the wfid of a subprocess only the parent part is returned.
+    #
     def parent_wfid
 
       self.class.wfid_split(@wfid)[0]
     end
 
+    # The counterpart to #parent_wfid, returns the subprocess identifier for
+    # this fei (or nil if it's a 'root' process).
+    #
     def sub_wfid
 
       self.class.wfid_split(@wfid)[1]
