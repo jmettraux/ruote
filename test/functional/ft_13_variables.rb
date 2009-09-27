@@ -87,5 +87,38 @@ class FtVariablesTest < Test::Unit::TestCase
     assert_equal(
       2, logger.log.select { |e| e[0] == :variables && e[1] == :set }.size)
   end
+
+  # A test about a protected method in FlowExpression, quite low level.
+  #
+  def test_lookup_var_site
+
+    pdef = Ruote.process_definition do
+      sequence do
+        sub0
+        echo 'done.'
+      end
+      define 'sub0' do
+        alpha
+      end
+    end
+
+    results = []
+
+    @engine.register_participant :alpha do |workitem, fexp|
+
+      class << fexp
+        public :lookup_var_site
+      end
+
+      results << fexp.lookup_var_site('//a')
+      results << fexp.lookup_var_site('/a').fei.brief
+      results << fexp.lookup_var_site('a').fei.brief
+    end
+
+    #noisy
+
+    assert_trace pdef, 'done.'
+    assert_equal [ nil, '/0', '0/0_0' ], results
+  end
 end
 

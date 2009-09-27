@@ -112,6 +112,18 @@ module Ruote
       (@expid.split(CHILD_SEP).size - 1)
     end
 
+    # Returns a brief string sub_wfid/expid. Used in some functional tests.
+    #
+    #   fei.brief => '/0'
+    #
+    # indicates the expression at the root of a main (not a subprocess)
+    # instance.
+    #
+    def brief
+
+      "#{sub_wfid}/#{expid}"
+    end
+
     def diff (fei)
 
       return fei \

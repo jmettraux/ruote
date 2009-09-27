@@ -141,6 +141,49 @@ module Ruote::Exp
 
       iterative_var_lookup(v)
     end
+
+    protected
+
+    VAR_PREFIX_REGEX = /^(\/*)/
+
+    # Used by lookup_variable and set_variable to extract the
+    # prefix in a variable name
+    #
+    def split_prefix (var, prefix)
+
+      if prefix.nil?
+        var = var.to_s
+        m = VAR_PREFIX_REGEX.match(var)
+        prefix = m ? m[1][0, 2] : ''
+        var = var[prefix.length..-1]
+      end
+
+      [ var, prefix ]
+    end
+
+    # Returns the flow expression that owns a variable (or the one
+    # that should own it).
+    #
+    def lookup_var_site (var, prefix=nil)
+
+      var, prefix = split_prefix(var, prefix)
+
+      return nil \
+        if prefix.length >= 2 # engine variable
+
+      return parent.lookup_var_site(var, prefix) \
+        if prefix.length >= 1 && @parent_id
+
+      # no prefix...
+
+      return self \
+        if @variables
+
+      return parent.lookup_var_site(var, prefix) \
+        if @parent_id
+
+      raise "uprooted var lookup, something went wrong"
+    end
   end
 end
 

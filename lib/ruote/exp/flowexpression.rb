@@ -449,23 +449,6 @@ module Ruote::Exp
       end
     end
 
-    VAR_PREFIX_REGEX = /^(\/*)/
-
-    # Used by lookup_variable and set_variable to extract the
-    # prefix in a variable name
-    #
-    def split_prefix (var, prefix)
-
-      if (not prefix)
-        var = var.to_s
-        m = VAR_PREFIX_REGEX.match(var)
-        prefix = m ? m[1][0, 2] : ''
-        var = var[prefix.length..-1]
-      end
-
-      [ var, prefix ]
-    end
-
     # Applies a given child (given by its index in the child list)
     #
     def apply_child (child_index, workitem, forget=false)
