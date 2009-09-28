@@ -43,6 +43,10 @@ module Ruote
     def context= (c)
 
       @context = c
+
+      @subid_prefix = '%d%d%d' % [ $$ % 10, self.hash % 10, Time.now.to_i % 10 ]
+      @subid_counters = {}
+
       subscribe(:expressions)
       subscribe(:processes)
     end
@@ -131,7 +135,7 @@ module Ruote
     def launch_sub (pos, tree, parent, workitem, opts={})
 
       i = parent.fei.dup
-      i.wfid = "#{i.parent_wfid}_#{get_next_sub_id(parent)}"
+      i.wfid = "#{i.parent_wfid}_#{get_next_subid(parent)}"
       i.expid = pos
 
       forget = opts[:forget]
@@ -254,18 +258,14 @@ module Ruote
 
     # Returns the next available sub id for the given expression.
     #
-    def get_next_sub_id (parent)
+    def get_next_subid (parent)
 
-      prefix, last_sub_id = parent.lookup_variable('/__next_sub_id__')
+      ph = parent.fei.parent_wfid.hash % 100
 
-      prefix ||= ''
-      last_sub_id ||= -1
+      c = @subid_counters[ph] || 0
+      @subid_counters[ph] = c + 1
 
-      last_sub_id = last_sub_id + 1
-
-      parent.set_variable('/__next_sub_id__', [ prefix, last_sub_id ])
-
-      "#{prefix}#{last_sub_id}"
+      '%s%02d0%d' % [ @subid_prefix, ph, c ]
     end
 
     EXP_MESSAGES = %w[ apply reply cancel ].collect { |m| m.to_sym }

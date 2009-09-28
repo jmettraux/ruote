@@ -225,13 +225,16 @@ class Tracer
   def to_s
     @trace.to_s.strip
   end
+  def to_a
+    to_s.split("\n")
+  end
   def << s
     @trace << s
   end
   def clear
     @trace = ''
   end
-  def puts s
+  def puts (s)
     @trace << "#{s}\n"
   end
 end

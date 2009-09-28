@@ -317,7 +317,9 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     @engine.register_participant '.*' do |workitem|
       @tracer << [
-        workitem.participant_name, workitem.fei.sub_wfid, workitem.fei.expid
+        workitem.participant_name,
+        workitem.fei.sub_wfid[-1, 1],
+        workitem.fei.expid
       ].join('/') + "\n"
     end
   end
