@@ -50,5 +50,35 @@ class FtSubprocessesTest < Test::Unit::TestCase
 
     assert_equal 1, logger.log.select { |e| e[1] == :launch_sub }.size
   end
+
+  def test_next_sub_wfid
+
+    pdef = Ruote.process_definition do
+      sequence do
+        sub0 :forget => true
+        sub0 :forget => true
+      end
+      define 'sub0' do
+        sub1 :forget => true
+      end
+      define 'sub1' do
+        alpha
+      end
+    end
+
+    wfids = []
+
+    @engine.register_participant :alpha do |workitem|
+      wfids << workitem.fei.sub_wfid
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    sleep 0.500
+
+    assert_equal 2, wfids.uniq.size
+  end
 end
 

@@ -165,7 +165,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    assert_equal "#{wfid}_0", alpha.first.fei.wfid
+    assert_match /^#{wfid}\_\d+0$/, alpha.first.fei.wfid
 
     ps = @engine.process(wfid)
 
@@ -173,9 +173,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal 5, ps.expressions.size
 
-    assert_equal(
-      [ wfid, "#{wfid}_0" ],
-      ps.expressions.collect { |e| e.fei.wfid }.sort.uniq)
+    wfids = ps.expressions.collect { |e| e.fei.wfid }.sort.uniq
+
+    assert_equal 2, wfids.size
+    assert_equal wfid, wfids[0]
+    assert_match /^#{wfid}\_\d+0$/, wfids[1]
   end
 
   def test_all_variables

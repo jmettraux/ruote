@@ -58,8 +58,10 @@ class FtRecursionTest < Test::Unit::TestCase
     assert_trace(pdef, %w[ 1 2 3 4 5 6 ])
 
     alpha.wfids[1..-1].each_with_index { |wfid, i|
-      assert_match /.*\_#{i}$/, wfid
+      assert_match /.*\_\d+#{i}$/, wfid
     }
+
+    assert_equal 6, alpha.wfids.uniq.size
   end
 
   def test_sub_recursion
@@ -81,8 +83,10 @@ class FtRecursionTest < Test::Unit::TestCase
     assert_trace(pdef, %w[ 1 2 3 4 5 6 ], :ignore_remaining_expressions => true)
 
     alpha.wfids.each_with_index { |wfid, i|
-      assert_match /.*\_#{i}$/, wfid
+      assert_match /.*\_\d+#{i}$/, wfid
     }
+
+    assert_equal 6, alpha.wfids.uniq.size
   end
 
   def test_forgotten_main_recursion
