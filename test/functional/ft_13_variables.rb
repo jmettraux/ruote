@@ -107,18 +107,21 @@ class FtVariablesTest < Test::Unit::TestCase
     @engine.register_participant :alpha do |workitem, fexp|
 
       class << fexp
-        public :lookup_var_site
+        public :locate_var
       end
 
-      results << fexp.lookup_var_site('//a')
-      results << fexp.lookup_var_site('/a').fei.brief
-      results << fexp.lookup_var_site('a').fei.brief
+      results << fexp.locate_var('//a')
+      results << fexp.locate_var('/a').first.fei.brief
+      results << fexp.locate_var('a').first.fei.brief
     end
 
     #noisy
 
     assert_trace pdef, 'done.'
-    assert_equal [ nil, '/0', '0/0_0' ], results
+
+    assert_equal nil, results[0]
+    assert_equal '/0', results[1]
+    assert_match /^\d+00\/0\_0$/, results[2]
   end
 end
 

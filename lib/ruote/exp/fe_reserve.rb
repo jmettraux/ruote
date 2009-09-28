@@ -57,9 +57,24 @@ module Ruote::Exp
 
       persist
 
-      mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
+      raise(
+        ArgumentError.new("can't bind reserve mutex at engine level")
+      ) if @mutex_name.match(/^\/\//)
 
-      mutex.register(self)
+      #mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
+      #mutex.register(self)
+
+      atomic_set(@mutex_name) do |mutex|
+
+        if mutex
+          mutex.register(self)
+        else
+          mutex = FlowMutex.new(@mutex_name)
+          mutex.register(self)
+        end
+
+        mutex
+      end
     end
 
     def reply (workitem)

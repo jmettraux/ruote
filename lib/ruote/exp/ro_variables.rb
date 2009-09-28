@@ -85,49 +85,28 @@ module Ruote::Exp
     # Sets a variable to a given value.
     # (will set at the appropriate level).
     #
-    def set_variable (var, val, prefix=nil)
+    def set_variable (var, val)
 
-      #p [ :sv, var, @fei.to_s, val, prefix, @variables ]
+      fexp, v = locate_var(var)
 
-      var, prefix = split_prefix(var, prefix)
+      raise(
+        ArgumentError.new("cannot set var at engine level : #{var}")
+      ) if fexp.nil?
 
-      return parent.set_variable(var, val, prefix) \
-        if @parent_id && prefix.length > 0
-
-      if @variables
-
-        with_ticket(:local_set_variable, var, val)
-
-      elsif @parent_id
-
-        parent.set_variable(var, val, prefix)
-
-      #else # should not happen
-      end
+      fexp.with_ticket(:un_set_variable, :set, v, val)
     end
 
     # Unbinds a variables.
     #
-    def unset_variable (var, prefix=nil)
+    def unset_variable (var)
 
-      var, prefix = split_prefix(var, prefix)
+      fexp, v = locate_var(var)
 
-      return parent.unset_variable(var, prefix) \
-        if @parent_id && prefix.length > 0
+      raise(
+        ArgumentError.new("cannot set var at engine level : #{var}")
+      ) if fexp.nil?
 
-      if @variables
-
-        @variables.delete(var)
-        persist
-
-        wqueue.emit(:variables, :unset, :var => var, :fei => @fei)
-
-      elsif @parent_id
-
-        parent.unset_variable(var, prefix)
-
-      #else # should not happen
-      end
+      fexp.with_ticket(:un_set_variable, :unset, v)
     end
 
     # This method is mostly used by the expression pool when looking up
@@ -143,6 +122,25 @@ module Ruote::Exp
     end
 
     protected
+
+    # Sets the value of a local variable
+    #
+    def un_set_variable (op, var, val=nil)
+
+      modified = true
+
+      if op == :set
+        modified = @variables[var] == val
+        @variables[var] = val
+      else # op == :unset
+        modified = @variables.keys.include?(var)
+        @variables.delete(var)
+      end
+
+      persist if modified
+
+      wqueue.emit(:variables, op, :var => var, :fei => @fei)
+    end
 
     VAR_PREFIX_REGEX = /^(\/*)/
 
@@ -161,25 +159,43 @@ module Ruote::Exp
       [ var, prefix ]
     end
 
-    # Returns the flow expression that owns a variable (or the one
-    # that should own it).
+    def atomic_set (var, &block)
+
+      fe = lookup_var_site(var)
+
+      fe.get_or_set_variable(split_prefix(var).first, &block)
+    end
+
+    # Given a varname and a block, will call the block with the value
+    # currently set for the var; this means that the block will be called
+    # with a nil if the variable hasn't yet been set.
     #
-    def lookup_var_site (var, prefix=nil)
+    def get_or_set_variable (var, &block)
+
+      un_set_variable(:set, var, block.call(@variables[var]))
+    end
+
+    with_ticket :get_or_set_variable
+
+    # Returns the flow expression that owns a variable (or the one
+    # that should own it) and the var without its potential / prefixes.
+    #
+    def locate_var (var, prefix=nil)
 
       var, prefix = split_prefix(var, prefix)
 
       return nil \
         if prefix.length >= 2 # engine variable
 
-      return parent.lookup_var_site(var, prefix) \
+      return parent.locate_var(var, prefix) \
         if prefix.length >= 1 && @parent_id
 
       # no prefix...
 
-      return self \
+      return [ self, var ] \
         if @variables
 
-      return parent.lookup_var_site(var, prefix) \
+      return parent.locate_var(var, prefix) \
         if @parent_id
 
       raise "uprooted var lookup, something went wrong"

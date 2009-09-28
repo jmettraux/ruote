@@ -422,14 +422,6 @@ module Ruote::Exp
 
     protected
 
-    def local_set_variable (var, val)
-
-      @variables[var] = val
-      persist
-
-      wqueue.emit(:variables, :set, :var => var, :fei => @fei)
-    end
-
     # A tag is a named pointer to an expression (name => fei).
     # It's stored in a variable.
     #

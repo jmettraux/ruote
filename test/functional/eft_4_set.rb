@@ -209,5 +209,22 @@ class EftSetTest < Test::Unit::TestCase
 
     assert_trace pdef, '0/1'
   end
+
+  def test_set_at_engine_level_is_forbidden
+
+    pdef = Ruote.process_definition do
+      set 'v://v' => 'whatever'
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    assert_equal 1, ps.errors.size
+  end
 end
 
