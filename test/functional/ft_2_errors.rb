@@ -119,6 +119,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal 1, ps.errors.size
 
+    #p ps.expressions.size
+    #ps.expressions.each do |e|
+    #  p [ e.fei.to_s, e.class, e.state ]
+    #end
+
     @engine.replay_at_error(ps.errors.first)
 
     wait_for(wfid)
