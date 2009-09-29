@@ -106,7 +106,14 @@ module Ruote::Exp
         ArgumentError.new("cannot set var at engine level : #{var}")
       ) if fexp.nil?
 
-      fexp.with_ticket(:un_set_variable, :unset, v)
+      if (fexp.fei == @fei)
+        #
+        # don't use a ticket when expression wants to modify its own vars
+        #
+        fexp.un_set_variable(:unset, v)
+      else
+        fexp.with_ticket(:un_set_variable, :unset, v)
+      end
     end
 
     # This method is mostly used by the expression pool when looking up
@@ -121,7 +128,11 @@ module Ruote::Exp
       iterative_var_lookup(v)
     end
 
-    # TODO : document me
+    # This method is currently only used by the "reserve" expression. It ensures
+    # that its block is passed the current value for the var (nil if not yet
+    # set) and that the block is executed while a ticket for the expression
+    # holding the var is held. The block is meant to return the new value
+    # for the variable.
     #
     def get_or_set_variable (var, &block)
 
@@ -133,7 +144,7 @@ module Ruote::Exp
 
     protected
 
-    # Sets the value of a local variable
+    # Sets (or unsets) the value of a local variable
     #
     def un_set_variable (op, var, val=nil)
 
@@ -165,7 +176,7 @@ module Ruote::Exp
       [ var, prefix ]
     end
 
-    # TODO : document me
+    # Does the magic for #get_or_set_variable (and is wrapped in a ticket).
     #
     def gos_variable (var, block)
 

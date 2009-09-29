@@ -120,9 +120,9 @@ module Ruote
       else
 
         msg = case exp.state
-        when :cancelling then :cancelled
-        when :dying then :killed
-        else :terminated
+          when :cancelling then :cancelled
+          when :dying then :killed
+          else :terminated
         end
 
         wqueue.emit(

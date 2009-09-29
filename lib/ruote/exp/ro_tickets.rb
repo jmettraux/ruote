@@ -53,20 +53,20 @@ module Ruote::Exp
       ticket = args.last.class.name.match(/Ticket$/) ? args.pop : nil
       ticket ||= expstorage.draw_ticket(self)
 
-      #p [ :t, :in, method_name, args, @fei.to_s, ticket.hash ]
+      #p [ :t, :in, ticket.hash, method_name, args, @fei.to_s ]
 
       if ticket.consumable?
 
         self.send(method_name, *args)
         ticket.consume
 
-        #p [ :t, :consumed, @fei.to_s, ticket.hash ]
+        #p [ :t, :co, ticket.hash, @fei.to_s ]
 
       else
 
         sleep 0.014
 
-        #p [ :t, :retry, @fei.to_s, ticket.hash ]
+        #p [ :t, :re, ticket.hash, @fei.to_s ]
 
         if exp = expstorage[@fei]
 

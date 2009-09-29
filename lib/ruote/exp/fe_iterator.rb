@@ -170,9 +170,9 @@ module Ruote::Exp
       return reply_to_parent(workitem) if com == 'break'
 
       case com
-      when 'rewind', 'continue' then @position = 0
-      when 'skip' then @position += arg
-      when 'jump' then @position = arg
+        when 'rewind', 'continue' then @position = 0
+        when 'skip' then @position += arg
+        when 'jump' then @position = arg
       end
 
       @position = @list.length + @position if @position < 0

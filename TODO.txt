@@ -137,6 +137,9 @@
 [x] equals : equals "v:v" => "true"  NO => evokes assignment
 [x] if : _if "v:v" => "true" ?  NO => evokes assignement
 [x] deferred apply technique / not OK, with EM and next_tick / pro
+[o] reserve : perhaps it's better to have an atomic get and set variable...
+[o] clean up lookup_var/set_var into locate_var/lookup_var/set_var
+[x] Sun Hao's up-to-date-tree idea ${f:participant_name} ps#resolved_tree
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : when (exploit :var :set event)
@@ -211,8 +214,6 @@ restart tests :
 
 [ ] jash : Time and DateTime and co ?
 
-[x] Sun Hao's up-to-date-tree idea ${f:participant_name} ps#resolved_tree
-
 [ ] history.to_tree ?
 
 [ ] Ruote.process_definition ... Ruote.method_missing or sequence ?
@@ -233,7 +234,4 @@ restart tests :
 [ ] document the dollar notation / substitution / extrapolation
 
 [ ] condition : "${f:x} [is] empty" / this one is hard
-
-[ ] reserve : perhaps it's better to have an atomic get and set variable...
-[ ] clean up lookup_var/set_var into locate_var/lookup_var/set_var
 
