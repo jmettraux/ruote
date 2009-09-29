@@ -27,6 +27,38 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     assert_equal 1, ps.errors.size
+
+    #p ps.expressions.size
+    #ps.expressions.each do |e|
+    #  p [ e.fei.to_s, e.class, e.state ]
+    #end
+  end
+
+  # asm and jpr5 use that sometimes
+  #
+  def test_error_reapply
+
+    pdef = Ruote.process_definition do
+      nada
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    assert_equal Ruote::Exp::RawExpression, ps.expressions.last.class
+
+    @engine.register_participant :nada do |workitem|
+      @tracer << 'done.'
+    end
+
+    @engine.re_apply(ps.expressions.last.fei)
+    wait_for(wfid)
+
+    assert_equal 'done.', @tracer.to_s
   end
 
   def test_error_replay
@@ -118,6 +150,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     assert_equal 1, ps.errors.size
+
+    #p ps.expressions.size
+    #ps.expressions.each do |e|
+    #  p [ e.fei.to_s, e.class, e.state ]
+    #end
 
     @engine.replay_at_error(ps.errors.first)
 
