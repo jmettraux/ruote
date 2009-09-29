@@ -126,6 +126,27 @@ module Ruote::Exp
   #
   #   subprocess 'http://pdefs.example.org/account/def1.xml'
   #
+  #
+  # == subprocess URIs bound at engine level
+  #
+  # There is a class of variables accessible to process instances in read-only
+  # mode : engine level variables.
+  #
+  # They can be set via the engine's initialization code (or later) like in
+  # this example :
+  #
+  #   engine.variables['inventory_check'] = 'http://pdefs.example.com/ic0.rb'
+  #
+  # All the process instance in the engine may then trigger this process in
+  # these 3 ways :
+  #
+  #   subprocess :ref => 'inventory_check'
+  #   subprocess 'inventory_check'
+  #   inventory_check
+  #
+  # The latter may make process definitions quite readable (but blur the
+  # distinction between expressions, call to participants or to subprocesses).
+  #
   class SubprocessExpression < FlowExpression
 
     names :subprocess
