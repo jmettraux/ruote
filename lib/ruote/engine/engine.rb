@@ -53,9 +53,9 @@ module Ruote
 
     include EngineContext
 
-    require 'ruote/engine/participant_methods'
-    require 'ruote/engine/listener_methods'
-    require 'ruote/engine/wait_methods'
+    require 'ruote/engine/ro_participant'
+    require 'ruote/engine/ro_listener'
+    require 'ruote/engine/ro_wait'
 
     # Defaults to 'engine'. A unique identifier for the engine.
     #
