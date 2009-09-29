@@ -121,23 +121,29 @@ module Ruote::Exp
       iterative_var_lookup(v)
     end
 
+    # TODO : document me
+    #
+    def get_or_set_variable (var, &block)
+
+      fexp, v = locate_var(var)
+
+      fexp.gos_variable(v, block)
+        # note that block is passed as regular argument
+    end
+
     protected
 
     # Sets the value of a local variable
     #
     def un_set_variable (op, var, val=nil)
 
-      modified = true
-
       if op == :set
-        modified = @variables[var] == val
         @variables[var] = val
       else # op == :unset
-        modified = @variables.keys.include?(var)
         @variables.delete(var)
       end
 
-      persist if modified
+      persist
 
       wqueue.emit(:variables, op, :var => var, :fei => @fei)
     end
@@ -159,23 +165,13 @@ module Ruote::Exp
       [ var, prefix ]
     end
 
-    def atomic_set (var, &block)
-
-      fe = lookup_var_site(var)
-
-      fe.get_or_set_variable(split_prefix(var).first, &block)
-    end
-
-    # Given a varname and a block, will call the block with the value
-    # currently set for the var; this means that the block will be called
-    # with a nil if the variable hasn't yet been set.
+    # TODO : document me
     #
-    def get_or_set_variable (var, &block)
+    def gos_variable (var, block)
 
       un_set_variable(:set, var, block.call(@variables[var]))
     end
-
-    with_ticket :get_or_set_variable
+    with_ticket :gos_variable
 
     # Returns the flow expression that owns a variable (or the one
     # that should own it) and the var without its potential / prefixes.
@@ -188,7 +184,7 @@ module Ruote::Exp
         if prefix.length >= 2 # engine variable
 
       return parent.locate_var(var, prefix) \
-        if prefix.length >= 1 && @parent_id
+        if prefix.length == 1 && @parent_id
 
       # no prefix...
 

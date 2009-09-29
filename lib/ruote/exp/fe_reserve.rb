@@ -64,22 +64,19 @@ module Ruote::Exp
       #mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
       #mutex.register(self)
 
-      atomic_set(@mutex_name) do |mutex|
-
-        if mutex
-          mutex.register(self)
-        else
-          mutex = FlowMutex.new(@mutex_name)
-          mutex.register(self)
-        end
-
+      get_or_set_variable(@mutex_name) do |mutex|
+        mutex ||= FlowMutex.new(@mutex_name)
+        mutex.register(self)
         mutex
       end
     end
 
     def reply (workitem)
 
-      lookup_variable(@mutex_name).release(self)
+      get_or_set_variable(@mutex_name) do |mutex|
+        mutex.release(self)
+        mutex
+      end
 
       reply_to_parent(workitem)
     end
@@ -88,7 +85,10 @@ module Ruote::Exp
 
       super
 
-      lookup_variable(@mutex_name).release(self)
+      get_or_set_variable(@mutex_name) do |mutex|
+        mutex.release(self)
+        mutex
+      end
     end
 
     def enter
@@ -105,6 +105,8 @@ module Ruote::Exp
   #
   class FlowMutex
 
+    attr_reader :name, :feis
+
     def initialize (name)
 
       @name = name
@@ -115,8 +117,6 @@ module Ruote::Exp
 
       @feis << fexp.fei
 
-      fexp.set_variable(@name, self)
-
       fexp.enter if @feis.size == 1
     end
 
@@ -124,11 +124,14 @@ module Ruote::Exp
 
       @feis.shift
 
-      fexp.set_variable(@name, self)
-
       return if @feis.empty?
 
       fexp.context[:s_expression_storage][@feis.first].enter
+    end
+
+    def inspect
+
+      [ :flowmutex, @name, @feis.collect { |fei| fei.to_s } ]
     end
   end
 end
