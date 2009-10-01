@@ -100,6 +100,18 @@ module Ruote::Exp
   #
   # The :to attribute has already been seen, it can be replaced by the :on one.
   #
+  # Those two attributes are expected to hold regular expressions, so it's OK to
+  # write things like :
+  #
+  #   listen :to => "^user\_.+"
+  #
+  # or
+  #
+  #   listen :to => /^user\_.+/
+  #
+  # To listen for workitems for all the participant whose name start with
+  # "user_".
+  #
   # == :wfid
   #
   # By default, a listen expression listens for any workitem/participant event
