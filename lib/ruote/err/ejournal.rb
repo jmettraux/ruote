@@ -144,6 +144,11 @@ module Ruote
 
     def receive (eclass, emsg, eargs)
 
+      if emsg == :remove
+        remove(eargs[:fei])
+        return
+      end
+
       eargs = eargs.dup
 
       info = eargs[:message].last

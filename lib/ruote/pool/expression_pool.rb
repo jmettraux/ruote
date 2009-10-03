@@ -346,6 +346,7 @@ module Ruote
         # return if error got handled
 
       exp.instance_variable_set(:@state, :failed)
+      exp.instance_variable_set(:@has_error, true)
       exp.persist
 
       efei = exp ? exp.fei : fei

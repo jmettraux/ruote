@@ -91,6 +91,7 @@ module Ruote::Exp
       @updated_tree = nil
 
       @state = nil # the default state of an 'active' expression
+      @has_error = false
 
       @children = []
 
@@ -415,9 +416,13 @@ module Ruote::Exp
 
     # Asks expstorage[s] to unstore persisted version of self.
     #
+    # Will require the error journal as well to remove the error for
+    # this expression if any.
+    #
     def unpersist
 
       wqueue.emit!(:expressions, :delete, :fei => @fei)
+      wqueue.emit!(:errors, :remove, { :fei => @fei }) if @has_error
     end
 
     protected

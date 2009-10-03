@@ -237,5 +237,25 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal %w[ alpha alpha done. ].join("\n"), @tracer.to_s
   end
+
+  def test_process_cancellation
+
+    pdef = Ruote.process_definition do
+      nada
+    end
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    assert_equal 1, @engine.process(wfid).errors.size
+
+    @engine.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    assert_nil @engine.process(wfid)
+    assert_equal 0, @engine.ejournal.process_errors(wfid).size
+  end
 end
 

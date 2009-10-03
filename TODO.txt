@@ -140,6 +140,8 @@
 [o] reserve : perhaps it's better to have an atomic get and set variable...
 [o] clean up lookup_var/set_var into locate_var/lookup_var/set_var
 [x] Sun Hao's up-to-date-tree idea ${f:participant_name} ps#resolved_tree
+[o] error : when an error expression is cancelled, should the err get remove 
+    from the process status ? yes.
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : when (exploit :var :set event)
@@ -217,9 +219,6 @@ restart tests :
 [ ] history.to_tree ?
 
 [ ] Ruote.process_definition ... Ruote.method_missing or sequence ?
-
-[ ] error : when an error expression is cancelled, should the err get removed
-    from the process status ?
 
 [ ] concurrence / concurrent_iterator : merge_type => 'discard' / 'ignore'
     keep track of the first "process sub id" ?
