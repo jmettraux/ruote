@@ -240,7 +240,7 @@ module Ruote
 
       service.context = @context if service.respond_to?(:context=)
 
-      #service
+      service
     end
 
     def remove_service (key)

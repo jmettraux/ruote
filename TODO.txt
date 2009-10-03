@@ -142,6 +142,7 @@
 [x] Sun Hao's up-to-date-tree idea ${f:participant_name} ps#resolved_tree
 [o] error : when an error expression is cancelled, should the err get remove 
     from the process status ? yes.
+[o] file logger / history service
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : when (exploit :var :set event)
@@ -163,8 +164,6 @@
 
 restart tests :
 [ ] when
-
-[ ] file logger / history service
 
 [ ] conditional : rprefix ! ${r:x} is perhaps sufficient
 
@@ -237,4 +236,6 @@ restart tests :
 [ ] let listeners accept launchitems
 
 [ ] ruote/exp/fe_set.rb:147: warning: already initialized constant PREFIX_REGEX
+
+[ ] engine.history ? engine.process_history(wfid) ?
 

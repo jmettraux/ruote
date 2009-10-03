@@ -64,17 +64,17 @@ module Ruote
       k = v.class.name.split('::').last
 
       case v
-      when String then v
-      when Symbol then v
-      when Regexp then v
-      when Exception then "#{k} >#{v.message}< at #{v.backtrace.first}"
-      when Workitem then "#{k}/#{v.fei.to_s}"
-      when Ruote::Exp::FlowExpression then "#{k}/#{v.fei.to_s}"
-      when FlowExpressionId then v.to_s
-      when NilClass then nil
-      when TrueClass then true
-      when FalseClass then false
-      else v.class
+        when String then v
+        when Symbol then v
+        when Regexp then v
+        when Exception then "#{k} >#{v.message}< at #{v.backtrace.first}"
+        when Workitem then "#{k}/#{v.fei.to_s}"
+        when Ruote::Exp::FlowExpression then "#{k}/#{v.fei.to_s}"
+        when FlowExpressionId then v.to_s
+        when NilClass then nil
+        when TrueClass then true
+        when FalseClass then false
+        else v.class
       end
     end
   end
