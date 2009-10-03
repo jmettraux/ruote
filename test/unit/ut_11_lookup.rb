@@ -31,5 +31,21 @@ class LookupTest < Test::Unit::TestCase
       [ 'nada', nil ],
       Ruote.lookup({ 'h' => { 'hh' => %w[ A B C ]} }, 'nada.nada', true))
   end
+
+  def test_set
+
+    h = { 'customer' => { 'name' => 'alpha' } }
+    Ruote.set(h, 'customer.name', 'bravo')
+
+    assert_equal({"customer"=>{"name"=>"bravo"}}, h)
+  end
+
+  def test_set_missing
+
+    h = {}
+    Ruote.set(h, 'customer.name', 'bravo')
+
+    assert_equal({"customer.name"=>"bravo"}, h)
+  end
 end
 

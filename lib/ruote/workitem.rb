@@ -69,6 +69,15 @@ module Ruote
     #
     alias :lf :lookup
 
+    # Like #lookup allows for nested lookups, #set_field can be used
+    # to set sub fields directly.
+    #
+    #   workitem.set_field('customer.address.city', 'Pleasantville')
+    #
+    # Warning : if the customer and address field and subfield are not present
+    # or are not hashes, set_field will simply create a "customer.address.city"
+    # field and set its value to "Pleasantville".
+    #
     def set_field (key, value)
 
       Ruote.set(@fields, key, value)
@@ -100,6 +109,8 @@ module Ruote
       Ruote.fulldup(self)
     end
 
+    # Turns a workitem into a Ruby Hash (useful for JSON serializations)
+    #
     def to_h
 
       h = {}
@@ -110,6 +121,8 @@ module Ruote
       h
     end
 
+    # Turns back a Ruby Hash into a workitem (well, attempts to)
+    #
     def self.from_h (h)
 
       wi = Workitem.new(h['fields'])

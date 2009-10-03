@@ -235,3 +235,7 @@ restart tests :
 
 [ ] condition : "${f:x} [is] empty" / this one is hard
 
+[ ] let listeners accept launchitems
+
+[ ] ruote/exp/fe_set.rb:147: warning: already initialized constant PREFIX_REGEX
+

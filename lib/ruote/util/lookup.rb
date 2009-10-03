@@ -41,6 +41,12 @@ module Ruote
     lookup(value, rest)
   end
 
+  #   h = { 'customer' => { 'name' => 'alpha' } }
+  #
+  #   Ruote.set(h, 'customer.name', 'bravo')
+  #
+  #   h #=> { 'customer' => { 'name' => 'bravo' } }
+  #
   def Ruote.set (collection, key, value)
 
     k, c = lookup(collection, key, true)
