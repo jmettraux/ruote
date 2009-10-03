@@ -91,7 +91,9 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a b d ])
+    wfid = assert_trace(pdef, %w[ a b d ])
+
+    assert_nil @engine.process(wfid)
   end
 
   def test_missing_handler_triggers_regular_error
