@@ -34,9 +34,16 @@ class FtHistoryTest < Test::Unit::TestCase
     lines = File.readlines(Dir['work/log/*'].first)
 
     assert_equal 8, lines.size
-    #lines.each { |l| puts l }
+    lines.each { |l| puts l }
 
-    assert_equal 4, history.process_history(wfid0).size
+    h = history.process_history(wfid0)
+    assert_equal 4, h.size
+    assert_equal Time, h.first.first.class
+  end
+
+  def test_subprocess
+
+    flunk
   end
 end
 

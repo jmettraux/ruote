@@ -60,10 +60,7 @@ wfid = engine.launch(
   end
 )
 
-engine.context[:s_logger].wait_for([
-  [ :processes, :terminated, { :wfid => wfid } ],
-])
-
+engine.logger.wait_for([ [ :processes, :terminated, { :wfid => wfid } ] ])
 
 puts "whole process took #{Time.now - launched} s"
 puts "workitem reached first participant after #{reached - launched} s"

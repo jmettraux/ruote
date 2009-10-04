@@ -88,6 +88,17 @@ module Ruote
     def tracker
       @context[:s_tracker]
     end
+
+    #--
+    # optional services
+    #++
+
+    def logger
+      @context[:s_logger]
+    end
+    def history
+      @context[:s_history]
+    end
   end
 end
 

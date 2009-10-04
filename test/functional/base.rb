@@ -89,7 +89,7 @@ module FunctionalBase
   end
 
   def logger
-    @engine.context[:s_logger]
+    @engine.logger
   end
 
   def wait_for (wfid_or_part, opts={})

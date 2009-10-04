@@ -257,5 +257,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_nil @engine.process(wfid)
     assert_equal 0, @engine.ejournal.process_errors(wfid).size
   end
+
+  def test_forgotten_subprocess
+
+    flunk
+  end
 end
 

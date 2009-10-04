@@ -43,9 +43,7 @@ Benchmark.benchmark(' ' * 20 + Benchmark::Tms::CAPTION, 20) do |bench|
       }
     )
 
-    engine.context[:s_logger].wait_for([
-      [ :processes, :terminated, { :wfid => wfid } ],
-    ])
+    engine.logger.wait_for([ [ :processes, :terminated, { :wfid => wfid } ] ])
 
   end
 
