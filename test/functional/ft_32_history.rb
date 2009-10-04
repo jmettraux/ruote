@@ -8,6 +8,7 @@
 require File.join(File.dirname(__FILE__), 'base')
 
 require 'ruote/log/fs_history'
+require 'ruote/part/no_op_participant'
 
 
 class FtHistoryTest < Test::Unit::TestCase
@@ -20,13 +21,11 @@ class FtHistoryTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    #noisy
-
     history = @engine.add_service(:s_history, Ruote::FsHistory)
 
-    @engine.register_participant :alpha do |workitem|
-      # do nothing
-    end
+    @engine.register_participant :alpha, Ruote::NoOpParticipant
+
+    #noisy
 
     wfid0 = assert_trace(pdef, "done.")
     wfid1 = assert_trace(pdef, "done.\ndone.")
@@ -34,7 +33,7 @@ class FtHistoryTest < Test::Unit::TestCase
     lines = File.readlines(Dir['work/log/*'].first)
 
     assert_equal 8, lines.size
-    lines.each { |l| puts l }
+    #lines.each { |l| puts l }
 
     h = history.process_history(wfid0)
     assert_equal 4, h.size
@@ -43,7 +42,59 @@ class FtHistoryTest < Test::Unit::TestCase
 
   def test_subprocess
 
-    flunk
+    pdef = Ruote.process_definition :name => 'test', :revision => '3' do
+      sequence do
+        sub0
+        echo 'done.'
+      end
+      define 'sub0' do
+        alpha
+      end
+    end
+
+    @engine.add_service(:s_history, Ruote::FsHistory)
+
+    @engine.register_participant :alpha, Ruote::NoOpParticipant
+
+    #noisy
+
+    wfid0 = assert_trace(pdef, "done.")
+
+    sleep 0.100
+
+    #dump_history
+
+    h = @engine.history.process_history(wfid0)
+    #h.each { |r| p r }
+    assert_equal 5, h.size
+  end
+
+  def test_errors
+
+    pdef = Ruote.process_definition :name => 'test' do
+      nada
+    end
+
+    @engine.add_service(:s_history, Ruote::FsHistory)
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    #dump_history
+
+    h = @engine.history.process_history(wfid)
+    h.each { |r| p r }
+    assert_equal 2, h.size
+  end
+
+  protected
+
+  def dump_history
+
+    lines = File.readlines(Dir['work/log/*'].first)
+    puts; lines.each { |l| puts l }
   end
 end
 

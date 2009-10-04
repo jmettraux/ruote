@@ -80,7 +80,7 @@ module Ruote
 
           history.unshift(r)
 
-          return history if l.match(/ processes launch$/)
+          return history if l.match(/ ps launch /)
         end
       end
 
@@ -95,7 +95,8 @@ module Ruote
 
     ABBREVIATIONS = {
       :processes => 'ps',
-      :workitems => 'wi'
+      :workitems => 'wi',
+      :errors => 'er'
     }
 
     protected
@@ -111,19 +112,73 @@ module Ruote
       ABBREVIATIONS[s] || s.to_s
     end
 
+    def fei (eargs)
+
+      if i = eargs[:fei]
+        return i
+      end
+      if wi = eargs[:workitem]
+        return wi.fei
+      end
+
+      nil
+    end
+
+    def parent_wfid (eargs)
+
+      if i = eargs[:wfid]
+        return i
+      end
+      if i = fei(eargs)
+        return i.parent_wfid
+      end
+
+      nil
+    end
+
+    def short_fei (eargs)
+
+      if i = fei(eargs)
+        i.sub_wfid ? "_#{i.sub_wfid} #{i.expid}" : i.expid
+      else
+        nil
+      end
+    end
+
     def receive (eclass, emsg, eargs)
 
       line = if eclass == :processes
-        [ eargs[:wfid], ab(eclass), emsg ]
+
+        if emsg == :launch
+          [ eargs[:tree][1].map { |k, v| "#{k}=#{v}" }.join(', ') ]
+        #elsif emsg == :launch_sub
+        #  [ short_fei(eargs), eargs.inspect ]
+        else
+          [ short_fei(eargs) ]
+        end
+
       elsif eclass == :workitems
-        [ eargs[:workitem].fei.wfid, ab(eclass), emsg, eargs[:pname] ]
+
+        [ short_fei(eargs), eargs[:pname] ]
+
+      elsif eclass == :errors
+
+        oeargs = eargs[:message].last
+        error = eargs[:error]
+        [ short_fei(oeargs), error.class, error.message ]
+
       else
+
         nil
       end
 
       return unless line
 
       rotate_if_necessary
+
+      line.unshift(emsg)
+      line.unshift(ab(eclass))
+      line.unshift(parent_wfid(eargs))
 
       #line.unshift(@last.strftime('%F %T'))
       line.unshift("#{@last.strftime('%F %T')}.#{"%06d" % @last.usec}")
