@@ -36,8 +36,15 @@ class FtHistoryTest < Test::Unit::TestCase
     #lines.each { |l| puts l }
 
     h = history.process_history(wfid0)
+    #h.each { |r| p r }
     assert_equal 4, h.size
     assert_equal Time, h.first.first.class
+
+    fei = h[1][-2]
+    assert_equal Ruote::FlowExpressionId, fei.class
+    assert_equal wfid0, fei.wfid
+    assert_equal '0_0', fei.expid
+    assert_equal 'engine', fei.engine_id
   end
 
   def test_subprocess
@@ -85,7 +92,7 @@ class FtHistoryTest < Test::Unit::TestCase
     #dump_history
 
     h = @engine.history.process_history(wfid)
-    h.each { |r| p r }
+    #h.each { |r| p r }
     assert_equal 2, h.size
   end
 

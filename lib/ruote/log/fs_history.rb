@@ -92,6 +92,7 @@ module Ruote
     #end
 
     LINE_REGEX = /^([0-9-]{10} [^ ]+) ([^ ]+) ([a-z]{2}) (.+)$/
+    MSG_REGEX = /^([^ ]+)( \_[0-9]+)?( [0-9\_]+)?(.*)$/
 
     ABBREVIATIONS = {
       :processes => 'ps',
@@ -101,10 +102,34 @@ module Ruote
 
     protected
 
+    def rebuild_fei (wfid, sub_wfid, expid)
+
+      fei = FlowExpressionId.new
+      fei.wfid = sub_wfid ? "#{wfid}#{sub_wfid.strip}" : wfid
+      fei.expid = expid.strip
+      fei.engine_id = engine.engine_id
+      fei
+    end
+
+    def split_rest (wfid, r)
+
+      if m = MSG_REGEX.match(r)
+        a = [ m[1] ]
+        a << rebuild_fei(wfid, m[2], m[3]) if m[3]
+        a << m[4].strip
+        a
+      else
+        [ r ]
+      end
+    end
+
     def split_line (l)
 
       m = LINE_REGEX.match(l)
-      m ? [ Time.parse(m[1]), m[2], m[3], m[4] ] : nil
+
+      return nil unless m
+
+      [ Time.parse(m[1]), m[2], m[3], *split_rest(m[2], m[4]) ]
     end
 
     def ab (s)
@@ -145,6 +170,9 @@ module Ruote
       end
     end
 
+    # This is the method called by the workqueue. Incoming engine events
+    # are 'processed' here.
+    #
     def receive (eclass, emsg, eargs)
 
       line = if eclass == :processes
