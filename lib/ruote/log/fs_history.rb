@@ -85,14 +85,24 @@ module Ruote
     #  # (NOTE why not ?)
     #end
 
+    ABBREVIATIONS = {
+      :processes => 'ps',
+      :workitems => 'wi'
+    }
+
     protected
+
+    def ab (s)
+
+      ABBREVIATIONS[s] || s.to_s
+    end
 
     def receive (eclass, emsg, eargs)
 
       line = if eclass == :processes
-        [ eargs[:wfid], eclass, emsg ]
+        [ eargs[:wfid], ab(eclass), emsg ]
       elsif eclass == :workitems
-        [ eargs[:workitem].fei.wfid, eclass, emsg, eargs[:pname] ]
+        [ eargs[:workitem].fei.wfid, ab(eclass), emsg, eargs[:pname] ]
       else
         nil
       end
@@ -101,7 +111,9 @@ module Ruote
 
       rotate_if_necessary
 
-      line.unshift(@last.strftime('%F %T'))
+      #line.unshift(@last.strftime('%F %T'))
+      line.unshift("#{@last.strftime('%F %T')}.#{"%06d" % @last.usec}")
+
       @file.puts(line.join(' '))
       @file.flush
     end
