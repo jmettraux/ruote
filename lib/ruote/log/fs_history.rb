@@ -57,7 +57,9 @@ module Ruote
       @file.close rescue nil
     end
 
-    # Brute approach, grep until the process launch is reached...
+    # Returns an array of Ruote::Record instances, each record represents
+    # a ruote engine [history] event.
+    # Returns an empty array if no history was found for the given wfid.
     #
     def process_history (wfid)
 
@@ -73,14 +75,13 @@ module Ruote
 
           next unless l.match(/ #{wfid} /)
 
-          l = l.strip
-          r = split_line(l)
+          r = Record.split_line(engine.engine_id, l.strip)
 
           next unless r
 
           history.unshift(r)
 
-          return history if l.match(/ ps launch /)
+          return history if r.is_process_launch?
         end
       end
 
@@ -91,9 +92,6 @@ module Ruote
     #  # (NOTE why not ?)
     #end
 
-    LINE_REGEX = /^([0-9-]{10} [^ ]+) ([^ ]+) ([a-z]{2}) (.+)$/
-    MSG_REGEX = /^([^ ]+)( \_[0-9]+)?( [0-9\_]+)?(.*)$/
-
     ABBREVIATIONS = {
       :processes => 'ps',
       :workitems => 'wi',
@@ -101,36 +99,6 @@ module Ruote
     }
 
     protected
-
-    def rebuild_fei (wfid, sub_wfid, expid)
-
-      fei = FlowExpressionId.new
-      fei.wfid = sub_wfid ? "#{wfid}#{sub_wfid.strip}" : wfid
-      fei.expid = expid.strip
-      fei.engine_id = engine.engine_id
-      fei
-    end
-
-    def split_rest (wfid, r)
-
-      if m = MSG_REGEX.match(r)
-        a = [ m[1] ]
-        a << rebuild_fei(wfid, m[2], m[3]) if m[3]
-        a << m[4].strip
-        a
-      else
-        [ r ]
-      end
-    end
-
-    def split_line (l)
-
-      m = LINE_REGEX.match(l)
-
-      return nil unless m
-
-      [ Time.parse(m[1]), m[2], m[3], *split_rest(m[2], m[4]) ]
-    end
 
     def ab (s)
 
@@ -231,6 +199,65 @@ module Ruote
       ].join('_') + '.txt'
 
       @file = File.open(File.join(@path, fn), 'a')
+    end
+  end
+
+  # Represents a ruote engine [history] event.
+  # Is returned by FsHistory.process_history(wfid) method calls.
+  #
+  class Record
+
+    LINE_REGEX = /^([0-9-]{10} [^ ]+) ([^ ]+) ([a-z]{2}) (.+)$/
+    MSG_REGEX = /^([^ ]+)( \_[0-9]+)?( [0-9\_]+)?(.*)$/
+
+    attr_accessor :at, :wfid, :fei, :eclass, :event, :message, :engine_id
+
+    # Returns a Record instance or nil (if the line can't be turned into
+    # a Record).
+    #
+    def self.split_line (engine_id, l)
+
+      m = LINE_REGEX.match(l)
+
+      return nil unless m
+
+      r = Record.new
+      r.engine_id = engine_id
+      r.at = Time.parse(m[1])
+      r.wfid = m[2]
+      r.eclass = m[3]
+      r.send(:split_rest, m[4]) # that stays in the family
+
+      r
+    end
+
+    def is_process_launch?
+
+      (@eclass == 'ps' && @event == 'launch')
+    end
+
+    protected
+
+    def rebuild_fei (wfid, sub_wfid, expid)
+
+      fei = FlowExpressionId.new
+      fei.wfid = sub_wfid ? "#{wfid}#{sub_wfid.strip}" : wfid
+      fei.expid = expid.strip
+      fei.engine_id = @engine_id
+      fei
+    end
+
+    def split_rest (r)
+
+      if m = MSG_REGEX.match(r)
+        @event = m[1]
+        @fei = m[3] ? rebuild_fei(wfid, m[2], m[3]) : nil
+        @message = m[4].strip
+      else
+        @event = r
+        @fei = nil
+        @message = nil
+      end
     end
   end
 end

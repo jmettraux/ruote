@@ -38,9 +38,9 @@ class FtHistoryTest < Test::Unit::TestCase
     h = history.process_history(wfid0)
     #h.each { |r| p r }
     assert_equal 4, h.size
-    assert_equal Time, h.first.first.class
+    assert_equal Time, h.first.at.class
 
-    fei = h[1][-2]
+    fei = h[1].fei
     assert_equal Ruote::FlowExpressionId, fei.class
     assert_equal wfid0, fei.wfid
     assert_equal '0_0', fei.expid
