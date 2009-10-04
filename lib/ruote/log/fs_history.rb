@@ -73,7 +73,13 @@ module Ruote
 
           next unless l.match(/ #{wfid} /)
 
-          history.unshift(l.strip)
+          l = l.strip
+          r = split_line(l)
+
+          next unless r
+
+          history.unshift(r)
+
           return history if l.match(/ processes launch$/)
         end
       end
@@ -85,12 +91,20 @@ module Ruote
     #  # (NOTE why not ?)
     #end
 
+    LINE_REGEX = /^([0-9-]{10} [^ ]+) ([^ ]+) ([a-z]{2}) (.+)$/
+
     ABBREVIATIONS = {
       :processes => 'ps',
       :workitems => 'wi'
     }
 
     protected
+
+    def split_line (l)
+
+      m = LINE_REGEX.match(l)
+      m ? [ Time.parse(m[1]), m[2], m[3], m[4] ] : nil
+    end
 
     def ab (s)
 
