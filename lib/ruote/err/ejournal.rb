@@ -38,14 +38,18 @@ module Ruote
       @h = h
     end
 
-    def when
-      @h[:when]
+    def at
+      @h[:at]
     end
 
-    # The 'internal' bus event
+    # The 'internal' workqueue event
     #
     def msg
       @h[:message]
+    end
+
+    def direction
+      msg[1]
     end
 
     def fei
@@ -58,6 +62,10 @@ module Ruote
 
     def tree
       msg.last[:tree]
+    end
+
+    def workitem
+      msg.last[:workitem]
     end
 
     def error_class
@@ -77,6 +85,21 @@ module Ruote
 
       raise "no tree in error, can't override" unless tree
       msg.last[:tree] = t
+    end
+
+    def to_h (short=false)
+
+      h = {}
+      h['fei'] = fei.to_h
+      h['error'] = @h[:error][0, 2] + [ @h[:error][2].first ]
+      h['direction'] = direction.to_s
+
+      return h if short
+
+      h['workitem'] = workitem.to_h
+      h['tree'] = tree
+
+      h
     end
   end
 
@@ -161,7 +184,7 @@ module Ruote
         # since Exception#to_yaml is not reliable...
 
       eargs[:fei] = fei
-      eargs[:when] = Time.now
+      eargs[:at] = Time.now
 
       record(fei, eargs)
     end

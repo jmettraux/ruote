@@ -36,6 +36,29 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal(
       {"my process"=>["0", ["sequence", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]]]},
       ps.variables)
+
+    # checking process_status.to_h
+
+    h = ps.to_h
+    #p h
+
+    assert_equal wfid, h['wfid']
+    assert_equal 2, h['expressions'].size
+    assert_equal 'my process', h['definition_name']
+
+    assert_equal Time, Time.parse(h['launched_time']).class
+
+    assert_equal(
+      ["sequence", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]],
+      h['original_tree'])
+
+    assert_equal(
+      ["sequence", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]],
+      h['current_tree'])
+
+    assert_equal(
+      {"my process"=>["0", ["sequence", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]]]},
+      h['variables'])
   end
 
   def test_variables

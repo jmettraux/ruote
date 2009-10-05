@@ -161,6 +161,28 @@ module Ruote
 
       s
     end
+
+    def to_h
+
+      h = {}
+
+      %w[
+        wfid
+        definition_name definition_revision
+        original_tree current_tree
+        variables tags
+      ].each { |m| h[m] = self.send(m) }
+
+      h['launched_time'] = launched_time.to_s
+
+      # all_variables and all_tags ?
+
+      h['root_expression'] = nil
+      h['expressions'] = @expressions.collect { |e| e.fei.to_h }
+      h['errors'] = @errors.collect { |e| e.to_h(true) }
+
+      h
+    end
   end
 
   def self.decompose_tree (t, pos='0', h={})

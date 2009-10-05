@@ -88,7 +88,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     err1 = ps.errors.first
 
-    assert_not_equal err.when, err1.when
+    assert_not_equal err.at, err1.at
       # not the same error
   end
 
@@ -284,6 +284,30 @@ class FtProcessStatusTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_nil @engine.process(wfid)
+  end
+
+  def test_ps_to_h
+
+    pdef = Ruote.process_definition do
+      error 'nada'
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    es = ps.to_h['errors']
+    e = es.first
+
+    #p e
+
+    assert_equal 1, es.size
+    assert_equal 'reply', e['direction']
+    assert_equal wfid, e['fei']['wfid']
+    assert_equal 3, e.size
   end
 end
 
