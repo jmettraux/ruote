@@ -260,7 +260,30 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
   def test_forgotten_subprocess
 
-    flunk
+    pdef = Ruote.process_definition do
+      sequence do
+        sub0 :forget => true
+        echo 'done.'
+      end
+      define 'sub0' do
+        error 'broken wing'
+      end
+    end
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    assert_equal 'done.', @tracer.to_s
+
+    ps = @engine.process(wfid)
+    assert_equal 3, ps.expressions.size
+    assert_equal 1, ps.errors.size
+
+    @engine.replay_at_error(ps.errors.first)
+    wait_for(wfid)
+    wait_for(wfid)
+
+    assert_nil @engine.process(wfid)
   end
 end
 
