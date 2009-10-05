@@ -127,5 +127,30 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_trace(pdef, 'failed.')
   end
+
+  def test_with_concurrence
+
+    pdef = Ruote.process_definition do
+      sequence do
+        concurrence :on_error => 'emil' do
+          alpha
+          error 'nada0'
+          error 'nada1'
+        end
+        echo 'done.'
+      end
+    end
+
+    acount = 0
+    ecount = 0
+    @engine.register_participant(:alpha) { |wi| acount += 1 }
+    @engine.register_participant(:emil) { |wi| ecount += 1 }
+
+    #noisy
+
+    assert_trace pdef, 'done.'
+    assert_equal 1, acount
+    assert_equal 1, ecount
+  end
 end
 
