@@ -7,8 +7,8 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-#require 'ruote/part/fs_participant'
 require 'ruote/part/hash_participant'
+require 'ruote/part/null_participant'
 
 
 class EftConcurrentIteratorTest < Test::Unit::TestCase
@@ -309,6 +309,37 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w{ . . . })
     assert_equal({0=>{"f"=>"a"}, 1=>{"f"=>"b"}, 2=>{"f"=>"c"}}, merged_fields)
+  end
+
+  def test_cancel
+
+    n = 77
+
+    pdef = Ruote.process_definition do
+      concurrent_iterator :times => n do
+        sequence do
+          alpha
+          bravo
+        end
+      end
+    end
+
+    acount = 0
+    @engine.register_participant(:alpha) { |wi| acount += 1 }
+    @engine.register_participant(:bravo, Ruote::NullParticipant)
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    sleep n.to_f/80
+
+    assert_equal n, acount
+
+    @engine.cancel_process(wfid)
+    wait_for(wfid)
+
+    assert_nil @engine.process(wfid)
   end
 
   protected
