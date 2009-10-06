@@ -240,6 +240,20 @@ module Ruote
       end
     end
 
+    # Cleans the engine and its services. Used by the test framework.
+    #
+    def purge!
+
+      wqueue.purge!
+        # at first, try to make work stop
+
+      @context.values.each do |service|
+        next if service == self
+        next if service.is_a?(Ruote::Workqueue)
+        service.purge! if service.respond_to?(:purge!)
+      end
+    end
+
     def add_service (key, o)
 
       remove_service(key)

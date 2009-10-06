@@ -64,6 +64,13 @@ module Ruote
 
       exp
     end
+
+    # Clears this storage. Mostly used by the test framework.
+    #
+    def purge!
+
+      clear
+    end
   end
 end
 

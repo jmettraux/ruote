@@ -332,7 +332,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep n.to_f/80
+    sleep n.to_f/50
 
     assert_equal n, acount
 

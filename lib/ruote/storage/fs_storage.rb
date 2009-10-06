@@ -139,11 +139,18 @@ module Ruote
       # nothing to do
     end
 
+    # Clears this storage. Mostly used by the test framework.
+    #
+    def purge!
+
+      Dir[File.join(@path, '*')].each { |d| FileUtils.rm_rf(d) }
+    end
+
     protected
 
     def all_filenames
 
-      Dir["#{@path}/**/*.ruote"]
+      Dir[File.join(@path, '**', '*.ruote')]
     end
 
     def dir_for (wfid)

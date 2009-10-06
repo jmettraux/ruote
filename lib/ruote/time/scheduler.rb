@@ -133,6 +133,13 @@ module Ruote
       @scheduler.jobs
     end
 
+    # Clears all jobs. Mostly used by the test framework.
+    #
+    def purge!
+
+      @scheduler.all_jobs { |j| @scheduler.unschedule(j.job_id) }
+    end
+
     protected
 
     def reload

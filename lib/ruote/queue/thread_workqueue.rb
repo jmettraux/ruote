@@ -60,6 +60,13 @@ module Ruote
 
       while @queue.size > 0; Thread.pass; end
     end
+
+    # Basically, it returns when there are no more jobs... It's like #shutdown.
+    #
+    def purge!
+
+      shutdown
+    end
   end
 end
 

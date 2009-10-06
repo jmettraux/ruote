@@ -88,6 +88,11 @@ module Ruote
       operate { |jobs| jobs.inject({}) { |h, j| h[j.job_id] = j; h } }
     end
 
+    def purge!
+
+      operate { |jobs| jobs.clear }
+    end
+
     protected
 
     def operate (skip=false, &block)
@@ -166,6 +171,14 @@ module Ruote
 
       @jq.shutdown
       @cjq.shutdown
+    end
+
+    # Clears all jobs. Mostly used by the test framework.
+    #
+    def purge!
+
+      @jq.purge!
+      @cjq.purge!
     end
   end
 end

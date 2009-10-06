@@ -114,10 +114,12 @@ module Ruote
       r << real_storage.to_s
     end
 
-    def purge
+    # Clears this storage. Mostly used by the test framework.
+    #
+    def purge!
 
       @cache.clear
-      real_storage.purge if real_storage.respond_to?(:purge)
+      real_storage.purge! if real_storage.respond_to?(:purge!)
     end
 
     protected

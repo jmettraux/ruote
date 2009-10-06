@@ -30,6 +30,8 @@ class FtHistoryTest < Test::Unit::TestCase
     wfid0 = assert_trace(pdef, "done.")
     wfid1 = assert_trace(pdef, "done.\ndone.")
 
+    sleep 0.010
+
     lines = File.readlines(Dir['work/log/*'].first)
 
     assert_equal 8, lines.size
@@ -92,6 +94,8 @@ class FtHistoryTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
     wait_for(wfid)
+
+    sleep 0.010
 
     #dump_history
 

@@ -61,6 +61,13 @@ module Ruote
       save(listeners.delete(fei))
     end
 
+    # Clears this tracker. Mostly used by the test framework.
+    #
+    def purge!
+
+      @listeners = Set.new
+    end
+
     protected
 
     def listeners

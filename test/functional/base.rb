@@ -37,9 +37,8 @@ module FunctionalBase
 
   def teardown
 
-    @engine.shutdown
-
     purge_engine
+    @engine.shutdown
   end
 
   def assert_log_count (count, &block)
@@ -180,9 +179,8 @@ module FunctionalBase
 
   def purge_engine
 
-    @engine.context.values.each do |s|
-      s.purge if s.respond_to?(:purge)
-    end
+    @engine.purge!
+
     FileUtils.rm_rf('work')
   end
 

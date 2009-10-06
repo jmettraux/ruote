@@ -49,6 +49,13 @@ module Ruote
       @bucket.close
     end
 
+    # Clears this tracker. Mostly used by the test framework.
+    #
+    def purge!
+
+      @bucket.save(Set.new)
+    end
+
     protected
 
     def listeners
