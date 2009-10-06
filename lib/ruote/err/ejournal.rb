@@ -151,6 +151,13 @@ module Ruote
       end
     end
 
+    # Clears all errors. Mostly used by the test framework.
+    #
+    def purge!
+
+      @errors.clear
+    end
+
     protected
 
     def record (fei, eargs)

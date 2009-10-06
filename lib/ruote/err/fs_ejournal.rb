@@ -78,6 +78,13 @@ module Ruote
       end
     end
 
+    # Clears all errors. Mostly used by the test framework.
+    #
+    def purge!
+
+      Dir[File.join(@path, '*')].each { |d| FileUtils.rm_rf(d) }
+    end
+
     protected
 
     def path_for (wfid)
