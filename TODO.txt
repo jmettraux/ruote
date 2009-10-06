@@ -143,6 +143,7 @@
 [o] error : when an error expression is cancelled, should the err get remove 
     from the process status ? yes.
 [o] file logger / history service
+[o] engine.process_history(wfid)
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : when (exploit :var :set event)
@@ -236,8 +237,6 @@ restart tests :
 [ ] let listeners accept launchitems
 
 [ ] ruote/exp/fe_set.rb:147: warning: already initialized constant PREFIX_REGEX
-
-[ ] engine.history ? engine.process_history(wfid) ?
 
 [ ] implement kill_process! (kill_expression! ?)
 

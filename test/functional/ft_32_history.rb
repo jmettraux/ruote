@@ -45,6 +45,10 @@ class FtHistoryTest < Test::Unit::TestCase
     assert_equal wfid0, fei.wfid
     assert_equal '0_0', fei.expid
     assert_equal 'engine', fei.engine_id
+
+    # testing engine#process_history
+
+    assert_equal 4, @engine.process_history(wfid1).size
   end
 
   def test_subprocess
