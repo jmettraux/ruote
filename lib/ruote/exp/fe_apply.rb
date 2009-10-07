@@ -63,6 +63,7 @@ module Ruote::Exp
     names :apply
 
     # TODO : maybe accept directly ruby and xml (and json)
+    # TODO : _yield ?
 
     def apply
 

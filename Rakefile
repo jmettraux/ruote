@@ -74,6 +74,14 @@ Rake::PackageTask.new('ruote', gemspec.version) do |pkg|
   end
 end
 
+# making "rake sudo deps:install" possible.
+#
+# thanks Kenneth !
+#
+task :sudo do
+  $RAKE_USE_SUDO = true
+end
+
 namespace :deps do
 
   # installs the gems required by ruote
