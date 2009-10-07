@@ -145,23 +145,23 @@
 [o] file logger / history service
 [o] engine.process_history(wfid)
 
+[ ] exp : cron
+[ ] exp : every
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : when (exploit :var :set event)
 [ ] exp : case (is it necessary ?)
-[ ] exp : defined (not really necessary)
-[ ] exp : quote (not really necessary)
-[ ] exp : field / attribute (not really necessary)
-[ ] exp : variable (not really necessary)
 [ ] exp : filter
 [ ] exp : filter-definition
 [x] exp : lose ?
 [x] exp : parameter
 [ ] exp : log
 
-[ ] exp : step (jump to cursor tag ?)
+[ ] exp : defined (not really necessary)
+[ ] exp : quote (not really necessary)
+[ ] exp : field / attribute (not really necessary)
+[ ] exp : variable (not really necessary)
 
-[ ] exp : cron
-[ ] exp : every
+[ ] exp : step (jump to cursor tag ?)
 
 restart tests :
 [ ] when

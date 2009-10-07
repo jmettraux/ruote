@@ -80,7 +80,8 @@ namespace :deps do
   #
   task :install do
     sh(
-      "sudo gem install " +
+      #"sudo gem install " +
+      "gem install " +
       "rufus-lru rufus-mnemo rufus-treechecker rufus-dollar rufus-scheduler")
   end
 end
