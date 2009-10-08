@@ -35,6 +35,8 @@ module Ruote::Exp
 
     def determine_list
 
+      @times_iterator = false
+
       #
       # :times or :branches
 
@@ -42,7 +44,10 @@ module Ruote::Exp
 
         list = ((1..count.to_i).to_a rescue nil)
 
-        return list if list
+        if list
+          @times_iterator = true
+          return list
+        end
       end
 
       #

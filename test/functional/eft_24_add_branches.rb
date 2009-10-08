@@ -28,6 +28,38 @@ class EftAddBranchesTest < Test::Unit::TestCase
     assert_trace pdef, %w[ a b c d ]
   end
 
+  def test_add_branches_times
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :times => 3 do
+        sequence do
+          echo '${v:i}'
+          add_branches 2, :if => '${v:i} == 1'
+        end
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ 1 2 3 4 5 ]
+  end
+
+  def test_add_branches_times_and_whatever
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :times => 3 do
+        sequence do
+          echo '${v:i}'
+          add_branches 'a, b', :if => '${v:i} == 1'
+        end
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ 1 2 3 a b ]
+  end
+
   def test_add_branches_with_tag
 
     pdef = Ruote.process_definition :name => 'test' do

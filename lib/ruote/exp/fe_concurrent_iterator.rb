@@ -125,6 +125,13 @@ module Ruote::Exp
 
     def add_branches (list)
 
+      if @times_iterator && list.size == 1
+
+        count = (list.first.to_i rescue nil)
+
+        list = (@list_size + 1..@list_size + count) if count
+      end
+
       list.each do |val|
 
         #@list << val
