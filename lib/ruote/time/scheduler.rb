@@ -53,7 +53,7 @@ module Ruote
 
         opts[:workitem] = context[:s_expression_storage][@fei].applied_workitem
 
-      else @method == :cancel
+      elsif @method == :cancel
 
         opts[:flavour] = :timeout
       end

@@ -34,6 +34,10 @@ module Ruote
       FileUtils.touch(@fpath) unless File.exist?(@fpath)
 
       @file = File.open(@fpath, 'wb+')
+
+      @raw = nil
+      @data = nil
+      @mtime = nil
     end
 
     # Closes this bucket (the File instance specifically).

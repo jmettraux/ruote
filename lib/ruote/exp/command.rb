@@ -45,7 +45,7 @@ module Ruote::Exp
       return nil if command == nil
 
       if command == 'back'
-        command == 'skip'
+        command = 'skip'
         step = step ? -step : -1
       elsif command == 'skip'
         step ||= 1

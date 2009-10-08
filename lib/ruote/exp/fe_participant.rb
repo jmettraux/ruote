@@ -132,15 +132,16 @@ module Ruote::Exp
 
       @participant_name = @participant_name.to_s
 
-      raise (
-        ArgumentError.new("no participant name specified")
-      ) if @participant_name == ''
+      if @participant_name == ''
+        raise ArgumentError.new("no participant name specified")
+      end
 
       participant = plist.lookup(@participant_name)
 
-      raise(
-        ArgumentError.new("no participant named #{@participant_name.inspect}")
-      ) unless participant
+      if participant.nil?
+        raise(ArgumentError.new(
+          "no participant named #{@participant_name.inspect}"))
+      end
 
       #
       # participant found, consider timeout

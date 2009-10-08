@@ -59,7 +59,7 @@ Hello, do you want ${f:item} ?
 
     sleep 0.350
 
-    assert_match /cat food/, File.read(trapfile)
+    assert_match(/cat food/, File.read(trapfile))
     assert_nil @engine.process(wfid)
   end
 end

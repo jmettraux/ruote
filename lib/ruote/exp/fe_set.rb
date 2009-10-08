@@ -144,7 +144,7 @@ module Ruote::Exp
       end
     end
 
-    PREFIX_REGEX = /^([^:]+):(.+)$/
+    PREFIX_REGEX = /^([^:]+):(.+)$/ unless defined?(PREFIX_REGEX)
 
     def set_vf (key, value)
 

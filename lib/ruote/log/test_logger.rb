@@ -44,6 +44,8 @@ module Ruote
       @index = 0
       @mutex = Mutex.new
       @queue = Queue.new
+
+      @wait_patterns = nil
     end
 
     def wait_for (patterns)

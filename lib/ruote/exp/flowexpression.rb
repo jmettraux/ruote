@@ -105,6 +105,9 @@ module Ruote::Exp
       @on_cancel = attribute(:on_cancel)
       @on_error = attribute(:on_error)
       @on_timeout = attribute(:on_timeout)
+
+      @tagname = nil
+      @timeout_job_id = nil
     end
 
     # Returns the parent expression of this expression instance.

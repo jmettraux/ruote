@@ -229,7 +229,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     err = ps.errors.first
 
-    assert_match /^#{wfid}_\d+0$/, err.fei.wfid
+    assert_match(/^#{wfid}_\d+0$/, err.fei.wfid)
 
     @engine.replay_at_error(err)
 

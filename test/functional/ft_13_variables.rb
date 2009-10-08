@@ -119,9 +119,9 @@ class FtVariablesTest < Test::Unit::TestCase
 
     assert_trace pdef, 'done.'
 
-    assert_equal nil, results[0]
-    assert_equal '/0', results[1]
-    assert_match /^\d+00\/0\_0$/, results[2]
+    assert_equal(nil, results[0])
+    assert_equal('/0', results[1])
+    assert_match(/^\d+00\/0\_0$/, results[2])
   end
 end
 
