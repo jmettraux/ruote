@@ -7,7 +7,6 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'mailtrap' # sudo gem install mailtrap
 require 'ruote/part/smtp_participant'
 
 
@@ -18,9 +17,13 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
     def puts (s)
       # silent night...
     end
-  end
+  end if RUBY_PLATFORM != 'java'
 
   def test_smtp
+
+    return if RUBY_PLATFORM == 'java'
+
+    require 'mailtrap' # sudo gem install mailtrap
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
