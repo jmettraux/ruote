@@ -159,6 +159,9 @@ module Ruote
 
       elsif eclass == :errors
 
+        #p [ eclass, emsg, eargs ]
+        return if emsg == :remove
+
         oeargs = eargs[:message].last
         error = eargs[:error]
         [ short_fei(oeargs), error.class, error.message ]

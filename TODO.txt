@@ -235,11 +235,13 @@ restart tests :
 
 [ ] condition : "${f:x} [is] empty" / this one is hard
 
-[ ] let listeners accept launchitems
+[o] let listeners accept launchitems
 
 [ ] ruote/exp/fe_set.rb:147: warning: already initialized constant PREFIX_REGEX
 
 [ ] implement kill_process! (kill_expression! ?)
 
 [ ] engine.force_reply_to_parent(fei) ?
+
+[ ] break fs_history, prepare for dm_history
 

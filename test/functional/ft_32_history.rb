@@ -104,6 +104,29 @@ class FtHistoryTest < Test::Unit::TestCase
     assert_equal 2, h.size
   end
 
+  def test_cancelling_failed_exp
+
+    pdef = Ruote.process_definition :name => 'test' do
+      nada
+    end
+
+    @engine.add_service(:s_history, Ruote::FsHistory)
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    fei = @engine.process(wfid).errors.first.fei
+
+    @engine.cancel_expression(fei)
+    wait_for(wfid)
+
+    h = @engine.history.process_history(wfid)
+    #h.each { |r| p r }
+    assert_equal 3, h.size
+  end
+
   protected
 
   def dump_history
