@@ -51,6 +51,12 @@ class FtHistoryTest < Test::Unit::TestCase
     # testing engine#process_history
 
     assert_equal 4, @engine.process_history(wfid1).size
+
+    # testing record.to_h
+
+    r = @engine.process_history(wfid1).first
+
+    assert_equal 'launch', r.to_h['event']
   end
 
   def test_subprocess

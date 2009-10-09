@@ -239,6 +239,19 @@ module Ruote
       (@eclass == 'ps' && @event == 'launch')
     end
 
+    #attr_accessor :at, :wfid, :fei, :eclass, :event, :message, :engine_id
+
+    def to_h
+
+      %w[ at wfid fei eclass event message engine_id ].inject({}) { |h, a|
+
+        v = self.send(a)
+        h[a] = v.is_a?(FlowExpressionId) ? v.to_h : v.to_s
+
+        h
+      }
+    end
+
     protected
 
     def rebuild_fei (wfid, sub_wfid, expid)
