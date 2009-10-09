@@ -133,6 +133,40 @@ class FtHistoryTest < Test::Unit::TestCase
     assert_equal 3, h.size
   end
 
+  def test_history_date
+
+    @engine.add_service(:s_history, Ruote::FsHistory)
+
+    FileUtils.mkdir(File.join(@engine.workdir, 'log')) rescue nil
+
+    File.open(File.join(
+      @engine.workdir, 'log', 'engine_history_2009-10-08.txt'), 'w'
+    ) do |f|
+      f.puts(%{
+2009-10-08 16:52:37.751683 20091008-bihomugiso ps launch name=test
+2009-10-08 16:52:37.782714 20091008-bihomugiso er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
+2009-10-08 16:52:38.525532 20091008-bijesejuno ps launch name=test
+2009-10-08 16:52:38.533304 20091008-bijesejuno er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
+2009-10-08 16:52:39.525532 20091008-bojesejuna ps launch name=test
+2009-10-08 16:52:39.533304 20091008-bojesejuna er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
+      }.strip)
+    end
+
+    File.open(File.join(
+      @engine.workdir, 'log', 'engine_history_2009-10-09.txt'), 'w'
+    ) do |f|
+      f.puts(%{
+2009-10-09 16:52:14.017324 20091009-totsugubi ps launch name=test
+2009-10-09 16:52:14.026024 20091009-totsugubi er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
+2009-10-09 16:52:36.027944 20091009-bigehimodi ps launch name=test
+2009-10-09 16:52:36.037019 20091009-bigehimodi er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
+      }.strip)
+    end
+
+    assert_equal 4, @engine.history_by_date('2009-10-09').size
+    assert_equal 6, @engine.history_by_date('2009-10-08').size
+  end
+
   protected
 
   def dump_history

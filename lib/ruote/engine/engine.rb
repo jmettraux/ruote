@@ -188,6 +188,13 @@ module Ruote
       history ? history.process_history(wfid) : []
     end
 
+    # Returns the history of all processes for a given date.
+    #
+    def history_by_date (date)
+
+      history ? history.history_by_date(date) : []
+    end
+
     # Cancels a whole process instance.
     #
     def cancel_process (wfid)

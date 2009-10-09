@@ -88,6 +88,24 @@ module Ruote
       history # shouldn't occur, unless history [file] got lost
     end
 
+    # Returns an array of Record instances for a given date, and any process
+    # instance.
+    #
+    def history_by_date (date)
+
+      date = Time.parse(date.to_s).strftime('%F')
+
+      lines = File.readlines(
+        File.join(@path, "#{engine.engine_id}_history_#{date}.txt")) rescue []
+
+      lines.inject([]) do |a, l|
+        if r = Record.split_line(engine.engine_id, l.strip)
+          a << r
+        end
+        a
+      end
+    end
+
     #def history_to_tree (wfid)
     #  # (NOTE why not ?)
     #end
