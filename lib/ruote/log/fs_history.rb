@@ -61,7 +61,7 @@ module Ruote
     # a ruote engine [history] event.
     # Returns an empty array if no history was found for the given wfid.
     #
-    def process_history (wfid)
+    def by_process (wfid)
 
       files = Dir[File.join(@path, "#{engine.engine_id}_*.txt")].reverse
 
@@ -88,10 +88,23 @@ module Ruote
       history # shouldn't occur, unless history [file] got lost
     end
 
+    RANGE_REGEXP = /_([0-9]{4}-[0-9]{2}-[0-9]{2}).txt$/
+
+    # Returns an array [ most recent date, oldest date ] (Time instances).
+    #
+    def range
+
+      files = Dir[File.join(@path, "#{engine.engine_id}_*.txt")]
+
+      [ files.last, files.first ].collect do |fn|
+        Time.parse(RANGE_REGEXP.match(fn)[1])
+      end
+    end
+
     # Returns an array of Record instances for a given date, and any process
     # instance.
     #
-    def history_by_date (date)
+    def by_date (date)
 
       date = Time.parse(date.to_s).strftime('%F')
 

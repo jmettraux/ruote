@@ -37,7 +37,7 @@ class FtHistoryTest < Test::Unit::TestCase
     assert_equal 8, lines.size
     #lines.each { |l| puts l }
 
-    h = history.process_history(wfid0)
+    h = @engine.history.by_process(wfid0)
     #h.each { |r| p r }
     assert_equal 4, h.size
     assert_equal Time, h.first.at.class
@@ -48,13 +48,9 @@ class FtHistoryTest < Test::Unit::TestCase
     assert_equal '0_0', fei.expid
     assert_equal 'engine', fei.engine_id
 
-    # testing engine#process_history
-
-    assert_equal 4, @engine.process_history(wfid1).size
-
     # testing record.to_h
 
-    r = @engine.process_history(wfid1).first
+    r = @engine.history.by_process(wfid1).first
 
     assert_equal 'launch', r.to_h['event']
   end
@@ -83,7 +79,7 @@ class FtHistoryTest < Test::Unit::TestCase
 
     #dump_history
 
-    h = @engine.history.process_history(wfid0)
+    h = @engine.history.by_process(wfid0)
     #h.each { |r| p r }
     assert_equal 5, h.size
   end
@@ -105,7 +101,7 @@ class FtHistoryTest < Test::Unit::TestCase
 
     #dump_history
 
-    h = @engine.history.process_history(wfid)
+    h = @engine.history.by_process(wfid)
     #h.each { |r| p r }
     assert_equal 2, h.size
   end
@@ -128,7 +124,7 @@ class FtHistoryTest < Test::Unit::TestCase
     @engine.cancel_expression(fei)
     wait_for(wfid)
 
-    h = @engine.history.process_history(wfid)
+    h = @engine.history.by_process(wfid)
     #h.each { |r| p r }
     assert_equal 3, h.size
   end
@@ -153,18 +149,22 @@ class FtHistoryTest < Test::Unit::TestCase
     end
 
     File.open(File.join(
-      @engine.workdir, 'log', 'engine_history_2009-10-09.txt'), 'w'
+      @engine.workdir, 'log', 'engine_history_2009-10-31.txt'), 'w'
     ) do |f|
       f.puts(%{
-2009-10-09 16:52:14.017324 20091009-totsugubi ps launch name=test
-2009-10-09 16:52:14.026024 20091009-totsugubi er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
-2009-10-09 16:52:36.027944 20091009-bigehimodi ps launch name=test
-2009-10-09 16:52:36.037019 20091009-bigehimodi er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
+2009-10-31 16:52:14.017324 20091009-totsugubi ps launch name=test
+2009-10-31 16:52:14.026024 20091009-totsugubi er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
+2009-10-31 16:52:36.027944 20091009-bigehimodi ps launch name=test
+2009-10-31 16:52:36.037019 20091009-bigehimodi er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
       }.strip)
     end
 
-    assert_equal 4, @engine.history_by_date('2009-10-09').size
-    assert_equal 6, @engine.history_by_date('2009-10-08').size
+    assert_equal 6, @engine.history.by_date('2009-10-08').size
+    assert_equal 4, @engine.history.by_date('2009-10-31').size
+
+    assert_equal(
+      [ Time.parse('2009-10-31'), Time.parse('2009-10-08') ],
+      @engine.history.range)
   end
 
   protected

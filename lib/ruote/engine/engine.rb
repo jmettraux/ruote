@@ -177,24 +177,6 @@ module Ruote
       end
     end
 
-    # Returns the history of the given process instance (if accessible).
-    #
-    # The history of a process instance is collected by a History service. By
-    # default, no such service is bound and this method will return an
-    # empty array.
-    #
-    def process_history (wfid)
-
-      history ? history.process_history(wfid) : []
-    end
-
-    # Returns the history of all processes for a given date.
-    #
-    def history_by_date (date)
-
-      history ? history.history_by_date(date) : []
-    end
-
     # Cancels a whole process instance.
     #
     def cancel_process (wfid)
