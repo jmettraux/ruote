@@ -110,6 +110,18 @@ module Ruote
     #  # (NOTE why not ?)
     #end
 
+    # The history system doesn't implement purge! so that when purge! is called
+    # on the engine, the history is not cleared.
+    #
+    # Call this *dangerous* clear! method to clean out any history file.
+    #
+    def clear!
+
+      Dir[File.join(@path, "#{engine.engine_id}_*.txt")].each do |f|
+        FileUtils.rm_f(f) rescue nil
+      end
+    end
+
     ABBREVIATIONS = {
       :processes => 'ps',
       :workitems => 'wi',
