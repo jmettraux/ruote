@@ -124,5 +124,19 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     assert_equal 1, bravo.size
   end
+
+  #def test_on_cancel_and_last_payload
+  #  pdef = Ruote.process_definition do
+  #    sequence :on_cancel => 'decom' do
+  #      set 'f:toto' => 'nada'
+  #      cancel_process
+  #    end
+  #    define 'decom' do
+  #      echo '|${f:toto}|'
+  #    end
+  #  end
+  #  #noisy
+  #  assert_trace pdef, '|nada|'
+  #end
 end
 

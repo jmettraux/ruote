@@ -245,3 +245,6 @@ restart tests :
 
 [ ] break fs_history, prepare for dm_history
 
+[ ] :on_timeout => :rewind (break, jump to x)...
+[ ] rewind 'x' where x is a tagname (command x)
+
