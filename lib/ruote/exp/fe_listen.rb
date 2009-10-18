@@ -66,7 +66,7 @@ module Ruote::Exp
   # other processes :
   #
   #   Ruote.process_definition :name => 'stalker' do
-  #     listen :to => 'bob'
+  #     listen :to => 'bob' do
   #       participant :ref => 'charly'
   #     end
   #   end
