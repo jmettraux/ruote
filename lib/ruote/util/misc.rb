@@ -106,5 +106,12 @@ module Ruote
 
     (s.index('.') ? Float(s) : Integer(s)) rescue nil
   end
+
+  # (simpler than the one from active_support)
+  #
+  def self.constantize (s)
+
+    s.split('::').inject(Object) { |c, n| n == '' ? c : c.const_get(n) }
+  end
 end
 

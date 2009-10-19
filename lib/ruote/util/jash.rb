@@ -22,6 +22,9 @@
 # Made in Japan.
 #++
 
+require 'ruote/util/misc'
+
+
 module Ruote
 
   #
@@ -117,16 +120,9 @@ module Ruote
 
       return h.inject({}) { |hh, (k, v)| hh[k] = decode(v); hh } unless k
 
-      o = constantize(k).allocate
+      o = Ruote.constantize(k).allocate
 
       h.inject(o) { |o, (k, v)| o.instance_variable_set(k, decode(v)); o }
-    end
-
-    # (simpler than the one from active_support)
-    #
-    def self.constantize (s)
-
-      s.split('::').inject(Object) { |c, n| n == '' ? c : c.const_get(n) }
     end
   end
 end

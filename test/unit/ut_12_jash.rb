@@ -110,7 +110,7 @@ class JashTest < Test::Unit::TestCase
 
     assert_equal(
       Test::Unit::TestCase,
-      Ruote::Jash.constantize('Test::Unit::TestCase'))
+      Ruote.constantize('Test::Unit::TestCase'))
   end
 
   def test_nil_instance_variable
