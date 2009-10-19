@@ -42,7 +42,7 @@ class EftWaitTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       sequence do
         echo 'a'
-        wait :for => '3s'
+        wait :for => '3d'
         echo 'b'
       end
     end
