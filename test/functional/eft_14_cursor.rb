@@ -222,5 +222,33 @@ class EftCursorTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ a b ]
   end
+
+  def test_break_if
+
+    pdef = Ruote.process_definition :name => 'test' do
+      cursor :break_if => 'true' do
+        echo 'c'
+      end
+      echo 'done.'
+    end
+
+    #noisy
+
+    assert_trace pdef, 'done.'
+  end
+
+  def test_over_unless
+
+    pdef = Ruote.process_definition :name => 'test' do
+      cursor :over_unless => 'false' do
+        echo 'c'
+      end
+      echo 'done.'
+    end
+
+    #noisy
+
+    assert_trace pdef, 'done.'
+  end
 end
 

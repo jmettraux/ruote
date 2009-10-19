@@ -31,7 +31,7 @@ module Ruote::Exp
   module CommandMixin
 
     F_COMMAND = '__command__'
-    ATT_COMMANDS = %w[ break rewind ]
+    ATT_COMMANDS = %w[ break rewind over ]
 
     protected
 
@@ -41,6 +41,7 @@ module Ruote::Exp
 
       command, step = workitem.fields.delete(F_COMMAND)
       command, step = lookup_attribute_command(workitem) unless command
+      command = 'break' if command == 'over'
 
       return nil if command == nil
 

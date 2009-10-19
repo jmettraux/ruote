@@ -160,6 +160,26 @@ module Ruote::Exp
   # cursor, but it will break the main 'cursor' (and thus break the whole
   # review process).
   #
+  # == :break_if / :rewind_if
+  #
+  # As an attribute of the cursor/repeat expression, you can set a :break_if.
+  # It tells the cursor (loop) if it has to break.
+  #
+  #   cursor :break_if => '${f:completed}' do
+  #     participant 'alpha'
+  #     participant 'bravo'
+  #     participant 'charly'
+  #   end
+  #
+  # If alpha or bravo replies and the field 'completed' is set to true, this
+  # cursor will break.
+  #
+  # :break_unless is accepted. :over_if and :over_unless are synonyms for
+  # :break_if and :break_unless respectively.
+  #
+  # :rewind_if / :rewind_unless behave the same, but the cursor/loop, instead
+  # of breaking, is put back in its first step.
+  #
   #
   # = repeat (loop)
   #

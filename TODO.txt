@@ -248,3 +248,5 @@ restart tests :
 [ ] :on_timeout => :rewind (break, jump to x)...
 [ ] rewind 'x' where x is a tagname (command x)
 
+[ ] cursor : :break_if / :break_unless
+
