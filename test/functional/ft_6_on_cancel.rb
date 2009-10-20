@@ -138,5 +138,27 @@ class FtOnCancelTest < Test::Unit::TestCase
   #  #noisy
   #  assert_trace pdef, '|nada|'
   #end
+
+  #def test_on_cancel_wait
+  #  pdef = Ruote.process_definition do
+  #    sequence :on_cancel => 'decom' do
+  #      echo 'nada'
+  #      wait '2d'
+  #    end
+  #    define 'decom' do
+  #      echo 'decom'
+  #    end
+  #  end
+  #  require 'ruote/part/null_participant'
+  #  @engine.register_participant '.*', Ruote::NullParticipant
+  #  #noisy
+  #  wfid = @engine.launch(pdef)
+  #  sleep 0.4
+  #  @engine.cancel_process(wfid)
+  #  wait_for(wfid)
+  #  assert_equal "nada\ndecom", @tracer.to_s
+  #  assert_equal 0, @engine.scheduler.jobs.size
+  #  assert_equal nil, @engine.process(wfid)
+  #end
 end
 
