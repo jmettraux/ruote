@@ -21,6 +21,16 @@ class PdefParserTest < Test::Unit::TestCase
     end
   }
 
+
+  TREE1 = Ruote::Parser.parse(%{
+    Ruote.define :name => 'nada' do
+      sequence do
+        alpha
+        participant 'bravo', :timeout => '2d'
+      end
+    end
+  })
+
   def test_from_string
 
     tree = Ruote::Parser.parse(DEF0)
@@ -47,6 +57,44 @@ class PdefParserTest < Test::Unit::TestCase
       tree)
 
     File.delete(fn) # sooner or later, it will get erased
+  end
+
+  def test_to_xml
+
+    #puts Ruote::Parser.to_xml(TREE1, :indent => 2)
+    assert_equal(
+      %{
+<?xml version="1.0" encoding="UTF-8"?>
+<define name="nada">
+  <sequence>
+    <alpha/>
+    <participant timeout="2d" ref="bravo"/>
+  </sequence>
+</define>
+      }.strip,
+      Ruote::Parser.to_xml(TREE1, :indent => 2).strip)
+  end
+
+  def test_to_ruby
+
+    #puts Ruote::Parser.to_ruby(TREE1)
+    assert_equal(
+      %{
+Ruote.process_definition :name => "nada" do
+  sequence do
+    alpha
+    participant "bravo", :timeout => "2d"
+  end
+end
+      }.strip,
+      Ruote::Parser.to_ruby(TREE1).strip)
+  end
+
+  def test_to_json
+
+    require 'json'
+
+    assert_equal TREE1.to_json, Ruote::Parser.to_json(TREE1)
   end
 end
 

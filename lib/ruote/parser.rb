@@ -82,6 +82,67 @@ module Ruote
       @parser.parse(d)
     end
 
+    # Turns the given process definition tree (ruote syntax tree) to an XML
+    # String.
+    #
+    # Mainly used by ruote-fluo.
+    #
+    def self.to_xml (tree, options={})
+
+      require 'builder'
+
+      # TODO : deal with "participant 'toto'"
+
+      builder(options) do |xml|
+
+        atts = tree[1].dup
+
+        t = atts.find { |k, v| v == nil }
+        if t
+          atts.delete(t.first)
+          atts['ref'] = t.first
+        end
+
+        if tree[2].empty?
+          xml.tag!(tree[0], atts)
+        else
+          xml.tag!(tree[0], atts) do
+            tree[2].each { |child| to_xml(child, options) }
+          end
+        end
+      end
+    end
+
+    # Turns the given process definition tree (ruote syntax tree) to a Ruby
+    # process definition (a String containing that ruby process definition).
+    #
+    # Mainly used by ruote-fluo.
+    #
+    def self.to_ruby (tree, level=0)
+
+      expname = tree[0]
+
+      expname = 'Ruote.process_definition' if level == 0 && expname == 'define'
+
+      s = "#{'  ' * level}#{expname}#{atts_to_ruby(tree[1])}"
+
+      return "#{s}\n" if tree[2].empty?
+
+      s << " do\n"
+      tree[2].each { |child| s << to_ruby(child, level + 1) }
+      s << "#{'  ' * level}end\n"
+
+      s
+    end
+
+    # Turns the process definition tree (ruote syntax tree) to a JSON String.
+    #
+    def self.to_json (tree)
+
+      tree.to_json
+      #Ruote::Json.encode(tree)
+    end
+
     protected
 
     # Evaluates the ruby string in the code, but at fist, thanks to the
@@ -97,6 +158,40 @@ module Ruote
       #puts e
       #e.backtrace.each { |l| puts l }
       raise ArgumentError.new('probably not ruby')
+    end
+
+    # A convenience method when building XML
+    #
+    def self.builder (options={}, &block)
+
+      if b = options[:builder]
+        block.call(b)
+      else
+        b = Builder::XmlMarkup.new(:indent => (options[:indent] || 0))
+        options[:builder] = b
+        b.instruct! unless options[:instruct] == false
+        block.call(b)
+        b.target!
+      end
+    end
+
+    # As used by to_ruby.
+    #
+    def self.atts_to_ruby (atts)
+
+      return '' if atts.empty?
+
+      s = []
+
+      t = atts.find { |k, v| v == nil }
+      s << t.first.inspect if t
+
+      s = atts.inject(s) { |a, (k, v)|
+        a << ":#{k} => #{v.inspect}" if t.nil? || k != t.first
+        a
+      }.join(', ')
+
+      s.length > 0 ? " #{s}" : s
     end
   end
 end
