@@ -145,6 +145,7 @@
 [o] file logger / history service
 [o] engine.process_history(wfid)
 [o] add_branch :times/:branches
+[o] cursor : :break_if / :break_unless
 
 [ ] exp : cron
 [ ] exp : every
@@ -247,6 +248,4 @@ restart tests :
 
 [ ] :on_timeout => :rewind (break, jump to x)...
 [ ] rewind 'x' where x is a tagname (command x)
-
-[ ] cursor : :break_if / :break_unless
 

@@ -40,6 +40,9 @@ module Ruote
 
     include EngineContext
 
+    # Turns the input into a ruote syntax tree (raw process definition).
+    # This method is used by engine.launch(x) for example.
+    #
     def parse (definition)
 
       return definition if definition.is_a?(Array) and definition.size == 3
@@ -65,8 +68,26 @@ module Ruote
         "doesn't know how to parse definition (#{definition.class})")
     end
 
+    # Class method for parsing process definition (XML, Ruby, from file or
+    # from a string, ...) to syntax trees. Used by ruote-fluo for example.
+    #
+    def self.parse (d)
+
+      unless @parser
+        require 'ruote/util/treechecker'
+        @parser = Ruote::Parser.new
+        @parser.context = { :s_treechecker => Ruote::TreeChecker.new }
+      end
+
+      @parser.parse(d)
+    end
+
     protected
 
+    # Evaluates the ruby string in the code, but at fist, thanks to the
+    # treechecker, makes sure it doesn't code malicious ruby code (at least
+    # tries very hard).
+    #
     def ruby_eval (s)
 
       treechecker.check(s)
