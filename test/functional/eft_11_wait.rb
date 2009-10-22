@@ -18,20 +18,16 @@ class EftWaitTest < Test::Unit::TestCase
         alpha
         wait :for => '1s'
         alpha
+        echo 'done.'
       end
     end
 
     #noisy
 
     ts = []
+    @engine.register_participant(:alpha) { ts << Time.now }
 
-    @engine.register_participant :alpha do
-      ts << Time.now
-    end
-
-    @engine.launch(pdef)
-
-    sleep 1.6
+    assert_trace pdef, 'done.'
 
     #p ts
     assert ts[1] - ts[0] > 1.0
@@ -72,6 +68,28 @@ class EftWaitTest < Test::Unit::TestCase
     end
 
     assert_trace pdef, %w[ a b ]
+  end
+
+  def test_wait_until
+
+    pdef = Ruote.process_definition do
+      sequence do
+        alpha
+        wait :until => (Time.now + 2.0).to_s
+        alpha
+        echo 'done.'
+      end
+    end
+
+    #noisy
+
+    ts = []
+    @engine.register_participant(:alpha) { ts << Time.now }
+
+    assert_trace pdef, 'done.'
+
+    #p ts
+    assert ts[1] - ts[0] > 1.0
   end
 end
 
