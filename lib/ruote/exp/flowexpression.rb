@@ -451,6 +451,8 @@ module Ruote::Exp
 
     # Applies a given child (given by its index in the child list)
     #
+    # Note that by default, this persists the parent expression.
+    #
     def apply_child (child_index, workitem, forget=false)
 
       pool.apply_child(self, child_index, workitem, forget)

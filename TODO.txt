@@ -146,8 +146,8 @@
 [o] engine.process_history(wfid)
 [o] add_branch :times/:branches
 [o] cursor : :break_if / :break_unless
-
-[ ] exp : when (exploit :var :set event, or frequency)
+[o] exp : when (exploit :var :set event, or frequency)
+[o] when : restart test
 
 [ ] exp : cron
 [ ] exp : every
@@ -165,9 +165,6 @@
 [ ] exp : variable (not really necessary)
 
 [ ] exp : step (jump to cursor tag ?)
-
-restart tests :
-[ ] when
 
 [ ] conditional : rprefix ! ${r:x} is perhaps sufficient
 
@@ -252,5 +249,5 @@ restart tests :
 
 [ ] repeat : have a counter in a variable (:to => x maybe)
 
-[ ] wait : :until => :christmas, :refresh => '2d' (when ?)
+[ ] when : cron frequency
 

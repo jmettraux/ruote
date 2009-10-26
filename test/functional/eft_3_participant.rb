@@ -116,7 +116,9 @@ class EftParticipantTest < Test::Unit::TestCase
 
     assert_trace pdef, 'done.'
 
-    assert_equal 0, atts
+    assert_equal(
+      { "commander of the left guard"=>nil, "if"=>"true", "ref"=>"notify" },
+      atts)
   end
 end
 
