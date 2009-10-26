@@ -43,6 +43,10 @@ module Ruote::Exp
   #
   # (the underscore prevents collision with Ruby's sleep method)
   #
+  # == :for and :until
+  #
+  # TODO
+  #
   class WaitExpression < FlowExpression
 
     names :wait, :sleep

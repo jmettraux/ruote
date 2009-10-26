@@ -147,10 +147,11 @@
 [o] add_branch :times/:branches
 [o] cursor : :break_if / :break_unless
 
+[ ] exp : when (exploit :var :set event, or frequency)
+
 [ ] exp : cron
 [ ] exp : every
 [ ] exp : exp (restricted form of eval ?)
-[ ] exp : when (exploit :var :set event)
 [ ] exp : case (is it necessary ?)
 [ ] exp : filter
 [ ] exp : filter-definition
@@ -248,4 +249,8 @@ restart tests :
 
 [ ] :on_timeout => :rewind (break, jump to x)...
 [ ] rewind 'x' where x is a tagname (command x)
+
+[ ] repeat : have a counter in a variable (:to => x maybe)
+
+[ ] wait : :until => :christmas, :refresh => '2d' (when ?)
 

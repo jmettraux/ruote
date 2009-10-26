@@ -97,5 +97,26 @@ class EftParticipantTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ alpha charly ]
   end
+
+  def test_participant_and_att_text
+
+    pdef = Ruote.process_definition do
+      notify 'commander of the left guard', :if => 'true'
+      echo 'done.'
+    end
+
+    atts = nil
+
+    @engine.register_participant :notify do |wi, fe|
+      #p fe.attribute_text
+      atts = fe.attributes
+    end
+
+    #noisy
+
+    assert_trace pdef, 'done.'
+
+    assert_equal 0, atts
+  end
 end
 
