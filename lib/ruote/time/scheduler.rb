@@ -123,6 +123,11 @@ module Ruote
       @scheduler.every(freq, :schedulable => new_schedulable(args))
     end
 
+    def cron (cron_string, *args)
+
+      @scheduler.cron(cron_string, :schedulable => new_schedulable(args))
+    end
+
     def unschedule (job_id)
 
       @scheduler.unschedule(job_id)
@@ -130,7 +135,7 @@ module Ruote
 
     def jobs
 
-      @scheduler.jobs
+      @scheduler.all_jobs
     end
 
     # Clears all jobs. Mostly used by the test framework.

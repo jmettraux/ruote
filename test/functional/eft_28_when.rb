@@ -54,6 +54,7 @@ class EftWhenTest < Test::Unit::TestCase
     #noisy
 
     assert_trace pdef, %w[ in over done. ]
+    assert_equal 0, @engine.scheduler.jobs.size
   end
 
   def test_cancel
@@ -76,6 +77,28 @@ class EftWhenTest < Test::Unit::TestCase
     sleep 0.400
 
     assert_nil @engine.process(wfid)
+    assert_equal 0, @engine.scheduler.jobs.size
+  end
+
+  def test_when_cron
+
+    pdef = Ruote.process_definition do
+      echo 'in'
+      concurrence do
+        _when '${v:ok}', :freq => '* * * * * *' do # every second
+          echo 'done.'
+        end
+        sequence do
+          wait '1s'
+          echo 'over'
+          set 'v:ok' => true
+        end
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ in over done. ]
     assert_equal 0, @engine.scheduler.jobs.size
   end
 end

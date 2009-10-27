@@ -113,7 +113,16 @@ module Ruote::Exp
   #
   # == :frequency and cron notation
   #
-  # TODO
+  # It's OK to pass a 'cron string' to the :frequency attribute.
+  #
+  #   _when '${v:delivery_complete}', :freq => '5 0 * * *'
+  #     # this 'when' will check its condition once per day, five minutes
+  #     # after midnight
+  #
+  # See "man 5 crontab" on your favourite unix system for the details of
+  # the 'cron string', but please note that ruote (thanks to the
+  # rufus-scheduler (http://rufus.rubyforge.org/rufus-scheduler) accepts
+  # seconds as well.
   #
   #
   # == the :timeout attribute common to all expressions
@@ -127,7 +136,12 @@ module Ruote::Exp
   #
   # == ${ruby:'hello'}
   #
-  # TODO
+  # Remember that, if the engine's :ruby_eval_allowed is set to true, the
+  # condition may contain Ruby code.
+  #
+  #   _when '${r:"hell" + "o"} == hello'
+  #
+  # This Ruby code is checked before hand against malicious code, but beware...
   #
   class WhenExpression < FlowExpression
 
@@ -150,6 +164,9 @@ module Ruote::Exp
       if Condition.true?(t)
 
         @triggered = true
+
+        scheduler.unschedule(@job_id)
+          # especially for a cron...
 
         if tree_children[0]
           #
@@ -174,18 +191,23 @@ module Ruote::Exp
       reply_to_parent(@applied_workitem)
     end
 
+    # Note : this method has to be public.
+    #
     def reschedule
 
-      @job_id = scheduler.in(@frequency, @fei, :reply).job_id
+      @job_id = if @frequency.match(/. ./)
+
+        return if @job_id && scheduler.jobs[@job_id]
+          # don't reschedule if not necessary
+
+        scheduler.cron(@frequency, @fei, :reply).job_id
+      else
+
+        scheduler.in(@frequency, @fei, :reply).job_id
+      end
+
       persist
     end
-
-    protected
-
-    #def schedule
-    #  reschedule
-    #  wqueue.emit(:expressions, :schedule_at, :until => @until)
-    #end
   end
 end
 

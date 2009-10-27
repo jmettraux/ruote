@@ -15,21 +15,34 @@ class RtWhenTest < Test::Unit::TestCase
 
   def test_when_and_restart
 
-    #FileUtils.rm_f('work')
+    do_test('500')
+  end
+
+  def test_when_cron_and_restart
+
+    do_test('* * * * * *')
+  end
+
+  protected
+
+  def do_test (freq)
+
+    FileUtils.rm_rf(
+      File.expand_path(File.join(File.dirname(__FILE__), %w[ .. .. work ])))
 
     start_new_engine
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
         echo 'in'
-        _when '${v:resume}', :freq => '500'
+        _when '${v:resume}', :freq => freq
         echo 'out.'
       end
     end
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.200
+    sleep 0.400
 
     assert_equal 1, @engine.processes.size
     assert_equal 1, @engine.scheduler.jobs.size
@@ -40,7 +53,7 @@ class RtWhenTest < Test::Unit::TestCase
 
     start_new_engine
 
-    sleep 0.200
+    sleep 0.400
 
     assert_equal 1, @engine.processes.size
     assert_equal 1, @engine.scheduler.jobs.size
