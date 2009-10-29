@@ -8,7 +8,11 @@
 module RestartBase
 
   def setup
+
     @tracer = Tracer.new
+
+    FileUtils.rm_rf(
+      File.expand_path(File.join(File.dirname(__FILE__), %w[ .. .. work ])))
   end
 
   def teardown

@@ -98,6 +98,7 @@ module Ruote
 
       build_tracker
       build_scheduler
+        # has to be built after the expression storage
     end
 
     def launch (definition, opts={})

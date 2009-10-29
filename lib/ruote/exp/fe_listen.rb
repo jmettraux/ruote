@@ -78,6 +78,10 @@ module Ruote::Exp
   # applied to the 'listen' expression, but with a copy of the fields of the
   # workitem passed to bob, merged in.
   #
+  # Note : for now, the triggered segments of processes are 'forgotten'. The
+  # 'listen' expression doesn't keep track of them. This also means that in
+  # case of cancel, the triggered segments will not get cancelled.
+  #
   # == :merge
   #
   # By default, :merge is set to true, the listened for workitems see their

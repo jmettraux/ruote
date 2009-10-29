@@ -62,7 +62,7 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
     wfid = @engine0.launch(pdef)
 
-    sleep 0.200
+    sleep 0.400
 
     assert_not_nil @engine0.process(wfid)
     assert_not_nil @engine0.process(wfid)
@@ -71,9 +71,9 @@ class CtConcurrenceTest < Test::Unit::TestCase
     assert_equal 0, alpha1.size
 
     @engine1.reply(alpha0.pop)
-    sleep 0.300
+    sleep 0.400
     @engine0.reply(alpha0.pop)
-    sleep 0.300
+    sleep 0.400
 
     assert_equal nil, @engine0.process(wfid)
     assert_equal nil, @engine1.process(wfid)

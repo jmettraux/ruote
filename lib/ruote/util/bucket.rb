@@ -27,17 +27,27 @@ module Ruote
 
   class Bucket
 
-    def initialize (fpath)
+    def initialize (fpath, default_value=nil)
 
       @fpath = fpath
 
-      FileUtils.touch(@fpath) unless File.exist?(@fpath)
+      @new_file = (not File.exist?(@fpath))
+      FileUtils.touch(@fpath) if @new_file
 
-      @file = File.open(@fpath, 'wb+')
+      @file = File.open(@fpath, 'rb+')
 
       @raw = nil
       @data = nil
       @mtime = nil
+
+      save(default_value) if @new_file && default_value != nil
+    end
+
+    # Returns true if the bucket had to create the file
+    #
+    def new_file?
+
+      @new_file
     end
 
     # Closes this bucket (the File instance specifically).
@@ -67,6 +77,9 @@ module Ruote
     # hasn't changed since last load or save.
     #
     def save (data)
+
+      #p [ @fpath, :save, data ] if data == []
+      #caller.each { |l| puts l } if data == []
 
       lock { write(data) }
     end
@@ -101,7 +114,11 @@ module Ruote
         @file.flock(File::LOCK_EX)
         block.call
       ensure
-        @file.flock(File::LOCK_UN) rescue nil
+        begin
+          @file.flock(File::LOCK_UN)
+        rescue Exception => e
+          #p [ @fpath, :lock,  e ]
+        end
       end
     end
 
@@ -109,13 +126,19 @@ module Ruote
 
       begin
 
+        r = @raw
+
         @file.pos = 0
         @raw = @file.read
 
         @data = Marshal.load(@raw)
+
         @mtime = @file.mtime
 
       rescue Exception => e
+
+        #puts "~~~ #{@fpath}"; p e
+        #caller.each { |l| puts l }
 
         @raw, @data, @mtime = nil
       end
@@ -142,6 +165,11 @@ module Ruote
     end
 
     def locked?
+
+      # flock returns false if File::LOCK_NB is specified and
+      # the operation would otherwise have blocked
+      #
+      # flock returns 0 if the locking was successful
 
       (@file.flock(File::LOCK_EX | File::LOCK_NB) == false)
     end

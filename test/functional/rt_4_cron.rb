@@ -2,44 +2,32 @@
 #
 # Testing Ruote (OpenWFEru)
 #
-# Tue Oct 27 01:36:52 JST 2009
+# Wed Oct 28 12:51:04 JST 2009
 #
 
 require File.join(File.dirname(__FILE__), 'base')
 require File.join(File.dirname(__FILE__), 'restart_base')
 
 
-class RtWhenTest < Test::Unit::TestCase
+class RtCronTest < Test::Unit::TestCase
   include FunctionalBase
   include RestartBase
 
-  def test_when_and_restart
-
-    do_test('500')
-  end
-
-  def test_when_cron_and_restart
-
-    do_test('* * * * * *')
-  end
-
-  protected
-
-  def do_test (freq)
+  def test_cron_restart
 
     start_new_engine
 
     pdef = Ruote.process_definition :name => 'test' do
-      sequence do
-        echo 'in'
-        _when '${v:resume}', :freq => freq
-        echo 'out.'
+      cron '* * * * * *' do # every second
+        echo '${v:text}'
       end
     end
 
+    @engine.variables['text'] = 'pre'
+
     wfid = @engine.launch(pdef)
 
-    sleep 0.400
+    sleep 1.2
 
     assert_equal 1, @engine.processes.size
     assert_equal 1, @engine.scheduler.jobs.size
@@ -50,17 +38,20 @@ class RtWhenTest < Test::Unit::TestCase
 
     start_new_engine
 
-    sleep 0.400
+    @engine.variables['text'] = 'post'
+
+    sleep 1.2
 
     assert_equal 1, @engine.processes.size
     assert_equal 1, @engine.scheduler.jobs.size
 
-    @engine.variables['resume'] = true
+    sleep 0.400
 
-    #wait_for(wfid)
-    sleep 1.400
+    assert_match /pre\npost/, @tracer.to_s
 
-    assert_equal "in\nout.", @tracer.to_s
+    @engine.cancel_process(wfid)
+
+    sleep 0.400
 
     assert_equal 0, @engine.processes.size
     assert_equal 0, @engine.scheduler.jobs.size

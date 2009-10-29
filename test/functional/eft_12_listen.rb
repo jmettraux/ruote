@@ -64,11 +64,15 @@ class EftListenTest < Test::Unit::TestCase
 
     sleep 0.750
 
+    #p @tracer.to_s
+
     a = @tracer.to_a
     assert_equal('a', a[0])
-    assert_equal('a', a[1])
-    assert_match(/^#{wfid}\_\d+0$/, a[2])
-    assert_match(/^#{wfid}\_\d+1$/, a[3])
+    assert_equal 2, a.select { |e| e == 'a' }.size
+
+    a = (a - [ 'a', 'a' ]).sort
+    assert_match(/^#{wfid}\_\d+0$/, a[0])
+    assert_match(/^#{wfid}\_\d+1$/, a[1])
 
     ps = @engine.process(wfid)
 

@@ -151,6 +151,7 @@ module Ruote::Exp
 
       @frequency = attribute(:frequency) || attribute(:freq) || '10s'
       @triggered = false
+      @job_id = nil
 
       reply(@applied_workitem)
     end
@@ -159,7 +160,7 @@ module Ruote::Exp
 
       return reply_to_parent(workitem) if @triggered
 
-      t = attribute_text(:test) || attribute_text
+      t = attribute(:test) || attribute_text
 
       if Condition.true?(t)
 
@@ -195,7 +196,7 @@ module Ruote::Exp
     #
     def reschedule
 
-      @job_id = if @frequency.match(/. ./)
+      @job_id = if Rufus::Scheduler.is_cron_string(@frequency)
 
         return if @job_id && scheduler.jobs[@job_id]
           # don't reschedule if not necessary

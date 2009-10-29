@@ -51,7 +51,18 @@ module Ruote
 
       if @method == :reply
 
-        opts[:workitem] = context[:s_expression_storage][@fei].applied_workitem
+        fexp = context[:s_expression_storage][@fei]
+
+        p @fei.to_s unless fexp
+
+        #unless fexp
+        #  # something has gone wrong, unschedule self
+        #  rufus_job.unschedule
+        #  return
+        #end
+          # let the exception get raised, it is very instructive
+
+        opts[:workitem] = fexp.applied_workitem
 
       elsif @method == :cancel
 
@@ -94,6 +105,10 @@ module Ruote
 
     include EngineContext
 
+    raise(
+      "please upgrade to rufus-scheduler >= 2.0.2"
+    ) if [ '2.0.2', Rufus::Scheduler::VERSION ].sort.first != '2.0.2'
+
     def context= (c)
 
       @context = c
@@ -101,6 +116,8 @@ module Ruote
       @scheduler = Rufus::Scheduler.start_new(:context => @context)
 
       reload
+        # reloading (rescheduling) could be necessary if the expression
+        # storage is persistent
     end
 
     def stop
@@ -147,10 +164,16 @@ module Ruote
 
     protected
 
+    # Should be called only when the scheduler persistent data got lost.
+    # Reloads all expressions and reschedules them (timeout, cron, whateever)
+    # if necessary.
+    #
     def reload
 
-      exps = expstorage.find_expressions(:responding_to => :reschedule)
-      exps.each { |exp| exp.reschedule }
+      expstorage.find_expressions.each do |exp|
+        exp.reschedule_timeout
+        exp.reschedule if exp.respond_to?(:reschedule)
+      end
     end
 
     def new_schedulable (args)

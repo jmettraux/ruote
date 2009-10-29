@@ -26,6 +26,26 @@
 require 'ruote/time/scheduler'
 
 
+#
+# Re-opening to take care of marshability...
+#
+class Rufus::Scheduler::Job
+
+  def marshal_dump #:nodoc#
+
+    iv = instance_variables
+    iv.delete(:@scheduler)
+    iv.delete('@scheduler')
+    iv.inject({}) { |h, vn| h[vn] = instance_variable_get(vn); h }
+  end
+
+  def marshal_load (s) #:nodoc#
+
+    s.each { |k, v| instance_variable_set(k, v) }
+  end
+end
+
+
 module Ruote
 
   #
@@ -41,8 +61,8 @@ module Ruote
       #@mutex = Mutex.new
         # no need for thread synchro, the workqueue does it for us
 
-      @bucket = Bucket.new(fpath)
-      @bucket.save([])
+      @bucket = Bucket.new(fpath, [])
+        # default initial value is an empty array
     end
 
     def shutdown
@@ -100,7 +120,7 @@ module Ruote
       @bucket.operate(skip) do |jobs|
         jobs.each { |j| j.scheduler = @scheduler }
         r = block.call(jobs)
-        jobs.each { |j| j.scheduler = nil }
+        #jobs.each { |j| j.scheduler = nil }
         r
       end
     end
@@ -163,8 +183,16 @@ module Ruote
 
       @scheduler = Rufus::Scheduler.start_new(
         :context => @context, :job_queue => @jq, :cron_job_queue => @cjq)
+      #def @scheduler.handle_exception (job, exception)
+      #  p jobs.params
+      #end
 
-      reload
+      if @jq.bucket.new_file? || @cjq.bucket.new_file?
+
+        [ @jq, @cjq ].each { |q| q.purge! unless q.bucket.new_file? }
+
+        reload
+      end
     end
 
     def shutdown

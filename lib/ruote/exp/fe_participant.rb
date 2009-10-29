@@ -203,7 +203,6 @@ module Ruote::Exp
       #else
       #  Thread.new(&block)
       #end
-        #
         # not good : executing in next_tick will block the whole engine
 
       Thread.new(&block)
@@ -232,12 +231,18 @@ module Ruote::Exp
     #
     def schedule_timeout (participant)
 
+      # TODO : timeout at case (Andrew)
+
       timeout =
         attribute(:timeout) ||
         (participant.respond_to?(:timeout) ? participant.timeout : nil)
 
-      @timeout_job_id = scheduler.in(timeout, @fei, :cancel).job_id \
-        if timeout
+      return unless timeout
+
+      j = scheduler.in(timeout, @fei, :cancel)
+
+      @timeout_at = j.at
+      @timeout_job_id = j.job_id
     end
   end
 end

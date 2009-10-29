@@ -68,13 +68,13 @@ class EftWhenTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.400
+    sleep 0.500
 
     assert_equal 1, @engine.scheduler.jobs.size
 
     @engine.cancel_process(wfid)
 
-    sleep 0.400
+    sleep 0.500
 
     assert_nil @engine.process(wfid)
     assert_equal 0, @engine.scheduler.jobs.size

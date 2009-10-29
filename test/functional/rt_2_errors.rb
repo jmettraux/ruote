@@ -25,7 +25,7 @@ class RtErrorsTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.100
+    sleep 0.400
 
     ps = @engine.process(wfid)
 
@@ -37,7 +37,7 @@ class RtErrorsTest < Test::Unit::TestCase
 
     start_new_engine
 
-    sleep 0.100
+    sleep 0.400
 
     assert_equal 1, @engine.processes.size
 
@@ -46,7 +46,7 @@ class RtErrorsTest < Test::Unit::TestCase
 
     @engine.cancel_process(wfid)
 
-    sleep 0.100
+    sleep 0.400
   end
 end
 

@@ -78,6 +78,7 @@ module Ruote
       add(Ruote::Exp::ErrorExpression)
       add(Ruote::Exp::IncExpression)
       add(Ruote::Exp::WhenExpression)
+      add(Ruote::Exp::CronExpression)
     end
 
     # Returns the expression class for the given expression name

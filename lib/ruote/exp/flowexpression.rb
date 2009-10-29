@@ -107,6 +107,8 @@ module Ruote::Exp
       @on_timeout = attribute(:on_timeout)
 
       @tagname = nil
+
+      @timeout_at = nil
       @timeout_job_id = nil
     end
 
@@ -428,6 +430,21 @@ module Ruote::Exp
       wqueue.emit!(:errors, :remove, { :fei => @fei }) if @has_error
     end
 
+    # Only called in case of emergency (when the scheduler persistent data
+    # got lost).
+    #
+    # See Ruote::Scheduler#reload
+    #
+    def reschedule_timeout
+
+      return unless @timeout_at
+
+      @timeout_job_id = scheduler.at(@timeout_at, @fei, :cancel).job_id
+
+      persist
+        # have to save the new @timeout_job_id
+    end
+
     protected
 
     # A tag is a named pointer to an expression (name => fei).
@@ -442,10 +459,19 @@ module Ruote::Exp
       end
     end
 
+    # If the expressions has a :timeout attribute, will schedule a cancel
+    # after the given period of time.
+    #
+    # TODO : timeout at
+    #
     def consider_timeout
 
       if timeout = attribute(:timeout)
-        @timeout_job_id = scheduler.in(timeout, @fei, :cancel).job_id
+
+        j = scheduler.in(timeout, @fei, :cancel)
+
+        @timeout_at = j.at
+        @timeout_job_id = j.job_id
       end
     end
 

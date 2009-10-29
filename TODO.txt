@@ -148,9 +148,12 @@
 [o] cursor : :break_if / :break_unless
 [o] exp : when (exploit :var :set event, or frequency)
 [o] when : restart test
+[o] when : cron frequency
+[o] let listeners accept launchitems
+[o] exp : cron
+[o] exp : every
+[o] write rt test for 'timeout'
 
-[ ] exp : cron
-[ ] exp : every
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
 [ ] exp : filter
@@ -234,8 +237,6 @@
 
 [ ] condition : "${f:x} [is] empty" / this one is hard
 
-[o] let listeners accept launchitems
-
 [ ] ruote/exp/fe_set.rb:147: warning: already initialized constant PREFIX_REGEX
 
 [ ] implement kill_process! (kill_expression! ?)
@@ -247,7 +248,14 @@
 [ ] :on_timeout => :rewind (break, jump to x)...
 [ ] rewind 'x' where x is a tagname (command x)
 
-[ ] repeat : have a counter in a variable (:to => x maybe)
+[ ] repeat : have a counter in a variable (:to => x maybe) (subprocessid ?)
 
-[ ] when : cron frequency
+[ ] when : add test for cancelling when child has been triggered / is running
+[x] listen : should it forget its triggered children ? yes
+
+[ ] engine.cancel_forgotten_children(wfid) ?
+
+[ ] undo exp : alias to 'cancel' ?
+
+[ ] run full tests at low load with --dm
 

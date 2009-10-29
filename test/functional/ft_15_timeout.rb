@@ -59,7 +59,8 @@ class FtTimeoutTest < Test::Unit::TestCase
 
     @engine.cancel_expression(alpha.first.fei)
 
-    sleep 0.5
+    #sleep 0.5
+    wait_for(:bravo)
 
     assert_equal 0, alpha.size
     assert_equal 1, bravo.size
