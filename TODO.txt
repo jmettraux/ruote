@@ -153,6 +153,7 @@
 [o] exp : cron
 [o] exp : every
 [o] write rt test for 'timeout'
+[o] undo exp : alias to 'cancel'
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -254,8 +255,6 @@
 [x] listen : should it forget its triggered children ? yes
 
 [ ] engine.cancel_forgotten_children(wfid) ?
-
-[ ] undo exp : alias to 'cancel' ?
 
 [ ] run full tests at low load with --dm
 

@@ -40,9 +40,15 @@ module Ruote::Exp
   # This example is rather tiny, but it shows a process branch (undo) cancelling
   # another (alpha).
   #
+  # == cancel
+  #
+  # This expression is aliased to 'cancel'
+  #
+  #   cancel :ref => 'invoicing_stage'
+  #
   class UndoExpression < FlowExpression
 
-    names :undo
+    names :undo, :cancel
 
     def apply
 

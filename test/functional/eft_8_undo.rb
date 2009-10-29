@@ -41,7 +41,8 @@ class EftUndoTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       concurrence do
         alpha :tag => :kilroy
-        undo :kilroy
+        #undo :kilroy
+        cancel :kilroy
       end
       echo 'over'
     end
