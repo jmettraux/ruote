@@ -258,3 +258,5 @@
 
 [ ] run full tests at low load with --dm
 
+[ ] port subprocess on_cancel test from ruote 0.9 http://groups.google.com/group/openwferu-users/t/75f02bdadf7b93eb
+

@@ -362,5 +362,38 @@ class FtProcessStatusTest < Test::Unit::TestCase
       ["sequence", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["charly", {}, []]]], ["participant", {"ref"=>"delta"}, []]]],
       tree1)
   end
+
+  def test_when_on_cancel_subprocess
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence :on_cancel => 'sub0' do
+        alpha
+      end
+      define 'sub0' do
+        alpha
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    @engine.cancel_process(wfid)
+
+    wait_for(:alpha)
+
+    assert_match /#{wfid}_\d+/, alpha.first.fei.wfid
+
+    assert_equal(
+      ["sequence", {"name"=>"test"}, [["define", {"sub0"=>nil}, [["alpha", {}, []]]], ["sequence", {"on_cancel"=>"sub0"}, [["alpha", {}, []]]]]],
+      @engine.process(wfid).original_tree)
+    assert_equal(
+      ["sequence", {"name"=>"test"}, [["sequence", {"sub0"=>nil}, [["participant", {"ref"=>"alpha"}, []]]], ["subprocess", {"ref"=>"sub0"}, [["alpha", {}, []]]]]],
+      @engine.process(wfid).current_tree)
+  end
 end
 
