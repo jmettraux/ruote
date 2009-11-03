@@ -66,11 +66,24 @@ module OpenWFE
     #
     def find_root_expression
 
-      self.find do |fexp|
+      #self.sort { |fe0, fe1|
+      #  fei0 = fe0.fei; fei1 = fe1.fei
+      #  "#{fei0.wfid} #{fei0.expid}" <=> "#{fei1.wfid} #{fei1.expid}"
+      #}.collect { |fexp|
+      #  puts "#{fexp.fei.wfid} #{fexp.fei.expid}"
+      #}
+
+      self.find { |fexp|
         fexp.fei.expid == '0' &&
         ( ! fexp.is_a?(OpenWFE::Environment)) &&
         fexp.fei.is_in_parent_process?
-      end
+      } ||
+      self.sort { |fe0, fe1|
+        fei0 = fe0.fei; fei1 = fe1.fei
+        "#{fei0.wfid} #{fei0.expid}" <=> "#{fei1.wfid} #{fei1.expid}"
+      }.find { |fexp|
+        ( ! fexp.is_a?(OpenWFE::Environment))
+      }
     end
 
     #
@@ -83,23 +96,23 @@ module OpenWFE
 
     protected
 
-      #
-      # If a child expression is present (in the process stack)
-      # makes sure to take its current representation and include
-      # it in the parent representation.
-      #
-      def get_updated_rep (flow_expression)
+    #
+    # If a child expression is present (in the process stack)
+    # makes sure to take its current representation and include
+    # it in the parent representation.
+    #
+    def get_updated_rep (flow_expression)
 
-        rep = flow_expression.raw_representation.dup
-        rep[2] = rep[2].dup
+      rep = flow_expression.raw_representation.dup
+      rep[2] = rep[2].dup
 
-        (flow_expression.children || []).each do |fei|
-          fexp = find_expression(fei)
-          next unless fexp
-          rep[2][fei.child_id.to_i] = get_updated_rep(fexp)
-        end
-
-        rep
+      (flow_expression.children || []).each do |fei|
+        fexp = find_expression(fei)
+        next unless fexp
+        rep[2][fei.child_id.to_i] = get_updated_rep(fexp)
       end
+
+      rep
+    end
   end
 end

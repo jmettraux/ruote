@@ -197,7 +197,7 @@ module OpenWFE
               object_to_xml(k, options)
               object_to_xml(v, options)
             end
-          end
+          end if h
         end
       end
     end
