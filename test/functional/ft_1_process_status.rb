@@ -34,7 +34,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_not_nil ps.launched_time
 
     assert_equal(
-      {"my process"=>["0", ["sequence", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]]]},
+      {"my process"=>["0", ["define", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]]]},
       ps.variables)
 
     # checking process_status.to_h
@@ -49,15 +49,15 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal Time, Time.parse(h['launched_time']).class
 
     assert_equal(
-      ["sequence", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]],
+      ["define", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]],
       h['original_tree'])
 
     assert_equal(
-      ["sequence", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]],
+      ["define", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]],
       h['current_tree'])
 
     assert_equal(
-      {"my process"=>["0", ["sequence", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]]]},
+      {"my process"=>["0", ["define", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]]]},
       h['variables'])
   end
 
@@ -80,7 +80,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal 'my process', ps.definition_name
 
     assert_equal(
-      {"my process"=>["0", ["sequence", {"my process"=>nil}, [["sequence", {}, [["set", {"var"=>"toto", "val"=>"nada"}, []], ["participant", {"ref"=>"alpha"}, []]]]]]], "toto"=>"nada"},
+      {"my process"=>["0", ["define", {"my process"=>nil}, [["sequence", {}, [["set", {"var"=>"toto", "val"=>"nada"}, []], ["participant", {"ref"=>"alpha"}, []]]]]]], "toto"=>"nada"},
       ps.variables)
   end
 
@@ -101,14 +101,14 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     assert_equal(
-      ["sequence", {"my process"=>nil}, [
+      ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
           ["participant", {"ref"=>:alpha}, []]]]]],
       ps.current_tree)
 
     assert_equal(
-      ["sequence", {"my process"=>nil}, [
+      ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
           ["participant", {"ref"=>:alpha}, []]]]]],
@@ -122,14 +122,14 @@ class FtProcessStatusTest < Test::Unit::TestCase
     e.update_tree([ 'participant', { 'ref' => :bravo }, [] ])
 
     assert_equal(
-      ["sequence", {"my process"=>nil}, [
+      ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
           ["participant", {"ref"=>:bravo}, []]]]]],
       ps.current_tree)
 
     assert_equal(
-      ["sequence", {"my process"=>nil}, [
+      ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
           ["participant", {"ref"=>:alpha}, []]]]]],
@@ -153,17 +153,17 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     assert_equal(
-      {"my process"=>["0", ["sequence", {"my process"=>nil}, [["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]], ["participant", {"ref"=>:alpha}, []]]]], "sub0"=>["0_0", ["sequence", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]]]},
+      {"my process"=>["0", ["define", {"my process"=>nil}, [["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]], ["participant", {"ref"=>:alpha}, []]]]], "sub0"=>["0_0", ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]]]},
       ps.variables)
 
     assert_equal(
-      ["sequence", {"my process"=>nil}, [
+      ["define", {"my process"=>nil}, [
         ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]],
         ["participant", {"ref"=>:alpha}, []]]],
       ps.current_tree)
 
     assert_equal(
-      ["sequence", {"my process"=>nil}, [
+      ["define", {"my process"=>nil}, [
         ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]],
         ["participant", {"ref"=>:alpha}, []]]],
       ps.original_tree)
@@ -355,11 +355,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_trace pdef, %w[ a c c d ]
 
     assert_equal(
-      ["sequence", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["participant", {"ref"=>"charly"}, []]]], ["delta", {}, []]]],
+      ["define", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["participant", {"ref"=>"charly"}, []]]], ["delta", {}, []]]],
       tree0)
 
     assert_equal(
-      ["sequence", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["charly", {}, []]]], ["participant", {"ref"=>"delta"}, []]]],
+      ["define", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["charly", {}, []]]], ["participant", {"ref"=>"delta"}, []]]],
       tree1)
   end
 
@@ -388,12 +388,19 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_match /#{wfid}_\d+/, alpha.first.fei.wfid
 
-    assert_equal(
-      ["sequence", {"name"=>"test"}, [["define", {"sub0"=>nil}, [["alpha", {}, []]]], ["sequence", {"on_cancel"=>"sub0"}, [["alpha", {}, []]]]]],
-      @engine.process(wfid).original_tree)
-    assert_equal(
-      ["sequence", {"name"=>"test"}, [["sequence", {"sub0"=>nil}, [["participant", {"ref"=>"alpha"}, []]]], ["subprocess", {"ref"=>"sub0"}, [["alpha", {}, []]]]]],
-      @engine.process(wfid).current_tree)
+    assert_equal 0, @engine.process(wfid).errors.size
+    assert_equal 4, @engine.process(wfid).expressions.size
+
+    #assert_equal(
+    #  ["sequence", {"name"=>"test"}, [
+    #    ["define", {"sub0"=>nil}, [["alpha", {}, []]]],
+    #    ["sequence", {"on_cancel"=>"sub0"}, [["alpha", {}, []]]]]],
+    #  @engine.process(wfid).original_tree)
+    #assert_equal(
+    #  ["sequence", {"name"=>"test"}, [
+    #    ["sequence", {"sub0"=>nil}, [["participant", {"ref"=>"alpha"}, []]]],
+    #    ["subprocess", {"ref"=>"sub0"}, [["alpha", {}, []]]]]],
+    #  @engine.process(wfid).current_tree)
   end
 end
 

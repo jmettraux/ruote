@@ -211,6 +211,8 @@ module Ruote::Exp
     # APPLY / REPLY / CANCEL
     #++
 
+    # Called directly by the expression pool.
+    #
     def do_apply
 
       initial = Ruote.fulldup(self)

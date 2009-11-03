@@ -105,7 +105,8 @@ module Ruote::Exp
 
       name = tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil }
 
-      [ name, [ 'sequence', tree[1], definitions + bodies ] ]
+      #[ name, [ 'sequence', tree[1], definitions + bodies ] ]
+      [ name, [ 'define', tree[1], definitions + bodies ] ]
     end
   end
 end

@@ -160,5 +160,41 @@ class FtOnCancelTest < Test::Unit::TestCase
   #  assert_equal 0, @engine.scheduler.jobs.size
   #  assert_equal nil, @engine.process(wfid)
   #end
+
+  def test_on_cancel_subprocess
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence :on_cancel => 'sub0' do
+        alpha
+      end
+      define 'sub0' do
+        bravo
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    @engine.cancel_process(wfid)
+
+    wait_for(:bravo)
+
+    assert_equal(
+      ["define", {"name"=>"test"}, [
+        ["define", {"sub0"=>nil}, [["bravo", {}, []]]],
+        ["XXXsequence", {"on_cancel"=>"sub0"}, [["alpha", {}, []]]]]],
+      @engine.process(wfid).original_tree)
+    assert_equal(
+      ["define", {"name"=>"test"}, [
+        ["sequence", {"sub0"=>nil}, [["participant", {"ref"=>"bravo"}, []]]],
+        ["subprocess", {"ref"=>"sub0"}, [["alpha", {}, []]]]]],
+      @engine.process(wfid).current_tree)
+  end
 end
 

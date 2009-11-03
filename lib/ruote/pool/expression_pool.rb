@@ -154,7 +154,8 @@ module Ruote
         :fei => i,
         :parent_id => forget ? nil : parent.fei,
         :workitem => workitem,
-        :variables => variables)
+        :variables => variables,
+        :launch => true)
     end
 
     # Re-applies the given expression.
@@ -197,6 +198,7 @@ module Ruote
       parent_id = eargs[:parent_id]
       workitem = eargs[:workitem]
       variables = eargs[:variables]
+      launch = eargs[:launch]
 
       # NOTE : orphaning will copy vars so parent == nil is OK.
 
@@ -236,9 +238,9 @@ module Ruote
 
       workitem.fei = fei
 
-      #exp = exp_class.new(@context, fei, parent_id, tree, variables, workitem)
-      #exp.persist
-      #wqueue.emit(:expressions, :apply, :fei => exp.fei)
+      exp_class = Ruote::Exp::SequenceExpression \
+        if launch && exp_class == Ruote::Exp::DefineExpression
+
       exp_class.new(
         @context, fei, parent_id, tree, variables, workitem
       ).do_apply
@@ -420,7 +422,8 @@ module Ruote
         :tree => tree,
         :fei => fei,
         :workitem => eargs[:workitem],
-        :variables => vars)
+        :variables => vars,
+        :launch => true)
     end
 
     # Cancels a process instance.

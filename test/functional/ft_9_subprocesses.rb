@@ -36,7 +36,8 @@ class FtSubprocessesTest < Test::Unit::TestCase
     fexp = @engine.expstorage[bravo.first.fei]
 
     assert_equal(
-      ['0_0', ['sequence', {'sub0'=>nil}, [['bravo', {}, []], ['echo', {'result : ${v:nada}'=>nil}, []]]]],
+      [ '0_0',
+        ['define', {'sub0'=>nil}, [['bravo', {}, []], ['echo', {'result : ${v:nada}'=>nil}, []]]] ],
       fexp.lookup_variable('sub0'))
 
     bravo.reply(bravo.first)
@@ -45,7 +46,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
     fexp = @engine.expstorage[bravo.first.fei]
 
     assert_equal(
-      ['sequence', {'sub0'=>nil}, [['bravo', {}, []], ['echo', {'result : ${v:nada}'=>nil}, []]]],
+      ['define', {'sub0'=>nil}, [['bravo', {}, []], ['echo', {'result : ${v:nada}'=>nil}, []]]],
       fexp.parent.tree)
 
     assert_equal 1, logger.log.select { |e| e[1] == :launch_sub }.size

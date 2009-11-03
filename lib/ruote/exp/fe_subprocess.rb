@@ -151,15 +151,12 @@ module Ruote::Exp
 
     names :subprocess
 
-
     def apply
 
       ref = attribute(:ref) || attribute_text
 
       raise "no subprocess referred in #{tree}" unless ref
 
-      #pos, subtree = lookup_variable(ref)
-      #raise "no subprocess named '#{ref}' found" unless subtree.is_a?(Array)
       pos, subtree = lookup_subprocess(ref)
 
       vars = compile_atts

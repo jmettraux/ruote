@@ -260,3 +260,5 @@
 
 [ ] port subprocess on_cancel test from ruote 0.9 http://groups.google.com/group/openwferu-users/t/75f02bdadf7b93eb
 
+[ ] double-check on_cancel rewrite (ft_1_process_status)
+
