@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'thread'
+
 
 module Ruote
 
@@ -39,6 +41,8 @@ module Ruote
       @raw = nil
       @data = nil
       @mtime = nil
+
+      @mutex = Mutex.new
 
       save(default_value) if @new_file && default_value != nil
     end
@@ -77,9 +81,6 @@ module Ruote
     # hasn't changed since last load or save.
     #
     def save (data)
-
-      #p [ @fpath, :save, data ] if data == []
-      #caller.each { |l| puts l } if data == []
 
       lock { write(data) }
     end
@@ -124,46 +125,53 @@ module Ruote
 
     def read
 
-      begin
+      @mutex.synchronize do
+        begin
 
-        r = @raw
+          r = @raw
 
-        @file.pos = 0
-        @raw = @file.read
+          @file.pos = 0
+          @raw = @file.read
 
-        @data = Marshal.load(@raw)
+          @data = Marshal.load(@raw)
 
-        @mtime = @file.mtime
+          @mtime = @file.mtime
 
-      rescue Exception => e
+        rescue Exception => e
 
-        #puts "~~~ #{@fpath}"; p e
-        #caller.each { |l| puts l }
+          #puts "~~~ #{@fpath}"; p e
+          #caller.each { |l| puts l }
 
-        @raw, @data, @mtime = nil
+          @raw, @data, @mtime = nil
+        end
       end
     end
 
     def write (data)
 
-      raw = Marshal.dump(data)
-        # beware of marshalling errors here
+      @mutex.synchronize do
 
-      return if raw == @raw # no changes
+        #p [ :write, @fpath, :nil?, data.nil? ]
 
-      @data = data
-      @raw = raw
+        raw = Marshal.dump(data)
+          # beware of marshalling errors here
 
-      #puts
-      #puts `lsof | grep ruota.work | awk '{ print $9 }' | sort`
-      #puts
+        return if raw == @raw # no changes
 
-      @file.pos = 0
-      l = @file.syswrite(raw)
-      @file.flush # very important
-      @file.truncate(l)
+        @data = data
+        @raw = raw
 
-      @mtime = @file.mtime
+        #puts
+        #puts `lsof | grep ruota.work | awk '{ print $9 }' | sort`
+        #puts
+
+        @file.pos = 0
+        l = @file.syswrite(raw)
+        @file.flush # very important
+        @file.truncate(l)
+
+        @mtime = @file.mtime
+      end
     end
 
     def locked?

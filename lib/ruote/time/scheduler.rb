@@ -53,14 +53,12 @@ module Ruote
 
         fexp = context[:s_expression_storage][@fei]
 
-        p @fei.to_s unless fexp
-
-        #unless fexp
-        #  # something has gone wrong, unschedule self
-        #  rufus_job.unschedule
-        #  return
-        #end
-          # let the exception get raised, it is very instructive
+        unless fexp
+          p [ :call_scheduled_reply, :missing, @fei.to_s ]
+          # something has gone wrong, unschedule self
+          rufus_job.unschedule
+          return
+        end
 
         opts[:workitem] = fexp.applied_workitem
 
