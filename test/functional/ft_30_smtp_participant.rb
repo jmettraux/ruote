@@ -60,7 +60,7 @@ Hello, do you want ${f:item} ?
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.350
+    sleep 0.450
 
     assert_match(/cat food/, File.read(trapfile))
     assert_nil @engine.process(wfid)

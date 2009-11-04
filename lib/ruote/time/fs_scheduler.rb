@@ -34,8 +34,10 @@ class Rufus::Scheduler::Job
   def marshal_dump #:nodoc#
 
     iv = instance_variables
-    iv.delete(:@scheduler)
-    iv.delete('@scheduler')
+    %w[ @scheduler @job_thread ].each do |v|
+      iv.delete(v)
+      iv.delete(v.to_sym)
+    end
     iv.inject({}) { |h, vn| h[vn] = instance_variable_get(vn); h }
   end
 

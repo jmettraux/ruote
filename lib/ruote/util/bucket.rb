@@ -147,6 +147,7 @@ module Ruote
     def write (data)
 
       raw = Marshal.dump(data)
+        # beware of marshalling errors here
 
       return if raw == @raw # no changes
 
@@ -159,6 +160,7 @@ module Ruote
 
       @file.pos = 0
       l = @file.syswrite(raw)
+      @file.flush # very important
       @file.truncate(l)
 
       @mtime = @file.mtime

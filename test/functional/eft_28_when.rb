@@ -99,6 +99,15 @@ class EftWhenTest < Test::Unit::TestCase
     #noisy
 
     assert_trace pdef, %w[ in over done. ]
+
+    #Thread.abort_on_exception = true
+    #wfid = @engine.launch(pdef)
+    #sleep 4
+    #Thread.list.each_with_index do |t, i|
+    #  puts "#{i} - #{t[:name]} - #{t.inspect}"
+    #end
+    #assert_equal %w[ in over done. ].join("\n"), @tracer.to_s
+
     assert_equal 0, @engine.scheduler.jobs.size
   end
 end

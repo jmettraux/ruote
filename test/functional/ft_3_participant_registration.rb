@@ -62,7 +62,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     @engine.unregister_participant pa
 
-    sleep 0.001
+    sleep 0.100
 
     entry = logger.log.last
     assert_equal(:unregistered, entry[1])

@@ -49,6 +49,7 @@ module Ruote
     end
 
     def wait_for (patterns)
+
       @mutex.synchronize do
 
         while evt = @log[@index]
