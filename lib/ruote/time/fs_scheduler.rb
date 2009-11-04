@@ -199,6 +199,8 @@ module Ruote
 
     def shutdown
 
+      @scheduler.stop
+
       @jq.shutdown
       @cjq.shutdown
     end

@@ -118,7 +118,7 @@ module Ruote
         # storage is persistent
     end
 
-    def stop
+    def shutdown
 
       @scheduler.stop
     end

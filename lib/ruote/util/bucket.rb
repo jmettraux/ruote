@@ -58,7 +58,11 @@ module Ruote
     #
     def close
 
-      @file.close
+      @mutex.synchronize {
+
+        #p [ :close, @fpath ]
+        @file.close
+      }
     end
 
     #--
@@ -109,6 +113,9 @@ module Ruote
 
     def lock (skip=false, &block)
 
+      return if @file.closed?
+        # don't do a thing
+
       return if skip and locked?
 
       begin
@@ -118,7 +125,8 @@ module Ruote
         begin
           @file.flock(File::LOCK_UN)
         rescue Exception => e
-          #p [ @fpath, :lock,  e ]
+          #p [ :lock, @fpath, e ]
+          #e.backtrace.each { |l| puts l }
         end
       end
     end
@@ -181,7 +189,13 @@ module Ruote
       #
       # flock returns 0 if the locking was successful
 
-      (@file.flock(File::LOCK_EX | File::LOCK_NB) == false)
+      begin
+        (@file.flock(File::LOCK_EX | File::LOCK_NB) == false)
+      rescue Exception => e
+        #p [ :locked?, @fpath, e ]
+        #e.backtrace.each { |l| puts l }
+        false
+      end
     end
   end
 end

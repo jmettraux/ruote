@@ -223,10 +223,19 @@ module Ruote
 
     def shutdown
 
-      @context.values.each do |service|
-        next if service == self
-        service.shutdown if service.respond_to?(:shutdown)
+      # purge queue first !
+
+      wqueue.shutdown
+      scheduler.shutdown
+
+      # shut the other services
+
+      keys = @context.keys - [ :s_workqueue, :s_engine, :s_scheduler ]
+
+      keys.each do |k|
+        service = @context[k]
         service.unsubscribe if service.respond_to?(:unsubscribe)
+        service.shutdown if service.respond_to?(:shutdown)
       end
     end
 

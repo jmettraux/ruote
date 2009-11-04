@@ -60,9 +60,10 @@ module Ruote
     #
     def shutdown
 
-      while @queue.size > 0; Thread.pass; end
-
-      Thread.kill(@thread)
+      while @queue.size > 0 && @thread.alive?
+        Thread.pass
+      end
+      Thread.kill(@thread) if @thread.alive?
     end
 
     # Basically, it returns when there are no more jobs... It's like #shutdown.
