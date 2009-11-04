@@ -45,6 +45,8 @@ module Ruote
       @thread = Thread.new do
         loop { process(@queue.pop) }
       end
+
+      @thread[:name] = "#{self.class} - #{Ruote::VERSION}"
     end
 
     # Emits event for later processing
@@ -59,6 +61,8 @@ module Ruote
     def shutdown
 
       while @queue.size > 0; Thread.pass; end
+
+      Thread.kill(@thread)
     end
 
     # Basically, it returns when there are no more jobs... It's like #shutdown.

@@ -205,7 +205,8 @@ module Ruote::Exp
       #end
         # not good : executing in next_tick will block the whole engine
 
-      Thread.new(&block)
+      t = Thread.new(&block)
+      t[:name] = "dispatching to '#{@participant_name}'"
     end
 
     def do_dispatch (participant)
