@@ -130,23 +130,6 @@ module Ruote
       "errors #{@errors.size})"
     end
 
-    # Returns the current version of the process definition tree. If no
-    # manipulation (gardening) was performed on the tree, this method yields
-    # the same result as the #original_tree method.
-    #
-    def current_tree
-
-      h = Ruote.decompose_tree(original_tree)
-
-      @expressions.sort { |e0, e1|
-        e0.fei.expid <=> e1.fei.expid
-      }.each { |e|
-        h.merge!(Ruote.decompose_tree(e.tree, e.fei.expid))
-      }
-
-      Ruote.recompose_tree(h)
-    end
-
     def inspect
 
       s = "== #{self.class} ==\n"
@@ -182,6 +165,39 @@ module Ruote
       h['errors'] = @errors.collect { |e| e.to_h(true) }
 
       h
+    end
+
+    # Returns the current version of the process definition tree. If no
+    # manipulation (gardening) was performed on the tree, this method yields
+    # the same result as the #original_tree method.
+    #
+    def current_tree
+
+      h = Ruote.decompose_tree(original_tree)
+
+      @expressions.sort { |e0, e1|
+        e0.fei.expid <=> e1.fei.expid
+      }.each { |e|
+        tree = if v = e.tree[1]['_triggered']
+          t = original_tree_from_parent(e).dup
+          t[1]['_triggered'] = v
+          t
+        else
+          e.tree
+        end
+        h.merge!(Ruote.decompose_tree(tree, e.fei.expid))
+      }
+
+      Ruote.recompose_tree(h)
+    end
+
+    protected
+
+    def original_tree_from_parent (e)
+
+      parent = @expressions.find { |exp| exp.fei == e.parent_id }
+
+      parent ? parent.tree[2][e.fei.child_id] : e.tree
     end
   end
 

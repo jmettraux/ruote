@@ -537,6 +537,10 @@ module Ruote::Exp
     #
     def apply_tree (tree, opts)
 
+      if on = opts.keys.find { |k| k.to_s.match(/^on\_.+/) }
+        tree[1]["_triggered"] = on.to_s
+      end
+
       pool.send(:apply, opts.merge(
         :tree => tree,
         :fei => @fei,

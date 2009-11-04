@@ -188,12 +188,12 @@ class FtOnCancelTest < Test::Unit::TestCase
     assert_equal(
       ["define", {"name"=>"test"}, [
         ["define", {"sub0"=>nil}, [["bravo", {}, []]]],
-        ["XXXsequence", {"on_cancel"=>"sub0"}, [["alpha", {}, []]]]]],
+        ["sequence", {"on_cancel"=>"sub0"}, [["alpha", {}, []]]]]],
       @engine.process(wfid).original_tree)
     assert_equal(
       ["define", {"name"=>"test"}, [
-        ["sequence", {"sub0"=>nil}, [["participant", {"ref"=>"bravo"}, []]]],
-        ["subprocess", {"ref"=>"sub0"}, [["alpha", {}, []]]]]],
+        ["define", {"sub0"=>nil}, [["participant", {"ref"=>"bravo"}, []]]],
+        ["sequence", {"on_cancel"=>"sub0", "_triggered"=>"on_cancel"}, [["alpha", {}, []]]]]],
       @engine.process(wfid).current_tree)
   end
 end
