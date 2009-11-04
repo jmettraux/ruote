@@ -124,6 +124,8 @@ class FtHistoryTest < Test::Unit::TestCase
     @engine.cancel_expression(fei)
     wait_for(wfid)
 
+    sleep 0.100
+
     h = @engine.history.by_process(wfid)
     #h.each { |r| p r }
     assert_equal 3, h.size
@@ -163,7 +165,7 @@ class FtHistoryTest < Test::Unit::TestCase
     assert_equal 4, @engine.history.by_date('2009-10-31').size
 
     assert_equal(
-      [ Time.parse('2009-10-31'), Time.parse('2009-10-08') ],
+      [ Time.parse(Time.now.strftime('%F')), Time.parse('2009-10-08') ],
       @engine.history.range)
   end
 
