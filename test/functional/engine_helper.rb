@@ -13,6 +13,7 @@ if ARGV.include?('--em')
   puts 'starting EM'
   puts
 
+  require 'openssl'
   require 'eventmachine'
 
   unless (EM.reactor_running?)
