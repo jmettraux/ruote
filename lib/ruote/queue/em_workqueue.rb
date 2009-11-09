@@ -45,6 +45,8 @@ module Ruote
 
       10.times { sleep 0.001 }
     end
+
+    alias :purge! :shutdown
   end
 end
 
