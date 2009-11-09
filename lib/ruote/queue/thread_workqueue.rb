@@ -66,11 +66,13 @@ module Ruote
       Thread.kill(@thread) if @thread.alive?
     end
 
-    # Basically, it returns when there are no more jobs... It's like #shutdown.
+    # Will return when there are no more jobs.
     #
     def purge!
 
-      shutdown
+      while @queue.size > 0
+        Thread.pass
+      end
     end
   end
 end
