@@ -49,7 +49,7 @@ Process definitions are mainly describing how workitems are routed to participan
 
 == test suite
 
-see http://github.com/jmettraux/ruote/tree/ruote2.0/test
+see http://github.com/jmettraux/ruote/tree/master/test
 
 
 == license
