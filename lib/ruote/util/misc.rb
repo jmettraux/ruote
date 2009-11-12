@@ -84,6 +84,8 @@ module Ruote
 
   # Returns true if the string seems to correpond to a URI
   #
+  # TODO : wouldn't it be better to simply use URI.parse() ?
+  #
   def self.is_uri? (s)
 
     s && (s.index('/') || s.match(/\.[^ ]+$/))
