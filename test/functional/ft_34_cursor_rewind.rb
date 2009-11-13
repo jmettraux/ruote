@@ -44,7 +44,6 @@ class FtCursorRewindTest < Test::Unit::TestCase
     # rewinding...
 
     wi = bravo.first
-
     wi.fields['__command__'] = [ 'back', 2 ]
 
     @engine.reply(wi)
@@ -69,7 +68,7 @@ class FtCursorRewindTest < Test::Unit::TestCase
     bravo = @engine.register_participant :bravo, Ruote::HashParticipant
     charly = @engine.register_participant :charly, Ruote::HashParticipant
 
-    #noisy
+    noisy
 
     #
     # reaching initial situation...
@@ -85,6 +84,7 @@ class FtCursorRewindTest < Test::Unit::TestCase
 
     wi = bravo.first
 
+    wi.fei.expid = wi.fei.expid[0..-3] # parent wfid
     wi.fields['__command__'] = [ 'jump', 'alpha' ]
 
     @engine.reply(wi)
