@@ -155,6 +155,9 @@ module Ruote
       eval(s)
 
     rescue Exception => e
+      #puts '=' * 80
+      #p s
+      #puts '-' * 80
       #puts e
       #e.backtrace.each { |l| puts l }
       raise ArgumentError.new('probably not ruby')
