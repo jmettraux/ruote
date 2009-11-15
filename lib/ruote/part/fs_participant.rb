@@ -109,9 +109,22 @@ module Ruote
     #
     def size
 
-      Dir.new(@path).entries.inject(0) do |i, path|
-        path.match(/^#{@name}\_\_.*\.yaml$/) ? i + 1 : i
+      files.size
+    end
+
+    # Returns all workitems presently stored in here (warning, if workitems
+    # vaniash and come in the meanwhile)
+    def all(&block)
+
+      workitems = []
+
+      files.each do |entry|
+        wi = YAML.load_file( entry )
+        block.call(wi) if block_given?
+        workitems << wi
       end
+
+      workitems
     end
 
     # Iterates over the workitems stored in here (warning, if workitems
@@ -119,11 +132,7 @@ module Ruote
     #
     def each (&block)
 
-      Dir.new(@path).entries.each do |entry|
-        next unless entry.match(/^#{@name}\_\_.*\.yaml$/)
-        wi = YAML.load_file(File.join(@path, entry))
-        block.call(wi)
-      end
+      all { |wi| yield wi }
     end
 
     # A helper method for testing... Returns the first workitem in the
@@ -139,9 +148,15 @@ module Ruote
     #
     def by_wfid (wfid)
 
-      Dir.glob(File.join(@path, "*_#{wfid}_*.yaml")).collect do |path|
-        YAML.load_file(path)
-      end
+      #Dir.glob(File.join(@path, "*_#{wfid}_*.yaml")).collect do |path|
+      #  YAML.load_file(path)
+      #end
+      files.select { |f| f =~ /#{wfid}/ }.map { |f| YAML.load_file(f) }
+    end
+
+    def purge!
+
+      files.each { |f| File.delete( f ) }
     end
 
     # TODO : what about #all and #first a la dm ?
@@ -155,6 +170,15 @@ module Ruote
 
       File.join(
         @path, "#{@name}__#{fei.engine_id}_#{fei.wfid}__#{fei.expid}.yaml")
+    end
+
+    # Returns a list of workitem filenames
+    def files
+
+      Dir.new(@path).entries.inject([]) do |list, path|
+        list << File.join( @path, path ) if path.match(/^#{@name}\_\_.*\.yaml$/)
+        list
+      end
     end
   end
 end
