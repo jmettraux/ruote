@@ -25,6 +25,7 @@ class FtConditionalTest < Test::Unit::TestCase
         echo 'b', :if => '${f:d} == 2'
         echo 'c', :if => "${f:d} == '2'"
         echo 'd', :if => '${f:d} is set'
+        echo 'e', :if => '${f:e} is set'
       end
     end
 

@@ -93,7 +93,8 @@ class ConditionTest < Test::Unit::TestCase
     assert_b true, 'false is set'
 
     assert_b false, 'true is not set'
-    #assert_b false, 'is set'
+    assert_b false, 'is set'
+    assert_b false, ' is set'
   end
 
   def test_bang_equal

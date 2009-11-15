@@ -33,6 +33,7 @@ Richard Jennings
 Feedback
 --------
 
+Francisco Kiko - "is set" issue
 David Goldhirsch - EM participant block
 dlamotte - set :val => nil
 jpr5 + asm

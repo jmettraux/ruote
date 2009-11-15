@@ -46,7 +46,7 @@ module Ruote::Exp
       conditional = unescape(conditional)
 
       if m = SET_REGEX.match(conditional)
-        eval_is(m[1..-1])
+        eval_is(m)
       elsif m = COMPARISON_REGEX.match(conditional)
         compare(m)
       else
@@ -58,8 +58,12 @@ module Ruote::Exp
 
     def self.eval_is (match)
 
-      is_set = match.pop.strip != ''
+      match = match[1..-2].select { |e| e != nil }
+
       negative = match.find { |m| m == ' not' }
+
+      first = match.first.strip
+      is_set = first != '' && first != 'is'
 
       negative ? (not is_set) : is_set
     end
