@@ -119,7 +119,7 @@ module Ruote
       workitems = []
 
       files.each do |entry|
-        wi = YAML.load_file(File.join(@path, entry))
+        wi = YAML.load_file( entry )
         block.call(wi) if block_given?
         workitems << wi
       end
@@ -148,14 +148,15 @@ module Ruote
     #
     def by_wfid (wfid)
 
-      Dir.glob(File.join(@path, "*_#{wfid}_*.yaml")).collect do |path|
-        YAML.load_file(path)
-      end
+      #Dir.glob(File.join(@path, "*_#{wfid}_*.yaml")).collect do |path|
+      #  YAML.load_file(path)
+      #end
+      files.select { |f| f =~ /#{wfid}/ }.map { |f| YAML.load_file(f) }
     end
 
     def purge!
 
-      files.each { |f| File.delete( File.join( @path, f ) ) }
+      files.each { |f| File.delete( f ) }
     end
 
     # TODO : what about #all and #first a la dm ?
@@ -175,7 +176,7 @@ module Ruote
     def files
 
       Dir.new(@path).entries.inject([]) do |list, path|
-        list << path if path.match(/^#{@name}\_\_.*\.yaml$/)
+        list << File.join( @path, path ) if path.match(/^#{@name}\_\_.*\.yaml$/)
         list
       end
     end
