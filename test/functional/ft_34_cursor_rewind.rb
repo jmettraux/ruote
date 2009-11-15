@@ -68,7 +68,7 @@ class FtCursorRewindTest < Test::Unit::TestCase
     bravo = @engine.register_participant :bravo, Ruote::HashParticipant
     charly = @engine.register_participant :charly, Ruote::HashParticipant
 
-    noisy
+    #noisy
 
     #
     # reaching initial situation...
