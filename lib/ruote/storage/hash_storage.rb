@@ -23,53 +23,61 @@
 #++
 
 
-require 'ruote/engine/context'
-require 'ruote/queue/subscriber'
-require 'ruote/storage/base'
-
-
 module Ruote
 
-  #
-  # Dumb Hash based in-memory storage.
-  #
-  # Warning : not constrained at all. May eat up all your mem.
-  #           For testing purposes only !
-  #
-  class HashStorage < Hash
+  class HashStorage
 
-    include EngineContext
-    include StorageBase # which overrides #context=
-    include DummyTickets
-    include Subscriber
+    def initialize
 
-    def find_expressions (query={})
-
-      values.select { |exp| exp_match?(exp, query) }
+      @hash = {}
+      @hash['ats'] = []
+      @hash['cron'] = []
+      @hash['tasks'] = []
+      @hash['expressions'] = {}
     end
 
-    def to_s
+    def get_at_schedules (time)
 
-      inject('') do |s, (k, v)|
-        s << "#{k.to_s} => #{v.class}\n"
-      end
+      @hash['ats']
     end
 
-    # Returns the expression for the given fei, if any.
+    def get_cron_schedules (time)
+
+      @hash['crons']
+    end
+
+    def get_tasks
+
+      @hash['tasks']
+    end
+
+    def get_expression (fei)
+
+      @hash['expressions'][fei] || Ruote::MissingExpression.new
+    end
+
+    def get_worker_configuration
+
+      nil
+    end
+
+    # Returns true if the task deletion succeeded (which means the worker
+    # is free to process the task).
     #
-    def [] (fei)
+    def delete_task (task)
 
-      exp = super(fei)
-      exp.context = context if exp
+      @hash['tasks'].shift
 
-      exp
+      true
     end
 
-    # Clears this storage. Mostly used by the test framework.
-    #
-    def purge!
+    def get_wfid_raw
 
-      clear
+      l = @hash['last'] || 0.0
+      t = Time.now.to_f
+      t = l + 0.001 if t <= l
+
+      Time.at(t)
     end
   end
 end

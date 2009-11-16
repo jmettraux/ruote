@@ -22,74 +22,28 @@
 # Made in Japan.
 #++
 
-require 'rufus/cloche'
-
 
 module Ruote
 
-  class FsStorage
+  class WfidGenerator
 
-    def initialize (dir)
+    def initialize (worker)
 
-      @cloche = Rufus::Cloche.new(:dir => dir)
+      @worker = worker
     end
 
-    def get_at_schedules (time)
+    def generate
 
-      @cloche.get_many('ats')
+      raw = get_raw
+
+      "#{time.strftime('%Y%m%d%H%M%S')}-#{time.usec}"
     end
 
-    def get_cron_schedules (time)
+    protected
 
-      @cloche.get_many('crons')
-    end
+    def get_raw
 
-    def get_tasks
-
-      @cloche.get_many('tasks')
-    end
-
-    def get_expression (fei)
-
-      @cloche.get('expressions', fei) || Ruote::MissingExpression.new
-    end
-
-    def get_worker_configuration
-
-      @cloche.get('configurations', 'worker')
-    end
-
-    # Returns true if the task deletion succeeded (which means the worker
-    # is free to process the task).
-    #
-    def delete_task (task)
-
-      @cloche.delete(task).nil?
-    end
-
-    def get_wfid_raw
-
-      h =
-        @cloche.get('wfid', 'last') ||
-        { '_id' => 'last', 'type' => 'wfid', 'last' => 0.0 }
-
-      l = h['last']
-
-      t = Time.now.to_f
-      t = l + 0.001 if t <= l
-
-      h['last'] = t
-
-      r = @cloche.put(h)
-
-      return get_wfid_raw if r
-
-      Time.at(t)
-    end
-
-    def put (args)
-
-      @cloche.put(args)
+      worker.storage.get_wfid_raw
     end
   end
 end
