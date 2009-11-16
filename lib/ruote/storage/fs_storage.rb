@@ -29,9 +29,10 @@ module Ruote
 
   class FsStorage
 
-    def initialize (dir)
+    def initialize (dir, options={})
 
       @cloche = Rufus::Cloche.new(:dir => dir)
+      @options = options
     end
 
     def get_at_schedules (time)
@@ -54,9 +55,9 @@ module Ruote
       @cloche.get('expressions', fei) || Ruote::MissingExpression.new
     end
 
-    def get_worker_configuration
+    def get_configuration
 
-      @cloche.get('configurations', 'worker')
+      @options.merge(@cloche.get('configurations', 'ruote'))
     end
 
     # Returns true if the task deletion succeeded (which means the worker
@@ -87,7 +88,11 @@ module Ruote
       Time.at(t)
     end
 
-    def put (args)
+    def put_task (action, args)
+
+      args['type'] = 'task'
+      args['action'] = 'action'
+      args['_id'] = Time.now.to_f.to_s
 
       @cloche.put(args)
     end

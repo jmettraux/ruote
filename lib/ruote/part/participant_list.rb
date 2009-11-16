@@ -23,7 +23,6 @@
 #++
 
 
-require 'ruote/engine/context'
 require 'ruote/part/block_participant'
 
 
@@ -36,12 +35,9 @@ module Ruote
   #
   class ParticipantList
 
-    include EngineContext
-
     attr_reader :list
 
-
-    def initialize
+    def initialize (context)
 
       @list = []
     end

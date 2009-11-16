@@ -24,7 +24,6 @@
 
 require 'ruote/util/ometa'
 require 'ruote/util/dollar'
-require 'ruote/engine/context'
 
 
 module Ruote::Exp
@@ -45,8 +44,6 @@ module Ruote::Exp
   # override #apply, #reply and #cancel.
   #
   class FlowExpression < Ruote::ObjectWithMeta
-
-    include Ruote::EngineContext
 
     require 'ruote/exp/ro_tickets'
     require 'ruote/exp/ro_attributes'

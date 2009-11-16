@@ -36,14 +36,14 @@ module Ruote
 
       raw = get_raw
 
-      "#{time.strftime('%Y%m%d%H%M%S')}-#{time.usec}"
+      "#{raw.strftime('%Y%m%d%H%M%S')}-#{raw.usec}"
     end
 
     protected
 
     def get_raw
 
-      worker.storage.get_wfid_raw
+      @worker.storage.get_wfid_raw
     end
   end
 end

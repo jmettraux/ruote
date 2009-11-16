@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+#require 'ruote/part/hash_participant'
 
 
 class EftProcessDefinitionTest < Test::Unit::TestCase

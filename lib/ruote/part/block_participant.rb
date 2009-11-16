@@ -22,8 +22,6 @@
 # Made in Japan.
 #++
 
-
-require 'ruote/engine/context'
 require 'ruote/part/local_participant'
 
 
@@ -66,7 +64,6 @@ module Ruote
   #
   class BlockParticipant
 
-    include EngineContext
     include LocalParticipant
 
     attr_accessor :do_not_thread

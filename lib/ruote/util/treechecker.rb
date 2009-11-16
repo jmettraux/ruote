@@ -27,7 +27,6 @@
   # is loaded only when needed
 
 require 'fileutils'
-require 'ruote/engine/context'
 
 
 module Ruote
@@ -38,17 +37,9 @@ module Ruote
   #
   class TreeChecker
 
-    include EngineContext
+    def initialize (context)
 
-    # builds the treechecker. Will return immediately (and not build)
-    # if the :use_ruby_treechecker option is set to false. By default
-    # the treechecker is used.
-    #
-    def context= (c)
-
-      @context = c
-
-      (@context[:use_ruby_treechecker] == false) and return
+      (context[:use_ruby_treechecker] == false) and return
 
       require 'rufus/treechecker' # gem 'rufus-treechecker'
         # load only when needed
@@ -107,6 +98,5 @@ module Ruote
       @cchecker.check(ruby_code) if @checker
     end
   end
-
 end
 

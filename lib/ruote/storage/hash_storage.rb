@@ -27,13 +27,15 @@ module Ruote
 
   class HashStorage
 
-    def initialize
+    def initialize (options={})
 
       @hash = {}
       @hash['ats'] = []
       @hash['cron'] = []
       @hash['tasks'] = []
       @hash['expressions'] = {}
+
+      @options = options
     end
 
     def get_at_schedules (time)
@@ -56,9 +58,9 @@ module Ruote
       @hash['expressions'][fei] || Ruote::MissingExpression.new
     end
 
-    def get_worker_configuration
+    def get_configuration
 
-      nil
+      @options
     end
 
     # Returns true if the task deletion succeeded (which means the worker
@@ -78,6 +80,15 @@ module Ruote
       t = l + 0.001 if t <= l
 
       Time.at(t)
+    end
+
+    def put_task (action, args)
+
+      args['type'] = 'task'
+      args['action'] = 'action'
+      args['_id'] = Time.now.to_f.to_s
+
+      @hash['tasks'] << args
     end
   end
 end

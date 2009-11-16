@@ -13,7 +13,7 @@ require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 require File.join(File.dirname(__FILE__), 'engine_helper.rb')
 
 require 'ruote/engine'
-require 'ruote/log/test_logger'
+require 'ruote/worker'
 
 
 module FunctionalBase
@@ -22,17 +22,7 @@ module FunctionalBase
 
     @tracer = Tracer.new
 
-    ac = {}
-
-    ac[:s_tracer] = @tracer
-    #ac[:ruby_eval_allowed] = true
-    #ac[:definition_in_launchitem_allowed] = true
-
-    @engine = determine_engine_class(ac).new(ac)
-
-    #FunctionalBase.track_wfids(@engine)
-
-    @engine.add_service(:s_logger, Ruote::TestLogger)
+    @engine = Ruote::Engine.new(Ruote::Worker.new(determine_storage))
   end
 
   def teardown
@@ -41,12 +31,11 @@ module FunctionalBase
     @engine.shutdown
   end
 
-  def assert_log_count (count, &block)
-
-    c = logger.log.select(&block).size
-    logger.to_stdout if ( ! @engine.context[:noisy]) && c != count
-    assert_equal count, c
-  end
+  #def assert_log_count (count, &block)
+  #  c = logger.log.select(&block).size
+  #  logger.to_stdout if ( ! @engine.context[:noisy]) && c != count
+  #  assert_equal count, c
+  #end
 
   # launch_thing is a process definition or a launch item
   #

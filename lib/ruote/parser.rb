@@ -25,7 +25,6 @@
 
 require 'uri'
 require 'open-uri'
-require 'ruote/engine/context'
 require 'ruote/util/json'
 require 'ruote/parser/ruby_dsl' # just making sure it's loaded
 require 'ruote/parser/xml'
@@ -38,7 +37,8 @@ module Ruote
   #
   class Parser
 
-    include EngineContext
+    def initialize (worker)
+    end
 
     # Turns the input into a ruote syntax tree (raw process definition).
     # This method is used by engine.launch(x) for example.

@@ -22,18 +22,12 @@
 # Made in Japan.
 #++
 
+#require 'ruote/context'
+
 
 module Ruote
 
   class Worker
-
-    DEFAULT_WORKER_CONF = {
-      's_expmap' => [ Ruote::ExpressionMap, 'ruote/exp/expression_map' ],
-      's_parser' => [ Ruote::Parser, 'ruote/parser' ],
-      's_wfidgen' => [ Ruote::MnemoWfidGenerator, 'ruote/id/mnemo_generator' ],
-      's_plist' => [ Ruote::ParticipantList, 'ruote/part/participant_list' ],
-      's_treechecker' => [ Ruote::TreeChecker, 'ruote/util/treechecker' ]
-    }
 
     EXP_ACTIONS = %w[ apply reply cancel ]
 
@@ -46,11 +40,7 @@ module Ruote
       @last_second = -1
 
       @subscribers = []
-
-      @context = DEFAULT_WORKER_CONF.merge(
-        @storage.get_worker_configuration || {})
-
-      @context.keys.each { |k| add_service(k) if k.match(/^s\_/) }
+      @context = Ruote::WorkerContext.new(self)
     end
 
     def run
@@ -78,9 +68,9 @@ module Ruote
       end
     end
 
-    def subscribe (actions, subscriber)
+    def subscribe (type, actions, subscriber)
 
-      @subscribers << [ actions, subscriber ]
+      @subscribers << [ type, actions, subscriber ]
     end
 
     protected
@@ -118,7 +108,8 @@ module Ruote
 
     def launch (task)
 
-      p [ task['wfid'], task['definition'] ]
+      puts "=== launch ==="
+      p task
     end
 
     def get_expression (task)
@@ -128,26 +119,13 @@ module Ruote
 
     def notify (event)
 
-      @subscribers.each do |actions, subscriber|
+      @subscribers.each do |type, actions, subscriber|
 
-        subscriber.notify(event) \
-          if actions == :all || actions.include?(event['action'])
+        next unless type == :all || event['type'] == type
+        next unless actions == :all || actions.include?(event['action'])
+
+        subscriber.notify(event)
       end
-    end
-
-    def add_service (key)
-
-      klass, path = @context[key]
-
-      load(path)
-
-      @context[key] = klass.new(self)
-
-      self.class.class_eval %{
-        def #{key[2..-1]}
-          @context['#{key}']
-        end
-      }
     end
   end
 end

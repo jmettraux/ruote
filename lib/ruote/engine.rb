@@ -22,14 +22,27 @@
 # Made in Japan.
 #++
 
+require 'ruote/context'
+require 'ruote/workitem'
+require 'ruote/launchitem'
+
 
 module Ruote
 
   class Engine
 
-    def initialize (worker)
+    attr_reader :storage
 
-      @worker = worker
+    def initialize (worker_or_storage)
+
+      if worker_or_storage.respond_to?(:storage)
+        @storage = worker_or_storage.storage
+        @context = worker_or_storage.context
+        @context.engine = self
+      else
+        @storage = worker_or_storage
+        @context = Ruote::EngineContext.new(self)
+      end
     end
 
     def launch (definition, opts={})
@@ -41,11 +54,10 @@ module Ruote
 
       workitem = Workitem.new(opts[:fields] || {})
 
-      wfid = @worker.wfidgen.generate
+      wfid = @context.wfidgen.generate
 
-      @worker.storage.put(
-        'type' => 'task',
-        'action' => 'launch',
+      @storage.put_task(
+        'launch',
         'wfid' => 'wfid',
         'definition' => definition,
         'workitem' => workitem)
@@ -53,15 +65,12 @@ module Ruote
       wfid
     end
 
-    def run
-
-      Thread.new { @worker.run }
-    end
-
-    def stop
-
-      @worker.stop
-    end
+    #def run
+    #  Thread.new { @worker.run }
+    #end
+    #def stop
+    #  @worker.stop
+    #end
   end
 end
 

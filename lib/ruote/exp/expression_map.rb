@@ -47,7 +47,7 @@ module Ruote
   #
   class ExpressionMap
 
-    def initialize
+    def initialize (worker)
 
       @map = {}
       add(Ruote::Exp::DefineExpression)
