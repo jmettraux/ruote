@@ -144,5 +144,21 @@ class EftSubprocessTest < Test::Unit::TestCase
       "no subprocess named 'nada' found",
       @engine.process(wfid).errors.first.error_message)
   end
+
+  def test_subprocess_in_engine_variable
+
+    pdef = Ruote.process_definition do
+      sequence do
+        sub0
+        echo 'done.'
+      end
+    end
+
+    @engine.variables['sub0'] = Ruote.process_definition do
+      echo 'in sub0'
+    end
+
+    assert_trace pdef, "in sub0\ndone."
+  end
 end
 

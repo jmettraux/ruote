@@ -75,5 +75,19 @@ class FtVarIndirectionTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ a b ]
   end
+
+  def test_subprocess_uri_set_as_engine_variable__absolute
+
+    pdef = Ruote.process_definition do
+      v
+    end
+
+    #noisy
+
+    @engine.variables['v'] = File.expand_path(
+      File.join(File.dirname(__FILE__), '..', 'pdef.xml'))
+
+    assert_trace pdef, %w[ a b ]
+  end
 end
 
