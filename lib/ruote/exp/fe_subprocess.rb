@@ -170,11 +170,12 @@ module Ruote::Exp
 
     def lookup_subprocess (ref)
 
+      val = lookup_variable(ref)
+
       # a classical subprocess stored in a variable ?
 
-      pos, subtree = lookup_variable(ref)
-
-      return [ pos, subtree ] if subtree.is_a?(Array) && subtree.size == 3
+      return [ '0', val ] if is_tree?(val)
+      return val if is_pos_tree?(val)
 
       # maybe subprocess :ref => 'uri'
 
@@ -183,11 +184,21 @@ module Ruote::Exp
       _, subtree = Ruote::Exp::DefineExpression.reorganize(expmap, subtree) \
         if subtree && expmap.is_definition?(subtree)
 
-      return [ '0', subtree ] if subtree.is_a?(Array) && subtree.size == 3
+      return [ '0', subtree ] if is_tree?(subtree)
 
       # no luck ...
 
       raise "no subprocess named '#{ref}' found"
+    end
+
+    def is_tree? (a)
+
+      a.is_a?(Array) && a[1].is_a?(Hash) && a.size == 3
+    end
+
+    def is_pos_tree? (a)
+
+      a.is_a?(Array) && a.size == 2 && a[0].is_a?(String) && is_tree?(a[1])
     end
   end
 end
