@@ -49,6 +49,8 @@ module Ruote
 
         t = Time.now
 
+        p t
+
         if t.sec != @last_second
 
           @last_second = t.sec
@@ -89,12 +91,12 @@ module Ruote
 
         action = task['action']
 
-        if action == 'launch'
+        if task['tree']
           launch(task)
         elsif EXP_ACTIONS.include?(action)
-          get_expression(task).send("do_#{action}", self, task['workitem'])
-        else
-          # ???
+          get_expression(task).send("do_#{action}", task['workitem'])
+        elsif action == 'dispatch'
+          dispatch(task)
         end
 
         notify(task)
@@ -103,18 +105,58 @@ module Ruote
 
         # TODO : log error ?
         p e
+        e.backtrace.each { |l| puts l }
       end
+    end
+
+    def dispatch (task)
+
+      # does it know this participant ?
+      pname = task['participant_name']
+
+      participant = context.plist.lookup_participant(pname)
+
+      # timeout ?
+
+      # REALLY split apply from dispatch ?
+
+      participant.consume(task)
     end
 
     def launch (task)
 
-      puts "=== launch ==="
-      p task
+      launch = task['action'] == 'launch'
+
+      tree = task['tree']
+
+      wfid = task['wfid']
+      parent_id = task['parent_id']
+      fei = task['fei']
+
+      workitem = task['workitem']
+      variables = task['variables'] || {}
+
+      workitem.fei = fei
+
+      exp_name = tree.first
+      exp_class = context.expmap.expression_class(exp_name)
+
+      exp_class = Ruote::Exp::SequenceExpression \
+        if launch && exp_class == Ruote::Exp::DefineExpression
+
+      exp_class.new(
+        @context, fei, parent_id, tree, variables, workitem
+      ).do_apply
+
+      #fei
     end
 
     def get_expression (task)
 
-      @storage.get_expression(task['fei'])
+      fexp = @storage.get_expression(task['fei'])
+      fexp.context = @context
+
+      fexp
     end
 
     def notify (event)

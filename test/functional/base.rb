@@ -22,12 +22,17 @@ module FunctionalBase
 
     @tracer = Tracer.new
 
-    @engine = Ruote::Engine.new(Ruote::Worker.new(determine_storage))
+    @engine =
+      Ruote::Engine.new(
+        Ruote::Worker.new(
+          determine_storage(
+            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
   end
 
   def teardown
 
     purge_engine
+
     @engine.shutdown
   end
 
@@ -51,7 +56,7 @@ module FunctionalBase
 
     if t = opts[:sleep]; sleep t; end
 
-    wait_for(wfid, opts)
+    wait_for(wfid)
 
     yield(@engine) if block_given?
 
@@ -76,27 +81,22 @@ module FunctionalBase
     @engine.context[:noisy] = on
   end
 
-  def logger
-    @engine.logger
-  end
+  def wait_for (wfid_or_part)
 
-  def wait_for (wfid_or_part, opts={})
+    sleep 0.500
 
-    if wfid_or_part.is_a?(String)
-
-      logger.wait_for([
-        [ :processes, :terminated, { :wfid => wfid_or_part } ],
-        [ :processes, :cancelled, { :wfid => wfid_or_part } ],
-        [ :processes, :killed, { :wfid => wfid_or_part } ],
-        [ :errors, nil, { :wfid => wfid_or_part } ]
-      ])
-
-    else
-
-      logger.wait_for([
-        [ :workitems, :dispatched, { :pname => wfid_or_part.to_s } ],
-      ])
-    end
+    #if wfid_or_part.is_a?(String)
+    #  logger.wait_for([
+    #    [ :processes, :terminated, { :wfid => wfid_or_part } ],
+    #    [ :processes, :cancelled, { :wfid => wfid_or_part } ],
+    #    [ :processes, :killed, { :wfid => wfid_or_part } ],
+    #    [ :errors, nil, { :wfid => wfid_or_part } ]
+    #  ])
+    #else
+    #  logger.wait_for([
+    #    [ :workitems, :dispatched, { :pname => wfid_or_part.to_s } ],
+    #  ])
+    #end
   end
 
   def assert_engine_clean (wfid=nil, opts={})
@@ -137,7 +137,7 @@ module FunctionalBase
 
     return if opts[:ignore_remaining_expressions]
 
-    expcount = @engine.expstorage.size
+    expcount = @engine.storage.get_expressions.size
     return if expcount == 0
 
     50.times { Thread.pass }

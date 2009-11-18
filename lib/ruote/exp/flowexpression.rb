@@ -49,6 +49,7 @@ module Ruote::Exp
     require 'ruote/exp/ro_attributes'
     require 'ruote/exp/ro_variables'
 
+    attr_accessor :context
 
     attr_accessor :fei
     attr_accessor :parent_id
@@ -382,38 +383,28 @@ module Ruote::Exp
     # making sure '@context' is not serialized
     #++
 
-    def marshal_dump #:nodoc#
+    def to_h
 
-      iv = instance_variables
-      iv.delete(:@context)
-      iv.delete('@context')
-      iv.inject({}) { |h, vn| h[vn] = instance_variable_get(vn); h }
-    end
+      instance_variables.inject({}) do |h, var|
 
-    def marshal_load (s) #:nodoc#
+        val = instance_variable_get(var)
+        var = var.to_s[1..-1]
 
-      s.each { |k, v| instance_variable_set(k, v) }
-    end
+        if var != 'context'
+          h[var] = val.respond_to?(:to_h) ? val.to_h : val
+        end
 
-    def to_yaml_properties #:nodoc#
-
-      #l = super
-      l = instance_variables.sort
-        # behind the scenes ;-)
-
-      l.delete(:@context)
-      l.delete('@context')
-
-      l
+        h
+      end
     end
 
     # Asks expstorage[s] to store/update persisted version of self.
     #
-    def persist (probe=false)
+    def persist
 
       @modified_time = Time.now
 
-      wqueue.emit!(:expressions, :update, :expression => self)
+      @context.storage.put(to_h)
 
       nil
     end
@@ -425,8 +416,9 @@ module Ruote::Exp
     #
     def unpersist
 
-      wqueue.emit!(:expressions, :delete, :fei => @fei)
-      wqueue.emit!(:errors, :remove, { :fei => @fei }) if @has_error
+      #wqueue.emit!(:expressions, :delete, :fei => @fei)
+      #wqueue.emit!(:errors, :remove, { :fei => @fei }) if @has_error
+      @context.storage.delete(to_h)
     end
 
     # Only called in case of emergency (when the scheduler persistent data

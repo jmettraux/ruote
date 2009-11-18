@@ -22,8 +22,6 @@
 # Made in Japan.
 #++
 
-
-require 'ruote/engine/context'
 require 'ruote/part/local_participant'
 
 
@@ -35,7 +33,6 @@ module Ruote
   #
   class HashParticipant
 
-    include EngineContext
     include LocalParticipant
 
     include Enumerable

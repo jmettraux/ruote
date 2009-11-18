@@ -96,9 +96,9 @@ module Ruote
 
       pa = plist.register(regex, participant, opts, block)
 
-      wqueue.emit(
-        :participants, :registered,
-        :regex => regex, :participant => pa)
+      #wqueue.emit(
+      #  :participants, :registered,
+      #  :regex => regex, :participant => pa)
 
       pa
     end
@@ -111,9 +111,9 @@ module Ruote
 
       raise(ArgumentError.new('participant not found')) unless entry
 
-      wqueue.emit(
-        :participants, :unregistered,
-        :regex => entry.first, :participant => entry.last)
+      #wqueue.emit(
+      #  :participants, :unregistered,
+      #  :regex => entry.first, :participant => entry.last)
     end
   end
 end

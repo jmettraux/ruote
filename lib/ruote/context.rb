@@ -54,6 +54,14 @@ module Ruote
       self.class.class_eval %{ def #{key[2..-1]}; @conf['#{key}']; end }
     end
 
+    def shutdown
+
+      @conf.values.each do |s|
+
+        s.shutdown if s.respond_to?(:shutdown)
+      end
+    end
+
     protected
 
     def initialize_services

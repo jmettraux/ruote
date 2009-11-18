@@ -25,11 +25,14 @@
 require 'ruote/context'
 require 'ruote/workitem'
 require 'ruote/launchitem'
+require 'ruote/engine/process_status'
 
 
 module Ruote
 
   class Engine
+
+    require 'ruote/engine/ro_participant'
 
     attr_reader :storage
 
@@ -39,6 +42,8 @@ module Ruote
         @storage = worker_or_storage.storage
         @context = worker_or_storage.context
         @context.engine = self
+        Thread.abort_on_exception = true
+        Thread.new { @context.worker.run }
       else
         @storage = worker_or_storage
         @context = Ruote::EngineContext.new(self)
@@ -52,25 +57,36 @@ module Ruote
         definition = definition.definition
       end
 
+      tree = @context.parser.parse(definition)
+
       workitem = Workitem.new(opts[:fields] || {})
 
       wfid = @context.wfidgen.generate
 
       @storage.put_task(
         'launch',
-        'wfid' => 'wfid',
-        'definition' => definition,
+        'wfid' => wfid,
+        'tree' => tree,
         'workitem' => workitem)
 
       wfid
     end
 
-    #def run
-    #  Thread.new { @worker.run }
-    #end
-    #def stop
-    #  @worker.stop
-    #end
+    def process (wfid)
+
+      ProcessStatus.new(
+        @storage.get_expressions(wfid), @storage.get_errors(wfid))
+    end
+
+    def purge!
+
+      @storage.purge!
+    end
+
+    def shutdown
+
+      @context.shutdown
+    end
   end
 end
 

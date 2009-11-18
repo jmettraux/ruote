@@ -12,7 +12,7 @@ require 'ruote/storage/fs_storage'
 #
 # Returns the class of the engine to use, based on the ARGV
 #
-def determine_storage
+def determine_storage (opts)
 
   if ARGV.include?('--help')
     puts %{
@@ -28,9 +28,9 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
   end
 
   if ARGV.include?('--fs')
-    Ruote::FsStorage.new('work')
+    Ruote::FsStorage.new('work', opts)
   else
-    Ruote::HashStorage.new
+    Ruote::HashStorage.new(opts)
   end
 end
 
