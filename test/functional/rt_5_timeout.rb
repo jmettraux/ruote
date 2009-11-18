@@ -91,7 +91,7 @@ class RtTimeoutTest < Test::Unit::TestCase
 
     assert_equal 1, @engine.processes.size
     assert_equal 1, @engine.scheduler.jobs.size
-    assert_equal at, @engine.scheduler.jobs.values.first.at
+    assert_in_delta at, @engine.scheduler.jobs.values.first.at, 1.0e-5
 
     sleep 0.400
 

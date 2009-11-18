@@ -15,6 +15,7 @@ Kenneth Kalmer  http://www.opensourcery.co.za
 Contributors
 ------------
 
+Enrico Bianco - http://github.com/enricob
 Andrew Timberlake - timeout 'at'
 Torsten Schoenebaum - ActiveResourceParticipant
 Raphael Simon - error handling mechanism design and QA
