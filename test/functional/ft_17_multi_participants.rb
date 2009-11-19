@@ -24,7 +24,7 @@ class FtMultiParticipants < Test::Unit::TestCase
 
       @participants = participants
 
-      # neuter all participant except the first
+      # neuter all participants except the first
 
       @participants[1..-1].each do |pa|
         class << pa
@@ -38,6 +38,8 @@ class FtMultiParticipants < Test::Unit::TestCase
     def application_context= (c)
 
       @application_context = c
+
+      # only the first participant needs a context (if it requires it)
 
       @participants.first.application_context = c \
         if @participants.first.respond_to?(:application_context=)
