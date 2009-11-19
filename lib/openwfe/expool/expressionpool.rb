@@ -538,6 +538,8 @@ module OpenWFE
 
       # notify or really handle ?
 
+      #puts error.backtrace.join("\n")
+
       do_handle_error(fei, workitem) ||
       onotify(:error, fei, message, workitem, error.class.name, error.to_s)
     end
