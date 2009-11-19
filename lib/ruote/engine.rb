@@ -23,7 +23,6 @@
 #++
 
 require 'ruote/context'
-require 'ruote/workitem'
 require 'ruote/launchitem'
 require 'ruote/engine/process_status'
 
@@ -59,14 +58,14 @@ module Ruote
 
       tree = @context.parser.parse(definition)
 
-      workitem = Workitem.new(opts[:fields] || {})
+      workitem = { 'fields' => opts[:fields] || {} }
 
       wfid = @context.wfidgen.generate
 
       @storage.put(
         'type' => 'tasks',
         'action' => 'launch',
-        '_id' => Time.now.to_f,
+        '_id' => Time.now.to_f.to_s,
         'wfid' => wfid,
         'tree' => tree,
         'workitem' => workitem)

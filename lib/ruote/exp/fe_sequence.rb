@@ -42,13 +42,14 @@ module Ruote::Exp
 
       persist
 
-      reply(@applied_workitem)
+      reply(applied_workitem)
     end
 
     def reply (workitem)
 
-      position = workitem.fei == self.fei ? -1 : workitem.fei.child_id
-      position += 1
+      position = workitem['fei'] == @h['fei'] ?
+        0 :
+        Ruote::FlowExpressionId.new(workitem['fei']).child_id + 1
 
       if position < tree_children.size
         apply_child(position, workitem)

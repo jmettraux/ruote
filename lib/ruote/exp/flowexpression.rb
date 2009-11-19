@@ -29,14 +29,199 @@ require 'ruote/util/dollar'
 
 module Ruote::Exp
 
-  #
-  # A simple timeout error. Only used when :on_timeout => 'error' for now.
-  #
-  class TimeoutError < RuntimeError
-    def backtrace
-      [ '---' ]
+  class FlowExpression
+
+    include Ruote::WithMeta
+    include Ruote::BasedOnHash
+
+    h_reader :applied_workitem
+    h_reader :original_tree
+    h_reader :updated_tree
+
+    def initialize (context, h)
+
+      @context = context
+
+      @h = h
+      @h['_id'] ||= fei.to_storage_id
+      @h['type'] ||= 'expressions'
+      @h['name'] ||= self.class.expression_names.first
+      @h['children'] ||= []
     end
+
+    def fei
+
+      Ruote::FlowExpressionId.new(@h['fei'])
+    end
+
+    #--
+    # PERSISTENCE
+    #++
+
+    def persist
+
+      @context.storage.put(@h)
+    end
+
+    def unpersist
+
+      @context.storage.delete(@h)
+    end
+
+    #--
+    # META
+    #++
+
+    # Keeping track of names and aliases for the expression
+    #
+    def self.names (*exp_names)
+
+      exp_names = exp_names.collect { |n| n.to_s }
+      meta_def(:expression_names) { exp_names }
+    end
+
+    # Returns true if this expression is a a definition
+    # (define, process_definition, set, ...)
+    #
+    def self.is_definition?
+
+      false
+    end
+
+    # This method makes sure the calling class responds "true" to is_definition?
+    # calls.
+    #
+    def self.is_definition
+
+      meta_def(:is_definition?) { true }
+    end
+
+    #--
+    # apply/reply
+    #++
+
+    def do_apply
+
+      apply
+    end
+
+    def reply_to_parent (workitem)
+
+      unpersist
+
+      workitem['fei'] = @h['fei']
+
+      @context.storage.put(
+        'type' => 'tasks',
+        '_id' => Time.now.to_f.to_s,
+        'action' => 'reply',
+        'fei' => @h['parent_id'],
+        'workitem' => workitem)
+    end
+
+    def apply_child (child_index, workitem, forget=false)
+
+      child_fei = @h['fei'].merge(
+        'expid' => "#{@h['fei']['expid']}_#{child_index}")
+
+      @h['children'] << child_fei unless forget
+
+      @context.storage.put(
+        'type' => 'tasks',
+        'action' => 'apply',
+        'fei' => child_fei,
+        'tree' => tree.last[child_index],
+        'parent_id' => forget ? nil : @h['fei'],
+        'variables' => forget ? compile_variables : nil,
+        'workitem' => workitem)
+    end
+
+    #def do_reply (workitem)
+    #  @children.delete(workitem.fei)
+    #    # NOTE : check on size before/after ?
+    #  if @state != nil # :failing, :cancelling or :dying
+    #    if @children.size < 1
+    #      reply_to_parent(workitem)
+    #    else
+    #      persist # for the updated @children
+    #    end
+    #  else
+    #    reply(workitem)
+    #  end
+    #end
+
+    def do_reply (workitem)
+
+      @h['children'].delete(workitem['fei'])
+
+      if @h['state'] != nil
+
+        if @h['children'].size < 1
+          reply_to_parent(workitem)
+        else
+          persist # for the updated children
+        end
+
+      else
+
+        reply(workitem)
+      end
+    end
+
+    #--
+    # TREE
+    #++
+
+    # Returns the current version of the tree (returns the updated version
+    # if it got updated.
+    #
+    def tree
+      updated_tree || original_tree
+    end
+
+    # Updates the tree of this expression
+    #
+    #   update_tree(t)
+    #
+    # will set the updated tree to t
+    #
+    #   update_tree
+    #
+    # will copy (deep copy) the original tree as the updated_tree.
+    #
+    # Adding a child to a sequence expression :
+    #
+    #   seq.update_tree
+    #   seq.updated_tree[2] << [ 'participant', { 'ref' => 'bob' }, [] ]
+    #   seq.persist
+    #
+    def update_tree (t=nil)
+      updated_tree = t || Ruote.fulldup(original_tree)
+    end
+
+    def name
+      tree[0]
+    end
+
+    def attributes
+      tree[1]
+    end
+
+    def tree_children
+      tree[2]
+    end
+
+    protected
   end
+
+  ##
+  ## A simple timeout error. Only used when :on_timeout => 'error' for now.
+  ##
+  #class TimeoutError < RuntimeError
+  #  def backtrace
+  #    [ '---' ]
+  #  end
+  #end
 
   #
   # The root class for all the expressions in Ruote.
@@ -44,9 +229,7 @@ module Ruote::Exp
   # Contains lots of default behaviour, extending classes primarily
   # override #apply, #reply and #cancel.
   #
-  class FlowExpression < Ruote::ObjectWithMeta
-
-    include Ruote::BasedOnHash
+  class BakFlowExpression #< Ruote::ObjectWithMeta
 
     require 'ruote/exp/ro_tickets'
     require 'ruote/exp/ro_attributes'

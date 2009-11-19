@@ -83,6 +83,8 @@ module Ruote
 
     def process (task)
 
+      p task
+
       return if @storage.delete(task)
 
       begin
@@ -135,12 +137,13 @@ module Ruote
       workitem = task['workitem']
       variables = task['variables'] || {}
 
-      fei ||= FlowExpressionId.from_h(
-        :engine_id => @context['engine_id'],
-        :wfid => wfid,
-        :expid => '0')
+      fei ||= {
+        'engine_id' => @context['engine_id'] || 'engine',
+        'wfid' => wfid,
+        'expid' => '0'
+      }
 
-      workitem.fei = fei
+      workitem['fei'] = fei
 
       exp_name = tree.first
       exp_class = context.expmap.expression_class(exp_name)
@@ -149,7 +152,12 @@ module Ruote
         if launch && exp_class == Ruote::Exp::DefineExpression
 
       exp = exp_class.new(
-        @context, fei, parent_id, tree, variables, workitem
+        @context,
+        'fei' => fei,
+        'parent_id' => parent_id,
+        'original_tree' => tree.dup,
+        'variables' => variables,
+        'applied_workitem' => workitem
       )
 
       exp.persist
@@ -160,10 +168,12 @@ module Ruote
 
     def get_expression (task)
 
-      fexp = @storage.get('expression', task['fei'])
-      fexp.context = @context
+      fexp = @storage.get(
+        'expressions', FlowExpressionId.new(task['fei']).to_storage_id)
 
-      fexp
+      exp_class = context.expmap.expression_class(fexp['name'])
+
+      exp_class.new(@context, fexp)
     end
 
     def notify (event)

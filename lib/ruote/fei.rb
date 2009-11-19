@@ -23,50 +23,88 @@
 #++
 
 
+require 'ruote/util/ohash'
 require 'ruote/util/misc'
 
 
 module Ruote
 
-  #
-  # Uniquely identifying FlowExpression instances.
-  #
   class FlowExpressionId
+
+    include Ruote::BasedOnHash
 
     CHILD_SEP = '_'
     SUBP_REGEX = /^(.+)\_(\d+)$/
 
-    attr_accessor :engine_id
-    attr_accessor :wfid
-    attr_accessor :expid
+    h_accessor :engine_id, :wfid, :expid
 
-    alias :pid :wfid
+    def initialize (h)
 
-    def to_s
-
-      "#{@engine_id}|#{@wfid}|#{@expid}"
+      @h = h
     end
 
-    def hash
+    def to_storage_id
 
-      to_s.hash
+      "#{expid}|#{sub_wfid}|#{parent_wfid}"
     end
 
-    def == (other)
+    # The counterpart to #parent_wfid, returns the subprocess identifier for
+    # this fei (or nil if it's a 'root' process).
+    #
+    def sub_wfid
 
-      return false unless other.is_a?(FlowExpressionId)
-
-      (hash == other.hash)
+      self.class.wfid_split(wfid)[1]
     end
-
-    alias eql? ==
 
     # Returns the last number in the expid. For instance, if the expid is
     # '0_5_7', the child_id will be '7'.
     #
     def child_id
 
-      @expid.split(CHILD_SEP).last.to_i
+      @h['expid'].split(CHILD_SEP).last.to_i
+    end
+
+    # Splits the wfid into [ parent_wfid, subprocess_id ]
+    #
+    def self.wfid_split (wfid)
+
+      if m = SUBP_REGEX.match(wfid)
+        [ m[1], m[2] ]
+      else
+        [ wfid ]
+      end
+    end
+
+    # If this fei's wfid is the wfid of a 'root' process, the wfid is returned.
+    # If this is the wfid of a subprocess only the parent part is returned.
+    #
+    def parent_wfid
+
+      self.class.wfid_split(wfid)[0]
+    end
+  end
+
+  #
+  # Uniquely identifying FlowExpression instances.
+  #
+  class BakFlowExpressionId
+
+    include Ruote::BasedOnHash
+
+    CHILD_SEP = '_'
+    SUBP_REGEX = /^(.+)\_(\d+)$/
+
+    def to_s
+
+      "#{@engine_id}|#{@wfid}|#{@expid}"
+    end
+
+    # Returns the last number in the expid. For instance, if the expid is
+    # '0_5_7', the child_id will be '7'.
+    #
+    def child_id
+
+      @hash['expid'].split(CHILD_SEP).last.to_i
     end
 
     # Given a child index, returns a copy of this FlowExpression, but with
@@ -75,7 +113,7 @@ module Ruote
     def new_child_fei (child_index)
 
       cfei = self.dup
-      cfei.expid = [ @expid, CHILD_SEP, child_index ].join
+      cfei.expid = [ expid, CHILD_SEP, child_index ].join
 
       cfei
     end
@@ -85,7 +123,7 @@ module Ruote
     #
     def parent_wfid
 
-      self.class.wfid_split(@wfid)[0]
+      self.class.wfid_split(wfid)[0]
     end
 
     # The counterpart to #parent_wfid, returns the subprocess identifier for
@@ -141,40 +179,31 @@ module Ruote
     # indicates the expression at the root of a main (not a subprocess)
     # instance.
     #
-    def brief
+    #def brief
+    #  "#{sub_wfid}/#{expid}"
+    #end
 
-      "#{sub_wfid}/#{expid}"
-    end
-
-    def diff (fei)
-
-      return fei \
-        if fei.engine_id != @engine_id
-      return fei \
-        if fei.parent_wfid != self.parent_wfid
-
-      return fei.child_id.to_i \
-        if fei.wfid == @wfid && fei.parent_expid == @expid
-      return fei.sub_wfid \
-        if fei.expid == '0'
-
-      fei
-    end
-
-    def undiff (i)
-
-      return i if i.is_a?(FlowExpressionId)
-
-      fei = self.dup
-
-      if i.is_a?(String)
-        fei.wfid = "#{fei.parent_wfid}#{CHILD_SEP}#{i}"
-      else # i is an number
-        fei.expid = "#{fei.expid}#{CHILD_SEP}#{i}"
-      end
-
-      fei
-    end
+    #def diff (fei)
+    #  return fei \
+    #    if fei.engine_id != @engine_id
+    #  return fei \
+    #    if fei.parent_wfid != self.parent_wfid
+    #  return fei.child_id.to_i \
+    #    if fei.wfid == @wfid && fei.parent_expid == @expid
+    #  return fei.sub_wfid \
+    #    if fei.expid == '0'
+    #  fei
+    #end
+    #def undiff (i)
+    #  return i if i.is_a?(FlowExpressionId)
+    #  fei = self.dup
+    #  if i.is_a?(String)
+    #    fei.wfid = "#{fei.parent_wfid}#{CHILD_SEP}#{i}"
+    #  else # i is an number
+    #    fei.expid = "#{fei.expid}#{CHILD_SEP}#{i}"
+    #  end
+    #  fei
+    #end
 
     def self.parent_wfid (wfid)
 

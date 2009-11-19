@@ -27,6 +27,8 @@ module Ruote
 
   class HashStorage
 
+    attr_reader :h
+
     def initialize (options={})
 
       @options = options
@@ -35,24 +37,24 @@ module Ruote
     end
 
     def put (doc)
-      (@hash[doc['type']] ||= {})[doc['_id']] = doc
+      (@h[doc['type']] ||= {})[doc['_id']] = Ruote::fulldup(doc)
       nil
     end
 
     def get (type, key)
-      @hash[type][key]
+      @h[type][key]
     end
 
     def delete (doc)
-      @hash[doc['type']].delete(doc['_id'])
+      @h[doc['type']].delete(doc['_id'])
       nil
     end
 
     def get_many (type, key=nil)
 
       (key ?
-        @hash[type].values.select { |doc| doc['_id'].match(key) } :
-        @hash[type].values
+        @h[type].values.select { |doc| doc['_id'].match(key) } :
+        @h[type].values
       ).sort { |d0, d1|
         d0['_id'] <=> d1['_id']
       }
@@ -60,7 +62,7 @@ module Ruote
 
     def purge!
 
-      @hash = %w[
+      @h = %w[
         tasks
         expressions
         errors
@@ -72,6 +74,15 @@ module Ruote
         h[k] = {}
         h
       }
+    end
+
+    def dump (type)
+
+      puts "=== #{type} ==="
+      @h[type].each do |k, v|
+        puts "      #{k} =>"
+        p v
+      end
     end
   end
 end

@@ -93,7 +93,7 @@ module Ruote::Exp
         # fei.expid : keeping track of the expid/branch for the subprocess
         #             (so that graphical representations match)
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(applied_workitem)
     end
 
     # Used by instances of this class and also the expression pool,

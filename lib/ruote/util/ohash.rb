@@ -30,15 +30,29 @@ module Ruote
     def self.included (target)
 
       class << target
-        def h_attr (*names)
+
+        def h_reader (*names)
+
           names.each do |name|
             define_method(name) do
-              @hash[name.to_s]
-            end
-            define_method("#{name}=") do |val|
-              @hash[name.to_s] = val
+              @h[name.to_s]
             end
           end
+        end
+
+        def h_writer (*names)
+
+          names.each do |name|
+            define_method("#{name}=") do |val|
+              @h[name.to_s] = val
+            end
+          end
+        end
+
+        def h_accessor (*names)
+
+          h_reader(*names)
+          h_writer(*names)
         end
       end
     end

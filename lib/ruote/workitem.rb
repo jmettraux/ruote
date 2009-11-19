@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'ruote/util/ohash'
 require 'ruote/util/misc'
 require 'ruote/util/lookup'
 
@@ -29,6 +30,28 @@ require 'ruote/util/lookup'
 module Ruote
 
   class Workitem
+
+    include Ruote::BasedOnHash
+
+    h_writer :fei
+
+    def initialize (h)
+
+      @h = h
+    end
+
+    def fei
+
+      FlowExpressionId.new(@h['fei'])
+    end
+
+    def raw_fei
+
+      @h['fei']
+    end
+  end
+
+  class BakWorkitem
 
     attr_accessor :fei
     attr_accessor :fields

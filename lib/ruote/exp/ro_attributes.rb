@@ -45,7 +45,7 @@ module Ruote::Exp
 
     # Looks up the value for attribute n.
     #
-    def attribute (n, workitem=@applied_workitem, options={})
+    def attribute (n, workitem=applied_workitem, options={})
 
       n = n.to_s
 
@@ -116,7 +116,7 @@ module Ruote::Exp
     def compile_atts (opts={})
 
       attributes.keys.inject({}) { |h, k|
-        h[k] = attribute(k, @applied_workitem, opts)
+        h[k] = attribute(k, applied_workitem, opts)
         h
       }
     end
@@ -130,8 +130,8 @@ module Ruote::Exp
     def expand_atts (opts={})
 
       attributes.keys.inject({}) { |h, k|
-        kk = Ruote.dosub(k, self, @applied_workitem)
-        h[kk] = attribute(k, @applied_workitem, opts)
+        kk = Ruote.dosub(k, self, applied_workitem)
+        h[kk] = attribute(k, applied_workitem, opts)
         h
       }
     end
@@ -148,7 +148,7 @@ module Ruote::Exp
     #
     # will yield 'alpha'.
     #
-    def attribute_text (workitem=@applied_workitem)
+    def attribute_text (workitem=applied_workitem)
 
       text = attributes.keys.find { |k| attributes[k] == nil }
 
@@ -174,17 +174,17 @@ module Ruote::Exp
 
       if k = has_att(*vals)
 
-        attribute(k, @applied_workitem, att_options)
+        attribute(k, applied_workitem, att_options)
 
       elsif k = has_att(*vars)
 
-        k = attribute(k, @applied_workitem, att_options)
+        k = attribute(k, applied_workitem, att_options)
         lookup_variable(k)
 
       elsif k = has_att(*flds)
 
-        k = attribute(k, @applied_workitem, att_options)
-        @applied_workitem.attributes[k]
+        k = attribute(k, applied_workitem, att_options)
+        applied_workitem.attributes[k]
 
       else
 

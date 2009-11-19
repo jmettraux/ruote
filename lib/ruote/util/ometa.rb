@@ -29,23 +29,26 @@
 
 module Ruote
 
-  class ObjectWithMeta
+  module WithMeta
     #
     # meta a la lucky stiff
 
-    def self.metaclass
-      class << self
-        self
+    def self.included(target)
+
+      def target.metaclass
+        class << self
+          self
+        end
       end
-    end
-    def self.meta_eval (&block)
-      metaclass.instance_eval(&block)
-    end
-    def self.meta_def (method_name, &block)
-      meta_eval { define_method method_name, &block }
-    end
-    def class_def (method_name, &block)
-      class_eval { define_method name, &block }
+      def target.meta_eval (&block)
+        metaclass.instance_eval(&block)
+      end
+      def target.meta_def (method_name, &block)
+        meta_eval { define_method method_name, &block }
+      end
+      def class_def (method_name, &block)
+        class_eval { define_method name, &block }
+      end
     end
   end
 end
