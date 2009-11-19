@@ -109,14 +109,25 @@ module Ruote::Exp
 
       unpersist
 
-      workitem['fei'] = @h['fei']
+      if @h['parent_id']
 
-      @context.storage.put(
-        'type' => 'tasks',
-        '_id' => Time.now.to_f.to_s,
-        'action' => 'reply',
-        'fei' => @h['parent_id'],
-        'workitem' => workitem)
+        workitem['fei'] = @h['fei']
+
+        @context.storage.put(
+          'type' => 'tasks',
+          '_id' => Time.now.to_f.to_s,
+          'action' => 'reply',
+          'fei' => @h['parent_id'],
+          'workitem' => workitem)
+      else
+
+        @context.storage.put(
+          'type' => 'tasks',
+          '_id' => Time.now.to_f.to_s,
+          'action' => 'terminated',
+          'wfid' => @h['fei']['wfid'],
+          'workitem' => workitem)
+      end
     end
 
     def apply_child (child_index, workitem, forget=false)

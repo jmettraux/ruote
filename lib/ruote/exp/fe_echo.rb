@@ -45,7 +45,7 @@ module Ruote::Exp
 
       text = "#{attribute_text}\n"
 
-      if t = @context[:s_tracer]
+      if t = @context['s_tracer']
         t << text
       else
         print(text)

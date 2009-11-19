@@ -74,6 +74,8 @@ module Ruote
         h[k] = {}
         h
       }
+
+      @h['configuration']['engine'] = @options
     end
 
     def dump (type)

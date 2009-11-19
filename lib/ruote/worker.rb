@@ -83,8 +83,6 @@ module Ruote
 
     def process (task)
 
-      p task
-
       return if @storage.delete(task)
 
       begin

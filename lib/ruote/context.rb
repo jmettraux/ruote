@@ -47,6 +47,8 @@ module Ruote
 
     def add_service (key, path, klass)
 
+      return unless klass
+
       require(path)
 
       @conf[key] = Ruote.constantize(klass).new(self)

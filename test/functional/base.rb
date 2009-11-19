@@ -26,7 +26,8 @@ module FunctionalBase
       Ruote::Engine.new(
         Ruote::Worker.new(
           determine_storage(
-            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
+            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ],
+            's_tracer' => @tracer)))
   end
 
   def teardown
@@ -54,7 +55,7 @@ module FunctionalBase
 
     wfid = @engine.launch(launch_thing, opts[:launch_opts] || {})
 
-    if t = opts[:sleep]; sleep t; end
+    #if t = opts[:sleep]; sleep t; end
 
     wait_for(wfid)
 
