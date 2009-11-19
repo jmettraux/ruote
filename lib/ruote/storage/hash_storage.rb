@@ -36,6 +36,7 @@ module Ruote
 
     def put (doc)
       (@hash[doc['type']] ||= {})[doc['_id']] = doc
+      nil
     end
 
     def get (type, key)
@@ -44,6 +45,17 @@ module Ruote
 
     def delete (doc)
       @hash[doc['type']].delete(doc['_id'])
+      nil
+    end
+
+    def get_many (type, key=nil)
+
+      (key ?
+        @hash[type].values.select { |doc| doc['_id'].match(key) } :
+        @hash[type].values
+      ).sort { |d0, d1|
+        d0['_id'] <=> d1['_id']
+      }
     end
 
     def purge!
@@ -54,109 +66,12 @@ module Ruote
         errors
         ats
         crons
+        configuration
+        misc
       ].inject({}) { |h, k|
         h[k] = {}
         h
       }
-    end
-
-    #--
-    # CONFIGURATION
-    #++
-
-    def get_configuration
-
-      @options
-    end
-
-    #--
-    # SCHEDULES
-    #++
-
-    def get_at_schedules (time)
-
-      p @hash
-
-      @hash['ats']
-    end
-
-    def get_cron_schedules (time)
-
-      @hash['crons']
-    end
-
-    #--
-    # TASKS
-    #++
-
-    def get_tasks
-
-      @hash['tasks'].values.sort { |t0, t1| t0['_id'] <=> t1['_id'] }
-    end
-
-    def put_task (action, args)
-
-      args['type'] = 'tasks'
-      args['action'] = action
-      args['_id'] = Time.now.to_f.to_s
-
-      put(args)
-    end
-
-    # Returns true if the task deletion succeeded (which means the worker
-    # is free to process the task).
-    #
-    def delete_task (task)
-
-      @hash['tasks'].shift
-
-      true
-    end
-
-    #--
-    # WFIDS
-    #++
-
-    def get_wfid_raw
-
-      l = @hash['last'] || 0.0
-      t = Time.now.to_f
-      t = l + 0.001 if t <= l
-
-      Time.at(t)
-    end
-
-    #--
-    # EXPRESSIONS
-    #++
-
-    def get_expression (fei)
-
-      @hash['expressions'][fei] || Ruote::MissingExpression.new
-    end
-
-    def get_expressions (wfid=nil)
-
-      return @hash['expressions'].values unless wfid
-
-      @hash['expressions'].inject([]) do |a, (fei, fexp)|
-
-        a << fexp if fei.parent_wfid == wfid
-        a
-      end
-    end
-
-    #--
-    # ERRORS
-    #++
-
-    def get_errors (wfid)
-
-      @hash['expressions'].inject([]) do |a, (fei, err)|
-
-        a << err if fei.parent_wfid == wfid
-        a
-      end
     end
   end
 end

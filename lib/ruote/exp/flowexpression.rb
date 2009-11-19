@@ -23,6 +23,7 @@
 #++
 
 require 'ruote/util/ometa'
+require 'ruote/util/ohash'
 require 'ruote/util/dollar'
 
 
@@ -44,6 +45,8 @@ module Ruote::Exp
   # override #apply, #reply and #cancel.
   #
   class FlowExpression < Ruote::ObjectWithMeta
+
+    include Ruote::BasedOnHash
 
     require 'ruote/exp/ro_tickets'
     require 'ruote/exp/ro_attributes'
@@ -186,25 +189,6 @@ module Ruote::Exp
       tree[2]
     end
 
-    # Given something like
-    #
-    #   sequence do
-    #     participant 'alpha'
-    #   end
-    #
-    # in the context of the participant expression
-    #
-    #   attribute_text()
-    #
-    # will yield 'alpha'.
-    #
-    def attribute_text (workitem=@applied_workitem)
-
-      text = attributes.keys.find { |k| attributes[k] == nil }
-
-      Ruote.dosub(text.to_s, self, workitem)
-    end
-
     #--
     # APPLY / REPLY / CANCEL
     #++
@@ -217,7 +201,7 @@ module Ruote::Exp
 
       if Condition.skip?(attribute(:if), attribute(:unless))
 
-        pool.reply_to_parent(self, @applied_workitem)
+        put_reply_task(@applied_workitem)
         return
       end
 
@@ -238,6 +222,7 @@ module Ruote::Exp
         apply
 
       rescue Exception => e
+
         initial.context = @context
         initial.persist
         raise e
@@ -385,7 +370,9 @@ module Ruote::Exp
 
     def to_h
 
-      instance_variables.inject({}) do |h, var|
+      instance_variables.inject({
+        '_id' => @fei.to_storage_id
+      }) do |h, var|
 
         val = instance_variable_get(var)
         var = var.to_s[1..-1]
@@ -398,13 +385,16 @@ module Ruote::Exp
       end
     end
 
+    def self.from_h (h)
+    end
+
     # Asks expstorage[s] to store/update persisted version of self.
     #
     def persist
 
       @modified_time = Time.now
 
-      @context.storage.put(to_h)
+      @context.storage.put(self.to_h)
 
       nil
     end
@@ -418,7 +408,7 @@ module Ruote::Exp
 
       #wqueue.emit!(:expressions, :delete, :fei => @fei)
       #wqueue.emit!(:errors, :remove, { :fei => @fei }) if @has_error
-      @context.storage.delete(to_h)
+      @context.storage.delete(self.to_h)
     end
 
     # Only called in case of emergency (when the scheduler persistent data
@@ -472,12 +462,22 @@ module Ruote::Exp
     #
     def apply_child (child_index, workitem, forget=false)
 
-      pool.apply_child(self, child_index, workitem, forget)
+      fei = @fei.new_child_fei(child_index)
+
+      register_child(fei) unless forget
+
+      @context.storage.put(
+        'type' => 'tasks',
+        'action' => 'apply',
+        'wfid' => @fei.wfid,
+        'fei' => fei,
+        'tree' => tree.last[child_index],
+        'parent_id' => forget ? nil : @fei,
+        'variables' => forget ? compile_variables : nil,
+        'workitem' => workitem)
     end
 
     # Replies to the parent expression.
-    #
-    # This method contains lots of logic.
     #
     def reply_to_parent (workitem)
 
@@ -518,7 +518,36 @@ module Ruote::Exp
           pexp.persist
         end
 
-        pool.reply_to_parent(self, workitem)
+        put_reply_task(workitem)
+      end
+    end
+
+    def put_reply_task (workitem)
+
+      unpersist
+
+      workitem.fei = @fei
+
+      if @parent_id
+
+        @context.storage.put(
+          'type' => 'tasks',
+          'action' => 'reply',
+          'fei' => @parent_id,
+          'workitem' => workitem)
+      else
+
+        msg = case @state
+          when 'cancelling' then 'cancelled'
+          when 'dying' then 'killed'
+          else 'terminated'
+        end
+
+        @context.storage.put(
+          'type' => 'tasks',
+          'action' => msg,
+          'wfid' => @fei.wfid,
+          'workitem' => workitem)
       end
     end
 
@@ -555,7 +584,7 @@ module Ruote::Exp
 
       if handler == 'undo' # which got just done (cancel)
 
-        pool.reply_to_parent(self, workitem)
+        put_reply_task(workitem)
 
       else # handle
 

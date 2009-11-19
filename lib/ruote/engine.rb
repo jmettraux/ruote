@@ -63,8 +63,10 @@ module Ruote
 
       wfid = @context.wfidgen.generate
 
-      @storage.put_task(
-        'launch',
+      @storage.put(
+        'type' => 'tasks',
+        'action' => 'launch',
+        '_id' => Time.now.to_f,
         'wfid' => wfid,
         'tree' => tree,
         'workitem' => workitem)
@@ -75,7 +77,8 @@ module Ruote
     def process (wfid)
 
       ProcessStatus.new(
-        @storage.get_expressions(wfid), @storage.get_errors(wfid))
+        @storage.get_many('expressions', /#{wfid}$/),
+        @storage.get_many('errors', /#{wfid}$/))
     end
 
     def purge!

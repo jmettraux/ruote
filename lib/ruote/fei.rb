@@ -98,10 +98,17 @@ module Ruote
 
     def to_h
 
-      %w[ engine_id wfid expid ].inject({ 'class' => self.class.to_s }) { |h, k|
+      %w[ engine_id wfid expid ].inject({}) { |h, k|
         h[k] = instance_variable_get("@#{k}")
         h
       }
+    end
+
+    # most relevant to the end...
+    #
+    def to_storage_id
+
+      "#{@expid}|#{sub_wfid}|#{parent_wfid}"
     end
 
     def self.from_h (h)

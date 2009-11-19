@@ -22,7 +22,7 @@
 # Made in Japan.
 #++
 
-#require 'ruote/context'
+require 'ruote/fei'
 
 
 module Ruote
@@ -49,21 +49,19 @@ module Ruote
 
         t = Time.now
 
-        p t
-
         if t.sec != @last_second
 
           @last_second = t.sec
 
           # at schedules
-          @storage.get_at_schedules(t).each { |sche| trigger(sche) }
+          @storage.get_many('ats', //).each { |sche| trigger(sche) }
 
           # cron schedules
-          @storage.get_cron_schedules(t).each { |sche| trigger(sche) }
+          @storage.get_many('crons', //).each { |sche| trigger(sche) }
         end
 
         # tasks
-        tasks = @storage.get_tasks
+        tasks = @storage.get_many('tasks')
         tasks.each { |task| process(task) }
 
         sleep(0.100) if tasks.size == 0
@@ -85,7 +83,7 @@ module Ruote
 
     def process (task)
 
-      return unless @storage.delete_task(task)
+      return if @storage.delete(task)
 
       begin
 
@@ -104,6 +102,7 @@ module Ruote
       rescue Exception => e
 
         # TODO : log error ?
+        puts "======================"
         p e
         e.backtrace.each { |l| puts l }
       end
@@ -136,6 +135,11 @@ module Ruote
       workitem = task['workitem']
       variables = task['variables'] || {}
 
+      fei ||= FlowExpressionId.from_h(
+        :engine_id => @context['engine_id'],
+        :wfid => wfid,
+        :expid => '0')
+
       workitem.fei = fei
 
       exp_name = tree.first
@@ -144,16 +148,19 @@ module Ruote
       exp_class = Ruote::Exp::SequenceExpression \
         if launch && exp_class == Ruote::Exp::DefineExpression
 
-      exp_class.new(
+      exp = exp_class.new(
         @context, fei, parent_id, tree, variables, workitem
-      ).do_apply
+      )
+
+      exp.persist
+      exp.do_apply
 
       #fei
     end
 
     def get_expression (task)
 
-      fexp = @storage.get_expression(task['fei'])
+      fexp = @storage.get('expression', task['fei'])
       fexp.context = @context
 
       fexp

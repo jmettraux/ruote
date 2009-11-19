@@ -25,45 +25,21 @@
 
 module Ruote
 
-  class WfidGenerator
+  module BasedOnHash
 
-    def initialize (context)
+    def self.included (target)
 
-      @context = context
-
-      @last =
-        @context.storage.get('misc', 'last_wfid') ||
-        { 'type' => 'misc', '_id' => 'last_wfid', 'raw' => Time.now.to_f }
-    end
-
-    def generate
-
-      raw = get_raw
-
-      "#{raw.strftime('%Y%m%d%H%M%S')}-#{raw.usec}"
-    end
-
-    protected
-
-    def get_raw
-
-      raw = Time.now
-
-      @last['raw'] = raw.to_f
-
-      last = @context.storage.put(@last)
-
-      if last
-        #
-        # put failed, have to re-ask
-        #
-        @last = last
-        get_raw
-      else
-        #
-        # put successful, we can build a new wfid
-        #
-        raw
+      class << target
+        def h_attr (*names)
+          names.each do |name|
+            define_method(name) do
+              @hash[name.to_s]
+            end
+            define_method("#{name}=") do |val|
+              @hash[name.to_s] = val
+            end
+          end
+        end
       end
     end
   end

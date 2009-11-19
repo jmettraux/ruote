@@ -136,6 +136,25 @@ module Ruote::Exp
       }
     end
 
+    # Given something like
+    #
+    #   sequence do
+    #     participant 'alpha'
+    #   end
+    #
+    # in the context of the participant expression
+    #
+    #   attribute_text()
+    #
+    # will yield 'alpha'.
+    #
+    def attribute_text (workitem=@applied_workitem)
+
+      text = attributes.keys.find { |k| attributes[k] == nil }
+
+      Ruote.dosub(text.to_s, self, workitem)
+    end
+
     protected
 
     def determine_tos

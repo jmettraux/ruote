@@ -137,7 +137,7 @@ module FunctionalBase
 
     return if opts[:ignore_remaining_expressions]
 
-    expcount = @engine.storage.get_expressions.size
+    expcount = @engine.storage.get_many('expressions').size
     return if expcount == 0
 
     50.times { Thread.pass }
