@@ -45,7 +45,7 @@ module Ruote::Exp
 
     # Looks up the value for attribute n.
     #
-    def attribute (n, workitem=applied_workitem, options={})
+    def attribute (n, workitem=h.applied_workitem, options={})
 
       n = n.to_s
 
@@ -115,9 +115,9 @@ module Ruote::Exp
     #
     def compile_atts (opts={})
 
-      attributes.keys.inject({}) { |h, k|
-        h[k] = attribute(k, applied_workitem, opts)
-        h
+      attributes.keys.inject({}) { |r, k|
+        r[k] = attribute(k, h.applied_workitem, opts)
+        r
       }
     end
 

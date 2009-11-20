@@ -151,9 +151,9 @@ module Ruote::Exp
     def un_set_variable (op, var, val=nil)
 
       if op == :set
-        variables[var] = val
+        h.variables[var] = val
       else # op == :unset
-        variables.delete(var)
+        h.variables.delete(var)
       end
 
       persist
@@ -202,7 +202,7 @@ module Ruote::Exp
       # no prefix...
 
       return [ self, var ] \
-        if variables
+        if h.variables
 
       return parent.locate_var(var, prefix) \
         if parent_id

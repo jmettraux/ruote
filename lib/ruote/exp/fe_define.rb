@@ -85,12 +85,12 @@ module Ruote::Exp
 
       # TODO : what if no name ??
 
-      set_variable(name, [ fei.expid, t ])
+      set_variable(name, [ h.fei['expid'], t ])
         #
         # fei.expid : keeping track of the expid/branch for the subprocess
         #             (so that graphical representations match)
 
-      reply_to_parent(applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     # Used by instances of this class and also the expression pool,

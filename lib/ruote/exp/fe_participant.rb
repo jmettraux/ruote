@@ -126,20 +126,19 @@ module Ruote::Exp
       #
       # determine participant
 
-      self.participant_name = attribute(:ref) || attribute_text
+      h.participant_name = attribute(:ref) || attribute_text
 
-      participant_name = participant_name.to_s
+      h.participant_name = h.participant_name.to_s
 
-      if participant_name == ''
+      if h.participant_name == ''
         raise ArgumentError.new("no participant name specified")
       end
 
-      participant = @context.plist.lookup(participant_name)
+      participant = @context.plist.lookup(h.participant_name)
 
-      if participant.nil?
-        raise(ArgumentError.new(
-          "no participant named #{participant_name.inspect}"))
-      end
+      raise(ArgumentError.new(
+        "no participant named #{participant_name.inspect}")
+      ) if participant.nil?
 
       #
       # participant found, consider timeout
@@ -149,11 +148,8 @@ module Ruote::Exp
       #
       # dispatch to participant
 
-      #applied_workitem['participant_name'] =
-      #  attribute(:original_ref) || participant_name
-      applied_workitem['participant_name'] = participant_name
-
-      applied_workitem['fields']['params'] = compile_atts
+      h.applied_workitem['participant_name'] = h.participant_name
+      h.applied_workitem['fields']['params'] = compile_atts
 
       persist
 
@@ -162,11 +158,11 @@ module Ruote::Exp
 
     def cancel (flavour)
 
-      participant = @context.plist.lookup(participant_name)
+      participant = @context.plist.lookup(h.participant_name)
 
       participant.cancel(fei, flavour)
 
-      reply_to_parent(applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     def reply_to_parent (workitem)
@@ -210,21 +206,14 @@ module Ruote::Exp
 
     def do_dispatch (participant)
 
-      wi = Ruote::Workitem.new(applied_workitem.dup)
+      wi = Ruote::Workitem.new(h.applied_workitem.dup)
 
       participant.consume(wi)
-
-      puts
-      @h.each do |k, v|
-        puts " - #{k} ==> #{v}"
-      end
-      p @h['participant_name']
-      p participant_name
 
       @context.storage.put(
         'type' => 'tasks',
         'action' => 'dispatched',
-        'participant_name' => participant_name,
+        'participant_name' => h.participant_name,
         'workitem' => wi)
     end
 
@@ -251,8 +240,10 @@ module Ruote::Exp
 
       j = scheduler.in(timeout, @fei, :cancel)
 
-      @timeout_at = j.at
-      @timeout_job_id = j.job_id
+      #@timeout_at = j.at
+      #@timeout_job_id = j.job_id
+
+      raise "implement me !"
     end
   end
 end

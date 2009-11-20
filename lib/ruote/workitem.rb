@@ -31,13 +31,12 @@ module Ruote
 
   class Workitem
 
-    include Ruote::HashDot
-
     attr_reader :h
 
     def initialize (h)
 
       @h = h
+      class << @h; include Ruote::HashDot; end
     end
 
     def fei
