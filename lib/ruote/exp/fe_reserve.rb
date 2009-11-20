@@ -23,9 +23,6 @@
 #++
 
 
-require 'ruote/exp/flowexpression'
-
-
 module Ruote::Exp
 
   #
