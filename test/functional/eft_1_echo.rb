@@ -5,6 +5,14 @@
 # Sat Sep 20 23:40:10 JST 2008
 #
 
+#class String
+#  def empty?
+#    puts '=' * 80
+#    puts caller.join("\n")
+#    return (size == 0)
+#  end
+#end
+
 #require 'perftools'
 #PerfTools::CpuProfiler.start("/tmp/out.profile")
 
@@ -12,6 +20,8 @@
 #  p o
 #  Kernel.require(o)
 #end
+
+#require 'profile'
 
 require File.join(File.dirname(__FILE__), 'base')
 
@@ -27,7 +37,7 @@ class EftEchoTest < Test::Unit::TestCase
 
     #noisy
 
-    #100.times {
+    #10.times {
     #  @tracer.trace.clear
       assert_trace(pdef, 'a')
     #}

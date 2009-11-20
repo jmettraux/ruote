@@ -34,9 +34,8 @@ module Ruote
     include Ruote::BasedOnHash
 
     CHILD_SEP = '_'
-    SUBP_REGEX = /^(.+)\_(\d+)$/
 
-    h_accessor :engine_id, :wfid, :expid
+    h_accessor :engine_id, :wfid, :sub_wfid, :expid
 
     def initialize (h)
 
@@ -45,15 +44,7 @@ module Ruote
 
     def to_storage_id
 
-      "#{expid}|#{sub_wfid}|#{parent_wfid}"
-    end
-
-    # The counterpart to #parent_wfid, returns the subprocess identifier for
-    # this fei (or nil if it's a 'root' process).
-    #
-    def sub_wfid
-
-      self.class.wfid_split(wfid)[1]
+      "#{expid}|#{sub_wfid}|#{wfid}"
     end
 
     # Returns the last number in the expid. For instance, if the expid is
@@ -62,25 +53,6 @@ module Ruote
     def child_id
 
       @h['expid'].split(CHILD_SEP).last.to_i
-    end
-
-    # Splits the wfid into [ parent_wfid, subprocess_id ]
-    #
-    def self.wfid_split (wfid)
-
-      if m = SUBP_REGEX.match(wfid)
-        [ m[1], m[2] ]
-      else
-        [ wfid ]
-      end
-    end
-
-    # If this fei's wfid is the wfid of a 'root' process, the wfid is returned.
-    # If this is the wfid of a subprocess only the parent part is returned.
-    #
-    def parent_wfid
-
-      self.class.wfid_split(wfid)[0]
     end
   end
 
