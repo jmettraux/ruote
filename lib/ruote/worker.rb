@@ -90,10 +90,16 @@ module Ruote
         action = task['action']
 
         if task['tree']
+
           launch(task)
+
         elsif EXP_ACTIONS.include?(action)
-          get_expression(task).send("do_#{action}", task['workitem'])
+
+          Ruote::Exp::FlowExpression.get_expression(@context, task['fei']).send(
+            "do_#{action}", task['workitem'])
+
         elsif action == 'dispatch'
+
           dispatch(task)
         end
 
@@ -133,7 +139,7 @@ module Ruote
       fei = task['fei']
 
       workitem = task['workitem']
-      variables = task['variables'] || {}
+      variables = task['variables']
 
       fei ||= {
         'engine_id' => @context['engine_id'] || 'engine',
@@ -162,16 +168,6 @@ module Ruote
       exp.do_apply
 
       #fei
-    end
-
-    def get_expression (task)
-
-      fexp = @storage.get(
-        'expressions', FlowExpressionId.new(task['fei']).to_storage_id)
-
-      exp_class = context.expmap.expression_class(fexp['name'])
-
-      exp_class.new(@context, fexp)
     end
 
     def notify (event)

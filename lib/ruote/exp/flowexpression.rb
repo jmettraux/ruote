@@ -54,6 +54,14 @@ module Ruote::Exp
       Ruote::FlowExpressionId.new(h.fei)
     end
 
+    def parent_id
+      h.parent_id ? Ruote::FlowExpressionId.new(h.parent_id) : nil
+    end
+
+    def parent
+      self.class.get_expression(@context, h.parent_id)
+    end
+
     #--
     # PERSISTENCE
     #++
@@ -66,6 +74,16 @@ module Ruote::Exp
     def unpersist
 
       @context.storage.delete(@h)
+    end
+
+    def self.get_expression (context, fei)
+
+      fexp = context.storage.get(
+        'expressions', Ruote::FlowExpressionId.new(fei).to_storage_id)
+
+      exp_class = context.expmap.expression_class(fexp['name'])
+
+      exp_class.new(context, fexp)
     end
 
     #--

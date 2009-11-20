@@ -136,13 +136,11 @@ module Ruote::Exp
     # holding the var is held. The block is meant to return the new value
     # for the variable.
     #
-    def get_or_set_variable (var, &block)
-
-      fexp, v = locate_var(var)
-
-      fexp.gos_variable(v, block)
-        # note that block is passed as regular argument
-    end
+    #def get_or_set_variable (var, &block)
+    #  fexp, v = locate_var(var)
+    #  fexp.gos_variable(v, block)
+    #    # note that block is passed as regular argument
+    #end
 
     protected
 
@@ -180,10 +178,9 @@ module Ruote::Exp
 
     # Does the magic for #get_or_set_variable (and is wrapped in a ticket).
     #
-    def gos_variable (var, block)
-
-      un_set_variable(:set, var, block.call(@variables[var]))
-    end
+    #def gos_variable (var, block)
+    #  un_set_variable(:set, var, block.call(@variables[var]))
+    #end
     #with_ticket :gos_variable
 
     # Returns the flow expression that owns a variable (or the one
@@ -197,7 +194,7 @@ module Ruote::Exp
         if prefix.length >= 2 # engine variable
 
       return parent.locate_var(var, prefix) \
-        if prefix.length == 1 && parent_id
+        if prefix.length == 1 && h.parent_id
 
       # no prefix...
 
@@ -205,7 +202,7 @@ module Ruote::Exp
         if h.variables
 
       return parent.locate_var(var, prefix) \
-        if parent_id
+        if h.parent_id
 
       raise "uprooted var lookup, something went wrong"
     end

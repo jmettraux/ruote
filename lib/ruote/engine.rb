@@ -73,7 +73,8 @@ module Ruote
         '_id' => Time.now.to_f.to_s,
         'wfid' => wfid,
         'tree' => tree,
-        'workitem' => workitem)
+        'workitem' => workitem,
+        'variables' => {})
 
       wfid
     end
