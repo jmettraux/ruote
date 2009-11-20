@@ -33,56 +33,55 @@ module Ruote::Exp
     # This class method is used to wrap the target method inside
     # a with_ticket call
     #
-    def self.with_ticket (method_name)
+#    def self.with_ticket (method_name)
+#
+#      alias_method "without_ticket__#{method_name}", method_name
+#      class_eval(%{
+#        def #{method_name} (*args)
+#          with_ticket("without_ticket__#{method_name}", *args)
+#        end
+#      })
+#    end
 
-      alias_method "without_ticket__#{method_name}", method_name
-
-      class_eval(%{
-        def #{method_name} (*args)
-          with_ticket("without_ticket__#{method_name}", *args)
-        end
-      })
-    end
-
-    protected
-
-    # The actual ticketing mecha wrapper.
-    #
-    def with_ticket (method_name, *args)
-
-      ticket = args.last.class.name.match(/Ticket$/) ? args.pop : nil
-      ticket ||= expstorage.draw_ticket(self)
-
-      #p [ :t, :in, ticket.hash, method_name, args, @fei.to_s ]
-
-      if ticket.consumable?
-
-        self.send(method_name, *args)
-        ticket.consume
-
-        #p [ :t, :co, ticket.hash, @fei.to_s ]
-
-      else
-
-        sleep 0.014
-
-        #p [ :t, :re, ticket.hash, @fei.to_s ]
-
-        if exp = expstorage[@fei]
-
-          args << ticket
-          exp.with_ticket(method_name, *args)
-        end
-      end
-    end
-
-    # Discards all the tickets for this flow expression instance
-    # (called when replying to the parent expression).
-    #
-    def discard_all_tickets
-
-      expstorage.discard_all_tickets(@fei)
-    end
+#    protected
+#
+#    # The actual ticketing mecha wrapper.
+#    #
+#    def with_ticket (method_name, *args)
+#
+#      ticket = args.last.class.name.match(/Ticket$/) ? args.pop : nil
+#      ticket ||= expstorage.draw_ticket(self)
+#
+#      #p [ :t, :in, ticket.hash, method_name, args, @fei.to_s ]
+#
+#      if ticket.consumable?
+#
+#        self.send(method_name, *args)
+#        ticket.consume
+#
+#        #p [ :t, :co, ticket.hash, @fei.to_s ]
+#
+#      else
+#
+#        sleep 0.014
+#
+#        #p [ :t, :re, ticket.hash, @fei.to_s ]
+#
+#        if exp = expstorage[@fei]
+#
+#          args << ticket
+#          exp.with_ticket(method_name, *args)
+#        end
+#      end
+#    end
+#
+#    # Discards all the tickets for this flow expression instance
+#    # (called when replying to the parent expression).
+#    #
+#    def discard_all_tickets
+#
+#      expstorage.discard_all_tickets(@fei)
+#    end
   end
 end
 

@@ -39,12 +39,16 @@ module Ruote
     def initialize (worker_or_storage)
 
       if worker_or_storage.respond_to?(:storage)
+
         @storage = worker_or_storage.storage
         @context = worker_or_storage.context
         @context.engine = self
+
         Thread.abort_on_exception = true
         Thread.new { @context.worker.run }
+
       else
+
         @storage = worker_or_storage
         @context = Ruote::EngineContext.new(self)
       end

@@ -79,7 +79,7 @@ module Ruote::Exp
 
     def apply
 
-      t = self.class.reorganize(expmap, tree).last
+      t = self.class.reorganize(@context.expmap, tree).last
 
       name = attribute(:name) || attribute_text
 

@@ -172,7 +172,7 @@ module Ruote::Exp
 
     # wraps the reply method with the ticket mechanism
     #
-    with_ticket :reply
+    #with_ticket :reply
 
     protected
 

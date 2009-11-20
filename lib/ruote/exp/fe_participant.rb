@@ -23,6 +23,7 @@
 #++
 
 
+require 'ruote/workitem'
 require 'ruote/exp/condition'
 
 
@@ -118,7 +119,7 @@ module Ruote::Exp
     #include FilterMixin
       # TODO
 
-    attr_reader :participant_name
+    h_reader :participant_name
 
     names :participant
 
@@ -127,19 +128,19 @@ module Ruote::Exp
       #
       # determine participant
 
-      @participant_name = attribute(:ref) || attribute_text
+      participant_name = attribute(:ref) || attribute_text
 
-      @participant_name = @participant_name.to_s
+      participant_name = participant_name.to_s
 
-      if @participant_name == ''
+      if participant_name == ''
         raise ArgumentError.new("no participant name specified")
       end
 
-      participant = plist.lookup(@participant_name)
+      participant = @context.plist.lookup(participant_name)
 
       if participant.nil?
         raise(ArgumentError.new(
-          "no participant named #{@participant_name.inspect}"))
+          "no participant named #{participant_name.inspect}"))
       end
 
       #
@@ -150,10 +151,11 @@ module Ruote::Exp
       #
       # dispatch to participant
 
-      @applied_workitem.participant_name =
-        attribute(:original_ref) || @participant_name
+      #applied_workitem['participant_name'] =
+      #  attribute(:original_ref) || participant_name
+      applied_workitem['participant_name'] = participant_name
 
-      @applied_workitem.fields['params'] = compile_atts
+      applied_workitem['fields']['params'] = compile_atts
 
       persist
 
@@ -162,11 +164,11 @@ module Ruote::Exp
 
     def cancel (flavour)
 
-      participant = plist.lookup(@participant_name)
+      participant = @context.plist.lookup(participant_name)
 
-      participant.cancel(@fei, flavour)
+      participant.cancel(fei, flavour)
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(applied_workitem)
     end
 
     def reply_to_parent (workitem)
@@ -205,17 +207,20 @@ module Ruote::Exp
         # not good : executing in next_tick will block the whole engine
 
       t = Thread.new(&block)
-      t[:name] = "dispatching to '#{@participant_name}'"
+      t[:name] = "dispatching to '#{participant_name}'"
     end
 
     def do_dispatch (participant)
 
-      wi = @applied_workitem.dup
+      wi = Ruote::Workitem.new(applied_workitem.dup)
 
       participant.consume(wi)
 
-      wqueue.emit(
-        :workitems, :dispatched, :workitem => wi, :pname => @participant_name)
+      @context.storage.put(
+        'type' => 'tasks',
+        'action' => 'dispatched',
+        'participant_name' => participant_name,
+        'workitem' => wi)
     end
 
     # Overriden with an empty behaviour. The work is now done a bit later

@@ -238,8 +238,8 @@ module Ruote::Exp
       end
     end
 
-    with_ticket :reply
-    with_ticket :set_command_workitem
+    #with_ticket :reply
+    #with_ticket :set_command_workitem
 
     protected
 

@@ -191,8 +191,8 @@ module Ruote::Exp
       apply_child(0, workitem)
     end
 
-    with_ticket :reply
-    with_ticket :set_command_workitem
+    #with_ticket :reply
+    #with_ticket :set_command_workitem
   end
 end
 

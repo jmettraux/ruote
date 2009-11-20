@@ -37,6 +37,8 @@ module Ruote::Exp
     h_reader :applied_workitem
     h_reader :original_tree
     h_reader :updated_tree
+    h_accessor :parent_id
+    h_accessor :variables
 
     def initialize (context, h)
 
@@ -50,8 +52,10 @@ module Ruote::Exp
     end
 
     def fei
-
       Ruote::FlowExpressionId.new(@h['fei'])
+    end
+    def raw_fei
+      @h['fei']
     end
 
     #--

@@ -94,7 +94,7 @@ module Ruote
     #
     def register_participant (regex, participant=nil, opts={}, &block)
 
-      pa = plist.register(regex, participant, opts, block)
+      pa = @context.plist.register(regex, participant, opts, block)
 
       #wqueue.emit(
       #  :participants, :registered,
@@ -107,7 +107,7 @@ module Ruote
     #
     def unregister_participant (name_or_participant)
 
-      entry = plist.unregister(name_or_participant)
+      entry = @context.plist.unregister(name_or_participant)
 
       raise(ArgumentError.new('participant not found')) unless entry
 

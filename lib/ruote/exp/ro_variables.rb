@@ -36,8 +36,8 @@ module Ruote::Exp
     #
     def compile_variables
 
-      vars = @parent_id ? parent.compile_variables : {}
-      vars.merge!(@variables) if @variables
+      vars = parent_id ? parent.compile_variables : {}
+      vars.merge!(variables) if variables
 
       vars.dup
     end
@@ -49,24 +49,24 @@ module Ruote::Exp
 
       var, prefix = split_prefix(var, prefix)
 
-      return engine.variables[var] \
+      return @context.engine.variables[var] \
         if prefix.length >= 2
 
       return parent.lookup_variable(var, prefix) \
-        if @parent_id && prefix.length >= 1
+        if parent_id && prefix.length >= 1
 
       #if var == (attribute('name') || attribute_text)
       #  # allowing main process recursion (with the up-to-date tree)
       #  return [ @fei.expid, tree ]
       #end
 
-      if @variables
+      if variables
 
-        val = @variables[var]
+        val = variables[var]
         return val if val != nil
       end
 
-      if @parent_id
+      if parent_id
 
         return parent.lookup_variable(var, prefix)
       end
@@ -93,7 +93,8 @@ module Ruote::Exp
         ArgumentError.new("cannot set var at engine level : #{var}")
       ) if fexp.nil?
 
-      fexp.with_ticket(:un_set_variable, :set, v, val)
+      #fexp.with_ticket(:un_set_variable, :set, v, val)
+      fexp.un_set_variable(:set, v, val)
     end
 
     # Unbinds a variables.
@@ -106,14 +107,15 @@ module Ruote::Exp
         ArgumentError.new("cannot set var at engine level : #{var}")
       ) if fexp.nil?
 
-      if (fexp.fei == @fei)
-        #
-        # don't use a ticket when expression wants to modify its own vars
-        #
-        fexp.un_set_variable(:unset, v)
-      else
-        fexp.with_ticket(:un_set_variable, :unset, v)
-      end
+      #if (fexp.raw_fei == @h['fei'])
+      #  #
+      #  # don't use a ticket when expression wants to modify its own vars
+      #  #
+      #  fexp.un_set_variable(:unset, v)
+      #else
+      #  fexp.with_ticket(:un_set_variable, :unset, v)
+      #end
+      fexp.un_set_variable(:unset, v)
     end
 
     # This method is mostly used by the expression pool when looking up
@@ -149,14 +151,14 @@ module Ruote::Exp
     def un_set_variable (op, var, val=nil)
 
       if op == :set
-        @variables[var] = val
+        variables[var] = val
       else # op == :unset
-        @variables.delete(var)
+        variables.delete(var)
       end
 
       persist
 
-      wqueue.emit(:variables, op, :var => var, :fei => @fei)
+      #wqueue.emit(:variables, op, :var => var, :fei => @fei)
     end
 
     VAR_PREFIX_REGEX = /^(\/*)/
@@ -182,7 +184,7 @@ module Ruote::Exp
 
       un_set_variable(:set, var, block.call(@variables[var]))
     end
-    with_ticket :gos_variable
+    #with_ticket :gos_variable
 
     # Returns the flow expression that owns a variable (or the one
     # that should own it) and the var without its potential / prefixes.
@@ -195,15 +197,15 @@ module Ruote::Exp
         if prefix.length >= 2 # engine variable
 
       return parent.locate_var(var, prefix) \
-        if prefix.length == 1 && @parent_id
+        if prefix.length == 1 && parent_id
 
       # no prefix...
 
       return [ self, var ] \
-        if @variables
+        if variables
 
       return parent.locate_var(var, prefix) \
-        if @parent_id
+        if parent_id
 
       raise "uprooted var lookup, something went wrong"
     end

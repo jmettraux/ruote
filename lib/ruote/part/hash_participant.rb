@@ -48,14 +48,14 @@ module Ruote
 
     def consume (workitem)
 
-      @items[workitem.fei] = workitem
+      @items[workitem.fei.to_storage_id] = workitem
     end
 
     # Makes sure to remove the workitem from the in-memory hash.
     #
     def cancel (fei, flavour)
 
-      @items.delete(fei)
+      @items.delete(fei.to_storage_id)
     end
 
     # Removes the workitem from the in-memory hash and replies to the engine.

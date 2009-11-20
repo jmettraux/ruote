@@ -45,6 +45,11 @@ module Ruote
       @conf[key]
     end
 
+    def []= (key, value)
+
+      @conf[key] = value
+    end
+
     def add_service (key, path, klass)
 
       return unless klass

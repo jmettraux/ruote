@@ -49,6 +49,11 @@ module Ruote
 
       @h['fei']
     end
+
+    def dup
+
+      Ruote.fulldup(self)
+    end
   end
 
   class BakWorkitem

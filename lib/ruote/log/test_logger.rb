@@ -58,7 +58,9 @@ module Ruote
 
     def notify (event)
 
-      @context.storage.put(event.merge('type' => 'archived_task'))
+      #@context.storage.put(event.merge('type' => 'archived_task'))
+
+      pretty_print(event) if @context[:noisy]
 
       @noteworthy << event if NOTEWORTHY.include?(event['action'])
 
@@ -99,6 +101,24 @@ module Ruote
         @waiting = nil
         thread.wakeup
       end
+    end
+
+    def pretty_print (event)
+
+      fei = event['fei']
+      depth = fei ? fei['expid'].split('_').size : 0
+
+      i = fei ?
+        [ fei['wfid'], fei['sub_wfid'], fei['expid'] ].join(' ') :
+        event['wfid']
+
+      rest = event.dup
+      %w[
+        _id type action
+        fei wfid workitem variables
+      ].each { |k| rest.delete(k) }
+
+      puts "#{'  ' * depth}#{event['action'][0, 2]} #{i} #{rest.inspect}"
     end
   end
 end

@@ -161,7 +161,7 @@ module Ruote::Exp
 
     # wraps the add_branches method with the ticket mechanism
     #
-    with_ticket :add_branches
+    #with_ticket :add_branches
 
     protected
 
@@ -187,7 +187,6 @@ module Ruote::Exp
     #
     def expected_count
 
-      #@count ? [ @count, @list.size ].min : @list.size
       @count ? [ @count, @list_size ].min : @list_size
     end
   end
