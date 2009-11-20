@@ -22,7 +22,6 @@
 # Made in Japan.
 #++
 
-require 'ruote/exp/flowexpression'
 require 'ruote/exp/iterator'
 
 

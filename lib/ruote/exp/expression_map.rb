@@ -29,6 +29,8 @@ module Exp
 end
 end
 
+require 'ruote/exp/flowexpression'
+
 
 exppath = File.dirname(__FILE__)
 

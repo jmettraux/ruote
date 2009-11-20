@@ -23,7 +23,6 @@
 #++
 
 
-require 'ruote/exp/flowexpression'
 require 'ruote/pool/errors'
 
 
