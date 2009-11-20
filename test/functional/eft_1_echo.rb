@@ -5,6 +5,14 @@
 # Sat Sep 20 23:40:10 JST 2008
 #
 
+#require 'perftools'
+#PerfTools::CpuProfiler.start("/tmp/out.profile")
+
+#def require (o)
+#  p o
+#  Kernel.require(o)
+#end
+
 require File.join(File.dirname(__FILE__), 'base')
 
 
@@ -19,7 +27,10 @@ class EftEchoTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'a')
+    #100.times {
+    #  @tracer.trace.clear
+      assert_trace(pdef, 'a')
+    #}
   end
 
   #def test_print_escape

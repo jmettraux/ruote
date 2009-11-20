@@ -208,6 +208,7 @@ module FunctionalBase
 end
 
 class Tracer
+  attr_reader :trace
   def initialize
     super
     @trace = ''
