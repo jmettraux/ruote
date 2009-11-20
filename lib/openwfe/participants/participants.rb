@@ -336,6 +336,10 @@ module OpenWFE
         workitem,
         nil) # no params for the new subprocess env
     end
+
+    #def cancel (cancelitem)
+    #  # argh
+    #end
   end
 
   #
@@ -376,6 +380,5 @@ module OpenWFE
       OpenWFE.dosub(template, fe, workitem)
     end
   end
-
 end
 
