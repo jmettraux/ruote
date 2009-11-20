@@ -148,7 +148,7 @@ module Ruote::Exp
     #
     # will yield 'alpha'.
     #
-    def attribute_text (workitem=applied_workitem)
+    def attribute_text (workitem=h.applied_workitem)
 
       text = attributes.keys.find { |k| attributes[k] == nil }
 

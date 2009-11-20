@@ -25,36 +25,25 @@
 
 module Ruote
 
-  module BasedOnHash
+  module HashDot
 
-    def self.included (target)
+    def method_missing (m, *args)
 
-      class << target
+      m = m.to_s
 
-        def h_reader (*names)
+      if m[-1, 1] == '='
 
-          names.each do |name|
-            define_method(name) do
-              @h[name.to_s]
-            end
-          end
-        end
+        val = args.first
+        self[m[0..-2]] = val
 
-        def h_writer (*names)
+        return val
 
-          names.each do |name|
-            define_method("#{name}=") do |val|
-              @h[name.to_s] = val
-            end
-          end
-        end
+      else
 
-        def h_accessor (*names)
-
-          h_reader(*names)
-          h_writer(*names)
-        end
+        return self[m] #if self.has_key?(m)
       end
+
+      #super
     end
   end
 end

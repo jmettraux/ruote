@@ -119,8 +119,6 @@ module Ruote::Exp
     #include FilterMixin
       # TODO
 
-    h_reader :participant_name
-
     names :participant
 
     def apply
@@ -128,7 +126,7 @@ module Ruote::Exp
       #
       # determine participant
 
-      participant_name = attribute(:ref) || attribute_text
+      self.participant_name = attribute(:ref) || attribute_text
 
       participant_name = participant_name.to_s
 
@@ -215,6 +213,13 @@ module Ruote::Exp
       wi = Ruote::Workitem.new(applied_workitem.dup)
 
       participant.consume(wi)
+
+      puts
+      @h.each do |k, v|
+        puts " - #{k} ==> #{v}"
+      end
+      p @h['participant_name']
+      p participant_name
 
       @context.storage.put(
         'type' => 'tasks',

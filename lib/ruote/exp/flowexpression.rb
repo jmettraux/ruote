@@ -23,8 +23,8 @@
 #++
 
 require 'ruote/util/ometa'
-require 'ruote/util/ohash'
 require 'ruote/util/dollar'
+require 'ruote/util/hashdot'
 
 
 module Ruote::Exp
@@ -32,30 +32,26 @@ module Ruote::Exp
   class FlowExpression
 
     include Ruote::WithMeta
-    include Ruote::BasedOnHash
 
-    h_reader :applied_workitem
-    h_reader :original_tree
-    h_reader :updated_tree
-    h_accessor :parent_id
-    h_accessor :variables
+    attr_reader :h
 
     def initialize (context, h)
 
       @context = context
 
       @h = h
-      @h['_id'] ||= fei.to_storage_id
-      @h['type'] ||= 'expressions'
-      @h['name'] ||= self.class.expression_names.first
-      @h['children'] ||= []
+      class << h
+        include Ruote::HashDot
+      end
+
+      h._id ||= fei.to_storage_id
+      h.type ||= 'expressions'
+      h.name ||= self.class.expression_names.first
+      h.children ||= []
     end
 
     def fei
-      Ruote::FlowExpressionId.new(@h['fei'])
-    end
-    def raw_fei
-      @h['fei']
+      Ruote::FlowExpressionId.new(h.fei)
     end
 
     #--
@@ -113,15 +109,15 @@ module Ruote::Exp
 
       unpersist
 
-      if @h['parent_id']
+      if h.parent_id
 
-        workitem['fei'] = @h['fei']
+        workitem['fei'] = h.fei
 
         @context.storage.put(
           'type' => 'tasks',
           '_id' => Time.now.to_f.to_s,
           'action' => 'reply',
-          'fei' => @h['parent_id'],
+          'fei' => h.parent_id,
           'workitem' => workitem)
       else
 
@@ -129,24 +125,24 @@ module Ruote::Exp
           'type' => 'tasks',
           '_id' => Time.now.to_f.to_s,
           'action' => 'terminated',
-          'wfid' => @h['fei']['wfid'],
+          'wfid' => h.fei['wfid'],
           'workitem' => workitem)
       end
     end
 
     def apply_child (child_index, workitem, forget=false)
 
-      child_fei = @h['fei'].merge(
-        'expid' => "#{@h['fei']['expid']}_#{child_index}")
+      child_fei = h.fei.merge(
+        'expid' => "#{h.fei['expid']}_#{child_index}")
 
-      @h['children'] << child_fei unless forget
+      h.children << child_fei unless forget
 
       @context.storage.put(
         'type' => 'tasks',
         'action' => 'apply',
         'fei' => child_fei,
         'tree' => tree.last[child_index],
-        'parent_id' => forget ? nil : @h['fei'],
+        'parent_id' => forget ? nil : h.fei,
         'variables' => forget ? compile_variables : nil,
         'workitem' => workitem)
     end
@@ -167,11 +163,11 @@ module Ruote::Exp
 
     def do_reply (workitem)
 
-      @h['children'].delete(workitem['fei'])
+      h.children.delete(workitem['fei'])
 
-      if @h['state'] != nil
+      if h.state != nil
 
-        if @h['children'].size < 1
+        if h.children.size < 1
           reply_to_parent(workitem)
         else
           persist # for the updated children
@@ -191,7 +187,7 @@ module Ruote::Exp
     # if it got updated.
     #
     def tree
-      updated_tree || original_tree
+      h.updated_tree || h.original_tree
     end
 
     # Updates the tree of this expression

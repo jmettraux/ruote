@@ -42,12 +42,12 @@ module Ruote::Exp
 
       persist
 
-      reply(applied_workitem)
+      reply(h.applied_workitem)
     end
 
     def reply (workitem)
 
-      position = workitem['fei'] == @h['fei'] ?
+      position = workitem['fei'] == h.fei ?
         0 :
         Ruote::FlowExpressionId.new(workitem['fei']).child_id + 1
 

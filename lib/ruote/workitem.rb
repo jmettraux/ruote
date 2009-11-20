@@ -22,18 +22,18 @@
 # Made in Japan.
 #++
 
-require 'ruote/util/ohash'
 require 'ruote/util/misc'
 require 'ruote/util/lookup'
+require 'ruote/util/hashdot'
 
 
 module Ruote
 
   class Workitem
 
-    include Ruote::BasedOnHash
+    include Ruote::HashDot
 
-    h_writer :fei
+    attr_reader :h
 
     def initialize (h)
 
@@ -42,12 +42,7 @@ module Ruote
 
     def fei
 
-      FlowExpressionId.new(@h['fei'])
-    end
-
-    def raw_fei
-
-      @h['fei']
+      FlowExpressionId.new(h.fei)
     end
 
     def dup
