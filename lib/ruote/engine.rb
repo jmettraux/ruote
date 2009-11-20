@@ -34,6 +34,7 @@ module Ruote
     require 'ruote/engine/ro_participant'
 
     attr_reader :storage
+    attr_reader :context
 
     def initialize (worker_or_storage)
 

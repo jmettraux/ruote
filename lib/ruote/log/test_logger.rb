@@ -31,6 +31,8 @@ module Ruote
 
   class TestLogger
 
+    NOTEWORTHY = %w[ terminated cancelled killed dispatched ]
+
     def initialize (context)
 
       @context = context
@@ -46,11 +48,57 @@ module Ruote
         # be queried
         #
       end
+
+      @noteworthy = []
+      @waiting = nil
+
+      # NOTE
+      # in case of troubles, why not have the wait_for has an event ?
     end
 
     def notify (event)
 
       @context.storage.put(event.merge('type' => 'archived_task'))
+
+      @noteworthy << event if NOTEWORTHY.include?(event['action'])
+
+      check_waiting
+    end
+
+    def wait_for (interest)
+
+      @waiting = [ Thread.current, interest ]
+
+      check_waiting
+
+      Thread.stop if @waiting
+    end
+
+    protected
+
+    def check_waiting
+
+      return unless @waiting
+
+      thread, interest = @waiting
+
+      over = @noteworthy.find do |event|
+
+        if interest.is_a?(Symbol) # participant
+
+          (event['action'] == 'dispatched' &&
+           event['participant_name'] == interest.to_s)
+
+        else # wfid
+
+          event['wfid'] == interest
+        end
+      end
+
+      if over
+        @waiting = nil
+        thread.wakeup
+      end
     end
   end
 end

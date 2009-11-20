@@ -84,7 +84,9 @@ module FunctionalBase
 
   def wait_for (wfid_or_part)
 
-    sleep 0.500
+    @engine.context.logger.wait_for(wfid_or_part)
+
+    #sleep 0.500
 
     #if wfid_or_part.is_a?(String)
     #  logger.wait_for([
