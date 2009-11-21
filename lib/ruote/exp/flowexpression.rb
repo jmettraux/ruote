@@ -98,22 +98,6 @@ module Ruote::Exp
       meta_def(:expression_names) { exp_names }
     end
 
-    # Returns true if this expression is a a definition
-    # (define, process_definition, set, ...)
-    #
-    def self.is_definition?
-
-      false
-    end
-
-    # This method makes sure the calling class responds "true" to is_definition?
-    # calls.
-    #
-    def self.is_definition
-
-      meta_def(:is_definition?) { true }
-    end
-
     #--
     # apply/reply
     #++

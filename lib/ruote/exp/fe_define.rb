@@ -73,19 +73,15 @@ module Ruote::Exp
   #
   class DefineExpression < FlowExpression
 
-    is_definition
-
     names :define, :process_definition, :workflow_definition
 
     def apply
 
-      t = self.class.reorganize(@context.expmap, tree).last
+      t = self.class.reorganize(tree).last
 
       name = attribute(:name) || attribute_text
 
-      # TODO : what if no name ??
-
-      set_variable(name, [ h.fei['expid'], t ])
+      set_variable(name, [ h.fei['expid'], t ]) if name
         #
         # fei.expid : keeping track of the expid/branch for the subprocess
         #             (so that graphical representations match)
@@ -96,13 +92,14 @@ module Ruote::Exp
     # Used by instances of this class and also the expression pool,
     # when launching a new process instance.
     #
-    def self.reorganize (expmap, tree)
+    def self.reorganize (tree)
 
-      definitions, bodies = tree[2].partition { |b| expmap.is_definition?(b) }
+      definitions, bodies = tree[2].partition { |b|
+        self.expression_names.include?(b.first)
+      }
 
       name = tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil }
 
-      #[ name, [ 'sequence', tree[1], definitions + bodies ] ]
       [ name, [ 'define', tree[1], definitions + bodies ] ]
     end
   end

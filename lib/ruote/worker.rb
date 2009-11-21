@@ -128,37 +128,36 @@ module Ruote
       participant.consume(task)
     end
 
+    # Works for both the 'launch' and the 'apply' tasks.
+    #
     def launch (task)
 
-      launch = task['action'] == 'launch'
-
       tree = task['tree']
-
-      wfid = task['wfid']
-      parent_id = task['parent_id']
-      fei = task['fei']
 
       workitem = task['workitem']
       variables = task['variables']
 
-      fei ||= {
+      fei = task['fei'] || {
         'engine_id' => @context['engine_id'] || 'engine',
-        'wfid' => wfid,
+        'wfid' => task['wfid'],
         'expid' => '0'
       }
 
       workitem['fei'] = fei
 
       exp_name = tree.first
-      exp_class = context.expmap.expression_class(exp_name)
+      exp_class = @context.expmap.expression_class(exp_name)
 
-      exp_class = Ruote::Exp::SequenceExpression \
-        if launch && exp_class == Ruote::Exp::DefineExpression
+      if task['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
+        def_name, tree = Ruote::Exp::DefineExpression.reorganize(tree)
+        variables[def_name] = [ '0', tree ] if def_name
+        exp_class = Ruote::Exp::SequenceExpression
+      end
 
       exp = exp_class.new(
         @context,
         'fei' => fei,
-        'parent_id' => parent_id,
+        'parent_id' => task['parent_id'],
         'original_tree' => tree.dup,
         'variables' => variables,
         'applied_workitem' => workitem

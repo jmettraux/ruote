@@ -90,15 +90,6 @@ module Ruote
       @map[exp_name]
     end
 
-    # Returns true if the argument points to a definition
-    #
-    def is_definition? (tree)
-
-      c = expression_class(tree.first)
-
-      (c && c.is_definition?)
-    end
-
     protected
 
     def add (exp_class)
