@@ -137,7 +137,7 @@ module Ruote::Exp
       participant = @context.plist.lookup(h.participant_name)
 
       raise(ArgumentError.new(
-        "no participant named #{participant_name.inspect}")
+        "no participant named #{h.participant_name.inspect}")
       ) if participant.nil?
 
       #
@@ -185,6 +185,8 @@ module Ruote::Exp
         begin
           do_dispatch(participant)
         rescue Exception => e
+          p e
+          e.backtrace.each { |l| puts l }
           pool.send(
             :handle_exception,
             :apply,
@@ -201,7 +203,7 @@ module Ruote::Exp
         # not good : executing in next_tick will block the whole engine
 
       t = Thread.new(&block)
-      t[:name] = "dispatching to '#{participant_name}'"
+      t[:name] = "dispatching to '#{h.participant_name}'"
     end
 
     def do_dispatch (participant)
@@ -212,6 +214,7 @@ module Ruote::Exp
 
       @context.storage.put(
         'type' => 'tasks',
+        '_id' => Time.now.to_f.to_s,
         'action' => 'dispatched',
         'participant_name' => h.participant_name,
         'workitem' => wi)

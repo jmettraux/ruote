@@ -141,6 +141,7 @@ module Ruote::Exp
 
       @context.storage.put(
         'type' => 'tasks',
+        '_id' => Time.now.to_f.to_s,
         'action' => 'apply',
         'fei' => child_fei,
         'tree' => tree.last[child_index],
@@ -179,6 +180,13 @@ module Ruote::Exp
 
         reply(workitem)
       end
+    end
+
+    # A default implementation for all the expressions.
+    #
+    def reply (workitem)
+
+      reply_to_parent(workitem)
     end
 
     #--

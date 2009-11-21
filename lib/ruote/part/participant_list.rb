@@ -31,83 +31,123 @@ module Ruote
   #
   # Tracking participants to [business] processes.
   #
-  # (Warning, the register/unregsiter methods are not thread-safe)
-  #
   class ParticipantList
 
     attr_reader :list
 
     def initialize (context)
 
-      @list = []
+      @context = context
+      @instantiated_participants = {}
+      @list = nil
     end
 
-    # Registers participant (and returns it)
+    # Registers the participant.
+    #
+    # Called by the register_participant method of the engine.
     #
     def register (name, participant, options, block)
 
-      options[:participant_name] = name
+      #options[:participant_name] = name
 
-      entry = [
-        name.is_a?(Regexp) ? name : Regexp.new("^#{name}$"),
-        prepare(participant, options, block)
-      ]
+      options = options.inject({}) { |h, (k, v)|
+        h[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
+        h
+      }
 
-      position = options[:position] || :last
+      list = get_list
 
+      entry = if participant.is_a?(Class)
+        [ participant.to_s, options ]
+      else
+        "#{name.class}/#{name.hash}"
+      end
+
+      entry = [ name.is_a?(Regexp) ? name : Regexp.new("^#{name}$"), entry ]
+
+      position = options['position'] || 'last'
       case position
-        when :last then @list << entry
-        when :first then @list.unshift(entry)
-        when Fixnum then @list.insert(position, entry)
+        when 'last' then list['list'] << entry
+        when 'first' then list['list'].unshift(entry)
+        when Fixnum then list['list'].insert(position, entry)
         else raise "cannot insertion participant at position '#{position}'"
       end
 
-      entry.last
+      if @context.storage.put(list)
+        #
+        # if put returns something it means the put failed, have to redo the
+        # work...
+        #
+        return register(name, participant, options, block)
+      end
+
+      if entry.last.is_a?(String)
+
+        participant = BlockParticipant.new(block, options) if block
+
+        participant.context = @context if participant.respond_to?(:context=)
+        @instantiated_participants[entry.last] = participant
+        participant
+
+      else
+
+        nil
+      end
     end
 
     def lookup (participant_name)
 
-      re, pa = @list.find { |re, pa| re.match(participant_name) }
+      re, pa = get_list['list'].find { |re, pa| re.match(participant_name) }
 
-      pa
-    end
+      return nil unless pa
+      return @instantiated_participants[pa] if pa.is_a?(String)
 
-    def unregister (name_or_participant)
+      class_name, options = pa
 
-      name_or_participant = name_or_participant.to_s \
-        if name_or_participant.is_a?(Symbol)
-
-      entry = @list.find do |re, pa|
-
-        name_or_participant.is_a?(String) ?
-          re.match(name_or_participant) :
-          (pa == name_or_participant)
+      if rp = options['require_path']
+        require(rp)
       end
 
-      @list.delete(entry)
+      Ruote.constantize(class_name).new(options)
     end
+
+    #def unregister (name_or_participant)
+    #  name_or_participant = name_or_participant.to_s \
+    #    if name_or_participant.is_a?(Symbol)
+    #  entry = @list.find do |re, pa|
+    #    name_or_participant.is_a?(String) ?
+    #      re.match(name_or_participant) :
+    #      (pa == name_or_participant)
+    #  end
+    #  @list.delete(entry)
+    #end
 
     def shutdown
 
-      @list.each { |re, pa| pa.shutdown if pa.respond_to?(:shutdown) }
+      @instantiated_participants.each { |re, pa|
+        pa.shutdown if pa.respond_to?(:shutdown)
+      }
     end
 
     protected
 
-    def prepare (pa, opts, block)
+    def get_list
 
-      pa = if pa.class == Class
-        pa.new(opts.merge(:block => block))
-      elsif block
-        BlockParticipant.new(block, opts)
-      else
-        pa
-      end
-
-      pa.context = @context if pa.respond_to?(:context=)
-
-      pa
+      @context.storage.get('participants', 'list') ||
+        { 'type' => 'participants', '_id' => 'list', 'list' => [] }
     end
+
+    #def prepare (pa, opts, block)
+    #  pa = if pa.class == Class
+    #    pa.new(opts.merge(:block => block))
+    #  elsif block
+    #    BlockParticipant.new(block, opts)
+    #  else
+    #    pa
+    #  end
+    #  pa.context = @context if pa.respond_to?(:context=)
+    #  pa
+    #end
   end
 end
 

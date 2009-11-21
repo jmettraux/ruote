@@ -66,6 +66,7 @@ module Ruote
 
     include LocalParticipant
 
+    attr_accessor :context
     attr_accessor :do_not_thread
 
     def initialize (block, opts)

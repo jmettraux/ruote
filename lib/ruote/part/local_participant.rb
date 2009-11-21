@@ -28,17 +28,24 @@ module Ruote
   #
   # Provides methods for 'local' participants.
   #
-  # Assumes the class that includes this module has an 'engine' method
-  # which returns the ruote engine.
+  # Assumes the class that includes this module has a #context method
+  # that points to the worker or engine ruote context.
   #
   module LocalParticipant
 
-    #
     # Sends back the workitem to the ruote engine.
     #
     def reply_to_engine (workitem)
 
-      engine.reply(workitem)
+      # the local participant knows how to deal with the storage directly
+
+      @context.storage.put(
+        'type' => 'tasks',
+        '_id' => Time.now.to_f.to_s,
+        'action' => 'reply',
+        'fei' => workitem.h.fei,
+        'workitem' => workitem.h,
+        'participant' => workitem.participant_name)
     end
   end
 end

@@ -48,6 +48,11 @@ module Ruote
 
       Ruote.fulldup(self)
     end
+
+    def participant_name
+
+      @h['participant_name']
+    end
   end
 
   class BakWorkitem

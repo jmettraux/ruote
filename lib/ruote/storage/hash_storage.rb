@@ -58,6 +58,8 @@ module Ruote
       ).sort { |d0, d1|
         d0['_id'] <=> d1['_id']
       }
+        # a nil _id here triggers an
+        # "ArgumentError: comparison of Hash with Hash failed"
     end
 
     def purge!
@@ -70,6 +72,7 @@ module Ruote
         crons
         configuration
         misc
+        participants
       ].inject({}) { |h, k|
         h[k] = {}
         h
