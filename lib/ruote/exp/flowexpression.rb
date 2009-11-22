@@ -48,6 +48,7 @@ module Ruote::Exp
       h['type'] ||= 'expressions'
       h.name ||= self.class.expression_names.first
       h.children ||= []
+      h.applied_workitem['fei'] = h.fei
     end
 
     def fei

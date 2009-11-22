@@ -150,8 +150,6 @@ module Ruote
 
     def dispatch (task)
 
-      # does it know this participant ?
-
       pname = task['participant_name']
 
       participant = @context.plist.lookup(pname)
@@ -164,40 +162,65 @@ module Ruote
     def launch (task)
 
       tree = task['tree']
-
-      workitem = task['workitem']
       variables = task['variables']
 
-      fei = task['fei'] || {
-        'engine_id' => @context['engine_id'] || 'engine',
-        'wfid' => task['wfid'],
-        'expid' => '0'
+      exp_class = @context.expmap.expression_class(tree.first)
+
+      exp_hash = {
+        'fei' => task['fei'] || {
+          'engine_id' => @context['engine_id'] || 'engine',
+          'wfid' => task['wfid'],
+          'expid' => '0' },
+        'parent_id' => task['parent_id'],
+        'original_tree' => tree,
+        'variables' => variables,
+        'applied_workitem' => task['workitem']
       }
 
-      workitem['fei'] = fei
+      if not exp_class
 
-      exp_name = tree.first
-      exp_class = @context.expmap.expression_class(exp_name)
+        exp_class, tree = lookup_subprocess_or_participant(exp_hash)
 
-      if task['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
+      elsif task['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
         def_name, tree = Ruote::Exp::DefineExpression.reorganize(tree)
         variables[def_name] = [ '0', tree ] if def_name
         exp_class = Ruote::Exp::SequenceExpression
       end
 
-      exp = exp_class.new(
-        @context,
-        'fei' => fei,
-        'parent_id' => task['parent_id'],
-        'original_tree' => tree.dup,
-        'variables' => variables,
-        'applied_workitem' => workitem
-      )
+      raise "unknown expression '#{tree.first}'" unless exp_class
 
+      exp = exp_class.new(@context, exp_hash)
       exp.persist
       exp.do_apply
+    end
 
-      #fei
+    def lookup_subprocess_or_participant (exp_hash)
+
+      tree = exp_hash['original_tree']
+
+      key, value = Ruote::Exp::FlowExpression.new(
+        @context, exp_hash.merge('name' => 'temporary')
+      ).iterative_var_lookup(tree[0])
+
+      sub = value
+      part = @context.plist.lookup_info(key)
+
+      sub = key if (not sub) && (not part) && Ruote.is_uri?(key)
+        # for when a variable points to the URI of a[n external] subprocess
+
+      if sub or part
+
+        tree[1].merge!('ref' => key, 'original_ref' => tree[0])
+        tree[0] = sub ? 'subprocess' : 'participant'
+
+        [ sub ?
+            Ruote::Exp::SubprocessExpression :
+            Ruote::Exp::ParticipantExpression,
+          tree ]
+      else
+
+        [ nil, tree ]
+      end
     end
 
     def notify (event)

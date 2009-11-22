@@ -53,25 +53,20 @@ module Ruote::Exp
         if prefix.length >= 2
 
       return parent.lookup_variable(var, prefix) \
-        if parent_id && prefix.length >= 1
+        if h.parent_id && prefix.length >= 1
 
-      #if var == (attribute('name') || attribute_text)
-      #  # allowing main process recursion (with the up-to-date tree)
-      #  return [ @fei.expid, tree ]
-      #end
+      if h.variables
 
-      if variables
-
-        val = variables[var]
+        val = h.variables[var]
         return val if val != nil
       end
 
-      if parent_id
+      if h.parent_id
 
         return parent.lookup_variable(var, prefix)
       end
 
-      engine.variables[var]
+      @context.storage.get('misc', 'variables')[var] rescue nil
     end
 
     # A shortcut for #lookup_variable
