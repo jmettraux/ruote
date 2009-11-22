@@ -37,11 +37,14 @@ module FunctionalBase
     @engine.shutdown
   end
 
-  #def assert_log_count (count, &block)
-  #  c = logger.log.select(&block).size
-  #  logger.to_stdout if ( ! @engine.context[:noisy]) && c != count
-  #  assert_equal count, c
-  #end
+  def assert_log_count (count, &block)
+
+    c = @engine.context.logger.noteworthy.select(&block).size
+
+    #logger.to_stdout if ( ! @engine.context[:noisy]) && c != count
+
+    assert_equal count, c
+  end
 
   # launch_thing is a process definition or a launch item
   #

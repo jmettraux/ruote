@@ -81,7 +81,16 @@ module Ruote
       #notify(schedule) # orly ?
     end
 
+    def cannot_handle (task)
+
+      return false if task['action'] != 'dispatch'
+
+      @context.engine.nil? && task['for_engine_worker?']
+    end
+
     def process (task)
+
+      return if cannot_handle(task)
 
       return if @storage.delete(task)
         #
@@ -90,7 +99,8 @@ module Ruote
       begin
 
         action = task['action']
-        action = 'reply' if action == 'received'
+
+        action = 'reply' if action == 'receive'
 
         if task['tree']
 
@@ -113,14 +123,14 @@ module Ruote
 
       rescue Exception => e
 
-        #puts "\n== worker intercepted error =="
-        #p e
-        #e.backtrace.each { |l| puts l }
-        #puts
+        puts "\n== worker intercepted error =="
+        p e
+        e.backtrace.each { |l| puts l }
+        puts
 
         # emit 'task'
 
-        wfid = task['wfid'] || task['fei']['wfid']
+        wfid = task['wfid'] || (task['fei']['wfid'] rescue nil)
 
         @storage.put_task(
           'error_intercepted',
@@ -138,14 +148,16 @@ module Ruote
       end
     end
 
-    #def dispatch (task)
-    #  # does it know this participant ?
-    #  pname = task['participant_name']
-    #  participant = @context.plist.lookup_participant(pname)
-    #  # timeout ?
-    #  # REALLY split apply from dispatch ?
-    #  participant.consume(task)
-    #end
+    def dispatch (task)
+
+      # does it know this participant ?
+
+      pname = task['participant_name']
+
+      participant = @context.plist.lookup(pname)
+
+      participant.consume(Ruote::Workitem.new(task['workitem']))
+    end
 
     # Works for both the 'launch' and the 'apply' tasks.
     #

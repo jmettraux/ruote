@@ -22,7 +22,7 @@
 # Made in Japan.
 #++
 
-require 'rufus/cloche'
+#require 'rufus/cloche'
 
 
 module Ruote

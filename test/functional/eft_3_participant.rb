@@ -27,10 +27,8 @@ class EftParticipantTest < Test::Unit::TestCase
 
     assert_trace pdef, 'alpha'
 
-    assert_log_count(1) { |e| e[1] == :received }
-
-    sleep 0.050
-    assert_log_count(1) { |e| e[1] == :dispatched } # arrives a tad later...
+    assert_log_count(1) { |e| e['action'] == 'dispatch' }
+    assert_log_count(1) { |e| e['action'] == 'receive' }
   end
 
   def test_participant_att_text

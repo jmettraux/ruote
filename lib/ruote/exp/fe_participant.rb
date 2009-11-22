@@ -134,16 +134,16 @@ module Ruote::Exp
         raise ArgumentError.new("no participant name specified")
       end
 
-      participant = @context.plist.lookup(h.participant_name)
+      participant_info = @context.plist.lookup_info(h.participant_name)
 
       raise(ArgumentError.new(
         "no participant named #{h.participant_name.inspect}")
-      ) if participant.nil?
+      ) if participant_info.nil?
 
       #
       # participant found, consider timeout
 
-      schedule_timeout(participant)
+      schedule_timeout(participant_info)
 
       #
       # dispatch to participant
@@ -157,7 +157,7 @@ module Ruote::Exp
         'dispatch',
         'participant_name' => h.participant_name,
         'workitem' => h.applied_workitem,
-        'engine_only?' => is_engine_only?)
+        'for_engine_worker?' => participant_info.class != Array)
     end
 
     def cancel (flavour)
@@ -176,9 +176,6 @@ module Ruote::Exp
     end
 
     protected
-
-    def is_engine_only?
-    end
 
     #def dispatch_to (participant)
     #  @context.storage.put_task(
@@ -226,13 +223,14 @@ module Ruote::Exp
     # Note that process definition timeout has priority over participant
     # specified timeout.
     #
-    def schedule_timeout (participant)
+    def schedule_timeout (p_info)
 
       # TODO : timeout at case (Andrew)
 
       timeout =
         attribute(:timeout) ||
-        (participant.respond_to?(:timeout) ? participant.timeout : nil)
+        (p_info.respond_to?(:timeout) ? p_info.timeout : nil) ||
+        (p_info.is_a?(Array) ? p_info.last['timeout'] : nil)
 
       return unless timeout
 
@@ -241,7 +239,7 @@ module Ruote::Exp
       #@timeout_at = j.at
       #@timeout_job_id = j.job_id
 
-      raise "implement me !"
+      raise "finish me !"
     end
   end
 end

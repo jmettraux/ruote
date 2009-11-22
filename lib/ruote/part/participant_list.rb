@@ -95,29 +95,25 @@ module Ruote
       end
     end
 
-    # true : the participant is instantiated locally ('engine worker' case)
-    # false : the participant is not instantiated ('standalone worker' OK)
-    # nil : no participant bound for the given name
-    #
-    def instantiated? (participant_name)
+    def lookup_info (participant_name)
 
       re, pa = get_list['list'].find { |re, pa| re.match(participant_name) }
 
       case pa
         when nil then nil
-        when String then true
-        else false
+        when String then @instantiated_participants[pa]
+        else pa
       end
     end
 
     def lookup (participant_name)
 
-      re, pa = get_list['list'].find { |re, pa| re.match(participant_name) }
+      pi = lookup_info(participant_name)
 
-      return nil unless pa
-      return @instantiated_participants[pa] if pa.is_a?(String)
+      return nil unless pi
+      return pi unless pi.is_a?(Array)
 
-      class_name, options = pa
+      class_name, options = pi
 
       if rp = options['require_path']
         require(rp)

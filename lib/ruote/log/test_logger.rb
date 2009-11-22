@@ -32,8 +32,11 @@ module Ruote
     NOTEWORTHY = %w[
       terminated cancelled killed
       error_intercepted
-      dispatched
+      receive
+      dispatch
     ]
+
+    attr_reader :noteworthy
 
     def initialize (context)
 
@@ -90,7 +93,7 @@ module Ruote
 
         if interest.is_a?(Symbol) # participant
 
-          (event['action'] == 'dispatched' &&
+          (event['action'] == 'dispatch' &&
            event['participant_name'] == interest.to_s)
 
         else # wfid

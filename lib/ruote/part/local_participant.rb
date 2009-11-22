@@ -40,7 +40,7 @@ module Ruote
       # the local participant knows how to deal with the storage directly
 
       @context.storage.put_task(
-        'received',
+        'receive',
         'fei' => workitem.h.fei,
         'workitem' => workitem.h,
         'participant' => workitem.participant_name)

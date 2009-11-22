@@ -45,7 +45,7 @@ module Ruote::Exp
       end
 
       h._id ||= fei.to_storage_id
-      h.type ||= 'expressions'
+      h['type'] ||= 'expressions'
       h.name ||= self.class.expression_names.first
       h.children ||= []
     end
