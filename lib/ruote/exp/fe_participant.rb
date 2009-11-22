@@ -153,7 +153,11 @@ module Ruote::Exp
 
       persist
 
-      dispatch_to(participant)
+      @context.storage.put_task(
+        'dispatch',
+        'participant_name' => h.participant_name,
+        'workitem' => h.applied_workitem,
+        'engine_only?' => is_engine_only?)
     end
 
     def cancel (flavour)
@@ -173,50 +177,43 @@ module Ruote::Exp
 
     protected
 
-    def dispatch_to (participant)
-
-      if participant.respond_to?(:do_not_thread) and participant.do_not_thread
-
-        do_dispatch(participant)
-        return
-      end
-
-      block = lambda {
-        begin
-          do_dispatch(participant)
-        rescue Exception => e
-          p e
-          e.backtrace.each { |l| puts l }
-          pool.send(
-            :handle_exception,
-            :apply,
-            { :fei => @fei, :workitem => @applied_workitem },
-            e)
-        end
-      }
-
-      #if defined?(EM) && EM.reactor_running?
-      #  EM.next_tick(&block)
-      #else
-      #  Thread.new(&block)
-      #end
-        # not good : executing in next_tick will block the whole engine
-
-      t = Thread.new(&block)
-      t[:name] = "dispatching to '#{h.participant_name}'"
+    def is_engine_only?
     end
 
-    def do_dispatch (participant)
+    #def dispatch_to (participant)
+    #  @context.storage.put_task(
+    #    'dispatched',
+    #    'participant_name' => h.participant_name,
+    #    'workitem' => wi)
+    #  if participant.respond_to?(:do_not_thread) and participant.do_not_thread
+    #    do_dispatch(participant)
+    #    return
+    #  end
+    #  block = lambda {
+    #    begin
+    #      do_dispatch(participant)
+    #    rescue Exception => e
+    #      p e
+    #      e.backtrace.each { |l| puts l }
+    #      pool.send(
+    #        :handle_exception,
+    #        :apply,
+    #        { :fei => @fei, :workitem => @applied_workitem },
+    #        e)
+    #    end
+    #  }
+    #  t = Thread.new(&block)
+    #  t[:name] = "dispatching to '#{h.participant_name}'"
+    #end
 
-      wi = Ruote::Workitem.new(h.applied_workitem.dup)
-
-      participant.consume(wi)
-
-      @context.storage.put_task(
-        'dispatched',
-        'participant_name' => h.participant_name,
-        'workitem' => wi)
-    end
+    #def do_dispatch (participant)
+    #  wi = Ruote::Workitem.new(h.applied_workitem.dup)
+    #  participant.consume(wi)
+    #  @context.storage.put_task(
+    #    'dispatched',
+    #    'participant_name' => h.participant_name,
+    #    'workitem' => wi)
+    #end
 
     # Overriden with an empty behaviour. The work is now done a bit later
     # via the #schedule_timeout method.

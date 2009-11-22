@@ -101,8 +101,9 @@ module Ruote
           Ruote::Exp::FlowExpression.get_expression(@context, task['fei']).send(
             "do_#{action}", task['workitem'])
 
-        #elsif action == 'dispatch'
-        #  dispatch(task)
+        elsif action == 'dispatch'
+
+          dispatch(task)
 
         #else
           # task got delete, might still be interesting for a subscriber
