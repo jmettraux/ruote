@@ -41,7 +41,10 @@ module Ruote
     end
 
     def put (doc)
-      (@h[doc['type']] ||= {})[doc['_id']] = Ruote::fulldup(doc)
+
+      (@h[doc['type']] ||= {})[doc['_id']] =
+        Ruote::fulldup(doc).merge!('put_at' => Time.now.to_s)
+
       nil
     end
 

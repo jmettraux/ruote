@@ -84,10 +84,13 @@ module Ruote
     def process (task)
 
       return if @storage.delete(task)
+        #
+        # NOTE : if the delete fails, it means there is another worker...
 
       begin
 
         action = task['action']
+        action = 'reply' if action == 'received'
 
         if task['tree']
 
@@ -98,35 +101,50 @@ module Ruote
           Ruote::Exp::FlowExpression.get_expression(@context, task['fei']).send(
             "do_#{action}", task['workitem'])
 
-        elsif action == 'dispatch'
+        #elsif action == 'dispatch'
+        #  dispatch(task)
 
-          dispatch(task)
+        #else
+          # task got delete, might still be interesting for a subscriber
         end
 
         notify(task)
 
       rescue Exception => e
 
-        # TODO : log error ?
-        puts "======================"
-        p e
-        e.backtrace.each { |l| puts l }
+        #puts "\n== worker intercepted error =="
+        #p e
+        #e.backtrace.each { |l| puts l }
+        #puts
+
+        # emit 'task'
+
+        wfid = task['wfid'] || task['fei']['wfid']
+
+        @storage.put_task(
+          'error_intercepted',
+          'error' => e.inspect,
+          'wfid' => wfid,
+          'task' => task)
+
+        # fill error in the error journal
+
+        @storage.put(
+          'type' => 'errors',
+          '_id' => Ruote::FlowExpressionId.to_storage_id(task['fei']),
+          'error' => e.inspect,
+          'trace' => e.backtrace.join("\n"))
       end
     end
 
-    def dispatch (task)
-
-      # does it know this participant ?
-      pname = task['participant_name']
-
-      participant = context.plist.lookup_participant(pname)
-
-      # timeout ?
-
-      # REALLY split apply from dispatch ?
-
-      participant.consume(task)
-    end
+    #def dispatch (task)
+    #  # does it know this participant ?
+    #  pname = task['participant_name']
+    #  participant = @context.plist.lookup_participant(pname)
+    #  # timeout ?
+    #  # REALLY split apply from dispatch ?
+    #  participant.consume(task)
+    #end
 
     # Works for both the 'launch' and the 'apply' tasks.
     #

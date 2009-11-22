@@ -22,16 +22,18 @@
 # Made in Japan.
 #++
 
-
-require 'ruote/util/tree'
-#require 'ruote/log/logger'
+#require 'ruote/util/tree'
 
 
 module Ruote
 
   class TestLogger
 
-    NOTEWORTHY = %w[ terminated cancelled killed dispatched ]
+    NOTEWORTHY = %w[
+      terminated cancelled killed
+      error_intercepted
+      dispatched
+    ]
 
     def initialize (context)
 

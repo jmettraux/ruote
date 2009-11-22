@@ -124,10 +124,8 @@ module FunctionalBase
     puts 'caught process error(s)'
     puts
     ps.errors.each do |e|
-      puts "  ** #{e.error_class} : #{e.error_message}"
-      e.error_backtrace.each do |l|
-        puts l
-      end
+      puts "  ** #{e['error']}"
+      puts e['trace']
     end
     puts '-' * 80
 

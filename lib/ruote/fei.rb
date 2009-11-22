@@ -46,6 +46,11 @@ module Ruote
       "#{h.expid}|#{h.sub_wfid}|#{h.wfid}"
     end
 
+    def self.to_storage_id (hfei)
+
+      "#{hfei['expid']}|#{hfei['sub_wfid']}|#{hfei['wfid']}"
+    end
+
     # Returns the last number in the expid. For instance, if the expid is
     # '0_5_7', the child_id will be '7'.
     #
