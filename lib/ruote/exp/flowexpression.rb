@@ -107,6 +107,9 @@ module Ruote::Exp
 
     def do_apply
 
+      return reply_to_parent(h.applied_workitem) \
+        if Condition.skip?(attribute(:if), attribute(:unless))
+
       apply
     end
 
