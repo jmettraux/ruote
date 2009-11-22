@@ -53,6 +53,11 @@ module Ruote
 
       @h['participant_name']
     end
+
+    def fields
+
+      @h['fields']
+    end
   end
 
   class BakWorkitem

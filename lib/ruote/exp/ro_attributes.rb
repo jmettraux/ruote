@@ -129,10 +129,10 @@ module Ruote::Exp
     #
     def expand_atts (opts={})
 
-      attributes.keys.inject({}) { |h, k|
-        kk = Ruote.dosub(k, self, applied_workitem)
-        h[kk] = attribute(k, applied_workitem, opts)
-        h
+      attributes.keys.inject({}) { |r, k|
+        kk = Ruote.dosub(k, self, h.applied_workitem)
+        r[kk] = attribute(k, h.applied_workitem, opts)
+        r
       }
     end
 
@@ -174,17 +174,17 @@ module Ruote::Exp
 
       if k = has_att(*vals)
 
-        attribute(k, applied_workitem, att_options)
+        attribute(k, h.applied_workitem, att_options)
 
       elsif k = has_att(*vars)
 
-        k = attribute(k, applied_workitem, att_options)
+        k = attribute(k, h.applied_workitem, att_options)
         lookup_variable(k)
 
       elsif k = has_att(*flds)
 
-        k = attribute(k, applied_workitem, att_options)
-        applied_workitem.attributes[k]
+        k = attribute(k, h.applied_workitem, att_options)
+        h.applied_workitem['fields'][k]
 
       else
 

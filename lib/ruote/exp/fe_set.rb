@@ -114,7 +114,7 @@ module Ruote::Exp
           "missing a variable or field target in #{tree.inspect}")
       end
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     def reply (workitem)
@@ -136,9 +136,9 @@ module Ruote::Exp
     def set_f (key, value)
 
       if name == 'unset'
-        @applied_workitem.fields.delete(key)
+        h.applied_workitem['fields'].delete(key)
       else
-        @applied_workitem.set_field(key, value)
+        Ruote.set(h.applied_workitem['fields'], key, value)
       end
     end
 
