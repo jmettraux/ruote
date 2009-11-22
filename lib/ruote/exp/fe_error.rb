@@ -23,8 +23,15 @@
 #++
 
 
-require 'ruote/pool/errors'
+module Ruote
 
+  #
+  # This error is used by the 'error' expression, when an error is triggered
+  # from the process definition.
+  #
+  class ForcedError < RuntimeError
+  end
+end
 
 module Ruote::Exp
 
