@@ -60,7 +60,7 @@ module Ruote::Exp
     end
 
     def parent
-      self.class.get_expression(@context, h.parent_id)
+      self.class.fetch(@context, h.parent_id)
     end
 
     #--
@@ -77,7 +77,9 @@ module Ruote::Exp
       @context.storage.delete(@h)
     end
 
-    def self.get_expression (context, fei)
+    # Fetches an expression from the storage and readies it for service.
+    #
+    def self.fetch (context, fei)
 
       fexp = context.storage.get(
         'expressions', Ruote::FlowExpressionId.new(fei).to_storage_id)

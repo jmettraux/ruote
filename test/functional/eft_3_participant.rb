@@ -67,14 +67,14 @@ class EftParticipantTest < Test::Unit::TestCase
       alpha :tag => 'whatever'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     @engine.launch(pdef)
     wait_for(:alpha)
 
     assert_equal(
       ['participant', {'tag'=>'whatever', 'ref'=>'alpha'}, []],
-      @engine.expstorage[alpha.first.fei].tree)
+      Ruote::Exp::FlowExpression.fetch(@engine.context, alpha.first.h.fei).tree)
   end
 
   def test_participant_if

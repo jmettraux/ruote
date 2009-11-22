@@ -81,13 +81,6 @@ module Ruote
       #notify(schedule) # orly ?
     end
 
-    def cannot_handle (task)
-
-      return false if task['action'] != 'dispatch'
-
-      @context.engine.nil? && task['for_engine_worker?']
-    end
-
     def process (task)
 
       return if cannot_handle(task)
@@ -108,8 +101,9 @@ module Ruote
 
         elsif EXP_ACTIONS.include?(action)
 
-          Ruote::Exp::FlowExpression.get_expression(@context, task['fei']).send(
-            "do_#{action}", task['workitem'])
+          Ruote::Exp::FlowExpression.fetch(
+            @context, task['fei']
+          ).send("do_#{action}", task['workitem'])
 
         elsif action == 'dispatch'
 
@@ -146,6 +140,13 @@ module Ruote
           'error' => e.inspect,
           'trace' => e.backtrace.join("\n"))
       end
+    end
+
+    def cannot_handle (task)
+
+      return false if task['action'] != 'dispatch'
+
+      @context.engine.nil? && task['for_engine_worker?']
     end
 
     def dispatch (task)
@@ -210,7 +211,9 @@ module Ruote
 
       if sub or part
 
-        tree[1].merge!('ref' => key, 'original_ref' => tree[0])
+        tree[1]['ref'] = key
+        tree[1]['original_ref'] = tree[0] if key != tree[0]
+
         tree[0] = sub ? 'subprocess' : 'participant'
 
         [ sub ?

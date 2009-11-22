@@ -34,10 +34,9 @@ module Ruote
   class HashParticipant
 
     include LocalParticipant
-
     include Enumerable
 
-    def initialize (opts)
+    def initialize (options=nil)
 
       @items = {}
     end
