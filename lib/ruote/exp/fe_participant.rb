@@ -212,10 +212,8 @@ module Ruote::Exp
 
       participant.consume(wi)
 
-      @context.storage.put(
-        'type' => 'tasks',
-        '_id' => Time.now.to_f.to_s,
-        'action' => 'dispatched',
+      @context.storage.put_task(
+        'dispatched',
         'participant_name' => h.participant_name,
         'workitem' => wi)
     end

@@ -22,10 +22,14 @@
 # Made in Japan.
 #++
 
+require 'ruote/storage/base'
+
 
 module Ruote
 
   class HashStorage
+
+    include StorageBase
 
     attr_reader :h
 

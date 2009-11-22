@@ -115,20 +115,12 @@ module Ruote::Exp
 
         workitem['fei'] = h.fei
 
-        @context.storage.put(
-          'type' => 'tasks',
-          '_id' => Time.now.to_f.to_s,
-          'action' => 'reply',
-          'fei' => h.parent_id,
-          'workitem' => workitem)
+        @context.storage.put_task(
+          'reply', 'fei' => h.parent_id, 'workitem' => workitem)
       else
 
-        @context.storage.put(
-          'type' => 'tasks',
-          '_id' => Time.now.to_f.to_s,
-          'action' => 'terminated',
-          'wfid' => h.fei['wfid'],
-          'workitem' => workitem)
+        @context.storage.put_task(
+          'terminated', 'wfid' => h.fei['wfid'], 'workitem' => workitem)
       end
     end
 
@@ -139,10 +131,8 @@ module Ruote::Exp
 
       h.children << child_fei unless forget
 
-      @context.storage.put(
-        'type' => 'tasks',
-        '_id' => Time.now.to_f.to_s,
-        'action' => 'apply',
+      @context.storage.put_task(
+        'apply',
         'fei' => child_fei,
         'tree' => tree.last[child_index],
         'parent_id' => forget ? nil : h.fei,
@@ -670,9 +660,8 @@ module Ruote::Exp
 
       register_child(fei) unless forget
 
-      @context.storage.put(
-        'type' => 'tasks',
-        'action' => 'apply',
+      @context.storage.put_task(
+        'apply',
         'wfid' => @fei.wfid,
         'fei' => fei,
         'tree' => tree.last[child_index],
@@ -734,11 +723,8 @@ module Ruote::Exp
 
       if @parent_id
 
-        @context.storage.put(
-          'type' => 'tasks',
-          'action' => 'reply',
-          'fei' => @parent_id,
-          'workitem' => workitem)
+        @context.storage.put_task(
+          'reply', 'fei' => @parent_id, 'workitem' => workitem)
       else
 
         msg = case @state
@@ -747,11 +733,8 @@ module Ruote::Exp
           else 'terminated'
         end
 
-        @context.storage.put(
-          'type' => 'tasks',
-          'action' => msg,
-          'wfid' => @fei.wfid,
-          'workitem' => workitem)
+        @context.storage.put_task(
+          msg, 'wfid' => @fei.wfid, 'workitem' => workitem)
       end
     end
 

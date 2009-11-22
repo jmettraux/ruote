@@ -67,10 +67,8 @@ module Ruote
 
       wfid = @context.wfidgen.generate
 
-      @storage.put(
-        'type' => 'tasks',
-        'action' => 'launch',
-        '_id' => Time.now.to_f.to_s,
+      @storage.put_task(
+        'launch',
         'wfid' => wfid,
         'tree' => tree,
         'workitem' => workitem,

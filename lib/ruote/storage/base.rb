@@ -26,24 +26,18 @@
 module Ruote
 
   #
-  # Provides methods for 'local' participants.
+  # Base methods for storage implementations.
   #
-  # Assumes the class that includes this module has a #context method
-  # that points to the worker or engine ruote context.
-  #
-  module LocalParticipant
+  module StorageBase
 
-    # Sends back the workitem to the ruote engine.
-    #
-    def reply_to_engine (workitem)
+    def put_task (action, options)
 
-      # the local participant knows how to deal with the storage directly
+      # merge! is way faster than merge (no object creation probably)
 
-      @context.storage.put_task(
-        'reply',
-        'fei' => workitem.h.fei,
-        'workitem' => workitem.h,
-        'participant' => workitem.participant_name)
+      put(options.merge!(
+        'type' => 'tasks',
+        '_id' => Time.now.to_f.to_s,
+        'action' => action))
     end
   end
 end
