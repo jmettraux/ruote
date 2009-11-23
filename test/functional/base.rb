@@ -88,21 +88,6 @@ module FunctionalBase
   def wait_for (wfid_or_part)
 
     @engine.context.logger.wait_for(wfid_or_part)
-
-    #sleep 0.500
-
-    #if wfid_or_part.is_a?(String)
-    #  logger.wait_for([
-    #    [ :processes, :terminated, { :wfid => wfid_or_part } ],
-    #    [ :processes, :cancelled, { :wfid => wfid_or_part } ],
-    #    [ :processes, :killed, { :wfid => wfid_or_part } ],
-    #    [ :errors, nil, { :wfid => wfid_or_part } ]
-    #  ])
-    #else
-    #  logger.wait_for([
-    #    [ :workitems, :dispatched, { :pname => wfid_or_part.to_s } ],
-    #  ])
-    #end
   end
 
   def assert_engine_clean (wfid=nil, opts={})
@@ -127,8 +112,8 @@ module FunctionalBase
     puts 'caught process error(s)'
     puts
     ps.errors.each do |e|
-      puts "  ** #{e['error']}"
-      puts e['trace']
+      puts "  ** #{e.message}"
+      puts e.trace
     end
     puts '-' * 80
 

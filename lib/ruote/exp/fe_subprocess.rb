@@ -177,10 +177,10 @@ module Ruote::Exp
 
       # maybe subprocess :ref => 'uri'
 
-      subtree = parser.parse(ref) rescue nil
+      subtree = @context.parser.parse(ref) rescue nil
 
-      _, subtree = Ruote::Exp::DefineExpression.reorganize(expmap, subtree) \
-        if subtree && expmap.is_definition?(subtree)
+      _, subtree = Ruote::Exp::DefineExpression.reorganize(subtree) \
+        if subtree && Ruote::Exp::DefineExpression.is_definition?(subtree)
 
       return [ '0', subtree ] if is_tree?(subtree)
 

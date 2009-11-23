@@ -89,15 +89,20 @@ module Ruote::Exp
       reply_to_parent(h.applied_workitem)
     end
 
+    # Returns true if the tree's root expression is a definition
+    # (define, process_definition, ...)
+    #
+    def self.is_definition? (tree)
+
+      self.expression_names.include?(tree.first)
+    end
+
     # Used by instances of this class and also the expression pool,
     # when launching a new process instance.
     #
     def self.reorganize (tree)
 
-      definitions, bodies = tree[2].partition { |b|
-        self.expression_names.include?(b.first)
-      }
-
+      definitions, bodies = tree[2].partition { |b| is_definition?(b) }
       name = tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil }
 
       [ name, [ 'define', tree[1], definitions + bodies ] ]
