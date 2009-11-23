@@ -13,7 +13,7 @@ require 'ruote/part/fs_participant'
 class FtFsParticipantTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_fs_participant
+  def test_fs_participant_consume_reply
 
     pdef = Ruote.process_definition :name => 'def0' do
       alpha
@@ -40,6 +40,33 @@ class FtFsParticipantTest < Test::Unit::TestCase
 
     assert_equal 2, Dir.new('work/fs_participants/').entries.size
     assert_equal 0, alpha.size
+  end
+
+  def test_fs_participant_update
+
+    pdef = Ruote.process_definition :name => 'def0' do
+      alpha
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::FsParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    assert_equal 3, Dir.new('work/fs_participants/').entries.size
+    assert_equal 1, alpha.size
+
+    wi = alpha.first
+
+    assert_equal Ruote::Workitem, wi.class
+
+    alpha.update(wi)
+
+    assert_equal 3, Dir.new('work/fs_participants/').entries.size
+    assert_equal 1, alpha.size
   end
 
   def test_find_by_wfid
