@@ -35,6 +35,7 @@ module Ruote
 
     attr_reader :storage
     attr_reader :context
+    attr_reader :variables
 
     def initialize (worker_or_storage)
 
@@ -52,6 +53,8 @@ module Ruote
         @storage = worker_or_storage
         @context = Ruote::EngineContext.new(self)
       end
+
+      @variables = EngineVariables.new(@storage)
     end
 
     def launch (definition, opts={})
@@ -92,6 +95,37 @@ module Ruote
     def shutdown
 
       @context.shutdown
+    end
+  end
+
+  #
+  # A wrapper class giving easy access to engine variables.
+  #
+  # There is one instance of this class for an Engine instance. It is
+  # returned when calling Engine#variables.
+  #
+  class EngineVariables
+
+    def initialize (storage)
+
+      @storage = storage
+    end
+
+    def [] (k)
+
+      @storage.get('misc', 'variables')[k]
+    end
+
+    def []= (k, v)
+
+      vars = @storage.get('misc', 'variables') || {
+        'type' => 'misc', '_id' => 'variables'
+      }
+
+      vars[k] = v
+
+      self.[]=(k, v) if @storage.put(vars)
+        # redo it if the put failed
     end
   end
 end
