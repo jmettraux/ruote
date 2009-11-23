@@ -43,7 +43,7 @@ module Ruote
     def put (doc)
 
       (@h[doc['type']] ||= {})[doc['_id']] =
-        Ruote::fulldup(doc).merge!('put_at' => Time.now.to_s)
+        Ruote::fulldup(doc).merge!('put_at' => Time.now.utc.to_s)
 
       nil
     end
@@ -59,14 +59,9 @@ module Ruote
 
     def get_many (type, key=nil)
 
-      (key ?
+      key ?
         @h[type].values.select { |doc| doc['_id'].match(key) } :
         @h[type].values
-      ).sort { |d0, d1|
-        d0['_id'] <=> d1['_id']
-      }
-        # a nil _id here triggers an
-        # "ArgumentError: comparison of Hash with Hash failed"
     end
 
     def purge!

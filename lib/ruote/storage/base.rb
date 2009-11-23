@@ -36,7 +36,7 @@ module Ruote
 
       put(options.merge!(
         'type' => 'tasks',
-        '_id' => Time.now.to_f.to_s,
+        '_id' => "#{$$}-#{Thread.current.object_id}-#{Time.now.to_f.to_s}",
         'action' => action))
     end
   end

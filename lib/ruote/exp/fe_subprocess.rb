@@ -161,7 +161,7 @@ module Ruote::Exp
       vars.merge!('tree' => tree_children.first)
         # NOTE : we're taking the first child here...
 
-      pool.launch_sub(pos, subtree, self, @applied_workitem, :variables => vars)
+      launch_sub(pos, subtree, :variables => vars)
     end
 
     protected

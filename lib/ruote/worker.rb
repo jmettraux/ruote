@@ -61,8 +61,14 @@ module Ruote
         end
 
         # tasks
+
         tasks = @storage.get_many('tasks')
-        tasks.each { |task| process(task) }
+
+        tasks.sort { |a, b|
+          a['put_at'] <=> b['put_at']
+        }.each { |task|
+          process(task)
+        }
 
         sleep(0.100) if tasks.size == 0
       end
@@ -167,6 +173,9 @@ module Ruote
 
       exp_class = @context.expmap.expression_class(tree.first)
 
+      # task['wfid'] only : it's a launch
+      # task['fei'] : it's a sub launch
+
       exp_hash = {
         'fei' => task['fei'] || {
           'engine_id' => @context['engine_id'] || 'engine',
@@ -190,7 +199,7 @@ module Ruote
 
       raise "unknown expression '#{tree.first}'" unless exp_class
 
-      exp = exp_class.new(@context, exp_hash)
+      exp = exp_class.new(@context, exp_hash.merge!('original_tree' => tree))
       exp.persist
       exp.do_apply
     end

@@ -146,20 +146,6 @@ module Ruote::Exp
         'workitem' => workitem)
     end
 
-    #def do_reply (workitem)
-    #  @children.delete(workitem.fei)
-    #    # NOTE : check on size before/after ?
-    #  if @state != nil # :failing, :cancelling or :dying
-    #    if @children.size < 1
-    #      reply_to_parent(workitem)
-    #    else
-    #      persist # for the updated @children
-    #    end
-    #  else
-    #    reply(workitem)
-    #  end
-    #end
-
     def do_reply (workitem)
 
       h.children.delete(workitem['fei'])
@@ -183,6 +169,29 @@ module Ruote::Exp
     def reply (workitem)
 
       reply_to_parent(workitem)
+    end
+
+    def launch_sub (pos, subtree, opts={})
+
+      fei = h.fei.dup
+      fei['sub_wfid'] = get_next_sub_wfid
+      fei['expid'] = pos
+
+      forget = opts[:forget]
+
+      register_child(fei) unless forget
+
+      variables = (
+        forget ? compile_variables : {}
+      ).merge!(opts[:variables] || {})
+
+      @context.storage.put_task(
+        'launch',
+        'fei' => fei,
+        'parent_id' => forget ? nil : h.fei,
+        'tree' => subtree,
+        'workitem' => h.applied_workitem,
+        'variables' => variables)
     end
 
     #--
@@ -227,8 +236,6 @@ module Ruote::Exp
     def tree_children
       tree[2]
     end
-
-    protected
   end
 
   ##
