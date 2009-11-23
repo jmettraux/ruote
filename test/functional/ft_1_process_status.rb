@@ -419,8 +419,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     ps = @engine.process(wfid)
 
-    h = ps.expressions.last.to_h
+    h = ps.expressions.find { |hf|
+      hf.is_a?(Ruote::Exp::ParticipantExpression)
+    }.to_h
 
+    assert_equal 'Ruote::Exp::ParticipantExpression', h['class']
     assert_equal 'alpha', h['participant_name']
     assert_equal ["participant", {"ref"=>"alpha"}, []], h['original_tree']
   end

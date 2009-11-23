@@ -421,12 +421,16 @@ module Ruote::Exp
       ivs.delete(:@context)
       ivs.delete('@context')
 
-      ivs.inject({}) { |h, iv|
+      hf = ivs.inject({}) { |h, iv|
         val = instance_variable_get(iv)
         val = val.to_h if val.respond_to?(:to_h)
         h[iv.to_s[1..-1]] = val
         h
       }
+
+      hf['class'] = self.class.name
+
+      hf
     end
 
     # Asks expstorage[s] to store/update persisted version of self.
