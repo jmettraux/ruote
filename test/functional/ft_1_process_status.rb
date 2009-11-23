@@ -402,5 +402,27 @@ class FtProcessStatusTest < Test::Unit::TestCase
     #    ["subprocess", {"ref"=>"sub0"}, [["alpha", {}, []]]]]],
     #  @engine.process(wfid).current_tree)
   end
+
+  def test_fexp_to_h
+
+    pdef = Ruote.process_definition :name => 'my process' do
+      participant :ref => 'alpha'
+    end
+
+    #noisy
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    ps = @engine.process(wfid)
+
+    h = ps.expressions.last.to_h
+
+    assert_equal 'alpha', h['participant_name']
+    assert_equal ["participant", {"ref"=>"alpha"}, []], h['original_tree']
+  end
 end
 
