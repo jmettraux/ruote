@@ -90,6 +90,8 @@ module Ruote
       File.open(path_for(workitem.fei), 'w') { |f| YAML.dump(workitem, f) }
     end
 
+    alias :update :consume
+
     # Simply deletes the workitem file.
     #
     def cancel (fei, flavour)
