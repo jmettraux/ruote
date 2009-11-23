@@ -17,7 +17,7 @@ Contributors
 
 Enrico Bianco - http://github.com/enricob
 Andrew Timberlake - timeout 'at'
-Torsten Schoenebaum - ActiveResourceParticipant
+Torsten Schoenebaum - ActiveResourceParticipant and more
 Raphael Simon - error handling mechanism design and QA
 Maarten Oelering - bug reports and test cases
 Nick Petrella - socket listener issues and Python interactivity, dollar patch
