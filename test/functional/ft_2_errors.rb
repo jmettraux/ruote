@@ -49,13 +49,15 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     ps = @engine.process(wfid)
 
-    assert_equal Ruote::Exp::RawExpression, ps.expressions.last.class
+    exp = ps.expressions.find { |fe| fe.class == Ruote::Exp::RawExpression }
+
+    assert_not_nil exp
 
     @engine.register_participant :nada do |workitem|
       @tracer << 'done.'
     end
 
-    @engine.re_apply(ps.expressions.last.fei)
+    @engine.re_apply(exp.fei)
     wait_for(wfid)
 
     assert_equal 'done.', @tracer.to_s
