@@ -63,7 +63,7 @@ module Ruote
     #
     def by_process (wfid)
 
-      files = Dir[File.join(@path, "#{engine.engine_id}_*.txt")].reverse
+      files = Dir[File.join(@path, "#{engine.engine_id}_*.txt")].sort.reverse
 
       history = []
 
@@ -94,7 +94,7 @@ module Ruote
     #
     def range
 
-      files = Dir[File.join(@path, "#{engine.engine_id}_*.txt")]
+      files = Dir[File.join(@path, "#{engine.engine_id}_*.txt")].sort
 
       [ files.last, files.first ].collect do |fn|
         Time.parse(RANGE_REGEXP.match(fn)[1])
