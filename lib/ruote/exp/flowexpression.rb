@@ -247,6 +247,12 @@ module Ruote::Exp
 
       "#{h.fei['expid']}s#{last_sub_wfid}"
     end
+
+    def register_child (fei)
+
+      h.children << fei
+      persist
+    end
   end
 
   ##
