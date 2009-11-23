@@ -134,7 +134,7 @@ module Ruote
 
         @storage.put_task(
           'error_intercepted',
-          'error' => e.inspect,
+          'message' => e.inspect,
           'wfid' => wfid,
           'task' => task)
 
@@ -143,8 +143,9 @@ module Ruote
         @storage.put(
           'type' => 'errors',
           '_id' => Ruote::FlowExpressionId.to_storage_id(task['fei']),
-          'error' => e.inspect,
-          'trace' => e.backtrace.join("\n"))
+          'message' => e.inspect,
+          'trace' => e.backtrace.join("\n"),
+          'task' => task)
       end
     end
 

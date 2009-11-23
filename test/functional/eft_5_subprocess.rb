@@ -141,8 +141,8 @@ class EftSubprocessTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_equal(
-      "no subprocess named 'nada' found",
-      @engine.process(wfid).errors.first.error_message)
+      "#<RuntimeError: no subprocess named 'nada' found>",
+      @engine.process(wfid).errors.first.message)
   end
 
   def test_subprocess_in_engine_variable

@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'ruote/engine/process_error'
+
 
 module Ruote
 
@@ -44,7 +46,7 @@ module Ruote
     def initialize (expressions, errors)
 
       @expressions = expressions
-      @errors = errors
+      @errors = errors.collect { |e| ProcessError.new(e) }
     end
 
     # Returns the expression at the root of the process instance.

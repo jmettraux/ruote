@@ -22,74 +22,44 @@
 # Made in Japan.
 #++
 
-require 'ruote/storage/base'
-
 
 module Ruote
 
-  class HashStorage
+  #
+  # Encapsulating all the information about an error in a process instance.
+  #
+  class ProcessError
 
-    include StorageBase
-
-    attr_reader :h
-
-    def initialize (options={})
-
-      @options = options
-
-      purge!
+    def initialize (h)
+      @h = h
     end
 
-    def put (doc)
-
-      (@h[doc['type']] ||= {})[doc['_id']] =
-        Ruote::fulldup(doc).merge!('put_at' => Ruote.now_utc_to_s)
-
-      nil
+    def message
+      @h['message']
     end
 
-    def get (type, key)
-      @h[type][key]
+    def trace
+      @h['trace']
     end
 
-    def delete (doc)
-      @h[doc['type']].delete(doc['_id'])
-      nil
+    def task
+      @h['task']
     end
 
-    def get_many (type, key=nil)
-
-      key ?
-        @h[type].values.select { |doc| doc['_id'].match(key) } :
-        @h[type].values
+    def fei
+      task['fei']
     end
 
-    def purge!
+    # A shortcut for modifying the tree of an expression when it has had
+    # an error upon being applied.
+    #
+    #def tree= (t)
+    #  raise "no tree in error, can't override" unless tree
+    #  msg.last[:tree] = t
+    #end
 
-      @h = %w[
-        tasks
-        expressions
-        errors
-        ats
-        crons
-        configuration
-        misc
-        participants
-      ].inject({}) { |h, k|
-        h[k] = {}
-        h
-      }
-
-      @h['configuration']['engine'] = @options
-    end
-
-    def dump (type)
-
-      puts "=== #{type} ==="
-      @h[type].each do |k, v|
-        puts "      #{k} =>"
-        p v
-      end
+    def to_h
+      @h
     end
   end
 end
