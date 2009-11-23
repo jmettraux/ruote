@@ -81,5 +81,60 @@ class FtSubprocessesTest < Test::Unit::TestCase
 
     assert_equal 2, wfids.uniq.size
   end
+
+  def test_cancel_and_subprocess
+
+    pdef = Ruote.process_definition do
+      sequence do
+        sub0
+      end
+      define 'sub0' do
+        alpha
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    assert_equal 1, alpha.size
+
+    @engine.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    assert_equal 0, alpha.size
+  end
+
+  def test_cancel_and_engine_variable_subprocess
+
+    pdef = Ruote.process_definition do
+      sequence do
+        sub0
+      end
+    end
+
+    @engine.variables['sub0'] = Ruote.process_definition do
+      alpha
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    assert_equal 1, alpha.size
+
+    @engine.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    assert_equal 0, alpha.size
+  end
 end
 

@@ -410,6 +410,25 @@ module Ruote::Exp
       l
     end
 
+    # Returns a Hash representation of this flow expression (suitable for
+    # JSONification).
+    #
+    def to_h
+
+      ivs = instance_variables.sort
+        # behind the scenes ;-)
+
+      ivs.delete(:@context)
+      ivs.delete('@context')
+
+      ivs.inject({}) { |h, iv|
+        val = instance_variable_get(iv)
+        val = val.to_h if val.respond_to?(:to_h)
+        h[iv.to_s[1..-1]] = val
+        h
+      }
+    end
+
     # Asks expstorage[s] to store/update persisted version of self.
     #
     def persist (probe=false)
