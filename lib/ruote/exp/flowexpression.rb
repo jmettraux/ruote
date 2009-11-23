@@ -242,7 +242,10 @@ module Ruote::Exp
 
     def get_next_sub_wfid
 
-      raise "implement me !"
+      last_sub_wfid = h.last_sub_wfid || 0
+      h.last_sub_wfid = last_sub_wfid + 1
+
+      "#{h.fei['expid']}s#{last_sub_wfid}"
     end
   end
 
