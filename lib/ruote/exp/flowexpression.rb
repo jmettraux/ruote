@@ -180,6 +180,7 @@ module Ruote::Exp
       forget = opts[:forget]
 
       register_child(fei) unless forget
+        # persists this expression
 
       variables = (
         forget ? compile_variables : {}
@@ -235,6 +236,13 @@ module Ruote::Exp
 
     def tree_children
       tree[2]
+    end
+
+    protected
+
+    def get_next_sub_wfid
+
+      raise "implement me !"
     end
   end
 
