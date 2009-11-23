@@ -116,7 +116,7 @@ module Ruote::Exp
     #
     def parent
 
-      expstorage[@parent_id]
+      @parent_id.nil? ? nil : expstorage[@parent_id]
     end
 
     # This method is called by expool#apply_child and expool#launch_sub,
