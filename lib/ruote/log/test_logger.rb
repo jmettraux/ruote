@@ -34,10 +34,11 @@ module Ruote
       error_intercepted
       receive
       dispatch
+      cancel
     ]
 
     attr_reader :noteworthy
-    attr_reader :complete_noteworthy
+    attr_reader :log
 
     def initialize (context)
 
@@ -56,7 +57,7 @@ module Ruote
       end
 
       @noteworthy = []
-      @complete_noteworthy = []
+      @log = []
       @waiting = nil
 
       # NOTE
@@ -71,7 +72,7 @@ module Ruote
 
       if NOTEWORTHY.include?(event['action'])
         @noteworthy << event
-        @complete_noteworthy << event
+        @log << event
       end
 
       check_waiting
@@ -93,15 +94,6 @@ module Ruote
       return unless @waiting
 
       thread, interest = @waiting
-
-      #over = @noteworthy.find do |event|
-      #  if interest.is_a?(Symbol) # participant
-      #    (event['action'] == 'dispatch' &&
-      #     event['participant_name'] == interest.to_s)
-      #  else # wfid
-      #    event['wfid'] == interest
-      #  end
-      #end
 
       over = false
 

@@ -136,8 +136,8 @@ module Ruote::Exp
 
     def apply
 
-      h.count = attribute(:count).to_i rescue 0
-      h.count = nil if h.count < 1
+      h.ccount = attribute(:count).to_i rescue 0
+      h.ccount = nil if h.ccount < 1
 
       h.cmerge = att(:merge, %w[ first last highest lowest ])
       h.cmerge_type = att(:merge_type, %w[ override mix isolate ])
@@ -201,7 +201,7 @@ module Ruote::Exp
     #
     def expected_count
 
-      h.count ? [ h.count, tree_children.size ].min : tree_children.size
+      h.ccount ? [ h.ccount, tree_children.size ].min : tree_children.size
     end
 
     def reply_to_parent (_workitem)

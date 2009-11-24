@@ -196,7 +196,10 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wfid = run_test_count('cancel', false)
 
-    assert_equal 1, logger.log.select { |e| e[1] == :cancel }.size
+    #puts
+    #logger.log.each { |e| p e }
+    #puts
+    assert_equal 1, logger.log.select { |e| e['action'] == 'cancel' }.size
 
     assert_equal 0, @alpha.size
     assert_equal 0, @bravo.size
@@ -206,7 +209,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wfid = run_test_count('forget', false)
 
-    assert_equal 1, logger.log.select { |e| e[1] == :forgotten }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'forget' }.size
 
     assert_equal 0, @alpha.size
     assert_equal 1, @bravo.size

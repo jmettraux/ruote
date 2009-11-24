@@ -77,6 +77,11 @@ module FunctionalBase
     wfid
   end
 
+  def logger
+
+    @engine.context.logger
+  end
+
   protected
 
   def noisy (on=true)
