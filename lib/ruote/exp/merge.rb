@@ -51,7 +51,6 @@ module Ruote::Exp
       return source unless target
 
       if type == 'mix'
-        #source.fields.each { |k, v| target.fields[k] = v }
         target.fields.merge!(source.fields)
       else # 'isolate'
         target.fields[index] = source.fields

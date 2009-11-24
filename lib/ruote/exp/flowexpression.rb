@@ -137,6 +137,8 @@ module Ruote::Exp
 
       h.children << child_fei unless forget
 
+      persist
+
       @context.storage.put_task(
         'apply',
         'fei' => child_fei,

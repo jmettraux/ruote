@@ -138,35 +138,35 @@ module Ruote::Exp
 
     def apply
 
-      @count = attribute(:count).to_i rescue 0
-      @count = nil if @count < 1
+      h.count = attribute(:count).to_i rescue 0
+      h.count = nil if h.count < 1
 
-      @merge = att(:merge, %w[ first last highest lowest ])
-      @merge_type = att(:merge_type, %w[ override mix isolate ])
-      @remaining = att(:remaining, %w[ cancel forget ])
+      h.cmerge = att(:merge, %w[ first last highest lowest ])
+      h.cmerge_type = att(:merge_type, %w[ override mix isolate ])
+      h.remaining = att(:remaining, %w[ cancel forget ])
 
-      @workitems = (@merge == 'first' || @merge == 'last') ? [] : {}
+      h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}
 
-      @over = false
+      h.over = false
 
       apply_children
     end
 
     def reply (workitem)
 
-      if not @over
+      unless h.over
 
-        if @merge == 'first' || @merge == 'last'
-          @workitems << workitem
+        if h.cmerge == 'first' || h.cmerge == 'last'
+          h.workitems << workitem
         else
-          @workitems[workitem.fei.expid] = workitem
+          h.workitems[workitem['fei']['expid']] = workitem
         end
 
-        @over = over?(workitem)
+        h.over = over?(workitem)
 
         persist
 
-        reply_to_parent(nil) if @over
+        reply_to_parent(nil) if h.over
       end
     end
 
@@ -179,7 +179,7 @@ module Ruote::Exp
     def apply_children
 
       tree_children.each_with_index do |c, i|
-        apply_child(i, @applied_workitem.dup)
+        apply_child(i, h.applied_workitem.dup)
       end
     end
 
@@ -193,7 +193,7 @@ module Ruote::Exp
       elsif over_unless && (not Condition.true?(over_unless))
         true
       else
-        (@workitems.size >= expected_count)
+        (h.workitems.size >= expected_count)
       end
     end
 
@@ -203,45 +203,45 @@ module Ruote::Exp
     #
     def expected_count
 
-      @count ? [ @count, tree_children.size ].min : tree_children.size
+      h.count ? [ h.count, tree_children.size ].min : tree_children.size
     end
 
     def reply_to_parent (_workitem)
 
-      handle_remaining if @children
+      handle_remaining if h.children
 
-      discard_all_tickets
+      #discard_all_tickets
 
       super(merge_all_workitems)
     end
 
     def merge_all_workitems
 
-      return @applied_workitem if @workitems.size < 1
+      return h.applied_workitem if h.workitems.size < 1
 
-      wis = case @merge
+      wis = case h.cmerge
       when 'first'
-        @workitems.reverse
+        h.workitems.reverse
       when 'last'
-        @workitems
+        h.workitems
       when 'highest', 'lowest'
-        is = @workitems.keys.sort.collect { |k| @workitems[k] }
-        @merge == 'highest' ? is.reverse : is
+        is = h.workitems.keys.sort.collect { |k| h.workitems[k] }
+        h.cmerge == 'highest' ? is.reverse : is
       end
       rwis = wis.reverse
 
       wis.inject(nil) { |t, wi|
-        merge_workitems(rwis.index(wi), t, wi, @merge_type)
+        merge_workitems(rwis.index(wi), t, wi, h.cmerge_type)
       }
     end
 
     def handle_remaining
 
-      b = @remaining == 'cancel' ?
+      b = h.remaining == 'cancel' ?
         lambda { |fei| pool.cancel_expression(fei, nil) } :
         lambda { |fei| pool.forget_expression(fei) }
 
-      @children.each(&b)
+      h.children.each(&b)
     end
   end
 end
