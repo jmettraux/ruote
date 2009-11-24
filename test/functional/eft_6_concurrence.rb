@@ -60,7 +60,10 @@ class EftConcurrenceTest < Test::Unit::TestCase
     #noisy
 
     assert_trace(pdef, %w[ alpha ] * 3)
-    assert_equal({ 1 => { 'seen' => 'indeed' }, 0 => {} }, fields)
+
+    assert_equal(
+      {1=>{"seen"=>"indeed"}, 0=>{}, "params"=>{"ref"=>"bravo"}},
+      fields)
   end
 
   def test_over_unless

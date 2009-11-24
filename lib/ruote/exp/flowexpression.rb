@@ -93,7 +93,7 @@ module Ruote::Exp
       fexp = context.storage.get(
         'expressions', Ruote::FlowExpressionId.new(fei).to_storage_id)
 
-      from_h(context, fexp)
+      fexp ? from_h(context, fexp) : nil
     end
 
     #--
