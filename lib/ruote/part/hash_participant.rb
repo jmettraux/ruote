@@ -61,7 +61,7 @@ module Ruote
     #
     def reply (workitem)
 
-      @items.delete(workitem.fei)
+      @items.delete(workitem.fei.to_storage_id)
       reply_to_engine(workitem)
     end
 

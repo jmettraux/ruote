@@ -63,6 +63,10 @@ module Ruote::Exp
       self.class.fetch(@context, h.parent_id)
     end
 
+    def variables
+      h.variables
+    end
+
     #--
     # PERSISTENCE
     #++

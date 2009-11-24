@@ -37,6 +37,7 @@ module Ruote
     ]
 
     attr_reader :noteworthy
+    attr_reader :complete_noteworthy
 
     def initialize (context)
 
@@ -55,6 +56,7 @@ module Ruote
       end
 
       @noteworthy = []
+      @complete_noteworthy = []
       @waiting = nil
 
       # NOTE
@@ -67,7 +69,10 @@ module Ruote
 
       pretty_print(event) if @context[:noisy]
 
-      @noteworthy << event if NOTEWORTHY.include?(event['action'])
+      if NOTEWORTHY.include?(event['action'])
+        @noteworthy << event
+        @complete_noteworthy << event
+      end
 
       check_waiting
     end
@@ -89,17 +94,25 @@ module Ruote
 
       thread, interest = @waiting
 
-      over = @noteworthy.find do |event|
+      #over = @noteworthy.find do |event|
+      #  if interest.is_a?(Symbol) # participant
+      #    (event['action'] == 'dispatch' &&
+      #     event['participant_name'] == interest.to_s)
+      #  else # wfid
+      #    event['wfid'] == interest
+      #  end
+      #end
 
-        if interest.is_a?(Symbol) # participant
+      over = false
 
+      while event = @noteworthy.shift
+        over = if interest.is_a?(Symbol) # participant
           (event['action'] == 'dispatch' &&
            event['participant_name'] == interest.to_s)
-
         else # wfid
-
           event['wfid'] == interest
         end
+        break if over
       end
 
       if over

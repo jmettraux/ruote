@@ -113,6 +113,7 @@ module Ruote
         elsif EXP_ACTIONS.include?(action)
 
           fexp = Ruote::Exp::FlowExpression.fetch(@context, task['fei'])
+
           fexp.send("do_#{action}", task) if fexp
 
         elsif action == 'dispatch'

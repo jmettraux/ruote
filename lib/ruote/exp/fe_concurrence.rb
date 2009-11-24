@@ -134,8 +134,6 @@ module Ruote::Exp
 
     names :concurrence
 
-    # TODO : implement :over_unless
-
     def apply
 
       h.count = attribute(:count).to_i rescue 0

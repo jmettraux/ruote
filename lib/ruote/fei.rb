@@ -70,6 +70,20 @@ module Ruote
 
       h.expid.split(CHILD_SEP).last.to_i
     end
+
+    def hash
+
+      to_storage_id.hash
+    end
+
+    def == (other)
+
+      return false unless other.is_a?(Ruote::FlowExpressionId)
+
+      (hash == other.hash)
+    end
+
+    alias eql? ==
   end
 end
 
