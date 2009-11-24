@@ -171,7 +171,7 @@ module Ruote::Exp
 
     def reply_to_parent (workitem)
 
-      workitem.fields.delete('params')
+      workitem['fields'].delete('params')
       super(workitem)
     end
 

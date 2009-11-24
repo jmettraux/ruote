@@ -39,6 +39,15 @@ module Ruote
         '_id' => "#{$$}-#{Thread.current.object_id}-#{Time.now.to_f.to_s}",
         'action' => action))
     end
+
+    def find_root_expression (wfid)
+
+      get_many('expressions', /#{wfid}$/).sort { |a, b|
+        a['fei']['expid'] <=> b['fei']['expid']
+      }.select { |e|
+        e['parent_id'].nil?
+      }.first
+    end
   end
 end
 

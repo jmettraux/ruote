@@ -41,6 +41,18 @@ module Ruote
       class << h; include Ruote::HashDot; end
     end
 
+    def expid
+      @h['expid']
+    end
+
+    def wfid
+      @h['wfid']
+    end
+
+    def sub_wfid
+      @h['sub_wfid']
+    end
+
     def to_storage_id
 
       "#{h.expid}|#{h.sub_wfid}|#{h.wfid}"

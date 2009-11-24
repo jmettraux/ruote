@@ -33,6 +33,8 @@ module Ruote
   #
   module LocalParticipant
 
+    attr_accessor :context
+
     # Sends back the workitem to the ruote engine.
     #
     def reply_to_engine (workitem)

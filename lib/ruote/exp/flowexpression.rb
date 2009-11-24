@@ -77,6 +77,15 @@ module Ruote::Exp
       @context.storage.delete(@h)
     end
 
+    # Instantiates expression back from hash.
+    #
+    def self.from_h (context, h)
+
+      exp_class = context.expmap.expression_class(h['name'])
+
+      exp_class.new(context, h)
+    end
+
     # Fetches an expression from the storage and readies it for service.
     #
     def self.fetch (context, fei)
@@ -84,9 +93,7 @@ module Ruote::Exp
       fexp = context.storage.get(
         'expressions', Ruote::FlowExpressionId.new(fei).to_storage_id)
 
-      exp_class = context.expmap.expression_class(fexp['name'])
-
-      exp_class.new(context, fexp)
+      from_h(context, fexp)
     end
 
     #--
@@ -148,7 +155,9 @@ module Ruote::Exp
         'workitem' => workitem)
     end
 
-    def do_reply (workitem)
+    def do_reply (task)
+
+      workitem = task['workitem']
 
       h.children.delete(workitem['fei'])
 
@@ -195,6 +204,43 @@ module Ruote::Exp
         'tree' => subtree,
         'workitem' => h.applied_workitem,
         'variables' => variables)
+    end
+
+    def do_cancel (task)
+
+      flavour = task['flavour']
+
+      return if h.state == 'failed' and flavour == 'timeout'
+        # do not timeout expressions that are "in error" (failed)
+
+      h.state = case flavour
+        when 'kill' then 'dying'
+        when 'timeout' then 'timing_out'
+        else 'cancelling'
+      end
+
+      h.applied_workitem['fields']['__timed_out__'] = [
+        h.fei, Ruote.now_utc_to_s
+      ] if h.state == :timing_out
+
+      persist
+
+      cancel(flavour)
+    end
+
+    # This default implementation cancels all the [registered] children
+    # of this expression.
+    #
+    def cancel (flavour)
+
+      h.children.each do |cfei|
+
+        @context.storage.put_task(
+          'cancel',
+          'fei' => cfei,
+          'parent_id' => h.fei, # indicating that this is a "cancel child"
+          'flavour' => flavour)
+      end
     end
 
     #--

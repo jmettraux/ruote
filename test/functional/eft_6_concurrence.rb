@@ -112,7 +112,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     noisy if noise
 
@@ -173,8 +173,8 @@ class EftConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    @alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    @bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+    @alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    @bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
 
     noisy if noise
 

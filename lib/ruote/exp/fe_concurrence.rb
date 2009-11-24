@@ -237,11 +237,9 @@ module Ruote::Exp
 
     def handle_remaining
 
-      b = h.remaining == 'cancel' ?
-        lambda { |fei| pool.cancel_expression(fei, nil) } :
-        lambda { |fei| pool.forget_expression(fei) }
-
-      h.children.each(&b)
+      h.children.each { |fei|
+        @context.storage.put_task(h.remaining, 'fei' => fei)
+      }
     end
   end
 end

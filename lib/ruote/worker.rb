@@ -27,9 +27,14 @@ require 'ruote/fei'
 
 module Ruote
 
+  VERSION = '2.1.0'
+
   class Worker
 
-    EXP_ACTIONS = %w[ apply reply cancel ]
+    EXP_ACTIONS = %w[ reply cancel ]
+      # 'apply' is comprised in 'launch'
+
+    PROC_ACTIONS = %w[ cancel_process kill_process ]
 
     attr_reader :storage
     attr_reader :context
@@ -109,11 +114,15 @@ module Ruote
 
           Ruote::Exp::FlowExpression.fetch(
             @context, task['fei']
-          ).send("do_#{action}", task['workitem'])
+          ).send("do_#{action}", task)
 
         elsif action == 'dispatch'
 
           dispatch(task)
+
+        elsif PROC_ACTIONS.include?(action)
+
+          self.send(action, task)
 
         #else
           # task got delete, might still be interesting for a subscriber
@@ -123,10 +132,10 @@ module Ruote
 
       rescue Exception => e
 
-        #puts "\n== worker intercepted error =="
-        #p e
-        #e.backtrace.each { |l| puts l }
-        #puts
+        puts "\n== worker intercepted error =="
+        p e
+        e.backtrace.each { |l| puts l }
+        puts
 
         # emit 'task'
 
@@ -146,6 +155,17 @@ module Ruote
           'message' => e.inspect,
           'trace' => e.backtrace.join("\n"),
           'task' => task)
+      end
+    end
+
+    def notify (event)
+
+      @subscribers.each do |type, actions, subscriber|
+
+        next unless type == :all || event['type'] == type
+        next unless actions == :all || actions.include?(event['action'])
+
+        subscriber.notify(event)
       end
     end
 
@@ -236,15 +256,21 @@ module Ruote
       end
     end
 
-    def notify (event)
+    def cancel_process (task)
 
-      @subscribers.each do |type, actions, subscriber|
+      root = @storage.find_root_expression(task['wfid'])
 
-        next unless type == :all || event['type'] == type
-        next unless actions == :all || actions.include?(event['action'])
+      return unless root
 
-        subscriber.notify(event)
-      end
+      @storage.put_task(
+        'cancel',
+        'fei' => root['fei'],
+        'wfid' => task['wfid']) # indicates this was triggered by a cancel_process
+    end
+
+    def kill_process (task)
+
+      raise "implement me !"
     end
   end
 end

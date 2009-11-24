@@ -43,10 +43,13 @@ module Ruote
     #
     attr_reader :errors
 
-    def initialize (expressions, errors)
+    def initialize (context, expressions, errors)
 
-      @expressions = expressions
-      @errors = errors.collect { |e| ProcessError.new(e) }
+      @expressions = expressions.collect { |e|
+        Ruote::Exp::FlowExpression.from_h(context, e) }
+
+      @errors = errors.collect { |e|
+        ProcessError.new(e) }
     end
 
     # Returns the expression at the root of the process instance.
@@ -137,7 +140,7 @@ module Ruote
       s = "== #{self.class} ==\n"
       s << "   expressions : #{@expressions.size}\n"
       @expressions.each do |e|
-        s << "     #{e.fei.to_s} : #{e.class}\n"
+        s << "     #{e.fei.to_storage_id} : #{e}\n"
       end
       s << "   errors : #{@errors.size}\n"
       @errors.each do |e|

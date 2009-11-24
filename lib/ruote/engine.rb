@@ -80,11 +80,30 @@ module Ruote
       wfid
     end
 
+    def cancel_process (wfid)
+
+      @storage.put_task(
+        'cancel_process',
+        'wfid' => wfid)
+    end
+
+    def kill_process (wfid)
+
+      raise "wire me !"
+
+      @storage.put_task(
+        'kill_process',
+        'wfid' => wfid)
+    end
+
     def process (wfid)
 
+      exps = @storage.get_many('expressions', /#{wfid}$/)
+
+      return nil if exps.size < 1
+
       ProcessStatus.new(
-        @storage.get_many('expressions', /#{wfid}$/),
-        @storage.get_many('errors', /#{wfid}$/))
+        @context, exps, @storage.get_many('errors', /#{wfid}$/))
     end
 
     def purge!

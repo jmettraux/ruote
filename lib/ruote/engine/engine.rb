@@ -42,7 +42,7 @@ require 'ruote/time/scheduler'
 
 module Ruote
 
-  VERSION = '2.0.0'
+  #VERSION = '2.0.0'
 
   #
   # The base class for all engines. This particular core version is an
