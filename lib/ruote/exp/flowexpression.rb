@@ -39,6 +39,7 @@ module Ruote::Exp
     h_reader :variables
     h_reader :created_time
     h_reader :original_tree
+    h_reader :updated_tree
 
     def initialize (context, h)
 

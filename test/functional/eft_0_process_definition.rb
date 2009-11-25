@@ -40,7 +40,7 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
 
     assert_equal(
       {"sub0"=> ["0_0", ["define", {"name"=>"sub0"}, []]],
-       "main"=> ["0", ["define", {"name"=>"main"}, [["define", {"name"=>"sub0"}, []], ["participant", {"ref"=>:alpha}, []]]]]},
+       "main"=> ["0", ["define", {"name"=>"main"}, [["define", {"name"=>"sub0"}, []], ["participant", {"ref"=>"alpha"}, []]]]]},
       ps.variables)
   end
 

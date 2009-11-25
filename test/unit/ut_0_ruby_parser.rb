@@ -23,15 +23,15 @@ class RubyParserTest < Test::Unit::TestCase
 
     tree = Ruote.define :name => 'nada' do
       sequence do
-        alpha
+        participant :ref => :alpha
         bravo
       end
     end
 
     assert_equal(
       ["define", {"name"=>"nada"}, [
-        ["sequence", {}, [["alpha", {}, []], ["bravo", {}, []]]]
-      ]],
+        ["sequence", {}, [
+          ["participant", {"ref"=>"alpha"}, []], ["bravo", {}, []]]]]],
       tree)
   end
 

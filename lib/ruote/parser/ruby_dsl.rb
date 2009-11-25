@@ -72,7 +72,7 @@ module Ruote
         a.is_a?(Hash) ? h.merge!(a) : h[a] = nil
         h
       }.inject({}) { |h, (k, v)|
-        h[k.to_s] = v
+        h[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
         h
       }
 

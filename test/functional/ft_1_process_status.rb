@@ -119,7 +119,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     e = ps.expressions.find { |e| e.fei.expid == '0_0_1' }
 
+    p e.h
+
     e.update_tree([ 'participant', { 'ref' => :bravo }, [] ])
+
+    p e.h
 
     assert_equal(
       ["define", {"my process"=>nil}, [
