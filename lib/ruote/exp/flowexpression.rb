@@ -121,6 +121,9 @@ module Ruote::Exp
       return reply_to_parent(h.applied_workitem) \
         if Condition.skip?(attribute(:if), attribute(:unless))
 
+      consider_tag
+      consider_timeout
+
       apply
     end
 
@@ -308,6 +311,24 @@ module Ruote::Exp
 
       h.children << fei
       persist
+    end
+
+    def consider_tag
+
+      if h.tagname = attribute(:tag)
+
+        set_variable(h.tagname, h.fei)
+
+        @context.storage.put_task(
+          'entered_tag', 'tag' => h.tagname, 'fei' => h.fei)
+      end
+    end
+
+    def consider_timeout
+
+      if timeout = attribute(:timeout)
+        raise "implement me !"
+      end
     end
   end
 

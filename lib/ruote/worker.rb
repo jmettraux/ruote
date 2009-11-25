@@ -100,6 +100,8 @@ module Ruote
         #
         # NOTE : if the delete fails, it means there is another worker...
 
+      fexp = nil
+
       begin
 
         action = task['action']
@@ -149,12 +151,15 @@ module Ruote
 
         # fill error in the error journal
 
+        fei = task['fei'] || (fexp.h.fei rescue nil)
+
         @storage.put(
           'type' => 'errors',
-          '_id' => Ruote::FlowExpressionId.to_storage_id(task['fei']),
+          '_id' => Ruote::FlowExpressionId.to_storage_id(fei),
           'message' => e.inspect,
           'trace' => e.backtrace.join("\n"),
-          'task' => task)
+          'task' => task
+        ) if fei
       end
     end
 

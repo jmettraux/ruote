@@ -84,6 +84,14 @@ module Ruote
     end
 
     alias eql? ==
+
+    # Returns true if the h is a representation of a FlowExpressionId instance.
+    #
+    def self.is_a_fei? (h)
+
+      h.respond_to?(:keys) &&
+      (h.keys - [ 'sub_wfid' ]).sort == %w[ engine_id expid wfid ]
+    end
   end
 end
 

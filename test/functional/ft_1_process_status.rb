@@ -21,7 +21,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
 
@@ -180,7 +180,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -218,7 +218,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -248,7 +248,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -277,7 +277,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -298,7 +298,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid0 = @engine.launch(pdef)
     wfid1 = @engine.launch(pdef)
@@ -374,7 +374,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -411,7 +411,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
 
