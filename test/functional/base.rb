@@ -134,9 +134,9 @@ module FunctionalBase
     expcount = @engine.storage.get_many('expressions').size
     return if expcount == 0
 
-    50.times { Thread.pass }
-    expcount = @engine.expstorage.size
-    return if expcount == 0
+    #50.times { Thread.pass }
+    #expcount = @engine.expstorage.size
+    #return if expcount == 0
 
     tf, _, tn = caller[2].split(':')
 
@@ -151,7 +151,7 @@ module FunctionalBase
     puts
     puts 'left :'
     puts
-    puts @engine.expstorage.to_s
+    puts @engine.context.torage.to_s
     puts
     puts '-' * 80
 

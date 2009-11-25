@@ -7,10 +7,8 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
 
-
-class FtWorkqueueTest < Test::Unit::TestCase
+class FtWorkerTest < Test::Unit::TestCase
   include FunctionalBase
 
   def test_launch_terminate
@@ -22,9 +20,8 @@ class FtWorkqueueTest < Test::Unit::TestCase
 
     fei = assert_trace pdef, ''
 
-    #p logger.log
-    assert_equal 1, logger.log.select { |e| e[1] == :launch }.size
-    assert_equal 1, logger.log.select { |e| e[1] == :terminated }.size
+    #puts; logger.log.each { |e| p e }; puts
+    assert_equal %w[ launch terminated ], logger.log.map { |e| e['action'] }
   end
 end
 

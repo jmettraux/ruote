@@ -29,17 +29,7 @@ module Ruote
 
   class TestLogger
 
-    NOTEWORTHY = %w[
-      terminated
-      ceased
-      cancelled killed
-      error_intercepted
-      receive
-      dispatch
-      cancel
-    ]
-
-    attr_reader :noteworthy
+    attr_reader :seen
     attr_reader :log
 
     def initialize (context)
@@ -58,7 +48,7 @@ module Ruote
         #
       end
 
-      @noteworthy = []
+      @seen = []
       @log = []
       @waiting = nil
 
@@ -72,10 +62,8 @@ module Ruote
 
       pretty_print(event) if @context[:noisy]
 
-      if NOTEWORTHY.include?(event['action'])
-        @noteworthy << event
-        @log << event
-      end
+      @seen << event
+      @log << event
 
       check_waiting
     end
@@ -99,13 +87,18 @@ module Ruote
 
       over = false
 
-      while event = @noteworthy.shift
+      while event = @seen.shift
+
+        action = event['action']
+
         over = if interest.is_a?(Symbol) # participant
-          (event['action'] == 'dispatch' &&
+          (action == 'dispatch' &&
            event['participant_name'] == interest.to_s)
         else # wfid
+          %w[ terminated ceased error_intercepted ].include?(action) &&
           event['wfid'] == interest
         end
+
         break if over
       end
 
