@@ -92,6 +92,10 @@ module Ruote
       h.respond_to?(:keys) &&
       (h.keys - [ 'sub_wfid' ]).sort == %w[ engine_id expid wfid ]
     end
+
+    def to_h
+      @h
+    end
   end
 end
 

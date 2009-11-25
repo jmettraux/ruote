@@ -31,9 +31,14 @@ module Ruote::Exp
 
   class FlowExpression
 
+    include Ruote::WithH
     include Ruote::WithMeta
 
     attr_reader :h
+
+    h_reader :variables
+    h_reader :created_time
+    h_reader :original_tree
 
     def initialize (context, h)
 
@@ -49,6 +54,7 @@ module Ruote::Exp
       h.name ||= self.class.expression_names.first
       h.children ||= []
       h.applied_workitem['fei'] = h.fei
+      h.created_time ||= Ruote.now_utc_to_s
     end
 
     def fei
@@ -61,10 +67,6 @@ module Ruote::Exp
 
     def parent
       self.class.fetch(@context, h.parent_id)
-    end
-
-    def variables
-      h.variables
     end
 
     #--

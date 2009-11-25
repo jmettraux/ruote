@@ -54,5 +54,19 @@ module Ruote
       #super
     end
   end
+
+  module WithH
+
+    def self.included (target)
+
+      def target.h_reader (*names)
+        names.each do |name|
+          define_method(name) do
+            @h[name.to_s]
+          end
+        end
+      end
+    end
+  end
 end
 
