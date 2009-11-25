@@ -56,6 +56,10 @@ module Ruote::Exp
       h.children ||= []
       h.applied_workitem['fei'] = h.fei
       h.created_time ||= Ruote.now_utc_to_s
+
+      h.on_cancel ||= attribute(:on_cancel)
+      h.on_error ||= attribute(:on_error)
+      h.on_timeout ||= attribute(:on_timeout)
     end
 
     def fei
@@ -132,37 +136,65 @@ module Ruote::Exp
 
     def reply_to_parent (workitem, delete=true)
 
-      unpersist if delete
-
-      if h.parent_id
-
-        workitem['fei'] = h.fei
-
+      if h.tagname
+        unset_variable(h.tagname)
         @context.storage.put_task(
-          'reply', 'fei' => h.parent_id, 'workitem' => workitem)
-      else
-
-        @context.storage.put_task(
-          'terminated', 'wfid' => h.fei['wfid'], 'workitem' => workitem)
+          'left_tag', 'tag' => h.tagname, 'fei' => h.fei)
       end
-    end
 
-    def apply_child (child_index, workitem, forget=false)
+      if h.timeout_job_id
+        raise "unschedule timeout job !!!!"
+      end
 
-      child_fei = h.fei.merge(
-        'expid' => "#{h.fei['expid']}_#{child_index}")
+      #if @state == :failing # @on_error is implicit (#fail got called)
+      #  trigger_on_error(workitem)
+      #elsif (@state == :cancelling) and @on_cancel
+      #  # @state == :dying doesn't trigger @on_cancel
+      #  trigger_on_cancel(workitem)
+      #elsif (@state == :timing_out) and @on_timeout
+      #  trigger_on_timeout(workitem)
+      #else
+      #  if @updated_tree && @parent_id
+      #    # updates the tree of the parent expression with the changes
+      #    # made to the tree in this expression
+      #    pexp = parent
+      #      # making sure to call #parent 1! especially in no cache envs
+      #    pexp.update_tree
+      #    pexp.updated_tree[2][@fei.child_id] = @updated_tree
+      #    pexp.persist
+      #      TODO : pass new tree in replied workitem ???
+      #  end
+      #  put_reply_task(workitem)
+      #end
 
-      h.children << child_fei unless forget
+      if h.state == 'failing' # on_error is implicit (#fail got called)
 
-      persist
+        trigger_on_error(workitem)
 
-      @context.storage.put_task(
-        'apply',
-        'fei' => child_fei,
-        'tree' => tree.last[child_index],
-        'parent_id' => forget ? nil : h.fei,
-        'variables' => forget ? compile_variables : nil,
-        'workitem' => workitem)
+      elsif (h.state == 'cancelling') and h.on_cancel
+
+        trigger_on_cancel(workitem)
+
+      elsif (h.state == 'cancelling') and h.on_timeout
+
+        trigger_on_timeout(workitem)
+
+      else # vanilla reply
+
+        unpersist if delete
+
+        if h.parent_id
+
+          workitem['fei'] = h.fei
+
+          @context.storage.put_task(
+            'reply', 'fei' => h.parent_id, 'workitem' => workitem)
+        else
+
+          @context.storage.put_task(
+            'terminated', 'wfid' => h.fei['wfid'], 'workitem' => workitem)
+        end
+      end
     end
 
     def do_reply (task)
@@ -302,6 +334,24 @@ module Ruote::Exp
 
     protected
 
+    def apply_child (child_index, workitem, forget=false)
+
+      child_fei = h.fei.merge(
+        'expid' => "#{h.fei['expid']}_#{child_index}")
+
+      h.children << child_fei unless forget
+
+      persist
+
+      @context.storage.put_task(
+        'apply',
+        'fei' => child_fei,
+        'tree' => tree.last[child_index],
+        'parent_id' => forget ? nil : h.fei,
+        'variables' => forget ? compile_variables : nil,
+        'workitem' => workitem)
+    end
+
     def get_next_sub_wfid
 
       last_sub_wfid = h.last_sub_wfid || 0
@@ -332,6 +382,31 @@ module Ruote::Exp
       if timeout = attribute(:timeout)
         raise "implement me !"
       end
+    end
+
+    def supplant_with (tree, opts)
+
+      if on = opts.keys.find { |k| k.match(/^on\_.+/) }
+        tree[1]["_triggered"] = on.to_s
+      end
+
+      @context.storage.put_task(
+        'apply',
+        { 'fei' => h.fei,
+          'parent_id' => h.parent_id,
+          'tree' => tree,
+          'workitem' => h.applied_workitem,
+          'variables' => h.variables
+        }.merge!(opts))
+    end
+
+    # if any on_cancel handler is present, will trigger it.
+    #
+    def trigger_on_cancel (workitem)
+
+      tree = h.on_cancel.is_a?(String) ? [ h.on_cancel, {}, [] ] : h.on_cancel
+
+      supplant_with(tree, 'on_cancel' => true)
     end
   end
 

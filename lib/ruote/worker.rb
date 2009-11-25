@@ -200,7 +200,7 @@ module Ruote
       exp_class = @context.expmap.expression_class(tree.first)
 
       # task['wfid'] only : it's a launch
-      # task['fei'] : it's a sub launch
+      # task['fei'] : it's a sub launch (a supplant ?)
 
       exp_hash = {
         'fei' => task['fei'] || {

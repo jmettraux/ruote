@@ -390,21 +390,25 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    assert_match /#{wfid}_\d+/, alpha.first.fei.wfid
+    assert_match wfid, alpha.first.fei.wfid
+    assert_not_nil alpha.first.fei.sub_wfid
 
     assert_equal 0, @engine.process(wfid).errors.size
     assert_equal 4, @engine.process(wfid).expressions.size
 
-    #assert_equal(
-    #  ["sequence", {"name"=>"test"}, [
-    #    ["define", {"sub0"=>nil}, [["alpha", {}, []]]],
-    #    ["sequence", {"on_cancel"=>"sub0"}, [["alpha", {}, []]]]]],
-    #  @engine.process(wfid).original_tree)
-    #assert_equal(
-    #  ["sequence", {"name"=>"test"}, [
-    #    ["sequence", {"sub0"=>nil}, [["participant", {"ref"=>"alpha"}, []]]],
-    #    ["subprocess", {"ref"=>"sub0"}, [["alpha", {}, []]]]]],
-    #  @engine.process(wfid).current_tree)
+    assert_equal(
+      ["define", {"name"=>"test"}, [
+        ["define", {"sub0"=>nil}, [["alpha", {}, []]]],
+        ["sequence", {"on_cancel"=>"sub0"}, [["alpha", {}, []]]]]],
+      @engine.process(wfid).original_tree)
+
+    assert_equal(
+      ["define", {"name"=>"test"}, [
+        ["define", {"sub0"=>nil}, [
+          ["participant", {"ref"=>"alpha"}, []]]],
+        ["sequence", {"on_cancel"=>"sub0", "_triggered"=>"on_cancel"}, [
+          ["alpha", {}, []]]]]],
+      @engine.process(wfid).current_tree)
   end
 
   def test_fexp_to_h
