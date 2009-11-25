@@ -55,7 +55,7 @@ module Ruote
 
     def to_storage_id
 
-      "#{h.expid}|#{h.sub_wfid}|#{h.wfid}"
+      "#{@h['expid']}|#{@h['sub_wfid']}|#{@h['wfid']}"
     end
 
     def self.to_storage_id (hfei)

@@ -36,10 +36,10 @@ module Ruote::Exp
     #
     def compile_variables
 
-      vars = parent_id ? parent.compile_variables : {}
-      vars.merge!(variables) if variables
+      vars = h.parent_id ? parent.compile_variables : {}
+      vars.merge!(h.variables) if h.variables
 
-      vars.dup
+      vars
     end
 
     # Looks up the value of a variable in expression tree

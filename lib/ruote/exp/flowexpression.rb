@@ -124,9 +124,9 @@ module Ruote::Exp
       apply
     end
 
-    def reply_to_parent (workitem)
+    def reply_to_parent (workitem, delete=true)
 
-      unpersist
+      unpersist if delete
 
       if h.parent_id
 
@@ -185,6 +185,10 @@ module Ruote::Exp
 
       reply_to_parent(workitem)
     end
+
+    #--
+    # misc
+    #++
 
     def launch_sub (pos, subtree, opts={})
 

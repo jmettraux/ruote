@@ -209,17 +209,21 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wfid = run_test_count('forget', false)
 
-    assert_equal 1, logger.log.select { |e| e['action'] == 'forget' }.size
+    #assert_equal 1, logger.log.select { |e| e['action'] == 'forget' }.size
 
     assert_equal 0, @alpha.size
     assert_equal 1, @bravo.size
 
-    assert_equal 1, @engine.expstorage.size
+    #@engine.context.storage.get_many('expressions').each { |e| p e['fei'] }
+    assert_equal 2, @engine.context.storage.get_many('expressions').size
     assert_not_nil @engine.process(wfid)
 
     @bravo.reply(@bravo.first)
 
-    sleep 0.007
+    wait_for(wfid)
+
+    @engine.context.storage.get_many('expressions').each { |e| p e['fei'] }
+    assert_equal 0, @engine.context.storage.get_many('expressions').size
   end
 
   def test_cancel

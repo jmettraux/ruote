@@ -30,7 +30,9 @@ module Ruote
   class TestLogger
 
     NOTEWORTHY = %w[
-      terminated cancelled killed
+      terminated
+      ceased
+      cancelled killed
       error_intercepted
       receive
       dispatch

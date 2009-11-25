@@ -152,19 +152,29 @@ module Ruote::Exp
 
     def reply (workitem)
 
-      unless h.over
+      if h.cmerge == 'first' || h.cmerge == 'last'
+        h.workitems << workitem
+      else
+        h.workitems[workitem['fei']['expid']] = workitem
+      end
 
-        if h.cmerge == 'first' || h.cmerge == 'last'
-          h.workitems << workitem
-        else
-          h.workitems[workitem['fei']['expid']] = workitem
-        end
+      over = h.over
 
-        h.over = over?(workitem)
+      h.over = over?(workitem) unless over
 
-        persist
+      persist
+        # have to keep track of the incoming workitems
 
-        reply_to_parent(nil) if h.over
+      if (not over) && h.over
+
+        reply_to_parent(nil)
+
+      elsif all_replied?
+
+        unpersist
+
+        @context.storage.put_task(
+          'ceased', 'wfid' => h.fei['wfid'], 'workitem' => workitem)
       end
     end
 
@@ -204,13 +214,63 @@ module Ruote::Exp
       h.ccount ? [ h.ccount, tree_children.size ].min : tree_children.size
     end
 
+    # Returns true if the flow expression given by its fei has already
+    # replied.
+    #
+    def replied? (fei)
+
+      workitems = h.workitems.respond_to?(:values) ?
+        h.workitems.values : h.workitems
+
+      (workitems.find { |wi| wi['fei'] == fei } != nil)
+    end
+
+    # Returns true if all the children of the concurrence have replied.
+    #
+    def all_replied?
+
+      #children = h.children.collect { |i|
+      #  Ruote::FlowExpressionId.to_storage_id(i)
+      #}
+      #workitems = h.workitems.respond_to?(:values) ?
+      #  h.workitems.values : h.workitems
+      #workitems = workitems.collect { |wi|
+      #  Ruote::FlowExpressionId.to_storage_id(wi['fei'])
+      #}
+      #(children - workitems).size == 0
+        #
+        # could it be faster ?
+
+      h.children.find { |i| (not replied?(i)) }.nil?
+    end
+
     def reply_to_parent (_workitem)
 
-      handle_remaining if h.children
+      workitem = merge_all_workitems
 
-      #discard_all_tickets
+      if h.remaining == 'cancel'
 
-      super(merge_all_workitems)
+        h.children.each { |i|
+          @context.storage.put_task('cancel', 'fei' => i) unless replied?(i)
+        }
+
+        super(workitem)
+
+      else # h.remaining == 'forget'
+
+        if all_replied?
+
+          unpersist
+        else
+
+          super(workitem, false)
+
+          h.variables = compile_variables
+          h.parent_id = nil
+
+          persist
+        end
+      end
     end
 
     def merge_all_workitems
@@ -218,25 +278,18 @@ module Ruote::Exp
       return h.applied_workitem if h.workitems.size < 1
 
       wis = case h.cmerge
-      when 'first'
-        h.workitems.reverse
-      when 'last'
-        h.workitems
-      when 'highest', 'lowest'
-        is = h.workitems.keys.sort.collect { |k| h.workitems[k] }
-        h.cmerge == 'highest' ? is.reverse : is
+        when 'first'
+          h.workitems.reverse
+        when 'last'
+          h.workitems
+        when 'highest', 'lowest'
+          is = h.workitems.keys.sort.collect { |k| h.workitems[k] }
+          h.cmerge == 'highest' ? is.reverse : is
       end
       rwis = wis.reverse
 
       wis.inject(nil) { |t, wi|
         merge_workitems(rwis.index(wi), t, wi, h.cmerge_type)
-      }
-    end
-
-    def handle_remaining
-
-      h.children.each { |fei|
-        @context.storage.put_task(h.remaining, 'fei' => fei)
       }
     end
   end

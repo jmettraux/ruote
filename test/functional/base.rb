@@ -39,7 +39,7 @@ module FunctionalBase
 
   def assert_log_count (count, &block)
 
-    c = @engine.context.logger.complete_noteworthy.select(&block).size
+    c = @engine.context.logger.log.select(&block).size
 
     #logger.to_stdout if ( ! @engine.context[:noisy]) && c != count
 
