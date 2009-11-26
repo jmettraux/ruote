@@ -96,6 +96,9 @@ module Ruote
         'wfid' => wfid)
     end
 
+    # Returns a ProcessStatus instance describing the current status of
+    # a process instance.
+    #
     def process (wfid)
 
       exps = @storage.get_many('expressions', /#{wfid}$/)
@@ -104,6 +107,27 @@ module Ruote
 
       ProcessStatus.new(
         @context, exps, @storage.get_many('errors', /#{wfid}$/))
+    end
+
+    # Returns an array of ProcessStatus instances.
+    #
+    # WARNING : this is an expensive operation.
+    #
+    def processes
+
+      exps = @storage.get_many('expressions')
+      errs = @storage.get_many('errors')
+
+      by_wfid = {}
+
+      exps.each do |exp|
+        (by_wfid[exp['fei']['wfid']] ||= [ [], [] ]).first << exp
+      end
+      errs.each do |err|
+        (by_wfid[err['fei']['wfid']] ||= [ [], [] ]).last << err
+      end
+
+      by_wfid.values.collect { |xs, rs| ProcessStatus.new(@context, xs, rs) }
     end
 
     def purge!
