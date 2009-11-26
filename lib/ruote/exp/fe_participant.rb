@@ -155,6 +155,7 @@ module Ruote::Exp
 
       @context.storage.put_task(
         'dispatch',
+        'fei' => h.fei,
         'participant_name' => h.participant_name,
         'workitem' => h.applied_workitem,
         'for_engine_worker?' => participant_info.class != Array)
