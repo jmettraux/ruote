@@ -104,14 +104,14 @@ class FtProcessStatusTest < Test::Unit::TestCase
       ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
-          ["participant", {"ref"=>:alpha}, []]]]]],
+          ["participant", {"ref"=>"alpha"}, []]]]]],
       ps.current_tree)
 
     assert_equal(
       ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
-          ["participant", {"ref"=>:alpha}, []]]]]],
+          ["participant", {"ref"=>"alpha"}, []]]]]],
       ps.original_tree)
 
     #
@@ -119,24 +119,20 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     e = ps.expressions.find { |e| e.fei.expid == '0_0_1' }
 
-    p e.h
-
-    e.update_tree([ 'participant', { 'ref' => :bravo }, [] ])
-
-    p e.h
+    e.update_tree([ 'participant', { 'ref' => 'bravo' }, [] ])
 
     assert_equal(
       ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
-          ["participant", {"ref"=>:bravo}, []]]]]],
+          ["participant", {"ref"=>"bravo"}, []]]]]],
       ps.current_tree)
 
     assert_equal(
       ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
-          ["participant", {"ref"=>:alpha}, []]]]]],
+          ["participant", {"ref"=>"alpha"}, []]]]]],
       ps.original_tree)
   end
 
@@ -157,7 +153,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     assert_equal(
-      {"my process"=>["0", ["define", {"my process"=>nil}, [["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]], ["participant", {"ref"=>:alpha}, []]]]], "sub0"=>["0_0", ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]]]},
+      {"my process"=>["0", ["define", {"my process"=>nil}, [["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]], ["participant", {"ref"=>"alpha"}, []]]]], "sub0"=>["0_0", ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]]]},
       ps.variables)
 
     assert_equal(
@@ -347,11 +343,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
     end
     @engine.register_participant :charly do |wi, fexp|
       @tracer << "c\n"
-      tree0 = fexp.engine.process(fexp.fei.wfid).current_tree
+      tree0 = fexp.context.engine.process(fexp.fei.wfid).current_tree
     end
     @engine.register_participant :delta do |wi, fexp|
       @tracer << "d\n"
-      tree1 = fexp.engine.process(fexp.fei.wfid).current_tree
+      tree1 = fexp.context.engine.process(fexp.fei.wfid).current_tree
     end
 
     #noisy

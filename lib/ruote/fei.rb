@@ -93,6 +93,13 @@ module Ruote
       (h.keys - [ 'sub_wfid' ]).sort == %w[ engine_id expid wfid ]
     end
 
+    # Returns child_id... For an expid of '0_1_4', this will be 4.
+    #
+    def self.child_id (h)
+
+      h['expid'].split(CHILD_SEP).last.to_i
+    end
+
     def to_h
       @h
     end

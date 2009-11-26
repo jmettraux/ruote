@@ -34,6 +34,7 @@ module Ruote::Exp
     include Ruote::WithH
     include Ruote::WithMeta
 
+    attr_reader :context
     attr_reader :h
 
     h_reader :variables
@@ -162,7 +163,6 @@ module Ruote::Exp
       #    pexp.update_tree
       #    pexp.updated_tree[2][@fei.child_id] = @updated_tree
       #    pexp.persist
-      #      TODO : pass new tree in replied workitem ???
       #  end
       #  put_reply_task(workitem)
       #end
@@ -188,11 +188,16 @@ module Ruote::Exp
           workitem['fei'] = h.fei
 
           @context.storage.put_task(
-            'reply', 'fei' => h.parent_id, 'workitem' => workitem)
+            'reply',
+            'fei' => h.parent_id,
+            'workitem' => workitem,
+            'updated_tree' => h.updated_tree) # nil most of the time
         else
 
           @context.storage.put_task(
-            'terminated', 'wfid' => h.fei['wfid'], 'workitem' => workitem)
+            'terminated',
+            'wfid' => h.fei['wfid'],
+            'workitem' => workitem)
         end
       end
     end
@@ -200,15 +205,22 @@ module Ruote::Exp
     def do_reply (task)
 
       workitem = task['workitem']
+      fei = workitem['fei']
 
-      h.children.delete(workitem['fei'])
+      if ut = task['updated_tree']
+        ct = tree.dup
+        ct.last[Ruote::FlowExpressionId.child_id(fei)] = ut
+        update_tree(ct)
+      end
+
+      h.children.delete(fei)
 
       if h.state != nil
 
         if h.children.size < 1
           reply_to_parent(workitem)
         else
-          persist # for the updated children
+          persist # for the updated h.children
         end
 
       else
@@ -317,7 +329,7 @@ module Ruote::Exp
     #   seq.persist
     #
     def update_tree (t=nil)
-      updated_tree = t || Ruote.fulldup(original_tree)
+      h.updated_tree = t || Ruote.fulldup(h.original_tree)
     end
 
     def name
@@ -920,29 +932,6 @@ module Ruote::Exp
         end
 
         put_reply_task(workitem)
-      end
-    end
-
-    def put_reply_task (workitem)
-
-      unpersist
-
-      workitem.fei = @fei
-
-      if @parent_id
-
-        @context.storage.put_task(
-          'reply', 'fei' => @parent_id, 'workitem' => workitem)
-      else
-
-        msg = case @state
-          when 'cancelling' then 'cancelled'
-          when 'dying' then 'killed'
-          else 'terminated'
-        end
-
-        @context.storage.put_task(
-          msg, 'wfid' => @fei.wfid, 'workitem' => workitem)
       end
     end
 
