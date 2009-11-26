@@ -167,7 +167,7 @@ module Ruote
 
       h['root_expression'] = nil
       h['expressions'] = @expressions.collect { |e| e.fei.to_h }
-      h['errors'] = @errors.collect { |e| e.to_h(true) }
+      h['errors'] = @errors.collect { |e| e.to_h }
 
       h
     end

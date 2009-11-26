@@ -55,26 +55,26 @@ module Ruote::Exp
 
     def apply
 
-      @triggered = false
-
-      persist
-      pool.reply(@applied_workitem)
-
-      # the error occurs in the reply() phase
+      # making the error occurs in the reply() phase
       # so that the replay_at_error targets the reply and not the apply
+
+      @context.storage.put_task(
+        'reply',
+        'fei' => h.fei,
+        'workitem' => h.applied_workitem)
     end
 
     def reply (workitem)
 
-      return reply_to_parent(@applied_workitem) if @triggered
+      return reply_to_parent(workitem) if h.triggered
 
       msg = attribute(:msg) || attribute(:message) || attribute_text
       msg = 'error triggered from process definition' if msg.strip == ''
 
-      @triggered = true
+      h.triggered = true
 
       persist
-        # to keep track of @triggered
+        # to keep track of h.triggered
 
       raise(Ruote::ForcedError.new(msg))
     end
@@ -83,7 +83,7 @@ module Ruote::Exp
 
       # TODO : should the error get removed from the process status ?
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
   end
 end
