@@ -150,6 +150,7 @@ module Ruote::Exp
 
         h.variables = compile_variables
         h.parent_id = nil
+        h.forgotten = true
 
         @context.storage.put_task(
           'reply', 'fei' => i, 'workitem' => wi)
@@ -223,7 +224,7 @@ module Ruote::Exp
         else
 
           @context.storage.put_task(
-            'terminated',
+            h.forgotten ? 'ceased' : 'terminated',
             'wfid' => h.fei['wfid'],
             'workitem' => workitem)
         end
@@ -389,7 +390,8 @@ module Ruote::Exp
         'tree' => tree.last[child_index],
         'parent_id' => forget ? nil : h.fei,
         'variables' => forget ? compile_variables : nil,
-        'workitem' => workitem)
+        'workitem' => workitem,
+        'forgotten' => forget)
     end
 
     def get_next_sub_wfid
@@ -727,18 +729,6 @@ module Ruote::Exp
 
     protected
 
-    # A tag is a named pointer to an expression (name => fei).
-    # It's stored in a variable.
-    #
-    def consider_tag
-
-      if @tagname = attribute(:tag)
-
-        set_variable(@tagname, @fei)
-        wqueue.emit(:expressions, :entered_tag, :tag => @tagname, :fei => @fei)
-      end
-    end
-
     # If the expressions has a :timeout attribute, will schedule a cancel
     # after the given period of time.
     #
@@ -752,51 +742,6 @@ module Ruote::Exp
 
         @timeout_at = j.at
         @timeout_job_id = j.job_id
-      end
-    end
-
-    # Replies to the parent expression.
-    #
-    def reply_to_parent (workitem)
-
-      if @tagname
-        unset_variable(@tagname)
-        wqueue.emit(:expressions, :left_tag, :tag => @tagname, :fei => @fei)
-      end
-
-      if @timeout_job_id
-        scheduler.unschedule(@timeout_job_id)
-      end
-
-      if @state == :failing # @on_error is implicit (#fail got called)
-
-        trigger_on_error(workitem)
-
-      elsif (@state == :cancelling) and @on_cancel
-        # @state == :dying doesn't trigger @on_cancel
-
-        trigger_on_cancel(workitem)
-
-      elsif (@state == :timing_out) and @on_timeout
-
-        trigger_on_timeout(workitem)
-
-      else
-
-        if @updated_tree && @parent_id
-
-          # updates the tree of the parent expression with the changes
-          # made to the tree in this expression
-
-          pexp = parent
-            # making sure to call #parent 1! especially in no cache envs
-
-          pexp.update_tree
-          pexp.updated_tree[2][@fei.child_id] = @updated_tree
-          pexp.persist
-        end
-
-        put_reply_task(workitem)
       end
     end
 

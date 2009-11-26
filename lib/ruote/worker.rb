@@ -218,7 +218,8 @@ module Ruote
         'parent_id' => task['parent_id'],
         'original_tree' => tree,
         'variables' => variables,
-        'applied_workitem' => task['workitem']
+        'applied_workitem' => task['workitem'],
+        'forgotten' => task['forgotten']
       }
 
       if not exp_class

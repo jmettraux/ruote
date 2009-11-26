@@ -66,15 +66,15 @@ module Ruote::Exp
     def apply
 
       tree_children.each_with_index do |t, index|
-        apply_child(index, @applied_workitem.dup, true)
+        apply_child(index, Ruote.fulldup(h.applied_workitem), true)
       end
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     def reply (workitem)
 
-      # will never get called
+      # never gets called
     end
   end
 end

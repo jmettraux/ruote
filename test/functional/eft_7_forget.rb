@@ -30,8 +30,9 @@ class EftForgetTest < Test::Unit::TestCase
 
     wfid = assert_trace pdef, %w[ alpha alpha ], :sleep => 0.500
 
-    assert_equal 2, logger.log.select { |e| e[1] == :terminated }.size
-      # process ended 2 times
+    #logger.log.each { |e| puts e['action'] }
+    assert_equal 1, logger.log.select { |e| e['action'] == 'ceased' }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'terminated' }.size
   end
 
   #def test_variables
