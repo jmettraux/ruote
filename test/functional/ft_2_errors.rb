@@ -123,7 +123,7 @@ class FtErrorsTest < Test::Unit::TestCase
 
     # check if error is really gone from error journal...
 
-    assert_equal [], @engine.ejournal.process_errors(wfid)
+    assert_equal [], @engine.storage.get_many('errors')
   end
 
   def test_error_in_participant

@@ -96,6 +96,21 @@ module Ruote
         'wfid' => wfid)
     end
 
+    # Replays at a given error (hopefully you fixed the cause of the error
+    # before replaying...)
+    #
+    def replay_at_error (err)
+
+      task = err.task.dup
+      action = task.delete('action')
+
+      task['replay_at_error'] = true
+        # just an indication
+
+      @storage.delete(err.to_h) # remove error
+      @storage.put_task(action, task) # trigger replay
+    end
+
     # Returns a ProcessStatus instance describing the current status of
     # a process instance.
     #

@@ -50,13 +50,20 @@ module Ruote
       task['fei']
     end
 
+    def tree
+      @h['task']['tree']
+    end
+
+    def at
+      @h['task']['put_at']
+    end
+
     # A shortcut for modifying the tree of an expression when it has had
     # an error upon being applied.
     #
-    #def tree= (t)
-    #  raise "no tree in error, can't override" unless tree
-    #  msg.last[:tree] = t
-    #end
+    def tree= (t)
+      @h['task']['tree'] = t
+    end
 
     def to_h
       @h

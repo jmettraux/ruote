@@ -134,10 +134,10 @@ module Ruote
 
       rescue Exception => e
 
-        puts "\n== worker intercepted error =="
-        p e
-        e.backtrace.each { |l| puts l }
-        puts
+        #puts "\n== worker intercepted error =="
+        #p e
+        #e.backtrace.each { |l| puts l }
+        #puts
 
         # emit 'task'
 
