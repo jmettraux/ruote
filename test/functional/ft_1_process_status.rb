@@ -159,13 +159,13 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal(
       ["define", {"my process"=>nil}, [
         ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]],
-        ["participant", {"ref"=>:alpha}, []]]],
+        ["participant", {"ref"=>"alpha"}, []]]],
       ps.current_tree)
 
     assert_equal(
       ["define", {"my process"=>nil}, [
         ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]],
-        ["participant", {"ref"=>:alpha}, []]]],
+        ["participant", {"ref"=>"alpha"}, []]]],
       ps.original_tree)
   end
 
@@ -188,7 +188,8 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    assert_match(/^#{wfid}\_\d+0$/, alpha.first.fei.wfid)
+    assert_equal wfid, alpha.first.fei.wfid
+    assert_equal '0_1_0s0', alpha.first.fei.sub_wfid
 
     ps = @engine.process(wfid)
 
@@ -196,11 +197,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal 5, ps.expressions.size
 
-    wfids = ps.expressions.collect { |e| e.fei.wfid }.sort.uniq
+    wfids = ps.expressions.collect { |e|
+      [ e.fei.wfid, e.fei.sub_wfid ].join('|')
+    }.sort.uniq
 
-    assert_equal 2, wfids.size
-    assert_equal wfid, wfids[0]
-    assert_match(/^#{wfid}\_\d+0$/, wfids[1])
+    assert_equal [ "#{wfid}|", "#{wfid}|0_1_0s0" ], wfids
   end
 
   def test_all_variables
@@ -427,7 +428,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       hf.is_a?(Ruote::Exp::ParticipantExpression)
     }.to_h
 
-    assert_equal 'Ruote::Exp::ParticipantExpression', h['class']
+    assert_equal 'participant', h['name']
     assert_equal 'alpha', h['participant_name']
     assert_equal ["participant", {"ref"=>"alpha"}, []], h['original_tree']
   end

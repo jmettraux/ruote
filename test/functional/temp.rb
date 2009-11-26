@@ -2,6 +2,7 @@
 %w[
 
   ft_0
+  ft_1
 
   eft_0
   eft_1

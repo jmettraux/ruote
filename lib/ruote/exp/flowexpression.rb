@@ -89,6 +89,10 @@ module Ruote::Exp
       @context.storage.delete(@h)
     end
 
+    def to_h
+      @h
+    end
+
     # Instantiates expression back from hash.
     #
     def self.from_h (context, h)
