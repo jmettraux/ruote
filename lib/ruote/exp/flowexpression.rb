@@ -138,8 +138,22 @@ module Ruote::Exp
 
     def do_apply
 
-      return reply_to_parent(h.applied_workitem) \
-        if Condition.skip?(attribute(:if), attribute(:unless))
+      if Condition.skip?(attribute(:if), attribute(:unless))
+
+        return reply_to_parent(h.applied_workitem)
+      end
+
+      if attribute(:forget).to_s == 'true'
+
+        i = h.parent_id
+        wi = Ruote.fulldup(h.applied_workitem)
+
+        h.variables = compile_variables
+        h.parent_id = nil
+
+        @context.storage.put_task(
+          'reply', 'fei' => i, 'workitem' => wi)
+      end
 
       consider_tag
       consider_timeout
@@ -552,49 +566,6 @@ module Ruote::Exp
     end
 
     #--
-    # TREE
-    #++
-
-    # Returns the current version of the tree (returns the updated version
-    # if it got updated.
-    #
-    def tree
-      @updated_tree || @original_tree
-    end
-
-    # Updates the tree of this expression
-    #
-    #   update_tree(t)
-    #
-    # will set the updated tree to t
-    #
-    #   update_tree
-    #
-    # will copy (deep copy) the original tree as the updated_tree.
-    #
-    # Adding a child to a sequence expression :
-    #
-    #   seq.update_tree
-    #   seq.updated_tree[2] << [ 'participant', { 'ref' => 'bob' }, [] ]
-    #   seq.persist
-    #
-    def update_tree (t=nil)
-      @updated_tree = t || Ruote.fulldup(@original_tree)
-    end
-
-    def name
-      tree[0]
-    end
-
-    def attributes
-      tree[1]
-    end
-
-    def tree_children
-      tree[2]
-    end
-
-    #--
     # APPLY / REPLY / CANCEL
     #++
 
@@ -723,34 +694,6 @@ module Ruote::Exp
     end
 
     #--
-    # META
-    #++
-
-    # Keeping track of names and aliases for the expression
-    #
-    def self.names (*exp_names)
-
-      exp_names = exp_names.collect { |n| n.to_s }
-      meta_def(:expression_names) { exp_names }
-    end
-
-    # Returns true if this expression is a a definition
-    # (define, process_definition, set, ...)
-    #
-    def self.is_definition?
-
-      false
-    end
-
-    # This method makes sure the calling class responds "true" to is_definition?
-    # calls.
-    #
-    def self.is_definition
-
-      meta_def(:is_definition?) { true }
-    end
-
-    #--
     # ON_CANCEL / ON_ERROR
     #++
 
@@ -765,78 +708,6 @@ module Ruote::Exp
       else
         nil
       end
-    end
-
-    #--
-    # SERIALIZATION
-    #
-    # making sure '@context' is not serialized
-    #++
-
-    def to_h
-
-      instance_variables.inject({
-        '_id' => @fei.to_storage_id
-      }) do |h, var|
-
-        val = instance_variable_get(var)
-        var = var.to_s[1..-1]
-
-        if var != 'context'
-          h[var] = val.respond_to?(:to_h) ? val.to_h : val
-        end
-
-        h
-      end
-    end
-
-    def self.from_h (h)
-    end
-
-    # Returns a Hash representation of this flow expression (suitable for
-    # JSONification).
-    #
-    def to_h
-
-      ivs = instance_variables.sort
-        # behind the scenes ;-)
-
-      ivs.delete(:@context)
-      ivs.delete('@context')
-
-      hf = ivs.inject({}) { |h, iv|
-        val = instance_variable_get(iv)
-        val = val.to_h if val.respond_to?(:to_h)
-        h[iv.to_s[1..-1]] = val
-        h
-      }
-
-      hf['class'] = self.class.name
-
-      hf
-    end
-
-    # Asks expstorage[s] to store/update persisted version of self.
-    #
-    def persist
-
-      @modified_time = Time.now
-
-      @context.storage.put(self.to_h)
-
-      nil
-    end
-
-    # Asks expstorage[s] to unstore persisted version of self.
-    #
-    # Will require the error journal as well to remove the error for
-    # this expression if any.
-    #
-    def unpersist
-
-      #wqueue.emit!(:expressions, :delete, :fei => @fei)
-      #wqueue.emit!(:errors, :remove, { :fei => @fei }) if @has_error
-      @context.storage.delete(self.to_h)
     end
 
     # Only called in case of emergency (when the scheduler persistent data
@@ -882,26 +753,6 @@ module Ruote::Exp
         @timeout_at = j.at
         @timeout_job_id = j.job_id
       end
-    end
-
-    # Applies a given child (given by its index in the child list)
-    #
-    # Note that by default, this persists the parent expression.
-    #
-    def apply_child (child_index, workitem, forget=false)
-
-      fei = @fei.new_child_fei(child_index)
-
-      register_child(fei) unless forget
-
-      @context.storage.put_task(
-        'apply',
-        'wfid' => @fei.wfid,
-        'fei' => fei,
-        'tree' => tree.last[child_index],
-        'parent_id' => forget ? nil : @fei,
-        'variables' => forget ? compile_variables : nil,
-        'workitem' => workitem)
     end
 
     # Replies to the parent expression.

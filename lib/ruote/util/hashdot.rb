@@ -31,14 +31,6 @@ module Ruote
 
       m = m.to_s
 
-      if m =='[]'
-        puts "=" * 80
-        puts m
-        caller.each { |l| puts l }
-        puts "=" * 80
-        exit 0
-      end
-
       if m[-1, 1] == '='
 
         val = args.first
