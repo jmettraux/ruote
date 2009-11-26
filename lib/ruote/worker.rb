@@ -135,8 +135,16 @@ module Ruote
       rescue Exception => e
 
         #puts "\n== worker intercepted error =="
+        #puts
         #p e
-        #e.backtrace.each { |l| puts l }
+        #e.backtrace[0, 10].each { |l| puts l }
+        #puts "..."
+        #puts
+        #puts "-- task --"
+        #task.keys.sort.each { |k|
+        #  puts "    #{k.inspect} =>\n#{task[k].inspect}"
+        #}
+        #puts "-- . --"
         #puts
 
         # emit 'task'
@@ -223,11 +231,22 @@ module Ruote
         exp_class = Ruote::Exp::SequenceExpression
       end
 
-      raise "unknown expression '#{tree.first}'" unless exp_class
+      raise_unknown_expression_error(exp_hash) unless exp_class
 
       exp = exp_class.new(@context, exp_hash.merge!('original_tree' => tree))
       exp.persist
       exp.do_apply
+    end
+
+    def raise_unknown_expression_error (exp_hash)
+
+      exp_hash['state'] = 'failed'
+      exp_hash['has_error'] = true
+
+      Ruote::Exp::RawExpression.new(@context, exp_hash).persist
+        # undigested expression is stored
+
+      raise "unknown expression '#{exp_hash['original_tree'].first}'"
     end
 
     def lookup_subprocess_or_participant (exp_hash)

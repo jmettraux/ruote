@@ -164,7 +164,6 @@ module Ruote::Exp
     def cancel (flavour)
 
       participant = @context.plist.lookup(h.participant_name)
-
       participant.cancel(fei, flavour)
 
       reply_to_parent(h.applied_workitem)

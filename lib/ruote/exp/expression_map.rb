@@ -30,6 +30,7 @@ end
 end
 
 require 'ruote/exp/flowexpression'
+require 'ruote/exp/raw'
 
 
 exppath = File.dirname(__FILE__)
@@ -52,6 +53,7 @@ module Ruote
     def initialize (worker)
 
       @map = {}
+      add(Ruote::Exp::RawExpression)
       add(Ruote::Exp::DefineExpression)
       add(Ruote::Exp::SequenceExpression)
       add(Ruote::Exp::EchoExpression)

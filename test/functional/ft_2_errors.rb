@@ -231,7 +231,8 @@ class FtErrorsTest < Test::Unit::TestCase
 
     err = ps.errors.first
 
-    assert_match(/^#{wfid}_\d+0$/, err.fei.wfid)
+    assert_equal wfid, err.fei.wfid
+    assert_equal '0_1_0s0', err.fei.sub_wfid
 
     @engine.replay_at_error(err)
 
@@ -246,6 +247,8 @@ class FtErrorsTest < Test::Unit::TestCase
       nada
     end
 
+    #noisy
+
     wfid = @engine.launch(pdef)
 
     wait_for(wfid)
@@ -257,7 +260,7 @@ class FtErrorsTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_nil @engine.process(wfid)
-    assert_equal 0, @engine.ejournal.process_errors(wfid).size
+    assert_equal [], @engine.storage.get_many('errors')
   end
 
   def test_forgotten_subprocess

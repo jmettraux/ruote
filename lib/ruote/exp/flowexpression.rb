@@ -87,6 +87,14 @@ module Ruote::Exp
     def unpersist
 
       @context.storage.delete(@h)
+
+      if h.has_error
+
+        err = @context.storage.get(
+          'errors', Ruote::FlowExpressionId.to_storage_id(h.fei))
+
+        @context.storage.delete(err) if err
+      end
     end
 
     def to_h
@@ -171,15 +179,17 @@ module Ruote::Exp
       #  put_reply_task(workitem)
       #end
 
-      if h.state == 'failing' # on_error is implicit (#fail got called)
+      state = h.state
+
+      if state == 'failing' # on_error is implicit (#fail got called)
 
         trigger_on_error(workitem)
 
-      elsif (h.state == 'cancelling') and h.on_cancel
+      elsif (state == 'cancelling') and h.on_cancel
 
         trigger_on_cancel(workitem)
 
-      elsif (h.state == 'cancelling') and h.on_timeout
+      elsif (state == 'cancelling') and h.on_timeout
 
         trigger_on_timeout(workitem)
 

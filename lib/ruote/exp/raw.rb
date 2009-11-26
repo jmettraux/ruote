@@ -30,9 +30,7 @@ module Ruote::Exp
   #
   class RawExpression < FlowExpression
 
-    def initialize (context, fei, parent_id, tree, workitem)
-      super(context, fei, parent_id, tree, nil, workitem)
-    end
+    names '!raw'
 
     def apply
       raise "can't apply or reply [to] raw expression"
@@ -43,7 +41,7 @@ module Ruote::Exp
     end
 
     def cancel (flavour)
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
   end
 end
