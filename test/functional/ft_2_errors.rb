@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), 'base')
 require 'ruote/part/hash_participant'
 
 
-class FtProcessStatusTest < Test::Unit::TestCase
+class FtErrorsTest < Test::Unit::TestCase
   include FunctionalBase
 
   def test_error
