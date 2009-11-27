@@ -63,11 +63,11 @@ module Ruote::Exp
 
         pool.re_apply(tag, true)
 
-        reply_to_parent(@applied_workitem) unless ancestor?(tag)
+        reply_to_parent(h.applied_workitem) unless ancestor?(tag)
 
       else
 
-        reply_to_parent(@applied_workitem)
+        reply_to_parent(h.applied_workitem)
       end
     end
 
@@ -78,7 +78,7 @@ module Ruote::Exp
 
     def cancel (flavour)
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
   end
 end

@@ -22,9 +22,9 @@ class EftRedoTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
-    #noisy
+    noisy
 
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
