@@ -61,7 +61,7 @@ module Ruote::Exp
 
         duration = sfor.index('.') ? sfor.to_f : Rufus.parse_time_string(sfor)
 
-        Time.now.to_f + duration
+        Time.now.utc.to_f + duration
 
       else
 
@@ -74,7 +74,7 @@ module Ruote::Exp
         else h.until
       end
 
-      if h.until
+      if h.until && h.until > Time.now.utc + 1.0
 
         h.job_id = @context.storage.put_at_schedule(
           h.fei,

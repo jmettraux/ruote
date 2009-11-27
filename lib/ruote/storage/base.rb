@@ -51,7 +51,18 @@ module Ruote
 
     def put_at_schedule (owner_fei, at, task)
 
-      put_schedule('ats', owner_fei, at, task)
+      if at < Time.now.utc + 1.0
+        #
+        # trigger immediately
+        #
+        put_task(task.delete('action'), task)
+        #
+      else
+        #
+        # schedule
+        #
+        put_schedule('ats', owner_fei, at, task)
+      end
     end
 
     def put_cron_schedule (owner_fei, cron, task)

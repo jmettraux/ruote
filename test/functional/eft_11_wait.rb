@@ -16,7 +16,7 @@ class EftWaitTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       sequence do
         alpha
-        wait :for => '1s'
+        wait :for => '2s'
         alpha
         echo 'done.'
       end
@@ -29,11 +29,7 @@ class EftWaitTest < Test::Unit::TestCase
 
     assert_trace pdef, 'done.'
 
-    #p ts
-    #p ts[1] - ts[0]
-    #p ts[1].sec - ts[0].sec
-    #assert ts[1] - ts[0] > 0.5
-    assert [ 1, -59 ].include?(ts[1].sec - ts[0].sec)
+    assert_equal 2, (ts[1].sec - ts[0].sec) % 60
   end
 
   def test_cancel_wait
