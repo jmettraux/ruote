@@ -30,7 +30,10 @@ class EftWaitTest < Test::Unit::TestCase
     assert_trace pdef, 'done.'
 
     #p ts
-    assert ts[1] - ts[0] > 1.0
+    #p ts[1] - ts[0]
+    #p ts[1].sec - ts[0].sec
+    #assert ts[1] - ts[0] > 0.5
+    assert [ 1, -59 ].include?(ts[1].sec - ts[0].sec)
   end
 
   def test_cancel_wait
@@ -54,7 +57,7 @@ class EftWaitTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_equal 'a', @tracer.to_s
-    assert_equal 0, @engine.scheduler.jobs.size
+    assert_equal 0, @engine.storage.get_many('ats').size
   end
 
   def test_wait_for_number

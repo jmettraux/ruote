@@ -42,7 +42,6 @@ module Ruote
     def initialize (storage)
 
       @storage = storage
-      @last_second = -1
 
       @subscribers = []
       @context = Ruote::WorkerContext.new(self)
@@ -50,19 +49,27 @@ module Ruote
 
     def run
 
+      last_second = -1
+
       loop do
 
-        t = Time.now
+        t = Time.now.utc
 
-        if t.sec != @last_second
+        if t.sec != last_second
+          #
+          # once per second
 
-          @last_second = t.sec
+          last_second = t.sec
 
           # at schedules
-          @storage.get_many('ats', //).each { |sche| trigger(sche) }
+
+          at = t.strftime('%Y%m%d%H%M%S')
+
+          @storage.get_many('ats', /-#{at}$/).each { |sche| trigger(sche) }
 
           # cron schedules
-          @storage.get_many('crons', //).each { |sche| trigger(sche) }
+
+          @storage.get_many('crons').each { |sche| trigger(sche) }
         end
 
         # tasks
@@ -88,8 +95,20 @@ module Ruote
 
     def trigger (schedule)
 
-      raise "implement me !"
-      #notify(schedule) # orly ?
+      task = schedule['task']
+
+      type = schedule['type']
+
+      if type == 'ats'
+
+        return if @storage.delete(schedule)
+
+        @storage.put_task(task.delete('action'), task)
+
+      else
+
+        raise "implement me !"
+      end
     end
 
     def process (task)

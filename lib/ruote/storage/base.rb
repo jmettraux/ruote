@@ -48,6 +48,39 @@ module Ruote
         e['parent_id'].nil?
       }.first
     end
+
+    def put_at_schedule (owner_fei, at, task)
+
+      put_schedule('ats', owner_fei, at, task)
+    end
+
+    def put_cron_schedule (owner_fei, cron, task)
+
+      put_schedule('crons', owner_fei, cron, task)
+    end
+
+    protected
+
+    def put_schedule (type, owner_fei, t, task)
+
+      if type == 'ats'
+
+        at = t.strftime('%Y%m%d%H%M%S')
+        i = "#{Ruote::FlowExpressionId.to_storage_id(owner_fei)}-#{at}"
+
+      else
+
+        raise "implement me !"
+      end
+
+      put(
+        'type' => type,
+        'owner' => owner_fei,
+        '_id' => i,
+        'task' => task)
+
+      i
+    end
   end
 end
 

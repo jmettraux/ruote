@@ -32,6 +32,8 @@ end
 require 'ruote/exp/flowexpression'
 require 'ruote/exp/raw'
 
+require 'rufus/scheduler' # for the time expressions
+
 
 exppath = File.dirname(__FILE__)
 

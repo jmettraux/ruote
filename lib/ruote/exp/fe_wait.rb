@@ -53,7 +53,7 @@ module Ruote::Exp
       sfor = attribute(:for) || attribute_text
       suntil = attribute(:until)
 
-      @until = if suntil
+      h.until = if suntil
 
         Rufus.to_ruby_time(suntil)# rescue nil
 
@@ -68,10 +68,26 @@ module Ruote::Exp
         nil
       end
 
-      if @until
-        schedule
+      h.until = case h.until
+        when DateTime then h.until.to_time.utc
+        when Float then Time.at(h.until).utc
+        else h.until
+      end
+
+      if h.until
+
+        h.job_id = @context.storage.put_at_schedule(
+          h.fei,
+          h.until,
+          'action' => 'reply',
+          'fei' => h.fei,
+          'workitem' => h.applied_workitem)
+
+        persist
+
       else
-        reply_to_parent(@applied_workitem)
+
+        reply_to_parent(h.applied_workitem)
       end
     end
 
@@ -84,26 +100,17 @@ module Ruote::Exp
     def cancel (flavour)
 
       unschedule
-      reply_to_parent(@applied_workitem)
-    end
-
-    def reschedule
-
-      @job_id = scheduler.at(@until, @fei, :reply).job_id
-      persist
+      reply_to_parent(h.applied_workitem)
     end
 
     protected
 
-    def schedule
-
-      reschedule
-      wqueue.emit(:expressions, :schedule_at, :until => @until)
-    end
-
     def unschedule
 
-      scheduler.unschedule(@job_id)
+      @context.storage.delete(
+        'type' => 'ats', '_id' => h.job_id, '_rev' => 0)
+
+      # NOTA BENE : _rev is 0 here !
     end
   end
 end
