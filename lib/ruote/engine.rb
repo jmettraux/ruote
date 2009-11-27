@@ -111,37 +111,26 @@ module Ruote
       @storage.put_task(action, task) # trigger replay
     end
 
-    # TODO : document me !
-    #
-    def re_apply (fei, options={})
-
-      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
-
-      raise(
-        ArgumentError.new("did not find expression #{fei.inspect}")
-      ) unless fexp
-
-      if options.delete(:cancel)
-
-        raise "implement me !"
-
-        # well, shouldn't cancel be implicit if the exp has children ???
-
-      else
-
-        fexp.unpersist
-
-        h = {
-          'fei' => fexp.h.fei,
-          'parent_id' => fexp.h.parent_id,
-          'tree' => fexp.tree,
-          'variables' => fexp.h.variables,
-          'workitem' => fexp.h.applied_workitem
-        }
-
-        @storage.put_task('apply', h.merge!(options))
-      end
-    end
+    #def re_apply (fei, options={})
+    #  fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
+    #  raise(
+    #    ArgumentError.new("did not find expression #{fei.inspect}")
+    #  ) unless fexp
+    #  if options.delete(:cancel)
+    #    raise "implement me !"
+    #    # well, shouldn't cancel be implicit if the exp has children ???
+    #  else
+    #    fexp.unpersist
+    #    h = {
+    #      'fei' => fexp.h.fei,
+    #      'parent_id' => fexp.h.parent_id,
+    #      'tree' => fexp.tree,
+    #      'variables' => fexp.h.variables,
+    #      'workitem' => fexp.h.applied_workitem
+    #    }
+    #    @storage.put_task('apply', h.merge!(options))
+    #  end
+    #end
 
     # Returns a ProcessStatus instance describing the current status of
     # a process instance.

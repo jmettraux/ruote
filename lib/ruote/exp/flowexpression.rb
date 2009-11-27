@@ -84,7 +84,7 @@ module Ruote::Exp
     end
 
     def parent
-      self.class.fetch(@context, h.parent_id)
+      Ruote::Exp::FlowExpression.fetch(@context, h.parent_id)
     end
 
     #--
@@ -278,32 +278,12 @@ module Ruote::Exp
       reply_to_parent(workitem)
     end
 
-    #--
-    # misc
-    #++
+    def re_apply
 
-    def launch_sub (pos, subtree, opts={})
+      h.on_cancel = tree
+      persist
 
-      fei = h.fei.dup
-      fei['sub_wfid'] = get_next_sub_wfid
-      fei['expid'] = pos
-
-      forget = opts[:forget]
-
-      register_child(fei) unless forget
-        # persists this expression
-
-      variables = (
-        forget ? compile_variables : {}
-      ).merge!(opts[:variables] || {})
-
-      @context.storage.put_task(
-        'launch',
-        'fei' => fei,
-        'parent_id' => forget ? nil : h.fei,
-        'tree' => subtree,
-        'workitem' => h.applied_workitem,
-        'variables' => variables)
+      @context.storage.put_task('cancel', 'fei' => h.fei)
     end
 
     def do_cancel (task)
@@ -342,6 +322,45 @@ module Ruote::Exp
           'parent_id' => h.fei, # indicating that this is a "cancel child"
           'flavour' => flavour)
       end
+    end
+
+    #--
+    # misc
+    #++
+
+    def launch_sub (pos, subtree, opts={})
+
+      fei = h.fei.dup
+      fei['sub_wfid'] = get_next_sub_wfid
+      fei['expid'] = pos
+
+      forget = opts[:forget]
+
+      register_child(fei) unless forget
+        # persists this expression
+
+      variables = (
+        forget ? compile_variables : {}
+      ).merge!(opts[:variables] || {})
+
+      @context.storage.put_task(
+        'launch',
+        'fei' => fei,
+        'parent_id' => forget ? nil : h.fei,
+        'tree' => subtree,
+        'workitem' => h.applied_workitem,
+        'variables' => variables)
+    end
+
+    # Returns true if the given fei points to an expression in the parent
+    # chain of this expression.
+    #
+    def ancestor? (fei)
+
+      return false unless h.parent_id
+      return true if h.parent_id == fei
+
+      parent.ancestor?(fei)
     end
 
     #--
@@ -561,16 +580,6 @@ module Ruote::Exp
 
       @children << fei
       persist if do_persist
-    end
-
-    # Returns true if the given fei points to an expression in the parent
-    # chain of this expression.
-    #
-    def ancestor? (fei)
-
-      return false unless @parent_id
-      return true if @parent_id == fei
-      parent.ancestor?(fei)
     end
 
     # Returns the root expression for this expression (top parent).

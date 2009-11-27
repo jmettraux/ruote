@@ -24,7 +24,7 @@ class EftRedoTest < Test::Unit::TestCase
 
     alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
-    noisy
+    #noisy
 
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
@@ -40,7 +40,7 @@ class EftRedoTest < Test::Unit::TestCase
     assert_equal 0, ps.errors.size
     assert_equal 3, ps.expressions.size
 
-    assert_equal 3, logger.log.select { |e| e[1] == :entered_tag }.size
+    assert_equal 3, logger.log.select { |e| e['action'] == 'entered_tag' }.size
   end
 end
 

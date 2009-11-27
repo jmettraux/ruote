@@ -54,16 +54,16 @@ module Ruote::Exp
 
     def apply
 
-      persist
-
       ref = attribute(:ref) || attribute_text
       tag = ref ? lookup_variable(ref) : nil
 
       if tag
 
-        pool.re_apply(tag, true)
+        fexp = Ruote::Exp::FlowExpression.fetch(@context, tag)
 
-        reply_to_parent(h.applied_workitem) unless ancestor?(tag)
+        fexp.re_apply if fexp
+
+        reply_to_parent(h.applied_workitem) if fexp.nil? || ( ! ancestor?(tag))
 
       else
 
