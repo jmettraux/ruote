@@ -148,6 +148,8 @@ module Ruote::Exp
       h.over = false
 
       apply_children
+
+      persist
     end
 
     def reply (workitem)
@@ -162,9 +164,6 @@ module Ruote::Exp
 
       h.over = over?(workitem) unless over
 
-      persist
-        # have to keep track of the incoming workitems
-
       if (not over) && h.over
 
         reply_to_parent(nil)
@@ -175,6 +174,9 @@ module Ruote::Exp
 
         @context.storage.put_task(
           'ceased', 'wfid' => h.fei['wfid'], 'workitem' => workitem)
+      else
+
+        persist
       end
     end
 

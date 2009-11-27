@@ -29,6 +29,18 @@ require 'ruote/util/hashdot'
 
 module Ruote::Exp
 
+  ##
+  ## A simple timeout error. Only used when :on_timeout => 'error' for now.
+  ##
+  #class TimeoutError < RuntimeError
+  #  def backtrace
+  #    [ '---' ]
+  #  end
+  #end
+
+  #
+  # TODO : document me
+  #
   class FlowExpression
 
     include Ruote::WithH
@@ -81,7 +93,8 @@ module Ruote::Exp
 
     def persist
 
-      @context.storage.put(@h)
+      r = @context.storage.put(@h)
+      raise "persist, new:#{@h['_rev']} / current:#{r['_rev']}" unless r.nil?
     end
 
     def unpersist
@@ -310,8 +323,6 @@ module Ruote::Exp
         h.fei, Ruote.now_utc_to_s
       ] if h.state == :timing_out
 
-      persist
-
       cancel(flavour)
     end
 
@@ -319,6 +330,9 @@ module Ruote::Exp
     # of this expression.
     #
     def cancel (flavour)
+
+      persist
+        # before firing the cancel message to the children
 
       h.children.each do |cfei|
 
@@ -426,10 +440,18 @@ module Ruote::Exp
       end
     end
 
+    # (Called by trigger_on_cancel & co)
+    #
     def supplant_with (tree, opts)
 
+      # at first, nuke self
+
+      unpersist
+
+      # then re-apply
+
       if on = opts.keys.find { |k| k.match(/^on\_.+/) }
-        tree[1]["_triggered"] = on.to_s
+        tree[1]['_triggered'] = on.to_s
       end
 
       @context.storage.put_task(
@@ -451,15 +473,6 @@ module Ruote::Exp
       supplant_with(tree, 'on_cancel' => true)
     end
   end
-
-  ##
-  ## A simple timeout error. Only used when :on_timeout => 'error' for now.
-  ##
-  #class TimeoutError < RuntimeError
-  #  def backtrace
-  #    [ '---' ]
-  #  end
-  #end
 
   #
   # The root class for all the expressions in Ruote.

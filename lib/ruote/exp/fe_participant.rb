@@ -165,6 +165,7 @@ module Ruote::Exp
 
       participant = @context.plist.lookup(h.participant_name)
       participant.cancel(fei, flavour)
+        # should this be threaded ?
 
       reply_to_parent(h.applied_workitem)
     end

@@ -307,12 +307,10 @@ class FtErrorsTest < Test::Unit::TestCase
     es = ps.to_h['errors']
     e = es.first
 
-    #p e
-
     assert_equal 1, es.size
     assert_equal 'reply', e['task']['action']
     assert_equal wfid, e['task']['fei']['wfid']
-    assert_equal 6, e.size
+    assert_equal 7, e.size
   end
 end
 

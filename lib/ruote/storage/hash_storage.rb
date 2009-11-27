@@ -23,6 +23,7 @@
 #++
 
 require 'ruote/storage/base'
+require 'monitor'
 
 
 module Ruote
@@ -30,10 +31,13 @@ module Ruote
   class HashStorage
 
     include StorageBase
+    include MonitorMixin
 
     attr_reader :h
 
     def initialize (options={})
+
+      super()
 
       @options = options
 
@@ -42,26 +46,63 @@ module Ruote
 
     def put (doc)
 
-      (@h[doc['type']] ||= {})[doc['_id']] =
-        Ruote::fulldup(doc).merge!('put_at' => Ruote.now_utc_to_s)
+      synchronize do
 
-      nil
+        prev = @h[doc['type']][doc['_id']]
+
+        if prev.nil? || prev['_rev'] == (doc['_rev'] || 0)
+
+          (@h[doc['type']] ||= {})[doc['_id']] =
+            Ruote::fulldup(doc).merge!(
+              'put_at' => Ruote.now_utc_to_s,
+              '_rev' => (doc['_rev'] || -1) + 1)
+
+          nil
+
+        else
+
+          prev
+        end
+      end
     end
 
     def get (type, key)
-      @h[type][key]
+
+      synchronize do
+        @h[type][key]
+      end
     end
 
     def delete (doc)
-      @h[doc['type']].delete(doc['_id'])
-      nil
+
+      synchronize do
+
+        prev = @h[doc['type']][doc['_id']]
+
+        return false if prev.nil?
+
+        doc['_rev'] ||= 0
+
+        if prev['_rev'] == doc['_rev']
+
+          @h[doc['type']].delete(doc['_id'])
+
+          nil
+
+        else
+
+          prev
+        end
+      end
     end
 
     def get_many (type, key=nil)
 
-      key ?
-        @h[type].values.select { |doc| doc['_id'].match(key) } :
-        @h[type].values
+      synchronize do
+        key ?
+          @h[type].values.select { |doc| doc['_id'].match(key) } :
+          @h[type].values
+      end
     end
 
     def purge!
@@ -85,10 +126,14 @@ module Ruote
 
     def dump (type)
 
-      puts "=== #{type} ==="
-      @h[type].each do |k, v|
-        puts "      #{k} =>"
-        p v
+      s = "=== #{type} ===\n"
+
+      @h[type].inject(s) do |s, (k, v)|
+        s << "\n"
+        s << "#{k} :\n"
+        v.keys.sort.inject(s) do |ss, kk|
+          ss << "  #{kk} => #{v[kk].inspect}\n"
+        end
       end
     end
   end

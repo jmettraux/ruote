@@ -151,7 +151,7 @@ module FunctionalBase
     puts
     puts 'left :'
     puts
-    puts @engine.context.torage.to_s
+    puts @engine.context.storage.dump('expressions')
     puts
     puts '-' * 80
 
