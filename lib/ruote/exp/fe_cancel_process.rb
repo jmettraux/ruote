@@ -55,9 +55,7 @@ module Ruote::Exp
 
     def apply
 
-      persist
-
-      wqueue.emit(:processes, :cancel, :wfid => root_expression.fei.wfid)
+      @context.storage.put_task('cancel_process', 'wfid' => h.fei['wfid'])
     end
 
     def reply (workitem)
@@ -67,7 +65,9 @@ module Ruote::Exp
 
     def cancel (flavour)
 
-      reply_to_parent(@applied_workitem)
+      # has to let the workitem rebound for the whole process to get cancelled
+
+      reply_to_parent(h.applied_workitem)
     end
   end
 end
