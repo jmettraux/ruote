@@ -115,9 +115,7 @@ module Ruote
     #
     def re_apply (fei, options={})
 
-      fei = fei.respond_to?(:to_h) ? fei.to_h : fei
-
-      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei)
+      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
 
       raise(
         ArgumentError.new("did not find expression #{fei.inspect}")

@@ -23,7 +23,7 @@ class EftUndoTest < Test::Unit::TestCase
       echo 'over'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -31,9 +31,9 @@ class EftUndoTest < Test::Unit::TestCase
 
     assert_equal 0, alpha.size
 
-    assert_equal 1, logger.log.select { |e| e[1] == :entered_tag }.size
-    assert_equal 1, logger.log.select { |e| e[1] == :cancel }.size
-    assert_equal 1, logger.log.select { |e| e[1] == :left_tag }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'entered_tag' }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'cancel' }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'left_tag' }.size
   end
 
   def test_undo
@@ -47,7 +47,7 @@ class EftUndoTest < Test::Unit::TestCase
       echo 'over'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -55,9 +55,9 @@ class EftUndoTest < Test::Unit::TestCase
 
     assert_equal 0, alpha.size
 
-    assert_equal 1, logger.log.select { |e| e[1] == :entered_tag }.size
-    assert_equal 1, logger.log.select { |e| e[1] == :cancel }.size
-    assert_equal 1, logger.log.select { |e| e[1] == :left_tag }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'entered_tag' }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'cancel' }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'left_tag' }.size
   end
 end
 

@@ -53,9 +53,9 @@ module Ruote::Exp
       ref = attribute(:ref) || attribute_text
       tag = ref ? lookup_variable(ref) : nil
 
-      pool.cancel_expression(tag, false) if tag
+      @context.storage.put_task('cancel', 'fei' => tag)
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     def reply (workitem)
