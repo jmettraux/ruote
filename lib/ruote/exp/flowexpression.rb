@@ -278,6 +278,9 @@ module Ruote::Exp
       reply_to_parent(workitem)
     end
 
+    # Cancels the expression (the whole branch) and makes sure it's re-applied
+    # (by riding the on_cancel attribute).
+    #
     def re_apply
 
       h.on_cancel = tree
