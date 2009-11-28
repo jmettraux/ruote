@@ -68,7 +68,7 @@ module Ruote::Exp
       h.name ||= self.class.expression_names.first
       h.children ||= []
       h.applied_workitem['fei'] = h.fei
-      h.created_time ||= Ruote.now_utc_to_s
+      h.created_time ||= Ruote.now_to_utc_s
 
       h.on_cancel ||= attribute(:on_cancel)
       h.on_error ||= attribute(:on_error)

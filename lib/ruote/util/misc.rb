@@ -116,13 +116,22 @@ module Ruote
     s.split('::').inject(Object) { |c, n| n == '' ? c : c.const_get(n) }
   end
 
+  # Produces the UTC string representation of a Time
+  #
+  # like "2009/11/23 11:11:50.947109 UTC"
+  #
+  def self.time_to_utc_s (t)
+
+    "#{t.utc.strftime('%Y/%m/%d %H:%m:%S')}.#{t.usec} UTC"
+  end
+
   # Returns a parsable representation of the UTC time now.
   #
   # like "2009/11/23 11:11:50.947109 UTC"
   #
-  def self.now_utc_to_s
+  def self.now_to_utc_s
 
-    t = Time.now.utc; "#{t.strftime('%Y/%m/%d %H:%m:%S')}.#{t.usec} UTC"
+    time_to_utc_s(Time.now)
   end
 end
 

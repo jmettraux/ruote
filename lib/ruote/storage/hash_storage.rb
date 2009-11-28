@@ -54,7 +54,7 @@ module Ruote
 
           (@h[doc['type']] ||= {})[doc['_id']] =
             Ruote::fulldup(doc).merge!(
-              'put_at' => Ruote.now_utc_to_s,
+              'put_at' => Ruote.now_to_utc_s,
               '_rev' => (doc['_rev'] || -1) + 1)
 
           nil

@@ -30,6 +30,10 @@ module Ruote
   #
   module StorageBase
 
+    #--
+    # tasks
+    #++
+
     def put_task (action, options)
 
       # merge! is way faster than merge (no object creation probably)
@@ -40,6 +44,10 @@ module Ruote
         'action' => action))
     end
 
+    #--
+    # expressions
+    #++
+
     def find_root_expression (wfid)
 
       get_many('expressions', /#{wfid}$/).sort { |a, b|
@@ -47,6 +55,37 @@ module Ruote
       }.select { |e|
         e['parent_id'].nil?
       }.first
+    end
+
+    #--
+    # ats and crons
+    #++
+
+    def get_ats (delta, now)
+
+      if delta < 2.0
+
+        at = now.strftime('%Y%m%d%H%M%S')
+        get_many('ats', /-#{at}$/)
+
+      elsif delta < 60.0
+
+        at = now.strftime('%Y%m%d%H%M')
+        ats = get_many('ats', /-#{at}\d\d$/)
+        filter_ats(ats, now)
+
+      else # load all the ats...
+
+        ats = get_many('ats')
+        filter_ats(ats, now)
+      end
+    end
+
+    def get_crons (delta, now)
+
+      # TODO : implement me
+
+      []
     end
 
     def put_at_schedule (owner_fei, at, task)
@@ -74,23 +113,31 @@ module Ruote
 
     def put_schedule (type, owner_fei, t, task)
 
+      h = { 'type' => type, 'owner' => owner_fei, 'task' => task }
+
       if type == 'ats'
 
         at = t.strftime('%Y%m%d%H%M%S')
-        i = "#{Ruote::FlowExpressionId.to_storage_id(owner_fei)}-#{at}"
+        h['_id'] = "#{Ruote::FlowExpressionId.to_storage_id(owner_fei)}-#{at}"
+        h['at'] = Ruote.time_to_utc_s(t)
 
       else
 
         raise "implement me !"
       end
 
-      put(
-        'type' => type,
-        'owner' => owner_fei,
-        '_id' => i,
-        'task' => task)
+      put(h)
 
-      i
+      h['_id']
+    end
+
+    # Returns all the ats whose due date arrived (now or earlier)
+    #
+    def filter_ats (ats, now)
+
+      now = Ruote.time_to_utc_s(now)
+
+      ats.select { |at| at['at'] <= now }
     end
   end
 end

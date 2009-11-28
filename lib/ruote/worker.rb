@@ -49,34 +49,26 @@ module Ruote
 
     def run
 
-      # TODO : inspect all ats at startup ?
-
-      last_second = -1
+      last_time = Time.at(0.0).utc # 1970...
 
       loop do
 
-        # TODO : if a loop takes more that 1 second, jobs could get skipped...
-        #
-        #        maybe inspect based on %S only... could be heavy
-        #        maybe loop over the amount of skipped seconds...
+        now = Time.now.utc
+        delta = now - last_time
 
-        t = Time.now.utc
-
-        if t.sec != last_second
+        if delta >= 1.0
           #
-          # once per second
+          # at most once per second
 
-          last_second = t.sec
+          last_time = now
 
           # at schedules
 
-          at = t.strftime('%Y%m%d%H%M%S')
-
-          @storage.get_many('ats', /-#{at}$/).each { |sche| trigger_at(sche) }
+          @storage.get_ats(delta, now).each { |sche| trigger_at(sche) }
 
           # cron schedules
 
-          @storage.get_many('crons').each { |sche| trigger_cron(sche) }
+          @storage.get_crons(delta, now).each { |sche| trigger_cron(sche) }
         end
 
         # tasks
