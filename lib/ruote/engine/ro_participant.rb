@@ -98,7 +98,8 @@ module Ruote
 
       @context.storage.put_msg(
         'participant_registered',
-        'regex' => regex.to_s)
+        'regex' => regex.to_s,
+        'engine_worker_only' => (pa != nil))
 
       pa
     end
@@ -107,13 +108,13 @@ module Ruote
     #
     def unregister_participant (name_or_participant)
 
-      entry = @context.plist.unregister(name_or_participant)
+      re = @context.plist.unregister(name_or_participant)
 
-      raise(ArgumentError.new('participant not found')) unless entry
+      raise(ArgumentError.new('participant not found')) unless re
 
       @context.storage.put_msg(
         'participant_unregistered',
-        'regex' => entry.first.to_s)
+        'regex' => re.to_s)
     end
   end
 end

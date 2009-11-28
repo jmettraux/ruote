@@ -33,13 +33,12 @@ module Ruote
   #
   class ParticipantList
 
-    attr_reader :list
+    attr_reader :instantiated_participants
 
     def initialize (context)
 
       @context = context
       @instantiated_participants = {}
-      @list = nil
     end
 
     # Registers the participant.
@@ -60,7 +59,7 @@ module Ruote
       entry = if participant.is_a?(Class)
         [ participant.to_s, options ]
       else
-        "#{name.class}/#{name.hash}"
+        name.inspect
       end
 
       entry = [ name.is_a?(Regexp) ? name : Regexp.new("^#{name}$"), entry ]
@@ -70,7 +69,7 @@ module Ruote
         when 'last' then list['list'] << entry
         when 'first' then list['list'].unshift(entry)
         when Fixnum then list['list'].insert(position, entry)
-        else raise "cannot insertion participant at position '#{position}'"
+        else raise "cannot insert participant at position '#{position}'"
       end
 
       if @context.storage.put(list)
@@ -93,6 +92,53 @@ module Ruote
 
         nil
       end
+    end
+
+    # Removes a participant, given via its name or directly from this
+    # participant list.
+    #
+    def unregister (name_or_participant)
+
+      code = nil
+      entry = nil
+
+      list_doc = get_list
+
+      name_or_participant = name_or_participant.to_s \
+        if name_or_participant.is_a?(Symbol)
+
+      if name_or_participant.is_a?(String)
+
+        entry = list_doc['list'].find { |re, pa| re.match(name_or_participant) }
+
+        return nil unless entry
+
+        code = entry.last if entry.last.is_a?(String)
+
+      else # we've been given a participant instance
+
+        code = @instantiated_participants.find { |k, v|
+          v == name_or_participant
+        }
+
+        return nil unless code
+
+        code = code.first
+
+        entry = list_doc['list'].find { |re, pa| pa == code }
+
+      end
+
+      list_doc['list'].delete(entry)
+
+      r = @context.storage.put(list_doc)
+
+      return nil if r
+        # put failed
+
+      @instantiated_participants.delete(code) if code
+
+      entry.first
     end
 
     def lookup_info (participant_name)
@@ -122,17 +168,9 @@ module Ruote
       Ruote.constantize(class_name).new(options)
     end
 
-    #def unregister (name_or_participant)
-    #  name_or_participant = name_or_participant.to_s \
-    #    if name_or_participant.is_a?(Symbol)
-    #  entry = @list.find do |re, pa|
-    #    name_or_participant.is_a?(String) ?
-    #      re.match(name_or_participant) :
-    #      (pa == name_or_participant)
-    #  end
-    #  @list.delete(entry)
-    #end
-
+    # Shuts down the 'instantiated participants' (engine worker participants)
+    # if they respond to #shutdown.
+    #
     def shutdown
 
       @instantiated_participants.each { |re, pa|

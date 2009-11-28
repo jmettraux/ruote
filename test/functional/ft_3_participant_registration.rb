@@ -19,14 +19,15 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       @tracer << 'alpha'
     end
 
-    sleep 0.001
+    sleep 0.100
 
-    entry = logger.log.last
-    assert_equal :registered, entry[1]
-    assert_equal :alpha, entry.last[:regex]
-    assert_equal Ruote::BlockParticipant, entry.last[:participant].class
+    msg = logger.log.last
+    assert_equal 'participant_registered', msg['action']
+    assert_equal 'alpha', msg['regex']
 
-    assert_equal [ /^alpha$/ ], @engine.plist.list.collect { |e| e.first }
+    assert_equal(
+      [ ':alpha' ],
+      @engine.context.plist.instantiated_participants.collect { |e| e.first })
   end
 
   def test_register_and_return_participant
@@ -46,13 +47,13 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     @engine.unregister_participant :alpha
 
-    sleep 0.001
+    sleep 0.100
 
-    entry = logger.log.last
-    assert_equal(:unregistered, entry[1])
-    assert_equal(/^alpha$/, entry.last[:regex])
+    msg = logger.log.last
+    assert_equal 'participant_unregistered', msg['action']
+    assert_equal '(?-mix:^alpha$)', msg['regex']
 
-    assert_equal 0, @engine.plist.list.size
+    assert_equal 0, @engine.context.plist.instantiated_participants.size
   end
 
   def test_participant_unregister
@@ -64,16 +65,16 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     sleep 0.100
 
-    entry = logger.log.last
-    assert_equal(:unregistered, entry[1])
-    assert_equal(/^alpha$/, entry.last[:regex])
+    msg = logger.log.last
+    assert_equal 'participant_unregistered', msg['action']
+    assert_equal '(?-mix:^alpha$)', msg['regex']
 
-    assert_equal(0, @engine.plist.list.size)
+    assert_equal 0, @engine.context.plist.instantiated_participants.size
   end
 
   class MyParticipant
     attr_reader :down
-    def initialize (opts)
+    def initialize
       @down = false
     end
     def shutdown
@@ -83,31 +84,11 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
   def test_participant_shutdown
 
-    alpha = @engine.register_participant :alpha, MyParticipant
+    alpha = @engine.register_participant :alpha, MyParticipant.new
 
-    @engine.plist.shutdown
+    @engine.context.plist.shutdown
 
     assert_equal true, alpha.down
-  end
-
-  class OptsParticipant
-    attr_reader :opts
-    def initialize (opts)
-      @opts = opts
-    end
-  end
-
-  def test_pass_block_to_participant
-
-    alpha = @engine.register_participant :alpha, OptsParticipant
-
-    bravo = @engine.register_participant :alpha, OptsParticipant do
-      # nada
-    end
-
-    assert_nil alpha.opts[:block]
-    assert_not_nil bravo.opts[:block]
-    assert_equal Proc, bravo.opts[:block].class
   end
 end
 
