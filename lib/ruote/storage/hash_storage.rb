@@ -108,7 +108,7 @@ module Ruote
     def purge!
 
       @h = %w[
-        tasks
+        msgs
         expressions
         errors
         ats

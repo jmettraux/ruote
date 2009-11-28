@@ -56,14 +56,14 @@ module Ruote
       # in case of troubles, why not have the wait_for has an event ?
     end
 
-    def notify (event)
+    def notify (msg)
 
-      #@context.storage.put(event.merge('type' => 'archived_task'))
+      #@context.storage.put(event.merge('type' => 'archived_msgs'))
 
-      pretty_print(event) if @context[:noisy]
+      pretty_print(msg) if @context[:noisy]
 
-      @seen << event
-      @log << event
+      @seen << msg
+      @log << msg
 
       check_waiting
     end
@@ -87,16 +87,16 @@ module Ruote
 
       over = false
 
-      while event = @seen.shift
+      while msg = @seen.shift
 
-        action = event['action']
+        action = msg['action']
 
         over = if interest.is_a?(Symbol) # participant
           (action == 'dispatch' &&
-           event['participant_name'] == interest.to_s)
+           msg['participant_name'] == interest.to_s)
         else # wfid
           %w[ terminated ceased error_intercepted ].include?(action) &&
-          event['wfid'] == interest
+          msg['wfid'] == interest
         end
 
         break if over
@@ -108,14 +108,14 @@ module Ruote
       end
     end
 
-    def pretty_print (event)
+    def pretty_print (msg)
 
-      fei = event['fei']
+      fei = msg['fei']
       depth = fei ? fei['expid'].split('_').size : 0
 
       i = fei ?
         [ fei['wfid'], fei['sub_wfid'], fei['expid'] ].join(' ') :
-        event['wfid']
+        msg['wfid']
 
       rest = event.dup
       %w[
@@ -123,7 +123,7 @@ module Ruote
         fei wfid workitem variables
       ].each { |k| rest.delete(k) }
 
-      puts "#{'  ' * depth}#{event['action'][0, 2]} #{i} #{rest.inspect}"
+      puts "#{'  ' * depth}#{msg['action'][0, 2]} #{i} #{rest.inspect}"
     end
   end
 end

@@ -71,17 +71,17 @@ module Ruote
           @storage.get_crons(delta, now).each { |sche| trigger_cron(sche) }
         end
 
-        # tasks
+        # msgs
 
-        tasks = @storage.get_many('tasks')
+        msgs = @storage.get_many('msgs')
 
-        tasks.sort { |a, b|
+        msgs.sort { |a, b|
           a['put_at'] <=> b['put_at']
-        }.each { |task|
-          process(task)
+        }.each { |msg|
+          process(msg)
         }
 
-        sleep(0.100) if tasks.size == 0
+        sleep(0.100) if msgs.size == 0
       end
     end
 
@@ -94,15 +94,14 @@ module Ruote
 
     def trigger_at (schedule)
 
-      task = schedule['task']
-
+      msg = schedule['msg']
       type = schedule['type']
 
       if type == 'ats'
 
         return if @storage.delete(schedule)
 
-        @storage.put_task(task.delete('action'), task)
+        @storage.put_msg(msg.delete('action'), msg)
 
       else
 
@@ -113,11 +112,11 @@ module Ruote
     def trigger_cron (schedule)
     end
 
-    def process (task)
+    def process (msg)
 
-      return if cannot_handle(task)
+      return if cannot_handle(msg)
 
-      return if @storage.delete(task)
+      return if @storage.delete(msg)
         #
         # NOTE : if the delete fails, it means there is another worker...
 
@@ -125,33 +124,33 @@ module Ruote
 
       begin
 
-        action = task['action']
+        action = msg['action']
 
         action = 'reply' if action == 'receive'
 
-        if task['tree']
+        if msg['tree']
 
-          launch(task)
+          launch(msg)
 
         elsif EXP_ACTIONS.include?(action)
 
-          fexp = Ruote::Exp::FlowExpression.fetch(@context, task['fei'])
+          fexp = Ruote::Exp::FlowExpression.fetch(@context, msg['fei'])
 
-          fexp.send("do_#{action}", task) if fexp
+          fexp.send("do_#{action}", msg) if fexp
 
         elsif action == 'dispatch'
 
-          dispatch(task)
+          dispatch(msg)
 
         elsif PROC_ACTIONS.include?(action)
 
-          self.send(action, task)
+          self.send(action, msg)
 
         #else
-          # task got delete, might still be interesting for a subscriber
+          # msg got deleted, might still be interesting for a subscriber
         end
 
-        notify(task)
+        notify(msg)
 
       rescue Exception => e
 
@@ -161,33 +160,33 @@ module Ruote
         #e.backtrace[0, 10].each { |l| puts l }
         #puts "..."
         #puts
-        #puts "-- task --"
-        #task.keys.sort.each { |k|
-        #  puts "    #{k.inspect} =>\n#{task[k].inspect}"
+        #puts "-- msg --"
+        #msg.keys.sort.each { |k|
+        #  puts "    #{k.inspect} =>\n#{msg[k].inspect}"
         #}
         #puts "-- . --"
         #puts
 
-        # emit 'task'
+        # emit 'msg'
 
-        wfid = task['wfid'] || (task['fei']['wfid'] rescue nil)
+        wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
 
-        @storage.put_task(
+        @storage.put_msg(
           'error_intercepted',
           'message' => e.inspect,
           'wfid' => wfid,
-          'task' => task)
+          'msg' => msg)
 
         # fill error in the error journal
 
-        fei = task['fei'] || (fexp.h.fei rescue nil)
+        fei = msg['fei'] || (fexp.h.fei rescue nil)
 
         @storage.put(
           'type' => 'errors',
           '_id' => Ruote::FlowExpressionId.to_storage_id(fei),
           'message' => e.inspect,
           'trace' => e.backtrace.join("\n"),
-          'task' => task
+          'msg' => msg
         ) if fei
       end
     end
@@ -203,51 +202,51 @@ module Ruote
       end
     end
 
-    def cannot_handle (task)
+    def cannot_handle (msg)
 
-      return false if task['action'] != 'dispatch'
+      return false if msg['action'] != 'dispatch'
 
-      @context.engine.nil? && task['for_engine_worker?']
+      @context.engine.nil? && msg['for_engine_worker?']
     end
 
-    def dispatch (task)
+    def dispatch (msg)
 
-      pname = task['participant_name']
+      pname = msg['participant_name']
 
       participant = @context.plist.lookup(pname)
 
-      participant.consume(Ruote::Workitem.new(task['workitem']))
+      participant.consume(Ruote::Workitem.new(msg['workitem']))
     end
 
-    # Works for both the 'launch' and the 'apply' tasks.
+    # Works for both the 'launch' and the 'apply' msgs.
     #
-    def launch (task)
+    def launch (msg)
 
-      tree = task['tree']
-      variables = task['variables']
+      tree = msg['tree']
+      variables = msg['variables']
 
       exp_class = @context.expmap.expression_class(tree.first)
 
-      # task['wfid'] only : it's a launch
-      # task['fei'] : it's a sub launch (a supplant ?)
+      # msg['wfid'] only : it's a launch
+      # msg['fei'] : it's a sub launch (a supplant ?)
 
       exp_hash = {
-        'fei' => task['fei'] || {
+        'fei' => msg['fei'] || {
           'engine_id' => @context['engine_id'] || 'engine',
-          'wfid' => task['wfid'],
+          'wfid' => msg['wfid'],
           'expid' => '0' },
-        'parent_id' => task['parent_id'],
+        'parent_id' => msg['parent_id'],
         'original_tree' => tree,
         'variables' => variables,
-        'applied_workitem' => task['workitem'],
-        'forgotten' => task['forgotten']
+        'applied_workitem' => msg['workitem'],
+        'forgotten' => msg['forgotten']
       }
 
       if not exp_class
 
         exp_class, tree = lookup_subprocess_or_participant(exp_hash)
 
-      elsif task['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
+      elsif msg['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
         def_name, tree = Ruote::Exp::DefineExpression.reorganize(tree)
         variables[def_name] = [ '0', tree ] if def_name
         exp_class = Ruote::Exp::SequenceExpression
@@ -302,19 +301,19 @@ module Ruote
       end
     end
 
-    def cancel_process (task)
+    def cancel_process (msg)
 
-      root = @storage.find_root_expression(task['wfid'])
+      root = @storage.find_root_expression(msg['wfid'])
 
       return unless root
 
-      @storage.put_task(
+      @storage.put_msg(
         'cancel',
         'fei' => root['fei'],
-        'wfid' => task['wfid']) # indicates this was triggered by a cancel_process
+        'wfid' => msg['wfid']) # indicates this was triggered by cancel_process
     end
 
-    def kill_process (task)
+    def kill_process (msg)
 
       raise "implement me !"
     end

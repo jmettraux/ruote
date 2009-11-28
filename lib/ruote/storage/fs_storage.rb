@@ -34,68 +34,6 @@ module Ruote
       @cloche = Rufus::Cloche.new(:dir => dir)
       @options = options
     end
-
-    def get_at_schedules (time)
-
-      @cloche.get_many('ats')
-    end
-
-    def get_cron_schedules (time)
-
-      @cloche.get_many('crons')
-    end
-
-    def get_tasks
-
-      @cloche.get_many('tasks')
-    end
-
-    def get_expression (fei)
-
-      @cloche.get('expressions', fei) || Ruote::MissingExpression.new
-    end
-
-    def get_configuration
-
-      @options.merge(@cloche.get('configurations', 'ruote'))
-    end
-
-    # Returns true if the task deletion succeeded (which means the worker
-    # is free to process the task).
-    #
-    def delete_task (task)
-
-      @cloche.delete(task).nil?
-    end
-
-    def get_wfid_raw
-
-      h =
-        @cloche.get('wfid', 'last') ||
-        { '_id' => 'last', 'type' => 'wfid', 'last' => 0.0 }
-
-      l = h['last']
-
-      t = Time.now.to_f
-      t = l + 0.001 if t <= l
-
-      h['last'] = t
-
-      r = @cloche.put(h)
-
-      return get_wfid_raw if r
-
-      Time.at(t)
-    end
-
-    def put_task (action, args)
-
-      args['type'] = 'task'
-      args['action'] = 'action'
-      args['_id'] = Time.now.to_f.to_s
-
-      @cloche.put(args)
-    end
   end
 end
 

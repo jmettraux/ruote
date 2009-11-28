@@ -58,7 +58,7 @@ module Ruote::Exp
       # making the error occurs in the reply() phase
       # so that the replay_at_error targets the reply and not the apply
 
-      @context.storage.put_task(
+      @context.storage.put_msg(
         'reply',
         'fei' => h.fei,
         'workitem' => h.applied_workitem)

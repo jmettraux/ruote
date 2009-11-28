@@ -70,7 +70,7 @@ module Ruote
 
       wfid = @context.wfidgen.generate
 
-      @storage.put_task(
+      @storage.put_msg(
         'launch',
         'wfid' => wfid,
         'tree' => tree,
@@ -82,7 +82,7 @@ module Ruote
 
     def cancel_process (wfid)
 
-      @storage.put_task(
+      @storage.put_msg(
         'cancel_process',
         'wfid' => wfid)
     end
@@ -91,7 +91,7 @@ module Ruote
 
       raise "wire me !"
 
-      @storage.put_task(
+      @storage.put_msg(
         'kill_process',
         'wfid' => wfid)
     end
@@ -101,14 +101,14 @@ module Ruote
     #
     def replay_at_error (err)
 
-      task = err.task.dup
-      action = task.delete('action')
+      msg = err.msg.dup
+      action = msg.delete('action')
 
-      task['replay_at_error'] = true
+      msg['replay_at_error'] = true
         # just an indication
 
       @storage.delete(err.to_h) # remove error
-      @storage.put_task(action, task) # trigger replay
+      @storage.put_msg(action, msg) # trigger replay
     end
 
     # Re-applies an expression (given via its FlowExpressionId).

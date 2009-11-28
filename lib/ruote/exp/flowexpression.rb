@@ -165,7 +165,7 @@ module Ruote::Exp
         h.parent_id = nil
         h.forgotten = true
 
-        @context.storage.put_task(
+        @context.storage.put_msg(
           'reply', 'fei' => i, 'workitem' => wi)
       end
 
@@ -179,33 +179,13 @@ module Ruote::Exp
 
       if h.tagname
         unset_variable(h.tagname)
-        @context.storage.put_task(
+        @context.storage.put_msg(
           'left_tag', 'tag' => h.tagname, 'fei' => h.fei)
       end
 
       if h.timeout_job_id
         raise "unschedule timeout job !!!!"
       end
-
-      #if @state == :failing # @on_error is implicit (#fail got called)
-      #  trigger_on_error(workitem)
-      #elsif (@state == :cancelling) and @on_cancel
-      #  # @state == :dying doesn't trigger @on_cancel
-      #  trigger_on_cancel(workitem)
-      #elsif (@state == :timing_out) and @on_timeout
-      #  trigger_on_timeout(workitem)
-      #else
-      #  if @updated_tree && @parent_id
-      #    # updates the tree of the parent expression with the changes
-      #    # made to the tree in this expression
-      #    pexp = parent
-      #      # making sure to call #parent 1! especially in no cache envs
-      #    pexp.update_tree
-      #    pexp.updated_tree[2][@fei.child_id] = @updated_tree
-      #    pexp.persist
-      #  end
-      #  put_reply_task(workitem)
-      #end
 
       state = h.state
 
@@ -229,14 +209,14 @@ module Ruote::Exp
 
           workitem['fei'] = h.fei
 
-          @context.storage.put_task(
+          @context.storage.put_msg(
             'reply',
             'fei' => h.parent_id,
             'workitem' => workitem,
             'updated_tree' => h.updated_tree) # nil most of the time
         else
 
-          @context.storage.put_task(
+          @context.storage.put_msg(
             h.forgotten ? 'ceased' : 'terminated',
             'wfid' => h.fei['wfid'],
             'workitem' => workitem)
@@ -244,12 +224,12 @@ module Ruote::Exp
       end
     end
 
-    def do_reply (task)
+    def do_reply (msg)
 
-      workitem = task['workitem']
+      workitem = msg['workitem']
       fei = workitem['fei']
 
-      if ut = task['updated_tree']
+      if ut = msg['updated_tree']
         ct = tree.dup
         ct.last[Ruote::FlowExpressionId.child_id(fei)] = ut
         update_tree(ct)
@@ -286,12 +266,12 @@ module Ruote::Exp
       h.on_cancel = tree
       persist
 
-      @context.storage.put_task('cancel', 'fei' => h.fei)
+      @context.storage.put_msg('cancel', 'fei' => h.fei)
     end
 
-    def do_cancel (task)
+    def do_cancel (msg)
 
-      flavour = task['flavour']
+      flavour = msg['flavour']
 
       return if h.state == 'failed' and flavour == 'timeout'
         # do not timeout expressions that are "in error" (failed)
@@ -319,7 +299,7 @@ module Ruote::Exp
 
       h.children.each do |cfei|
 
-        @context.storage.put_task(
+        @context.storage.put_msg(
           'cancel',
           'fei' => cfei,
           'parent_id' => h.fei, # indicating that this is a "cancel child"
@@ -346,7 +326,7 @@ module Ruote::Exp
         forget ? compile_variables : {}
       ).merge!(opts[:variables] || {})
 
-      @context.storage.put_task(
+      @context.storage.put_msg(
         'launch',
         'fei' => fei,
         'parent_id' => forget ? nil : h.fei,
@@ -420,7 +400,7 @@ module Ruote::Exp
 
       persist
 
-      @context.storage.put_task(
+      @context.storage.put_msg(
         'apply',
         'fei' => child_fei,
         'tree' => tree.last[child_index],
@@ -450,7 +430,7 @@ module Ruote::Exp
 
         set_variable(h.tagname, h.fei)
 
-        @context.storage.put_task(
+        @context.storage.put_msg(
           'entered_tag', 'tag' => h.tagname, 'fei' => h.fei)
       end
     end
@@ -476,7 +456,7 @@ module Ruote::Exp
         tree[1]['_triggered'] = on.to_s
       end
 
-      @context.storage.put_task(
+      @context.storage.put_msg(
         'apply',
         { 'fei' => h.fei,
           'parent_id' => h.parent_id,

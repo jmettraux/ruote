@@ -42,27 +42,27 @@ module Ruote
       @h['trace']
     end
 
-    def task
-      @h['task']
+    def msg
+      @h['msg']
     end
 
     def fei
-      task['fei']
+      msg['fei']
     end
 
     def tree
-      @h['task']['tree']
+      @h['msg']['tree']
     end
 
     def at
-      @h['task']['put_at']
+      @h['msg']['put_at']
     end
 
     # A shortcut for modifying the tree of an expression when it has had
     # an error upon being applied.
     #
     def tree= (t)
-      @h['task']['tree'] = t
+      @h['msg']['tree'] = t
     end
 
     def to_h

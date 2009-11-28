@@ -308,8 +308,8 @@ class FtErrorsTest < Test::Unit::TestCase
     e = es.first
 
     assert_equal 1, es.size
-    assert_equal 'reply', e['task']['action']
-    assert_equal wfid, e['task']['fei']['wfid']
+    assert_equal 'reply', e['msg']['action']
+    assert_equal wfid, e['msg']['fei']['wfid']
     assert_equal 7, e.size
   end
 end

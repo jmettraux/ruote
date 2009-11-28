@@ -172,7 +172,7 @@ module Ruote::Exp
 
         unpersist
 
-        @context.storage.put_task(
+        @context.storage.put_msg(
           'ceased', 'wfid' => h.fei['wfid'], 'workitem' => workitem)
       else
 
@@ -253,7 +253,7 @@ module Ruote::Exp
       if h.remaining == 'cancel'
 
         h.children.each { |i|
-          @context.storage.put_task('cancel', 'fei' => i) unless replied?(i)
+          @context.storage.put_msg('cancel', 'fei' => i) unless replied?(i)
         }
 
         super(workitem)

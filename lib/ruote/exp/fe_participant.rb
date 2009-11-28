@@ -153,7 +153,7 @@ module Ruote::Exp
 
       persist
 
-      @context.storage.put_task(
+      @context.storage.put_msg(
         'dispatch',
         'fei' => h.fei,
         'participant_name' => h.participant_name,

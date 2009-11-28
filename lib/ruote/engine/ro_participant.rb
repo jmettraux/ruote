@@ -96,9 +96,9 @@ module Ruote
 
       pa = @context.plist.register(regex, participant, opts, block)
 
-      #wqueue.emit(
-      #  :participants, :registered,
-      #  :regex => regex, :participant => pa)
+      @context.storage.put_msg(
+        'participant_registered',
+        'regex' => regex.to_s)
 
       pa
     end
@@ -111,9 +111,9 @@ module Ruote
 
       raise(ArgumentError.new('participant not found')) unless entry
 
-      #wqueue.emit(
-      #  :participants, :unregistered,
-      #  :regex => entry.first, :participant => entry.last)
+      @context.storage.put_msg(
+        'participant_unregistered',
+        'regex' => entry.first.to_s)
     end
   end
 end

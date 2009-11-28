@@ -55,7 +55,7 @@ module Ruote::Exp
 
     def apply
 
-      @context.storage.put_task('cancel_process', 'wfid' => h.fei['wfid'])
+      @context.storage.put_msg('cancel_process', 'wfid' => h.fei['wfid'])
     end
 
     def reply (workitem)

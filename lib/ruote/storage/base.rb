@@ -31,15 +31,15 @@ module Ruote
   module StorageBase
 
     #--
-    # tasks
+    # messages
     #++
 
-    def put_task (action, options)
+    def put_msg (action, options)
 
       # merge! is way faster than merge (no object creation probably)
 
       put(options.merge!(
-        'type' => 'tasks',
+        'type' => 'msgs',
         '_id' => "#{$$}-#{Thread.current.object_id}-#{Time.now.to_f.to_s}",
         'action' => action))
     end
@@ -88,32 +88,32 @@ module Ruote
       []
     end
 
-    def put_at_schedule (owner_fei, at, task)
+    def put_at_schedule (owner_fei, at, msg)
 
       if at < Time.now.utc + 1.0
         #
         # trigger immediately
         #
-        put_task(task.delete('action'), task)
+        put_msg(msg.delete('action'), msg)
         #
       else
         #
         # schedule
         #
-        put_schedule('ats', owner_fei, at, task)
+        put_schedule('ats', owner_fei, at, msg)
       end
     end
 
-    def put_cron_schedule (owner_fei, cron, task)
+    def put_cron_schedule (owner_fei, cron, msg)
 
-      put_schedule('crons', owner_fei, cron, task)
+      put_schedule('crons', owner_fei, cron, msg)
     end
 
     protected
 
-    def put_schedule (type, owner_fei, t, task)
+    def put_schedule (type, owner_fei, t, msg)
 
-      h = { 'type' => type, 'owner' => owner_fei, 'task' => task }
+      h = { 'type' => type, 'owner' => owner_fei, 'msg' => msg }
 
       if type == 'ats'
 
