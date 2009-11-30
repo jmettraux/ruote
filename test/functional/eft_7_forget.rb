@@ -28,7 +28,12 @@ class EftForgetTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = assert_trace pdef, %w[ alpha alpha ], :sleep => 0.500
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+    wait_for(:alpha)
+
+    assert_equal "alpha\nalpha", @tracer.to_s
 
     #logger.log.each { |e| puts e['action'] }
     assert_equal 1, logger.log.select { |e| e['action'] == 'ceased' }.size
