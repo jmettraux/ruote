@@ -21,7 +21,7 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -35,12 +35,13 @@ class FtTagsTest < Test::Unit::TestCase
     assert_equal '0_0', ps.variables['main'].expid
     assert_equal '0_0_0', ps.variables['part'].expid
 
-    assert_equal 2, logger.log.select { |e| e[1] == :entered_tag }.size
+    #logger.log.each { |e| puts e['action'] }
+    assert_equal 2, logger.log.select { |e| e['action'] == 'entered_tag' }.size
 
     alpha.reply(alpha.first)
     wait_for(wfid)
 
-    assert_equal 2, logger.log.select { |e| e[1] == :left_tag }.size
+    assert_equal 2, logger.log.select { |e| e['action'] == 'left_tag' }.size
   end
 
   # making sure a tag is removed in case of on_cancel
@@ -59,7 +60,7 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -70,7 +71,7 @@ class FtTagsTest < Test::Unit::TestCase
     assert_equal 1, @engine.process(wfid).tags.size
 
     fei = alpha.first.fei.dup
-    fei.expid = '0_1_0'
+    fei.h['expid'] = '0_1_0'
     @engine.cancel_expression(fei)
 
     wait_for(:alpha)

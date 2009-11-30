@@ -8,6 +8,7 @@
   ft_4
   ft_5
   ft_6
+  ft_7
 
   eft_0
   eft_1
