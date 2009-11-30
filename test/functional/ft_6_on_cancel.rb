@@ -59,8 +59,9 @@ class FtOnCancelTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
     assert_not_nil ps
 
-    assert_equal 1, logger.log.select { |e| e[0] == :errors }.size
-      # 1 error
+    #logger.log.each { |e| puts e['action'] }
+    assert_equal(
+      1, logger.log.select { |e| e['action'] == 'error_intercepted' }.size)
   end
 
   def test_on_cancel_trigger_subprocess
@@ -107,8 +108,8 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
 
     #noisy
 
@@ -117,7 +118,7 @@ class FtOnCancelTest < Test::Unit::TestCase
     wait_for(:alpha)
 
     fei = alpha.first.fei.dup
-    fei.expid = '0_1'
+    fei.h['expid'] = '0_1'
     @engine.cancel_expression(fei)
 
     wait_for(:bravo)
