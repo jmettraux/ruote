@@ -28,7 +28,12 @@ class EftForgetTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = assert_trace pdef, %w[ alpha alpha ], :sleep => 0.500
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+    wait_for(:alpha)
+
+    assert_equal "alpha\nalpha", @tracer.to_s
 
     assert_equal 2, logger.log.select { |e| e[1] == :terminated }.size
       # process ended 2 times
