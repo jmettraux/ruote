@@ -68,12 +68,12 @@ module Ruote
         name = name[1..-1]
       end
 
-      h = attributes.inject({}) { |h, a|
-        a.is_a?(Hash) ? h.merge!(a) : h[a] = nil
-        h
-      }.inject({}) { |h, (k, v)|
-        h[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
-        h
+      h = attributes.inject({}) { |h1, a|
+        a.is_a?(Hash) ? h1.merge!(a) : h1[a] = nil
+        h1
+      }.inject({}) { |h1, (k, v)|
+        h1[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
+        h1
       }
 
       c = BranchContext.new(name, h)

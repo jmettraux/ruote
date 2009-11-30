@@ -19,7 +19,7 @@ class FtCancelTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -39,8 +39,9 @@ class FtCancelTest < Test::Unit::TestCase
     assert_nil ps
     assert_equal 0, alpha.size
 
-    assert_equal 3, logger.log.select { |e| e[0] == :processes }.size
-    assert_equal 3, logger.log.select { |e| e[1] == :cancel }.size
+    #puts; logger.log.each { |e| p e['action'] }; puts
+    assert_equal 1, logger.log.select { |e| e['action'] == 'cancel_process' }.size
+    assert_equal 2, logger.log.select { |e| e['action'] == 'cancel' }.size
   end
 
   def test_cancel_expression
@@ -52,8 +53,8 @@ class FtCancelTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
 
     #noisy
 

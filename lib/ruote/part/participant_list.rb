@@ -143,7 +143,7 @@ module Ruote
 
     def lookup_info (participant_name)
 
-      re, pa = get_list['list'].find { |re, pa| re.match(participant_name) }
+      re, pa = get_list['list'].find { |rr, pp| rr.match(participant_name) }
 
       case pa
         when nil then nil

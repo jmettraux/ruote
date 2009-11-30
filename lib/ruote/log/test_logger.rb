@@ -117,7 +117,7 @@ module Ruote
         [ fei['wfid'], fei['sub_wfid'], fei['expid'] ].join(' ') :
         msg['wfid']
 
-      rest = event.dup
+      rest = msg.dup
       %w[
         _id type action
         fei wfid workitem variables

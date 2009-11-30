@@ -82,7 +82,7 @@ module Ruote::Exp
 
       o = o.strip if o.is_a?(String)
 
-      not (o == nil || o == false || o == 'false' || o == '')
+      not(o == nil || o == false || o == 'false' || o == '')
     end
 
     def self.compare (m)

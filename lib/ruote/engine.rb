@@ -96,6 +96,15 @@ module Ruote
         'wfid' => wfid)
     end
 
+    def cancel_expression (fei)
+
+      fei = fei.to_h if fei.respond_to?(:to_h)
+
+      @storage.put_msg(
+        'cancel',
+        'fei' => fei)
+    end
+
     # Replays at a given error (hopefully you fixed the cause of the error
     # before replaying...)
     #
