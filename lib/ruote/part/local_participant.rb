@@ -45,7 +45,7 @@ module Ruote
         'receive',
         'fei' => workitem.h.fei,
         'workitem' => workitem.h,
-        'participant' => workitem.participant_name)
+        'participant_name' => workitem.participant_name)
     end
   end
 end

@@ -31,7 +31,8 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
       # making sure the reply to the participant expression is intercepted
       # as well
 
-    assert_equal 2, logger.log.select { |e| e[2][:pname] == 'alpha' }.size
+    assert_equal(
+      2, logger.log.select { |e| e['participant_name'] == 'alpha' }.size)
   end
 
   def test_missing_participant_name
@@ -50,8 +51,10 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
 
     ps = @engine.process(wfid)
 
-    assert_equal 1, ps.errors.size
-    assert_equal 'no participant name specified', ps.errors.first.error_message
+    assert_equal(
+      1, ps.errors.size)
+    assert_equal(
+      '#<ArgumentError: no participant name specified>', ps.errors[0].message)
   end
 
   def test_dot_star
