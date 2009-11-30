@@ -27,7 +27,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_trace(pdef, 'caught')
 
-    assert_equal 1, logger.log.select { |e| e[1] == :on_error }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'fail' }.size
   end
 
   def test_on_error_neutralization
@@ -110,8 +110,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_equal 1, ps.errors.size
 
-    assert_equal 1, logger.log.select { |e| e[1] == :on_error }.size
-    assert_equal 1, logger.log.select { |e| e[0] == :errors }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'error_intercepted' }.size
   end
 
   def test_on_error_at_process_level

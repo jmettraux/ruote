@@ -31,7 +31,7 @@ module Ruote
 
   class Worker
 
-    EXP_ACTIONS = %w[ reply cancel ]
+    EXP_ACTIONS = %w[ reply cancel fail ]
       # 'apply' is comprised in 'launch'
 
     PROC_ACTIONS = %w[ cancel_process kill_process ]
@@ -95,18 +95,10 @@ module Ruote
     def trigger_at (schedule)
 
       msg = schedule['msg']
-      type = schedule['type']
 
-      if type == 'ats'
+      return if @storage.delete(schedule)
 
-        return if @storage.delete(schedule)
-
-        @storage.put_msg(msg.delete('action'), msg)
-
-      else
-
-        raise "implement me !"
-      end
+      @storage.put_msg(msg.delete('action'), msg)
     end
 
     def trigger_cron (schedule)
@@ -152,43 +144,57 @@ module Ruote
 
         notify(msg)
 
-      rescue Exception => e
+      rescue Exception => ex
 
-        #puts "\n== worker intercepted error =="
-        #puts
-        #p e
-        #e.backtrace[0, 10].each { |l| puts l }
-        #puts "..."
-        #puts
-        #puts "-- msg --"
-        #msg.keys.sort.each { |k|
-        #  puts "    #{k.inspect} =>\n#{msg[k].inspect}"
-        #}
-        #puts "-- . --"
-        #puts
-
-        # emit 'msg'
-
-        wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
-
-        @storage.put_msg(
-          'error_intercepted',
-          'message' => e.inspect,
-          'wfid' => wfid,
-          'msg' => msg)
-
-        # fill error in the error journal
-
-        fei = msg['fei'] || (fexp.h.fei rescue nil)
-
-        @storage.put(
-          'type' => 'errors',
-          '_id' => Ruote::FlowExpressionId.to_storage_id(fei),
-          'message' => e.inspect,
-          'trace' => e.backtrace.join("\n"),
-          'msg' => msg
-        ) if fei
+        handle_exception(msg, fexp, ex)
       end
+    end
+
+    def handle_exception (msg, fexp, ex)
+
+      wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
+      fei = msg['fei'] || (fexp.h.fei rescue nil)
+
+      # debug only
+
+      #puts "\n== worker intercepted error =="
+      #puts
+      #p ex
+      #ex.backtrace[0, 10].each { |l| puts l }
+      #puts "..."
+      #puts
+      #puts "-- msg --"
+      #msg.keys.sort.each { |k|
+      #  puts "    #{k.inspect} =>\n#{msg[k].inspect}"
+      #}
+      #puts "-- . --"
+      #puts
+
+      # on_error ?
+
+      if not(fexp) && fei
+        fexp = Ruote::Exp::FlowExpression.fetch(@context, fei)
+      end
+
+      return if fexp && fexp.handle_on_error
+
+      # emit 'msg'
+
+      @storage.put_msg(
+        'error_intercepted',
+        'message' => ex.inspect,
+        'wfid' => wfid,
+        'msg' => msg)
+
+      # fill error in the error journal
+
+      @storage.put(
+        'type' => 'errors',
+        '_id' => Ruote::FlowExpressionId.to_storage_id(fei),
+        'message' => ex.inspect,
+        'trace' => ex.backtrace.join("\n"),
+        'msg' => msg
+      ) if fei
     end
 
     def notify (event)

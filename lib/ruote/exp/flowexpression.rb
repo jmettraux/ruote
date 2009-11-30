@@ -54,6 +54,12 @@ module Ruote::Exp
     h_reader :original_tree
     h_reader :updated_tree
 
+    h_reader :state
+
+    h_reader :on_error
+    h_reader :on_cancel
+    h_reader :on_timeout
+
     def initialize (context, h)
 
       @context = context
@@ -191,15 +197,15 @@ module Ruote::Exp
 
       if state == 'failing' # on_error is implicit (#fail got called)
 
-        trigger_on_error(workitem)
+        trigger('on_error', workitem)
 
       elsif (state == 'cancelling') and h.on_cancel
 
-        trigger_on_cancel(workitem)
+        trigger('on_cancel', workitem)
 
       elsif (state == 'cancelling') and h.on_timeout
 
-        trigger_on_timeout(workitem)
+        trigger('on_timeout', workitem)
 
       else # vanilla reply
 
@@ -307,6 +313,14 @@ module Ruote::Exp
       end
     end
 
+    def do_fail (msg)
+
+      @h['state'] = 'failing'
+      persist
+
+      h.children.each { |i| @context.storage.put_msg('cancel', 'fei' => i) }
+    end
+
     #--
     # misc
     #++
@@ -344,6 +358,43 @@ module Ruote::Exp
       return true if h.parent_id == fei
 
       parent.ancestor?(fei)
+    end
+
+    # Looks up "on_error" attribute
+    #
+    def lookup_on_error
+
+      if @h['on_error']
+        self
+      elsif h.parent_id
+        parent.lookup_on_error
+      else
+        nil
+      end
+    end
+
+    # Looks up parent with on_error attribute and triggers it
+    #
+    def handle_on_error
+
+      return false if h.state == 'failing'
+
+      oe_parent = lookup_on_error
+
+      return false unless oe_parent
+        # no parent with on_error attribute found
+
+      handler = oe_parent.on_error.to_s
+
+      return false if handler == ''
+        # empty on_error handler nullifies ancestor's on_error
+
+      @context.storage.put_msg(
+        'fail',
+        'fei' => oe_parent.h.fei,
+        'error_fei' => h.fei)
+
+      true # yes, error is being handled.
     end
 
     #--
@@ -452,8 +503,8 @@ module Ruote::Exp
 
       # then re-apply
 
-      if on = opts.keys.find { |k| k.match(/^on\_.+/) }
-        tree[1]['_triggered'] = on.to_s
+      if t = opts['trigger']
+        tree[1]['_triggered'] = t.to_s
       end
 
       @context.storage.put_msg(
@@ -468,11 +519,26 @@ module Ruote::Exp
 
     # if any on_cancel handler is present, will trigger it.
     #
-    def trigger_on_cancel (workitem)
+    def trigger (on, workitem)
 
-      tree = h.on_cancel.is_a?(String) ? [ h.on_cancel, {}, [] ] : h.on_cancel
+      hon = h[on]
+      t = hon.is_a?(String) ? [ hon, {}, [] ] : hon
 
-      supplant_with(tree, 'on_cancel' => true)
+      if on == 'on_error'
+
+        if hon == 'redo'
+
+          t = tree
+
+        elsif hon == 'undo'
+
+          h.state = 'failed'
+          reply_to_parent(workitem)
+          return
+        end
+      end
+
+      supplant_with(t, 'trigger' => on)
     end
   end
 
@@ -703,19 +769,6 @@ module Ruote::Exp
     #--
     # ON_CANCEL / ON_ERROR
     #++
-
-    # Looks up an "on_" attribute
-    #
-    def lookup_on (type)
-
-      if self.send("on_#{type}")
-        self
-      elsif @parent_id
-        parent.lookup_on(type)
-      else
-        nil
-      end
-    end
 
     # Only called in case of emergency (when the scheduler persistent data
     # got lost).

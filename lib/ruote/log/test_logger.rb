@@ -123,7 +123,9 @@ module Ruote
         fei wfid workitem variables
       ].each { |k| rest.delete(k) }
 
-      puts "#{'  ' * depth}#{msg['action'][0, 2]} #{i} #{rest.inspect}"
+      action = msg['action'][0, 2]
+
+      puts "#{'  ' * depth}#{action} * #{i} #{rest.inspect}"
     end
   end
 end
