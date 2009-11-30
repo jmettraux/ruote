@@ -327,14 +327,21 @@ module Ruote::Exp
 
     def launch_sub (pos, subtree, opts={})
 
-      fei = h.fei.dup
-      fei['sub_wfid'] = get_next_sub_wfid
-      fei['expid'] = pos
+      i = h.fei.dup
+      i['sub_wfid'] = get_next_sub_wfid
+      i['expid'] = pos
+
+      #p '=== launch_sub ==='
+      #p [ :launcher, h.fei['expid'], h.fei['sub_wfid'], h.fei['wfid'] ]
+      #p [ :launched, i['expid'], i['sub_wfid'], i['wfid'] ]
 
       forget = opts[:forget]
 
-      register_child(fei) unless forget
-        # persists this expression
+      if forget
+        persist
+      else
+        register_child(i) # does persist
+      end
 
       variables = (
         forget ? compile_variables : {}
@@ -342,7 +349,7 @@ module Ruote::Exp
 
       @context.storage.put_msg(
         'launch',
-        'fei' => fei,
+        'fei' => i,
         'parent_id' => forget ? nil : h.fei,
         'tree' => subtree,
         'workitem' => h.applied_workitem,
@@ -466,7 +473,18 @@ module Ruote::Exp
       last_sub_wfid = h.last_sub_wfid || 0
       h.last_sub_wfid = last_sub_wfid + 1
 
-      "#{h.fei['expid']}s#{last_sub_wfid}"
+      #persist
+        # no need here, it's done in launch sub
+
+      a = [ last_sub_wfid ]
+
+      if swi = h.fei['sub_wfid']
+        a.unshift(swi.split('s').first)
+      end
+
+      a.unshift(h.fei['expid'])
+
+      a.join('s')
     end
 
     def register_child (fei)

@@ -26,14 +26,15 @@ class FtSubprocessesTest < Test::Unit::TestCase
       end
     end
 
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
 
     #noisy
 
     wfid = @engine.launch(pdef)
     wait_for(:bravo)
 
-    fexp = @engine.expstorage[bravo.first.fei]
+    fexp = Ruote::Exp::FlowExpression.fetch(
+      @engine.context, bravo.first.fei.to_h)
 
     assert_equal(
       [ '0_0',
@@ -43,13 +44,15 @@ class FtSubprocessesTest < Test::Unit::TestCase
     bravo.reply(bravo.first)
     wait_for(:bravo)
 
-    fexp = @engine.expstorage[bravo.first.fei]
+    fexp = Ruote::Exp::FlowExpression.fetch(
+      @engine.context, bravo.first.fei.to_h)
 
     assert_equal(
       ['define', {'sub0'=>nil}, [['bravo', {}, []], ['echo', {'result : ${v:nada}'=>nil}, []]]],
       fexp.parent.tree)
 
-    assert_equal 1, logger.log.select { |e| e[1] == :launch_sub }.size
+    #logger.log.each { |e| puts e['action'] }
+    assert_equal 2, logger.log.select { |e| e['action'] == 'launch' }.size
   end
 
   def test_next_sub_wfid
@@ -77,9 +80,12 @@ class FtSubprocessesTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.500
+    wait_for(:alpha)
+    wait_for(:alpha)
 
-    assert_equal 2, wfids.uniq.size
+    #Thread.pass # giving a bit of time
+
+    assert_equal ["0_0_0s0_2_0s0", "0_0_0s0_2_1s0"], wfids.sort
   end
 
   def test_cancel_and_subprocess
@@ -93,7 +99,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
 
@@ -120,7 +126,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
