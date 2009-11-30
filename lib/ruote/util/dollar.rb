@@ -162,7 +162,7 @@ module Ruote
         # some simple notations made available to ${ruby:...}
         # notations
 
-      @fexp.context[:s_treechecker].check(ruby_code)
+      @fexp.context.treechecker.check(ruby_code)
 
       # clear for eval...
 

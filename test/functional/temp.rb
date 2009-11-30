@@ -11,6 +11,7 @@
   ft_7
   ft_8
   ft_9
+  ft_10
 
   eft_0
   eft_1
