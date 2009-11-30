@@ -52,11 +52,10 @@ module Ruote
 
     def add_service (key, path, klass)
 
-      return unless klass
-
-      require(path)
-
-      @conf[key] = Ruote.constantize(klass).new(self)
+      if klass
+        require(path)
+        @conf[key] = Ruote.constantize(klass).new(self)
+      end
 
       self.class.class_eval %{ def #{key[2..-1]}; @conf['#{key}']; end }
     end
