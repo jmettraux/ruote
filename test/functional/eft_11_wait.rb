@@ -46,7 +46,7 @@ class EftWaitTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.300
+    wait_for(4)
 
     @engine.cancel_process(wfid)
 
@@ -88,7 +88,7 @@ class EftWaitTest < Test::Unit::TestCase
     assert_trace pdef, 'done.'
 
     #p ts
-    assert ts[1] - ts[0] > 1.0
+    assert ts[1] - ts[0] > 1.0, "#{ts[1] - ts[0]} should be > 1.0"
   end
 end
 

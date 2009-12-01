@@ -19,7 +19,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       @tracer << 'alpha'
     end
 
-    sleep 0.100
+    wait_for(1)
 
     msg = logger.log.last
     assert_equal 'participant_registered', msg['action']
@@ -47,7 +47,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     @engine.unregister_participant :alpha
 
-    sleep 0.100
+    wait_for(2)
 
     msg = logger.log.last
     assert_equal 'participant_unregistered', msg['action']
@@ -63,7 +63,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     @engine.unregister_participant pa
 
-    sleep 0.100
+    wait_for(2)
 
     msg = logger.log.last
     assert_equal 'participant_unregistered', msg['action']

@@ -33,6 +33,7 @@ class EftForgetTest < Test::Unit::TestCase
     wait_for(:alpha)
     wait_for(:alpha)
     wait_for(wfid)
+    wait_for(wfid)
 
     assert_equal "alpha\nalpha", @tracer.to_s
 

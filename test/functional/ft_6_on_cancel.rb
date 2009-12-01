@@ -126,42 +126,6 @@ class FtOnCancelTest < Test::Unit::TestCase
     assert_equal 1, bravo.size
   end
 
-  #def test_on_cancel_and_last_payload
-  #  pdef = Ruote.process_definition do
-  #    sequence :on_cancel => 'decom' do
-  #      set 'f:toto' => 'nada'
-  #      cancel_process
-  #    end
-  #    define 'decom' do
-  #      echo '|${f:toto}|'
-  #    end
-  #  end
-  #  #noisy
-  #  assert_trace pdef, '|nada|'
-  #end
-
-  #def test_on_cancel_wait
-  #  pdef = Ruote.process_definition do
-  #    sequence :on_cancel => 'decom' do
-  #      echo 'nada'
-  #      wait '2d'
-  #    end
-  #    define 'decom' do
-  #      echo 'decom'
-  #    end
-  #  end
-  #  require 'ruote/part/null_participant'
-  #  @engine.register_participant '.*', Ruote::NullParticipant
-  #  #noisy
-  #  wfid = @engine.launch(pdef)
-  #  sleep 0.4
-  #  @engine.cancel_process(wfid)
-  #  wait_for(wfid)
-  #  assert_equal "nada\ndecom", @tracer.to_s
-  #  assert_equal 0, @engine.scheduler.jobs.size
-  #  assert_equal nil, @engine.process(wfid)
-  #end
-
   def test_on_cancel_subprocess
 
     pdef = Ruote.process_definition :name => 'test' do

@@ -160,9 +160,10 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wi = run_concurrence({ :merge_type => :isolate }, false)
 
-    assert_equal(
-      {1=>{"seen"=>"0_0_0_1"}, 0=>{"seen"=>"0_0_0_0"}, "params"=>{"ref"=>"alpha"}},
-      wi.fields)
+    assert_equal(%w[ 0 1 params ], wi.fields.keys.collect { |k| k.to_s }.sort)
+    assert_equal({ 'ref' => 'alpha' }, wi.fields['params'])
+    assert_equal(%w[ seen ], wi.fields[0].keys)
+    assert_equal(%w[ seen ], wi.fields[1].keys)
   end
 
   # helper
@@ -241,6 +242,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
+    wait_for(:alpha)
     wait_for(:alpha)
 
     assert_equal 2, alpha.size
