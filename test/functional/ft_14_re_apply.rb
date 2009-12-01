@@ -22,7 +22,7 @@ class FtReApplyTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -60,7 +60,7 @@ class FtReApplyTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -75,7 +75,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
     stalled_exp = ps.expressions.find { |fexp| fexp.fei.expid == '0_0_0' }
 
-    @engine.re_apply(stalled_exp.fei, true)
+    @engine.re_apply(stalled_exp.fei)
 
     wait_for(:alpha)
 
@@ -98,7 +98,7 @@ class FtReApplyTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
