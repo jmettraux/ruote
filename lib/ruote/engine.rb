@@ -82,27 +82,24 @@ module Ruote
 
     def cancel_process (wfid)
 
-      @storage.put_msg(
-        'cancel_process',
-        'wfid' => wfid)
+      @storage.put_msg('cancel_process', 'wfid' => wfid)
     end
 
     def kill_process (wfid)
 
-      raise "wire me !"
-
-      @storage.put_msg(
-        'kill_process',
-        'wfid' => wfid)
+      @storage.put_msg('kill_process', 'wfid' => wfid)
     end
 
     def cancel_expression (fei)
 
       fei = fei.to_h if fei.respond_to?(:to_h)
+      @storage.put_msg('cancel', 'fei' => fei)
+    end
 
-      @storage.put_msg(
-        'cancel',
-        'fei' => fei)
+    def kill_expression (fei)
+
+      fei = fei.to_h if fei.respond_to?(:to_h)
+      @storage.put_msg('cancel', 'fei' => fei, 'flavour' => 'kill')
     end
 
     # Replays at a given error (hopefully you fixed the cause of the error

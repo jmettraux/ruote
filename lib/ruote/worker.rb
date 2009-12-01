@@ -313,16 +313,16 @@ module Ruote
 
       return unless root
 
+      flavour = (msg['action'] == 'kill_process') ? 'kill' : nil
+
       @storage.put_msg(
         'cancel',
         'fei' => root['fei'],
-        'wfid' => msg['wfid']) # indicates this was triggered by cancel_process
+        'wfid' => msg['wfid'], # indicates this was triggered by cancel_process
+        'flavour' => flavour)
     end
 
-    def kill_process (msg)
-
-      raise "implement me !"
-    end
+    alias :kill_process :cancel_process
   end
 end
 

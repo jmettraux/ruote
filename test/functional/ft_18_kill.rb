@@ -19,7 +19,7 @@ class FtKillTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -35,7 +35,7 @@ class FtKillTest < Test::Unit::TestCase
     assert_equal 0, alpha.size
 
     assert_equal(
-      1, logger.log.select { |e| e[0] == :processes && e[1] == :kill }.size)
+      1, logger.log.select { |e| e['action'] == 'kill_process' }.size)
   end
 
   def test_kill_does_not_trigger_on_cancel
@@ -46,8 +46,8 @@ class FtKillTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    catcher = @engine.register_participant :catcher, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    catcher = @engine.register_participant :catcher, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
@@ -68,8 +68,8 @@ class FtKillTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    catcher = @engine.register_participant :catcher, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    catcher = @engine.register_participant :catcher, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
