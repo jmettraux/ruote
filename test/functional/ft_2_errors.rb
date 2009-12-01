@@ -232,7 +232,7 @@ class FtErrorsTest < Test::Unit::TestCase
     err = ps.errors.first
 
     assert_equal wfid, err.fei.wfid
-    assert_equal '0_1_0s0', err.fei.sub_wfid
+    assert_not_nil err.fei.sub_wfid
 
     @engine.replay_at_error(err)
 

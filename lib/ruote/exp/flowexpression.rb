@@ -340,11 +340,7 @@ module Ruote::Exp
 
       forget = opts[:forget]
 
-      if forget
-        persist
-      else
-        register_child(i) # does persist
-      end
+      register_child(i) unless forget
 
       variables = (
         forget ? compile_variables : {}
@@ -374,7 +370,7 @@ module Ruote::Exp
     #
     def lookup_on_error
 
-      if @h['on_error']
+      if h.on_error
         self
       elsif h.parent_id
         parent.lookup_on_error
@@ -471,23 +467,17 @@ module Ruote::Exp
         'forgotten' => forget)
     end
 
+    # Generates a sub_wfid, without hitting storage.
+    #
+    # There's a better implementation for sure...
+    #
     def get_next_sub_wfid
 
-      last_sub_wfid = h.last_sub_wfid || 0
-      h.last_sub_wfid = last_sub_wfid + 1
+      i = [
+        $$, Time.now.to_f.to_s, self.hash.to_s, @h['fei'].inspect
+      ].join('-').hash
 
-      #persist
-        # no need here, it's done in launch sub
-
-      a = [ last_sub_wfid ]
-
-      if swi = h.fei['sub_wfid']
-        a.unshift(swi.split('s').first)
-      end
-
-      a.unshift(h.fei['expid'])
-
-      a.join('s')
+      (i < 0 ? "1#{i * -1}" : "0#{i}").to_s
     end
 
     def register_child (fei)

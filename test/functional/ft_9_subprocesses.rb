@@ -85,7 +85,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
 
     #Thread.pass # giving a bit of time
 
-    assert_equal ["0_0_0s0_2_0s0", "0_0_0s0_2_1s0"], wfids.sort
+    assert_equal 2, wfids.sort.uniq.size
   end
 
   def test_cancel_and_subprocess

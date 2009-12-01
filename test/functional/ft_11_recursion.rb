@@ -7,17 +7,18 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
+require 'ruote/part/local_participant'
+
 
 class FtRecursionTest < Test::Unit::TestCase
   include FunctionalBase
 
   class CountingParticipant
-    include Ruote::EngineContext
     include Ruote::LocalParticipant
 
     attr_reader :wfids
 
-    def initialize (opts)
+    def initialize
 
       @wfids = []
     end
@@ -29,7 +30,7 @@ class FtRecursionTest < Test::Unit::TestCase
       workitem.fields['count'] ||= 0
       workitem.fields['count'] = workitem.fields['count'] + 1
 
-      @context[:s_tracer] << workitem.fields['count'].to_s + "\n"
+      @context.tracer << workitem.fields['count'].to_s + "\n"
 
       if workitem.fields['count'] > 5
         engine.cancel_process(workitem.fei.parent_wfid)
@@ -51,7 +52,7 @@ class FtRecursionTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, CountingParticipant
+    alpha = @engine.register_participant :alpha, CountingParticipant.new
 
     #noisy
 
@@ -76,11 +77,12 @@ class FtRecursionTest < Test::Unit::TestCase
       sub0
     end
 
-    alpha = @engine.register_participant :alpha, CountingParticipant
+    alpha = @engine.register_participant :alpha, CountingParticipant.new
 
     #noisy
 
-    assert_trace(pdef, %w[ 1 2 3 4 5 6 ], :ignore_remaining_expressions => true)
+    #assert_trace(pdef, %w[ 1 2 3 4 5 6 ], :ignore_remaining_expressions => true)
+    assert_trace pdef, %w[ 1 2 3 4 5 6 ]
 
     alpha.wfids.each_with_index { |wfid, i|
       assert_match(/.*\_\d+#{i}$/, wfid)
@@ -100,7 +102,7 @@ class FtRecursionTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, CountingParticipant
+    alpha = @engine.register_participant :alpha, CountingParticipant.new
 
     #noisy
 
