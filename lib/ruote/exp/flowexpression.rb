@@ -102,8 +102,7 @@ module Ruote::Exp
 
     def persist
 
-      r = @context.storage.put(@h)
-      raise "persist, new:#{@h['_rev']} / current:#{r['_rev']}" unless r.nil?
+      @context.storage.put(@h)
     end
 
     def unpersist

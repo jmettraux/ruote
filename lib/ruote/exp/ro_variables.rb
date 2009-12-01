@@ -149,9 +149,24 @@ module Ruote::Exp
         h.variables.delete(var)
       end
 
-      persist
+      r = persist
 
-      #wqueue.emit(:variables, op, :var => var, :fei => @fei)
+      if r != nil
+        #
+        # persist failed, have to retry
+
+        @h = r
+        un_set_variable(op, var, val)
+
+      else
+        #
+        # success
+
+        @context.storage.put_msg(
+          "variable_#{op}",
+          'var' => var,
+          'fei' => h.fei)
+      end
     end
 
     VAR_PREFIX_REGEX = /^(\/*)/

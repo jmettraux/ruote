@@ -39,10 +39,12 @@ class FtVariablesTest < Test::Unit::TestCase
 
     assert_trace(pdef, 'done.')
 
+    #logger.log.each { |e| p e }
+
     assert_equal(
-      1, logger.log.select { |e| e[0] == :variables && e[1] == :set }.size)
+      1, logger.log.select { |e| e['action'] == 'variable_set' }.size)
     assert_equal(
-      1, logger.log.select { |e| e[0] == :variables && e[1] == :unset }.size)
+      1, logger.log.select { |e| e['action'] == 'variable_unset' }.size)
   end
 
   def test_process_root_variables
@@ -85,7 +87,7 @@ class FtVariablesTest < Test::Unit::TestCase
     assert_trace(pdef, %w[ a0: b0:b0 done. ])
 
     assert_equal(
-      2, logger.log.select { |e| e[0] == :variables && e[1] == :set }.size)
+      1, logger.log.select { |e| e['action'] == 'variable_set' }.size)
   end
 
   # A test about a protected method in FlowExpression, quite low level.
@@ -111,17 +113,19 @@ class FtVariablesTest < Test::Unit::TestCase
       end
 
       results << fexp.locate_var('//a')
-      results << fexp.locate_var('/a').first.fei.brief
-      results << fexp.locate_var('a').first.fei.brief
+      results << fexp.locate_var('/a').first.fei.to_storage_id
+      results << fexp.locate_var('a').first.fei.to_storage_id
     end
 
     #noisy
 
     assert_trace pdef, 'done.'
 
+    #p results
+
     assert_equal(nil, results[0])
-    assert_equal('/0', results[1])
-    assert_match(/^\d+00\/0\_0$/, results[2])
+    assert_match(/^0||\d+_\d+$/, results[1])
+    assert_match(/^0\_0|\d+|\d+_\d+$/, results[2])
   end
 end
 
