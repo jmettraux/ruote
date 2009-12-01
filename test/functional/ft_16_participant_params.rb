@@ -23,7 +23,7 @@ class FtParticipantParamsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -40,6 +40,8 @@ class FtParticipantParamsTest < Test::Unit::TestCase
     wait_for(:alpha)
     assert_equal({ 'ref' => 'alpha' }, alpha.first.fields['params'])
     alpha.reply(alpha.first)
+
+    wait_for(wfid)
   end
 end
 
