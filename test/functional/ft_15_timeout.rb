@@ -22,13 +22,13 @@ class FtTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
 
-    #noisy
+    noisy
 
     wfid = @engine.launch(pdef)
-    sleep 1.5
+    wait_for(4)
 
     assert_equal 0, alpha.size
     assert_equal 1, bravo.size
@@ -47,8 +47,8 @@ class FtTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
 
     #noisy
 
@@ -73,7 +73,7 @@ class FtTimeoutTest < Test::Unit::TestCase
       alpha :timeout => '500', :on_timeout => 'redo'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -100,7 +100,7 @@ class FtTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 
@@ -119,7 +119,7 @@ class FtTimeoutTest < Test::Unit::TestCase
       alpha :timeout => '500', :on_timeout => 'error'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy
 

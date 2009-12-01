@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'ruote/util/time'
 require 'ruote/util/ometa'
 require 'ruote/util/dollar'
 require 'ruote/util/hashdot'
@@ -292,7 +293,7 @@ module Ruote::Exp
 
       h.applied_workitem['fields']['__timed_out__'] = [
         h.fei, Ruote.now_utc_to_s
-      ] if h.state == :timing_out
+      ] if h.state == 'timing_out'
 
       cancel(flavour)
     end
@@ -498,9 +499,15 @@ module Ruote::Exp
 
     def consider_timeout
 
-      if timeout = attribute(:timeout)
-        raise "implement me !"
-      end
+      timeout = attribute(:timeout)
+
+      return unless timeout
+
+      # for and at
+
+      # if there is a space, it's an at probably...
+
+      p timeout
     end
 
     # (Called by trigger_on_cancel & co)

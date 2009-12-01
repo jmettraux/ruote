@@ -50,35 +50,19 @@ module Ruote::Exp
 
     def apply
 
-      sfor = attribute(:for) || attribute_text
-      suntil = attribute(:until)
+      h.for = attribute(:for) || attribute_text
+      h.until = attribute(:until)
 
-      h.until = if suntil
+      s = h.for
+      s = h.until if s == ''
 
-        Rufus.to_ruby_time(suntil)# rescue nil
+      h.at = Ruote.s_to_at(s) if s
 
-      elsif sfor
-
-        duration = sfor.index('.') ? sfor.to_f : Rufus.parse_time_string(sfor)
-
-        Time.now.utc.to_f + duration
-
-      else
-
-        nil
-      end
-
-      h.until = case h.until
-        when DateTime then h.until.to_time.utc
-        when Float then Time.at(h.until).utc
-        else h.until
-      end
-
-      if h.until && h.until > Time.now.utc + 1.0
+      if h.at && h.at > Time.now.utc + 1.0
 
         h.job_id = @context.storage.put_at_schedule(
           h.fei,
-          h.until,
+          h.at,
           'action' => 'reply',
           'fei' => h.fei,
           'workitem' => h.applied_workitem)

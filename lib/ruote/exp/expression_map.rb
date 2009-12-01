@@ -32,22 +32,6 @@ end
 require 'ruote/exp/flowexpression'
 require 'ruote/exp/raw'
 
-require 'rufus/scheduler' # for the time expressions
-
-
-unless DateTime.instance_methods.include?(:to_time)
-  #
-  # Ruby 1.9.1 has it, but not 1.8.x, so adding it...
-  #
-  class DateTime
-    def to_time
-      new_offset(0).instance_eval {
-        Time.utc(year, mon, mday, hour, min, sec + sec_fraction)
-      }.getlocal
-    end
-  end
-end
-
 
 exppath = File.dirname(__FILE__)
 
