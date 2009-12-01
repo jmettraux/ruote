@@ -30,15 +30,6 @@ require 'ruote/util/hashdot'
 
 module Ruote::Exp
 
-  ##
-  ## A simple timeout error. Only used when :on_timeout => 'error' for now.
-  ##
-  #class TimeoutError < RuntimeError
-  #  def backtrace
-  #    [ '---' ]
-  #  end
-  #end
-
   #
   # TODO : document me
   #
@@ -192,8 +183,9 @@ module Ruote::Exp
           'left_tag', 'tag' => h.tagname, 'fei' => h.fei)
       end
 
-      if h.timeout_job_id
-        raise "unschedule timeout job !!!!"
+      if h.timeout_schedule_id && h.state != 'timing_out'
+
+        @context.storage.delete_at_schedule(h.timeout_schedule_id)
       end
 
       state = h.state
@@ -206,7 +198,7 @@ module Ruote::Exp
 
         trigger('on_cancel', workitem)
 
-      elsif (state == 'cancelling') and h.on_timeout
+      elsif (state == 'timing_out') and h.on_timeout
 
         trigger('on_timeout', workitem)
 
@@ -292,7 +284,7 @@ module Ruote::Exp
       end
 
       h.applied_workitem['fields']['__timed_out__'] = [
-        h.fei, Ruote.now_utc_to_s
+        h.fei, Ruote.now_to_utc_s
       ] if h.state == 'timing_out'
 
       cancel(flavour)
@@ -497,17 +489,30 @@ module Ruote::Exp
       end
     end
 
+    # Called by do_apply. Overriden in ParticipantExpression.
+    #
     def consider_timeout
 
-      timeout = attribute(:timeout)
+      do_schedule_timeout(attribute(:timeout))
+    end
+
+    # Called by consider_timeout (FlowExpression) and schedule_timeout
+    # (ParticipantExpression).
+    #
+    def do_schedule_timeout (timeout)
 
       return unless timeout
 
-      # for and at
+      h.timeout_at = Ruote.s_to_at(timeout)
 
-      # if there is a space, it's an at probably...
+      return if not(h.timeout_at) || h.timeout_at < Time.now.utc + 1.0
 
-      p timeout
+      h.timeout_schedule_id = @context.storage.put_at_schedule(
+        h.fei,
+        h.timeout_at,
+        'action' => 'cancel',
+        'fei' => h.fei,
+        'flavour' => 'timeout')
     end
 
     # (Called by trigger_on_cancel & co)
@@ -552,6 +557,13 @@ module Ruote::Exp
           h.state = 'failed'
           reply_to_parent(workitem)
           return
+        end
+
+      elsif on == 'on_timeout'
+
+        if hon == 'redo'
+
+          t = tree
         end
       end
 

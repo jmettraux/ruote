@@ -109,6 +109,18 @@ module Ruote
       put_schedule('crons', owner_fei, cron, msg)
     end
 
+    def delete_at_schedule (schedule_id)
+
+      s = get('ats', schedule_id)
+      delete(s) if s
+    end
+
+    def delete_cron_schedule (schedule_id)
+
+      s = get('crons', schedule_id)
+      delete(s) if s
+    end
+
     protected
 
     def put_schedule (type, owner_fei, t, msg)

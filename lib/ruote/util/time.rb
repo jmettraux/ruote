@@ -41,6 +41,28 @@ end
 
 module Ruote
 
+  # Produces the UTC string representation of a Time
+  #
+  # like "2009/11/23 11:11:50.947109 UTC"
+  #
+  def self.time_to_utc_s (t)
+
+    "#{t.utc.strftime('%Y/%m/%d %H:%m:%S')}.#{t.usec} UTC"
+  end
+
+  # Returns a parsable representation of the UTC time now.
+  #
+  # like "2009/11/23 11:11:50.947109 UTC"
+  #
+  def self.now_to_utc_s
+
+    time_to_utc_s(Time.now)
+  end
+
+  # Turns a date or a duration to a Time object pointing AT a point in time...
+  #
+  # (my prose is weak)
+  #
   def self.s_to_at (s)
 
     at = if s.index(' ')

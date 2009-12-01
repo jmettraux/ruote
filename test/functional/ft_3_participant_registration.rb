@@ -48,6 +48,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     @engine.unregister_participant :alpha
 
     wait_for(2)
+    Thread.pass
 
     msg = logger.log.last
     assert_equal 'participant_unregistered', msg['action']

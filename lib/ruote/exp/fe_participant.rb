@@ -178,41 +178,6 @@ module Ruote::Exp
 
     protected
 
-    #def dispatch_to (participant)
-    #  @context.storage.put_task(
-    #    'dispatched',
-    #    'participant_name' => h.participant_name,
-    #    'workitem' => wi)
-    #  if participant.respond_to?(:do_not_thread) and participant.do_not_thread
-    #    do_dispatch(participant)
-    #    return
-    #  end
-    #  block = lambda {
-    #    begin
-    #      do_dispatch(participant)
-    #    rescue Exception => e
-    #      p e
-    #      e.backtrace.each { |l| puts l }
-    #      pool.send(
-    #        :handle_exception,
-    #        :apply,
-    #        { :fei => @fei, :workitem => @applied_workitem },
-    #        e)
-    #    end
-    #  }
-    #  t = Thread.new(&block)
-    #  t[:name] = "dispatching to '#{h.participant_name}'"
-    #end
-
-    #def do_dispatch (participant)
-    #  wi = Ruote::Workitem.new(h.applied_workitem.dup)
-    #  participant.consume(wi)
-    #  @context.storage.put_task(
-    #    'dispatched',
-    #    'participant_name' => h.participant_name,
-    #    'workitem' => wi)
-    #end
-
     # Overriden with an empty behaviour. The work is now done a bit later
     # via the #schedule_timeout method.
     #
@@ -226,21 +191,12 @@ module Ruote::Exp
     #
     def schedule_timeout (p_info)
 
-      # TODO : timeout at case (Andrew)
-
       timeout =
         attribute(:timeout) ||
         (p_info.respond_to?(:timeout) ? p_info.timeout : nil) ||
         (p_info.is_a?(Array) ? p_info.last['timeout'] : nil)
 
-      return unless timeout
-
-      j = scheduler.in(timeout, @fei, :cancel)
-
-      #@timeout_at = j.at
-      #@timeout_job_id = j.job_id
-
-      raise "finish me !"
+      do_schedule_timeout(timeout)
     end
   end
 end
