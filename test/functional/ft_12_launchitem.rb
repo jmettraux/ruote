@@ -30,7 +30,7 @@ class FtLaunchitemTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_equal('a', @tracer.to_s)
-    assert_equal({ 'a' => 0, 'b' => 1 }, fields)
+    assert_equal({"a"=>0, "b"=>1, "params"=>{"ref"=>"alpha"}}, fields)
   end
 
   def test_launchitem
