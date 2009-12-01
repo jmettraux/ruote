@@ -92,9 +92,19 @@ module Ruote
         action = msg['action']
 
         over = if interest.is_a?(Symbol) # participant
+
           (action == 'dispatch' &&
            msg['participant_name'] == interest.to_s)
+
+        elsif interest.is_a?(Fixnum)
+
+          interest = interest - 1
+          @waiting = [ thread, interest ]
+
+          (interest < 1)
+
         else # wfid
+
           %w[ terminated ceased error_intercepted ].include?(action) &&
           msg['wfid'] == interest
         end
