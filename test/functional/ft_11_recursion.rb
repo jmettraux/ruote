@@ -25,7 +25,7 @@ class FtRecursionTest < Test::Unit::TestCase
 
     def consume (workitem)
 
-      @wfids << workitem.fei.wfid
+      @wfids << "#{workitem.fei.wfid}|#{workitem.fei.sub_wfid}"
 
       workitem.fields['count'] ||= 0
       workitem.fields['count'] = workitem.fields['count'] + 1
@@ -33,7 +33,7 @@ class FtRecursionTest < Test::Unit::TestCase
       @context.tracer << workitem.fields['count'].to_s + "\n"
 
       if workitem.fields['count'] > 5
-        engine.cancel_process(workitem.fei.parent_wfid)
+        @context.engine.cancel_process(workitem.fei.wfid)
       else
         reply_to_engine(workitem)
       end
@@ -58,9 +58,7 @@ class FtRecursionTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ 1 2 3 4 5 6 ])
 
-    alpha.wfids[1..-1].each_with_index { |wfid, i|
-      assert_match(/.*\_\d+#{i}$/, wfid)
-    }
+    #p alpha.wfids.uniq
 
     assert_equal 6, alpha.wfids.uniq.size
   end
@@ -84,9 +82,7 @@ class FtRecursionTest < Test::Unit::TestCase
     #assert_trace(pdef, %w[ 1 2 3 4 5 6 ], :ignore_remaining_expressions => true)
     assert_trace pdef, %w[ 1 2 3 4 5 6 ]
 
-    alpha.wfids.each_with_index { |wfid, i|
-      assert_match(/.*\_\d+#{i}$/, wfid)
-    }
+    #p alpha.wfids.uniq
 
     assert_equal 6, alpha.wfids.uniq.size
   end
