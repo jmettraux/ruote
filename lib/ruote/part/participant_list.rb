@@ -45,16 +45,14 @@ module Ruote
     #
     # Called by the register_participant method of the engine.
     #
-    def register (name, participant, options, block)
+    def register (name, participant, options, block, list=nil)
 
-      #options[:participant_name] = name
+      list ||= get_list
 
       options = options.inject({}) { |h, (k, v)|
         h[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
         h
       }
-
-      list = get_list
 
       entry = if participant.is_a?(Class)
         [ participant.to_s, options ]
@@ -72,12 +70,12 @@ module Ruote
         else raise "cannot insert participant at position '#{position}'"
       end
 
-      if @context.storage.put(list)
+      if r = @context.storage.put(list)
         #
         # if put returns something it means the put failed, have to redo the
         # work...
         #
-        return register(name, participant, options, block)
+        return register(name, participant, options, block, r)
       end
 
       if entry.last.is_a?(String)
@@ -97,19 +95,19 @@ module Ruote
     # Removes a participant, given via its name or directly from this
     # participant list.
     #
-    def unregister (name_or_participant)
+    def unregister (name_or_participant, list=nil)
+
+      list ||= get_list
 
       code = nil
       entry = nil
-
-      list_doc = get_list
 
       name_or_participant = name_or_participant.to_s \
         if name_or_participant.is_a?(Symbol)
 
       if name_or_participant.is_a?(String)
 
-        entry = list_doc['list'].find { |re, pa| re.match(name_or_participant) }
+        entry = list['list'].find { |re, pa| re.match(name_or_participant) }
 
         return nil unless entry
 
@@ -125,16 +123,18 @@ module Ruote
 
         code = code.first
 
-        entry = list_doc['list'].find { |re, pa| pa == code }
+        entry = list['list'].find { |re, pa| pa == code }
 
       end
 
-      list_doc['list'].delete(entry)
+      list['list'].delete(entry)
 
-      r = @context.storage.put(list_doc)
-
-      return nil if r
-        # put failed
+      if r = @context.storage.put(list)
+        #
+        # put failed, have to redo it
+        #
+        return unregister(name_or_participant, r)
+      end
 
       @instantiated_participants.delete(code) if code
 

@@ -58,6 +58,16 @@ module Ruote
     end
 
     #--
+    # trackers
+    #++
+
+    def get_trackers
+
+      get('misc', 'trackers') ||
+        { '_id' => 'trackers', 'type' => 'misc', 'trackers' => {} }
+    end
+
+    #--
     # ats and crons
     #++
 

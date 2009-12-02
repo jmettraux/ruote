@@ -40,7 +40,7 @@ module Ruote
         #
         # this is a worker context, DO log
         #
-        @context.worker.subscribe(:all, :all, self)
+        @context.worker.subscribe(:all, self)
       else
         #
         # this is not a worker context, DO NOT log, but be ready to
@@ -60,7 +60,7 @@ module Ruote
 
       #@context.storage.put(event.merge('type' => 'archived_msgs'))
 
-      pretty_print(msg) if @context[:noisy]
+      puts(pretty_print(msg)) if @context[:noisy]
 
       @seen << msg
       @log << msg
@@ -75,6 +75,13 @@ module Ruote
       check_waiting
 
       Thread.stop if @waiting
+    end
+
+    # Debug only : dumps all the seen events to STDOUTS
+    #
+    def dump
+
+      @seen.collect { |msg| pretty_print(msg) }.join("\n")
     end
 
     protected
@@ -134,8 +141,9 @@ module Ruote
       ].each { |k| rest.delete(k) }
 
       action = msg['action'][0, 2]
+      action = 'rc' if msg['action'] == 'receive'
 
-      puts "#{'  ' * depth}#{action} * #{i} #{rest.inspect}"
+      "#{'  ' * depth}#{action} * #{i} #{rest.inspect}"
     end
   end
 end

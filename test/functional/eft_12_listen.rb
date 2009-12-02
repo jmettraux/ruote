@@ -31,9 +31,10 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "alpha\n"
     end
 
-    assert_trace(pdef, %w[ alpha 1 ])
-
-    assert_equal(0, @engine.tracker.send(:listeners).size)
+    assert_trace(
+      pdef, %w[ alpha 1 ])
+    assert_equal(
+      0, @engine.context.storage.get('misc', 'trackers')['trackers'].size)
   end
 
   def test_listen_with_child
@@ -56,13 +57,15 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "a\n"
     end
     @engine.register_participant :bravo do |workitem|
-      @tracer << workitem.fei.wfid
+      @tracer << "#{workitem.fei.wfid}|#{workitem.fei.sub_wfid}"
       @tracer << "\n"
     end
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.750
+    wait_for(:bravo)
+    wait_for(:bravo)
+    wait_for(1)
 
     #p @tracer.to_s
 
@@ -71,15 +74,15 @@ class EftListenTest < Test::Unit::TestCase
     assert_equal 2, a.select { |e| e == 'a' }.size
 
     a = (a - [ 'a', 'a' ]).sort
-    assert_match(/^#{wfid}\_\d+0$/, a[0])
-    assert_match(/^#{wfid}\_\d+1$/, a[1])
+    assert_equal 2, a.uniq.size
 
     ps = @engine.process(wfid)
 
     assert_equal 3, ps.expressions.size
     assert_equal 0, ps.errors.size
 
-    assert_equal(1, @engine.tracker.send(:listeners).size)
+    assert_equal(
+      1, @engine.context.storage.get('misc', 'trackers')['trackers'].size)
   end
 
   def test_upon
@@ -172,9 +175,13 @@ class EftListenTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 1.7
+    wait_for(:alpha)
+    wait_for(:alpha)
+    wait_for(wfid) # ceased
 
     assert_equal %w[ alpha alpha toto ].join("\n"), @tracer.to_s
+    assert_equal 3, @engine.process(wfid).expressions.size
+    assert_equal 'ceased', @engine.context.logger.log.last['action']
   end
 
   def test_listen_cancel
@@ -185,15 +192,17 @@ class EftListenTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.500
+    wait_for(2)
 
-    assert_equal(1, @engine.tracker.send(:listeners).size)
+    assert_equal(
+      1, @engine.context.storage.get('misc', 'trackers')['trackers'].size)
 
     @engine.cancel_process(wfid)
 
     wait_for(wfid)
 
-    assert_equal(0, @engine.tracker.send(:listeners).size)
+    assert_equal(
+      0, @engine.context.storage.get('misc', 'trackers')['trackers'].size)
   end
 
   def test_cross
@@ -245,7 +254,7 @@ class EftListenTest < Test::Unit::TestCase
     lwfid = @engine.launch(listening)
     ewfid = @engine.launch(emitting)
 
-    sleep 1
+    wait_for(ewfid)
 
     assert_equal("edone.", @tracer.to_s)
 

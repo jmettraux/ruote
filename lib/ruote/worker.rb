@@ -85,9 +85,9 @@ module Ruote
       end
     end
 
-    def subscribe (type, actions, subscriber)
+    def subscribe (actions, subscriber)
 
-      @subscribers << [ type, actions, subscriber ]
+      @subscribers << [ actions, subscriber ]
     end
 
     protected
@@ -197,14 +197,13 @@ module Ruote
       ) if fei
     end
 
-    def notify (event)
+    def notify (msg)
 
-      @subscribers.each do |type, actions, subscriber|
+      @subscribers.each do |actions, subscriber|
 
-        next unless type == :all || event['type'] == type
-        next unless actions == :all || actions.include?(event['action'])
-
-        subscriber.notify(event)
+        if actions == :all || actions.include?(msg['action'])
+          subscriber.notify(msg)
+        end
       end
     end
 

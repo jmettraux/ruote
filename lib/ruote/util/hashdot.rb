@@ -45,6 +45,19 @@ module Ruote
 
       #super
     end
+
+    def dump
+
+      s = "~~ h ~~\n"
+      each do |k, v|
+        s << "  * '#{k}' => "
+        s << v.inspect
+        s << "\n"
+      end
+      s << "~~ . ~~"
+
+      s
+    end
   end
 
   module WithH

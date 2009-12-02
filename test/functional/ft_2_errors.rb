@@ -277,6 +277,7 @@ class FtErrorsTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
     wait_for(wfid)
+    wait_for(wfid)
 
     assert_equal 'done.', @tracer.to_s
 
@@ -285,7 +286,6 @@ class FtErrorsTest < Test::Unit::TestCase
     assert_equal 1, ps.errors.size
 
     @engine.replay_at_error(ps.errors.first)
-    wait_for(wfid)
     wait_for(wfid)
 
     assert_nil @engine.process(wfid)

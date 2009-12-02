@@ -87,7 +87,8 @@ module Ruote
       {
         's_wfidgen' => [ 'ruote/id/wfid_generator', 'Ruote::WfidGenerator' ],
         's_parser' => [ 'ruote/parser', 'Ruote::Parser' ],
-        's_treechecker' => [ 'ruote/util/treechecker', 'Ruote::TreeChecker' ]
+        's_treechecker' => [ 'ruote/util/treechecker', 'Ruote::TreeChecker' ],
+        's_tracker' => [ 'ruote/evt/tracker', 'Ruote::Tracker' ]
       }
     end
   end

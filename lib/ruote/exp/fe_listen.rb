@@ -128,37 +128,51 @@ module Ruote::Exp
 
     def apply
 
-      @to = attribute(:to) || attribute(:on)
+      h.to = attribute(:to) || attribute(:on)
 
       upon = attribute(:upon) || 'apply'
-      @upon = upon == 'reply' ? :received : :dispatched
+      h.upon = (upon == 'reply') ? 'receive' : 'dispatch'
 
-      @merge = attribute(:merge)
-      @merge = @merge.nil? ? 'true' : @merge.to_s
+      h.lmerge = attribute(:merge).to_s
+      h.lmerge = 'true' if h.lmerge == ''
 
-      @wfid = attribute(:wfid).to_s
-      @wfid = %w[ same current true ].include?(@wfid)
+      h.wfid = attribute(:wfid).to_s
+      h.wfid = %w[ same current true ].include?(h.wfid)
 
       persist
 
-      tracker.register(@fei)
+      @context.tracker.add_tracker(
+        h.wfid ? h.fei['wfid'] : nil,
+        h.upon,
+        h.fei,
+        { 'participant_name' => h.to },
+        { 'action' => 'reply', 'fei' => h.fei, 'flavour' => 'listen' })
     end
 
     def reply (workitem)
 
-      wi = @applied_workitem.dup
+      #
+      # :where guard
 
-      if @merge == 'true'
-        wi.fields.merge!(workitem.fields)
-      elsif @merge == 'override'
-        wi.fields = workitem.fields
+      where = attribute(:where, workitem)
+      return if where && ( ! Condition.true?(where))
+
+      #
+      # green for trigger
+
+      wi = h.applied_workitem.dup
+
+      if h.lmerge == 'true'
+        wi['fields'].merge!(workitem['fields'])
+      elsif h.lmerge == 'override'
+        wi['fields'] = workitem['fields']
       #else don't touch
       end
 
       if tree_children.size > 0
 
-        pool.launch_sub(
-          "#{@fei.expid}_0", tree_children[0], self, wi, :forget => true)
+        launch_sub(
+          "#{h.fei['expid']}_0", tree[2][0], :forget => true, :workitem => wi)
       else
 
         reply_to_parent(wi)
@@ -167,31 +181,14 @@ module Ruote::Exp
 
     def cancel (flavour)
 
-      reply_to_parent(@applied_workitem)
-    end
-
-    def match_event? (eclass, emsg, eargs)
-
-      return false unless eclass == :workitems
-      return false unless emsg == @upon
-      return false unless eargs[:pname].match(@to)
-
-      wi = eargs[:workitem]
-
-      return false if @wfid && @fei.parent_wfid != wi.fei.parent_wfid
-
-      where = attribute(:where, wi)
-
-      return false if where && (not Condition.true?(where))
-
-      true
+      reply_to_parent(h.applied_workitem)
     end
 
     protected
 
     def reply_to_parent (workitem)
 
-      tracker.unregister(@fei)
+      @context.tracker.remove_tracker(h.fei)
 
       super(workitem)
     end

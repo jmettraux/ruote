@@ -343,8 +343,9 @@ module Ruote::Exp
         'fei' => i,
         'parent_id' => forget ? nil : h.fei,
         'tree' => subtree,
-        'workitem' => h.applied_workitem,
-        'variables' => variables)
+        'workitem' => opts[:workitem] || h.applied_workitem,
+        'variables' => variables,
+        'forgotten' => forget)
     end
 
     # Returns true if the given fei points to an expression in the parent
@@ -363,10 +364,26 @@ module Ruote::Exp
     def lookup_on_error
 
       if h.on_error
+
         self
+
       elsif h.parent_id
-        parent.lookup_on_error
+
+        par = parent
+
+        unless par
+          puts "~~"
+          puts "parent gone for"
+          p h.fei
+          p h.parent_id
+          p tree
+          puts "~~"
+        end
+
+        par ? par.lookup_on_error : nil
+
       else
+
         nil
       end
     end
@@ -449,14 +466,16 @@ module Ruote::Exp
 
       persist
 
-      @context.storage.put_msg(
-        'apply',
+      msg = {
         'fei' => child_fei,
         'tree' => tree.last[child_index],
         'parent_id' => forget ? nil : h.fei,
         'variables' => forget ? compile_variables : nil,
-        'workitem' => workitem,
-        'forgotten' => forget)
+        'workitem' => workitem
+      }
+      msg['forgotten'] = true if forget
+
+      @context.storage.put_msg('apply', msg)
     end
 
     # Generates a sub_wfid, without hitting storage.
