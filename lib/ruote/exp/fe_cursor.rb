@@ -23,7 +23,7 @@
 #++
 
 
-require 'ruote/exp/command'
+require 'ruote/exp/commanded'
 
 
 module Ruote::Exp
@@ -197,31 +197,13 @@ module Ruote::Exp
   #     publisher
   #   end
   #
-  class CursorExpression < FlowExpression
-
-    include CommandMixin
+  class CursorExpression < CommandedExpression
 
     names :cursor, :loop, :repeat
 
     def apply
 
       move_on
-    end
-
-    def reply (workitem)
-
-      workitem = h.command_workitem || workitem
-      h.command_workitem = nil
-
-      if Ruote::FlowExpressionId.direct_child?(h.fei, workitem['fei'])
-        return move_on(workitem)
-      end
-
-      h.command_workitem = workitem
-      h.command_workitem['fei'] = h.children.first
-      persist
-
-      @context.storage.put_msg('cancel', 'fei' => h.children.first)
     end
 
     protected

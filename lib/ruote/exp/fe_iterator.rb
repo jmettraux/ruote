@@ -23,7 +23,7 @@
 #++
 
 
-require 'ruote/exp/command'
+require 'ruote/exp/commanded'
 require 'ruote/exp/iterator'
 
 
@@ -136,9 +136,8 @@ module Ruote::Exp
   # workitem field "cancel_everything" to true), then the whole iterator
   # gets 'broken' out of.
   #
-  class IteratorExpression < FlowExpression
+  class IteratorExpression < CommandedExpression
 
-    include CommandMixin
     include IteratorMixin
 
     names :iterator
@@ -154,34 +153,6 @@ module Ruote::Exp
       h.to_v = 'i' if h.to_v == nil && h.to_f == nil
 
       move_on
-    end
-
-    def reply (workitem)
-
-      workitem = h.command_workitem || workitem
-      h.command_workitem = nil
-
-      # command/answer may come from
-      #
-      # a) a child, regular case, easy
-      # b) somewhere else, which means we have to cancel the current child
-      #    and then make sure the comand is interpreted
-
-      # a)
-
-      if Ruote::FlowExpressionId.direct_child?(h.fei, workitem['fei'])
-        return move_on(workitem)
-      end
-
-      # b)
-
-      h.command_workitem = workitem
-      h.command_workitem['fei'] = h.children.first
-      persist
-
-      @context.storage.put_msg('cancel', 'fei' => h.children.first)
-
-      # iteration will be done at when cancelled child replies
     end
 
     protected
