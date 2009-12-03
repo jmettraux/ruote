@@ -23,7 +23,6 @@
 #++
 
 
-require 'ruote/engine/context'
 require 'ruote/part/local_participant'
 
 
@@ -37,10 +36,9 @@ module Ruote
   #
   class NoOpParticipant
 
-    include EngineContext
     include LocalParticipant
 
-    def initialize (opts)
+    def initialize
 
       @items = {}
     end

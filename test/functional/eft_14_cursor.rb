@@ -7,6 +7,8 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
+require 'ruote/part/no_op_participant'
+
 
 class EftCursorTest < Test::Unit::TestCase
   include FunctionalBase
@@ -59,6 +61,21 @@ class EftCursorTest < Test::Unit::TestCase
       cursor do
         echo 'a'
         _break
+        echo 'b'
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, 'a')
+  end
+
+  def test_stop
+
+    pdef = Ruote.process_definition :name => 'test' do
+      cursor do
+        echo 'a'
+        stop
         echo 'b'
       end
     end
@@ -174,11 +191,11 @@ class EftCursorTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.350
+    wait_for(14)
 
     #p @tracer.to_s
 
-    assert_equal 1, @tracer.to_s.split("\n").uniq.size
+    assert_equal [ 'a', 'a' ], @tracer.to_a[0..1]
   end
 
   def test_external_break
@@ -189,17 +206,24 @@ class EftCursorTest < Test::Unit::TestCase
           echo 'a'
         end
         sequence do
-          wait '500'
-          _break :ref => 'cu'
+          wait '1.1'
+          stop :ref => 'cu'
+          alpha
         end
       end
     end
 
+    @engine.register_participant :alpha, Ruote::NoOpParticipant.new
+
+    #noisy
+
     wfid = @engine.launch(pdef)
 
-    sleep 1.000
+    wait_for(:alpha)
+    wait_for(wfid)
 
     #p @tracer.to_s
+    assert_equal %w[ a a a ], @tracer.to_a[0, 3]
 
     assert_nil @engine.process(wfid)
   end

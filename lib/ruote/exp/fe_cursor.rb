@@ -205,11 +205,7 @@ module Ruote::Exp
 
     def apply
 
-      persist
-
-      #without_ticket__reply(@applied_workitem)
-        # no need for a ticket at apply time
-      reply(h.applied_workitem)
+      move_on
     end
 
     def reply (workitem)
@@ -217,8 +213,24 @@ module Ruote::Exp
       workitem = h.command_workitem || workitem
       h.command_workitem = nil
 
+      if Ruote::FlowExpressionId.direct_child?(h.fei, workitem['fei'])
+        return move_on(workitem)
+      end
+
+      h.command_workitem = workitem
+      h.command_workitem['fei'] = h.children.first
+      persist
+
+      @context.storage.put_msg('cancel', 'fei' => h.children.first)
+    end
+
+    protected
+
+    def move_on (workitem=h.applied_workitem)
+
       position = workitem['fei'] == h.fei ?
-        -1 : Ruote::FlowExpressionId.new(workitem['fei']).child_id
+        -1 : Ruote::FlowExpressionId.child_id(workitem['fei'])
+
       position += 1
 
       com, arg = get_command(workitem)
@@ -239,11 +251,6 @@ module Ruote::Exp
         reply_to_parent(workitem)
       end
     end
-
-    #with_ticket :reply
-    #with_ticket :set_command_workitem
-
-    protected
 
     def is_loop?
 

@@ -153,9 +153,7 @@ module Ruote::Exp
 
       h.to_v = 'i' if h.to_v == nil && h.to_f == nil
 
-      #without_ticket__reply(h.applied_workitem)
-        # no ticket at apply time
-      iterate
+      move_on
     end
 
     def reply (workitem)
@@ -169,16 +167,13 @@ module Ruote::Exp
       # b) somewhere else, which means we have to cancel the current child
       #    and then make sure the comand is interpreted
 
-      if Ruote::FlowExpressionId.direct_child?(h.fei, workitem['fei'])
-        #
-        # a) easy
+      # a)
 
-        iterate(workitem)
-        return
+      if Ruote::FlowExpressionId.direct_child?(h.fei, workitem['fei'])
+        return move_on(workitem)
       end
 
-      #
-      # b) more work
+      # b)
 
       h.command_workitem = workitem
       h.command_workitem['fei'] = h.children.first
@@ -189,12 +184,9 @@ module Ruote::Exp
       # iteration will be done at when cancelled child replies
     end
 
-    #with_ticket :reply
-    #with_ticket :set_command_workitem
-
     protected
 
-    def iterate (workitem=h.applied_workitem)
+    def move_on (workitem=h.applied_workitem)
 
       h.position += 1
 

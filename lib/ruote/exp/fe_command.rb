@@ -87,7 +87,7 @@ module Ruote::Exp
 
     include CommandMixin
 
-    names :skip, :back, :jump, :rewind, :continue, :break
+    names :skip, :back, :jump, :rewind, :continue, :break, :stop
 
     def apply
 
@@ -123,7 +123,7 @@ module Ruote::Exp
         target = fetch_command_target
       end
 
-      if target.nil? || target.fei == h.parent_id
+      if target.nil? || target.h.fei == h.parent_id
 
         return reply_to_parent(h.applied_workitem)
       end
