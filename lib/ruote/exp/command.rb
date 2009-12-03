@@ -39,7 +39,7 @@ module Ruote::Exp
 
     def get_command (workitem)
 
-      command, step = workitem.fields.delete(F_COMMAND)
+      command, step = workitem['fields'].delete(F_COMMAND)
       command, step = lookup_attribute_command(workitem) unless command
       command = 'break' if command == 'over'
 
@@ -57,7 +57,7 @@ module Ruote::Exp
 
     def set_command (workitem, command, step=nil)
 
-      workitem.fields[F_COMMAND] = [ command, step ]
+      workitem['fields'][F_COMMAND] = [ command, step ]
     end
 
     def lookup_attribute_command (workitem)
@@ -86,11 +86,10 @@ module Ruote::Exp
 
     # Sets the @command_workitem and persists.
     #
-    def set_command_workitem (wi)
-
-      @command_workitem = wi
-      persist
-    end
+    #def set_command_workitem (wi)
+    #  h.command_workitem = wi
+    #  persist
+    #end
   end
 end
 

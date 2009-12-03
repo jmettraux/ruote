@@ -145,54 +145,86 @@ module Ruote::Exp
 
     def apply
 
-      return reply_to_parent(@applied_workitem) if tree_children.size < 1
+      return reply_to_parent(h.applied_workitem) if tree_children.size < 1
 
-      @list = determine_list
-      @to_v, @to_f = determine_tos
-      @position = -1
+      h.list = determine_list
+      h.to_v, h.to_f = determine_tos
+      h.position = -1
 
-      @to_v = 'i' if @to_v == nil && @to_f == nil
+      h.to_v = 'i' if h.to_v == nil && h.to_f == nil
 
-      without_ticket__reply(@applied_workitem)
+      #without_ticket__reply(h.applied_workitem)
         # no ticket at apply time
+      iterate
     end
 
     def reply (workitem)
 
-      workitem = @command_workitem || workitem
-      @command_workitem = nil
+      workitem = h.command_workitem || workitem
+      h.command_workitem = nil
 
-      @position += 1
+      # command/answer may come from
+      #
+      # a) a child, regular case, easy
+      # b) somewhere else, which means we have to cancel the current child
+      #    and then make sure the comand is interpreted
+
+      if Ruote::FlowExpressionId.direct_child?(h.fei, workitem['fei'])
+        #
+        # a) easy
+
+        iterate(workitem)
+        return
+      end
+
+      #
+      # b) more work
+
+      h.command_workitem = workitem
+      h.command_workitem['fei'] = h.children.first
+      persist
+
+      @context.storage.put_msg('cancel', 'fei' => h.children.first)
+
+      # iteration will be done at when cancelled child replies
+    end
+
+    #with_ticket :reply
+    #with_ticket :set_command_workitem
+
+    protected
+
+    def iterate (workitem=h.applied_workitem)
+
+      h.position += 1
 
       com, arg = get_command(workitem)
 
       return reply_to_parent(workitem) if com == 'break'
 
       case com
-        when 'rewind', 'continue' then @position = 0
-        when 'skip' then @position += arg
-        when 'jump' then @position = arg
+        when 'rewind', 'continue' then h.position = 0
+        when 'skip' then h.position += arg
+        when 'jump' then h.position = arg
       end
 
-      @position = @list.length + @position if @position < 0
+      h.position = h.list.length + h.position if h.position < 0
 
-      val = @list[@position]
+      val = h.list[h.position]
 
       return reply_to_parent(workitem) if val == nil
 
-      (@variables ||= {})['ii'] = @position
+      (h.variables ||= {})['ii'] = h.position
 
-      if @to_v
-        @variables[@to_v] = val
-      else #if @to_f
-        workitem.fields[@to_f] = val
+      if h.to_v
+        h.variables[h.to_v] = val
+      else #if h.to_f
+        workitem['fields'][h.to_f] = val
       end
 
       apply_child(0, workitem)
+        # persist is done in there
     end
-
-    #with_ticket :reply
-    #with_ticket :set_command_workitem
   end
 end
 

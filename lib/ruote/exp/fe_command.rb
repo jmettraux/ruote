@@ -92,17 +92,17 @@ module Ruote::Exp
     def apply
 
       param = case name
-      when 'skip', 'back' then attribute(:step) || attribute_text
-      when 'jump' then attribute(:to) || attribute_text
-      else nil
+        when 'skip', 'back' then attribute(:step) || attribute_text
+        when 'jump' then attribute(:to) || attribute_text
+        else nil
       end
 
       param = Integer(param) rescue param
 
-      set_command(@applied_workitem, name, param)
+      set_command(h.applied_workitem, name, param)
 
       persist
-        # to keep track of the command set in the @applied_workitem fields
+        # to keep track of the command set in the h.applied_workitem fields
 
       target = parent
       ancestor = true
@@ -111,8 +111,10 @@ module Ruote::Exp
 
         fei = lookup_variable(ref)
 
-        target = fei.is_a?(Ruote::FlowExpressionId) ? expstorage[fei] : nil
-        target = target.respond_to?(:set_command) ? target : nil
+        target = Ruote::FlowExpressionId.is_a_fei?(fei) ?
+          Ruote::Exp::FlowExpression.fetch(@context, fei) : nil
+        target = target.respond_to?(:set_command) ?
+          target : nil
 
         ancestor = target ? ancestor?(target.fei) : false
 
@@ -121,27 +123,24 @@ module Ruote::Exp
         target = fetch_command_target
       end
 
-      if target.nil? || target.fei == @parent_id
+      if target.nil? || target.fei == h.parent_id
 
-        reply_to_parent(@applied_workitem)
-        return
+        return reply_to_parent(h.applied_workitem)
       end
 
-      target.set_command_workitem(@applied_workitem)
+      @context.storage.put_msg(
+        'reply',
+        'fei' => target.h.fei,
+        'workitem' => h.applied_workitem)
 
-      child_fei = target.children.first
-
-      pool.cancel_expression(child_fei, nil) if child_fei
-        # flavour is nil, regular cancel
-
-      reply_to_parent(@applied_workitem) if not ancestor
+      reply_to_parent(h.applied_workitem) unless ancestor
     end
 
     # Necessary in case of 'pass_command_directly'
     #
     def cancel (flavour)
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     protected

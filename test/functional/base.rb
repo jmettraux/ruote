@@ -14,6 +14,7 @@ require File.join(File.dirname(__FILE__), 'engine_helper.rb')
 
 require 'ruote/engine'
 require 'ruote/worker'
+require 'ruote/parser/ruby_dsl'
 
 
 module FunctionalBase

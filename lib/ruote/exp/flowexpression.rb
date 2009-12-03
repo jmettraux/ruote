@@ -49,6 +49,7 @@ module Ruote::Exp
     h_reader :original_tree
     h_reader :updated_tree
 
+    h_reader :children
     h_reader :state
 
     h_reader :on_error
@@ -94,17 +95,26 @@ module Ruote::Exp
 
     def persist
 
+      #puts "--- per #{h.fei['expid']} #{tree.first} #{h._rev}"
+
       @context.storage.put(@h)
     end
 
     def unpersist
 
-      @context.storage.delete(@h)
+      #puts "--- unp #{h.fei['expid']} #{tree.first} #{h._rev}"
+
+      r = @context.storage.delete(@h)
+
+      raise(
+        "unpersist fail for "+
+        "#{Ruote::FlowExpressionId.to_s_id(h.fei)} #{tree.first}"
+      ) if r
 
       if h.has_error
 
         err = @context.storage.get(
-          'errors', Ruote::FlowExpressionId.to_storage_id(h.fei))
+          'errors', Ruote::FlowExpressionId.to_s_id(h.fei))
 
         @context.storage.delete(err) if err
       end
@@ -127,8 +137,10 @@ module Ruote::Exp
     #
     def self.fetch (context, fei)
 
+      return nil if fei.nil?
+
       fexp = context.storage.get(
-        'expressions', Ruote::FlowExpressionId.new(fei).to_storage_id)
+        'expressions', Ruote::FlowExpressionId.to_storage_id(fei))
 
       fexp ? from_h(context, fexp) : nil
     end
@@ -178,7 +190,9 @@ module Ruote::Exp
     def reply_to_parent (workitem, delete=true)
 
       if h.tagname
+
         unset_variable(h.tagname)
+
         @context.storage.put_msg(
           'left_tag', 'tag' => h.tagname, 'fei' => h.fei)
       end

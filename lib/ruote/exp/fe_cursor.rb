@@ -207,16 +207,18 @@ module Ruote::Exp
 
       persist
 
-      without_ticket__reply(@applied_workitem)
+      #without_ticket__reply(@applied_workitem)
         # no need for a ticket at apply time
+      reply(h.applied_workitem)
     end
 
     def reply (workitem)
 
-      workitem = @command_workitem || workitem
-      @command_workitem = nil
+      workitem = h.command_workitem || workitem
+      h.command_workitem = nil
 
-      position = workitem.fei == self.fei ? -1 : workitem.fei.child_id
+      position = workitem['fei'] == h.fei ?
+        -1 : Ruote::FlowExpressionId.new(workitem['fei']).child_id
       position += 1
 
       com, arg = get_command(workitem)
@@ -224,9 +226,9 @@ module Ruote::Exp
       return reply_to_parent(workitem) if com == 'break'
 
       case com
-      when 'rewind', 'continue' then position = 0
-      when 'skip' then position += arg
-      when 'jump' then position = jump_to(workitem, position, arg)
+        when 'rewind', 'continue' then position = 0
+        when 'skip' then position += arg
+        when 'jump' then position = jump_to(workitem, position, arg)
       end
 
       position = 0 if position >= tree_children.size && is_loop?
