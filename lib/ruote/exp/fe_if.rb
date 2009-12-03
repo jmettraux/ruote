@@ -74,23 +74,23 @@ module Ruote::Exp
 
     def apply
 
-      reply(@applied_workitem)
+      reply(h.applied_workitem)
     end
 
     # called by 'else', 'then' or perhaps 'equals'
     #
     def reply (workitem)
 
-      if workitem.fei == @fei # apply --> reply
+      if workitem['fei'] == h.fei # apply --> reply
 
-        @test = attribute(:test)
-        @test = attribute_text if @test.nil?
-        @test = nil if @test == ''
+        h.test = attribute(:test)
+        h.test = attribute_text if h.test.nil?
+        h.test = nil if h.test == ''
 
         persist
 
-        offset = if @test != nil
-          Condition.true?(@test) ? 0 : 1
+        offset = if h.test != nil
+          Condition.true?(h.test) ? 0 : 1
         else
           0
         end
@@ -99,10 +99,14 @@ module Ruote::Exp
 
       else # reply from a child
 
-        if @test != nil || workitem.fei.child_id != 0
+        if h.test != nil || Ruote::FlowExpressionId.child_id(workitem['fei']) != 0
+
           reply_to_parent(workitem)
+
         else
-          apply_child_if_present(workitem.result == true ? 1 : 2, workitem)
+
+          apply_child_if_present(
+            workitem['fields']['__result__'] == true ? 1 : 2, workitem)
         end
       end
     end

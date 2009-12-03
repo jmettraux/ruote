@@ -76,13 +76,13 @@ module Ruote::Exp
 
       vals = grab_values
 
-      @applied_workitem.result = if vals.size < 2
+      h.applied_workitem['fields']['__result__'] = if vals.size < 2
         false
       else
-        vals.first == vals.last
+        (vals.first == vals.last)
       end
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     protected
@@ -105,9 +105,9 @@ module Ruote::Exp
       end
 
       case k
-      when /^f/ then @applied_workitem.attributes[attval]
-      when /^var/ then lookup_variable(attval)
-      when /^val/ then attval
+        when /^f/ then h.applied_workitem['fields'][attval]
+        when /^var/ then lookup_variable(attval)
+        when /^val/ then attval
       end
     end
   end

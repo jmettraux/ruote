@@ -41,6 +41,9 @@ module Ruote::Exp
     require 'ruote/exp/ro_attributes'
     require 'ruote/exp/ro_variables'
 
+    COMMON_ATT_KEYS = %w[
+      if unless forget timeout on_error on_cancel on_timeout ]
+
     attr_reader :context
     attr_reader :h
 
