@@ -289,6 +289,9 @@ module Ruote::Exp
 
     def do_cancel (msg)
 
+      return if h.state == 'cancelling'
+        # cancel on cancel gets discarded
+
       flavour = msg['flavour']
 
       return if h.state == 'failed' and flavour == 'timeout'
