@@ -48,6 +48,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
       workitem.fields['seen'] = 'indeed' if count == 1
       @tracer << "alpha\n"
       count = count + 1
+      nil
     end
     alpha.do_not_thread = true
 
@@ -55,6 +56,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     @engine.register_participant :bravo do |workitem|
       fields = workitem.fields
+      nil
     end
 
     #noisy
