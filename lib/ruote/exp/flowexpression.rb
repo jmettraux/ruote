@@ -100,7 +100,12 @@ module Ruote::Exp
 
       #puts "--- per #{h.fei['expid']} #{tree.first} #{h._rev}"
 
-      @context.storage.put(@h)
+      r = @context.storage.put(@h)
+
+      raise(
+        "persist fail for "+
+        "#{Ruote::FlowExpressionId.to_s_id(h.fei)} #{tree.first}"
+      ) if r
     end
 
     def unpersist
@@ -485,6 +490,8 @@ module Ruote::Exp
       h.children << child_fei unless forget
 
       persist
+        #
+        # TODO : add switch to NOT persist (concurrence exp !!)
 
       msg = {
         'fei' => child_fei,
@@ -600,10 +607,7 @@ module Ruote::Exp
 
       elsif on == 'on_timeout'
 
-        if hon == 'redo'
-
-          t = tree
-        end
+        t = tree if hon == 'redo'
       end
 
       supplant_with(t, 'trigger' => on)

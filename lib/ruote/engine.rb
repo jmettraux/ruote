@@ -113,6 +113,16 @@ module Ruote
       msg['replay_at_error'] = true
         # just an indication
 
+      puts "~" * 80
+      p action, msg
+      if action == 'apply' && fei = msg['fei']
+        #
+        # nukes the expression in case of apply
+        #
+        exp = Ruote::Exp::FlowExpression.fetch(@context, fei)
+        exp.unpersist if exp
+      end
+
       @storage.delete(err.to_h) # remove error
       @storage.put_msg(action, msg) # trigger replay
     end

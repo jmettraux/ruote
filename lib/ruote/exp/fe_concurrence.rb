@@ -148,8 +148,9 @@ module Ruote::Exp
       h.over = false
 
       apply_children
-
       persist
+        #
+        # TODO : it should be persist THEN apply_children
     end
 
     def reply (workitem)
