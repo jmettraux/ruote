@@ -80,11 +80,13 @@ module Ruote
 
     def consume (workitem)
 
-      if @block.arity == 1
+      r = if @block.arity == 1
         @block.call(workitem)
       else
         @block.call(workitem, expstorage[workitem.fei])
       end
+
+      workitem.result = r if r && r != workitem
 
       reply_to_engine(workitem)
     end
