@@ -22,6 +22,7 @@ class FtLaunchitemTest < Test::Unit::TestCase
     @engine.register_participant :alpha do |workitem|
       fields = workitem.fields
       @tracer << 'a'
+      nil
     end
 
     #noisy

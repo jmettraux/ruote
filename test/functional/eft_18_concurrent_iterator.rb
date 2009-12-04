@@ -303,6 +303,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     @engine.register_participant :bravo do |workitem|
       merged_fields = workitem.fields
+      nil
     end
 
     #noisy
