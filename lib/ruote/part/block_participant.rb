@@ -78,7 +78,7 @@ module Ruote
 
     def consume (workitem)
 
-      if @block.arity == 1
+      r = if @block.arity == 1
 
         @block.call(workitem)
       else
@@ -86,6 +86,8 @@ module Ruote
         @block.call(
           workitem, Ruote::Exp::FlowExpression.fetch(@context, workitem.h.fei))
       end
+
+      workitem.result = r if r != nil && r != workitem
 
       reply_to_engine(workitem)
     end

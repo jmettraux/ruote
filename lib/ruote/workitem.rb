@@ -58,6 +58,25 @@ module Ruote
 
       @h['fields']
     end
+
+    # A shortcut to the value in the field named __result__
+    #
+    # This field is used by the if expression for instance to determine
+    # if it should branch to its 'then' or its 'else'.
+    #
+    def result
+
+      fields['__result__']
+    end
+
+    # Sets the value of the 'special' field __result__
+    #
+    # See #result
+    #
+    def result= (r)
+
+      fields['__result__'] = r
+    end
   end
 
   class BakWorkitem
@@ -113,25 +132,6 @@ module Ruote
     def set_field (key, value)
 
       Ruote.set(@fields, key, value)
-    end
-
-    # A shortcut to the value in the field named __result__
-    #
-    # This field is used by the if expression for instance to determine
-    # if it should branch to its 'then' or its 'else'.
-    #
-    def result
-
-      @fields['__result__']
-    end
-
-    # Sets the value of the 'special' field __result__
-    #
-    # See #result
-    #
-    def result= (r)
-
-      @fields['__result__'] = r
     end
 
     # Returns a deep copy of this workitem instance.
