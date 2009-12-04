@@ -121,6 +121,8 @@ module Ruote
         action = 'reply' if action == 'receive'
 
         if msg['tree']
+          #
+          # warning here, it could be a reply, with a 'tree' key...
 
           launch(msg)
 
@@ -157,18 +159,18 @@ module Ruote
 
       # debug only
 
-      puts "\n== worker intercepted error =="
-      puts
-      p ex
-      ex.backtrace[0, 10].each { |l| puts l }
-      puts "..."
-      puts
-      puts "-- msg --"
-      msg.keys.sort.each { |k|
-        puts "    #{k.inspect} =>\n#{msg[k].inspect}"
-      }
-      puts "-- . --"
-      puts
+      #puts "\n== worker intercepted error =="
+      #puts
+      #p ex
+      #ex.backtrace[0, 10].each { |l| puts l }
+      #puts "..."
+      #puts
+      #puts "-- msg --"
+      #msg.keys.sort.each { |k|
+      #  puts "    #{k.inspect} =>\n#{msg[k].inspect}"
+      #}
+      #puts "-- . --"
+      #puts
 
       # on_error ?
 

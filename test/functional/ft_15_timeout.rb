@@ -139,6 +139,26 @@ class FtTimeoutTest < Test::Unit::TestCase
     assert_equal 1, alpha.size
   end
 
+  def test_deep_on_timeout_error
+
+    pdef = Ruote.process_definition do
+      sequence :timeout => '1.1', :on_timeout => 'error' do
+        alpha
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    assert_equal 1, ps.errors.size
+    assert_equal 0, alpha.size
+    assert_equal 2, ps.expressions.size
+  end
+
   def test_timeout_then_error
 
     pdef = Ruote.process_definition do

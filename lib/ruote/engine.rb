@@ -113,11 +113,9 @@ module Ruote
       msg['replay_at_error'] = true
         # just an indication
 
-      puts "~" * 80
-      p action, msg
-      if action == 'apply' && fei = msg['fei']
+      if msg['tree'] && fei = msg['fei']
         #
-        # nukes the expression in case of apply
+        # nukes the expression in case of [re]apply
         #
         exp = Ruote::Exp::FlowExpression.fetch(@context, fei)
         exp.unpersist if exp
