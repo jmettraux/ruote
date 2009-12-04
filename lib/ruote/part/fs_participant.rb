@@ -150,10 +150,13 @@ module Ruote
     #
     def by_wfid (wfid)
 
-      #Dir.glob(File.join(@path, "*_#{wfid}_*.yaml")).collect do |path|
-      #  YAML.load_file(path)
-      #end
       files.select { |f| f =~ /#{wfid}/ }.map { |f| YAML.load_file(f) }
+    end
+
+    # Returns all the workitems stored here for a given participant
+    def by_participant( participant )
+
+      all.select { |wi| wi.participant_name == participant }
     end
 
     def purge!
