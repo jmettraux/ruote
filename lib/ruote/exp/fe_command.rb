@@ -113,7 +113,8 @@ module Ruote::Exp
 
         target = Ruote::FlowExpressionId.is_a_fei?(fei) ?
           Ruote::Exp::FlowExpression.fetch(@context, fei) : nil
-        target = target.respond_to?(:set_command) ?
+
+        target = target.is_a?(Ruote::Exp::CommandedExpression) ?
           target : nil
 
         ancestor = target ? ancestor?(target.fei) : false
@@ -153,13 +154,11 @@ module Ruote::Exp
     #
     def fetch_command_target (exp=parent)
 
-      return nil \
-        unless exp
-
-      return exp \
-        if exp.class.included_modules.include?(Ruote::Exp::CommandMixin)
-
-      fetch_command_target(exp.parent)
+      case exp
+        when nil then nil
+        when Ruote::Exp::CommandedExpression then exp
+        else fetch_command_target(exp.parent)
+      end
     end
   end
 end
