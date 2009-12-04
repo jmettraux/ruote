@@ -45,44 +45,13 @@ module Ruote
 
       @subscribers = []
       @context = Ruote::WorkerContext.new(self)
+
+      @last_time = Time.at(0.0).utc # 1970...
     end
 
     def run
 
-      last_time = Time.at(0.0).utc # 1970...
-
-      loop do
-
-        now = Time.now.utc
-        delta = now - last_time
-
-        if delta >= 1.0
-          #
-          # at most once per second
-
-          last_time = now
-
-          # at schedules
-
-          @storage.get_ats(delta, now).each { |sche| trigger_at(sche) }
-
-          # cron schedules
-
-          @storage.get_crons(delta, now).each { |sche| trigger_cron(sche) }
-        end
-
-        # msgs
-
-        msgs = @storage.get_many('msgs')
-
-        msgs.sort { |a, b|
-          a['put_at'] <=> b['put_at']
-        }.each { |msg|
-          process(msg)
-        }
-
-        sleep(0.100) if msgs.size == 0
-      end
+      loop { step }
     end
 
     def subscribe (actions, subscriber)
@@ -91,6 +60,39 @@ module Ruote
     end
 
     protected
+
+    def step
+
+      now = Time.now.utc
+      delta = now - last_time
+
+      if delta >= 1.0
+        #
+        # at most once per second
+
+        @last_time = now
+
+        # at schedules
+
+        @storage.get_ats(delta, now).each { |sche| trigger_at(sche) }
+
+        # cron schedules
+
+        @storage.get_crons(delta, now).each { |sche| trigger_cron(sche) }
+      end
+
+      # msgs
+
+      msgs = @storage.get_many('msgs')
+
+      msgs.sort { |a, b|
+        a['put_at'] <=> b['put_at']
+      }.each { |msg|
+        process(msg)
+      }
+
+      sleep(0.100) if msgs.size == 0
+    end
 
     def trigger_at (schedule)
 

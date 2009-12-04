@@ -37,7 +37,7 @@ module Ruote
     attr_reader :context
     attr_reader :variables
 
-    def initialize (worker_or_storage)
+    def initialize (worker_or_storage, run=true)
 
       if worker_or_storage.respond_to?(:context)
 
@@ -46,7 +46,10 @@ module Ruote
         @context.engine = self
 
         Thread.abort_on_exception = true
-        Thread.new { @context.worker.run }
+          #
+          # TODO : this is temporary !!! remove it at one point
+
+        Thread.new { @context.worker.run } if run
 
       else
 
