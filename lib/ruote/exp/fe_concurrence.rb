@@ -148,12 +148,11 @@ module Ruote::Exp
       h.over = false
 
       apply_children
-      persist
-        #
-        # TODO : it should be persist THEN apply_children
     end
 
     def reply (workitem)
+
+      # TODO : the fun things happen now
 
       if h.cmerge == 'first' || h.cmerge == 'last'
         h.workitems << workitem
@@ -189,9 +188,19 @@ module Ruote::Exp
 
     def apply_children
 
+      # a) register children
+      # b) persist
+      # c) trigger children applies
+
+      msgs = []
+
       tree_children.each_with_index do |c, i|
-        apply_child(i, h.applied_workitem.dup)
+        msgs << pre_apply_child(i, h.applied_workitem.dup, false)
       end
+
+      persist
+
+      msgs.each { |m| @context.storage.put_msg('apply', m) }
     end
 
     def over? (workitem)

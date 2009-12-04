@@ -482,16 +482,12 @@ module Ruote::Exp
 
     protected
 
-    def apply_child (child_index, workitem, forget=false)
+    def pre_apply_child (child_index, workitem, forget)
 
       child_fei = h.fei.merge(
         'expid' => "#{h.fei['expid']}_#{child_index}")
 
       h.children << child_fei unless forget
-
-      persist
-        #
-        # TODO : add switch to NOT persist (concurrence exp !!)
 
       msg = {
         'fei' => child_fei,
@@ -501,6 +497,15 @@ module Ruote::Exp
         'workitem' => workitem
       }
       msg['forgotten'] = true if forget
+
+      msg
+    end
+
+    def apply_child (child_index, workitem, forget=false)
+
+      msg = pre_apply_child(child_index, workitem, forget)
+
+      persist
 
       @context.storage.put_msg('apply', msg)
     end
