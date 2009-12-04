@@ -86,7 +86,7 @@ module Ruote
         @block.call(workitem, expstorage[workitem.fei])
       end
 
-      workitem.result = r if r && r != workitem
+      workitem.result = r if r != nil && r != workitem
 
       reply_to_engine(workitem)
     end
