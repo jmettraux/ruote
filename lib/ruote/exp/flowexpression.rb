@@ -210,17 +210,15 @@ module Ruote::Exp
         @context.storage.delete_at_schedule(h.timeout_schedule_id)
       end
 
-      state = h.state
-
-      if state == 'failing' # on_error is implicit (#fail got called)
+      if h.state == 'failing' # on_error is implicit (#fail got called)
 
         trigger('on_error', workitem)
 
-      elsif (state == 'cancelling') and h.on_cancel
+      elsif (h.state == 'cancelling') and h.on_cancel
 
         trigger('on_cancel', workitem)
 
-      elsif (state == 'timing_out') and h.on_timeout
+      elsif (h.state == 'timing_out') and h.on_timeout
 
         trigger('on_timeout', workitem)
 
@@ -230,12 +228,10 @@ module Ruote::Exp
 
         if h.parent_id
 
-          workitem['fei'] = h.fei
-
           @context.storage.put_msg(
             'reply',
             'fei' => h.parent_id,
-            'workitem' => workitem,
+            'workitem' => workitem.merge!('fei' => h.fei),
             'updated_tree' => h.updated_tree) # nil most of the time
         else
 

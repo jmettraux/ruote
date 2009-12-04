@@ -262,26 +262,29 @@ module Ruote::Exp
 
       if h.remaining == 'cancel'
 
-        h.children.each { |i|
+        h.children.each do |i|
           @context.storage.put_msg('cancel', 'fei' => i) unless replied?(i)
-        }
+        end
+
+        super(workitem)
+
+      elsif all_replied?
 
         super(workitem)
 
       else # h.remaining == 'forget'
 
-        if all_replied?
+        #if all_replied?
+        #  unpersist
+        #else
 
-          unpersist
-        else
+        super(workitem, false)
 
-          super(workitem, false)
+        h.variables = compile_variables
+        h.parent_id = nil
 
-          h.variables = compile_variables
-          h.parent_id = nil
-
-          persist
-        end
+        persist
+        #end
       end
     end
 

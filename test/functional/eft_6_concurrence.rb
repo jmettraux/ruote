@@ -103,6 +103,19 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_trace(pdef, %w[ a a done. ])
   end
 
+  def test_remaining_forget_when_no_remains
+
+    pdef = Ruote.process_definition do
+      concurrence :remaining => :forget do
+        echo 'a'
+        echo 'b'
+      end
+      echo 'done.'
+    end
+
+    assert_trace pdef, %w[ a b done.]
+  end
+
   # helper
   #
   def run_concurrence (concurrence_attributes, noise)
