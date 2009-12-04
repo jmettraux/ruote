@@ -114,6 +114,26 @@ class FtFsParticipantTest < Test::Unit::TestCase
     end
   end
 
+  def test_by_participant
+
+    pdef = Ruote.process_definition :name => 'def0' do
+      concurrence do
+        alpha
+        beta
+      end
+    end
+
+    fs = @engine.register_participant :alpha, Ruote::FsParticipant
+    @engine.register_participant :beta, fs
+
+    wfid = @engine.launch(pdef)
+
+    sleep 0.500
+
+    assert_equal 1, fs.by_participant('alpha').size
+    assert_equal 1, fs.by_participant('beta').size
+  end
+
   def test_purge
 
     pdef = Ruote.process_definition :name => 'def0' do
