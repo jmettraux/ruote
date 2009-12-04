@@ -40,8 +40,6 @@ module Ruote::Exp
 
     def apply
 
-      persist
-
       reply(h.applied_workitem)
     end
 
