@@ -87,18 +87,7 @@ module Ruote
 
     def color= (c)
 
-      @color = {
-        :white => 37,
-        :cyan => 36,
-        :magenta => 35,
-        :blue => 34,
-        :yellow => 33,
-        :green => 32,
-        :red => 31,
-        :black => 30,
-        :bright => 1,
-        :dim => 2
-      }[c] || 34
+      @color = c
     end
 
     protected
@@ -142,9 +131,41 @@ module Ruote
       end
     end
 
-    def color (code, s)
+    # <ESC>[{attr1};...;{attrn}m
+    #
+    # 0 Reset all attributes
+    # 1 Bright
+    # 2 Dim
+    # 4 Underscore
+    # 5 Blink
+    # 7 Reverse
+    # 8 Hidden
+    #
+    # Foreground Colours
+    # 30 Black
+    # 31 Red
+    # 32 Green
+    # 33 Yellow
+    # 34 Blue
+    # 35 Magenta
+    # 36 Cyan
+    # 37 White
+    #
+    # Background Colours
+    # 40 Black
+    # 41 Red
+    # 42 Green
+    # 43 Yellow
+    # 44 Blue
+    # 45 Magenta
+    # 46 Cyan
+    # 47 White
+
+    def color (mod, s, clear=false)
+
       return s unless STDOUT.tty?
-      "[#{code}m#{s}[0m"
+
+      "[#{mod}m#{s}[0m#{clear ? '' : "[#{@color}m"}"
     end
 
     def pretty_print (msg)
@@ -177,11 +198,17 @@ module Ruote
 
       action = msg['action'][0, 2]
       action = 'rc' if msg['action'] == 'receive'
-      action = color(31, action) if action == 'ca'
+      action = color('4;32', action) if action == 'la'
+      action = color('4;31', action) if action == 'te'
+      action = color('31', action) if action == 'ce'
+      action = color('31', action) if action == 'ca'
+      action = color('4;34', action) if action == 'rc'
+      action = color('4;34', action) if action == 'di'
 
       color(
         @color,
-        " #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}")
+        " #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}",
+        true)
     end
   end
 end

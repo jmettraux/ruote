@@ -41,7 +41,7 @@ module ConcurrentBase
     @engine0.context.add_service('s_tracer', @tracer0, nil)
     @engine1.context.add_service('s_tracer', @tracer1, nil)
 
-    @engine1.context.logger.color = :green
+    @engine1.context.logger.color = '32' # green
   end
 
   def teardown
