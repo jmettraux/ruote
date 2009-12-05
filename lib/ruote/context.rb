@@ -55,6 +55,8 @@ module Ruote
       if klass
         require(path)
         @conf[key] = Ruote.constantize(klass).new(self)
+      else
+        @conf[key] = path
       end
 
       self.class.class_eval %{ def #{key[2..-1]}; @conf['#{key}']; end }

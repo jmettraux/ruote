@@ -64,7 +64,7 @@ module Ruote
     def step
 
       now = Time.now.utc
-      delta = now - last_time
+      delta = now - @last_time
 
       if delta >= 1.0
         #
@@ -83,13 +83,9 @@ module Ruote
 
       # msgs
 
-      msgs = @storage.get_many('msgs')
+      msgs = @storage.get_msgs
 
-      msgs.sort { |a, b|
-        a['put_at'] <=> b['put_at']
-      }.each { |msg|
-        process(msg)
-      }
+      msgs.each { |msg| process(msg) }
 
       sleep(0.100) if msgs.size == 0
     end

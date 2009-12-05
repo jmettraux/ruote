@@ -44,6 +44,11 @@ module Ruote
         'action' => action))
     end
 
+    def get_msgs
+
+      get_many('msgs').sort { |a, b| a['put_at'] <=> b['put_at'] }
+    end
+
     #--
     # expressions
     #++

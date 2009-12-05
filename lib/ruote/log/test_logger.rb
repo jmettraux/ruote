@@ -51,6 +51,7 @@ module Ruote
       @seen = []
       @log = []
       @waiting = nil
+      @color = 34
 
       # NOTE
       # in case of troubles, why not have the wait_for has an event ?
@@ -82,6 +83,22 @@ module Ruote
     def dump
 
       @seen.collect { |msg| pretty_print(msg) }.join("\n")
+    end
+
+    def color= (c)
+
+      @color = {
+        :white => 37,
+        :cyan => 36,
+        :magenta => 35,
+        :blue => 34,
+        :yellow => 33,
+        :green => 32,
+        :red => 31,
+        :black => 30,
+        :bright => 1,
+        :dim => 2
+      }[c] || 34
     end
 
     protected
@@ -125,7 +142,14 @@ module Ruote
       end
     end
 
+    def color (code, s)
+      return s unless STDOUT.tty?
+      "[#{code}m#{s}[0m"
+    end
+
     def pretty_print (msg)
+
+      ei = self.object_id.to_s[-2..-1]
 
       fei = msg['fei']
       depth = fei ? fei['expid'].split('_').size : 0
@@ -136,14 +160,28 @@ module Ruote
 
       rest = msg.dup
       %w[
-        _id type action
+        _id put_at _rev
+        type action
         fei wfid workitem variables
       ].each { |k| rest.delete(k) }
 
+      if v = rest['parent_id']
+        rest['parent_id'] = Ruote::FlowExpressionId.to_s_id(v)
+      end
+
+      { 'tree' => :t, 'parent_id' => :pi }.each do |k0, k1|
+        if v = rest.delete(k0)
+          rest[k1] = v
+        end
+      end
+
       action = msg['action'][0, 2]
       action = 'rc' if msg['action'] == 'receive'
+      action = color(31, action) if action == 'ca'
 
-      "#{'  ' * depth}#{action} * #{i} #{rest.inspect}"
+      color(
+        @color,
+        " #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}")
     end
   end
 end
