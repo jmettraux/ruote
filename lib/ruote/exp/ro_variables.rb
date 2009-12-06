@@ -136,23 +136,14 @@ module Ruote::Exp
 
       return unless do_persist
 
-      r = persist
-
-      if r != nil
-        #
-        # persist failed, have to retry
+      if r = try_persist # persist failed, have to retry
 
         @h = r
-        un_set_variable(op, var, val)
+        un_set_variable(op, var, val, true)
 
-      else
-        #
-        # success
+      else # success
 
-        @context.storage.put_msg(
-          "variable_#{op}",
-          'var' => var,
-          'fei' => h.fei)
+        @context.storage.put_msg("variable_#{op}", 'var' => var, 'fei' => h.fei)
       end
     end
 

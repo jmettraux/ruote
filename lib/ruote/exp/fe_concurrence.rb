@@ -152,8 +152,6 @@ module Ruote::Exp
 
     def reply (workitem)
 
-      # TODO : the fun things happen now
-
       if h.cmerge == 'first' || h.cmerge == 'last'
         h.workitems << workitem
       else
@@ -161,28 +159,25 @@ module Ruote::Exp
       end
 
       over = h.over
-
-      h.over = over?(workitem) unless over
+      h.over = over || over?(workitem)
 
       if (not over) && h.over
+        # just became 'over'
 
         reply_to_parent(nil)
 
-      elsif all_replied?
+      #elsif all_replied?
+      #elsif h.ccount && h.children.empty?
+      elsif h.children.empty?
 
-        unpersist
-
-        @context.storage.put_msg(
-          'ceased', 'wfid' => h.fei['wfid'], 'workitem' => workitem)
+        safely(:unpersist) && @context.storage.put_msg(
+          'ceased',
+          'wfid' => h.fei['wfid'], 'fei' => h.fei, 'workitem' => workitem)
       else
 
-        persist
+        safely(:persist)
       end
     end
-
-    # wraps the reply method with the ticket mechanism
-    #
-    #with_ticket :reply
 
     protected
 
@@ -226,65 +221,32 @@ module Ruote::Exp
       h.ccount ? [ h.ccount, tree_children.size ].min : tree_children.size
     end
 
-    # Returns true if the flow expression given by its fei has already
-    # replied.
-    #
-    def replied? (fei)
-
-      workitems = h.workitems.respond_to?(:values) ?
-        h.workitems.values : h.workitems
-
-      (workitems.find { |wi| wi['fei'] == fei } != nil)
-    end
-
-    # Returns true if all the children of the concurrence have replied.
-    #
-    def all_replied?
-
-      #children = h.children.collect { |i|
-      #  Ruote::FlowExpressionId.to_storage_id(i)
-      #}
-      #workitems = h.workitems.respond_to?(:values) ?
-      #  h.workitems.values : h.workitems
-      #workitems = workitems.collect { |wi|
-      #  Ruote::FlowExpressionId.to_storage_id(wi['fei'])
-      #}
-      #(children - workitems).size == 0
-        #
-        # could it be faster ?
-
-      h.children.find { |i| (not replied?(i)) }.nil?
-    end
-
     def reply_to_parent (_workitem)
 
       workitem = merge_all_workitems
 
-      if h.remaining == 'cancel'
+      if h.ccount == nil || h.children.empty?
 
-        h.children.each do |i|
-          @context.storage.put_msg('cancel', 'fei' => i) unless replied?(i)
+        safely(:unpersist) && super(workitem, false)
+
+      elsif h.remaining == 'cancel'
+
+        if r = safely(:unpersist)
+
+          super(workitem, false)
+
+          h.children.each do |i|
+            @context.storage.put_msg('cancel', 'fei' => i) #unless replied?(i)
+          end
         end
-
-        super(workitem)
-
-      elsif all_replied?
-
-        super(workitem)
 
       else # h.remaining == 'forget'
 
-        #if all_replied?
-        #  unpersist
-        #else
-
-        super(workitem, false)
-
         h.variables = compile_variables
-        h.parent_id = nil
+        #h.parent_id = nil
+        h.forgotten = true
 
-        persist
-        #end
+        safely(:persist) && super(workitem, false)
       end
     end
 

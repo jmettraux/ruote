@@ -21,14 +21,16 @@ module FunctionalBase
 
   def setup
 
-    @tracer = Tracer.new
 
     @engine =
       Ruote::Engine.new(
         Ruote::Worker.new(
           determine_storage(
-            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ],
-            's_tracer' => @tracer)))
+            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
+
+    @tracer = Tracer.new
+
+    @engine.context.add_service('s_tracer', @tracer, nil)
   end
 
   def teardown
@@ -61,7 +63,7 @@ module FunctionalBase
 
     wait_for(wfid)
 
-    yield(@engine) if block_given?
+    #yield(@engine) if block_given?
 
     assert_engine_clean(wfid, opts)
 
@@ -71,7 +73,7 @@ module FunctionalBase
     end
 
     assert(true)
-      # so that the assertion count matche
+      # so that the assertion count matches
 
     wfid
   end
@@ -178,25 +180,25 @@ module FunctionalBase
 end
 
 class Tracer
-  attr_reader :trace
+  attr_reader :s
   def initialize
     super
-    @trace = ''
+    @s = ''
   end
   def to_s
-    @trace.to_s.strip
+    @s.to_s.strip
   end
   def to_a
     to_s.split("\n")
   end
   def << s
-    @trace << s
+    @s << s
   end
   def clear
-    @trace = ''
+    @s = ''
   end
   def puts (s)
-    @trace << "#{s}\n"
+    @s << "#{s}\n"
   end
 end
 

@@ -31,8 +31,9 @@ module Ruote
 
   class Worker
 
-    EXP_ACTIONS = %w[ reply cancel fail ]
+    EXP_ACTIONS = %w[ reply cancel fail receive ]
       # 'apply' is comprised in 'launch'
+      # 'receive' is a ParticipantExpression alias for 'reply'
 
     PROC_ACTIONS = %w[ cancel_process kill_process ]
 
@@ -116,8 +117,6 @@ module Ruote
 
         action = msg['action']
 
-        action = 'reply' if action == 'receive'
-
         if msg['tree']
           #
           # warning here, it could be a reply, with a 'tree' key...
@@ -126,9 +125,7 @@ module Ruote
 
         elsif EXP_ACTIONS.include?(action)
 
-          fexp = Ruote::Exp::FlowExpression.fetch(@context, msg['fei'])
-
-          fexp.send("do_#{action}", msg) if fexp
+          Ruote::Exp::FlowExpression.do_action(@context, msg)
 
         elsif action == 'dispatch'
 

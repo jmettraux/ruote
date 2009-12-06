@@ -69,7 +69,7 @@ module Ruote
     def get (type, key)
 
       synchronize do
-        @h[type][key]
+        Ruote::fulldup(@h[type][key])
       end
     end
 

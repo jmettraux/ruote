@@ -113,6 +113,8 @@ class EftConcurrenceTest < Test::Unit::TestCase
       echo 'done.'
     end
 
+    #noisy
+
     assert_trace pdef, %w[ a b done.]
   end
 
@@ -223,6 +225,8 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
   def test_count_remaining_forget
 
+    #noisy
+
     wfid = run_test_count('forget', false)
 
     #assert_equal 1, logger.log.select { |e| e['action'] == 'forget' }.size
@@ -231,6 +235,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal 1, @bravo.size
 
     #@engine.context.storage.get_many('expressions').each { |e| p e['fei'] }
+    #puts @engine.context.storage.dump('expressions')
     assert_equal 2, @engine.context.storage.get_many('expressions').size
     assert_not_nil @engine.process(wfid)
 

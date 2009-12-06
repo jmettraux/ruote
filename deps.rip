@@ -1,7 +1,0 @@
-git://github.com/jmettraux/rufus-dollar.git 231dd8a8
-git://github.com/jmettraux/rufus-lru.git 6d5296df
-git://github.com/jmettraux/rufus-mnemo.git r1.1.0
-git://github.com/jmettraux/rufus-scheduler.git r2.0.1
-git://github.com/jmettraux/rufus-treechecker.git r1.0.3
-ruby_parser 2.0.3
-sexp_processor 3.0.2

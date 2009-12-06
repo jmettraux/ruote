@@ -9,16 +9,25 @@ require File.join(File.dirname(__FILE__), 'base.rb')
 
 
 class Ruote::Worker
-  def process_next_msg
+  def step_by_one
     msg = @storage.get_msgs.first
     #p [ msg['action'], msg['fei'] ]
-    process(msg) if msg
+    if msg
+      process(msg)
+      true
+    else
+      false
+    end
   end
 end
 
 class Ruote::Engine
-  def process_next_msg (count=1)
-    count.times { @context.worker.process_next_msg }
+  def step (count=1)
+    count.times { @context.worker.step_by_one }
+  end
+  def walk
+    while @context.worker.step_by_one do
+    end
   end
 end
 

@@ -63,6 +63,8 @@ module Ruote::Exp
 
       @context = context
 
+      @msg = nil
+
       @h = h
       class << h
         include Ruote::HashDot
@@ -100,7 +102,7 @@ module Ruote::Exp
 
       #puts "--- per #{h.fei['expid']} #{tree.first} #{h._rev}"
 
-      r = @context.storage.put(@h)
+      r = try_persist
 
       raise(
         "persist fail for "+
@@ -112,23 +114,19 @@ module Ruote::Exp
 
       #puts "--- unp #{h.fei['expid']} #{tree.first} #{h._rev}"
 
-      r = @context.storage.delete(@h)
+      r = try_unpersist
 
       raise(
         "unpersist fail for "+
         "#{Ruote::FlowExpressionId.to_s_id(h.fei)} #{tree.first}"
       ) if r
-
-      if h.has_error
-
-        err = @context.storage.get(
-          'errors', Ruote::FlowExpressionId.to_s_id(h.fei))
-
-        @context.storage.delete(err) if err
-      end
     end
 
+    # Turns this FlowExpression instance into a Hash (well, just hands back
+    # the base hash behind it.
+    #
     def to_h
+
       @h
     end
 
@@ -169,6 +167,12 @@ module Ruote::Exp
     # apply/reply
     #++
 
+    def self.do_action (context, msg)
+
+      fexp = fetch(context, msg['fei'])
+      fexp.send("do_#{msg['action']}", msg) if fexp
+    end
+
     def do_apply
 
       if Condition.skip?(attribute(:if), attribute(:unless))
@@ -185,8 +189,7 @@ module Ruote::Exp
         h.parent_id = nil
         h.forgotten = true
 
-        @context.storage.put_msg(
-          'reply', 'fei' => i, 'workitem' => wi)
+        @context.storage.put_msg('reply', 'fei' => i, 'workitem' => wi)
       end
 
       consider_tag
@@ -238,12 +241,16 @@ module Ruote::Exp
           @context.storage.put_msg(
             h.forgotten ? 'ceased' : 'terminated',
             'wfid' => h.fei['wfid'],
+            'fei' => h.fei,
             'workitem' => workitem)
         end
       end
     end
 
     def do_reply (msg)
+
+      @msg = Ruote.fulldup(msg)
+        # keeping the message, for 'retry' in collision cases
 
       workitem = msg['workitem']
       fei = workitem['fei']
@@ -256,7 +263,7 @@ module Ruote::Exp
 
       h.children.delete(fei)
 
-      if h.state != nil
+      if h.state != nil # failing or timing out ...
 
         if h.children.size < 1
           reply_to_parent(workitem)
@@ -269,6 +276,10 @@ module Ruote::Exp
         reply(workitem)
       end
     end
+
+    # (only makes sense for the participant expression though)
+    #
+    alias :do_receive :do_reply
 
     # A default implementation for all the expressions.
     #
@@ -612,6 +623,46 @@ module Ruote::Exp
       end
 
       supplant_with(t, 'trigger' => on)
+    end
+
+    def try_persist
+
+      @context.storage.put(@h)
+    end
+
+    def try_unpersist
+
+      r = @context.storage.delete(@h)
+
+      return r if r
+
+      if h.has_error
+
+        err = @context.storage.get(
+          'errors', Ruote::FlowExpressionId.to_s_id(h.fei))
+
+        @context.storage.delete(err) if err
+      end
+
+      nil
+    end
+
+    def redo_reply (latest_h)
+
+      #$stderr.puts "\n~~~ redo ~~~\n"
+      #$stderr.puts [ @msg['fei'], @msg['workitem']['fei'] ].inspect
+
+      @h = latest_h
+      do_reply(@msg)
+    end
+
+    def safely (un_persist)
+
+      latest_h = self.send("try_#{un_persist}")
+
+      redo_reply(latest_h) if latest_h
+
+      latest_h.nil?
     end
   end
 end

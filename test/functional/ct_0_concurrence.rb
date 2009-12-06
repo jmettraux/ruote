@@ -13,7 +13,7 @@ require File.join(File.dirname(__FILE__), 'concurrent_base')
 class CtConcurrenceTest < Test::Unit::TestCase
   include ConcurrentBase
 
-  def test_only_one_engine
+  def test_collision
 
     pdef = Ruote.process_definition do
       concurrence do
@@ -22,55 +22,47 @@ class CtConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    @engine0.launch(pdef)
+    #noisy
 
-    assert_equal 1, @storage.get_msgs.size
+    wfid = @engine0.launch(pdef)
+    @engine0.step 4
 
-    @engine0.process_next_msg 7
+    $stderr.puts "================ hmm ..." if @storage.get_msgs.size != 2
 
-    assert_equal 'terminated', @storage.get_msgs.first['action']
+    #t0 = Thread.new { @engine1.step }
+    #t1 = Thread.new { @engine0.step }
+    #t0.join
+    #t1.join
 
-    @engine0.process_next_msg
+    t0 = Thread.new { @engine1.step }
+    @engine0.step
+    t0.join
 
-    assert_equal 0, @storage.get_msgs.size
+    msgs = @storage.get_msgs
+    msg = msgs.first
 
-    assert_equal "a\nb", @tracer0.to_s
-  end
+    if msgs.size > 1 || (msg['fei'] && msg['fei']['expid'] != '0')
 
-  def test_two_engines
+      msgs.each do |m|
 
-    pdef = Ruote.process_definition do
-      concurrence do
-        echo 'a'
-        echo 'b'
+        fei = m['fei'] ?
+          Ruote::FlowExpressionId.to_s_id(m['fei']) : ''
+        wi_fei = m['workitem'] ?
+          Ruote::FlowExpressionId.to_s_id(m['workitem']['fei']) : ''
+
+        p [ m['action'], fei, wi_fei ]
       end
     end
 
-    noisy
+    if msg['action'] == 'error_intercepted'
+      #p @engine0.process(wfid).errors.first
+      puts @engine0.process(wfid).errors.first.message
+      puts @engine0.process(wfid).errors.first.trace
+    end
 
-    @engine0.launch(pdef)
-
-    @engine1.process_next_msg
-
-    assert_equal 1, @storage.get_msgs.size
-
-    @engine0.process_next_msg
-
-    assert_equal 2, @storage.get_msgs.size
-
-    @engine1.process_next_msg
-    @engine0.process_next_msg
-
-    assert_equal 2, @storage.get_msgs.size
-
-    @engine1.process_next_msg
-    @engine0.process_next_msg
-
-    assert_equal 1, @storage.get_msgs.size
-
-    @engine1.process_next_msg 2
-
-    assert_equal 0, @storage.get_msgs.size
+    assert_equal 1, msgs.size
+    assert_equal 'reply', msg['action']
+    assert_equal '0', msg['fei']['expid']
   end
 end
 
