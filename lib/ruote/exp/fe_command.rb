@@ -99,9 +99,11 @@ module Ruote::Exp
 
       param = Integer(param) rescue param
 
-      set_command(h.applied_workitem, name, param)
+      command_workitem = Ruote.fulldup(h.applied_workitem)
 
-      persist
+      set_command(command_workitem, name, param)
+
+      #persist
         # to keep track of the command set in the h.applied_workitem fields
 
       target = parent
@@ -117,22 +119,21 @@ module Ruote::Exp
         target = target.is_a?(Ruote::Exp::CommandedExpression) ?
           target : nil
 
-        ancestor = target ? ancestor?(target.fei) : false
+        ancestor = target ? ancestor?(target.h.fei) : false
 
       else
 
         target = fetch_command_target
       end
 
-      if target.nil? || target.h.fei == h.parent_id
-
-        return reply_to_parent(h.applied_workitem)
-      end
+      return reply_to_parent(h.applied_workitem) if target.nil?
+      return reply_to_parent(command_workitem) if target.h.fei == h.parent_id
 
       @context.storage.put_msg(
         'reply',
         'fei' => target.h.fei,
-        'workitem' => h.applied_workitem)
+        'workitem' => command_workitem,
+        'command' => [ name, param ]) # purely indicative for now
 
       reply_to_parent(h.applied_workitem) unless ancestor
     end

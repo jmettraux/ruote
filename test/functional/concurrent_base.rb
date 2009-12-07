@@ -18,6 +18,7 @@ class Ruote::Worker
       false
     end
   end
+  public :process
 end
 
 class Ruote::Engine
@@ -30,6 +31,9 @@ class Ruote::Engine
   end
   def walk
     while @context.worker.step_by_one do; end
+  end
+  def do_step (msg)
+    @context.worker.process(msg)
   end
 end
 
