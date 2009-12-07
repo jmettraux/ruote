@@ -47,7 +47,7 @@ module Ruote
   #
   def self.time_to_utc_s (t)
 
-    "#{t.utc.strftime('%Y/%m/%d %H:%m:%S')}.#{t.usec} UTC"
+    "#{t.utc.strftime('%Y/%m/%d %H:%m:%S')}.#{sprintf('%06d', t.usec)} UTC"
   end
 
   # Returns a parsable representation of the UTC time now.

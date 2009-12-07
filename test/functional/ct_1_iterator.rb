@@ -37,7 +37,7 @@ class CtIteratorTest < Test::Unit::TestCase
 
     p msg0, msg1
 
-    assert_equal 'stop:', msg0['command']
+    assert_equal 'stop', msg0['command'].first
     assert_equal '0_0_0', msg0['fei']['expid']
     assert_equal '0_0_1_0', msg1['fei']['expid']
 
