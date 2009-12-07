@@ -134,6 +134,14 @@ module Ruote::Exp
 
     names :concurrence
 
+    #class WiArray < Array
+    #  def << (elt)
+    #    p [ self.object_id, :<<, elt ]
+    #    Ruote.p_caller('<<')
+    #    super
+    #  end
+    #end
+
     def apply
 
       h.ccount = attribute(:count).to_i rescue 0
@@ -144,6 +152,7 @@ module Ruote::Exp
       h.remaining = att(:remaining, %w[ cancel forget ])
 
       h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}
+      #h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? WiArray.new : {}
 
       h.over = false
 

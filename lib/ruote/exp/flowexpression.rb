@@ -649,8 +649,7 @@ module Ruote::Exp
 
     def redo_reply (latest_h)
 
-      #$stderr.puts "\n~~~ redo ~~~\n"
-      #$stderr.puts [ @msg['fei'], @msg['workitem']['fei'] ].inspect
+      $stderr.puts "\n~~~ redo ~~~\n"
 
       @h = latest_h
       do_reply(@msg)

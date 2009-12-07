@@ -48,7 +48,7 @@ module Ruote
 
       synchronize do
 
-        prev = @h[doc['type']][doc['_id']]
+        prev = get(doc['type'], doc['_id'])
 
         if prev.nil? || prev['_rev'] == (doc['_rev'] || 0)
 
@@ -77,7 +77,7 @@ module Ruote
 
       synchronize do
 
-        prev = @h[doc['type']][doc['_id']]
+        prev = get(doc['type'], doc['_id'])
 
         return false if prev.nil?
 
@@ -97,6 +97,8 @@ module Ruote
     end
 
     def get_many (type, key=nil)
+
+      # NOTE : no dup here for now
 
       synchronize do
         key ?

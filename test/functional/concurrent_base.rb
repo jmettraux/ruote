@@ -14,7 +14,6 @@ class Ruote::Worker
     #p [ msg['action'], msg['fei'] ]
     if msg
       process(msg)
-      true
     else
       false
     end
@@ -25,9 +24,12 @@ class Ruote::Engine
   def step (count=1)
     count.times { @context.worker.step_by_one }
   end
+  def step!
+    r = @context.worker.step_by_one
+    step! if r == false
+  end
   def walk
-    while @context.worker.step_by_one do
-    end
+    while @context.worker.step_by_one do; end
   end
 end
 

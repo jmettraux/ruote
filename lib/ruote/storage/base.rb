@@ -30,6 +30,11 @@ module Ruote
   #
   module StorageBase
 
+    def reserve (doc)
+
+      (delete(doc) != false)
+    end
+
     #--
     # messages
     #++

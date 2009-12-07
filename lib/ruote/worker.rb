@@ -95,20 +95,23 @@ module Ruote
 
       msg = schedule['msg']
 
-      return if @storage.delete(schedule)
+      return false unless @storage.reserve(schedule)
 
       @storage.put_msg(msg.delete('action'), msg)
+
+      true
     end
 
     def trigger_cron (schedule)
+
+      # TODO : implement
     end
 
     def process (msg)
 
-      return if cannot_handle(msg)
+      return false if cannot_handle(msg)
 
-      return if @storage.delete(msg)
-        #
+      return false unless @storage.reserve(msg)
         # NOTE : if the delete fails, it means there is another worker...
 
       fexp = nil
@@ -145,6 +148,8 @@ module Ruote
 
         handle_exception(msg, fexp, ex)
       end
+
+      true
     end
 
     def handle_exception (msg, fexp, ex)

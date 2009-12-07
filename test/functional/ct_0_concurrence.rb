@@ -22,21 +22,21 @@ class CtConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
+    noisy
 
     wfid = @engine0.launch(pdef)
     @engine0.step 4
 
-    $stderr.puts "================ hmm ..." if @storage.get_msgs.size != 2
+    $stderr.puts "*cough*" if @storage.get_msgs.size != 2
+
+    t0 = Thread.new { @engine1.step! }
+    t1 = Thread.new { @engine0.step! }
+    t0.join
+    t1.join
 
     #t0 = Thread.new { @engine1.step }
-    #t1 = Thread.new { @engine0.step }
+    #@engine0.step
     #t0.join
-    #t1.join
-
-    t0 = Thread.new { @engine1.step }
-    @engine0.step
-    t0.join
 
     msgs = @storage.get_msgs
     msg = msgs.first
