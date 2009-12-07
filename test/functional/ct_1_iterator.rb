@@ -29,19 +29,24 @@ class CtIteratorTest < Test::Unit::TestCase
     noisy
 
     wfid = @engine0.launch(pdef)
-    @engine0.step 11
+
+    #@engine0.step 11
+    msg = @engine0.step_until { |msg| msg['command'] != nil }
+
+    assert_equal 'stop', msg['command'].first
+    assert_equal '0_0_0', msg['fei']['expid']
 
     msgs = @storage.get_msgs
-    msg0 = msgs[0]
-    msg1 = msgs[1]
 
-    p msg0, msg1
+    assert_equal 3, msgs.size
 
-    assert_equal 'stop', msg0['command'].first
-    assert_equal '0_0_0', msg0['fei']['expid']
-    assert_equal '0_0_1_0', msg1['fei']['expid']
+    msgs = msgs - [ msg ]
 
-    t0 = Thread.new { @engine1.do_step(msg0) }
+    assert_equal 2, msgs.size
+
+    msg1 = msgs.first
+
+    t0 = Thread.new { @engine1.do_step(msg) }
     t1 = Thread.new { @engine0.do_step(msg1) }
     t0.join
     t1.join
