@@ -187,11 +187,10 @@ module Ruote
       ].each { |k| rest.delete(k) }
 
       if v = rest['parent_id']
-        rest['parent_id'] = Ruote::FlowExpressionId.to_s_id(v)
+        rest['parent_id'] = Ruote.to_storage_id(v)
       end
       if v = rest.delete('workitem')
-        rest[:wi] = [
-          Ruote::FlowExpressionId.to_s_id(v['fei']), v['fields'].size ]
+        rest[:wi] = [ Ruote.to_storage_id(v['fei']), v['fields'].size ]
       end
 
       { 'tree' => :t, 'parent_id' => :pi }.each do |k0, k1|

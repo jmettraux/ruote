@@ -118,6 +118,7 @@ module Ruote
         configuration
         misc
         participants
+        workitems
       ].inject({}) { |h, k|
         h[k] = {}
         h

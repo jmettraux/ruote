@@ -165,7 +165,11 @@ module Ruote
         require(rp)
       end
 
-      Ruote.constantize(class_name).new(options)
+      pa = Ruote.constantize(class_name).new(options)
+
+      pa.context = @context if pa.respond_to?(:context=)
+
+      pa
     end
 
     # Shuts down the 'instantiated participants' (engine worker participants)

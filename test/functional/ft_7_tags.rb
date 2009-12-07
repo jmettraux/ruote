@@ -32,8 +32,8 @@ class FtTagsTest < Test::Unit::TestCase
 
     #p ps.variables
     #ps.expressions.each { |e| p [ e.fei, e.variables ] }
-    assert_equal '0_0', ps.variables['main'].expid
-    assert_equal '0_0_0', ps.variables['part'].expid
+    assert_equal '0_0', ps.variables['main']['expid']
+    assert_equal '0_0_0', ps.variables['part']['expid']
 
     #logger.log.each { |e| puts e['action'] }
     assert_equal 2, logger.log.select { |e| e['action'] == 'entered_tag' }.size

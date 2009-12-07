@@ -47,7 +47,7 @@ module Ruote
     end
 
     def fei
-      msg['fei']
+      Ruote::FlowExpressionId.new(msg['fei'])
     end
 
     def tree

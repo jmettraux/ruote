@@ -70,7 +70,7 @@ module Ruote::Exp
         include Ruote::HashDot
       end
 
-      h._id ||= fei.to_storage_id
+      h._id ||= Ruote.to_storage_id(h.fei)
       h['type'] ||= 'expressions'
       h.name ||= self.class.expression_names.first
       h.children ||= []
@@ -105,9 +105,7 @@ module Ruote::Exp
       r = try_persist
 
       raise(
-        "persist fail for "+
-        "#{Ruote::FlowExpressionId.to_s_id(h.fei)} #{tree.first}"
-      ) if r
+        "persist fail for #{Ruote.to_storage_id(h.fei)} #{tree.first}") if r
     end
 
     def unpersist
@@ -117,9 +115,7 @@ module Ruote::Exp
       r = try_unpersist
 
       raise(
-        "unpersist fail for "+
-        "#{Ruote::FlowExpressionId.to_s_id(h.fei)} #{tree.first}"
-      ) if r
+        "unpersist fail for #{Ruote.to_storage_id(h.fei)} #{tree.first}") if r
     end
 
     # Turns this FlowExpression instance into a Hash (well, just hands back
@@ -145,8 +141,7 @@ module Ruote::Exp
 
       return nil if fei.nil?
 
-      fexp = context.storage.get(
-        'expressions', Ruote::FlowExpressionId.to_storage_id(fei))
+      fexp = context.storage.get('expressions', Ruote.to_storage_id(fei))
 
       fexp ? from_h(context, fexp) : nil
     end
@@ -638,9 +633,7 @@ module Ruote::Exp
 
       if h.has_error
 
-        err = @context.storage.get(
-          'errors', Ruote::FlowExpressionId.to_s_id(h.fei))
-
+        err = @context.storage.get('errors', Ruote.to_storage_id(h.fei))
         @context.storage.delete(err) if err
       end
 

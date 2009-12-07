@@ -81,7 +81,7 @@ module Ruote
 
       doc ||= @context.storage.get_trackers
 
-      doc['trackers'][Ruote::FlowExpressionId.to_storage_id(fei)] =
+      doc['trackers'][Ruote.to_storage_id(fei)] =
         { 'wfid' => wfid,
           'action' => action,
           'fei' => fei,
@@ -98,7 +98,7 @@ module Ruote
 
       doc ||= @context.storage.get_trackers
 
-      doc['trackers'].delete(Ruote::FlowExpressionId.to_storage_id(fei))
+      doc['trackers'].delete(Ruote.to_storage_id(fei))
 
       r = @context.storage.put(doc)
 

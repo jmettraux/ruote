@@ -29,6 +29,18 @@ require 'ruote/util/hashdot'
 
 module Ruote
 
+  # A shortcut for
+  #
+  #   Ruote::FlowExpressionId.to_storage_id(fei)
+  #
+  def self.to_storage_id (fei)
+
+    Ruote::FlowExpressionId.to_storage_id(fei)
+  end
+
+  #
+  # TODO : document me
+  #
   class FlowExpressionId
 
     CHILD_SEP = '_'
@@ -61,11 +73,6 @@ module Ruote
     def self.to_storage_id (hfei)
 
       "#{hfei['expid']}|#{hfei['sub_wfid']}|#{hfei['wfid']}"
-    end
-
-    def self.to_s_id (hfei)
-
-      to_storage_id(hfei)
     end
 
     # Returns the last number in the expid. For instance, if the expid is

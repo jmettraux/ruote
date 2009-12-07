@@ -150,7 +150,7 @@ module Ruote
       if type == 'ats'
 
         at = t.strftime('%Y%m%d%H%M%S')
-        h['_id'] = "#{Ruote::FlowExpressionId.to_storage_id(owner_fei)}-#{at}"
+        h['_id'] = "#{Ruote.to_storage_id(owner_fei)}-#{at}"
         h['at'] = Ruote.time_to_utc_s(t)
 
       else

@@ -39,6 +39,11 @@ module Ruote
       class << @h; include Ruote::HashDot; end
     end
 
+    def to_h
+
+      @h
+    end
+
     def fei
 
       FlowExpressionId.new(h.fei)

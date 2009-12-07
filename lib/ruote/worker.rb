@@ -159,18 +159,18 @@ module Ruote
 
       # debug only
 
-      #puts "\n== worker intercepted error =="
-      #puts
-      #p ex
-      #ex.backtrace[0, 10].each { |l| puts l }
-      #puts "..."
-      #puts
-      #puts "-- msg --"
-      #msg.keys.sort.each { |k|
-      #  puts "    #{k.inspect} =>\n#{msg[k].inspect}"
-      #}
-      #puts "-- . --"
-      #puts
+      puts "\n== worker intercepted error =="
+      puts
+      p ex
+      ex.backtrace[0, 10].each { |l| puts l }
+      puts "..."
+      puts
+      puts "-- msg --"
+      msg.keys.sort.each { |k|
+        puts "    #{k.inspect} =>\n#{msg[k].inspect}"
+      }
+      puts "-- . --"
+      puts
 
       # on_error ?
 
@@ -192,7 +192,7 @@ module Ruote
 
       @storage.put(
         'type' => 'errors',
-        '_id' => Ruote::FlowExpressionId.to_storage_id(fei),
+        '_id' => Ruote.to_storage_id(fei),
         'message' => ex.inspect,
         'trace' => ex.backtrace.join("\n"),
         'msg' => msg
