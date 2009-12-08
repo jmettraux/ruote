@@ -22,17 +22,60 @@
 # Made in Japan.
 #++
 
-#require 'rufus/cloche'
+require 'rufus/cloche'
 
 
 module Ruote
 
   class FsStorage
 
+    include StorageBase
+
     def initialize (dir, options={})
+
+      FileUtils.mkdir_p(dir)
 
       @cloche = Rufus::Cloche.new(:dir => dir)
       @options = options
+
+      @cloche.put(@options.merge('type' => 'configuration', '_id' => 'engine'))
+    end
+
+    def put (doc)
+
+      @cloche.put(doc.merge!('put_at' => Ruote.now_to_utc_s))
+    end
+
+    def get (type, key)
+
+      @cloche.get(type, key)
+    end
+
+    def delete (doc)
+
+      @cloche.delete(doc)
+    end
+
+    def get_many (type, key=nil)
+
+      @cloche.get_many(type, key)
+    end
+
+    def purge!
+
+      FileUtils.rm_rf(@cloche.dir)
+    end
+
+    def dump (type)
+
+      s = "=== #{type} ===\n"
+
+      @cloche.get_many(type).inject(s) do |s1, e|
+        s1 << "\n"
+        e.keys.sort.inject(s1) do |s2, k|
+          s2 << "  #{k} => #{e[k].inspect}\n"
+        end
+      end
     end
   end
 end

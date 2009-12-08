@@ -21,7 +21,6 @@ module FunctionalBase
 
   def setup
 
-
     @engine =
       Ruote::Engine.new(
         Ruote::Worker.new(
@@ -35,9 +34,9 @@ module FunctionalBase
 
   def teardown
 
-    purge_engine
-
     @engine.shutdown
+    #puts `tree work`
+    @engine.context.storage.purge!
   end
 
   def assert_log_count (count, &block)
@@ -159,13 +158,6 @@ module FunctionalBase
     puts_trace_so_far
 
     flunk 'too many expressions left in storage'
-  end
-
-  def purge_engine
-
-    @engine.purge!
-
-    FileUtils.rm_rf('work')
   end
 
   def puts_trace_so_far

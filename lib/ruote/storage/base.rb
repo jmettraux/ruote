@@ -32,7 +32,10 @@ module Ruote
 
     def reserve (doc)
 
-      (delete(doc) != false)
+      (delete(doc) != true)
+      #r = delete(doc)
+      #p [ self.object_id, :reserve, r, doc['action'] ]
+      #r != true
     end
 
     #--

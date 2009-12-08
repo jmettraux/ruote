@@ -11,19 +11,18 @@ Gem::Specification.new do |s|
   s.description = 'an open source ruby workflow engine'
 
   s.require_path = 'lib'
-  s.rubyforge_project = 'openwferu'
+  s.rubyforge_project = 'ruote'
   #s.autorequire = 'ruote'
   s.test_file = 'test/test.rb'
   s.has_rdoc = true
   s.extra_rdoc_files = [ 'README.rdoc' ]
 
   [
-    'rufus-lru',
     'rufus-scheduler',
     'rufus-dollar',
     'rufus-treechecker',
     'rufus-mnemo',
-    'rufus-verbs'
+    'rufus-cloche'
   ].each { |d|
     s.requirements << d
     s.add_dependency(d)

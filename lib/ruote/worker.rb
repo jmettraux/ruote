@@ -37,6 +37,7 @@ module Ruote
 
     PROC_ACTIONS = %w[ cancel_process kill_process ]
 
+    attr_reader :running
     attr_reader :storage
     attr_reader :context
 
@@ -48,16 +49,35 @@ module Ruote
       @context = Ruote::WorkerContext.new(self)
 
       @last_time = Time.at(0.0).utc # 1970...
+
+      @running = true
+      @run_thread = nil
     end
 
     def run
 
-      loop { step }
+      while(@running) do
+        step
+      end
+    end
+
+    def run_in_thread
+
+      #Thread.abort_on_exception = true
+      @running = true
+
+      @run_thread = Thread.new { run }
     end
 
     def subscribe (actions, subscriber)
 
       @subscribers << [ actions, subscriber ]
+    end
+
+    def shutdown
+
+      @running = false
+      @run_thread.join if @run_thread
     end
 
     protected
@@ -159,18 +179,21 @@ module Ruote
 
       # debug only
 
-      puts "\n== worker intercepted error =="
-      puts
-      p ex
-      ex.backtrace[0, 10].each { |l| puts l }
-      puts "..."
-      puts
-      puts "-- msg --"
-      msg.keys.sort.each { |k|
-        puts "    #{k.inspect} =>\n#{msg[k].inspect}"
-      }
-      puts "-- . --"
-      puts
+      if ARGV.include?('-d')
+
+        puts "\n== worker intercepted error =="
+        puts
+        p ex
+        ex.backtrace[0, 10].each { |l| puts l }
+        puts "..."
+        puts
+        puts "-- msg --"
+        msg.keys.sort.each { |k|
+          puts "    #{k.inspect} =>\n#{msg[k].inspect}"
+        }
+        puts "-- . --"
+        puts
+      end
 
       # on_error ?
 

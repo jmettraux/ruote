@@ -120,6 +120,13 @@ module Ruote
       super(@worker.storage)
     end
 
+    def shutdown
+
+      @worker.shutdown
+
+      super
+    end
+
     protected
 
     def default_conf

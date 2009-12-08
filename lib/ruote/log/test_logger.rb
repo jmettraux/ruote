@@ -51,7 +51,7 @@ module Ruote
       @seen = []
       @log = []
       @waiting = nil
-      @color = 34
+      @color = 33
 
       # NOTE
       # in case of troubles, why not have the wait_for has an event ?
@@ -205,8 +205,8 @@ module Ruote
       action = color('4;31', action) if action == 'te'
       action = color('31', action) if action == 'ce'
       action = color('31', action) if action == 'ca'
-      action = color('4;34', action) if action == 'rc'
-      action = color('4;34', action) if action == 'di'
+      action = color('4;33', action) if action == 'rc'
+      action = color('4;33', action) if action == 'di'
 
       color(
         @color,

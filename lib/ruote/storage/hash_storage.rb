@@ -79,7 +79,7 @@ module Ruote
 
         prev = get(doc['type'], doc['_id'])
 
-        return false if prev.nil?
+        return true if prev.nil?
 
         doc['_rev'] ||= 0
 

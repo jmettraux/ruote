@@ -45,11 +45,7 @@ module Ruote
         @context = worker_or_storage.context
         @context.engine = self
 
-        Thread.abort_on_exception = true
-          #
-          # TODO : this is temporary !!! remove it at one point
-
-        Thread.new { @context.worker.run } if run
+        @context.worker.run_in_thread if run
 
       else
 
@@ -177,11 +173,6 @@ module Ruote
       end
 
       by_wfid.values.collect { |xs, rs| ProcessStatus.new(@context, xs, rs) }
-    end
-
-    def purge!
-
-      @storage.purge!
     end
 
     def shutdown

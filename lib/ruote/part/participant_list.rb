@@ -89,7 +89,7 @@ module Ruote
 
         participant.context = @context if participant.respond_to?(:context=)
         @instantiated_participants[entry.last] = participant
-        participant
+        #participant
 
       else
 

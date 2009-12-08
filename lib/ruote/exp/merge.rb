@@ -45,15 +45,15 @@ module Ruote::Exp
 
       return source if type == 'override'
 
-      source.fields = { index => source.fields } \
+      source['fields'] = { index => source['fields'] } \
         if target == nil && type == 'isolate'
 
       return source unless target
 
       if type == 'mix'
-        target.fields.merge!(source.fields)
+        target['fields'].merge!(source['fields'])
       else # 'isolate'
-        target.fields[index] = source.fields
+        target['fields'][index] = source['fields']
       end
 
       target

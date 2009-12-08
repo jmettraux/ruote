@@ -114,6 +114,8 @@ module Ruote::Exp
 
       r = try_unpersist
 
+      #p [ :unp_reply, r ]
+
       raise(
         "unpersist fail for #{Ruote.to_storage_id(h.fei)} #{tree.first}") if r
     end
