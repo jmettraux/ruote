@@ -26,8 +26,20 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal 'alpha', msg['regex']
 
     assert_equal(
-      [ ':alpha' ],
+      [ 'inpa_:alpha' ],
       @engine.context.plist.instantiated_participants.collect { |e| e.first })
+  end
+
+  def test_double_registration
+
+    @engine.register_participant :alpha do |workitem|
+      @tracer << 'alpha'
+    end
+    @engine.register_participant :alpha do |workitem|
+      @tracer << 'alpha'
+    end
+
+    assert_equal 1, @engine.context.plist.send(:get_list)['list'].size
   end
 
   def test_register_and_return_participant
@@ -52,7 +64,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     msg = logger.log.last
     assert_equal 'participant_unregistered', msg['action']
-    assert_equal '(?-mix:^alpha$)', msg['regex']
+    assert_equal '^alpha$', msg['regex']
 
     assert_equal 0, @engine.context.plist.instantiated_participants.size
   end
@@ -68,7 +80,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     msg = logger.log.last
     assert_equal 'participant_unregistered', msg['action']
-    assert_equal '(?-mix:^alpha$)', msg['regex']
+    assert_equal '^alpha$', msg['regex']
 
     assert_equal 0, @engine.context.plist.instantiated_participants.size
   end

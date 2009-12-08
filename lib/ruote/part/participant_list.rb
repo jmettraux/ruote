@@ -57,10 +57,15 @@ module Ruote
       entry = if participant.is_a?(Class)
         [ participant.to_s, options ]
       else
-        name.inspect
+        "inpa_#{name.inspect}"
+          # INstantiated PArticipant
       end
 
-      entry = [ name.is_a?(Regexp) ? name : Regexp.new("^#{name}$"), entry ]
+      key = (name.is_a?(Regexp) ? name : Regexp.new("^#{name}$")).source
+
+      entry = [ key, entry ]
+
+      list['list'].delete_if { |e| e.first == key }
 
       position = options['position'] || 'last'
       case position
@@ -107,7 +112,7 @@ module Ruote
 
       if name_or_participant.is_a?(String)
 
-        entry = list['list'].find { |re, pa| re.match(name_or_participant) }
+        entry = list['list'].find { |re, pa| name_or_participant.match(re) }
 
         return nil unless entry
 
@@ -143,7 +148,7 @@ module Ruote
 
     def lookup_info (participant_name)
 
-      re, pa = get_list['list'].find { |rr, pp| rr.match(participant_name) }
+      re, pa = get_list['list'].find { |rr, pp| participant_name.match(rr) }
 
       case pa
         when nil then nil
@@ -189,18 +194,6 @@ module Ruote
       @context.storage.get('participants', 'list') ||
         { 'type' => 'participants', '_id' => 'list', 'list' => [] }
     end
-
-    #def prepare (pa, opts, block)
-    #  pa = if pa.class == Class
-    #    pa.new(opts.merge(:block => block))
-    #  elsif block
-    #    BlockParticipant.new(block, opts)
-    #  else
-    #    pa
-    #  end
-    #  pa.context = @context if pa.respond_to?(:context=)
-    #  pa
-    #end
   end
 end
 
