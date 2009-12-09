@@ -14,8 +14,8 @@ require 'ruote/log/test_logger'
 opts = {}
 
 storage = if ARGV.include?('--fs')
-  FileUtils.rm_rf('work') if ARGV.include?('-e')
-  Ruote::FsStorage.new('work', opts)
+  #FileUtils.rm_rf('work_mega') if ARGV.include?('-e')
+  Ruote::FsStorage.new('work_mega', opts)
 else
   Ruote::HashStorage.new(opts)
 end
