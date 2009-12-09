@@ -64,7 +64,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_trace(pdef, %w[ alpha ] * 3)
 
     assert_equal(
-      {1=>{"seen"=>"indeed"}, 0=>{}, "params"=>{"ref"=>"bravo"}},
+      {'1'=>{"seen"=>"indeed"}, '0'=>{}, "params"=>{"ref"=>"bravo"}},
       fields)
   end
 
@@ -179,8 +179,8 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     assert_equal(%w[ 0 1 params ], wi.fields.keys.collect { |k| k.to_s }.sort)
     assert_equal({ 'ref' => 'alpha' }, wi.fields['params'])
-    assert_equal(%w[ seen ], wi.fields[0].keys)
-    assert_equal(%w[ seen ], wi.fields[1].keys)
+    assert_equal(%w[ seen ], wi.fields['0'].keys)
+    assert_equal(%w[ seen ], wi.fields['1'].keys)
   end
 
   # helper

@@ -45,15 +45,18 @@ module Ruote::Exp
 
       return source if type == 'override'
 
-      source['fields'] = { index => source['fields'] } \
-        if target == nil && type == 'isolate'
+      source['fields'] = {
+        index.to_s => source['fields']
+      } if target == nil && type == 'isolate'
+        #
+        # index.to_s since JSON wants string keys.
 
       return source unless target
 
       if type == 'mix'
         target['fields'].merge!(source['fields'])
       else # 'isolate'
-        target['fields'][index] = source['fields']
+        target['fields'][index.to_s] = source['fields']
       end
 
       target
