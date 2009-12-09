@@ -1,11 +1,14 @@
 
+
 $:.unshift('lib')
 
+require 'rubygems'
 require 'ruote/engine'
 require 'ruote/worker'
 require 'ruote/part/storage_participant'
 require 'ruote/storage/hash_storage'
 require 'ruote/storage/fs_storage'
+require 'ruote/log/test_logger'
 
 #opts = { 's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ] }
 opts = {}
@@ -50,11 +53,10 @@ else
   # pure worker
   #
 
-  puts "... worker ..."
+  puts "... standalone worker ..."
 
   worker = Ruote::Worker.new(storage)
-  worker.run_in_thread
-  worker.run_thread.join
+  worker.run
 
 end
 

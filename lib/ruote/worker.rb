@@ -54,6 +54,8 @@ module Ruote
 
       @running = true
       @run_thread = nil
+
+      @msgs = []
     end
 
     def run
@@ -66,6 +68,7 @@ module Ruote
     def run_in_thread
 
       #Thread.abort_on_exception = true
+
       @running = true
 
       @run_thread = Thread.new { run }
@@ -106,11 +109,32 @@ module Ruote
 
       # msgs
 
-      msgs = @storage.get_msgs
+      @msgs = @storage.get_msgs if @msgs.empty?
 
-      msgs.each { |msg| process(msg) }
+      processed = 0
+      collisions = 0
 
-      sleep(0.100) if msgs.size == 0
+      while msg = @msgs.shift
+
+        r = process(msg)
+
+        if r != false
+          processed += 1
+        else
+          collisions += 1
+        end
+
+        if collisions > 2
+          @msgs = @msgs[(@msgs.size / 2)..-1] || []
+        end
+
+        #print r == false ? '*' : '.'; STDOUT.flush
+
+        break if Time.now.utc - @last_time >= 1.0
+      end
+
+      #puts "#{delta}  processed : #{processed} #{(processed) == 0 ? '*' : ''}"
+      sleep(0.100) if processed == 0
     end
 
     def trigger_at (schedule)
@@ -134,7 +158,6 @@ module Ruote
       return false if cannot_handle(msg)
 
       return false unless @storage.reserve(msg)
-        # NOTE : if the delete fails, it means there is another worker...
 
       fexp = nil
 

@@ -90,6 +90,12 @@ module Ruote
       @color = c
     end
 
+    def self.pp (msg)
+
+      @logger ||= TestLogger.new(nil)
+      puts @logger.send(:pretty_print, msg)
+    end
+
     protected
 
     def check_waiting
@@ -190,7 +196,9 @@ module Ruote
         rest['parent_id'] = Ruote.to_storage_id(v)
       end
       if v = rest.delete('workitem')
-        rest[:wi] = [ Ruote.to_storage_id(v['fei']), v['fields'].size ]
+        rest[:wi] = [
+          v['fei'] ? Ruote.to_storage_id(v['fei']) : nil,
+          v['fields'].size ]
       end
 
       { 'tree' => :t, 'parent_id' => :pi }.each do |k0, k1|
