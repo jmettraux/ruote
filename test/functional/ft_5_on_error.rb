@@ -140,16 +140,16 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    acount = 0
-    ecount = 0
-    @engine.register_participant(:alpha) { |wi| acount += 1 }
-    @engine.register_participant(:emil) { |wi| ecount += 1 }
+    a_count = 0
+    e_count = 0
+    @engine.register_participant(:alpha) { |wi| a_count += 1 }
+    @engine.register_participant(:emil) { |wi| e_count += 1 }
 
     #noisy
 
     assert_trace pdef, 'done.'
-    assert_equal 1, acount
-    assert_equal 1, ecount
+    assert_equal 1, a_count
+    assert_equal 1, e_count
   end
 end
 

@@ -104,8 +104,10 @@ module Ruote::Exp
 
       r = try_persist
 
+      #p [ :per_reply, r ]
+
       raise(
-        "persist fail for #{Ruote.to_storage_id(h.fei)} #{tree.first}") if r
+        "persist failed for #{Ruote.to_storage_id(h.fei)} #{tree.first}") if r
     end
 
     def unpersist
@@ -117,7 +119,17 @@ module Ruote::Exp
       #p [ :unp_reply, r ]
 
       raise(
-        "unpersist fail for #{Ruote.to_storage_id(h.fei)} #{tree.first}") if r
+        "unpersist failed for #{Ruote.to_storage_id(h.fei)} #{tree.first}") if r
+    end
+
+    def unpersist_if_still_present
+
+      r = try_unpersist
+
+      raise(
+        "unpersist_if_still_present failed for "+
+        "#{Ruote.to_storage_id(h.fei)} #{tree.first}"
+      ) if r.respond_to?(:keys)
     end
 
     # Turns this FlowExpression instance into a Hash (well, just hands back
@@ -576,7 +588,7 @@ module Ruote::Exp
 
       # at first, nuke self
 
-      unpersist
+      unpersist_if_still_present
 
       # then re-apply
 
