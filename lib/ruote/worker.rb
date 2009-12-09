@@ -37,9 +37,11 @@ module Ruote
 
     PROC_ACTIONS = %w[ cancel_process kill_process ]
 
-    attr_reader :running
     attr_reader :storage
     attr_reader :context
+
+    attr_reader :run_thread
+    attr_reader :running
 
     def initialize (storage)
 
