@@ -59,7 +59,7 @@ module Ruote
 
         raise ArgumentError.new(
           "remote process definitions are not allowed"
-        ) if u.scheme != nil && @context[:remote_definition_allowed] != true
+        ) if u.scheme != nil && @context['remote_definition_allowed'] != true
 
         return parse(open(definition).read)
       end
@@ -76,7 +76,7 @@ module Ruote
       unless @parser
         require 'ruote/util/treechecker'
         @parser = Ruote::Parser.new
-        @parser.context = { :s_treechecker => Ruote::TreeChecker.new }
+        @parser.context = { 's_treechecker' => Ruote::TreeChecker.new }
       end
 
       @parser.parse(d)

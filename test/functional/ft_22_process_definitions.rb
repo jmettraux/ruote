@@ -38,7 +38,7 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
 
   def test_remote_definitions_allowed
 
-    @engine.context[:remote_definition_allowed] = true
+    @engine.context['remote_definition_allowed'] = true
 
     e = assert_raise SocketError, OpenURI::HTTPError, ArgumentError do
       @engine.launch('http://defs.example.com/def0.rb')
