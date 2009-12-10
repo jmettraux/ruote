@@ -35,7 +35,7 @@ module Ruote
 
       @storage = storage
 
-      @conf = default_conf.merge(@storage.get('configuration', 'engine') || {})
+      @conf = default_conf.merge(@storage.get_configuration('engine') || {})
 
       initialize_services
     end

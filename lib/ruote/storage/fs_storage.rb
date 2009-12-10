@@ -38,7 +38,7 @@ module Ruote
       @cloche = Rufus::Cloche.new(:dir => dir)
       @options = options
 
-      @cloche.put(@options.merge('type' => 'configuration', '_id' => 'engine'))
+      @cloche.put(@options.merge('type' => 'configurations', '_id' => 'engine'))
     end
 
     def put (doc)
@@ -56,9 +56,9 @@ module Ruote
       @cloche.delete(doc)
     end
 
-    def get_many (type, key=nil)
+    def get_many (type, key=nil, opts={})
 
-      @cloche.get_many(type, key)
+      @cloche.get_many(type, key, opts)
     end
 
     def purge!

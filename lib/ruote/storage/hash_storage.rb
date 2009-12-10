@@ -110,21 +110,24 @@ module Ruote
     def purge!
 
       @h = %w[
+
+        last_wfid
+        trackers
+
         msgs
         expressions
         errors
         ats
         crons
-        configuration
-        misc
-        participants
+        configurations
         workitems
+
       ].inject({}) { |h, k|
         h[k] = {}
         h
       }
 
-      @h['configuration']['engine'] = @options
+      @h['configurations']['engine'] = @options
     end
 
     def dump (type)

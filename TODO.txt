@@ -271,3 +271,5 @@
 
 [ ] timeout :at and :after
 
+[ ] limit the number of msgs returned 
+

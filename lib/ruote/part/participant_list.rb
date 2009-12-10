@@ -191,8 +191,10 @@ module Ruote
 
     def get_list
 
-      @context.storage.get('participants', 'list') ||
-        { 'type' => 'participants', '_id' => 'list', 'list' => [] }
+      @context.storage.get_configuration('participant_list') ||
+        { 'type' => 'configurations',
+          '_id' => 'participant_list',
+          'list' => [] }
     end
   end
 end

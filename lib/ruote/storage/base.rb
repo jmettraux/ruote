@@ -39,6 +39,15 @@ module Ruote
     end
 
     #--
+    # configurations
+    #++
+
+    def get_configuration (key)
+
+      get('configurations', key)
+    end
+
+    #--
     # messages
     #++
 
@@ -53,6 +62,8 @@ module Ruote
     end
 
     def get_msgs
+
+      # TODO : add limit here, maybe 100
 
       get_many('msgs').sort { |a, b| a['put_at'] <=> b['put_at'] }
     end
@@ -76,8 +87,8 @@ module Ruote
 
     def get_trackers
 
-      get('misc', 'trackers') ||
-        { '_id' => 'trackers', 'type' => 'misc', 'trackers' => {} }
+      get('trackers', 'trackers') ||
+        { '_id' => 'trackers', 'type' => 'trackers', 'trackers' => {} }
     end
 
     #--
