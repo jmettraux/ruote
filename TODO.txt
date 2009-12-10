@@ -266,10 +266,8 @@
 [ ] listen : to errors
 
 [ ] case exp : smarter one ?
-
 [ ] remove abort_on_exception=true
-
 [ ] timeout :at and :after
-
-[ ] limit the number of msgs returned 
+[o] limit the number of msgs returned
+[ ] issue with :unless => '${f:index} == 2000'
 

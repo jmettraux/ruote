@@ -1,5 +1,4 @@
 
-
 $:.unshift('lib')
 
 require 'rubygems'
@@ -36,17 +35,20 @@ if ARGV.include?('-e')
   start = Time.now
 
   pdef = Ruote.process_definition :name => 'mega' do
-    #echo '${f:index}'
-    alpha
+    #echo '/${f:index}/'
+    alpha :if => '${f:index} != 2000'
   end
 
+  wfid = nil
+
   (1..2000).to_a.each_with_index do |i|
-    engine.launch(pdef, :fields => { 'index' => i })
+    wfid = engine.launch(pdef, :fields => { 'index' => i })
   end
 
   puts "took #{Time.now - start} seconds to launch"
 
-  engine.context.worker.run_thread.join
+  #engine.context.worker.run_thread.join
+  engine.wait_for(wfid)
 
 else
   #
