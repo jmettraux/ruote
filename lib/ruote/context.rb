@@ -90,7 +90,8 @@ module Ruote
         's_wfidgen' => [ 'ruote/id/wfid_generator', 'Ruote::WfidGenerator' ],
         's_parser' => [ 'ruote/parser', 'Ruote::Parser' ],
         's_treechecker' => [ 'ruote/util/treechecker', 'Ruote::TreeChecker' ],
-        's_tracker' => [ 'ruote/evt/tracker', 'Ruote::Tracker' ]
+        's_tracker' => [ 'ruote/evt/tracker', 'Ruote::Tracker' ],
+        's_logger' => [ 'ruote/log/wait_logger', 'Ruote::WaitLogger' ]
       }
     end
   end
@@ -132,10 +133,8 @@ module Ruote
     def default_conf
 
       super.merge(
-        's_plist' => [
-          'ruote/part/participant_list', 'Ruote::ParticipantList' ],
-        's_expmap' => [
-          'ruote/exp/expression_map', 'Ruote::ExpressionMap' ])
+        's_plist' => [ 'ruote/part/participant_list', 'Ruote::ParticipantList' ],
+        's_expmap' => [ 'ruote/exp/expression_map', 'Ruote::ExpressionMap' ])
     end
   end
 end

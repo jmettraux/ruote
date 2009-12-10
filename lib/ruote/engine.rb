@@ -179,6 +179,34 @@ module Ruote
 
       @context.shutdown
     end
+
+    # This method expects there is a logger with a wait_for method in the
+    # context, else it will raise an exception.
+    #
+    # This method is only useful for test/quickstart/examples environments.
+    #
+    #   engine.wait_for(:alpha)
+    #     # will make the current thread block until a workitem is delivered
+    #     # to the participant named 'alpha'
+    #
+    #   engine.wait_for('123432123-9043')
+    #     # will make the current thread block until the processed whose
+    #     # wfid is given (String) terminates or produces an error.
+    #
+    #   engine.wait_for(5)
+    #     # will make the current thread block until 5 messages have been
+    #     # processed on the workqueue...
+    #
+    def wait_for (item)
+
+      logger = @context['s_logger']
+
+      raise(
+        "can't wait_for, there is no logger that responds to that call"
+      ) unless logger.respond_to?(:wait_for)
+
+      logger.wait_for(item)
+    end
   end
 
   #
