@@ -96,14 +96,21 @@ module Ruote
       end
     end
 
-    def get_many (type, key=nil)
+    def get_many (type, key=nil, opts={})
 
       # NOTE : no dup here for now
 
       synchronize do
-        key ?
+
+        docs = key ?
           @h[type].values.select { |doc| doc['_id'].match(key) } :
           @h[type].values
+
+        if l = opts[:limit]
+          docs[0, l]
+        else
+          docs
+        end
       end
     end
 

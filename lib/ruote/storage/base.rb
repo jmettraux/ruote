@@ -63,9 +63,11 @@ module Ruote
 
     def get_msgs
 
-      # TODO : add limit here, maybe 100
-
-      get_many('msgs').sort { |a, b| a['put_at'] <=> b['put_at'] }
+      get_many(
+        'msgs', nil, :limit => 300
+      ).sort { |a, b|
+        a['put_at'] <=> b['put_at']
+      }
     end
 
     #--
