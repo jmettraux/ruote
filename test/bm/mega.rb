@@ -36,7 +36,7 @@ if ARGV.include?('-e')
 
   pdef = Ruote.process_definition :name => 'mega' do
     #echo '/${f:index}/'
-    alpha :if => '${f:index} != 2000'
+    alpha :unless => '${f:index} == 2000'
   end
 
   wfid = nil
