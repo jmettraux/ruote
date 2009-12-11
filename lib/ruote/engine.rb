@@ -224,19 +224,12 @@ module Ruote
 
     def [] (k)
 
-      @storage.get('misc', 'variables')[k]
+      @storage.get_engine_variable(k)
     end
 
     def []= (k, v)
 
-      vars = @storage.get('misc', 'variables') || {
-        'type' => 'misc', '_id' => 'variables'
-      }
-
-      vars[k] = v
-
-      self.[]=(k, v) if @storage.put(vars)
-        # redo it if the put failed
+      @storage.put_engine_variable(k, v)
     end
   end
 end

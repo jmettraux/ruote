@@ -32,8 +32,8 @@ module Ruote
       @context = context
 
       @last =
-        @context.storage.get('last_wfid', 'last_wfid') ||
-        { 'type' => 'last_wfid', '_id' => 'last_wfid', 'raw' => Time.now.to_f }
+        @context.storage.get('variables', 'last_wfid') ||
+        { 'type' => 'variables', '_id' => 'last_wfid', 'raw' => Time.now.to_f }
     end
 
     def generate

@@ -49,7 +49,7 @@ module Ruote::Exp
 
       var, prefix = split_prefix(var, prefix)
 
-      return @context.engine.variables[var] \
+      return @context.storage.get_engine_variable(var) \
         if prefix.length >= 2
 
       return parent.lookup_variable(var, prefix) \
@@ -66,7 +66,7 @@ module Ruote::Exp
         return parent.lookup_variable(var, prefix)
       end
 
-      @context.storage.get('misc', 'variables')[var] rescue nil
+      @context.storage.get_engine_variable(var)
     end
 
     # A shortcut for #lookup_variable

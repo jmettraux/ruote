@@ -69,6 +69,7 @@ module Ruote
     def get (type, key)
 
       synchronize do
+        #p type unless @h[type]
         Ruote::fulldup(@h[type][key])
       end
     end
@@ -118,8 +119,7 @@ module Ruote
 
       @h = %w[
 
-        last_wfid
-        trackers
+        variables
 
         msgs
         expressions

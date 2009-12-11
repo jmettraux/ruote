@@ -89,8 +89,8 @@ module Ruote
 
     def get_trackers
 
-      get('trackers', 'trackers') ||
-        { '_id' => 'trackers', 'type' => 'trackers', 'trackers' => {} }
+      get('variables', 'trackers') ||
+        { '_id' => 'trackers', 'type' => 'variables', 'trackers' => {} }
     end
 
     #--
@@ -157,7 +157,30 @@ module Ruote
       delete(s) if s
     end
 
+    #--
+    # engine variables
+    #++
+
+    def get_engine_variable (k)
+
+      get_engine_variables['variables'][k]
+    end
+
+    def put_engine_variable (k, v)
+
+      vars = get_engine_variables
+      vars['variables'][k] = v
+
+      put_engine_variable(k, v) unless put(vars).nil?
+    end
+
     protected
+
+    def get_engine_variables
+
+      get('variables', 'variables') || {
+        'type' => 'variables', '_id' => 'variables', 'variables' => {} }
+    end
 
     def put_schedule (type, owner_fei, t, msg)
 

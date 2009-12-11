@@ -34,7 +34,7 @@ class EftListenTest < Test::Unit::TestCase
     assert_trace(
       pdef, %w[ alpha 1 ])
     assert_equal(
-      0, @engine.context.storage.get('misc', 'trackers')['trackers'].size)
+      0, @engine.context.storage.get('variables', 'trackers')['trackers'].size)
   end
 
   def test_listen_with_child
@@ -82,7 +82,7 @@ class EftListenTest < Test::Unit::TestCase
     assert_equal 0, ps.errors.size
 
     assert_equal(
-      1, @engine.context.storage.get('misc', 'trackers')['trackers'].size)
+      1, @engine.context.storage.get('variables', 'trackers')['trackers'].size)
   end
 
   def test_upon
@@ -195,14 +195,14 @@ class EftListenTest < Test::Unit::TestCase
     wait_for(2)
 
     assert_equal(
-      1, @engine.context.storage.get('misc', 'trackers')['trackers'].size)
+      1, @engine.context.storage.get('variables', 'trackers')['trackers'].size)
 
     @engine.cancel_process(wfid)
 
     wait_for(wfid)
 
     assert_equal(
-      0, @engine.context.storage.get('misc', 'trackers')['trackers'].size)
+      0, @engine.context.storage.get('variables', 'trackers')['trackers'].size)
   end
 
   def test_cross
