@@ -217,7 +217,7 @@ module Ruote::Exp
 
       initial = Ruote.fulldup(self)
 
-      if Condition.skip?(attribute(:if), attribute(:unless))
+      if not Condition.apply?(attribute(:if), attribute(:unless))
 
         pool.reply_to_parent(self, @applied_workitem)
         return

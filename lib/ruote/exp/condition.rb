@@ -30,12 +30,12 @@ module Ruote::Exp
     SET_REGEX = /(\S*?)( +is)?( +not)?( +set)$/
     COMPARISON_REGEX = /(.*?) *(==|!=|>=|<=|>|<|=~) *(.*)/
 
-    def self.skip? (sif, sunless)
+    def self.apply? (sif, sunless)
 
-      return (not true?(sif)) if sif
-      return (true?(sunless)) if sunless
+      return (true?(sif)) if sif
+      return ( ! true?(sunless)) if sunless
 
-      false
+      true
     end
 
     # TODO : rconditional
