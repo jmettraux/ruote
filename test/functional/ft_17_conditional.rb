@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Fri Jul  3 19:46:22 JST 2009
 #
@@ -50,6 +50,30 @@ class FtConditionalTest < Test::Unit::TestCase
     end
 
     assert_trace(pdef, "some dude\na\nb\nd")
+  end
+
+  def test_unless
+
+    pdef = Ruote.process_definition :name => 'test' do
+
+      echo '${f:f}'
+      echo 'u', :unless => '${f:f} == 2000'
+      echo 'i', :if => '${f:f} == 2000'
+      echo '.'
+    end
+
+    assert_trace(
+      Ruote::Launchitem.new(pdef, 'f' => 2000), %w[ 2000 i . ])
+
+    @tracer.clear
+
+    assert_trace(
+      Ruote::Launchitem.new(pdef, 'f' => '2000'), %w[ 2000 i . ])
+
+    @tracer.clear
+
+    assert_trace(
+      Ruote::Launchitem.new(pdef, 'f' => 'other'), %w[ other u . ])
   end
 end
 

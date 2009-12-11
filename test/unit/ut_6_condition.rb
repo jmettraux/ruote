@@ -40,7 +40,7 @@ class ConditionTest < Test::Unit::TestCase
     sif = fe.attribute(:if)
     sunless = fe.attribute(:unless)
 
-    assert_equal result, (not Ruote::Exp::Condition.skip?(sif, sunless))
+    assert_equal result, Ruote::Exp::Condition.apply?(sif, sunless)
   end
 
   def assert_b (b, conditional)
