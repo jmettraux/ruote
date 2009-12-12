@@ -67,12 +67,12 @@ module Ruote
 
     def to_storage_id
 
-      "#{@h['expid']}|#{@h['sub_wfid']}|#{@h['wfid']}"
+      "#{@h['expid']}!#{@h['sub_wfid']}!#{@h['wfid']}"
     end
 
     def self.to_storage_id (hfei)
 
-      "#{hfei['expid']}|#{hfei['sub_wfid']}|#{hfei['wfid']}"
+      "#{hfei['expid']}!#{hfei['sub_wfid']}!#{hfei['wfid']}"
     end
 
     # Returns the last number in the expid. For instance, if the expid is
