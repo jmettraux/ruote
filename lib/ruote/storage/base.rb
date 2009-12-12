@@ -33,9 +33,6 @@ module Ruote
     def reserve (doc)
 
       (delete(doc) != true)
-      #r = delete(doc)
-      #p [ self.object_id, :reserve, r, doc['action'] ]
-      #r != true
     end
 
     #--
@@ -59,7 +56,18 @@ module Ruote
         'type' => 'msgs',
         '_id' => "#{$$}-#{Thread.current.object_id}-#{Time.now.to_f.to_s}",
         'action' => action))
+
+      #(@local_msgs ||= []) << options
     end
+
+    #def get_local_msgs
+    #  if @msgs
+    #    msgs = @msgs
+    #    @msgs = nil
+    #    return msgs
+    #  end
+    #  []
+    #end
 
     def get_msgs
 

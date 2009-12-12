@@ -270,4 +270,5 @@
 [ ] timeout :at and :after
 [o] limit the number of msgs returned
 [ ] issue with :unless => '${f:index} == 2000'
+[ ] spare 1 get_msg by caching msg (but keep 'deleting')
 
