@@ -113,29 +113,10 @@ module Ruote
 
       @msgs = @storage.get_msgs if @msgs.empty?
 
-      processed = process_msgs(@msgs)
-
-      #if @msgs.empty? && (Time.now.utc - @last_time < 1.0)
-      #  @msgs = @storage.get_local_msgs
-      #  processed = process_msgs(@msgs)
-      #end
-
-      #sleep(0.100) if processed == 0
-      if processed == 0
-        @sleep_time += 0.001
-        @sleep_time = 0.490 if @sleep_time > 0.490
-        sleep(@sleep_time)
-      else
-        @sleep_time = 0.001
-      end
-    end
-
-    def process_msgs (msgs)
-
       processed = 0
       collisions = 0
 
-      while msg = msgs.shift
+      while msg = @msgs.shift
 
         r = process(msg)
 
@@ -146,7 +127,7 @@ module Ruote
         end
 
         if collisions > 2
-          msgs = msgs[(msgs.size / 2)..-1] || []
+          @msgs = @msgs[(@msgs.size / 2)..-1] || []
         end
 
         #print r == false ? '*' : '.'
@@ -156,7 +137,14 @@ module Ruote
 
       #puts processed.to_s
 
-      processed
+      #sleep(0.100) if processed == 0
+      if processed == 0
+        @sleep_time += 0.001
+        @sleep_time = 0.490 if @sleep_time > 0.490
+        sleep(@sleep_time)
+      else
+        @sleep_time = 0.001
+      end
     end
 
     def trigger_at (schedule)
