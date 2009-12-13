@@ -108,33 +108,40 @@ module Ruote
 
       while msg = @seen.shift
 
-        action = msg['action']
+        break if check_msg(msg)
+      end
+    end
 
-        over = if interest.is_a?(Symbol) # participant
+    def check_msg (msg)
 
-          (action == 'dispatch' &&
-           msg['participant_name'] == interest.to_s)
+      thread, interest = @waiting
 
-        elsif interest.is_a?(Fixnum)
+      action = msg['action']
 
-          interest = interest - 1
-          @waiting = [ thread, interest ]
+      over = if interest.is_a?(Symbol) # participant
 
-          (interest < 1)
+        (action == 'dispatch' && msg['participant_name'] == interest.to_s)
 
-        else # wfid
+      elsif interest.is_a?(Fixnum)
 
-          %w[ terminated ceased error_intercepted ].include?(action) &&
-          msg['wfid'] == interest
-        end
+        interest = interest - 1
+        @waiting = [ thread, interest ]
 
-        break if over
+        (interest < 1)
+
+      else # wfid
+
+        %w[ terminated ceased error_intercepted ].include?(action) &&
+        msg['wfid'] == interest
       end
 
       if over
+
         @waiting = nil
         thread.wakeup
       end
+
+      over
     end
 
     # <ESC>[{attr1};...;{attrn}m

@@ -22,25 +22,32 @@
 # Made in Japan.
 #++
 
+require 'ruote/log/test_logger'
+
 
 module Ruote
 
   #
   # A helper logger for quickstart examples.
   #
-  class WaitLogger
+  class WaitLogger < TestLogger
 
     def initialize (context)
 
       @context = context
       @waiting = nil
+      @color = 33
 
       @context.worker.subscribe(:all, self) if @context.respond_to?(:worker)
     end
 
     def notify (msg)
 
-      check_waiting(msg)
+      puts(pretty_print(msg)) if @context[:noisy]
+
+      return unless @waiting
+
+      check_msg(msg)
     end
 
     def wait_for (interest)
@@ -48,39 +55,6 @@ module Ruote
       @waiting = [ Thread.current, interest ]
 
       Thread.stop
-    end
-
-    protected
-
-    def check_waiting (msg)
-
-      return unless @waiting
-
-      thread, interest = @waiting
-
-      action = msg['action']
-
-      over = if interest.is_a?(Symbol) # participant
-
-        (action == 'dispatch' && msg['participant_name'] == interest.to_s)
-
-      elsif interest.is_a?(Fixnum)
-
-        interest = interest - 1
-        @waiting = [ thread, interest ]
-
-        (interest < 1)
-
-      else # wfid
-
-        %w[ terminated ceased error_intercepted ].include?(action) &&
-        msg['wfid'] == interest
-      end
-
-      if over
-        @waiting = nil
-        thread.wakeup
-      end
     end
   end
 end
