@@ -9,6 +9,16 @@ require 'ruote/storage/hash_storage'
 require 'ruote/storage/fs_storage'
 
 
+def locate_storage_impl (arg)
+
+  pers = arg[2..-1]
+
+  path = File.expand_path(
+    File.join(File.dirname(__FILE__), %w[ .. .. .. ], "ruote-#{pers}"))
+
+  (File.exist?(path) && File.directory?(path)) ? [ pers, path ] : nil
+end
+
 #
 # Returns the class of the engine to use, based on the ARGV
 #
@@ -27,9 +37,31 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     exit 0
   end
 
-  if ARGV.include?('--fs')
+  ps = ARGV.select { |a| a.match(/^--/) }
+
+  if ps.include?('--fs')
+
     Ruote::FsStorage.new('work', opts)
+
+  elsif not ps.empty?
+
+    pers = nil
+    ps.each do |a|
+      pers = locate_storage_impl(a)
+      break if pers
+    end
+
+    raise "no persistence found (#{ps.inspect})" unless pers
+
+    lib, path = pers
+    $:.unshift(File.join(path, 'lib'))
+
+    load File.join(path, %w[ test integration_connection.rb ])
+
+    new_storage(opts)
+
   else
+
     Ruote::HashStorage.new(opts)
   end
 end
