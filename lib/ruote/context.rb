@@ -87,11 +87,16 @@ module Ruote
     def default_conf
 
       {
-        's_wfidgen' => [ 'ruote/id/wfid_generator', 'Ruote::WfidGenerator' ],
-        's_parser' => [ 'ruote/parser', 'Ruote::Parser' ],
-        's_treechecker' => [ 'ruote/util/treechecker', 'Ruote::TreeChecker' ],
-        's_tracker' => [ 'ruote/evt/tracker', 'Ruote::Tracker' ],
-        's_logger' => [ 'ruote/log/wait_logger', 'Ruote::WaitLogger' ]
+        's_wfidgen' => [
+          'ruote/id/mnemo_wfid_generator', 'Ruote::MnemoWfidGenerator' ],
+        's_parser' => [
+          'ruote/parser', 'Ruote::Parser' ],
+        's_treechecker' => [
+          'ruote/util/treechecker', 'Ruote::TreeChecker' ],
+        's_tracker' => [
+          'ruote/evt/tracker', 'Ruote::Tracker' ],
+        's_logger' => [
+          'ruote/log/wait_logger', 'Ruote::WaitLogger' ]
       }
     end
   end
