@@ -130,6 +130,8 @@ module Ruote
           @msgs = @msgs[(@msgs.size / 2)..-1] || []
         end
 
+        #@msgs.concat(@storage.get_local_msgs)
+
         #print r == false ? '*' : '.'
 
         break if Time.now.utc - @last_time >= 1.0

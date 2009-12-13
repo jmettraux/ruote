@@ -61,12 +61,13 @@ module Ruote
     end
 
     #def get_local_msgs
-    #  if @msgs
-    #    msgs = @msgs
-    #    @msgs = nil
-    #    return msgs
+    #  if @local_msgs
+    #    r = @local_msgs
+    #    @local_msgs = nil
+    #    r
+    #  else
+    #    []
     #  end
-    #  []
     #end
 
     def get_msgs
