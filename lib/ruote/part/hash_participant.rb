@@ -36,7 +36,7 @@ module Ruote
     include LocalParticipant
     include Enumerable
 
-    def initialize (options=nil)
+    def initialize (opts=nil)
 
       @items = {}
     end

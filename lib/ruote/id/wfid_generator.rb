@@ -33,7 +33,7 @@ module Ruote
 
       @last =
         @context.storage.get('variables', 'last_wfid') ||
-        { 'type' => 'variables', '_id' => 'last_wfid', 'raw' => Time.now.to_f }
+        { 'type' => 'variables', '_id' => 'last_wfid', 'raw' => Time.now.utc.to_f }
     end
 
     def generate
@@ -47,7 +47,7 @@ module Ruote
 
     def get_raw
 
-      raw = Time.now
+      raw = Time.now.utc
 
       @last['raw'] = raw.to_f
 

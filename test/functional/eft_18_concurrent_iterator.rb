@@ -62,7 +62,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     wait_for(wfid)
 
     trace = @tracer.to_s.split("\n").sort
-    assert_equal %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ], trace
+    assert_equal %w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ], trace
+    assert_equal 3, @subs.sort.uniq.size
   end
 
   def test_iterator_to_f
@@ -82,7 +83,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     wait_for(wfid)
 
     trace = @tracer.to_s.split("\n").sort
-    assert_equal %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ], trace
+    assert_equal %w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ], trace
+    assert_equal 3, @subs.sort.uniq.size
   end
 
   def test_iterator_with_array_param
@@ -105,7 +107,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     wait_for(wfid)
 
     trace = @tracer.to_s.split("\n").sort
-    assert_equal %w[ a/0/0_0_0_0 b/1/0_0_0_0 c/2/0_0_0_0 done. ], trace
+    assert_equal %w[ a/0_0_0_0 b/0_0_0_0 c/0_0_0_0 done. ], trace
+    assert_equal 3, @subs.sort.uniq.size
   end
 
   #def test_iterator_with_nested_sequence_and_fs_participants
@@ -155,9 +158,9 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    p1 = @engine.register_participant :participant_1, Ruote::HashParticipant
-    p2 = @engine.register_participant :participant_2, Ruote::HashParticipant
-    p3 = @engine.register_participant :participant_3, Ruote::HashParticipant
+    p1 = @engine.register_participant :participant_1, Ruote::HashParticipant.new
+    p2 = @engine.register_participant :participant_2, Ruote::HashParticipant.new
+    p3 = @engine.register_participant :participant_3, Ruote::HashParticipant.new
 
     #noisy
 
@@ -247,35 +250,21 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     wait_for(wfid)
 
     trace = @tracer.to_s.split("\n").sort
-    assert_equal %w[ alice:0/0/0_0_0 bob:1/1/0_0_0 charly:2/2/0_0_0 ], trace
+    assert_equal %w[ alice:0/0_0_0 bob:1/0_0_0 charly:2/0_0_0 ], trace
+    assert_equal 3, @subs.sort.uniq.size
   end
 
-  def test_persist_count
-
-    n = 3
-
-    pdef = Ruote.process_definition :name => 'test' do
-      concurrent_iterator :branches => n do
-        echo 'a'
-      end
-    end
-
-    #noisy
-
-    assert_trace pdef, %w[ a ] * n
-
-    update_count = logger.log.select { |e|
-      e[0] == :expressions &&
-      e[1] == :update &&
-      e[2][:expression].class == Ruote::Exp::ConcurrentIteratorExpression
-    }.size
-
-    #p update_count
-
-    #assert_equal 2 + n * 2, update_count
-    #assert_equal 2 + n, update_count
-    assert_equal 1 + n, update_count
-  end
+  #def test_persist_count
+  #  n = 3
+  #  pdef = Ruote.process_definition :name => 'test' do
+  #    concurrent_iterator :branches => n do
+  #      echo 'a'
+  #    end
+  #  end
+  #  noisy
+  #  assert_trace pdef, %w[ a ] * n
+  #  #assert_equal 1 + n, update_count
+  #end
 
   def test_on_only
 
@@ -308,8 +297,14 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w{ . . . })
-    assert_equal({0=>{"f"=>"a"}, 1=>{"f"=>"b"}, 2=>{"f"=>"c"}}, merged_fields)
+    assert_trace(
+      pdef, %w{ . . . })
+    assert_equal(
+      {"0" => { "f" => "a" },
+       "1" => { "f" => "b" },
+       "2" => { "f" => "c" },
+       "params" => { "ref" => "bravo" }},
+      merged_fields)
   end
 
   def test_cancel
@@ -325,9 +320,9 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    acount = 0
-    @engine.register_participant(:alpha) { |wi| acount += 1 }
-    @engine.register_participant(:bravo, Ruote::NullParticipant)
+    a_count = 0
+    @engine.register_participant(:alpha) { |wi| a_count += 1 }
+    @engine.register_participant(:bravo, Ruote::NullParticipant.new)
 
     #noisy
 
@@ -335,7 +330,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     sleep n.to_f/40
 
-    assert_equal n, acount
+    assert_equal n, a_count
 
     @engine.cancel_process(wfid)
     wait_for(wfid)
@@ -347,11 +342,14 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
   def register_catchall_participant
 
+    @subs = []
+
     @engine.register_participant '.*' do |workitem|
+
+      @subs << workitem.fei.sub_wfid
+
       @tracer << [
-        workitem.participant_name,
-        workitem.fei.sub_wfid[-1, 1],
-        workitem.fei.expid
+        workitem.participant_name, workitem.fei.expid
       ].join('/') + "\n"
     end
   end

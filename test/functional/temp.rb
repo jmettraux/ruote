@@ -42,6 +42,7 @@
   eft_15
   eft_16
   eft_17
+  eft_18
 
 ].collect { |prefix|
   Dir[File.join(File.dirname(__FILE__), "#{prefix}_*.rb")].first

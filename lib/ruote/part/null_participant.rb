@@ -22,8 +22,6 @@
 # Made in Japan.
 #++
 
-
-require 'ruote/engine/context'
 require 'ruote/part/local_participant'
 
 
@@ -37,10 +35,9 @@ module Ruote
   #
   class NullParticipant
 
-    include EngineContext
     include LocalParticipant
 
-    def initialize (opts)
+    def initialize
     end
 
     # Does nothing, discards the workitem it receives.

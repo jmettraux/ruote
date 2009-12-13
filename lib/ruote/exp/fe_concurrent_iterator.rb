@@ -118,41 +118,38 @@ module Ruote::Exp
     # Overrides FlowExpression#register_child to make sure that persist is
     # not called.
     #
-    def register_child (fei, do_persist=true)
+    def register_child (fei)
 
-      @children << fei
+      h.children << fei
     end
 
     def add_branches (list)
 
-      if @times_iterator && list.size == 1
+      if h.times_iterator && list.size == 1
 
         count = (list.first.to_i rescue nil)
 
-        list = (@list_size + 1..@list_size + count) if count
+        list = (h.list_size + 1..h.list_size + count) if count
       end
 
       list.each do |val|
 
-        #@list << val
-        @list_size += 1
+        h.list_size += 1
 
-        workitem  = @applied_workitem.dup
+        workitem = Ruote.fulldup(h.applied_workitem)
 
-        #variables = { 'ii' => @list.size - 1 }
-        variables = { 'ii' => @list_size - 1 }
+        variables = { 'ii' => h.list_size - 1 }
 
-        if @to_v
-          variables[@to_v] = val
+        if h.to_v
+          variables[h.to_v] = val
         else #if to_f
-          workitem.fields[@to_f] = val
+          workitem['fields'][h.to_f] = val
         end
 
-        pool.launch_sub(
-          "#{@fei.expid}_0",
+        launch_sub(
+          "#{h.fei['expid']}_0",
           tree_children[0],
-          self,
-          workitem,
+          :workitem => workitem,
           :variables => variables)
       end
 
@@ -160,34 +157,34 @@ module Ruote::Exp
     end
 
     # wraps the add_branches method with the ticket mechanism
-    #
     #with_ticket :add_branches
 
     protected
 
     def apply_children
 
-      return reply_to_parent(@applied_workitem) unless tree_children[0]
+      return reply_to_parent(h.applied_workitem) unless tree_children[0]
 
       list = determine_list
 
-      return reply_to_parent(@applied_workitem) if list.empty?
+      return reply_to_parent(h.applied_workitem) if list.empty?
 
-      @to_v, @to_f = determine_tos
-      @to_v = 'i' if @to_v == nil && @to_f == nil
+      h.to_v, h.to_f = determine_tos
+      h.to_v = 'i' if h.to_v.nil? && h.to_f.nil?
 
-      #@list = []
-      @list_size = 0
+      h.list_size = 0
 
-      without_ticket__add_branches(list)
+      #without_ticket__add_branches(list)
         # no need for a ticket at apply time
+
+      add_branches(list)
     end
 
     # Overrides the implementation found in ConcurrenceExpression
     #
     def expected_count
 
-      @count ? [ @count, @list_size ].min : @list_size
+      h.count ? [ h.count, h.list_size ].min : h.list_size
     end
   end
 end
