@@ -1,77 +1,59 @@
-
 require 'rubygems'
-
-require 'fileutils'
-
 require 'rake'
+
+$:.unshift( File.join(File.dirname(__FILE__), 'lib') )
+require File.dirname(__FILE__) + '/lib/ruote/engine'
+
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.version = Ruote::VERSION
+    gem.name = "ruote"
+    gem.summary = %Q{an open source ruby workflow engine}
+    gem.email = "jmettraux@gmail.com"
+    gem.homepage = "http://ruote.rubyforge.org"
+    gem.authors = ["John Mettraux", "Kenneth Kalmer"]
+    gem.rubyforge_project = 'openwferu'
+    gem.test_file = 'test/test.rb'
+    gem.add_dependency "rufus-lru"
+    gem.add_dependency "rufus-scheduler", "2.0.1"
+    gem.add_dependency "rufus-dollar"
+    gem.add_dependency "rufus-treechecker", "1.0.3"
+    gem.add_dependency "rufus-mnemo", "1.1.0"
+    gem.add_dependency "rufus-verbs"
+    gem.add_dependency "ruby_parser", "2.0.3"
+    gem.add_dependency "sexp_processer", "3.0.2"
+    gem.add_development_dependency "yard", ">= 0"
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+  end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+end
+
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new do |doc|
+    doc.options = [ '-o', 'ruote_rdoc', '--title', "ruote #{Ruote::VERSION}" ]
+  end
+rescue LoadError
+  task :yardoc do
+    abort "YARD is not available. In order to run yardoc, you must: sudo gem install yard"
+  end
+end
+
 require 'rake/clean'
-require 'rake/packagetask'
-require 'rubygems/package_task'
-#require 'rake/testtask'
-
-
-gemspec = File.read('ruote.gemspec')
-eval "gemspec = #{gemspec}"
-
-
 CLEAN.include('pkg', 'rdoc', 'work', 'logs')
 
 task :default => [ :clean, :repackage ]
 
-task :rdoc do
-  sh %{
-    rm -fR ruote_rdoc
-    yardoc 'lib/**/*.rb' \
-      -o ruote_rdoc \
-      --title 'ruote 2.0'
-  }
-end
-#task :exp_rdoc do
-#  sh %{
-#    rm -fR ruote_rdoc
-#    yardoc 'lib/ruote/exp/*.rb' -o ruote_exp_rdoc --title 'ruote 2.0 expressions'
-#  }
-#end
-
+desc "Upload the documentation to rubyforge"
 task :upload_rdoc => :rdoc do
   sh %{
     rsync -azv -e ssh \
       ruote_rdoc \
       jmettraux@rubyforge.org:/var/www/gforge-projects/ruote/
   }
-end
-
-task :change_version do
-
-  version = ARGV.pop
-  `sedip "s/VERSION = '.*'/VERSION = '#{version}'/" lib/openwfe/version.rb`
-  `sedip "s/s.version = '.*'/s.version = '#{version}'/" ruote.gemspec`
-  exit 0 # prevent rake from triggering other tasks
-end
-
-Gem::PackageTask.new(gemspec) do |pkg|
-  #pkg.need_tar = true
-end
-
-Rake::PackageTask.new('ruote', gemspec.version) do |pkg|
-
-  pkg.need_zip = true
-  pkg.package_files = FileList[
-    'Rakefile',
-    '*.txt',
-    #'bin/**/*',
-    'doc/**/*',
-    #'examples/**/*',
-    'lib/**/*',
-    'test/**/*'
-  ].to_a
-  #pkg.package_files.delete('rc.txt')
-  #pkg.package_files.delete('MISC.txt')
-  class << pkg
-    def package_name
-      "#{@name}-#{@version}-src"
-    end
-  end
 end
 
 # making "rake sudo deps:install" possible.
