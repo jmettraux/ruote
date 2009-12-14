@@ -16,7 +16,7 @@ begin
     gem.rubyforge_project = 'openwferu'
     gem.test_file = 'test/test.rb'
     gem.add_dependency "rufus-lru"
-    gem.add_dependency "rufus-scheduler", "2.0.1"
+    gem.add_dependency "rufus-scheduler", ">= 2.0.3"
     gem.add_dependency "rufus-dollar"
     gem.add_dependency "rufus-treechecker", "1.0.3"
     gem.add_dependency "rufus-mnemo", "1.1.0"
