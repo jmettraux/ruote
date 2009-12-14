@@ -21,8 +21,6 @@ begin
     gem.add_dependency "rufus-treechecker", "1.0.3"
     gem.add_dependency "rufus-mnemo", "1.1.0"
     gem.add_dependency "rufus-verbs"
-    gem.add_dependency "ruby_parser", "2.0.3"
-    gem.add_dependency "sexp_processer", "3.0.2"
     gem.add_development_dependency "yard", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

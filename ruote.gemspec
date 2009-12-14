@@ -241,112 +241,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{an open source ruby workflow engine}
   s.test_files = [
-    "test/bm/ci.rb",
-     "test/bm/ici.rb",
-     "test/bm/jash.rb",
-     "test/bm/juuman.rb",
-     "test/bm/load_26c.rb",
-     "test/bm/t.rb",
-     "test/functional/base.rb",
-     "test/functional/ct_0_concurrence.rb",
-     "test/functional/eft_0_process_definition.rb",
-     "test/functional/eft_10_cancel_process.rb",
-     "test/functional/eft_11_wait.rb",
-     "test/functional/eft_12_listen.rb",
-     "test/functional/eft_13_iterator.rb",
-     "test/functional/eft_14_cursor.rb",
-     "test/functional/eft_15_loop.rb",
-     "test/functional/eft_16_if.rb",
-     "test/functional/eft_17_equals.rb",
-     "test/functional/eft_18_concurrent_iterator.rb",
-     "test/functional/eft_19_reserve.rb",
-     "test/functional/eft_1_echo.rb",
-     "test/functional/eft_20_save.rb",
-     "test/functional/eft_21_restore.rb",
-     "test/functional/eft_22_noop.rb",
-     "test/functional/eft_23_apply.rb",
-     "test/functional/eft_24_add_branches.rb",
-     "test/functional/eft_25_command.rb",
-     "test/functional/eft_26_error.rb",
-     "test/functional/eft_27_inc.rb",
-     "test/functional/eft_28_when.rb",
-     "test/functional/eft_29_cron.rb",
-     "test/functional/eft_2_sequence.rb",
-     "test/functional/eft_3_participant.rb",
-     "test/functional/eft_4_set.rb",
-     "test/functional/eft_5_subprocess.rb",
-     "test/functional/eft_6_concurrence.rb",
-     "test/functional/eft_7_forget.rb",
-     "test/functional/eft_8_undo.rb",
-     "test/functional/eft_9_redo.rb",
-     "test/functional/engine_helper.rb",
-     "test/functional/ft_0_wqueue.rb",
-     "test/functional/ft_10_dollar.rb",
-     "test/functional/ft_11_recursion.rb",
-     "test/functional/ft_12_launchitem.rb",
-     "test/functional/ft_13_variables.rb",
-     "test/functional/ft_14_re_apply.rb",
-     "test/functional/ft_15_timeout.rb",
-     "test/functional/ft_16_participant_params.rb",
-     "test/functional/ft_17_conditional.rb",
-     "test/functional/ft_18_kill.rb",
-     "test/functional/ft_19_alias.rb",
-     "test/functional/ft_1_process_status.rb",
-     "test/functional/ft_20_fs_participant.rb",
-     "test/functional/ft_21_forget.rb",
-     "test/functional/ft_22_process_definitions.rb",
-     "test/functional/ft_23_load_defs.rb",
-     "test/functional/ft_24_block_participants.rb",
-     "test/functional/ft_25_listener_registration.rb",
-     "test/functional/ft_26_participant_timeout.rb",
-     "test/functional/ft_27_var_indirection.rb",
-     "test/functional/ft_28_null_noop_participants.rb",
-     "test/functional/ft_29_part_template.rb",
-     "test/functional/ft_2_errors.rb",
-     "test/functional/ft_30_smtp_participant.rb",
-     "test/functional/ft_31_part_blocking.rb",
-     "test/functional/ft_32_history.rb",
-     "test/functional/ft_33_participant_subprocess_priority.rb",
-     "test/functional/ft_34_cursor_rewind.rb",
-     "test/functional/ft_3_participant_registration.rb",
-     "test/functional/ft_4_cancel.rb",
-     "test/functional/ft_5_on_error.rb",
-     "test/functional/ft_6_on_cancel.rb",
-     "test/functional/ft_7_tags.rb",
-     "test/functional/ft_8_participant_consumption.rb",
-     "test/functional/ft_9_subprocesses.rb",
-     "test/functional/restart_base.rb",
-     "test/functional/rt_0_wait.rb",
-     "test/functional/rt_1_listen.rb",
-     "test/functional/rt_2_errors.rb",
-     "test/functional/rt_3_when.rb",
-     "test/functional/rt_4_cron.rb",
-     "test/functional/rt_5_timeout.rb",
-     "test/functional/rtest.rb",
-     "test/functional/test.rb",
-     "test/mpc_test.rb",
-     "test/path_helper.rb",
-     "test/test.rb",
-     "test/test_helper.rb",
-     "test/unit/test.rb",
-     "test/unit/ut_0_ruby_parser.rb",
-     "test/unit/ut_10_json.rb",
-     "test/unit/ut_11_lookup.rb",
-     "test/unit/ut_12_jash.rb",
-     "test/unit/ut_13_serializer.rb",
-     "test/unit/ut_14_is_uri.rb",
-     "test/unit/ut_15_util.rb",
-     "test/unit/ut_16_parser.rb",
-     "test/unit/ut_1_fei.rb",
-     "test/unit/ut_2_wfidgen.rb",
-     "test/unit/ut_4_expmap.rb",
-     "test/unit/ut_5_tree.rb",
-     "test/unit/ut_6_condition.rb",
-     "test/unit/ut_7_workitem.rb",
-     "test/unit/ut_8_tree_to_dot.rb",
-     "test/unit/ut_9_xml_parser.rb",
-     "examples/flickr_report.rb",
-     "examples/ruote_quickstart.rb"
+    "test/test.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -360,8 +255,6 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
       s.add_runtime_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
       s.add_runtime_dependency(%q<rufus-verbs>, [">= 0"])
-      s.add_runtime_dependency(%q<ruby_parser>, ["= 2.0.3"])
-      s.add_runtime_dependency(%q<sexp_processer>, ["= 3.0.2"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<rufus-lru>, [">= 0"])
@@ -370,8 +263,6 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
       s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
       s.add_dependency(%q<rufus-verbs>, [">= 0"])
-      s.add_dependency(%q<ruby_parser>, ["= 2.0.3"])
-      s.add_dependency(%q<sexp_processer>, ["= 3.0.2"])
       s.add_dependency(%q<yard>, [">= 0"])
     end
   else
@@ -381,8 +272,6 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
     s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
     s.add_dependency(%q<rufus-verbs>, [">= 0"])
-    s.add_dependency(%q<ruby_parser>, ["= 2.0.3"])
-    s.add_dependency(%q<sexp_processer>, ["= 3.0.2"])
     s.add_dependency(%q<yard>, [">= 0"])
   end
 end
