@@ -41,7 +41,7 @@ module Ruote
       @cloche.put(@options.merge('type' => 'configurations', '_id' => 'engine'))
     end
 
-    def put (doc)
+    def put (doc, opts={})
 
       @cloche.put(doc.merge!('put_at' => Ruote.now_to_utc_s))
     end

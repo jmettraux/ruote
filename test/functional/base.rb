@@ -10,7 +10,7 @@
 require 'fileutils'
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
-require File.join(File.dirname(__FILE__), 'engine_helper.rb')
+require File.join(File.dirname(__FILE__), 'storage_helper.rb')
 
 require 'ruote/engine'
 require 'ruote/worker'

@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'ruote/util/misc'
 require 'ruote/storage/base'
 require 'monitor'
 
@@ -44,25 +45,28 @@ module Ruote
       purge!
     end
 
-    def put (doc)
+    def put (doc, opts={})
 
       synchronize do
 
-        prev = get(doc['type'], doc['_id'])
+        pre = get(doc['type'], doc['_id'])
 
-        if prev.nil? || prev['_rev'] == (doc['_rev'] || 0)
-
-          (@h[doc['type']] ||= {})[doc['_id']] =
-            Ruote::fulldup(doc).merge!(
-              'put_at' => Ruote.now_to_utc_s,
-              '_rev' => (doc['_rev'] || -1) + 1)
-
-          nil
-
-        else
-
-          prev
+        if pre && ( ! opts[:update_rev]) && pre['_rev'] != doc['_rev']
+          return pre
         end
+
+        doc = if opts[:update_rev]
+          doc['_rev'] = pre ? pre['_rev'] : -1
+        else
+          Ruote.fulldup(doc).merge!('_rev' => doc['_rev'] || -1)
+        end
+
+        doc['put_at'] = Ruote.now_to_utc_s
+        doc['_rev'] = doc['_rev'] + 1
+
+        (@h[doc['type']] ||= {})[doc['_id']] = doc
+
+        nil
       end
     end
 

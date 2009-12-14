@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'ruote/util/time'
+
 
 module Ruote
 
