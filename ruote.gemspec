@@ -250,7 +250,7 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rufus-lru>, [">= 0"])
-      s.add_runtime_dependency(%q<rufus-scheduler>, ["= 2.0.1"])
+      s.add_runtime_dependency(%q<rufus-scheduler>, [">= 2.0.3"])
       s.add_runtime_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_runtime_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
       s.add_runtime_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
@@ -258,7 +258,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<rufus-lru>, [">= 0"])
-      s.add_dependency(%q<rufus-scheduler>, ["= 2.0.1"])
+      s.add_dependency(%q<rufus-scheduler>, [">= 2.0.3"])
       s.add_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
       s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
@@ -267,7 +267,7 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<rufus-lru>, [">= 0"])
-    s.add_dependency(%q<rufus-scheduler>, ["= 2.0.1"])
+    s.add_dependency(%q<rufus-scheduler>, [">= 2.0.3"])
     s.add_dependency(%q<rufus-dollar>, [">= 0"])
     s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
     s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
