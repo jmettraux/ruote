@@ -29,8 +29,6 @@ require 'ruote/engine/process_status'
 
 module Ruote
 
-  VERSION = '2.1.0'
-
   class Engine
 
     require 'ruote/engine/ro_participant'

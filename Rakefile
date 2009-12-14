@@ -2,7 +2,7 @@ require 'rubygems'
 require 'rake'
 
 $:.unshift( File.join(File.dirname(__FILE__), 'lib') )
-require File.dirname(__FILE__) + '/lib/ruote/engine'
+require File.dirname(__FILE__) + '/lib/ruote/worker'
 
 begin
   require 'jeweler'
