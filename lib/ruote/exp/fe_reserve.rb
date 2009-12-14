@@ -47,33 +47,21 @@ module Ruote::Exp
 
     def apply
 
-      return reply_to_parent(@applied_workitem) if tree_children.empty?
+      return reply_to_parent(h.applied_workitem) if tree_children.empty?
 
-      @mutex_name = attribute(:mutex) || attribute_text
-      @mutex_name = 'reserve' if @mutex_name.strip == ''
-
-      persist
+      h.mutex_name = attribute(:mutex) || attribute_text
+      h.mutex_name = 'reserve' if h.mutex_name.strip == ''
 
       raise(
         ArgumentError.new("can't bind reserve mutex at engine level")
-      ) if @mutex_name.match(/^\/\//)
+      ) if h.mutex_name.match(/^\/\//)
 
-      #mutex = lookup_variable(@mutex_name) || FlowMutex.new(@mutex_name)
-      #mutex.register(self)
-
-      get_or_set_variable(@mutex_name) do |mutex|
-        mutex ||= FlowMutex.new(@mutex_name)
-        mutex.register(self)
-        mutex
-      end
+      set_mutex
     end
 
     def reply (workitem)
 
-      get_or_set_variable(@mutex_name) do |mutex|
-        mutex.release(self)
-        mutex
-      end
+      release_mutex
 
       reply_to_parent(workitem)
     end
@@ -82,53 +70,56 @@ module Ruote::Exp
 
       super
 
-      get_or_set_variable(@mutex_name) do |mutex|
-        mutex.release(self)
-        mutex
-      end
+      release_mutex
     end
 
     def enter
 
-      # TODO : emit message ?
-
-      apply_child(0, @applied_workitem)
-    end
-  end
-
-  #
-  # A FlowMutex, keeps track of the reserve expression waiting on a mutex to
-  # unlock...
-  #
-  class FlowMutex
-
-    attr_reader :name, :feis
-
-    def initialize (name)
-
-      @name = name
-      @feis = []
+      apply_child(0, h.applied_workitem)
     end
 
-    def register (fexp)
+    protected
 
-      @feis << fexp.fei
+    def set_mutex
 
-      fexp.enter if @feis.size == 1
+      target, var = locate_var(h.mutex_name)
+
+      val = target.variables[var]
+
+      # [ 'mutex', name, [ fei0, fei1, ... ] ]
+
+      mutex = val ? val : [ 'mutex', var, [] ]
+
+      mutex.last << h.fei
+
+      target.variables[var] = mutex
+
+      r = target.try_persist
+
+      return set_mutex if r != nil
+
+      if mutex.last.first == h.fei
+        enter
+      else
+        persist
+      end
     end
 
-    def release (fexp)
+    def release_mutex
 
-      @feis.shift
+      target, var = locate_var(h.mutex_name)
 
-      return if @feis.empty?
+      mutex = target.variables[var]
 
-      fexp.context[:s_expression_storage][@feis.first].enter
-    end
+      mutex.last.shift
 
-    def inspect
+      r = target.try_persist
 
-      [ :flowmutex, @name, @feis.collect { |fei| fei.to_s } ]
+      return release_mutex if r != nil
+
+      next_fei = mutex.last.first
+
+      Ruote::Exp::FlowExpression.fetch(@context, next_fei).enter if next_fei
     end
   end
 end

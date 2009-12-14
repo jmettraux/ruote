@@ -273,4 +273,6 @@
 [ ] spare 1 get_msg by caching msg (but keep 'deleting')
 [ ] verify get_last/get_raw logic, no + 0.0001...
 [ ] add_branches : pass message to concurrent_iterator
+    like a command expression
+[ ] [un]set_var : via message ? should be ok like that... Not much traffic there
 

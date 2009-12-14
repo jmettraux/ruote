@@ -30,6 +30,13 @@ module Ruote::Exp
   #
   class FlowExpression
 
+    # A shortcut to the variables held in the expression (nil if none held).
+    #
+    def variables
+
+      @h['variables']
+    end
+
     # Returns a fresh hash of all the variables visible from this expression.
     #
     # This is used mainly when forgetting an expression.
@@ -88,7 +95,6 @@ module Ruote::Exp
         ArgumentError.new("cannot set var at engine level : #{var}")
       ) if fexp.nil?
 
-      #fexp.with_ticket(:un_set_variable, :set, v, val)
       fexp.un_set_variable(:set, v, val, true)
     end
 
@@ -164,13 +170,6 @@ module Ruote::Exp
       [ var, prefix ]
     end
 
-    # Does the magic for #get_or_set_variable (and is wrapped in a ticket).
-    #
-    #def gos_variable (var, block)
-    #  un_set_variable(:set, var, block.call(@variables[var]))
-    #end
-    #with_ticket :gos_variable
-
     # Returns the flow expression that owns a variable (or the one
     # that should own it) and the var without its potential / prefixes.
     #
@@ -178,19 +177,13 @@ module Ruote::Exp
 
       var, prefix = split_prefix(var, prefix)
 
-      return nil \
-        if prefix.length >= 2 # engine variable
-
-      return parent.locate_var(var, prefix) \
-        if prefix.length == 1 && h.parent_id
+      return nil if prefix.length >= 2 # engine variable
+      return parent.locate_var(var, prefix) if prefix.length == 1 && h.parent_id
 
       # no prefix...
 
-      return [ self, var ] \
-        if h.variables
-
-      return parent.locate_var(var, prefix) \
-        if h.parent_id
+      return [ self, var ] if h.variables
+      return parent.locate_var(var, prefix) if h.parent_id
 
       raise "uprooted var lookup, something went wrong"
     end

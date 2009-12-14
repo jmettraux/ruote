@@ -500,8 +500,7 @@ module Ruote::Exp
 
     def pre_apply_child (child_index, workitem, forget)
 
-      child_fei = h.fei.merge(
-        'expid' => "#{h.fei['expid']}_#{child_index}")
+      child_fei = h.fei.merge('expid' => "#{h.fei['expid']}_#{child_index}")
 
       h.children << child_fei unless forget
 

@@ -28,7 +28,7 @@ class EftReserveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
 
@@ -40,7 +40,12 @@ class EftReserveTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     assert_equal 2, ps.variables.size
-    assert_equal Ruote::Exp::FlowMutex, ps.variables['a'].class
+
+    assert_equal(
+      [ 'mutex', 'a' ], ps.variables['a'][0, 2])
+    assert_equal(
+      [ '0_0_0', '0_0_1' ],
+      ps.variables['a'].last.collect { |e| e['expid'] })
 
     alpha.reply(alpha.first)
 
@@ -69,7 +74,7 @@ class EftReserveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
 
@@ -81,6 +86,8 @@ class EftReserveTest < Test::Unit::TestCase
     @engine.cancel_expression(exp.fei)
 
     wait_for(:alpha)
+
+    #alpha.instance_variable_get(:@items).each { |i| p i }
 
     assert_equal 1, alpha.size
     assert_equal '0_0_1_0', alpha.first.fei.expid
@@ -105,7 +112,7 @@ class EftReserveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
 
