@@ -26,6 +26,31 @@
 module Ruote
 
   #
+  # Some methods for looking at system/runtime things.
+  #
+  module Look
+
+    def self.lsof
+
+      `lsof -p #{$$}`
+    end
+
+    def self.dump_lsof
+
+      puts '= lsof =' + '=' * 71
+      puts lsof
+      puts '=' * 80
+    end
+
+    def self.dump_lsof_count
+
+      puts '= lsof count =' + '=' * 65
+      puts lsof.split("\n").size
+      puts '=' * 80
+    end
+  end
+
+  #
   # Some utilities for mem usage analysis
   #
   module Mem
