@@ -98,6 +98,13 @@ module Ruote::Exp
     # PERSISTENCE
     #++
 
+    # Persists and fetches the _rev identifier from the storage.
+    #
+    def initial_persist
+
+      @context.storage.put(@h, :update_rev => true)
+    end
+
     def persist
 
       #puts "--- per #{h.fei['expid']} #{tree.first} #{h._rev}"
@@ -520,7 +527,7 @@ module Ruote::Exp
 
       msg = pre_apply_child(child_index, workitem, forget)
 
-      persist
+      persist unless forget
 
       @context.storage.put_msg('apply', msg)
     end
@@ -646,7 +653,9 @@ module Ruote::Exp
 
       if h.has_error
 
-        err = @context.storage.get('errors', Ruote.to_storage_id(h.fei))
+        err = @context.storage.get(
+          'errors', "err_#{Ruote.to_storage_id(h.fei)}")
+
         @context.storage.delete(err) if err
       end
 

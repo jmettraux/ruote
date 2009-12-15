@@ -57,6 +57,7 @@ module Ruote
 
         doc = if opts[:update_rev]
           doc['_rev'] = pre ? pre['_rev'] : -1
+          doc
         else
           Ruote.fulldup(doc).merge!('_rev' => doc['_rev'] || -1)
         end
@@ -80,6 +81,10 @@ module Ruote
 
     def delete (doc)
 
+      drev = doc['_rev']
+
+      raise ArgumentError.new("can't delete doc without _rev") unless drev
+
       synchronize do
 
         prev = get(doc['type'], doc['_id'])
@@ -88,7 +93,7 @@ module Ruote
 
         doc['_rev'] ||= 0
 
-        if prev['_rev'] == doc['_rev']
+        if prev['_rev'] == drev
 
           @h[doc['type']].delete(doc['_id'])
 

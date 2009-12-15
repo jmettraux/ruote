@@ -252,7 +252,7 @@ module Ruote
 
       @storage.put(
         'type' => 'errors',
-        '_id' => Ruote.to_storage_id(fei),
+        '_id' => "err_#{Ruote.to_storage_id(fei)}",
         'message' => ex.inspect,
         'trace' => ex.backtrace.join("\n"),
         'msg' => msg
@@ -322,7 +322,7 @@ module Ruote
       raise_unknown_expression_error(exp_hash) unless exp_class
 
       exp = exp_class.new(@context, exp_hash.merge!('original_tree' => tree))
-      exp.persist
+      exp.initial_persist
       exp.do_apply
     end
 

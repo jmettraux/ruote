@@ -58,11 +58,27 @@ class UtStorage < Test::Unit::TestCase
 
   def test_put_update_rev
 
-    doc = { '_id' => 'toto', 'type' => 'dogfood', 'message' => 'more' }
+    doc = { '_id' => 'ouinouin', 'type' => 'dogfood', 'message' => 'more' }
 
     r = @s.put(doc, :update_rev => true)
 
     assert_not_nil doc['_rev']
+  end
+
+  def test_delete_fail
+
+    assert_raise(ArgumentError) do
+      @s.delete('_id' => 'toto')
+    end
+  end
+
+  def test_delete
+
+    doc = @s.get('dogfood', 'toto')
+
+    r = @s.delete(doc)
+
+    assert_nil r
   end
 end
 

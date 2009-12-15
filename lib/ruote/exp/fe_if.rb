@@ -87,8 +87,6 @@ module Ruote::Exp
         h.test = attribute_text if h.test.nil?
         h.test = nil if h.test == ''
 
-        persist
-
         offset = if h.test != nil
           Condition.true?(h.test) ? 0 : 1
         else

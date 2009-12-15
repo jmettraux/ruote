@@ -50,6 +50,11 @@ module Ruote
       @conf[key] = value
     end
 
+    def keys
+
+      @conf.keys
+    end
+
     def add_service (key, path, klass)
 
       if klass
