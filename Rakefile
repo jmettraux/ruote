@@ -62,15 +62,3 @@ task :sudo do
   $RAKE_USE_SUDO = true
 end
 
-namespace :deps do
-
-  # installs the gems required by ruote
-  #
-  task :install do
-    sh(
-      #"sudo gem install " +
-      "gem install " +
-      "rufus-lru rufus-mnemo rufus-treechecker rufus-dollar rufus-scheduler")
-  end
-end
-
