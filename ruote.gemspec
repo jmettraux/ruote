@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer"]
-  s.date = %q{2009-12-14}
+  s.date = %q{2009-12-15}
   s.email = %q{jmettraux@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -100,8 +100,8 @@ Gem::Specification.new do |s|
      "lib/ruote/util/dollar.rb",
      "lib/ruote/util/hashdot.rb",
      "lib/ruote/util/json.rb",
+     "lib/ruote/util/look.rb",
      "lib/ruote/util/lookup.rb",
-     "lib/ruote/util/mem.rb",
      "lib/ruote/util/misc.rb",
      "lib/ruote/util/ometa.rb",
      "lib/ruote/util/serializer.rb",
@@ -155,7 +155,6 @@ Gem::Specification.new do |s|
      "test/functional/eft_7_forget.rb",
      "test/functional/eft_8_undo.rb",
      "test/functional/eft_9_redo.rb",
-     "test/functional/engine_helper.rb",
      "test/functional/ft_0_worker.rb",
      "test/functional/ft_10_dollar.rb",
      "test/functional/ft_11_recursion.rb",
@@ -199,6 +198,7 @@ Gem::Specification.new do |s|
      "test/functional/rt_4_cron.rb",
      "test/functional/rt_5_timeout.rb",
      "test/functional/rtest.rb",
+     "test/functional/storage_helper.rb",
      "test/functional/temp.rb",
      "test/functional/test.rb",
      "test/mpc_test.rb",
@@ -206,6 +206,7 @@ Gem::Specification.new do |s|
      "test/pdef.xml",
      "test/test.rb",
      "test/test_helper.rb",
+     "test/unit/storages.rb",
      "test/unit/temp.rb",
      "test/unit/test.rb",
      "test/unit/ut_0_ruby_parser.rb",
@@ -215,6 +216,7 @@ Gem::Specification.new do |s|
      "test/unit/ut_14_is_uri.rb",
      "test/unit/ut_15_util.rb",
      "test/unit/ut_16_parser.rb",
+     "test/unit/ut_17_storage.rb",
      "test/unit/ut_1_fei.rb",
      "test/unit/ut_2_wfidgen.rb",
      "test/unit/ut_3_wait_logger.rb",
@@ -245,7 +247,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_runtime_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
       s.add_runtime_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
-      s.add_runtime_dependency(%q<rufus-verbs>, [">= 0"])
+      s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.5"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<rufus-lru>, [">= 0"])
@@ -253,7 +255,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
       s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
-      s.add_dependency(%q<rufus-verbs>, [">= 0"])
+      s.add_dependency(%q<rufus-cloche>, [">= 0.1.5"])
       s.add_dependency(%q<yard>, [">= 0"])
     end
   else
@@ -262,7 +264,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rufus-dollar>, [">= 0"])
     s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
     s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
-    s.add_dependency(%q<rufus-verbs>, [">= 0"])
+    s.add_dependency(%q<rufus-cloche>, [">= 0.1.5"])
     s.add_dependency(%q<yard>, [">= 0"])
   end
 end
