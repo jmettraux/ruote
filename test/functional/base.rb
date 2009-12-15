@@ -21,6 +21,10 @@ module FunctionalBase
 
   def setup
 
+    #require 'ruote/util/look'
+    #Ruote::Look.dump_lsof
+    #Ruote::Look.dump_lsof_count
+
     @engine =
       Ruote::Engine.new(
         Ruote::Worker.new(
