@@ -58,6 +58,7 @@ module Ruote
         'type' => 'msgs',
         '_id' => "#{$$}-#{Thread.current.object_id}-#{Time.now.to_f.to_s}",
         'action' => action))
+        #'action' => action), :update_rev => true)
 
       #(@local_msgs ||= []) << options
     end
