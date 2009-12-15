@@ -20,7 +20,7 @@ begin
     gem.add_dependency "rufus-dollar"
     gem.add_dependency "rufus-treechecker", "1.0.3"
     gem.add_dependency "rufus-mnemo", "1.1.0"
-    gem.add_dependency "rufus-cloche", ">= 0.1.5"
+    gem.add_dependency "rufus-cloche", ">= 0.1.6"
     gem.add_development_dependency "yard", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
