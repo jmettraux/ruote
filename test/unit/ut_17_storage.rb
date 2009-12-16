@@ -80,5 +80,12 @@ class UtStorage < Test::Unit::TestCase
 
     assert_nil r
   end
+
+  def test_delete_missing
+
+    r = @s.delete('_id' => 'x', '_rev' => '12-13231123132', 'type' => 'dogfood')
+
+    assert_equal true, r
+  end
 end
 
