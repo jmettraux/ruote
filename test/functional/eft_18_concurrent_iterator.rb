@@ -328,7 +328,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep n.to_f/40
+    wait_for(2 + 77 * 5)
+    #p "=" * 80
 
     assert_equal n, a_count
 

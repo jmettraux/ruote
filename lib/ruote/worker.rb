@@ -94,7 +94,7 @@ module Ruote
       now = Time.now.utc
       delta = now - @last_time
 
-      if delta >= 1.0
+      if delta >= 0.8
         #
         # at most once per second
 
@@ -134,15 +134,14 @@ module Ruote
 
         #print r == false ? '*' : '.'
 
-        break if Time.now.utc - @last_time >= 1.0
+        break if Time.now.utc - @last_time >= 0.8
       end
 
       #puts processed.to_s
 
-      #sleep(0.100) if processed == 0
       if processed == 0
         @sleep_time += 0.001
-        @sleep_time = 0.490 if @sleep_time > 0.490
+        @sleep_time = 0.499 if @sleep_time > 0.499
         sleep(@sleep_time)
       else
         @sleep_time = 0.001

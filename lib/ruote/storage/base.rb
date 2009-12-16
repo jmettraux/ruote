@@ -111,7 +111,11 @@ module Ruote
 
     def get_ats (delta, now)
 
-      if delta < 2.0
+      #p delta
+      #p Ruote.time_to_utc_s(now)
+      #get_many('ats').each { |a| p [ :at, a['at'] ] }
+
+      if delta < 1.0
 
         at = now.strftime('%Y%m%d%H%M%S')
         get_many('ats', /-#{at}$/)
