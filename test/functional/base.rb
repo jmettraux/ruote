@@ -91,7 +91,7 @@ module FunctionalBase
   def noisy (on=true)
 
     puts "\nnoisy " + caller[0] if on
-    @engine.context[:noisy] = on
+    @engine.context.logger.noisy = true
   end
 
   def wait_for (wfid_or_part)

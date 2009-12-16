@@ -32,6 +32,8 @@ module Ruote
     attr_reader :seen
     attr_reader :log
 
+    attr_accessor :noisy
+
     def initialize (context)
 
       @context = context
@@ -52,6 +54,7 @@ module Ruote
       @log = []
       @waiting = nil
       @color = 33
+      @noisy = false
 
       # NOTE
       # in case of troubles, why not have the wait_for has an event ?
@@ -61,7 +64,7 @@ module Ruote
 
       #@context.storage.put(event.merge('type' => 'archived_msgs'))
 
-      puts(pretty_print(msg)) if @context[:noisy]
+      puts(pretty_print(msg)) if @noisy
 
       @seen << msg
       @log << msg

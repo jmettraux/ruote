@@ -32,6 +32,8 @@ module Ruote
   #
   class WaitLogger < TestLogger
 
+    attr_accessor :noisy
+
     def initialize (context)
 
       @context = context
@@ -39,11 +41,13 @@ module Ruote
       @color = 33
 
       @context.worker.subscribe(:all, self) if @context.respond_to?(:worker)
+
+      @noisy = false
     end
 
     def notify (msg)
 
-      puts(pretty_print(msg)) if @context[:noisy]
+      puts(pretty_print(msg)) if @noisy
 
       return unless @waiting
 
