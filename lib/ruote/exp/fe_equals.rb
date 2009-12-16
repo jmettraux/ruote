@@ -105,9 +105,13 @@ module Ruote::Exp
       end
 
       case k
-      when /^f/ then @applied_workitem.attributes[attval]
-      when /^var/ then lookup_variable(attval)
-      when /^val/ then attval
+        when /^f/
+          @applied_workitem.attributes[attval.to_s] ||
+          @applied_workitem.attributes[attval.to_s.to_sym]
+        when /^var/
+          lookup_variable(attval)
+        when /^val/
+          attval
       end
     end
   end
