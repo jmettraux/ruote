@@ -103,6 +103,8 @@ module Ruote
           atts['ref'] = t.first
         end
 
+        atts = atts.inject({}) { |h, (k, v)| h[k.to_s.gsub(/\_/, '-')] = v; h }
+
         if tree[2].empty?
           xml.tag!(tree[0], atts)
         else

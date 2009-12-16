@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote
+# testing ruote
 #
 # Tue Oct 20 10:48:11 JST 2009
 #
@@ -26,7 +26,7 @@ class PdefParserTest < Test::Unit::TestCase
     Ruote.define :name => 'nada' do
       sequence do
         alpha
-        participant 'bravo', :timeout => '2d'
+        participant 'bravo', :timeout => '2d', :on_board => true
       end
     end
   })
@@ -68,7 +68,7 @@ class PdefParserTest < Test::Unit::TestCase
 <define name="nada">
   <sequence>
     <alpha/>
-    <participant timeout="2d" ref="bravo"/>
+    <participant timeout="2d" on-board="true" ref="bravo"/>
   </sequence>
 </define>
       }.strip,
@@ -83,7 +83,7 @@ class PdefParserTest < Test::Unit::TestCase
 Ruote.process_definition :name => "nada" do
   sequence do
     alpha
-    participant "bravo", :timeout => "2d"
+    participant "bravo", :timeout => "2d", :on_board => true
   end
 end
       }.strip,
