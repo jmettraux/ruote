@@ -165,7 +165,11 @@ module Ruote::Exp
       elsif k = has_att(*flds)
 
         k = attribute(k, @applied_workitem, att_options)
-        @applied_workitem.attributes[k]
+
+        @applied_workitem.attributes[k.to_s] ||
+        @applied_workitem.attributes[k.to_s.to_sym]
+
+        # TODO : what about leveraging workitem#lookup ?
 
       else
 

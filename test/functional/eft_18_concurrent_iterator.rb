@@ -65,6 +65,26 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal %w[ alice/0/0_0_0 bob/1/0_0_0 charly/2/0_0_0 ], trace
   end
 
+  def test_iterator_cbeer
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :on_field => 'assets', :to_var => 'v' do
+        participant '${v:v}'
+      end
+    end
+
+    register_catchall_participant
+
+    #noisy
+
+    wfid = @engine.launch(pdef, :fields => { :assets => %w[ a b c ] })
+
+    wait_for(wfid)
+
+    trace = @tracer.to_s.split("\n").sort
+    assert_equal %w[ a/0/0_0_0 b/1/0_0_0 c/2/0_0_0 ], trace
+  end
+
   def test_iterator_to_f
 
     pdef = Ruote.process_definition :name => 'test' do
