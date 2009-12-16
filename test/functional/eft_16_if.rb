@@ -143,5 +143,27 @@ class EftIfTest < Test::Unit::TestCase
 
     assert_trace(pdef, %w[ then else else else ])
   end
+
+  def test_xml_equals
+
+    pdef = %{
+      <?xml version="1.0"?>
+      <process-definition name="test_xml">
+        <if>
+          <equals field-value="state" other-value="A" />
+          <echo>alpha</echo>
+          <echo>bravo</echo>
+        </if>
+      </process-definition>
+    }
+
+    li = Ruote::Launchitem.new(pdef, 'state' => 'A')
+    assert_trace(li, 'alpha')
+
+    @tracer.clear
+
+    li = Ruote::Launchitem.new(pdef, :state => 'A')
+    assert_trace(li, 'alpha')
+  end
 end
 
