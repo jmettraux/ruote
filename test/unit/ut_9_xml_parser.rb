@@ -42,5 +42,20 @@ class RubyParserTest < Test::Unit::TestCase
       ["process_definition", {"name"=>"nada"}, [["echo", {"la vida loca"=>nil}, []]]],
       tree)
   end
+
+  def test_concurrent_iterator
+
+    tree = Ruote::XmlParser.parse(%{
+<process-definition name="nada">
+  <concurrent-iterator on-field="toti" to-field="toto">
+  </concurrent-iterator>
+</process-definition>
+    })
+
+    assert_equal(
+      ["process_definition", {"name"=>"nada"}, [
+        ["concurrent_iterator", {"on_field"=>"toti", "to_field"=>"toto"}, []]]],
+      tree)
+  end
 end
 
