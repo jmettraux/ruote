@@ -22,7 +22,7 @@
 # Made in Japan.
 #++
 
-require 'rufus/cloche'
+require 'rufus/cloche' # gem install rufus-cloche
 
 
 module Ruote
