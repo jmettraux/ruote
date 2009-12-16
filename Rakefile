@@ -10,6 +10,9 @@ begin
     gem.version = Ruote::VERSION
     gem.name = "ruote"
     gem.summary = %Q{an open source ruby workflow engine}
+    gem.description = %{
+ruote is an open source ruby workflow engine.
+    }
     gem.email = "jmettraux@gmail.com"
     gem.homepage = "http://ruote.rubyforge.org"
     gem.authors = ["John Mettraux", "Kenneth Kalmer"]
@@ -35,7 +38,7 @@ begin
     doc.options = [ '-o', 'ruote_rdoc', '--title', "ruote #{Ruote::VERSION}" ]
   end
 rescue LoadError
-  task :yardoc do
+  task :yard do
     abort "YARD is not available. In order to run yardoc, you must: sudo gem install yard"
   end
 end
@@ -43,7 +46,7 @@ end
 require 'rake/clean'
 CLEAN.include('pkg', 'rdoc', 'work', 'logs')
 
-task :default => [ :clean, :repackage ]
+task :default => [ :clean ]
 
 desc "Upload the documentation to rubyforge"
 task :upload_rdoc => :rdoc do
