@@ -15,6 +15,7 @@ Kenneth Kalmer  http://www.opensourcery.co.za
 Contributors
 ------------
 
+Chris Beer - http://github.com/cbeer
 Enrico Bianco - http://github.com/enricob
 Andrew Timberlake - timeout 'at'
 Torsten Schoenebaum - ActiveResourceParticipant and more

@@ -279,3 +279,5 @@
 
 [ ] ats : cache next ?
 
+[ ] empty iterator or concurrent-iterator, log ? crash ?
+
