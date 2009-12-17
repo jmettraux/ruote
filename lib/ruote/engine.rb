@@ -120,7 +120,15 @@ module Ruote
         exp.unpersist if exp
       end
 
-      @storage.delete(err.to_h) # remove error
+      #@storage.delete(err.to_h) # remove error
+        #
+        # done when the expression gets deleted
+        #
+        # but
+        #
+        # is there a case, 5 lines above, where there is no expression
+        # to delete ?
+
       @storage.put_msg(action, msg) # trigger replay
     end
 

@@ -109,18 +109,17 @@ module FunctionalBase
 
     return if opts[:ignore_errors]
 
-    ps = @engine.process(wfid)
+    errors = @engine.storage.get_many('errors', /#{wfid}$/)
 
-    return unless ps
-    return if ps.errors.size == 0
+    return if errors.size == 0
 
     # TODO : implement 'banner' function
 
     puts
     puts '-' * 80
-    puts 'caught process error(s)'
+    puts 'remaining process error(s)'
     puts
-    ps.errors.each do |e|
+    errors.each do |e|
       puts "  ** #{e.message}"
       puts e.trace
     end
@@ -128,7 +127,7 @@ module FunctionalBase
 
     puts_trace_so_far
 
-    flunk 'caught process error(s)'
+    flunk 'remaining process error(s)'
   end
 
   def assert_no_remaining_expressions (wfid, opts)

@@ -61,6 +61,8 @@ class FtErrorsTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_equal 'done.', @tracer.to_s
+
+    assert_equal 0, @engine.storage.get_many('errors').size
   end
 
   def test_error_replay
@@ -92,6 +94,8 @@ class FtErrorsTest < Test::Unit::TestCase
 
     assert_not_equal err.at, err1.at
       # not the same error
+
+    assert_equal 1, @engine.storage.get_many('errors').size
   end
 
   def test_error_fix_then_replay
