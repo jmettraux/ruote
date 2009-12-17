@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer"]
-  s.date = %q{2009-12-16}
+  s.date = %q{2009-12-17}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -96,6 +96,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/part/smtp_participant.rb",
      "lib/ruote/part/storage_participant.rb",
      "lib/ruote/part/template.rb",
+     "lib/ruote/participant.rb",
      "lib/ruote/storage/base.rb",
      "lib/ruote/storage/fs_storage.rb",
      "lib/ruote/storage/hash_storage.rb",
@@ -251,6 +252,7 @@ ruote is an open source ruby workflow engine.
       s.add_runtime_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
       s.add_runtime_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
       s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.6"])
+      s.add_development_dependency(%q<json>, [">= 0"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<rufus-lru>, [">= 0"])
@@ -259,6 +261,7 @@ ruote is an open source ruby workflow engine.
       s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
       s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
       s.add_dependency(%q<rufus-cloche>, [">= 0.1.6"])
+      s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
     end
   else
@@ -268,6 +271,7 @@ ruote is an open source ruby workflow engine.
     s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
     s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
     s.add_dependency(%q<rufus-cloche>, [">= 0.1.6"])
+    s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
   end
 end

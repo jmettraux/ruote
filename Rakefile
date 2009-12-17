@@ -5,8 +5,11 @@ $:.unshift( File.join(File.dirname(__FILE__), 'lib') )
 require File.dirname(__FILE__) + '/lib/ruote/worker'
 
 begin
+
   require 'jeweler'
+
   Jeweler::Tasks.new do |gem|
+
     gem.version = Ruote::VERSION
     gem.name = "ruote"
     gem.summary = %Q{an open source ruby workflow engine}
@@ -15,17 +18,21 @@ ruote is an open source ruby workflow engine.
     }
     gem.email = "jmettraux@gmail.com"
     gem.homepage = "http://ruote.rubyforge.org"
-    gem.authors = ["John Mettraux", "Kenneth Kalmer"]
+    gem.authors = [ "John Mettraux", "Kenneth Kalmer" ]
     gem.rubyforge_project = 'openwferu'
     gem.test_file = 'test/test.rb'
+
     gem.add_dependency "rufus-lru"
     gem.add_dependency "rufus-scheduler", ">= 2.0.3"
     gem.add_dependency "rufus-dollar"
     gem.add_dependency "rufus-treechecker", "1.0.3"
     gem.add_dependency "rufus-mnemo", "1.1.0"
     gem.add_dependency "rufus-cloche", ">= 0.1.6"
+
+    gem.add_development_dependency "json"
     gem.add_development_dependency "yard", ">= 0"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+
+    # Gem::Specification http://www.rubygems.org/read/chapter/20
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

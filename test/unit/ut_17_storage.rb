@@ -87,5 +87,20 @@ class UtStorage < Test::Unit::TestCase
 
     assert_equal true, r
   end
+
+  def test_keys_should_be_string
+
+    require 'yajl' rescue require 'json'
+    Ruote::Json.detect_backend
+
+    doc = { '_id' => 'h0', 'type' => 'dogfood', :m0 => :z, :m1 => [ :a, :b ] }
+
+    @s.put(doc)
+
+    doc = @s.get('dogfood', 'h0')
+
+    assert_equal 'z', doc['m0']
+    assert_equal %w[ a b ], doc['m1']
+  end
 end
 

@@ -52,14 +52,29 @@ module Ruote
     #
     NONE = [ lambda { |s| raise 'no JSON backend found' } ] * 2
 
-    @backend = if defined?(ActiveSupport::JSON)
-      ACTIVE_SUPPORT
-    elsif defined?(::JSON)
-      JSON
-    elsif defined?(::Yajl)
-      YAJL
-    else
-      NONE
+    # [Re-]Attempts to detect a JSON backend
+    #
+    def self.detect_backend
+
+      @backend = if defined?(::Yajl)
+        YAJL
+      elsif defined?(::JSON)
+        JSON
+      elsif defined?(ActiveSupport::JSON)
+        ACTIVE_SUPPORT
+      else
+        NONE
+      end
+    end
+
+    detect_backend
+      # run it right now
+
+    # Returns true if there is a backend set for parsing/encoding JSON
+    #
+    def self.has_backend?
+
+      (@backend != NONE)
     end
 
     # Forces a decoder JSON/ACTIVE_SUPPORT or any lambda pair that knows
@@ -80,6 +95,15 @@ module Ruote
     def self.decode (s)
 
       @backend[1].call(s)
+    end
+
+    # Duplicates an object by turning it into JSON and back.
+    #
+    # Don't laugh, yajl-ruby makes that faster than a Marshal copy.
+    #
+    def self.dup (o)
+
+      (@backend == NONE) ? Marshal.load(Marshal.dump(o)) : decode(encode(o))
     end
   end
 end

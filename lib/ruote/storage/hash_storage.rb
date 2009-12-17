@@ -22,7 +22,9 @@
 # Made in Japan.
 #++
 
+
 require 'ruote/util/misc'
+require 'ruote/util/json'
 require 'ruote/storage/base'
 require 'monitor'
 
@@ -59,13 +61,13 @@ module Ruote
           doc['_rev'] = pre ? pre['_rev'] : -1
           doc
         else
-          Ruote.fulldup(doc).merge!('_rev' => doc['_rev'] || -1)
+          doc.merge('_rev' => doc['_rev'] || -1)
         end
 
         doc['put_at'] = Ruote.now_to_utc_s
         doc['_rev'] = doc['_rev'] + 1
 
-        (@h[doc['type']] ||= {})[doc['_id']] = doc
+        (@h[doc['type']] ||= {})[doc['_id']] = Ruote::Json.dup(doc)
 
         nil
       end
@@ -74,8 +76,7 @@ module Ruote
     def get (type, key)
 
       synchronize do
-        #p type unless @h[type]
-        Ruote::fulldup(@h[type][key])
+        Ruote::Json.dup(@h[type][key])
       end
     end
 

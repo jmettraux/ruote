@@ -146,6 +146,10 @@ class EftIfTest < Test::Unit::TestCase
 
   def test_xml_equals
 
+    require 'yajl' rescue require 'json'
+    Ruote::Json.detect_backend
+      # making sure JSON dup is available in case of HashStorage
+
     pdef = %{
       <?xml version="1.0"?>
       <process-definition name="test_xml">

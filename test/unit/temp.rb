@@ -3,6 +3,8 @@
 
   ut_3
 
+  ut_10
+
   ut_17
 
 ].collect { |prefix|

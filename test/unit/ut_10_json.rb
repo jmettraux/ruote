@@ -48,5 +48,18 @@ class JsonTest < Test::Unit::TestCase
     Ruote::Json.backend = Ruote::Json::JSON
     assert_equal "[1,2,3]", Ruote::Json.encode([ 1, 2, 3 ])
   end
+
+  def test_dup
+
+    require 'json'
+
+    d0 = { 'id' => 'nada' }
+    d1 = { :id => :nada }
+
+    Ruote::Json.backend = Ruote::Json::JSON
+
+    assert_equal({ 'id' => 'nada' }, Ruote::Json.dup(d0))
+    assert_equal({ 'id' => 'nada' }, Ruote::Json.dup(d1))
+  end
 end
 
