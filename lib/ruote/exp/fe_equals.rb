@@ -76,8 +76,6 @@ module Ruote::Exp
 
       vals = grab_values
 
-      p vals
-
       h.applied_workitem['fields']['__result__'] = if vals.size < 2
         false
       else
