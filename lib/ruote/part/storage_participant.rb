@@ -78,7 +78,7 @@ module Ruote
 
     def fetch (fei)
 
-      @context.storage.get('workitems', Ruote.to_storage_id(fei))
+      @context.storage.get('workitems', to_id(fei))
     end
 
     # Removes the workitem from the in-memory hash and replies to the engine.
@@ -122,18 +122,18 @@ module Ruote
 
     def fetch_all
 
-      if @store_name
-        @context.storage.get_many('workitems', /^#{@store_name}::/)
-      else
-        @context.storage.get_many('workitems')
-      end
+      key = @store_name ? /^wi\_#{@store_name}::/ : nil
+
+      @context.storage.get_many('workitems', key)
     end
 
     def to_id (fei)
 
       sid = Ruote.to_storage_id(fei)
 
-      @store_name ? "#{store_name}::#{sid}" : sid
+      sid = @store_name ? "#{store_name}::#{sid}" : sid
+
+      "wi_#{sid}"
     end
   end
 end
