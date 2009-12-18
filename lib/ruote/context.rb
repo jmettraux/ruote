@@ -69,6 +69,8 @@ module Ruote
 
     def shutdown
 
+      @storage.shutdown if @storage.respond_to?(:shutdown)
+
       @conf.values.each do |s|
 
         s.shutdown if s.respond_to?(:shutdown)

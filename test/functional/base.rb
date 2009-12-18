@@ -39,7 +39,6 @@ module FunctionalBase
   def teardown
 
     @engine.shutdown
-    #puts `tree work`
     @engine.context.storage.purge!
   end
 
