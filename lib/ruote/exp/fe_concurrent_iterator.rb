@@ -115,6 +115,8 @@ module Ruote::Exp
 
     names :concurrent_iterator
 
+    ADD_BRANCHES_FIELD = '__add_branches__'
+
     # Overrides FlowExpression#register_child to make sure that persist is
     # not called.
     #
@@ -156,7 +158,7 @@ module Ruote::Exp
 
     def reply (workitem)
 
-      if ab = workitem['fields']['__add_branches__']
+      if ab = workitem['fields'].delete(ADD_BRANCHES_FIELD)
 
         add_branches(ab)
 

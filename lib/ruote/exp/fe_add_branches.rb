@@ -83,20 +83,23 @@ module Ruote::Exp
 
     include IteratorMixin
 
-    #ADD_BRANCH_FIELD = '__add_branches__'
-
     names :add_branches, :add_branch
 
     def apply
 
       list = split_list(lookup_val_prefix('on') || attribute_text)
+      iterator_fei = find_concurrent_iterator
 
-      iterator = find_concurrent_iterator
+      if list && iterator_fei
 
-      #iterator.add_branches(list) if list && iterator
-      # TODO : send __add_branch__ to concurrent_iterator
+        wi = Ruote::Json.dup(h.applied_workitem)
+        wi['fields'][ConcurrentIteratorExpression::ADD_BRANCHES_FIELD] = list
 
-      reply_to_parent(@applied_workitem)
+        @context.storage.put_msg(
+          'reply', 'fei' => iterator_fei, 'workitem' => wi)
+      end
+
+      reply_to_parent(h.applied_workitem)
     end
 
     def reply (workitem)
@@ -113,13 +116,7 @@ module Ruote::Exp
 
       if ref = attribute(:ref)
 
-        fei = lookup_variable(ref)
-        exp = expstorage[fei]
-
-        return exp if exp && exp.is_a?(ConcurrentIteratorExpression)
-
-        #raise "no concurrent iterator found for tag '#{ref}'"
-        return nil
+        return lookup_variable(ref)
       end
 
       #
@@ -130,14 +127,12 @@ module Ruote::Exp
       loop do
 
         break if exp.nil?
-
         break if exp.is_a?(ConcurrentIteratorExpression)
 
         exp = exp.parent
       end
 
-      #exp || raise("add_branches did not find any concurrent_iterator")
-      exp
+      exp ? exp.h.fei : nil
     end
   end
 end

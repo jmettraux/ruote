@@ -70,7 +70,7 @@ class EftUndoTest < Test::Unit::TestCase
       echo '.'
     end
 
-    noisy
+    #noisy
 
     assert_trace pdef, '.'
   end
