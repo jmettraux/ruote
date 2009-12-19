@@ -57,7 +57,7 @@ module Ruote::Exp
 
       if tk.match(/^to_v/)
 
-        set_variable(key, h.applied_workitem.dup)
+        set_variable(key, h.applied_workitem['fields'])
 
       elsif tk.match(/^to_f/)
 

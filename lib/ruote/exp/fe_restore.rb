@@ -75,25 +75,26 @@ module Ruote::Exp
       afrom = attribute(from)
 
       fields = if from.match(/var/)
-        lookup_variable(afrom).fields
+        lookup_variable(afrom)
       elsif from.match(/f/)
-        workitem.lookup(afrom)
+        Ruote.lookup(h.applied_workitem['fields'], afrom)
       else # val
         afrom
       end
 
       if to
-        @applied_workitem.set_field(attribute(to), fields)
+        Ruote.set(h.applied_workitem['fields'], attribute(to), fields)
       else
-        @applied_workitem.fields = fields
+        h.applied_workitem['fields'] = fields
       end
 
       # TODO : merge strategies
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     def reply (workitem)
+
       # empty, never called
     end
   end

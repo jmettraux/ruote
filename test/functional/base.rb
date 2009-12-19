@@ -119,8 +119,8 @@ module FunctionalBase
     puts 'remaining process error(s)'
     puts
     errors.each do |e|
-      puts "  ** #{e.message}"
-      puts e.trace
+      puts "  ** #{e['message']}"
+      puts e['trace']
     end
     puts '-' * 80
 
