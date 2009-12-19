@@ -84,8 +84,8 @@ module ConcurrentBase
 
   def noisy
 
-    @engine0.context[:noisy] = true
-    @engine1.context[:noisy] = true
+    @engine0.context.logger.noisy = true
+    @engine1.context.logger.noisy = true
   end
 end
 
