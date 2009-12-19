@@ -304,17 +304,9 @@ module Ruote::Exp
       reply_to_parent(workitem)
     end
 
-    # Cancels the expression (the whole branch) and makes sure it's re-applied
-    # (by riding the on_cancel attribute).
+    # The raw handling of messages passed to expressions (the fine handling
+    # is done in the #cancel method).
     #
-    def re_apply
-
-      h.on_cancel = tree
-      persist
-
-      @context.storage.put_msg('cancel', 'fei' => h.fei)
-    end
-
     def do_cancel (msg)
 
       return if h.state == 'cancelling'
@@ -334,6 +326,14 @@ module Ruote::Exp
       h.applied_workitem['fields']['__timed_out__'] = [
         h.fei, Ruote.now_to_utc_s
       ] if h.state == 'timing_out'
+
+      if h.state == 'cancelling'
+        if t = msg['on_cancel']
+          h.on_cancel = t
+        elsif msg['re_apply']
+          h.on_cancel = tree
+        end
+      end
 
       cancel(flavour)
     end
@@ -670,6 +670,10 @@ module Ruote::Exp
       do_reply(@msg)
     end
 
+    # 'safely' is certainly not the best name for this method.
+    # It involves redo_reply. Maybe a best name is
+    # 'redo_reply_until_[un]persist_is_successful'
+    #
     def safely (un_persist)
 
       latest_h = self.send("try_#{un_persist}")

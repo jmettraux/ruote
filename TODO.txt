@@ -263,6 +263,10 @@
 [ ] double-check on_cancel rewrite (ft_1_process_status)
 
 [o] limit the number of msgs returned
+[o] should redo/undo follow the example of command and add_branches ?
+    everything through reply (receive)
+    should re_apply not touch the state of its expression ?
+
 [ ] clean up persists present in #apply
 [ ] listen : to errors
 [ ] case exp : smarter one ?
@@ -279,4 +283,6 @@
 [ ] ats : cache next ?
 
 [ ] empty iterator or concurrent-iterator, log ? crash ?
+
+[ ] test undo when cancelling parent expression
 

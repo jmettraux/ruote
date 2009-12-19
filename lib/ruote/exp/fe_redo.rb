@@ -59,11 +59,9 @@ module Ruote::Exp
 
       if tag
 
-        fexp = Ruote::Exp::FlowExpression.fetch(@context, tag)
+        @context.storage.put_msg('cancel', 'fei' => tag, 're_apply' => true)
 
-        fexp.re_apply if fexp
-
-        reply_to_parent(h.applied_workitem) if fexp.nil? || ( ! ancestor?(tag))
+        reply_to_parent(h.applied_workitem) unless ancestor?(tag)
 
       else
 

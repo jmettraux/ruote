@@ -140,13 +140,7 @@ module Ruote
     #
     def re_apply (fei)
 
-      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
-
-      raise(
-        ArgumentError.new("did not find expression #{fei.inspect}")
-      ) unless fexp
-
-      fexp.re_apply
+      @context.storage.put_msg('cancel', 'fei' => fei.to_h, 're_apply' => true)
     end
 
     # Returns a ProcessStatus instance describing the current status of
