@@ -132,39 +132,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal 3, @subs.sort.uniq.size
   end
 
-  #def test_iterator_with_nested_sequence_and_fs_participants
-  #  pdef = Ruote.process_definition :name => 'test' do
-  #    sequence do
-  #      concurrent_iterator :on_value => (1..10).to_a, :to_field => 'f' do
-  #        sequence do
-  #          participant_1
-  #          participant_2
-  #        end
-  #      end
-  #      participant_3
-  #    end
-  #  end
-  #  p1 = @engine.register_participant :participant_1, Ruote::FsParticipant
-  #  p2 = @engine.register_participant :participant_2, Ruote::FsParticipant
-  #  p3 = @engine.register_participant :participant_3, Ruote::FsParticipant
-  #  #noisy
-  #  wfid = @engine.launch(pdef)
-  #  sleep 0.500
-  #  assert_equal [ 10, 0, 0 ], [ p1.size, p2.size, p3.size ]
-  #  assert_not_nil @engine.process(wfid)
-  #  while wi = p1.first; p1.reply(wi); end
-  #  sleep 0.500
-  #  assert_equal [ 0, 10, 0 ], [ p1.size, p2.size, p3.size ]
-  #  assert_not_nil @engine.process(wfid)
-  #  while wi = p2.first; p2.reply(wi); end
-  #  sleep 0.500
-  #  assert_equal [ 0, 0, 1 ], [ p1.size, p2.size, p3.size ]
-  #  assert_not_nil @engine.process(wfid)
-  #  p3.reply(p3.first)
-  #  sleep 0.500
-  #  assert_nil @engine.process(wfid)
-  #end
-
   def test_iterator_with_branches_finishing_before_others
 
     pdef = Ruote.process_definition :name => 'test' do
@@ -275,18 +242,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal 3, @subs.sort.uniq.size
   end
 
-  #def test_persist_count
-  #  n = 3
-  #  pdef = Ruote.process_definition :name => 'test' do
-  #    concurrent_iterator :branches => n do
-  #      echo 'a'
-  #    end
-  #  end
-  #  noisy
-  #  assert_trace pdef, %w[ a ] * n
-  #  #assert_equal 1 + n, update_count
-  #end
-
   def test_on_only
 
     pdef = Ruote.process_definition :name => 'test' do
@@ -358,6 +313,30 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_nil @engine.process(wfid)
+  end
+
+  def test_add_branch_command
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        concurrent_iterator :on_value => (1..2).to_a, :to_field => 'f' do
+          alpha
+        end
+        echo '.'
+      end
+    end
+
+    @engine.register_participant 'alpha' do |workitem|
+
+      @tracer << "#{workitem.fields['f']}\n"
+
+      workitem.fields['__add_branches__'] = %w[ a b ] \
+        if workitem.fields['f'] == 2
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ 1 2 a b . ]
   end
 
   protected

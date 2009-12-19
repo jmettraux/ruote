@@ -152,12 +152,24 @@ module Ruote::Exp
           :workitem => workitem,
           :variables => variables)
       end
-
-      persist
     end
 
-    # wraps the add_branches method with the ticket mechanism
-    #with_ticket :add_branches
+    def reply (workitem)
+
+      if ab = workitem['fields']['__add_branches__']
+
+        add_branches(ab)
+
+        if h.fei['wfid'] != workitem['fei']['wfid'] ||
+           ( ! workitem['fei']['expid'].match(/^#{h.fei['expid']}_\d+$/))
+
+          safely(:persist)
+          return
+        end
+      end
+
+      super(workitem)
+    end
 
     protected
 
@@ -174,17 +186,16 @@ module Ruote::Exp
 
       h.list_size = 0
 
-      #without_ticket__add_branches(list)
-        # no need for a ticket at apply time
-
       add_branches(list)
+
+      persist
     end
 
     # Overrides the implementation found in ConcurrenceExpression
     #
     def expected_count
 
-      h.count ? [ h.count, h.list_size ].min : h.list_size
+      h.ccount ? [ h.ccount, h.list_size ].min : h.list_size
     end
   end
 end

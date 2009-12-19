@@ -83,6 +83,8 @@ module Ruote::Exp
 
     include IteratorMixin
 
+    #ADD_BRANCH_FIELD = '__add_branches__'
+
     names :add_branches, :add_branch
 
     def apply
@@ -91,14 +93,15 @@ module Ruote::Exp
 
       iterator = find_concurrent_iterator
 
-      iterator.add_branches(list) if list && iterator
+      #iterator.add_branches(list) if list && iterator
+      # TODO : send __add_branch__ to concurrent_iterator
 
       reply_to_parent(@applied_workitem)
     end
 
     def reply (workitem)
 
-      # not in use
+      # never called
     end
 
     protected

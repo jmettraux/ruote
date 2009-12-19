@@ -262,13 +262,12 @@
 
 [ ] double-check on_cancel rewrite (ft_1_process_status)
 
+[o] limit the number of msgs returned
 [ ] clean up persists present in #apply
 [ ] listen : to errors
-
 [ ] case exp : smarter one ?
 [ ] remove abort_on_exception=true
 [ ] timeout :at and :after
-[o] limit the number of msgs returned
 [ ] issue with :unless => '${f:index} == 2000'
 [ ] spare 1 get_msg by caching msg (but keep 'deleting')
 [ ] verify get_last/get_raw logic, no + 0.0001...
