@@ -148,7 +148,7 @@ module Ruote::Exp
       #    "missing a variable or field target in #{tree.inspect}")
       end
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     def reply (workitem)
@@ -172,7 +172,9 @@ module Ruote::Exp
       ndelta = Ruote.narrow_to_number(delta || 1)
       ndelta = -ndelta if dec && ndelta
 
-      value = type == :var ? lookup_variable(key) : @applied_workitem.lf(key)
+      value = type == :var ?
+        lookup_variable(key) :
+        Ruote.lookup(h.applied_workitem['fields'], key)
 
       pos = attribute(:position) || attribute(:pos)
 
