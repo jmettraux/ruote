@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Tue Sep 15 19:26:33 JST 2009
 #
@@ -34,7 +34,8 @@ class EftErrorTest < Test::Unit::TestCase
     assert_equal(
       1, ps.errors.size)
     assert_equal(
-      'error triggered from process definition', ps.errors.first.error_message)
+      '#<Ruote::ForcedError: error triggered from process definition>',
+      ps.errors.first.message)
   end
 
   def test_error_replay
