@@ -38,7 +38,7 @@ module Ruote::Exp
 
     def apply
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
   end
 end
