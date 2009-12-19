@@ -71,26 +71,14 @@ module Ruote::Exp
         lookup_val_prefix('tree', :escape => true) ||
         lookup_variable('tree')
 
-      return reply_to_parent(@applied_workitem) unless tree
-
-      persist
+      return reply_to_parent(h.applied_workitem) unless tree
 
       #
       # apply 'tree'
 
-      afei = @fei.dup
-      afei.expid = "#{@fei.expid}_0"
-
-      wqueue.emit(
-        :expressions,
-        :apply,
-        {
-          :tree => tree,
-          :fei => afei,
-          :parent_id => @fei,
-          :workitem => @applied_workitem,
-          :variables => compile_atts(:escape => true)
-        })
+      launch_sub(
+        "#{h.fei['expid']}_0", tree,
+        :variables => compile_atts(:escape => true))
     end
   end
 end
