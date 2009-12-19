@@ -22,7 +22,7 @@ class EftSaveTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.register_participant :alpha, Ruote::HashParticipant
+    @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
 
@@ -30,7 +30,7 @@ class EftSaveTest < Test::Unit::TestCase
 
     ps = @engine.process(wfid)
 
-    assert_equal Ruote::Workitem, ps.variables['v'].class
+    assert_equal Hash, ps.variables['v'].class
   end
 
   def test_save_to_field
@@ -43,7 +43,7 @@ class EftSaveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
 
@@ -63,7 +63,7 @@ class EftSaveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
 

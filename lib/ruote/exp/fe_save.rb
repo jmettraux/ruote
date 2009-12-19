@@ -51,25 +51,27 @@ module Ruote::Exp
         has_attribute(*%w[ v var variable ].map { |k| "to_#{k}" }) ||
         has_attribute(*%w[ f fld field ].map { |k| "to_#{k}" })
 
-      return reply_to_parent(@applied_workitem) unless tk
+      return reply_to_parent(h.applied_workitem) unless tk
 
       key = attribute(tk)
 
       if tk.match(/^to_v/)
 
-        set_variable(key, @applied_workitem.dup)
+        set_variable(key, h.applied_workitem.dup)
 
       elsif tk.match(/^to_f/)
 
-        @applied_workitem.set_field(
+        Ruote.set(
+          h.applied_workitem['fields'],
           key,
-          Ruote.fulldup(@applied_workitem.fields))
+          Ruote.fulldup(h.applied_workitem['fields']))
       end
 
-      reply_to_parent(@applied_workitem)
+      reply_to_parent(h.applied_workitem)
     end
 
     def reply (workitem)
+
       # empty, never called
     end
   end
