@@ -59,5 +59,20 @@ class EftUndoTest < Test::Unit::TestCase
     assert_equal 1, logger.log.select { |e| e['action'] == 'cancel' }.size
     assert_equal 1, logger.log.select { |e| e['action'] == 'left_tag' }.size
   end
+
+  def test_undo_parent
+
+    pdef = Ruote.process_definition do
+      sequence :tag => :richard do
+        cancel :richard
+        echo 'out'
+      end
+      echo '.'
+    end
+
+    noisy
+
+    assert_trace pdef, '.'
+  end
 end
 

@@ -266,6 +266,7 @@
 [o] should redo/undo follow the example of command and add_branches ?
     everything through reply (receive)
     should re_apply not touch the state of its expression ?
+[o] test undo when cancelling parent expression
 
 [ ] clean up persists present in #apply
 [ ] listen : to errors
@@ -283,6 +284,4 @@
 [ ] ats : cache next ?
 
 [ ] empty iterator or concurrent-iterator, log ? crash ?
-
-[ ] test undo when cancelling parent expression
 
