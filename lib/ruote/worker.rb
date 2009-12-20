@@ -96,17 +96,11 @@ module Ruote
 
       if delta >= 0.8
         #
-        # at most once per second
+        # at most once per second, deal with 'ats' and 'crons'
 
         @last_time = now
 
-        # at schedules
-
-        @storage.get_ats(delta, now).each { |sche| trigger_at(sche) }
-
-        # cron schedules
-
-        @storage.get_crons(delta, now).each { |sche| trigger_cron(sche) }
+        @storage.get_schedules(delta, now).each { |sche| trigger(sche, now) }
       end
 
       # msgs
@@ -148,20 +142,25 @@ module Ruote
       end
     end
 
-    def trigger_at (schedule)
+    def trigger (schedule, now)
 
-      msg = schedule['msg']
+      msg = Ruote.fulldup(schedule['msg'])
 
       return false unless @storage.reserve(schedule)
 
       @storage.put_msg(msg.delete('action'), msg)
 
+      if schedule['type'] == 'cron'
+
+        # 'reschedule'
+
+        nt = Rufus::CronLine.new(schedule['original']).next_time(now + 1)
+
+        @storage.put_schedule(
+          schedule['type'], schedule['owner'], nt, schedule['msg'])
+      end
+
       true
-    end
-
-    def trigger_cron (schedule)
-
-      # TODO : implement
     end
 
     def process (msg)

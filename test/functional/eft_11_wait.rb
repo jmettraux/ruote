@@ -54,7 +54,7 @@ class EftWaitTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_equal 'a', @tracer.to_s
-    assert_equal 0, @engine.storage.get_many('ats').size
+    assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
   def test_wait_for_number

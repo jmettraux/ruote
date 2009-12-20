@@ -284,4 +284,5 @@
 [ ] ats : cache next ?
 
 [ ] empty iterator or concurrent-iterator, log ? crash ?
+[ ] maybe cancel should have a safely / redo_reply thing
 

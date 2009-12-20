@@ -34,7 +34,8 @@ module Ruote
 
     def reserve (doc)
 
-      (delete(doc) != true)
+      #(delete(doc) != true)
+      delete(doc).nil?
     end
 
     #--
@@ -109,67 +110,59 @@ module Ruote
     # ats and crons
     #++
 
-    def get_ats (delta, now)
-
-      #p delta
-      #p Ruote.time_to_utc_s(now)
-      #get_many('ats').each { |a| p [ :at, a['at'] ] }
+    def get_schedules (delta, now)
 
       if delta < 1.0
 
         at = now.strftime('%Y%m%d%H%M%S')
-        get_many('ats', /-#{at}$/)
+        get_many('schedules', /-#{at}$/)
 
       elsif delta < 60.0
 
         at = now.strftime('%Y%m%d%H%M')
-        ats = get_many('ats', /-#{at}\d\d$/)
-        filter_ats(ats, now)
+        scheds = get_many('schedules', /-#{at}\d\d$/)
+        filter_schedules(scheds, now)
 
-      else # load all the ats...
+      else # load all the schedules
 
-        ats = get_many('ats')
-        filter_ats(ats, now)
+        scheds = get_many('schedules')
+        filter_schedules(scheds, now)
       end
     end
 
-    def get_crons (delta, now)
-
-      # TODO : implement me
-
-      []
-    end
-
-    def put_at_schedule (owner_fei, at, msg)
+    def put_schedule (flavour, owner_fei, original, at, msg)
 
       if at < Time.now.utc + 1.0
-        #
-        # trigger immediately
-        #
-        put_msg(msg.delete('action'), msg)
-        #
-      else
-        #
-        # schedule
-        #
-        put_schedule('ats', owner_fei, at, msg)
+
+        if flavour == 'at'
+          put_msg(msg)
+          return
+        end
+
+        # else, cron
+
+        at = Rufus::CronLine.new(original).next_time(at + 1)
       end
+
+      sat = at.strftime('%Y%m%d%H%M%S')
+      i = "#{flavour}-#{Ruote.to_storage_id(owner_fei)}-#{sat}"
+
+      put(
+        '_id' => i,
+        'type' => 'schedules',
+        'flavour' => flavour,
+        'original' => original,
+        'at' => Ruote.time_to_utc_s(at),
+        'owner' => owner_fei,
+        'msg' => msg
+      )
+
+      i
     end
 
-    def put_cron_schedule (owner_fei, cron, msg)
+    def delete_schedule (schedule_id)
 
-      put_schedule('crons', owner_fei, cron, msg)
-    end
-
-    def delete_at_schedule (schedule_id)
-
-      s = get('ats', schedule_id)
-      delete(s) if s
-    end
-
-    def delete_cron_schedule (schedule_id)
-
-      s = get('crons', schedule_id)
+      s = get('schedules', schedule_id)
       delete(s) if s
     end
 
@@ -198,33 +191,13 @@ module Ruote
         'type' => 'variables', '_id' => 'variables', 'variables' => {} }
     end
 
-    def put_schedule (type, owner_fei, t, msg)
-
-      h = { 'type' => type, 'owner' => owner_fei, 'msg' => msg }
-
-      if type == 'ats'
-
-        at = t.strftime('%Y%m%d%H%M%S')
-        h['_id'] = "#{Ruote.to_storage_id(owner_fei)}-#{at}"
-        h['at'] = Ruote.time_to_utc_s(t)
-
-      else
-
-        raise "implement me !"
-      end
-
-      put(h)
-
-      h['_id']
-    end
-
     # Returns all the ats whose due date arrived (now or earlier)
     #
-    def filter_ats (ats, now)
+    def filter_schedules (scheds, now)
 
       now = Ruote.time_to_utc_s(now)
 
-      ats.select { |at| at['at'] <= now }
+      scheds.select { |sched| sched['at'] <= now }
     end
   end
 end

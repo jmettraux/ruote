@@ -60,8 +60,10 @@ module Ruote::Exp
 
       if h.at && h.at > Time.now.utc + 1.0
 
-        h.schedule_id = @context.storage.put_at_schedule(
+        h.schedule_id = @context.storage.put_schedule(
+          'at',
           h.fei,
+          s,
           h.at,
           'action' => 'reply',
           'fei' => h.fei,
@@ -83,7 +85,7 @@ module Ruote::Exp
 
     def cancel (flavour)
 
-      @context.storage.delete_at_schedule(h.schedule_id)
+      @context.storage.delete_schedule(h.schedule_id)
       reply_to_parent(h.applied_workitem)
     end
   end

@@ -226,7 +226,7 @@ module Ruote::Exp
 
       if h.timeout_schedule_id && h.state != 'timing_out'
 
-        @context.storage.delete_at_schedule(h.timeout_schedule_id)
+        @context.storage.delete_schedule(h.timeout_schedule_id)
       end
 
       if h.state == 'failing' # on_error is implicit (#fail got called)
@@ -580,8 +580,10 @@ module Ruote::Exp
 
       return if not(h.timeout_at) || h.timeout_at < Time.now.utc + 1.0
 
-      h.timeout_schedule_id = @context.storage.put_at_schedule(
+      h.timeout_schedule_id = @context.storage.put_schedule(
+        'at',
         h.fei,
+        timeout,
         h.timeout_at,
         'action' => 'cancel',
         'fei' => h.fei,
@@ -612,7 +614,7 @@ module Ruote::Exp
         }.merge!(opts))
     end
 
-    # if any on_cancel handler is present, will trigger it.
+    # 'on_{error|timeout|cancel}' triggering
     #
     def trigger (on, workitem)
 

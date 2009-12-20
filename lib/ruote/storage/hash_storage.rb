@@ -134,8 +134,7 @@ module Ruote
         msgs
         expressions
         errors
-        ats
-        crons
+        schedules
         configurations
         workitems
 
