@@ -76,7 +76,7 @@ module Ruote
     def get (type, key)
 
       synchronize do
-        Ruote::Json.dup(@h[type][key])
+        Ruote.fulldup(@h[type][key])
       end
     end
 

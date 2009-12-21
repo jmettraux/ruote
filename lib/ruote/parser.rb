@@ -37,7 +37,9 @@ module Ruote
   #
   class Parser
 
-    def initialize (worker)
+    def initialize (context)
+
+      @context = context
     end
 
     # Turns the input into a ruote syntax tree (raw process definition).
