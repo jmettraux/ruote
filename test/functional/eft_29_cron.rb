@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Tue Oct 27 16:13:41 JST 2009
 #
@@ -30,7 +30,7 @@ class EftCronTest < Test::Unit::TestCase
 
     @engine.cancel_process(wfid)
 
-    wait_for(4)
+    wait_for(5)
 
     assert_match /^ok\nok/, @tracer.to_s
     assert_nil @engine.process(wfid)
@@ -54,7 +54,7 @@ class EftCronTest < Test::Unit::TestCase
 
     @engine.cancel_process(wfid)
 
-    wait_for(4)
+    wait_for(5)
 
     assert_match /^ok\nok/, @tracer.to_s
     assert_nil @engine.process(wfid)
