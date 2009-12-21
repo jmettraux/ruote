@@ -91,5 +91,20 @@ class EftWaitTest < Test::Unit::TestCase
     #p ts
     assert ts[1] - ts[0] > 1.0, "#{ts[1] - ts[0]} should be > 1.0"
   end
+
+  def test_wait_until_now
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
+        wait Time.now
+        echo 'b'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, %w[ a b ]
+  end
 end
 

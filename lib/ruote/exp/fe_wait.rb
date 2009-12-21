@@ -56,9 +56,9 @@ module Ruote::Exp
       s = h.for
       s = h.until if s == ''
 
-      h.at = Ruote.s_to_at(s) if s
+      h.at = s
 
-      if h.at && h.at > Time.now.utc + 1.0
+      if h.at
 
         h.schedule_id = @context.storage.put_schedule(
           'at',

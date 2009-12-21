@@ -141,6 +141,11 @@ module Ruote
       end
       at = at.utc
 
+      if at <= Time.now.utc && flavour == 'at'
+        put_msg(msg.delete('action'), msg)
+        return
+      end
+
       sat = at.strftime('%Y%m%d%H%M%S')
       i = "#{flavour}-#{Ruote.to_storage_id(owner_fei)}-#{sat}"
 
