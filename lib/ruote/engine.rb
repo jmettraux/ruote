@@ -25,6 +25,7 @@
 require 'ruote/context'
 require 'ruote/launchitem'
 require 'ruote/engine/process_status'
+require 'ruote/receiver/base'
 
 
 module Ruote
