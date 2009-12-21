@@ -154,6 +154,8 @@
 [o] exp : every
 [o] write rt test for 'timeout'
 [o] undo exp : alias to 'cancel'
+[o] Andrew's at for timeouts (Chronic maybe)
+[x] timeout :at and :after (timeout expression vanished)
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -177,8 +179,6 @@
 [ ] define without name (__result__)
 
 [ ] pooltool.ru
-
-[ ] Andrew's at for timeouts (Chronic maybe)
 
 [ ] participant dispatch thread throttling ?
 
@@ -214,11 +214,7 @@
 
 [ ] apply : ruby or xml (instead of just ast) ?
 
-[ ] FsParticipant : what about #first and #all a la dm ?
-
 [ ] unify ruote/util/json and ruote/util/serializer
-
-[ ] jash : Time and DateTime and co ?
 
 [ ] history.to_tree ?
 
@@ -256,8 +252,6 @@
 
 [ ] engine.cancel_forgotten_children(wfid) ?
 
-[ ] run full tests at low load with --dm
-
 [ ] port subprocess on_cancel test from ruote 0.9 http://groups.google.com/group/openwferu-users/t/75f02bdadf7b93eb
 
 [ ] double-check on_cancel rewrite (ft_1_process_status)
@@ -267,23 +261,20 @@
     everything through reply (receive)
     should re_apply not touch the state of its expression ?
 [o] test undo when cancelling parent expression
+[o] issue with :unless => '${f:index} == 2000'
 
+[ ] verify get_last/get_raw logic, no + 0.0001...
 [ ] clean up persists present in #apply
 [ ] listen : to errors
 [ ] case exp : smarter one ?
 [ ] remove abort_on_exception=true
-[ ] timeout :at and :after
-[ ] issue with :unless => '${f:index} == 2000'
 [ ] spare 1 get_msg by caching msg (but keep 'deleting')
-[ ] verify get_last/get_raw logic, no + 0.0001...
 [ ] add_branches : pass message to concurrent_iterator
     like a command expression
 [ ] [un]set_var : via message ? should be ok like that... Not much traffic there
 [ ] listeners
 
-[ ] ats : cache next ?
-
-[ ] empty iterator or concurrent-iterator, log ? crash ?
+[ ] empty iterator or concurrent-iterator, log ? crash ? empty while...
 [ ] maybe cancel should have a safely / redo_reply thing
 [ ] at expression ?
 [ ] listen to participants/errors/tags {in|out}

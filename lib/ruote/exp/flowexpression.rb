@@ -576,15 +576,13 @@ module Ruote::Exp
 
       return unless timeout
 
-      h.timeout_at = Ruote.s_to_at(timeout)
-
-      return if not(h.timeout_at) || h.timeout_at < Time.now.utc + 1.0
+      #h.timeout_at = Ruote.s_to_at(timeout)
+      #return if not(h.timeout_at) || h.timeout_at < Time.now.utc + 1.0
 
       h.timeout_schedule_id = @context.storage.put_schedule(
         'at',
         h.fei,
         timeout,
-        h.timeout_at,
         'action' => 'cancel',
         'fei' => h.fei,
         'flavour' => 'timeout')

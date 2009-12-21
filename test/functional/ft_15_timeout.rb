@@ -178,5 +178,28 @@ class FtTimeoutTest < Test::Unit::TestCase
     assert_equal 1, ps.errors.size
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
+
+  def test_timeout_at
+
+    t = (Time.now + 2).to_s
+
+    pdef = Ruote.process_definition do
+      sequence :timeout => t do
+        alpha
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(9)
+
+    assert_nil @engine.process(wfid)
+    assert_equal 0, alpha.size
+    assert_equal 0, @engine.storage.get_many('schedules').size
+  end
 end
 
