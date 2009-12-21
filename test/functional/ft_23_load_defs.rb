@@ -33,7 +33,7 @@ end
       @engine.load_definition(fn))
   end
 
-  def test_load_definition
+  def test_load_illegal_definition
 
     pdef = %{
 Ruote.process_definition :name => 'test' do

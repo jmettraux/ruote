@@ -49,8 +49,6 @@ module Ruote
 
       return definition if definition.is_a?(Array) and definition.size == 3
 
-      # TODO : yaml (maybe)
-
       (return XmlParser.parse(definition)) rescue nil
       (return Ruote::Json.decode(definition)) rescue nil
       (return ruby_eval(definition)) rescue nil
@@ -155,7 +153,7 @@ module Ruote
     #
     def ruby_eval (s)
 
-      treechecker.check(s)
+      @context.treechecker.check(s)
       eval(s)
 
     rescue Exception => e

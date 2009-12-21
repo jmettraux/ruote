@@ -209,6 +209,13 @@ module Ruote
 
       logger.wait_for(item)
     end
+
+    # Loads and parses the process definition at the given path.
+    #
+    def load_definition (path)
+
+      @context.parser.parse(path)
+    end
   end
 
   #
