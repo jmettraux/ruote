@@ -21,23 +21,27 @@ class EftCronTest < Test::Unit::TestCase
 
     #noisy
 
+    t = Time.now
     wfid = @engine.launch(pdef)
 
-    sleep 4
+    wait_for(7)
+
+    d = Time.now - t
 
     @engine.cancel_process(wfid)
 
-    sleep 0.400
+    wait_for(4)
 
     assert_match /^ok\nok/, @tracer.to_s
     assert_nil @engine.process(wfid)
-    assert_equal 0, @engine.scheduler.jobs.size
+    assert_equal 0, @engine.storage.get_many('schedules').size
+    #assert d < 5.0, "#{d} < 5.0 :("
   end
 
   def test_every
 
     pdef = Ruote.process_definition do
-      every '200' do
+      every '1s' do
         echo 'ok'
       end
     end
@@ -46,15 +50,15 @@ class EftCronTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 1
+    wait_for(7)
 
     @engine.cancel_process(wfid)
 
-    sleep 0.400
+    wait_for(4)
 
     assert_match /^ok\nok/, @tracer.to_s
     assert_nil @engine.process(wfid)
-    assert_equal 0, @engine.scheduler.jobs.size
+    assert_equal 0, @engine.storage.get_many('schedules').size
   end
 end
 

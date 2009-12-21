@@ -93,39 +93,48 @@ module Ruote::Exp
 
     def apply
 
-      @schedule = attribute(:tab) || attribute(:interval) || attribute_text
-      @job_id = nil
+      h.schedule = attribute(:tab) || attribute(:interval) || attribute_text
+      h.job_id = nil
 
       reschedule
     end
 
     def reply (workitem)
 
-      pool.launch_sub(
-        "#{@fei.expid}_0",
+      launch_sub(
+        "#{h.fei['expid']}_0",
         tree_children[0],
-        self,
-        workitem.dup,
+        :workitem => Ruote.fulldup(h.applied_workitem),
         :forget => true)
+
+      reschedule
     end
 
     def cancel (flavour)
 
-      scheduler.unschedule(@job_id)
-      reply_to_parent(@applied_workitem)
+      @context.storage.delete_schedule(h.job_id)
+      reply_to_parent(h.applied_workitem)
     end
 
     # Note : this method has to be public.
     #
     def reschedule
 
-      @job_id = if Rufus::Scheduler.is_cron_string(@schedule)
-        scheduler.cron(@schedule, @fei, :reply).job_id
-      else
-        scheduler.every(@schedule, @fei, :reply).job_id
-      end
+      h.job_id = @context.storage.put_schedule(
+        'cron',
+        h.fei,
+        h.schedule,
+        'action' => 'reply',
+        'fei' => h.fei,
+        'workitem' => h.applied_workitem)
 
-      persist
+      @context.storage.delete_schedule(h.job_id) if try_persist
+        #
+        # if the persist failed, immediately unschedule
+        # the just scheduled job
+        #
+        # this is meant to cope with cases where one worker reschedules
+        # while another just cancelled
     end
   end
 end

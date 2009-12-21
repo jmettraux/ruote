@@ -100,7 +100,7 @@ module Ruote
 
         @last_time = now
 
-        @storage.get_schedules(delta, now).each { |sche| trigger(sche, now) }
+        @storage.get_schedules(delta, now).each { |sche| trigger(sche) }
       end
 
       # msgs
@@ -142,23 +142,13 @@ module Ruote
       end
     end
 
-    def trigger (schedule, now)
+    def trigger (schedule)
 
       msg = Ruote.fulldup(schedule['msg'])
 
       return false unless @storage.reserve(schedule)
 
       @storage.put_msg(msg.delete('action'), msg)
-
-      if schedule['type'] == 'cron'
-
-        # 'reschedule'
-
-        nt = Rufus::CronLine.new(schedule['original']).next_time(now + 1)
-
-        @storage.put_schedule(
-          schedule['type'], schedule['owner'], nt, schedule['msg'])
-      end
 
       true
     end

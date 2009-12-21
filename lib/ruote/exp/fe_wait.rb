@@ -63,7 +63,6 @@ module Ruote::Exp
         h.schedule_id = @context.storage.put_schedule(
           'at',
           h.fei,
-          s,
           h.at,
           'action' => 'reply',
           'fei' => h.fei,

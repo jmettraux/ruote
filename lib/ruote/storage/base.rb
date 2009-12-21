@@ -130,19 +130,27 @@ module Ruote
       end
     end
 
-    def put_schedule (flavour, owner_fei, original, at, msg)
+    def put_schedule (flavour, owner_fei, s, msg)
 
-      if at < Time.now.utc + 1.0
-
-        if flavour == 'at'
-          put_msg(msg)
-          return
-        end
-
-        # else, cron
-
-        at = Rufus::CronLine.new(original).next_time(at + 1)
+      at = if s.is_a?(Time) # at or every
+        at
+      elsif Rufus::Scheduler.is_cron_string(s) # cron
+        Rufus::CronLine.new(s).next_time(Time.now + 1)
+      else # at or every
+        Ruote.s_to_at(s)
       end
+
+      at = at.utc
+
+      #if at < Time.now.utc + 1.0
+      #  if flavour == 'at'
+      #    put_msg(msg) # trigger immediately and forget
+      #    return
+      #  end
+      #  if Rufus::Scheduler.is_cron_string(s)
+      #    at = Rufus::CronLine.new(original).next_time(at + 1)
+      #  end
+      #end
 
       sat = at.strftime('%Y%m%d%H%M%S')
       i = "#{flavour}-#{Ruote.to_storage_id(owner_fei)}-#{sat}"
@@ -151,11 +159,10 @@ module Ruote
         '_id' => i,
         'type' => 'schedules',
         'flavour' => flavour,
-        'original' => original,
+        'original' => s,
         'at' => Ruote.time_to_utc_s(at),
         'owner' => owner_fei,
-        'msg' => msg
-      )
+        'msg' => msg)
 
       i
     end

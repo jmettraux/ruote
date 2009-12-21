@@ -285,4 +285,6 @@
 
 [ ] empty iterator or concurrent-iterator, log ? crash ?
 [ ] maybe cancel should have a safely / redo_reply thing
+[ ] at expression ?
+[ ] listen to participants/errors/tags {in|out}
 
