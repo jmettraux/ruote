@@ -18,7 +18,7 @@ class EftWhenTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       echo 'in'
       concurrence do
-        _when '${v:ok}', :freq => '500' do
+        _when '${v:ok}', :freq => '1s' do
           echo 'done.'
         end
         sequence do
@@ -32,6 +32,8 @@ class EftWhenTest < Test::Unit::TestCase
     #noisy
 
     assert_trace pdef, %w[ in over done. ]
+
+    assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
   def test_when_blocking
@@ -40,7 +42,7 @@ class EftWhenTest < Test::Unit::TestCase
       echo 'in'
       concurrence do
         sequence do
-          _when '${v:ok}', :freq => '500'
+          _when '${v:ok}', :freq => '1'
           echo 'done.'
         end
         sequence do
@@ -54,7 +56,8 @@ class EftWhenTest < Test::Unit::TestCase
     #noisy
 
     assert_trace pdef, %w[ in over done. ]
-    assert_equal 0, @engine.scheduler.jobs.size
+
+    assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
   def test_cancel
@@ -68,16 +71,16 @@ class EftWhenTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.500
+    wait_for(2)
 
-    assert_equal 1, @engine.scheduler.jobs.size
+    assert_equal 1, @engine.storage.get_many('schedules').size
 
     @engine.cancel_process(wfid)
 
-    sleep 0.500
+    wait_for(4)
 
     assert_nil @engine.process(wfid)
-    assert_equal 0, @engine.scheduler.jobs.size
+    assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
   def test_when_cron
@@ -100,15 +103,7 @@ class EftWhenTest < Test::Unit::TestCase
 
     assert_trace pdef, %w[ in over done. ]
 
-    #Thread.abort_on_exception = true
-    #wfid = @engine.launch(pdef)
-    #sleep 4
-    #Thread.list.each_with_index do |t, i|
-    #  puts "#{i} - #{t[:name]} - #{t.inspect}"
-    #end
-    #assert_equal %w[ in over done. ].join("\n"), @tracer.to_s
-
-    assert_equal 0, @engine.scheduler.jobs.size
+    assert_equal 0, @engine.storage.get_many('schedules').size
   end
 end
 

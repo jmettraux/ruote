@@ -23,7 +23,6 @@
 #++
 
 
-
 module Ruote::Exp
 
   #
@@ -147,24 +146,24 @@ module Ruote::Exp
 
     def apply
 
-      @frequency = attribute(:frequency) || attribute(:freq) || '10s'
-      @triggered = false
-      @job_id = nil
+      h.frequency = attribute(:frequency) || attribute(:freq) || '10s'
+      h.triggered = false
+      h.job_id = nil
 
-      reply(@applied_workitem)
+      reply(h.applied_workitem)
     end
 
     def reply (workitem)
 
-      return reply_to_parent(workitem) if @triggered
+      return reply_to_parent(workitem) if h.triggered
 
       t = attribute(:test) || attribute_text
 
       if Condition.true?(t)
 
-        @triggered = true
+        h.triggered = true
 
-        scheduler.unschedule(@job_id)
+        @context.storage.delete_schedule(h.job_id)
           # especially for a cron...
 
         if tree_children[0]
@@ -186,26 +185,29 @@ module Ruote::Exp
 
     def cancel (flavour)
 
-      scheduler.unschedule(@job_id)
-      reply_to_parent(@applied_workitem)
+      @context.storage.delete_schedule(h.job_id)
+      reply_to_parent(h.applied_workitem)
     end
 
-    # Note : this method has to be public.
-    #
+    protected
+
     def reschedule
 
-      @job_id = if Rufus::Scheduler.is_cron_string(@frequency)
+      h.job_id = @context.storage.put_schedule(
+        'cron',
+        h.fei,
+        h.frequency,
+        'action' => 'reply',
+        'fei' => h.fei,
+        'workitem' => h.applied_workitem)
 
-        return if @job_id && scheduler.jobs[@job_id]
-          # don't reschedule if not necessary
-
-        scheduler.cron(@frequency, @fei, :reply).job_id
-      else
-
-        scheduler.in(@frequency, @fei, :reply).job_id
-      end
-
-      persist
+      @context.storage.delete_schedule(h.job_id) if try_persist
+        #
+        # if the persist failed, immediately unschedule
+        # the just scheduled job
+        #
+        # this is meant to cope with cases where one worker reschedules
+        # while another just cancelled
     end
   end
 end
