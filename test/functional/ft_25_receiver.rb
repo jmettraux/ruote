@@ -8,7 +8,6 @@
 require File.join(File.dirname(__FILE__), 'base')
 
 require 'ruote/participant'
-require 'ruote/receiver'
 
 
 class FtReceiverTest < Test::Unit::TestCase

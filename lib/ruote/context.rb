@@ -27,15 +27,27 @@ require 'ruote/util/misc'
 
 module Ruote
 
+  #
+  # A sort of internal registry, via a shared instance of this class, the worker
+  # and the engine can access subservices like parser, treechecker,
+  # wfid_generator and so on.
+  #
   class Context
 
     attr_reader :storage
+    attr_accessor :worker
+    attr_accessor :engine
 
-    def initialize (storage)
+    def initialize (storage, worker_or_engine)
 
       @storage = storage
-
       @conf = default_conf.merge(@storage.get_configuration('engine') || {})
+
+      @worker, @engine = if worker_or_engine.kind_of?(Ruote::Engine)
+        [ worker_or_engine.worker, worker_or_engine ]
+      else
+        [ worker_or_engine, nil ]
+      end
 
       initialize_services
     end
@@ -70,6 +82,7 @@ module Ruote
     def shutdown
 
       @storage.shutdown if @storage.respond_to?(:shutdown)
+      @worker.shutdown if @worker
 
       @conf.values.each do |s|
 
@@ -93,60 +106,20 @@ module Ruote
 
     def default_conf
 
-      {
-        's_wfidgen' => [
+      { 's_wfidgen' => [
           'ruote/id/mnemo_wfid_generator', 'Ruote::MnemoWfidGenerator' ],
         's_parser' => [
           'ruote/parser', 'Ruote::Parser' ],
         's_treechecker' => [
           'ruote/util/treechecker', 'Ruote::TreeChecker' ],
+        's_expmap' => [
+           'ruote/exp/expression_map', 'Ruote::ExpressionMap' ],
         's_tracker' => [
           'ruote/evt/tracker', 'Ruote::Tracker' ],
+        's_plist' => [
+          'ruote/part/participant_list', 'Ruote::ParticipantList' ],
         's_logger' => [
-          'ruote/log/wait_logger', 'Ruote::WaitLogger' ]
-      }
-    end
-  end
-
-  class EngineContext < Context
-
-    attr_reader :engine
-
-    def initialize (engine)
-
-      @engine = engine
-
-      super(@engine.storage)
-    end
-  end
-
-  class WorkerContext < Context
-
-    attr_reader :worker
-    attr_accessor :engine
-
-    def initialize (worker)
-
-      @worker = worker
-      @engine = nil
-
-      super(@worker.storage)
-    end
-
-    def shutdown
-
-      @worker.shutdown
-
-      super
-    end
-
-    protected
-
-    def default_conf
-
-      super.merge(
-        's_plist' => [ 'ruote/part/participant_list', 'Ruote::ParticipantList' ],
-        's_expmap' => [ 'ruote/exp/expression_map', 'Ruote::ExpressionMap' ])
+          'ruote/log/wait_logger', 'Ruote::WaitLogger' ] }
     end
   end
 end

@@ -35,6 +35,7 @@ module Ruote
     require 'ruote/engine/ro_participant'
 
     attr_reader :storage
+    attr_reader :worker
     attr_reader :context
     attr_reader :variables
 
@@ -42,19 +43,20 @@ module Ruote
 
       if worker_or_storage.respond_to?(:context)
 
-        @storage = worker_or_storage.storage
-        @context = worker_or_storage.context
+        @worker = worker_or_storage
+        @storage = @worker.storage
+        @context = @worker.context
         @context.engine = self
-
-        @context.worker.run_in_thread if run
-
       else
 
+        @worker = nil
         @storage = worker_or_storage
-        @context = Ruote::EngineContext.new(self)
+        @context = Ruote::Context.new(self)
       end
 
       @variables = EngineVariables.new(@storage)
+
+      @worker.run_in_thread if @worker && run
     end
 
     def launch (definition, opts={})

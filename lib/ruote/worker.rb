@@ -48,7 +48,7 @@ module Ruote
       @storage = storage
 
       @subscribers = []
-      @context = Ruote::WorkerContext.new(self)
+      @context = Ruote::Context.new(@storage, self)
 
       @last_time = Time.at(0.0).utc # 1970...
 
