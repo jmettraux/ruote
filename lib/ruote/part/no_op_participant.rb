@@ -38,7 +38,7 @@ module Ruote
 
     include LocalParticipant
 
-    def initialize
+    def initialize (opts=nil)
 
       @items = {}
     end

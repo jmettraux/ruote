@@ -37,7 +37,7 @@ module Ruote
 
     include LocalParticipant
 
-    def initialize
+    def initialize (opts=nil)
     end
 
     # Does nothing, discards the workitem it receives.
