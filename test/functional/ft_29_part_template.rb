@@ -1,21 +1,20 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Mon Sep 14 19:31:37 JST 2009
 #
 
 require File.join(File.dirname(__FILE__), 'base')
 
+require 'ruote/participant'
 require 'ruote/part/template'
-require 'ruote/part/local_participant'
 
 
 class FtPartTemplateTest < Test::Unit::TestCase
   include FunctionalBase
 
   class MyParticipant
-    include Ruote::EngineContext
     include Ruote::LocalParticipant
     include Ruote::TemplateMixin
 
@@ -27,8 +26,10 @@ class FtPartTemplateTest < Test::Unit::TestCase
 
     def consume (workitem)
 
-      context[:s_tracer] << render_template(expstorage[workitem.fei], workitem)
-      context[:s_tracer] << "\n"
+      @context['s_tracer'] << render_template(
+        Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h), workitem)
+      @context['s_tracer'] << "\n"
+
       reply_to_engine(workitem)
     end
 
@@ -49,8 +50,7 @@ class FtPartTemplateTest < Test::Unit::TestCase
 
     @engine.register_participant(
       :alpha,
-      MyParticipant,
-      :template => "0:${v:var0}\n1:${f:field0}")
+      MyParticipant.new(:template => "0:${v:var0}\n1:${f:field0}"))
 
     assert_trace pdef, %w[ 0:v_value 1:f_value done. ]
   end

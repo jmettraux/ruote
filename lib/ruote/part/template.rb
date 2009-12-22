@@ -54,6 +54,8 @@ module Ruote
         ArgumentError.new('no @template or @block_template found')
       ) unless template
 
+      workitem = workitem.to_h if workitem.respond_to?(:to_h)
+
       Ruote.dosub(template, flow_expression, workitem)
     end
   end
