@@ -65,11 +65,6 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal 'FtReceiverTest::MyReceiver', rcv['receiver']
   end
 
-  def test_receiver_launch
-
-    flunk
-  end
-
   def test_engine_receive
 
     wfid = @engine.launch(@pdef)
