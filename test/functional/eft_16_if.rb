@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Thu Jul  9 12:40:10 JST 2009
 #
@@ -161,13 +161,11 @@ class EftIfTest < Test::Unit::TestCase
       </process-definition>
     }
 
-    li = Ruote::Launchitem.new(pdef, 'state' => 'A')
-    assert_trace(li, 'alpha')
+    assert_trace(pdef, { 'state' => 'A' }, 'alpha')
 
     @tracer.clear
 
-    li = Ruote::Launchitem.new(pdef, :state => 'A')
-    assert_trace(li, 'alpha')
+    assert_trace(pdef, { :state => 'A' }, 'alpha')
   end
 end
 

@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Tue Jun 23 10:55:16 JST 2009
 #
@@ -27,24 +27,11 @@ class FtLaunchitemTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef, :fields => { 'a' => 0, 'b' => 1 })
+    wfid = @engine.launch(pdef, 'a' => 0, 'b' => 1)
     wait_for(wfid)
 
     assert_equal('a', @tracer.to_s)
     assert_equal({"a"=>0, "b"=>1, "params"=>{"ref"=>"alpha"}}, fields)
-  end
-
-  def test_launchitem
-
-    pdef = Ruote.process_definition :name => 'test' do
-      sequence do
-        echo '${f:car}'
-      end
-    end
-
-    li = Ruote::Launchitem.new(pdef, 'car' => 'benz')
-
-    assert_trace(li, 'benz')
   end
 end
 

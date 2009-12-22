@@ -1,8 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
-#
-# John Mettraux at openwfe.org
+# testing ruote
 #
 # Sat Sep 20 23:40:10 JST 2008
 #
@@ -51,23 +49,24 @@ module FunctionalBase
     assert_equal count, c
   end
 
-  # launch_thing is a process definition or a launch item
+  #   assert_trace(pdef, *expected_traces)
+  #   assert_trace(pdef, fields, *expected_traces)
   #
-  def assert_trace (launch_thing, *expected_traces)
+  def assert_trace (pdef, *expected_traces)
 
-    opts = expected_traces.last.is_a?(Hash) ? expected_traces.pop : {}
+    fields = expected_traces.first.is_a?(Hash) ? expected_traces.shift : {}
 
     expected_traces = expected_traces.collect do |et|
       et.is_a?(Array) ? et.join("\n") : et
     end
 
-    wfid = @engine.launch(launch_thing, opts[:launch_opts] || {})
+    wfid = @engine.launch(pdef, fields)
 
     wait_for(wfid)
 
     #yield(@engine) if block_given?
 
-    assert_engine_clean(wfid, opts)
+    assert_engine_clean(wfid)
 
     if expected_traces.length > 0
       ok, nok = expected_traces.partition { |et| @tracer.to_s == et }
@@ -98,21 +97,17 @@ module FunctionalBase
     @engine.context.logger.wait_for(wfid_or_part)
   end
 
-  def assert_engine_clean (wfid=nil, opts={})
+  def assert_engine_clean (wfid)
 
-    assert_no_errors(wfid, opts)
-    assert_no_remaining_expressions(wfid, opts)
+    assert_no_errors(wfid)
+    assert_no_remaining_expressions(wfid)
   end
 
-  def assert_no_errors (wfid, opts)
-
-    return if opts[:ignore_errors]
+  def assert_no_errors (wfid)
 
     errors = @engine.storage.get_many('errors', /#{wfid}$/)
 
     return if errors.size == 0
-
-    # TODO : implement 'banner' function
 
     puts
     puts '-' * 80
@@ -129,16 +124,10 @@ module FunctionalBase
     flunk 'remaining process error(s)'
   end
 
-  def assert_no_remaining_expressions (wfid, opts)
-
-    return if opts[:ignore_remaining_expressions]
+  def assert_no_remaining_expressions (wfid)
 
     expcount = @engine.storage.get_many('expressions').size
     return if expcount == 0
-
-    #50.times { Thread.pass }
-    #expcount = @engine.expstorage.size
-    #return if expcount == 0
 
     tf, _, tn = caller[2].split(':')
 

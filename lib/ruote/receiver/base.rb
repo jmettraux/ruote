@@ -33,7 +33,12 @@ module Ruote
   #
   module ReceiverMixin
 
-    def receive (workitem)
+    def receive (item)
+
+      reply(item)
+    end
+
+    def reply (workitem)
 
       workitem = workitem.to_h if workitem.respond_to?(:to_h)
 
@@ -44,8 +49,6 @@ module Ruote
         'participant_name' => workitem['participant_name'],
         'receiver' => sign)
     end
-
-    alias :reply :receive
 
     def sign
 

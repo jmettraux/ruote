@@ -84,6 +84,9 @@ module Ruote
     end
   end
 
+  #
+  # TODO : clean me out !
+  #
   class BakWorkitem
 
     attr_accessor :fei

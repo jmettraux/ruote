@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Sat Jun 13 22:43:16 JST 2009
 #
@@ -79,7 +79,6 @@ class FtRecursionTest < Test::Unit::TestCase
 
     #noisy
 
-    #assert_trace(pdef, %w[ 1 2 3 4 5 6 ], :ignore_remaining_expressions => true)
     assert_trace pdef, %w[ 1 2 3 4 5 6 ]
 
     #p alpha.wfids.uniq

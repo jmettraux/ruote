@@ -23,7 +23,6 @@
 #++
 
 require 'ruote/context'
-require 'ruote/launchitem'
 require 'ruote/engine/process_status'
 require 'ruote/receiver/base'
 
@@ -33,8 +32,6 @@ module Ruote
   class Engine
 
     include ReceiverMixin
-
-    require 'ruote/engine/ro_participant'
 
     attr_reader :storage
     attr_reader :worker
@@ -61,25 +58,16 @@ module Ruote
       @worker.run_in_thread if @worker && run
     end
 
-    def launch (definition, opts={})
-
-      if definition.is_a?(Launchitem)
-        opts[:fields] = definition.fields
-        definition = definition.definition
-      end
-
-      tree = @context.parser.parse(definition)
-
-      workitem = { 'fields' => opts[:fields] || {} }
+    def launch (process_definition, fields={}, variables={})
 
       wfid = @context.wfidgen.generate
 
       @storage.put_msg(
         'launch',
         'wfid' => wfid,
-        'tree' => tree,
-        'workitem' => workitem,
-        'variables' => {})
+        'tree' => @context.parser.parse(process_definition),
+        'workitem' => { 'fields' => fields },
+        'variables' => variables)
 
       wfid
     end
@@ -220,6 +208,93 @@ module Ruote
     def load_definition (path)
 
       @context.parser.parse(path)
+    end
+
+    # Registers a participant in the engine. Returns the participant instance.
+    #
+    # Some examples :
+    #
+    #   require 'ruote/part/hash_participant'
+    #   alice = engine.register_participant 'alice', Ruote::HashParticipant
+    #     # register an in-memory (hash) store for Alice's workitems
+    #
+    #   engine.register_participant 'compute_sum' do |wi|
+    #     wi.fields['sum'] = wi.fields['articles'].inject(0) do |s, (c, v)|
+    #       s + c * v # sum + count * value
+    #     end
+    #     # a block participant implicitely replies to the engine immediately
+    #   end
+    #
+    #   class MyParticipant
+    #     def initialize (name)
+    #       @name = name
+    #     end
+    #     def consume (workitem)
+    #       workitem.fields['rocket_name'] = @name
+    #       send_to_the_moon(workitem)
+    #     end
+    #     def cancel (fei, flavour)
+    #       # do nothing
+    #     end
+    #   end
+    #   engine.register_participant /^moon-.+/, MyParticipant.new('Saturn-V')
+    #
+    #
+    # == passing a block to a participant
+    #
+    # Usually only the BlockParticipant cares about being passed a block :
+    #
+    #   engine.register_participant 'compute_sum' do |workitem|
+    #     workitem.fields['kilroy'] = 'was here'
+    #   end
+    #
+    # But it's OK to pass a block to a custom participant :
+    #
+    #   require 'ruote/part/local_participant'
+    #
+    #   class MyParticipant
+    #     include Ruote::LocalParticipant
+    #     def initialize (opts)
+    #       @name = opts[:name]
+    #       @block = opts[:block]
+    #     end
+    #     def consume (workitem)
+    #       workitem.fields['prestamp'] = Time.now
+    #       workitem.fields['author'] = @name
+    #       @block.call(workitem)
+    #       reply_to_engine(workitem)
+    #     end
+    #   end
+    #
+    #   engine.register_participant 'al', MyParticipant, :name => 'toto' do |wi|
+    #     wi.fields['nada'] = surf
+    #   end
+    #
+    # The block is available under the :block option.
+    #
+    def register_participant (regex, participant=nil, opts={}, &block)
+
+      pa = @context.plist.register(regex, participant, opts, block)
+
+      @context.storage.put_msg(
+        'participant_registered',
+        'regex' => regex.to_s,
+        'engine_worker_only' => (pa != nil))
+
+      pa
+    end
+
+    # Removes/unregisters a participant from the engine.
+    #
+    def unregister_participant (name_or_participant)
+
+      re = @context.plist.unregister(name_or_participant)
+
+      raise(ArgumentError.new('participant not found')) unless re
+
+      @context.storage.put_msg(
+        'participant_unregistered',
+        'regex' => re.to_s)
     end
   end
 

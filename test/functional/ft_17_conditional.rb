@@ -62,18 +62,15 @@ class FtConditionalTest < Test::Unit::TestCase
       echo '.'
     end
 
-    assert_trace(
-      Ruote::Launchitem.new(pdef, 'f' => 2000), %w[ 2000 i . ])
+    assert_trace(pdef, { 'f' => 2000 }, %w[ 2000 i . ])
 
     @tracer.clear
 
-    assert_trace(
-      Ruote::Launchitem.new(pdef, 'f' => '2000'), %w[ 2000 i . ])
+    assert_trace(pdef, { 'f' => '2000' }, %w[ 2000 i . ])
 
     @tracer.clear
 
-    assert_trace(
-      Ruote::Launchitem.new(pdef, 'f' => 'other'), %w[ other u . ])
+    assert_trace(pdef, { 'f' => 'other' }, %w[ other u . ])
   end
 end
 

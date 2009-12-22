@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Wed Jul 29 23:25:44 JST 2009
 #
@@ -78,7 +78,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef, :fields => { 'assets' => %w[ a b c ] })
+    wfid = @engine.launch(pdef, 'assets' => %w[ a b c ])
 
     wait_for(wfid)
 
