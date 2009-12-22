@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Sun Aug 16 14:25:35 JST 2009
 #
@@ -22,8 +22,8 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
 
     class << alpha
       def timeout
@@ -34,12 +34,14 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
     #noisy
 
     wfid = @engine.launch(pdef)
-    sleep 1.5
+    wait_for(9)
 
     assert_equal 0, alpha.size
     assert_equal 1, bravo.size
-    assert_equal 1, logger.log.select { |e| e[2][:scheduler] == true }.size
-    assert_equal 0, @engine.scheduler.jobs.size
+
+    #logger.log.each { |l| p l }
+    assert_equal 1, logger.log.select { |e| e['flavour'] == 'timeout' }.size
+    assert_equal 0, @engine.storage.get_many('schedules').size
 
     assert_not_nil bravo.first.fields['__timed_out__']
   end
