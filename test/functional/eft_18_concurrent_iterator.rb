@@ -168,7 +168,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     p2.reply(p2.first)
 
-    sleep 0.450
+    wait_for(3)
 
     assert_equal 0, p3.size
     assert_equal 1, p1.size

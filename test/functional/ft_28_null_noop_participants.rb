@@ -26,7 +26,7 @@ class FtNullNoopParticipantsTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.350
+    wait_for(4)
 
     ps = @engine.process(wfid)
 
