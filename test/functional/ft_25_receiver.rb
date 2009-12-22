@@ -13,6 +13,20 @@ require 'ruote/participant'
 class FtReceiverTest < Test::Unit::TestCase
   include FunctionalBase
 
+  def setup
+
+    super
+
+    @pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        alpha
+        echo '.'
+      end
+    end
+
+    @alpha = @engine.register_participant 'alpha', MyParticipant.new
+  end
+
   class MyParticipant
     include Ruote::LocalParticipant
 
@@ -31,26 +45,17 @@ class FtReceiverTest < Test::Unit::TestCase
 
   def test_my_receiver
 
-    pdef = Ruote.process_definition :name => 'test' do
-      sequence do
-        alpha
-        echo '.'
-      end
-    end
-
-    alpha = @engine.register_participant 'alpha', MyParticipant.new
-
     receiver = MyReceiver.new(@engine.storage)
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @engine.launch(@pdef)
 
     wait_for(:alpha)
 
     assert_equal 3, @engine.process(wfid).expressions.size
 
-    receiver.receive(alpha.wi)
+    receiver.receive(@alpha.wi)
 
     wait_for(wfid)
 
@@ -67,7 +72,18 @@ class FtReceiverTest < Test::Unit::TestCase
 
   def test_engine_receive
 
-    flunk
+    wfid = @engine.launch(@pdef)
+
+    wait_for(:alpha)
+
+    @engine.receive(@alpha.wi)
+
+    wait_for(wfid)
+
+    assert_nil @engine.process(wfid)
+
+    rcv = logger.log.select { |e| e['action'] == 'receive' }.first
+    assert_equal 'Ruote::Engine', rcv['receiver']
   end
 end
 

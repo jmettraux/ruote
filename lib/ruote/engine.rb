@@ -32,6 +32,8 @@ module Ruote
 
   class Engine
 
+    include ReceiverMixin
+
     require 'ruote/engine/ro_participant'
 
     attr_reader :storage
