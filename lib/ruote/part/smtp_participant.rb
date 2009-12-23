@@ -24,8 +24,7 @@
 
 require 'net/smtp'
 
-require 'ruote/engine/context'
-require 'ruote/part/local_participant'
+require 'ruote/participant'
 require 'ruote/part/template'
 
 
@@ -93,11 +92,10 @@ module Ruote
   #
   class SmtpParticipant
 
-    include EngineContext
     include LocalParticipant
     include TemplateMixin
 
-    def initialize (opts, &block)
+    def initialize (opts={}, &block)
 
       @server = opts[:server] || '127.0.0.1'
       @port = opts[:port] || 25
@@ -116,7 +114,8 @@ module Ruote
       to = workitem.fields['email_target'] || @to
       to = Array(to)
 
-      text = render_template(expstorage[workitem.fei], workitem)
+      text = render_template(
+        Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h), workitem)
 
       Net::SMTP.start(@server, @port) do |smtp|
         smtp.send_message(text, @from, *to)
@@ -128,6 +127,8 @@ module Ruote
     def cancel (fei, flavour)
 
       # does nothing
+      #
+      # one variant could send a "cancellation email"
     end
   end
 end

@@ -31,6 +31,7 @@
   ft_27
   ft_28
   ft_29
+  ft_30
 
   eft_0
   eft_1

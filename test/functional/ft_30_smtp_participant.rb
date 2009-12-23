@@ -35,26 +35,26 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
       end
     end
 
-    trapfile = 'work/mailtrap.txt'
+    trapfile = '/tmp/ruote_mailtrap.txt'
     FileUtils.rm(trapfile) rescue nil
 
     Thread.new do
       Trap.new('127.0.0.1', 2525, true, trapfile)
     end
-    sleep 0.050
+    sleep 0.040
       # give it some time to start listening
 
     @engine.register_participant(
       :alpha,
-      Ruote::SmtpParticipant,
-      :server => '127.0.0.1',
-      :port => 2525,
-      :to => 'toto@cloudwhatever.ch',
-      :from => 'john@outoftheblue.ch',
-      :notification => true,
-      :template => %{
-Hello, do you want ${f:item} ?
-      })
+      Ruote::SmtpParticipant.new(
+        :server => '127.0.0.1',
+        :port => 2525,
+        :to => 'toto@cloudwhatever.ch',
+        :from => 'john@outoftheblue.ch',
+        :notification => true,
+        :template => %{
+  Hello, do you want ${f:item} ?
+        }))
 
     #noisy
 
