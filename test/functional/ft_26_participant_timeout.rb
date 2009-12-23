@@ -34,7 +34,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
     #noisy
 
     wfid = @engine.launch(pdef)
-    wait_for(9)
+    wait_for(10)
 
     assert_equal 0, alpha.size
     assert_equal 1, bravo.size

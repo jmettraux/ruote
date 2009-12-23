@@ -92,9 +92,9 @@ module FunctionalBase
     @engine.context.logger.noisy = true
   end
 
-  def wait_for (wfid_or_part)
+  def wait_for (*wfid_or_part)
 
-    @engine.context.logger.wait_for(wfid_or_part)
+    @engine.context.logger.wait_for(*wfid_or_part)
   end
 
   def assert_engine_clean (wfid)

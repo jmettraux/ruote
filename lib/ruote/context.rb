@@ -118,6 +118,8 @@ module Ruote
           'ruote/evt/tracker', 'Ruote::Tracker' ],
         's_plist' => [
           'ruote/part/participant_list', 'Ruote::ParticipantList' ],
+        's_dispatch_pool' => [
+          'ruote/part/dispatch_pool', 'Ruote::DispatchPool' ],
         's_logger' => [
           'ruote/log/wait_logger', 'Ruote::WaitLogger' ] }
     end

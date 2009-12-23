@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Fri Sep 25 16:15:57 JST 2009
 #
@@ -18,6 +18,7 @@ class FtPartBlockingTest < Test::Unit::TestCase
  end
 
  def test_second_is_faster
+   #noisy
    run_engine :first_time => 0.5
    assert_equal 'second', @tracer.to_s
  end
@@ -29,7 +30,7 @@ class FtPartBlockingTest < Test::Unit::TestCase
 
  protected
 
- def run_engine(options={})
+ def run_engine (options={})
 
    first_time = options[:first_time] || 0.0
    second_time = options[:second_time] || 0.0
@@ -60,7 +61,7 @@ class FtPartBlockingTest < Test::Unit::TestCase
      @tracer << "#{wi.fields['result']}"
    end
 
-   wfid = @engine.launch(pdef, :fields => {})
+   wfid = @engine.launch(pdef)
    @engine.wait_for(wfid)
 
    wfid

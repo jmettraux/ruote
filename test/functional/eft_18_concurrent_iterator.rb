@@ -336,7 +336,10 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ 1 2 a b . ]
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    assert_equal %w[ . 1 2 a b ], @tracer.to_a.sort
   end
 
   protected

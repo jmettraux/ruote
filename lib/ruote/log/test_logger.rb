@@ -72,9 +72,9 @@ module Ruote
       check_waiting
     end
 
-    def wait_for (interest)
+    def wait_for (*interests)
 
-      @waiting = [ Thread.current, interest ]
+      @waiting = [ Thread.current, interests ]
 
       check_waiting
 
@@ -105,10 +105,6 @@ module Ruote
 
       return unless @waiting
 
-      thread, interest = @waiting
-
-      over = false
-
       while msg = @seen.shift
 
         break if check_msg(msg)
@@ -117,31 +113,45 @@ module Ruote
 
     def check_msg (msg)
 
-      thread, interest = @waiting
+      if check_interest(msg)
+
+        thread = @waiting.first
+        @waiting = nil
+        thread.wakeup
+
+        true
+      else
+
+        false
+      end
+    end
+
+    def check_interest (msg)
+
+      over = false
 
       action = msg['action']
 
-      over = if interest.is_a?(Symbol) # participant
+      Array(@waiting.last).each do |interest|
 
-        (action == 'dispatch' && msg['participant_name'] == interest.to_s)
+        over = if interest.is_a?(Symbol) # participant
 
-      elsif interest.is_a?(Fixnum)
+          (action == 'dispatch' && msg['participant_name'] == interest.to_s)
 
-        interest = interest - 1
-        @waiting = [ thread, interest ]
+        elsif interest.is_a?(Fixnum)
 
-        (interest < 1)
+          interest = interest - 1
+          @waiting = [ @waiting.first, interest ]
 
-      else # wfid
+          (interest < 1)
 
-        %w[ terminated ceased error_intercepted ].include?(action) &&
-        msg['wfid'] == interest
-      end
+        else # wfid
 
-      if over
+          %w[ terminated ceased error_intercepted ].include?(action) &&
+          msg['wfid'] == interest
+        end
 
-        @waiting = nil
-        thread.wakeup
+        break if over
       end
 
       over

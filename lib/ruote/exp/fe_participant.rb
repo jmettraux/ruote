@@ -102,8 +102,7 @@ module Ruote::Exp
   #
   # The expression will make sure to dispatch to the participant in an
   # asynchronous way. This means that the dispatch will occur in a dedicated
-  # thread. If EventMachine is available, a new thread won't be created,
-  # but the dispatch will thanks to EventMachine.next_tick() method.
+  # thread.
   #
   # Since the dispatching to the participant could take a long time and block
   # the engine for too long, this 'do thread' policy is used by default.

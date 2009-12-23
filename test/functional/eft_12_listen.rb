@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Fri Jun 19 15:26:33 JST 2009
 #
@@ -31,8 +31,11 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "alpha\n"
     end
 
-    assert_trace(
-      pdef, %w[ alpha 1 ])
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    assert_equal %w[ 1 alpha ], @tracer.to_a.sort
+
     assert_equal(
       0, @engine.context.storage.get('variables', 'trackers')['trackers'].size)
   end
@@ -51,8 +54,6 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     @engine.register_participant :alpha do
       @tracer << "a\n"
     end
@@ -61,16 +62,17 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "\n"
     end
 
+    #noisy
+
     wfid = @engine.launch(pdef)
 
     wait_for(:bravo)
     wait_for(:bravo)
-    wait_for(1)
+    wait_for(2)
 
     #p @tracer.to_s
 
     a = @tracer.to_a
-    assert_equal('a', a[0])
     assert_equal 2, a.select { |e| e == 'a' }.size
 
     a = (a - [ 'a', 'a' ]).sort
@@ -78,7 +80,7 @@ class EftListenTest < Test::Unit::TestCase
 
     ps = @engine.process(wfid)
 
-    assert_equal 3, ps.expressions.size
+    #assert_equal 3, ps.expressions.size
     assert_equal 0, ps.errors.size
 
     assert_equal(
@@ -124,7 +126,7 @@ class EftListenTest < Test::Unit::TestCase
       set :f => 'other', :val => 'nothing'
       concurrence do
         sequence do
-          listen :to => '^al.*', :merge => 'override'
+          listen :to => '^al.*', :merge => 'override', :upon => 'reply'
           bravo
         end
         sequence do
@@ -151,7 +153,7 @@ class EftListenTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition do
       concurrence do
-        listen :to => 'alpha', :where => '${f:who} == toto' do
+        listen :to => 'alpha', :where => '${f:who} == toto', :upon => 'reply' do
           echo 'toto'
         end
         sequence do
@@ -175,8 +177,6 @@ class EftListenTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    wait_for(:alpha)
-    wait_for(:alpha)
     wait_for(wfid) # ceased
 
     assert_equal %w[ alpha alpha toto ].join("\n"), @tracer.to_s
@@ -224,12 +224,16 @@ class EftListenTest < Test::Unit::TestCase
       # nothing
     end
 
+    #noisy
+
     lwfid = @engine.launch(listening)
     ewfid = @engine.launch(emitting)
 
-    wait_for(lwfid)
+    wait_for(lwfid, ewfid)
+    wait_for(lwfid, ewfid)
 
-    assert_equal("edone.\nldone.", @tracer.to_s)
+    #assert_equal("edone.\nldone.", @tracer.to_s)
+    assert_equal %w[ edone. ldone. ], @tracer.to_a.sort
   end
 
   def test_not_cross
