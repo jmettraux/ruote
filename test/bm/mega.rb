@@ -42,7 +42,7 @@ if ARGV.include?('-e')
   wfid = nil
 
   (1..2000).to_a.each_with_index do |i|
-    wfid = engine.launch(pdef, :fields => { 'index' => i })
+    wfid = engine.launch(pdef, 'index' => i)
   end
 
   puts "took #{Time.now - start} seconds to launch"
