@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Fri Nov 13 10:30:32 JST 2009
 #
@@ -25,9 +25,9 @@ class FtCursorRewindTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
-    charly = @engine.register_participant :charly, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
+    charly = @engine.register_participant :charly, Ruote::HashParticipant.new
 
     #noisy
 
@@ -64,9 +64,9 @@ class FtCursorRewindTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
-    charly = @engine.register_participant :charly, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
+    charly = @engine.register_participant :charly, Ruote::HashParticipant.new
 
     #noisy
 
@@ -84,7 +84,7 @@ class FtCursorRewindTest < Test::Unit::TestCase
 
     wi = bravo.first
 
-    wi.fei.expid = wi.fei.expid[0..-3] # parent wfid
+    wi.h['fei']['expid'] = wi.h['fei']['expid'][0..-3] # parent wfid
     wi.fields['__command__'] = [ 'jump', 'alpha' ]
 
     @engine.reply(wi)
