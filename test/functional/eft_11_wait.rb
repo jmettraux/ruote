@@ -57,19 +57,6 @@ class EftWaitTest < Test::Unit::TestCase
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
-  def test_wait_for_number
-
-    pdef = Ruote.process_definition do
-      sequence do
-        echo 'a'
-        wait 0.500
-        echo 'b'
-      end
-    end
-
-    assert_trace pdef, %w[ a b ]
-  end
-
   def test_wait_until
 
     pdef = Ruote.process_definition do
