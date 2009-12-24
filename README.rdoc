@@ -13,11 +13,14 @@ Process definitions are mainly describing how workitems are routed to participan
 == usage
 
   require 'rubygems'
-  require 'ruote/engine'
+  require 'ruote'
+  require 'ruote/storage/fs_storage'
 
   # preparing the engine
 
-  engine = Ruote::FsPersistedEngine.new
+  engine = Ruote::Engine.new(
+    Ruote::Worker.new(
+      Ruote::FsStorage.new("ruote_work")))
 
   # registering participants
 
@@ -40,16 +43,17 @@ Process definitions are mainly describing how workitems are routed to participan
 
   # launching, creating a process instance
 
-  pid = engine.launch(pdef)
+  wfid = engine.launch(pdef)
 
-  sleep 1
+  engine.wait_for(wfid)
+    # blocks current thread until our process instance terminates
 
   # => 'I received a message from Alice'
 
 
 == test suite
 
-see http://github.com/jmettraux/ruote/tree/master/test
+see http://github.com/jmettraux/ruote/tree/ruote2.1/test
 
 
 == license

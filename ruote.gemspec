@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer"]
-  s.date = %q{2009-12-17}
+  s.date = %q{2009-12-24}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -35,8 +35,6 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/engine.rb",
      "lib/ruote/engine/process_error.rb",
      "lib/ruote/engine/process_status.rb",
-     "lib/ruote/engine/ro_listener.rb",
-     "lib/ruote/engine/ro_participant.rb",
      "lib/ruote/evt/tracker.rb",
      "lib/ruote/exp/command.rb",
      "lib/ruote/exp/commanded.rb",
@@ -80,7 +78,6 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/fei.rb",
      "lib/ruote/id/mnemo_wfid_generator.rb",
      "lib/ruote/id/wfid_generator.rb",
-     "lib/ruote/launchitem.rb",
      "lib/ruote/log/fs_history.rb",
      "lib/ruote/log/test_logger.rb",
      "lib/ruote/log/wait_logger.rb",
@@ -88,6 +85,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/parser/ruby_dsl.rb",
      "lib/ruote/parser/xml.rb",
      "lib/ruote/part/block_participant.rb",
+     "lib/ruote/part/dispatch_pool.rb",
      "lib/ruote/part/hash_participant.rb",
      "lib/ruote/part/local_participant.rb",
      "lib/ruote/part/no_op_participant.rb",
@@ -97,6 +95,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/part/storage_participant.rb",
      "lib/ruote/part/template.rb",
      "lib/ruote/participant.rb",
+     "lib/ruote/receiver/base.rb",
      "lib/ruote/storage/base.rb",
      "lib/ruote/storage/fs_storage.rb",
      "lib/ruote/storage/hash_storage.rb",
@@ -123,6 +122,7 @@ ruote is an open source ruby workflow engine.
      "test/bm/juuman.rb",
      "test/bm/load_26c.rb",
      "test/bm/mega.rb",
+     "test/bm/seq_thousand.rb",
      "test/bm/t.rb",
      "test/functional/base.rb",
      "test/functional/concurrent_base.rb",
@@ -176,7 +176,7 @@ ruote is an open source ruby workflow engine.
      "test/functional/ft_22_process_definitions.rb",
      "test/functional/ft_23_load_defs.rb",
      "test/functional/ft_24_block_participants.rb",
-     "test/functional/ft_25_listener_registration.rb",
+     "test/functional/ft_25_receiver.rb",
      "test/functional/ft_26_participant_timeout.rb",
      "test/functional/ft_27_var_indirection.rb",
      "test/functional/ft_28_null_noop_participants.rb",

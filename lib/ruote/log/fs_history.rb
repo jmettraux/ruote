@@ -23,8 +23,7 @@
 #++
 
 require 'fileutils'
-require 'ruote/engine/context'
-require 'ruote/queue/subscriber'
+require 'ruote/util/json'
 
 
 module Ruote
@@ -32,21 +31,30 @@ module Ruote
   #
   # Logs the ruote engine history to files.
   #
+  # REMEMBER : this FsHistory only logs 1 worker. StorageHistory is better
+  # to let all the workers output history in the shared storage.
+  #
   class FsHistory
 
-    include EngineContext
-    include Subscriber
+    def initialize (context, options={})
 
-    def context= (c)
+      @context = context
+      @options = options
 
-      @context = c
-      subscribe(:all)
+      @path =
+        @options['history_path'] ||
+        @context['history_path'] ||
+        File.join('work', 'log')
 
-      @path = @context[:history_path] || File.join(workdir, 'log')
       FileUtils.mkdir_p(@path)
 
       @last = nil
       @file = nil
+
+      if @context.respond_to?(:worker)
+        @context.worker.subscribe(:all, self)
+      end
+
       rotate_if_necessary
     end
 
@@ -63,7 +71,7 @@ module Ruote
     #
     def by_process (wfid)
 
-      files = Dir[File.join(@path, "#{engine.engine_id}_*.txt")].sort.reverse
+      files = Dir[File.join(@path, '*.json')].sort.reverse
 
       history = []
 
@@ -73,31 +81,38 @@ module Ruote
 
         lines.each do |l|
 
-          next unless l.match(/ #{wfid} /)
+          a = Ruote::Json.decode(l) rescue nil
 
-          r = Record.split_line(engine.engine_id, l.strip)
+          next unless a
 
-          next unless r
+          at, msg = a
 
-          history.unshift(r)
+          m_wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
 
-          return history if r.is_process_launch?
+          next if m_wfid != wfid
+
+          history.unshift(a)
+
+          return history if msg['action'] == 'launch'
         end
       end
 
       history # shouldn't occur, unless history [file] got lost
     end
 
-    RANGE_REGEXP = /_([0-9]{4}-[0-9]{2}-[0-9]{2}).txt$/
+    RANGE_REGEXP = /_([0-9]{4}-[0-9]{2}-[0-9]{2}).json$/
 
     # Returns an array [ most recent date, oldest date ] (Time instances).
     #
     def range
 
-      files = Dir[File.join(@path, "#{engine.engine_id}_*.txt")].sort
+      files = Dir[File.join(@path, '*.json')].sort
 
-      [ files.last, files.first ].collect do |fn|
-        Time.parse(RANGE_REGEXP.match(fn)[1])
+      [ files.last, files.first ].inject([]) do |a, fn|
+        if m = RANGE_REGEXP.match(fn)
+          a << Time.parse(m[1])
+        end
+        a
       end
     end
 
@@ -108,11 +123,10 @@ module Ruote
 
       date = Time.parse(date.to_s).strftime('%F')
 
-      lines = File.readlines(
-        File.join(@path, "#{engine.engine_id}_history_#{date}.txt")) rescue []
+      lines = File.readlines(File.join(@path, "history_#{date}.json")) rescue []
 
       lines.inject([]) do |a, l|
-        if r = Record.split_line(engine.engine_id, l.strip)
+        if r = (Ruote::Json.decode(l) rescue nil)
           a << r
         end
         a
@@ -135,188 +149,32 @@ module Ruote
       end
     end
 
-    ABBREVIATIONS = {
-      :processes => 'ps',
-      :workitems => 'wi',
-      :errors => 'er'
-    }
-
-    protected
-
-    def ab (s)
-
-      ABBREVIATIONS[s] || s.to_s
-    end
-
-    def fei (eargs)
-
-      if i = eargs[:fei]
-        return i
-      end
-      if wi = eargs[:workitem]
-        return wi.fei
-      end
-
-      nil
-    end
-
-    def parent_wfid (eargs)
-
-      if i = eargs[:wfid]
-        return i
-      end
-      if i = fei(eargs)
-        return i.parent_wfid
-      end
-
-      nil
-    end
-
-    def short_fei (eargs)
-
-      if i = fei(eargs)
-        i.sub_wfid ? "_#{i.sub_wfid} #{i.expid}" : i.expid
-      else
-        nil
-      end
-    end
-
     # This is the method called by the workqueue. Incoming engine events
     # are 'processed' here.
     #
-    def receive (eclass, emsg, eargs)
-
-      line = if eclass == :processes
-
-        if emsg == :launch
-          [ eargs[:tree][1].map { |k, v| "#{k}=#{v}" }.join(', ') ]
-        #elsif emsg == :launch_sub
-        #  [ short_fei(eargs), eargs.inspect ]
-        else
-          [ short_fei(eargs) ]
-        end
-
-      elsif eclass == :workitems
-
-        [ short_fei(eargs), eargs[:pname] ]
-
-      elsif eclass == :errors
-
-        #p [ eclass, emsg, eargs ]
-        return if emsg == :remove
-
-        oeargs = eargs[:message].last
-        error = eargs[:error]
-        [ short_fei(oeargs), error.class, error.message ]
-
-      else
-
-        nil
-      end
-
-      return unless line
+    def notify (msg)
 
       rotate_if_necessary
 
-      line.unshift(emsg)
-      line.unshift(ab(eclass))
-      line.unshift(parent_wfid(eargs))
-
-      #line.unshift(@last.strftime('%F %T'))
-      line.unshift("#{@last.strftime('%F %T')}.#{"%06d" % @last.usec}")
-
-      @file.puts(line.join(' '))
+      @file.puts(Ruote::Json.encode(
+        [ "#{@last.strftime('%F %T')}.#{"%06d" % @last.usec}", msg ]))
       @file.flush
     end
+
+    protected
 
     def rotate_if_necessary
 
       prev = @last
-      @last = Time.now
+      @last = Time.now.utc
 
       return if prev && prev.day == @last.day
 
       @file.close rescue nil
 
-      fn = [
-        Ruote.neutralize(engine.engine_id),
-        'history',
-        @last.strftime('%F')
-      ].join('_') + '.txt'
+      fn = [ 'history', @last.strftime('%F') ].join('_') + '.json'
 
       @file = File.open(File.join(@path, fn), 'a')
-    end
-  end
-
-  # Represents a ruote engine [history] event.
-  # Is returned by FsHistory.process_history(wfid) method calls.
-  #
-  class Record
-
-    LINE_REGEX = /^([0-9-]{10} [^ ]+) ([^ ]+) ([a-z]{2}) (.+)$/
-    MSG_REGEX = /^([^ ]+)( \_[0-9]+)?( [0-9\_]+)?(.*)$/
-
-    attr_accessor :at, :wfid, :fei, :eclass, :event, :message, :engine_id
-
-    # Returns a Record instance or nil (if the line can't be turned into
-    # a Record).
-    #
-    def self.split_line (engine_id, l)
-
-      m = LINE_REGEX.match(l)
-
-      return nil unless m
-
-      r = Record.new
-      r.engine_id = engine_id
-      r.at = Time.parse(m[1])
-      r.wfid = m[2]
-      r.eclass = m[3]
-      r.send(:split_rest, m[4]) # that stays in the family
-
-      r
-    end
-
-    def is_process_launch?
-
-      (@eclass == 'ps' && @event == 'launch')
-    end
-
-    #attr_accessor :at, :wfid, :fei, :eclass, :event, :message, :engine_id
-
-    def to_h
-
-      %w[ at wfid fei eclass event message engine_id ].inject({}) { |h, a|
-
-        v = self.send(a)
-        h[a] = v.is_a?(FlowExpressionId) ? v.to_h : v.to_s
-
-        h
-      }
-    end
-
-    protected
-
-    def rebuild_fei (wfid, sub_wfid, expid)
-
-      fei = FlowExpressionId.new
-      fei.wfid = sub_wfid ? "#{wfid}#{sub_wfid.strip}" : wfid
-      fei.expid = expid.strip
-      fei.engine_id = @engine_id
-      fei
-    end
-
-    def split_rest (r)
-
-      if m = MSG_REGEX.match(r)
-        @event = m[1]
-        @fei = m[3] ? rebuild_fei(wfid, m[2], m[3]) : nil
-        @message = m[4].strip
-      else
-        @event = r
-        @fei = nil
-        @message = nil
-      end
     end
   end
 end

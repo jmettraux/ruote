@@ -67,12 +67,22 @@ module Ruote
       @conf.keys
     end
 
-    def add_service (key, path, klass)
+    def add_service (key, *args)
+
+      path, klass, opts = args
+
+      key = "s_#{key}" unless key.match(/^s\_/)
 
       if klass
+
         require(path)
-        @conf[key] = Ruote.constantize(klass).new(self)
+
+        aa = [ self ]
+        aa << opts if opts
+
+        @conf[key] = Ruote.constantize(klass).new(*aa)
       else
+
         @conf[key] = path
       end
 
@@ -98,9 +108,7 @@ module Ruote
 
         next unless key.match(/^s\_/)
 
-        path, klass = @conf[key]
-
-        add_service(key, path, klass)
+        add_service(key, *@conf[key])
       end
     end
 

@@ -2,11 +2,15 @@
 $:.unshift('lib') # running from ruote/ probably
 
 require 'rubygems'
-require 'ruote/engine'
+require 'ruote'
+require 'ruote/storage/fs_storage'
 
 # preparing the engine
 
-engine = Ruote::FsPersistedEngine.new
+engine = Ruote::Engine.new(
+  Ruote::Worker.new(
+    Ruote::FsStorage.new("ruote_work")))
+    #Ruote::HashStorage.new))
 
 # registering participants
 
@@ -31,6 +35,8 @@ end
 
 wfid = engine.launch(pdef)
 
-sleep 1
+engine.wait_for(wfid)
+  # blocks current thread until our process instance terminates
 
 # => 'I received a message from Alice'
+

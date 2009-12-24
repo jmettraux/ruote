@@ -296,6 +296,20 @@ module Ruote
         'participant_unregistered',
         'regex' => re.to_s)
     end
+
+    # Adds a service locally (will not get propagated to other workers).
+    #
+    #   tracer = Tracer.new
+    #   @engine.add_service('tracer', tracer)
+    #
+    # or
+    #
+    #   @engine.add_service('tracer', 'ruote/exp/tracer', 'Ruote::Exp::Tracer')
+    #
+    def add_service (name, path_or_instance, classname=nil, opts=nil)
+
+      @context.add_service(name, path_or_instance, classname, opts)
+    end
   end
 
   #

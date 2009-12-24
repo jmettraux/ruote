@@ -115,8 +115,10 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "bravo:#{workitem.fields['seen']}\n"
     end
 
-    assert_trace(
-      pdef, %w[ alpha bravo:yes bravo: ], %w[ alpha bravo: bravo:yes ])
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal %w[ alpha bravo: bravo:yes ], @tracer.to_a.sort
   end
 
   def test_merge_override

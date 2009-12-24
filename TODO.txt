@@ -262,21 +262,26 @@
     should re_apply not touch the state of its expression ?
 [o] test undo when cancelling parent expression
 [o] issue with :unless => '${f:index} == 2000'
+[o] implement Engine#reply (Engine simply has to include ReceiverMixin
+[o] listeners X receivers
 
 [ ] verify get_last/get_raw logic, no + 0.0001...
 [ ] clean up persists present in #apply
-[ ] listen : to errors
 [ ] case exp : smarter one ?
 [ ] remove abort_on_exception=true
 [ ] spare 1 get_msg by caching msg (but keep 'deleting')
 [ ] add_branches : pass message to concurrent_iterator
     like a command expression
 [ ] [un]set_var : via message ? should be ok like that... Not much traffic there
-[ ] listeners
 
 [ ] empty iterator or concurrent-iterator, log ? crash ? empty while...
 [ ] maybe cancel should have a safely / redo_reply thing
 [ ] at expression ?
 [ ] listen to participants/errors/tags {in|out}
-[ ] implement Engine#reply (Engine simply has to include ReceiverMixin
+
+[ ] implement StorageHistory
+
+[ ] add_service(name, path, klass, opts={}) opts local to services (really?)
+
+[ ] ftest for add_service
 

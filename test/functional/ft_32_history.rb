@@ -1,9 +1,15 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Sun Oct  4 00:14:27 JST 2009
 #
+
+begin
+  require 'yajl'
+rescue LoadError => le
+  require 'json'
+end
 
 require File.join(File.dirname(__FILE__), 'base')
 
@@ -21,7 +27,8 @@ class FtHistoryTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    history = @engine.add_service(:s_history, Ruote::FsHistory)
+    history = @engine.add_service(
+      'history', 'ruote/log/fs_history', 'Ruote::FsHistory')
 
     @engine.register_participant :alpha, Ruote::NoOpParticipant
 
@@ -34,25 +41,22 @@ class FtHistoryTest < Test::Unit::TestCase
 
     lines = File.readlines(Dir['work/log/*'].first)
 
-    assert_equal 8, lines.size
+    assert_equal 17, lines.size
     #lines.each { |l| puts l }
 
-    h = @engine.history.by_process(wfid0)
+    h = @engine.context.history.by_process(wfid0)
     #h.each { |r| p r }
-    assert_equal 4, h.size
-    assert_equal Time, h.first.at.class
-
-    fei = h[1].fei
-    assert_equal Ruote::FlowExpressionId, fei.class
-    assert_equal wfid0, fei.wfid
-    assert_equal '0_0', fei.expid
-    assert_equal 'engine', fei.engine_id
+    assert_equal 8, h.size
 
     # testing record.to_h
 
-    r = @engine.history.by_process(wfid1).first
+    h = @engine.context.history.by_process(wfid1)
+    #h.each { |r| p r }
+    assert_equal 8, h.size
 
-    assert_equal 'launch', r.to_h['event']
+  ensure
+
+    Dir['work/log/*'].each { |fn| FileUtils.rm(fn) }
   end
 
   def test_subprocess
@@ -67,7 +71,9 @@ class FtHistoryTest < Test::Unit::TestCase
       end
     end
 
-    @engine.add_service(:s_history, Ruote::FsHistory)
+    history = @engine.add_service(
+      'history', 'ruote/log/fs_history', 'Ruote::FsHistory',
+      'history_path' => 'work/log2')
 
     @engine.register_participant :alpha, Ruote::NoOpParticipant
 
@@ -75,13 +81,15 @@ class FtHistoryTest < Test::Unit::TestCase
 
     wfid0 = assert_trace(pdef, "done.")
 
-    sleep 0.100
+    sleep 0.010
 
-    #dump_history
-
-    h = @engine.history.by_process(wfid0)
+    h = @engine.context.history.by_process(wfid0)
     #h.each { |r| p r }
-    assert_equal 5, h.size
+    assert_equal 11, h.size
+
+  ensure
+
+    Dir['work/log2/*'].each { |fn| FileUtils.rm(fn) }
   end
 
   def test_errors
@@ -90,7 +98,8 @@ class FtHistoryTest < Test::Unit::TestCase
       nada
     end
 
-    @engine.add_service(:s_history, Ruote::FsHistory)
+    history = @engine.add_service(
+      'history', 'ruote/log/fs_history', 'Ruote::FsHistory')
 
     #noisy
 
@@ -99,11 +108,13 @@ class FtHistoryTest < Test::Unit::TestCase
 
     sleep 0.010
 
-    #dump_history
-
-    h = @engine.history.by_process(wfid)
+    h = @engine.context.history.by_process(wfid)
     #h.each { |r| p r }
     assert_equal 2, h.size
+
+  ensure
+
+    Dir['work/log/*'].each { |fn| FileUtils.rm(fn) }
   end
 
   def test_cancelling_failed_exp
@@ -112,7 +123,8 @@ class FtHistoryTest < Test::Unit::TestCase
       nada
     end
 
-    @engine.add_service(:s_history, Ruote::FsHistory)
+    history = @engine.add_service(
+      'history', 'ruote/log/fs_history', 'Ruote::FsHistory')
 
     #noisy
 
@@ -124,57 +136,51 @@ class FtHistoryTest < Test::Unit::TestCase
     @engine.cancel_expression(fei)
     wait_for(wfid)
 
-    sleep 0.100
+    sleep 0.010
 
-    h = @engine.history.by_process(wfid)
+    h = @engine.context.history.by_process(wfid)
     #h.each { |r| p r }
-    assert_equal 3, h.size
+    assert_equal 5, h.size
+
+  ensure
+
+    Dir['work/log/*'].each { |fn| FileUtils.rm(fn) }
   end
 
   def test_history_date
 
-    @engine.add_service(:s_history, Ruote::FsHistory)
+    history = @engine.add_service(
+      'history', 'ruote/log/fs_history', 'Ruote::FsHistory')
 
     FileUtils.mkdir(File.join(@engine.workdir, 'log')) rescue nil
 
-    File.open(File.join(
-      @engine.workdir, 'log', 'engine_history_2009-10-08.txt'), 'w'
-    ) do |f|
+    File.open(File.join('work', 'log', 'history_2009-10-08.json'), 'w') do |f|
       f.puts(%{
-2009-10-08 16:52:37.751683 20091008-bihomugiso ps launch name=test
-2009-10-08 16:52:37.782714 20091008-bihomugiso er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
-2009-10-08 16:52:38.525532 20091008-bijesejuno ps launch name=test
-2009-10-08 16:52:38.533304 20091008-bijesejuno er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
-2009-10-08 16:52:39.525532 20091008-bojesejuna ps launch name=test
-2009-10-08 16:52:39.533304 20091008-bojesejuna er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
+["2009-10-08 12:33:27.835469",{"wfid":"20091224-beretsureto","tree":["define",{},[["alpha",{},[]],["echo",{"done.":null},[]]]],"workitem":{"fields":{},"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0"}},"variables":{},"type":"msgs","_id":"17619-2151883888-1261658007.83374","action":"launch","_rev":0,"put_at":"2009/12/24 12:33:27.833769 UTC"}]
+["2009-10-08 12:33:27.836787",{"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"tree":["participant",{"ref":"alpha"},[]],"parent_id":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0"},"variables":null,"workitem":{"fields":{"params":{"ref":"alpha"}},"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"participant_name":"alpha"},"type":"msgs","_id":"17619-2157823640-1261658007.83534","action":"apply","_rev":0,"put_at":"2009/12/24 12:33:27.835369 UTC"}]
+["2009-10-08 12:33:27.837098",{"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"participant_name":"alpha","workitem":{"fields":{"params":{"ref":"alpha"}},"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"participant_name":"alpha"},"for_engine_worker?":false,"type":"msgs","_id":"17619-2157823640-1261658007.83666","action":"dispatch","_rev":0,"put_at":"2009/12/24 12:33:27.836690 UTC"}]
       }.strip)
     end
 
-    File.open(File.join(
-      @engine.workdir, 'log', 'engine_history_2009-10-31.txt'), 'w'
-    ) do |f|
+    File.open(File.join('work', 'log', 'history_2009-10-31.json'), 'w') do |f|
       f.puts(%{
-2009-10-31 16:52:14.017324 20091009-totsugubi ps launch name=test
-2009-10-31 16:52:14.026024 20091009-totsugubi er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
-2009-10-31 16:52:36.027944 20091009-bigehimodi ps launch name=test
-2009-10-31 16:52:36.037019 20091009-bigehimodi er s_expression_pool 0_0 RuntimeError unknown expression 'nada'
+["2009-10-31 12:33:27.835469",{"wfid":"20091224-beretsureto","tree":["define",{},[["alpha",{},[]],["echo",{"done.":null},[]]]],"workitem":{"fields":{},"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0"}},"variables":{},"type":"msgs","_id":"17619-2151883888-1261658007.83374","action":"launch","_rev":0,"put_at":"2009/12/24 12:33:27.833769 UTC"}]
+["2009-10-31 12:33:27.836787",{"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"tree":["participant",{"ref":"alpha"},[]],"parent_id":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0"},"variables":null,"workitem":{"fields":{"params":{"ref":"alpha"}},"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"participant_name":"alpha"},"type":"msgs","_id":"17619-2157823640-1261658007.83534","action":"apply","_rev":0,"put_at":"2009/12/24 12:33:27.835369 UTC"}]
+["2009-10-31 12:33:27.837098",{"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"participant_name":"alpha","workitem":{"fields":{"params":{"ref":"alpha"}},"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"participant_name":"alpha"},"for_engine_worker?":false,"type":"msgs","_id":"17619-2157823640-1261658007.83666","action":"dispatch","_rev":0,"put_at":"2009/12/24 12:33:27.836690 UTC"}]
+["2009-10-31 12:33:27.837961",{"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"workitem":{"fields":{},"fei":{"engine_id":"engine","wfid":"20091224-beretsureto","expid":"0_0"},"participant_name":"alpha"},"participant_name":"alpha","type":"msgs","_id":"17619-2159486252-1261658007.83719","action":"receive","_rev":0,"put_at":"2009/12/24 12:33:27.837235 UTC"}]
       }.strip)
     end
 
-    assert_equal 6, @engine.history.by_date('2009-10-08').size
-    assert_equal 4, @engine.history.by_date('2009-10-31').size
+    assert_equal 3, @engine.context.history.by_date('2009-10-08').size
+    assert_equal 4, @engine.context.history.by_date('2009-10-31').size
 
     assert_equal(
       [ Time.parse(Time.now.strftime('%F')), Time.parse('2009-10-08') ],
-      @engine.history.range)
-  end
+      @engine.context.history.range)
 
-  protected
+  ensure
 
-  def dump_history
-
-    lines = File.readlines(Dir['work/log/*'].first)
-    puts; lines.each { |l| puts l }
+    Dir['work/log/*'].each { |fn| FileUtils.rm(fn) }
   end
 end
 

@@ -31,7 +31,7 @@ module FunctionalBase
 
     @tracer = Tracer.new
 
-    @engine.context.add_service('s_tracer', @tracer, nil)
+    @engine.add_service('tracer', @tracer)
   end
 
   def teardown

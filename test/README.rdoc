@@ -9,24 +9,7 @@ running a specific test
 
   $ ruby19 test/functional/ft_1_process_status.rb
 
-running a test with the EventMachine queue :
-
-  $ ruby19 test/functional/ft_1_process_status.rb -- --em
-
 running a test with file persistence :
 
   $ ruby19 test/functional/eft_2_sequence.rb -- --fs
-
-running a test with file persistence (but no cache) :
-
-  $ ruby19 test/functional/eft_2_sequence.rb -- --fs -C
-
-
-== note
-
-Some of the functional tests rely too heavily on proper timing. They may thus fail, especially there's too much activity from other processes.
-
-A trick is to prefix running the tests with "sudo nice -5" (Thanks Torsten).
-
-Of course, it would be nicer if tests would run properly, all the time. Don't hesitate to drop me a line on the mailing list about the ones that fail consistently for you.
 
