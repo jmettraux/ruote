@@ -8,31 +8,27 @@
 module RestartBase
 
   def setup
-
     @tracer = Tracer.new
-
-    FileUtils.rm_rf(
-      File.expand_path(File.join(File.dirname(__FILE__), %w[ .. .. work ])))
   end
 
   def teardown
+    @engine.shutdown
+    @storage.purge!
   end
 
   protected
 
   def start_new_engine
 
-    ac = {}
+    @storage = determine_storage(
+      's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ],
+      :persistent => true)
 
-    ac[:s_tracer] = @tracer
-    #ac[:ruby_eval_allowed] = true
-    #ac[:definition_in_launchitem_allowed] = true
+    @engine = Ruote::Engine.new(Ruote::Worker.new(@storage))
 
-    engine_class = determine_engine_class(ac)
-    engine_class = Ruote::FsPersistedEngine if engine_class == Ruote::Engine
-    @engine = engine_class.new(ac)
+    @tracer.clear
 
-    @engine.add_service(:s_logger, Ruote::TestLogger)
+    @engine.add_service('tracer', @tracer)
   end
 end
 

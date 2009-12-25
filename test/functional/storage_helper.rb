@@ -38,6 +38,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
   end
 
   ps = ARGV.select { |a| a.match(/^--/) }
+  persistent = opts.delete(:persistent)
 
   if ps.include?('--fs')
 
@@ -59,6 +60,10 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     load File.join(path, %w[ test integration_connection.rb ])
 
     new_storage(opts)
+
+  elsif persistent
+
+    Ruote::FsStorage.new('work', opts)
 
   else
 

@@ -25,12 +25,14 @@ class RtWaitTest < Test::Unit::TestCase
       end
     end
 
+    #noisy
+
     wfid = @engine.launch(pdef)
 
-    sleep 0.400
+    wait_for(5)
 
     assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.scheduler.jobs.size
+    assert_equal 1, @engine.storage.get_many('schedules').size
 
     @engine.shutdown
 
@@ -38,14 +40,14 @@ class RtWaitTest < Test::Unit::TestCase
 
     start_new_engine
 
-    sleep 0.400
+    #noisy
 
     assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.scheduler.jobs.size
+    assert_equal 1, @engine.storage.get_many('schedules').size
 
     @engine.cancel_process(wfid)
 
-    sleep 0.400
+    wait_for(wfid)
 
     assert_equal 0, @engine.processes.size
   end
