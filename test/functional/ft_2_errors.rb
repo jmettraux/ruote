@@ -28,10 +28,10 @@ class FtErrorsTest < Test::Unit::TestCase
 
     assert_equal 1, ps.errors.size
 
-    #p ps.expressions.size
-    #ps.expressions.each do |e|
-    #  p [ e.fei.to_s, e.class, e.state ]
-    #end
+    pss = @engine.processes
+
+    assert_equal 1, pss.size
+    assert_equal 1, pss.first.errors.size
   end
 
   # asm and jpr5 use that sometimes

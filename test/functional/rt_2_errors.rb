@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Thu Jul 16 13:49:09 JST 2009
 #
@@ -23,9 +23,11 @@ class RtErrorsTest < Test::Unit::TestCase
       end
     end
 
+    #noisy
+
     wfid = @engine.launch(pdef)
 
-    sleep 0.400
+    wait_for(3)
 
     ps = @engine.process(wfid)
 
@@ -37,7 +39,7 @@ class RtErrorsTest < Test::Unit::TestCase
 
     start_new_engine
 
-    sleep 0.400
+    #noisy
 
     assert_equal 1, @engine.processes.size
 
@@ -46,7 +48,9 @@ class RtErrorsTest < Test::Unit::TestCase
 
     @engine.cancel_process(wfid)
 
-    sleep 0.400
+    wait_for(wfid)
+
+    assert_nil @engine.process(wfid)
   end
 end
 

@@ -164,7 +164,7 @@ module Ruote
         (by_wfid[exp['fei']['wfid']] ||= [ [], [] ]).first << exp
       end
       errs.each do |err|
-        (by_wfid[err['fei']['wfid']] ||= [ [], [] ]).last << err
+        (by_wfid[err['msg']['fei']['wfid']] ||= [ [], [] ]).last << err
       end
 
       by_wfid.values.collect { |xs, rs| ProcessStatus.new(@context, xs, rs) }
