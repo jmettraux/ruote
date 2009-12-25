@@ -22,9 +22,8 @@
 # Made in Japan.
 #++
 
-
+require 'rufus/json'
 require 'ruote/util/misc'
-require 'ruote/util/json'
 require 'ruote/storage/base'
 require 'monitor'
 
@@ -67,7 +66,7 @@ module Ruote
         doc['put_at'] = Ruote.now_to_utc_s
         doc['_rev'] = doc['_rev'] + 1
 
-        (@h[doc['type']] ||= {})[doc['_id']] = Ruote::Json.dup(doc)
+        (@h[doc['type']] ||= {})[doc['_id']] = Rufus::Json.dup(doc)
 
         nil
       end

@@ -23,7 +23,7 @@
 #++
 
 require 'fileutils'
-require 'ruote/util/json'
+require 'rufus/json'
 
 
 module Ruote
@@ -81,7 +81,7 @@ module Ruote
 
         lines.each do |l|
 
-          a = Ruote::Json.decode(l) rescue nil
+          a = Rufus::Json.decode(l) rescue nil
 
           next unless a
 
@@ -126,7 +126,7 @@ module Ruote
       lines = File.readlines(File.join(@path, "history_#{date}.json")) rescue []
 
       lines.inject([]) do |a, l|
-        if r = (Ruote::Json.decode(l) rescue nil)
+        if r = (Rufus::Json.decode(l) rescue nil)
           a << r
         end
         a
@@ -156,7 +156,7 @@ module Ruote
 
       rotate_if_necessary
 
-      @file.puts(Ruote::Json.encode(
+      @file.puts(Rufus::Json.encode(
         [ "#{@last.strftime('%F %T')}.#{"%06d" % @last.usec}", msg ]))
       @file.flush
     end

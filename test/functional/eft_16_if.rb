@@ -147,7 +147,7 @@ class EftIfTest < Test::Unit::TestCase
   def test_xml_equals
 
     require 'yajl' rescue require 'json'
-    Ruote::Json.detect_backend
+    Rufus::Json.detect_backend
       # making sure JSON dup is available in case of HashStorage
 
     pdef = %{

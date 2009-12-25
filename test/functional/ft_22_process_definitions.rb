@@ -50,7 +50,7 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
   def test_json_definition
 
     require 'json'
-    Ruote::Json.backend = Ruote::Json::JSON
+    Rufus::Json.backend = :json
 
     #pdef = Ruote.process_definition :name => 'test' do
     #  sequence do
@@ -64,7 +64,7 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
       "[\"define\",{\"name\":\"test\"},[[\"sequence\",{},[[\"echo\",{\"a\":null},[]],[\"echo\",{\"b\":null},[]]]]]]",
       %w[ a b ])
 
-    Ruote::Json.backend = Ruote::Json::NONE
+    Rufus::Json.backend = :none
       # back to initial state
   end
 

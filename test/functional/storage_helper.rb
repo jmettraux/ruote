@@ -42,6 +42,9 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   if ps.include?('--fs')
 
+    require 'yajl' rescue require 'json'
+    Rufus::Json.detect_backend
+
     Ruote::FsStorage.new('work', opts)
 
   elsif not ps.empty?
@@ -62,6 +65,9 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     new_storage(opts)
 
   elsif persistent
+
+    require 'yajl' rescue require 'json'
+    Rufus::Json.detect_backend
 
     Ruote::FsStorage.new('work', opts)
 

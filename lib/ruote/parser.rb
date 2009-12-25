@@ -25,7 +25,7 @@
 
 require 'uri'
 require 'open-uri'
-require 'ruote/util/json'
+require 'rufus/json'
 require 'ruote/parser/ruby_dsl' # just making sure it's loaded
 require 'ruote/parser/xml'
 
@@ -50,7 +50,7 @@ module Ruote
       return definition if definition.is_a?(Array) and definition.size == 3
 
       (return XmlParser.parse(definition)) rescue nil
-      (return Ruote::Json.decode(definition)) rescue nil
+      (return Rufus::Json.decode(definition)) rescue nil
       (return ruby_eval(definition)) rescue nil
 
       if definition.index("\n") == nil
@@ -145,7 +145,6 @@ module Ruote
     def self.to_json (tree)
 
       tree.to_json
-      #Ruote::Json.encode(tree)
     end
 
     protected
