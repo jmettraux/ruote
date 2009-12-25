@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Wed Jul  8 15:30:55 JST 2009
 #
@@ -22,7 +22,7 @@ class CtConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    noisy
+    #noisy
 
     wfid = @engine0.launch(pdef)
     @engine0.step 4

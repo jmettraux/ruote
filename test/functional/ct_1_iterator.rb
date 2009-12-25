@@ -26,7 +26,7 @@ class CtIteratorTest < Test::Unit::TestCase
       end
     end
 
-    noisy
+    #noisy
 
     wfid = @engine0.launch(pdef)
 
