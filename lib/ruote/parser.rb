@@ -74,9 +74,12 @@ module Ruote
     def self.parse (d)
 
       unless @parser
+
+        require 'ostruct'
         require 'ruote/util/treechecker'
-        @parser = Ruote::Parser.new
-        @parser.context = { 's_treechecker' => Ruote::TreeChecker.new }
+
+        @parser = Ruote::Parser.new(
+          OpenStruct.new('treechecker' => Ruote::TreeChecker.new({})))
       end
 
       @parser.parse(d)
