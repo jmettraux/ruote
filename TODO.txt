@@ -210,7 +210,7 @@
 
 [ ] restore : implement merge strategies
 
-[ ] one file, no multi-process, persistence ?
+[ ] one file, no multi-process, persistence ? LateHashStorage ?
 
 [ ] apply : ruby or xml (instead of just ast) ?
 
@@ -222,8 +222,6 @@
 
 [ ] concurrence / concurrent_iterator : merge_type => 'discard' / 'ignore'
     keep track of the first "process sub id" ?
-
-[ ] "switch off" for the ticket mecha
 
 [ ] @children diff/undiff idea ?
 
@@ -264,14 +262,13 @@
 [o] issue with :unless => '${f:index} == 2000'
 [o] implement Engine#reply (Engine simply has to include ReceiverMixin
 [o] listeners X receivers
+[o] add_service(name, path, klass, opts={}) opts local to services (really?)
+[o] add_branches : pass message to concurrent_iterator like a command expression
 
 [ ] verify get_last/get_raw logic, no + 0.0001...
 [ ] clean up persists present in #apply
 [ ] case exp : smarter one ?
-[ ] remove abort_on_exception=true
 [ ] spare 1 get_msg by caching msg (but keep 'deleting')
-[ ] add_branches : pass message to concurrent_iterator
-    like a command expression
 [ ] [un]set_var : via message ? should be ok like that... Not much traffic there
 
 [ ] empty iterator or concurrent-iterator, log ? crash ? empty while...
@@ -280,8 +277,7 @@
 [ ] listen to participants/errors/tags {in|out}
 
 [ ] implement StorageHistory
+[ ] nuke FsHistory ?
 
-[ ] add_service(name, path, klass, opts={}) opts local to services (really?)
-
-[ ] ftest for add_service
+[ ] remove abort_on_exception=true
 

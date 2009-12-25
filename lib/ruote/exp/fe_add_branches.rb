@@ -88,15 +88,14 @@ module Ruote::Exp
     def apply
 
       list = split_list(lookup_val_prefix('on') || attribute_text)
-      iterator_fei = find_concurrent_iterator
+      it_fei = find_concurrent_iterator
 
-      if list && iterator_fei
+      if list && it_fei
 
-        wi = Ruote::Json.dup(h.applied_workitem)
+        wi = Ruote.fulldup(h.applied_workitem)
         wi['fields'][ConcurrentIteratorExpression::ADD_BRANCHES_FIELD] = list
 
-        @context.storage.put_msg(
-          'reply', 'fei' => iterator_fei, 'workitem' => wi)
+        @context.storage.put_msg('reply', 'fei' => it_fei, 'workitem' => wi)
       end
 
       reply_to_parent(h.applied_workitem)
