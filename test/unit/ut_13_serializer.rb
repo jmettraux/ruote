@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote
+# testing ruote
 #
 # Thu Aug 27 10:44:44 JST 2009
 #
@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 require 'ruote/util/serializer'
 
 
-class SerializerTest < Test::Unit::TestCase
+class UtSerializerTest < Test::Unit::TestCase
 
   class Vehicle
     attr_accessor :type

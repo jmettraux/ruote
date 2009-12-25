@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote
+# testing ruote
 #
 # Tue May 12 15:31:26 JST 2009
 #
@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 require 'ruote/parser/ruby_dsl'
 
 
-class RubyParserTest < Test::Unit::TestCase
+class UtRubyParserTest < Test::Unit::TestCase
 
   #def test_whatever
   #  tree = Ruote.define do

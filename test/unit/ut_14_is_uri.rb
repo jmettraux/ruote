@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote
+# testing ruote
 #
 # Tue Sep  1 13:39:43 JST 2009
 #
@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 require 'ruote/util/misc'
 
 
-class IsUriTest < Test::Unit::TestCase
+class UtIsUriTest < Test::Unit::TestCase
 
   def test_is
 

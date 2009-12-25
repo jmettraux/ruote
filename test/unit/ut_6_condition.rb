@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote
+# testing ruote
 #
 # Sun Jun 14 17:30:43 JST 2009
 #

@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote
+# testing ruote
 #
 # Sat Sep 19 13:27:18 JST 2009
 #
@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 require 'ruote/util/misc'
 
 
-class MiscTest < Test::Unit::TestCase
+class UtMiscTest < Test::Unit::TestCase
 
   def test_narrow_to_number
 
