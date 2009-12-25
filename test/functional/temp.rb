@@ -74,6 +74,7 @@
   rt_2
   rt_3
   rt_4
+  rt_5
 
 ].collect { |prefix|
   Dir[File.join(File.dirname(__FILE__), "#{prefix}_*.rb")].first
