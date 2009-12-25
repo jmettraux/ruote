@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Tue Oct 27 01:36:52 JST 2009
 #
@@ -15,7 +15,7 @@ class RtWhenTest < Test::Unit::TestCase
 
   def test_when_and_restart
 
-    do_test('500')
+    do_test('1s')
   end
 
   def test_when_cron_and_restart
@@ -37,12 +37,14 @@ class RtWhenTest < Test::Unit::TestCase
       end
     end
 
+    #noisy
+
     wfid = @engine.launch(pdef)
 
-    sleep 0.400
+    wait_for(5)
 
     assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.scheduler.jobs.size
+    assert_equal 1, @engine.storage.get_many('schedules').size
 
     @engine.shutdown
 
@@ -50,20 +52,19 @@ class RtWhenTest < Test::Unit::TestCase
 
     start_new_engine
 
-    sleep 0.400
+    #noisy
 
     assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.scheduler.jobs.size
+    assert_equal 1, @engine.storage.get_many('schedules').size
 
     @engine.variables['resume'] = true
 
-    #wait_for(wfid)
-    sleep 1.400
+    wait_for(wfid)
 
     assert_equal "in\nout.", @tracer.to_s
 
     assert_equal 0, @engine.processes.size
-    assert_equal 0, @engine.scheduler.jobs.size
+    assert_equal 0, @engine.storage.get_many('schedules').size
   end
 end
 

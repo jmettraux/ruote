@@ -26,7 +26,7 @@ module RestartBase
 
     @engine = Ruote::Engine.new(Ruote::Worker.new(@storage))
 
-    @tracer.clear
+    #@tracer.clear
 
     @engine.add_service('tracer', @tracer)
   end
