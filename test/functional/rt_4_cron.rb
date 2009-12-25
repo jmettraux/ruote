@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Wed Oct 28 12:51:04 JST 2009
 #
@@ -25,12 +25,14 @@ class RtCronTest < Test::Unit::TestCase
 
     @engine.variables['text'] = 'pre'
 
+    #noisy
+
     wfid = @engine.launch(pdef)
 
-    sleep 1.2
+    wait_for(3)
 
     assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.scheduler.jobs.size
+    assert_equal 1, @engine.storage.get_many('schedules').size
 
     @engine.shutdown
 
@@ -38,23 +40,23 @@ class RtCronTest < Test::Unit::TestCase
 
     start_new_engine
 
+    #noisy
+
     @engine.variables['text'] = 'post'
 
-    sleep 1.2
-
     assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.scheduler.jobs.size
+    assert_equal 1, @engine.storage.get_many('schedules').size
 
-    sleep 0.400
+    wait_for(4)
 
     assert_match /pre\npost/, @tracer.to_s
 
     @engine.cancel_process(wfid)
 
-    sleep 0.400
+    wait_for(wfid)
 
     assert_equal 0, @engine.processes.size
-    assert_equal 0, @engine.scheduler.jobs.size
+    assert_equal 0, @engine.storage.get_many('schedules').size
   end
 end
 
