@@ -70,6 +70,7 @@
   eft_29
 
   rt_0
+  rt_1
 
 ].collect { |prefix|
   Dir[File.join(File.dirname(__FILE__), "#{prefix}_*.rb")].first

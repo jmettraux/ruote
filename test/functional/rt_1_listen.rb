@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Thu Jul  2 12:51:54 JST 2009
 #
@@ -32,12 +32,11 @@ class RtListenTest < Test::Unit::TestCase
 
     #puts; noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     wfid = @engine.launch(pdef)
 
     wait_for(:alpha)
-    sleep 0.100
 
     assert_equal '', @tracer.to_s
 
@@ -47,15 +46,9 @@ class RtListenTest < Test::Unit::TestCase
 
     #puts; noisy
 
-    sleep 0.200
-
-    #@engine.tracker.send(:reload)
-    #assert_equal 1, @engine.tracker.send(:listeners).size
-
     @engine.reply(alpha.first)
 
-    sleep 0.200
-    #wait_for(wfid)
+    wait_for(wfid)
 
     assert_equal 'done.', @tracer.to_s
   end
