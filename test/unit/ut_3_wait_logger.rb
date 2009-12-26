@@ -30,9 +30,12 @@ class UtWaitLoggerTest < Test::Unit::TestCase
     alpha = engine.register_participant :alpha, Ruote::HashParticipant.new
 
     engine.launch(pdef)
-    engine.wait_for(:alpha)
+    msg = engine.wait_for(:alpha)
 
     assert_equal 1, alpha.size
+
+    assert_not_nil msg
+    assert_not_nil msg['workitem']
   end
 end
 

@@ -59,6 +59,8 @@ module Ruote
       @waiting = [ Thread.current, interest ]
 
       Thread.stop
+
+      Thread.current['__result__']
     end
   end
 end

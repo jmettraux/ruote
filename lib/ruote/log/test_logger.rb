@@ -79,6 +79,8 @@ module Ruote
       check_waiting
 
       Thread.stop if @waiting
+
+      Thread.current['__result__']
     end
 
     # Debug only : dumps all the seen events to STDOUTS
@@ -117,6 +119,7 @@ module Ruote
 
         thread = @waiting.first
         @waiting = nil
+        thread['__result__'] = msg
         thread.wakeup
 
         true
