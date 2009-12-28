@@ -281,3 +281,7 @@
 
 [ ] remove abort_on_exception=true
 
+[ ] check : what if a reply on a concurrence wants to save, whereas the
+    concurrence terminated (got removed) meanwhile ?
+    the reply returns true...
+

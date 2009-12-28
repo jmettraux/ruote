@@ -5,6 +5,9 @@
 # Mon Dec 14 15:03:13 JST 2009
 #
 
+require 'yajl' rescue require 'json'
+require 'patron' rescue nil
+
 require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
 require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
 
@@ -13,7 +16,7 @@ class UtStorage < Test::Unit::TestCase
 
   def setup
     @s = determine_storage({})
-    @s.h['dogfood'] = {} if @s.respond_to?(:h)
+    @s.add_test_type('dogfood') if @s.respond_to?(:add_test_type)
     @s.put(
       '_id' => 'toto',
       'type' => 'dogfood',
@@ -101,6 +104,19 @@ class UtStorage < Test::Unit::TestCase
 
     assert_equal 'z', doc['m0']
     assert_equal %w[ a b ], doc['m1']
+  end
+
+  # Updating a gone document must result in a 'true' reply.
+  #
+  def test_put_missing
+
+    h = @s.get('dogfood', 'toto')
+
+    assert_nil @s.delete(h)
+
+    h['colour'] = 'blue'
+
+    assert_equal true, @s.put(h)
   end
 end
 

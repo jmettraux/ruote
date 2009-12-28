@@ -157,6 +157,11 @@ module Ruote
         end
       end
     end
+
+    def add_test_type (type)
+
+      @h[type] = {}
+    end
   end
 end
 

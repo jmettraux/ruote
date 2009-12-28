@@ -9,5 +9,5 @@ puts `ruby test/unit/ut_17_storage.rb --fs`
 
 puts "\n\n\n== couch_storage"
 puts
-puts `ruby test/unit/ut_17_storage.rb --couch`
+puts `ruby -r patron -r yajl test/unit/ut_17_storage.rb --couch`
 
