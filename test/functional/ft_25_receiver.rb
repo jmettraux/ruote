@@ -52,7 +52,9 @@ class FtReceiverTest < Test::Unit::TestCase
     wfid = @engine.launch(@pdef)
 
     wait_for(:alpha)
-    5.times { Thread.pass }
+    while @alpha.wi.nil? do
+      Thread.pass
+    end
 
     assert_equal 3, @engine.process(wfid).expressions.size
 

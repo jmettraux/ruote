@@ -82,8 +82,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
 
     wait_for(:alpha)
     wait_for(:alpha)
-
-    Thread.pass # giving a bit of time
+    wait_for(1)
 
     assert_equal 2, wfids.sort.uniq.size
   end
