@@ -20,7 +20,7 @@ Process definitions are mainly describing how workitems are routed to participan
 
   engine = Ruote::Engine.new(
     Ruote::Worker.new(
-      Ruote::FsStorage.new("ruote_work")))
+      Ruote::FsStorage.new('ruote_work')))
 
   # registering participants
 
