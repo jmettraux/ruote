@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer"]
-  s.date = %q{2009-12-24}
+  s.date = %q{2009-12-28}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -26,8 +26,6 @@ ruote is an open source ruby workflow engine.
      "README.rdoc",
      "Rakefile",
      "TODO.txt",
-     "doc/workflow.txt",
-     "doc/wqueue.graffle",
      "examples/flickr_report.rb",
      "examples/ruote_quickstart.rb",
      "lib/ruote.rb",
@@ -102,7 +100,6 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/tree_dot.rb",
      "lib/ruote/util/dollar.rb",
      "lib/ruote/util/hashdot.rb",
-     "lib/ruote/util/json.rb",
      "lib/ruote/util/look.rb",
      "lib/ruote/util/lookup.rb",
      "lib/ruote/util/misc.rb",
@@ -118,7 +115,6 @@ ruote is an open source ruby workflow engine.
      "test/README.rdoc",
      "test/bm/ci.rb",
      "test/bm/ici.rb",
-     "test/bm/jash.rb",
      "test/bm/juuman.rb",
      "test/bm/load_26c.rb",
      "test/bm/mega.rb",
@@ -187,6 +183,7 @@ ruote is an open source ruby workflow engine.
      "test/functional/ft_32_history.rb",
      "test/functional/ft_33_participant_subprocess_priority.rb",
      "test/functional/ft_34_cursor_rewind.rb",
+     "test/functional/ft_35_add_service.rb",
      "test/functional/ft_3_participant_registration.rb",
      "test/functional/ft_4_cancel.rb",
      "test/functional/ft_5_on_error.rb",
@@ -203,7 +200,6 @@ ruote is an open source ruby workflow engine.
      "test/functional/rt_5_timeout.rb",
      "test/functional/rtest.rb",
      "test/functional/storage_helper.rb",
-     "test/functional/temp.rb",
      "test/functional/test.rb",
      "test/mpc_test.rb",
      "test/path_helper.rb",
@@ -211,10 +207,8 @@ ruote is an open source ruby workflow engine.
      "test/test.rb",
      "test/test_helper.rb",
      "test/unit/storages.rb",
-     "test/unit/temp.rb",
      "test/unit/test.rb",
      "test/unit/ut_0_ruby_parser.rb",
-     "test/unit/ut_10_json.rb",
      "test/unit/ut_11_lookup.rb",
      "test/unit/ut_13_serializer.rb",
      "test/unit/ut_14_is_uri.rb",
@@ -246,31 +240,34 @@ ruote is an open source ruby workflow engine.
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<rufus-lru>, [">= 0"])
-      s.add_runtime_dependency(%q<rufus-scheduler>, [">= 2.0.3"])
-      s.add_runtime_dependency(%q<rufus-dollar>, [">= 0"])
-      s.add_runtime_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
-      s.add_runtime_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
       s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.6"])
+      s.add_runtime_dependency(%q<rufus-dollar>, [">= 0"])
+      s.add_runtime_dependency(%q<rufus-json>, [">= 0"])
+      s.add_runtime_dependency(%q<rufus-lru>, [">= 0"])
+      s.add_runtime_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
+      s.add_runtime_dependency(%q<rufus-scheduler>, [">= 2.0.3"])
+      s.add_runtime_dependency(%q<rufus-treechecker>, [">= 1.0.3"])
       s.add_development_dependency(%q<json>, [">= 0"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
-      s.add_dependency(%q<rufus-lru>, [">= 0"])
-      s.add_dependency(%q<rufus-scheduler>, [">= 2.0.3"])
-      s.add_dependency(%q<rufus-dollar>, [">= 0"])
-      s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
-      s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
       s.add_dependency(%q<rufus-cloche>, [">= 0.1.6"])
+      s.add_dependency(%q<rufus-dollar>, [">= 0"])
+      s.add_dependency(%q<rufus-json>, [">= 0"])
+      s.add_dependency(%q<rufus-lru>, [">= 0"])
+      s.add_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
+      s.add_dependency(%q<rufus-scheduler>, [">= 2.0.3"])
+      s.add_dependency(%q<rufus-treechecker>, [">= 1.0.3"])
       s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rufus-lru>, [">= 0"])
-    s.add_dependency(%q<rufus-scheduler>, [">= 2.0.3"])
-    s.add_dependency(%q<rufus-dollar>, [">= 0"])
-    s.add_dependency(%q<rufus-treechecker>, ["= 1.0.3"])
-    s.add_dependency(%q<rufus-mnemo>, ["= 1.1.0"])
     s.add_dependency(%q<rufus-cloche>, [">= 0.1.6"])
+    s.add_dependency(%q<rufus-dollar>, [">= 0"])
+    s.add_dependency(%q<rufus-json>, [">= 0"])
+    s.add_dependency(%q<rufus-lru>, [">= 0"])
+    s.add_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
+    s.add_dependency(%q<rufus-scheduler>, [">= 2.0.3"])
+    s.add_dependency(%q<rufus-treechecker>, [">= 1.0.3"])
     s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
   end
