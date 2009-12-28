@@ -100,6 +100,8 @@ module Ruote::Exp
 
     # Persists and fetches the _rev identifier from the storage.
     #
+    # Only used by the worker when creating the expression.
+    #
     def initial_persist
 
       @context.storage.put(@h, :update_rev => true)
@@ -662,14 +664,6 @@ module Ruote::Exp
       nil
     end
 
-    def redo_reply (latest_h)
-
-      #$stderr.puts "\n~~~ redo ~~~\n"
-
-      @h = latest_h
-      do_reply(@msg)
-    end
-
     # 'safely' is certainly not the best name for this method.
     # It involves redo_reply. Maybe a best name is
     # 'redo_reply_until_[un]persist_is_successful'
@@ -678,7 +672,14 @@ module Ruote::Exp
 
       latest_h = self.send("try_#{un_persist}")
 
-      redo_reply(latest_h) if latest_h
+      if latest_h
+
+        @h = latest_h
+
+        do_reply(@msg)
+      end
+        # TODO if lastest is a Hash then redo
+        #      if it's true, then forget and reply false.
 
       latest_h.nil?
     end
