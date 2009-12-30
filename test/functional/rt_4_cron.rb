@@ -53,8 +53,9 @@ class RtCronTest < Test::Unit::TestCase
 
     @engine.cancel_process(wfid)
 
-    wait_for(wfid)
+    msg = wait_for(wfid)
 
+    assert_equal 'terminated', msg['action']
     assert_equal 0, @engine.processes.size
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
