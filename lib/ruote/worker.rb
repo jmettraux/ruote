@@ -317,7 +317,7 @@ module Ruote
       exp_hash['state'] = 'failed'
       exp_hash['has_error'] = true
 
-      Ruote::Exp::RawExpression.new(@context, exp_hash).persist
+      Ruote::Exp::RawExpression.new(@context, exp_hash).persist_or_raise
         # undigested expression is stored
 
       raise "unknown expression '#{exp_hash['original_tree'].first}'"

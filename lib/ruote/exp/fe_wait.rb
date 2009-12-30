@@ -68,7 +68,7 @@ module Ruote::Exp
           'fei' => h.fei,
           'workitem' => h.applied_workitem)
 
-        persist
+        persist_or_raise
 
       else
 

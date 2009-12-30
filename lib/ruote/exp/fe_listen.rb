@@ -139,7 +139,7 @@ module Ruote::Exp
       h.wfid = attribute(:wfid).to_s
       h.wfid = %w[ same current true ].include?(h.wfid)
 
-      persist
+      persist_or_raise
 
       @context.tracker.add_tracker(
         h.wfid ? h.fei['wfid'] : nil,

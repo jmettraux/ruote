@@ -110,7 +110,7 @@ module Ruote
         # nukes the expression in case of [re]apply
         #
         exp = Ruote::Exp::FlowExpression.fetch(@context, fei)
-        exp.unpersist if exp
+        exp.unpersist_or_raise if exp
       end
 
       #@storage.delete(err.to_h) # remove error

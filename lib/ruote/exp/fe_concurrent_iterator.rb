@@ -165,7 +165,7 @@ module Ruote::Exp
         if h.fei['wfid'] != workitem['fei']['wfid'] ||
            ( ! workitem['fei']['expid'].match(/^#{h.fei['expid']}_\d+$/))
 
-          safely(:persist)
+          do_persist
           return
         end
       end
@@ -190,7 +190,7 @@ module Ruote::Exp
 
       add_branches(list)
 
-      persist
+      persist_or_raise
     end
 
     # Overrides the implementation found in ConcurrenceExpression

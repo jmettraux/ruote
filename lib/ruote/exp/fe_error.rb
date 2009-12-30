@@ -73,8 +73,7 @@ module Ruote::Exp
 
       h.triggered = true
 
-      persist
-        # to keep track of h.triggered
+      persist_or_raise # to keep track of h.triggered
 
       raise(Ruote::ForcedError.new(msg))
     end
@@ -82,6 +81,7 @@ module Ruote::Exp
     def cancel (flavour)
 
       # TODO : should the error get removed from the process status ?
+      #        it's currently done when the exp gets 'unpersisted'
 
       reply_to_parent(h.applied_workitem)
     end

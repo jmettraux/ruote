@@ -108,10 +108,10 @@ module Ruote::Exp
         ArgumentError.new("cannot set var at engine level : #{var}")
       ) if fexp.nil?
 
-      do_persist = (fexp.h.fei != h.fei)
+      should_persist = (fexp.h.fei != h.fei)
         # don't use a ticket when expression wants to modify its own vars
 
-      fexp.un_set_variable(:unset, v, nil, do_persist)
+      fexp.un_set_variable(:unset, v, nil, should_persist)
     end
 
     # This method is mostly used by the expression pool when looking up
@@ -132,7 +132,7 @@ module Ruote::Exp
     #
     # val should be nil in case of 'unset'.
     #
-    def un_set_variable (op, var, val, do_persist)
+    def un_set_variable (op, var, val, should_persist)
 
       if op == :set
         h.variables[var] = val
@@ -140,7 +140,7 @@ module Ruote::Exp
         h.variables.delete(var)
       end
 
-      return unless do_persist
+      return unless should_persist
 
       if r = try_persist # persist failed, have to retry
 

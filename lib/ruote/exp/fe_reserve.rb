@@ -101,7 +101,7 @@ module Ruote::Exp
       if mutex.last.first == h.fei
         enter
       else
-        persist
+        persist_or_raise
       end
     end
 

@@ -168,12 +168,14 @@ module Ruote::Exp
 
       elsif h.children.empty?
 
-        safely(:unpersist) && @context.storage.put_msg(
+        do_unpersist || return
+
+        @context.storage.put_msg(
           'ceased',
           'wfid' => h.fei['wfid'], 'fei' => h.fei, 'workitem' => workitem)
       else
 
-        safely(:persist)
+        do_persist
       end
     end
 
@@ -191,7 +193,7 @@ module Ruote::Exp
         msgs << pre_apply_child(i, h.applied_workitem.dup, false)
       end
 
-      persist
+      persist_or_raise
 
       msgs.each { |m| @context.storage.put_msg('apply', m) }
     end
@@ -225,11 +227,11 @@ module Ruote::Exp
 
       if h.ccount == nil || h.children.empty?
 
-        safely(:unpersist) && super(workitem, false)
+        do_unpersist && super(workitem, false)
 
       elsif h.remaining == 'cancel'
 
-        if r = safely(:unpersist)
+        if r = do_unpersist
 
           super(workitem, false)
 
@@ -243,7 +245,7 @@ module Ruote::Exp
         h.variables = compile_variables
         h.forgotten = true
 
-        safely(:persist) && super(workitem, false)
+        do_persist && super(workitem, false)
       end
     end
 

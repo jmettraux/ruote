@@ -38,6 +38,7 @@ module Ruote::Exp
     include Ruote::WithH
     include Ruote::WithMeta
 
+    require 'ruote/exp/ro_persist'
     require 'ruote/exp/ro_attributes'
     require 'ruote/exp/ro_variables'
 
@@ -92,53 +93,6 @@ module Ruote::Exp
 
     def parent
       Ruote::Exp::FlowExpression.fetch(@context, h.parent_id)
-    end
-
-    #--
-    # PERSISTENCE
-    #++
-
-    # Persists and fetches the _rev identifier from the storage.
-    #
-    # Only used by the worker when creating the expression.
-    #
-    def initial_persist
-
-      @context.storage.put(@h, :update_rev => true)
-    end
-
-    def persist
-
-      #puts "--- per #{h.fei['expid']} #{tree.first} #{h._rev}"
-
-      r = try_persist
-
-      #p [ :per_reply, r ]
-
-      raise(
-        "persist failed for #{Ruote.to_storage_id(h.fei)} #{tree.first}") if r
-    end
-
-    def unpersist
-
-      #puts "--- unp #{h.fei['expid']} #{tree.first} #{h._rev}"
-
-      r = try_unpersist
-
-      #p [ :unp_reply, r ]
-
-      raise(
-        "unpersist failed for #{Ruote.to_storage_id(h.fei)} #{tree.first}") if r
-    end
-
-    def unpersist_if_still_present
-
-      r = try_unpersist
-
-      raise(
-        "unpersist_if_still_present failed for "+
-        "#{Ruote.to_storage_id(h.fei)} #{tree.first}"
-      ) if r.respond_to?(:keys)
     end
 
     # Turns this FlowExpression instance into a Hash (well, just hands back
@@ -245,7 +199,7 @@ module Ruote::Exp
 
       else # vanilla reply
 
-        unpersist if delete
+        unpersist_or_raise if delete
 
         if h.parent_id
 
@@ -286,7 +240,7 @@ module Ruote::Exp
         if h.children.size < 1
           reply_to_parent(workitem)
         else
-          persist # for the updated h.children
+          persist_or_raise # for the updated h.children
         end
 
       else
@@ -345,7 +299,7 @@ module Ruote::Exp
     #
     def cancel (flavour)
 
-      persist
+      do_persist || return
         # before firing the cancel message to the children
 
       h.children.each do |cfei|
@@ -361,7 +315,7 @@ module Ruote::Exp
     def do_fail (msg)
 
       @h['state'] = 'failing'
-      persist
+      persist_or_raise
 
       h.children.each { |i| @context.storage.put_msg('cancel', 'fei' => i) }
     end
@@ -487,7 +441,7 @@ module Ruote::Exp
     #
     #   seq.update_tree
     #   seq.updated_tree[2] << [ 'participant', { 'ref' => 'bob' }, [] ]
-    #   seq.persist
+    #   seq.do_persist
     #
     def update_tree (t=nil)
       h.updated_tree = t || Ruote.fulldup(h.original_tree)
@@ -529,7 +483,7 @@ module Ruote::Exp
 
       msg = pre_apply_child(child_index, workitem, forget)
 
-      persist unless forget
+      persist_or_raise unless forget
 
       @context.storage.put_msg('apply', msg)
     end
@@ -550,7 +504,7 @@ module Ruote::Exp
     def register_child (fei)
 
       h.children << fei
-      persist
+      persist_or_raise
     end
 
     def consider_tag
@@ -596,7 +550,12 @@ module Ruote::Exp
 
       # at first, nuke self
 
-      unpersist_if_still_present
+      r = try_unpersist
+
+      raise(
+        "failed to remove exp to supplant "+
+        "#{Ruote.to_storage_id(h.fei)} #{tree.first}"
+      ) if r.respond_to?(:keys)
 
       # then re-apply
 
@@ -640,48 +599,6 @@ module Ruote::Exp
       end
 
       supplant_with(t, 'trigger' => on)
-    end
-
-    def try_persist
-
-      @context.storage.put(@h)
-    end
-
-    def try_unpersist
-
-      r = @context.storage.delete(@h)
-
-      return r if r
-
-      if h.has_error
-
-        err = @context.storage.get(
-          'errors', "err_#{Ruote.to_storage_id(h.fei)}")
-
-        @context.storage.delete(err) if err
-      end
-
-      nil
-    end
-
-    # 'safely' is certainly not the best name for this method.
-    # It involves redo_reply. Maybe a best name is
-    # 'redo_reply_until_[un]persist_is_successful'
-    #
-    def safely (un_persist)
-
-      latest_h = self.send("try_#{un_persist}")
-
-      if latest_h
-
-        @h = latest_h
-
-        do_reply(@msg)
-      end
-        # TODO if lastest is a Hash then redo
-        #      if it's true, then forget and reply false.
-
-      latest_h.nil?
     end
   end
 end

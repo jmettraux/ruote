@@ -103,9 +103,6 @@ module Ruote::Exp
 
       set_command(command_workitem, name, param)
 
-      #persist
-        # to keep track of the command set in the h.applied_workitem fields
-
       target = parent
       ancestor = true
 

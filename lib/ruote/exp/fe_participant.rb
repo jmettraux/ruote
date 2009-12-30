@@ -150,7 +150,7 @@ module Ruote::Exp
       h.applied_workitem['participant_name'] = h.participant_name
       h.applied_workitem['fields']['params'] = compile_atts
 
-      persist
+      persist_or_raise
 
       @context.storage.put_msg(
         'dispatch',
