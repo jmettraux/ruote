@@ -49,6 +49,8 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
 
   def test_json_definition
 
+    prev = Rufus::Json.backend
+
     require 'json'
     Rufus::Json.backend = :json
 
@@ -64,7 +66,7 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
       "[\"define\",{\"name\":\"test\"},[[\"sequence\",{},[[\"echo\",{\"a\":null},[]],[\"echo\",{\"b\":null},[]]]]]]",
       %w[ a b ])
 
-    Rufus::Json.backend = :none
+    Rufus::Json.backend = prev
       # back to initial state
   end
 
