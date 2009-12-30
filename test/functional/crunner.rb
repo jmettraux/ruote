@@ -4,7 +4,8 @@ i = 0
 loop do
 
   #s = `ruby test/functional/ct_0_concurrence.rb`
-  s = `ruby test/functional/ct_1_iterator.rb`
+  #s = `ruby test/functional/ct_1_iterator.rb`
+  s = `ruby test/functional/ct_2_cancel.rb`
 
   if $? != 0
     puts
