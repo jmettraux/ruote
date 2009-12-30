@@ -53,6 +53,8 @@ module Ruote
       @seen = []
       @log = []
       @waiting = nil
+
+      @count = -1
       @color = 33
       @noisy = false
 
@@ -199,6 +201,9 @@ module Ruote
 
     def pretty_print (msg)
 
+      @count += 1
+      @count = 0 if @count > 9
+
       ei = self.object_id.to_s[-2..-1]
 
       fei = msg['fei']
@@ -241,7 +246,7 @@ module Ruote
 
       color(
         @color,
-        " #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}",
+        "#{@count} #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}",
         true)
     end
   end
