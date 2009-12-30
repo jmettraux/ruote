@@ -55,11 +55,16 @@ module Ruote
 
       # merge! is way faster than merge (no object creation probably)
 
-      put(options.merge!(
+      msg = options.merge!(
         'type' => 'msgs',
         '_id' => "#{$$}-#{Thread.current.object_id}-#{Time.now.to_f.to_s}",
-        'action' => action))
-        #'action' => action), :update_rev => true)
+        'action' => action)
+
+      msg.delete('_rev')
+        # in case of message replay
+
+      put(msg)
+        #, :update_rev => true)
 
       #(@local_msgs ||= []) << options
     end

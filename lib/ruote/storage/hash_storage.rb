@@ -56,6 +56,10 @@ module Ruote
           return pre
         end
 
+        if pre.nil? && doc['_rev']
+          return true
+        end
+
         doc = if opts[:update_rev]
           doc['_rev'] = pre ? pre['_rev'] : -1
           doc
