@@ -23,7 +23,7 @@ class CtCancelTest < Test::Unit::TestCase
       # let reply immediately
     end
 
-    #noisy
+    noisy
 
     wfid = @engine0.launch(pdef)
 
@@ -36,26 +36,45 @@ class CtCancelTest < Test::Unit::TestCase
     loop do
       msgs = @storage.get_msgs
       break if msgs.size == 2
+      #p msgs.collect { |m| m['fei']['expid'] }.uniq
+      #break if
+      #  msgs.size == 2 &&
+      #  msgs.collect { |m| m['fei']['expid'] }.uniq == %w[ 0_0 ]
     end
 
     #msgs.each { |m| p m }
+    puts
 
     t1 = Thread.new { @engine0.do_step(msgs[1]) }
     t0 = Thread.new { @engine1.do_step(msgs[0]) }
     t1.join
     t0.join
 
-    #p @storage.get_msgs
+    puts
 
-    exps = @storage.get_many('expressions')
-
+    #puts
+    #@storage.get_msgs.each do |msg|
+    #  p [ msg['action'], msg['fei']['expid'] ]
+    #end
+    #puts
+    #exps = @storage.get_many('expressions')
     #exps.each do |exp|
     #  p [ exp['fei']['expid'], exp['original_tree'] ]
     #end
+    #assert_equal 1, exps.size
 
-    assert_equal 1, exps.size
+    @engine0.step 4
 
-    #@engine0.step 1
+    sleep 0.010
+
+    assert_equal 0, @storage.get_msgs.size
+
+    exps = @storage.get_many('expressions')
+    exps.each { |exp|
+      p [ exp['fei']['expid'], exp['original_tree'] ]
+    } if exps.size > 0
+
+    assert_equal 0, exps.size
   end
 end
 

@@ -1,11 +1,13 @@
 
+pers = ARGV.find { |a| a.match(/^--/) } || ''
+
 i = 0
 
 loop do
 
-  #s = `ruby test/functional/ct_0_concurrence.rb`
-  #s = `ruby test/functional/ct_1_iterator.rb`
-  s = `ruby test/functional/ct_2_cancel.rb`
+  #s = `ruby test/functional/ct_0_concurrence.rb #{pers}`
+  #s = `ruby test/functional/ct_1_iterator.rb #{pers}`
+  s = `ruby test/functional/ct_2_cancel.rb #{pers}`
 
   if $? != 0
     puts

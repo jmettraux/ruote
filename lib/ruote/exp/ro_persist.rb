@@ -52,12 +52,20 @@ module Ruote::Exp
 
     def try_persist
 
-      @context.storage.put(@h)
+      r = @context.storage.put(@h)
+
+      #puts "+ per #{h.fei['expid']} #{tree.first} #{h._rev} --> #{r.class}"
+      #Ruote.p_caller('+ per') if r != nil
+
+      r
     end
 
     def try_unpersist
 
       r = @context.storage.delete(@h)
+
+      #puts "- unp #{h.fei['expid']} #{tree.first} #{h._rev} --> #{r.class}"
+      #Ruote.p_caller('- unp') if r != nil
 
       return r if r
 
@@ -78,23 +86,21 @@ module Ruote::Exp
 
     def persist_or_raise
 
-      #puts "--- per #{h.fei['expid']} #{tree.first} #{h._rev}"
-
       r = try_persist
 
       raise(
-        "persist failed for #{Ruote.to_storage_id(h.fei)} #{tree.first}"
+        "persist failed for " +
+        "#{Ruote.to_storage_id(h.fei)} #{tree.first} #{r.class}"
       ) if r
     end
 
     def unpersist_or_raise
 
-      #puts "--- unp #{h.fei['expid']} #{tree.first} #{h._rev}"
-
       r = try_unpersist
 
       raise(
-        "unpersist failed for #{Ruote.to_storage_id(h.fei)} #{tree.first}"
+        "unpersist failed for " +
+        "#{Ruote.to_storage_id(h.fei)} #{tree.first} #{r.class}"
       ) if r
     end
 
@@ -103,23 +109,29 @@ module Ruote::Exp
 
     def do_persist
 
-      if latest_h = try_persist
-        @h = latest_h
-        do_reply(@msg)
-        false
-      else
-        true
-      end
+      do_p(:persist)
     end
 
     def do_unpersist
 
-      if latest_h = try_unpersist
-        @h = latest_h
-        do_reply(@msg)
-        false
-      else
-        true
+      do_p(:unpersist)
+    end
+
+    protected
+
+    def do_p (pers)
+
+      case r = self.send("try_#{pers}")
+        when true
+          (pers == :unpersist)
+            # persist FALSE : gone... return false "please don't go on"
+            # unpersist TRUE : already gone, should be OK
+        when Hash
+          self.h = r
+          self.send("do_#{@msg['action']}", @msg)
+          false
+        else
+          true
       end
     end
   end

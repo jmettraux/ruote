@@ -66,10 +66,7 @@ module Ruote::Exp
 
       @msg = nil
 
-      @h = h
-      class << h
-        include Ruote::HashDot
-      end
+      self.h = h
 
       h._id ||= Ruote.to_storage_id(h.fei)
       h['type'] ||= 'expressions'
@@ -81,6 +78,13 @@ module Ruote::Exp
       h.on_cancel ||= attribute(:on_cancel)
       h.on_error ||= attribute(:on_error)
       h.on_timeout ||= attribute(:on_timeout)
+    end
+
+    def h= (hash)
+      @h = hash
+      class << h
+        include Ruote::HashDot
+      end
     end
 
     def fei
@@ -172,6 +176,15 @@ module Ruote::Exp
 
     def reply_to_parent (workitem, delete=true)
 
+      #if delete && h.state.nil?
+      #  p @msg
+      #  if @msg && @msg['action'] == 'reply'
+      #    do_unpersist || return
+      #  else
+      #    unpersist_or_raise
+      #  end
+      #end
+
       if h.tagname
 
         unset_variable(h.tagname)
@@ -199,7 +212,11 @@ module Ruote::Exp
 
       else # vanilla reply
 
-        unpersist_or_raise if delete
+        #unpersist_or_raise if delete
+        #try_unpersist if delete
+        if delete
+          do_unpersist || return
+        end
 
         if h.parent_id
 
@@ -265,6 +282,8 @@ module Ruote::Exp
     #
     def do_cancel (msg)
 
+      @msg = Ruote.fulldup(msg)
+
       return if h.state == 'cancelling'
         # cancel on cancel gets discarded
 
@@ -299,7 +318,7 @@ module Ruote::Exp
     #
     def cancel (flavour)
 
-      do_persist || return
+      do_persist(:cancel) || return
         # before firing the cancel message to the children
 
       h.children.each do |cfei|
