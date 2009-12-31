@@ -22,7 +22,11 @@
 # Made in Japan.
 #++
 
-require 'rufus/cloche' # gem install rufus-cloche
+require 'yajl' rescue require 'json'
+  # gem install yajl-ruby OR json OR json_pure OR json-jruby
+
+require 'rufus/cloche'
+  # gem install rufus-cloche
 
 
 module Ruote
