@@ -318,7 +318,7 @@ module Ruote::Exp
     #
     def cancel (flavour)
 
-      do_persist(:cancel) || return
+      do_persist || return
         # before firing the cancel message to the children
 
       h.children.each do |cfei|
