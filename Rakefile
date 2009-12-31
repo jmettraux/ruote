@@ -20,7 +20,7 @@ ruote is an open source ruby workflow engine.
     gem.email = 'jmettraux@gmail.com'
     gem.homepage = 'http://ruote.rubyforge.org'
     gem.authors = [ 'John Mettraux', 'Kenneth Kalmer' ]
-    gem.rubyforge_project = 'openwferu'
+    gem.rubyforge_project = 'ruote'
     gem.test_file = 'test/test.rb'
 
     gem.add_dependency 'rufus-cloche', '>= 0.1.6'

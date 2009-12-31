@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruote}
-  s.version = "2.1.0"
+  s.version = "2.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer"]
-  s.date = %q{2009-12-28}
+  s.date = %q{2009-12-31}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -28,6 +28,7 @@ ruote is an open source ruby workflow engine.
      "TODO.txt",
      "examples/flickr_report.rb",
      "examples/ruote_quickstart.rb",
+     "examples/web_first_page.rb",
      "lib/ruote.rb",
      "lib/ruote/context.rb",
      "lib/ruote/engine.rb",
@@ -72,6 +73,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/exp/merge.rb",
      "lib/ruote/exp/raw.rb",
      "lib/ruote/exp/ro_attributes.rb",
+     "lib/ruote/exp/ro_persist.rb",
      "lib/ruote/exp/ro_variables.rb",
      "lib/ruote/fei.rb",
      "lib/ruote/id/mnemo_wfid_generator.rb",
@@ -125,6 +127,7 @@ ruote is an open source ruby workflow engine.
      "test/functional/crunner.rb",
      "test/functional/ct_0_concurrence.rb",
      "test/functional/ct_1_iterator.rb",
+     "test/functional/ct_2_cancel.rb",
      "test/functional/eft_0_process_definition.rb",
      "test/functional/eft_10_cancel_process.rb",
      "test/functional/eft_11_wait.rb",
@@ -228,7 +231,7 @@ ruote is an open source ruby workflow engine.
   s.homepage = %q{http://ruote.rubyforge.org}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubyforge_project = %q{openwferu}
+  s.rubyforge_project = %q{ruote}
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{an open source ruby workflow engine}
   s.test_files = [
