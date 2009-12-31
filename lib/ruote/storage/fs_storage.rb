@@ -25,6 +25,9 @@
 require 'yajl' rescue require 'json'
   # gem install yajl-ruby OR json OR json_pure OR json-jruby
 
+require 'rufus/json'
+Rufus::Json.detect_backend
+
 require 'rufus/cloche'
   # gem install rufus-cloche
 
