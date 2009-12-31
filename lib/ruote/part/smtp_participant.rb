@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2005-2009, Alain Hoang and John Mettraux.
+# Copyright (c) 2005-2010, Alain Hoang and John Mettraux.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
