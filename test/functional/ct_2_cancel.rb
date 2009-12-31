@@ -23,7 +23,7 @@ class CtCancelTest < Test::Unit::TestCase
       # let reply immediately
     end
 
-    noisy
+    #noisy
 
     wfid = @engine0.launch(pdef)
 
@@ -43,25 +43,14 @@ class CtCancelTest < Test::Unit::TestCase
     end
 
     #msgs.each { |m| p m }
-    puts
+    #puts
 
     t1 = Thread.new { @engine0.do_step(msgs[1]) }
     t0 = Thread.new { @engine1.do_step(msgs[0]) }
     t1.join
     t0.join
 
-    puts
-
     #puts
-    #@storage.get_msgs.each do |msg|
-    #  p [ msg['action'], msg['fei']['expid'] ]
-    #end
-    #puts
-    #exps = @storage.get_many('expressions')
-    #exps.each do |exp|
-    #  p [ exp['fei']['expid'], exp['original_tree'] ]
-    #end
-    #assert_equal 1, exps.size
 
     @engine0.step 4
 
