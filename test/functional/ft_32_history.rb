@@ -38,7 +38,7 @@ class FtHistoryTest < Test::Unit::TestCase
     wfid0 = assert_trace(pdef, "done.")
     wfid1 = assert_trace(pdef, "done.\ndone.")
 
-    sleep 0.010
+    sleep 0.100
 
     lines = File.readlines(Dir['work/log/*'].first)
 
@@ -82,7 +82,7 @@ class FtHistoryTest < Test::Unit::TestCase
 
     wfid0 = assert_trace(pdef, "done.")
 
-    sleep 0.010
+    sleep 0.100
 
     h = @engine.context.history.by_process(wfid0)
     #h.each { |r| p r }
@@ -107,7 +107,7 @@ class FtHistoryTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(wfid)
 
-    sleep 0.010
+    sleep 0.100
 
     h = @engine.context.history.by_process(wfid)
     #h.each { |r| p r }
@@ -137,7 +137,7 @@ class FtHistoryTest < Test::Unit::TestCase
     @engine.cancel_expression(fei)
     wait_for(wfid)
 
-    sleep 0.010
+    sleep 0.100
 
     h = @engine.context.history.by_process(wfid)
     #h.each { |r| p r }

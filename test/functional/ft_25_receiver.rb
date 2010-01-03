@@ -38,6 +38,14 @@ class FtReceiverTest < Test::Unit::TestCase
 
       # no reply to the engine
     end
+
+    # do not let the dispatch happen in its own thread, this makes
+    # wait_for(:alpha) synchronous.
+    #
+    def do_not_thread
+
+      true
+    end
   end
 
   class MyReceiver < Ruote::Receiver
