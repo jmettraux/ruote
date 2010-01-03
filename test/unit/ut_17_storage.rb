@@ -44,7 +44,11 @@ class UtStorage < Test::Unit::TestCase
 
   def test_put
 
-    @s.put('_id' => 'nada', 'type' => 'dogfood', 'message' => 'testing again')
+    doc =  { '_id' => 'nada', 'type' => 'dogfood', 'message' => 'testing (2)' }
+
+    @s.put(doc)
+
+    assert_nil doc['_rev']
 
     h = @s.get('dogfood', 'nada')
 
@@ -108,7 +112,7 @@ class UtStorage < Test::Unit::TestCase
 
   # Updating a gone document must result in a 'true' reply.
   #
-  def test_put_missing
+  def test_put_gone
 
     h = @s.get('dogfood', 'toto')
 

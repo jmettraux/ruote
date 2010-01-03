@@ -285,3 +285,6 @@
     concurrence terminated (got removed) meanwhile ?
     the reply returns true...
 
+[ ] shell ? irb ? Shell.new(storage)
+[ ] focus on fulldup or json.dup (via fulldup ?)
+

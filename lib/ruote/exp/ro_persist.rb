@@ -55,7 +55,7 @@ module Ruote::Exp
       r = @context.storage.put(@h)
 
       #puts "+ per #{h.fei['expid']} #{tree.first} #{h._rev} --> #{r.class}"
-      #Ruote.p_caller('+ per') if r != nil
+      #Ruote.p_caller('+ per') if r != nil || h.fei['expid'] == '0_0'
 
       r
     end
@@ -65,7 +65,7 @@ module Ruote::Exp
       r = @context.storage.delete(@h)
 
       #puts "- unp #{h.fei['expid']} #{tree.first} #{h._rev} --> #{r.class}"
-      #Ruote.p_caller('- unp') if r != nil
+      #Ruote.p_caller('- unp') if r != nil || h.fei['expid'] == '0_0'
 
       return r if r
 
@@ -123,15 +123,13 @@ module Ruote::Exp
 
       case r = self.send("try_#{pers}")
         when true
-          (pers == :unpersist)
-            # persist FALSE : gone... return false "please don't go on"
-            # unpersist TRUE : already gone, should be OK
+          false # don't go on
         when Hash
           self.h = r
           self.send("do_#{@msg['action']}", @msg)
-          false
+          false # don't go on
         else
-          true
+          true # success, please go on
       end
     end
   end

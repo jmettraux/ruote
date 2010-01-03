@@ -50,7 +50,7 @@ module Ruote
 
     def put (doc, opts={})
 
-      @cloche.put(doc.merge!('put_at' => Ruote.now_to_utc_s))
+      @cloche.put(doc.merge!('put_at' => Ruote.now_to_utc_s), opts)
     end
 
     def get (type, key)
