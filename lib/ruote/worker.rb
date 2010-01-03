@@ -27,7 +27,7 @@ require 'ruote/fei'
 
 module Ruote
 
-  VERSION = '2.1.1'
+  VERSION = '2.1.2'
 
   class Worker
 

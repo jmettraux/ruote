@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruote}
-  s.version = "2.1.1"
+  s.version = "2.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer"]
@@ -218,6 +218,7 @@ ruote is an open source ruby workflow engine.
      "test/unit/ut_15_util.rb",
      "test/unit/ut_16_parser.rb",
      "test/unit/ut_17_storage.rb",
+     "test/unit/ut_18_engine.rb",
      "test/unit/ut_1_fei.rb",
      "test/unit/ut_2_wfidgen.rb",
      "test/unit/ut_3_wait_logger.rb",

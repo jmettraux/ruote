@@ -1,7 +1,8 @@
 
 = ruote - CHANGELOG.txt
 
-== ruote - 2.1.2          not yet released
+
+== ruote - 2.1.2          released 2010/01/03
 
 - fixed issue when initializing engine without worker. Thanks Matt Nichols.
 
