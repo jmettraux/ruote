@@ -282,14 +282,14 @@ module Ruote::Exp
     #
     def do_cancel (msg)
 
-      @msg = Ruote.fulldup(msg)
-
       return if h.state == 'cancelling'
         # cancel on cancel gets discarded
 
+      @msg = Ruote.fulldup(msg)
+
       flavour = msg['flavour']
 
-      return if h.state == 'failed' and flavour == 'timeout'
+      return if h.state == 'failed' && flavour == 'timeout'
         # do not timeout expressions that are "in error" (failed)
 
       h.state = case flavour
