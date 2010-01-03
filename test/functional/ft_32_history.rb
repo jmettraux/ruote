@@ -5,8 +5,11 @@
 # Sun Oct  4 00:14:27 JST 2009
 #
 
-
-require 'yajl' rescue require 'json'
+begin
+  require 'yajl'
+rescue LoadError
+  require 'json'
+end
 Rufus::Json.detect_backend rescue nil
 
 require File.join(File.dirname(__FILE__), 'base')

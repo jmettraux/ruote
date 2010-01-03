@@ -15,6 +15,7 @@ Kenneth Kalmer  http://www.opensourcery.co.za
 Contributors
 ------------
 
+Matt Nichols - http://github.com/mattnichols
 Nicholas Faiz - http://github.com/biv
 Chris Beer - http://github.com/cbeer
 Enrico Bianco - http://github.com/enricob

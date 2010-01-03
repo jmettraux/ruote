@@ -5,7 +5,11 @@
 # Mon Dec 14 15:03:13 JST 2009
 #
 
-require 'yajl' rescue require 'json'
+begin
+  require 'yajl'
+rescue LoadError
+  require 'json'
+end
 require 'patron' rescue nil
 
 require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
@@ -97,8 +101,12 @@ class UtStorage < Test::Unit::TestCase
 
   def test_keys_should_be_string
 
-    require 'yajl' rescue require 'json'
-    Rufus::Json.detect_backend
+    #begin
+    #  require 'yajl'
+    #rescue LoadError
+    #  require 'json'
+    #end
+    #Rufus::Json.detect_backend
 
     doc = { '_id' => 'h0', 'type' => 'dogfood', :m0 => :z, :m1 => [ :a, :b ] }
 
