@@ -41,7 +41,7 @@ class CtConcurrenceTest < Test::Unit::TestCase
     msgs = @storage.get_msgs
     msg = msgs.first
 
-    if msgs.size > 1 || (msg['fei'] && msg['fei']['expid'] != '0')
+    if msgs.size > 1 || (msg && msg['fei'] && msg['fei']['expid'] != '0')
 
       msgs.each do |m|
 

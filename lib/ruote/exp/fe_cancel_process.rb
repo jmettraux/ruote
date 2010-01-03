@@ -62,13 +62,6 @@ module Ruote::Exp
 
       # never called
     end
-
-    def cancel (flavour)
-
-      # has to let the workitem rebound for the whole process to get cancelled
-
-      reply_to_parent(h.applied_workitem)
-    end
   end
 end
 

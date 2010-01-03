@@ -135,13 +135,6 @@ module Ruote::Exp
       reply_to_parent(h.applied_workitem) unless ancestor
     end
 
-    # Necessary in case of 'pass_command_directly'
-    #
-    def cancel (flavour)
-
-      reply_to_parent(h.applied_workitem)
-    end
-
     protected
 
     # Walks up the expression tree (process instance and returns the first

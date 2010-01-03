@@ -45,8 +45,8 @@ class CtCancelTest < Test::Unit::TestCase
     #msgs.each { |m| p m }
     #puts
 
-    t1 = Thread.new { @engine0.do_step(msgs[1]) }
-    t0 = Thread.new { @engine1.do_step(msgs[0]) }
+    t1 = Thread.new { @engine1.do_step(msgs[1]) }
+    t0 = Thread.new { @engine0.do_step(msgs[0]) }
     t1.join
     t0.join
 

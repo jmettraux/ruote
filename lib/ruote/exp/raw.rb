@@ -39,10 +39,6 @@ module Ruote::Exp
     def reply (workitem)
       raise "can't apply or reply [to] raw expression"
     end
-
-    def cancel (flavour)
-      reply_to_parent(h.applied_workitem)
-    end
   end
 end
 

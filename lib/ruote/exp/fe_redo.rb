@@ -73,11 +73,6 @@ module Ruote::Exp
 
       # never called
     end
-
-    def cancel (flavour)
-
-      reply_to_parent(h.applied_workitem)
-    end
   end
 end
 

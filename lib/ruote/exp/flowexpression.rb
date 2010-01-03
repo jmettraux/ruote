@@ -251,6 +251,7 @@ module Ruote::Exp
       end
 
       h.children.delete(fei)
+        # accept without any check ?
 
       if h.state != nil # failing or timing out ...
 
@@ -260,7 +261,7 @@ module Ruote::Exp
           persist_or_raise # for the updated h.children
         end
 
-      else
+      else # vanilla reply
 
         reply(workitem)
       end
@@ -317,6 +318,9 @@ module Ruote::Exp
     # of this expression.
     #
     def cancel (flavour)
+
+      return reply_to_parent(h.applied_workitem) \
+        unless h.children.find { |cfei| Ruote::FlowExpression.fetch(cfei) }
 
       do_persist || return
         # before firing the cancel message to the children

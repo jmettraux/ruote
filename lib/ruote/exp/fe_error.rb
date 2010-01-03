@@ -77,14 +77,6 @@ module Ruote::Exp
 
       raise(Ruote::ForcedError.new(msg))
     end
-
-    def cancel (flavour)
-
-      # TODO : should the error get removed from the process status ?
-      #        it's currently done when the exp gets 'unpersisted'
-
-      reply_to_parent(h.applied_workitem)
-    end
   end
 end
 
