@@ -50,7 +50,7 @@ module Ruote
 
         @worker = nil
         @storage = worker_or_storage
-        @context = Ruote::Context.new(self)
+        @context = Ruote::Context.new(@storage, self)
       end
 
       @variables = EngineVariables.new(@storage)

@@ -1,8 +1,13 @@
 
-= ruote (OpenWFEru) - CHANGELOG.txt
+= ruote - CHANGELOG.txt
 
-== ruote - 2.0.0    not yet released
+== ruote - 2.1.2          not yet released
+
+- fixed issue when initializing engine without worker. Thanks Matt Nichols.
+
+
+== ruote - 2.1.1          released 2009/12/31
 
 == OpenWFEru - 0.9.2      released 2007/01/26
-== openwfe-ruby - 1.7.0   released 2006-05-08
+== openwfe-ruby - 1.7.0   released 2006/05/08
 

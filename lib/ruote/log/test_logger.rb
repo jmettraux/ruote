@@ -38,12 +38,12 @@ module Ruote
 
       @context = context
 
-      if @context.respond_to?(:worker)
+      if @context.worker
         #
         # this is a worker context, DO log
         #
         @context.worker.subscribe(:all, self)
-      else
+      #else
         #
         # this is not a worker context, DO NOT log, but be ready to
         # be queried

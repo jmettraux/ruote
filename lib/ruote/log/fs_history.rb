@@ -51,11 +51,13 @@ module Ruote
       @last = nil
       @file = nil
 
-      if @context.respond_to?(:worker)
-        @context.worker.subscribe(:all, self)
-      end
+      if @context.worker
 
-      rotate_if_necessary
+        # only care about logging if there is a worker present
+
+        @context.worker.subscribe(:all, self)
+        rotate_if_necessary
+      end
     end
 
     # Makes sure to close the history file.
