@@ -22,7 +22,11 @@
 # Made in Japan.
 #++
 
-require 'yajl' rescue require 'json'
+begin
+  require 'yajl'
+rescue LoadError
+  require 'json'
+end
   # gem install yajl-ruby OR json OR json_pure OR json-jruby
 
 require 'rufus/json'
