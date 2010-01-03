@@ -105,6 +105,8 @@ class FtRecursionTest < Test::Unit::TestCase
 
     6.times { wait_for(:alpha) }
 
+    Thread.pass
+
     assert_equal((1..6).to_a.join("\n"), @tracer.to_s)
   end
 end
