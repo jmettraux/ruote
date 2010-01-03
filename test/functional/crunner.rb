@@ -1,13 +1,16 @@
 
 pers = ARGV.find { |a| a.match(/^--/) } || ''
+tnumber = ARGV.find { |a| a.match(/^\d+/) } || 2
 
 i = 0
 
 loop do
 
-  #s = `ruby test/functional/ct_0_concurrence.rb #{pers}`
-  #s = `ruby test/functional/ct_1_iterator.rb #{pers}`
-  s = `ruby test/functional/ct_2_cancel.rb #{pers}`
+  t = Dir["test/functional/ct_#{tnumber}_*.rb"].first
+
+  raise "didn't find test..." unless t
+
+  s = `ruby #{t} #{pers}`
 
   if $? != 0
     puts
