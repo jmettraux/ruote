@@ -105,7 +105,14 @@ module Ruote
     #
     def each (&block)
 
-      fetch_all.each { |hwi| block.call(Ruote::Workitem.new(hwi)) }
+      all.each { |wi| block.call(wi) }
+    end
+
+    # Returns all the workitems stored in here.
+    #
+    def all
+
+      fetch_all.map { |hwi| Ruote::Workitem.new(hwi) }
     end
 
     # A convenience method (especially when testing), returns the first
@@ -119,6 +126,7 @@ module Ruote
     end
 
     # Clean this participant out completely
+    #
     def purge!
 
       fetch_all.each { |hwi| @context.storage.delete( hwi ) }
