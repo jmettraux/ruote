@@ -33,6 +33,7 @@ ruote is an open source ruby workflow engine.
 
     gem.add_development_dependency 'json'
     gem.add_development_dependency 'yard'
+    gem.add_development_dependency 'builder'
 
     # Gem::Specification http://www.rubygems.org/read/chapter/20
   end
