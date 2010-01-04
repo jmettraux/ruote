@@ -127,9 +127,17 @@ module Ruote
     end
 
     # Return all workitems for the specified wfid
+    #
     def by_wfid( wfid )
 
       @context.storage.get_many('workitems', /!#{wfid}$/).map { |hwi| Ruote::Workitem.new(hwi) }
+    end
+
+    # Return all workitems for the specified participant
+    #
+    def by_participant( part )
+
+      all.select { |wi| wi.participant_name == part }
     end
 
     # Clean this participant out completely
