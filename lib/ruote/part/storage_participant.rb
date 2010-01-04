@@ -125,6 +125,12 @@ module Ruote
       hwi ? Ruote::Workitem.new(hwi) : nil
     end
 
+    # Return all workitems for the specified wfid
+    def by_wfid( wfid )
+
+      @context.storage.get_many('workitems', /!#{wfid}$/).map { |hwi| Ruote::Workitem.new(hwi) }
+    end
+
     # Clean this participant out completely
     #
     def purge!
