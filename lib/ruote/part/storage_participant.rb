@@ -112,7 +112,7 @@ module Ruote
     #
     def all
 
-      fetch_all.map { |hwi| block.call(Ruote::Workitem.new(hwi)) }
+      fetch_all.map { |hwi| Ruote::Workitem.new(hwi) }
     end
 
     # A convenience method (especially when testing), returns the first
