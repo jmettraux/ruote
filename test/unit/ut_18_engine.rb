@@ -23,11 +23,24 @@ class UtEngineTest < Test::Unit::TestCase
     engine = Ruote::Engine.new(worker, false)
   end
 
+  def test_initialize_with_worker_and_without_logger
+
+    storage = determine_storage({})
+    worker = Ruote::Worker.new(storage)
+    engine = Ruote::Engine.new(worker, false)
+  end
+
   def test_initialize_with_storage
 
     storage = determine_storage(
       's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])
 
+    engine = Ruote::Engine.new(storage)
+  end
+
+  def test_initialize_storage_without_logger
+
+    storage = determine_storage({})
     engine = Ruote::Engine.new(storage)
   end
 end

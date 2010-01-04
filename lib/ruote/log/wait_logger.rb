@@ -40,7 +40,7 @@ module Ruote
       @waiting = nil
       @color = 33
 
-      @context.worker.subscribe(:all, self) if @context.respond_to?(:worker)
+      @context.worker.subscribe(:all, self) if @context.respond_to?(:worker) && !@context.worker.nil?
 
       @noisy = false
     end
