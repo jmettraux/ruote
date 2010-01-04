@@ -42,5 +42,31 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_nil @engine.process(wfid)
   end
+
+  def test_purge
+
+    pdef = Ruote.process_definition :name => 'def0' do
+      alpha
+    end
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    assert_equal 1, @engine.storage.get_many('workitems').size
+
+    alpha = Ruote::StorageParticipant.new
+    alpha.context = @engine.context
+
+    assert !alpha.first.nil?
+
+    alpha.purge!
+
+    assert alpha.first.nil?
+  end
 end
 
