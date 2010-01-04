@@ -118,6 +118,12 @@ module Ruote
       hwi ? Ruote::Workitem.new(hwi) : nil
     end
 
+    # Clean this participant out completely
+    def purge!
+
+      fetch_all.each { |hwi| @context.storage.delete( hwi ) }
+    end
+
     protected
 
     def fetch_all
