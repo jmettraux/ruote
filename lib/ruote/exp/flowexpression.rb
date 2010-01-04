@@ -320,7 +320,7 @@ module Ruote::Exp
     def cancel (flavour)
 
       return reply_to_parent(h.applied_workitem) \
-        unless h.children.find { |cfei| Ruote::FlowExpression.fetch(cfei) }
+        unless h.children.find { |cfei| Ruote::Exp::FlowExpression.fetch(@context, cfei) }
 
       do_persist || return
         # before firing the cancel message to the children
