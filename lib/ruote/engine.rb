@@ -40,7 +40,7 @@ module Ruote
 
     def initialize (worker_or_storage, run=true)
 
-      if worker_or_storage.respond_to?(:context)
+      if worker_or_storage.respond_to?(:storage)
 
         @worker = worker_or_storage
         @storage = @worker.storage
