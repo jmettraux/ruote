@@ -68,5 +68,26 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert alpha.first.nil?
   end
+
+  def test_find_by_wfid
+
+    pdef = Ruote.process_definition :name => 'def0' do
+      concurrence do
+        alpha
+        alpha
+      end
+    end
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    alpha = Ruote::StorageParticipant.new
+    alpha.context = @engine.context
+
+    assert_equal 2, alpha.by_wfid(wfid).size
+  end
 end
 
