@@ -57,6 +57,7 @@ module Ruote
 
       @context.storage.put(doc)
     end
+    alias :update :consume
 
     # Makes sure to remove the workitem from the in-memory hash.
     #
