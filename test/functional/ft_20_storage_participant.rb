@@ -83,10 +83,13 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
 
     wait_for(:alpha)
+    wait_for(:alpha)
+      # wait for the two workitems
 
     alpha = Ruote::StorageParticipant.new
     alpha.context = @engine.context
 
+    assert_equal 2, alpha.size
     assert_equal 2, alpha.by_wfid(wfid).size
   end
 end
