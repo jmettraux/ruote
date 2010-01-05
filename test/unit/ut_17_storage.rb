@@ -10,7 +10,11 @@ begin
 rescue LoadError
   require 'json'
 end
-require 'patron' rescue nil
+begin
+  require 'patron'
+rescue LoadError
+  # stick with net/http
+end
 
 require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
 require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
