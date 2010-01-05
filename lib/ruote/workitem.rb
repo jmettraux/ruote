@@ -64,6 +64,11 @@ module Ruote
       @h['fields']
     end
 
+    def fields=( fields )
+
+      @h['fields'] = fields
+    end
+
     # A shortcut to the value in the field named __result__
     #
     # This field is used by the if expression for instance to determine
