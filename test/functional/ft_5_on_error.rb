@@ -1,6 +1,6 @@
 
 #
-# Testing Ruote (OpenWFEru)
+# testing ruote
 #
 # Tue Jun  2 18:48:02 JST 2009
 #
