@@ -55,9 +55,12 @@ module Ruote
 
       # merge! is way faster than merge (no object creation probably)
 
+      t = Time.now
+      t = "#{t.to_i}.#{"%06d" % t.usec}"
+
       msg = options.merge!(
         'type' => 'msgs',
-        '_id' => "#{$$}-#{Thread.current.object_id}-#{Time.now.to_f.to_s}",
+        '_id' => "#{$$}-#{Thread.current.object_id}-#{t}",
         'action' => action)
 
       msg.delete('_rev')
