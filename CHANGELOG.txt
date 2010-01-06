@@ -3,6 +3,7 @@
 
 == ruote - 2.1.4          not yet released
 
+- using yyyy-mm-dd instead of yyyy/mm/dd for Ruote.time_to_utc_s(t)
 - implemented Storage#purge_type!(t)
 - Engine#add_service now returning just bound service
 
