@@ -14,7 +14,7 @@ require 'ruote/part/no_op_participant'
 class FtStorageHistoryTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_launch
+  def test_by_wfid
 
     pdef = Ruote.process_definition do
       alpha
@@ -47,7 +47,12 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
     history.clear!
 
-    assert_equal 0, @engine.storage.get_many('history')
+    assert_equal 0, @engine.storage.get_many('history').size
+  end
+
+  def test_by_date
+
+    flunk
   end
 end
 

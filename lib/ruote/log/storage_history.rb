@@ -62,8 +62,6 @@ module Ruote
     end
 
     def by_date (date)
-
-      # TODO : implement me
     end
 
     #def history_to_tree (wfid)
@@ -76,6 +74,8 @@ module Ruote
     # Call this *dangerous* clear! method to clean out any history file.
     #
     def clear!
+
+      @context.storage.purge_type!('history')
     end
 
     # This is the method called by the workqueue. Incoming engine events
@@ -86,9 +86,6 @@ module Ruote
       msg = msg.dup
         # a shallow copy is sufficient
 
-      t = msg['_id'].split('-').last
-        # '_id' => "#{$$}-#{Thread.current.object_id}-#{Time.now.to_f.to_s}"
-
       si = if fei = msg['fei']
         Ruote::FlowExpressionId.to_storage_id(fei)
       else
@@ -96,7 +93,7 @@ module Ruote
       end
 
       msg['original_id'] = msg['_id']
-      msg['_id'] = "#{t}!#{si}"
+      msg['_id'] = "#{msg['put_at']}!#{si}"
       msg['type'] = 'history'
       msg['original_put_at'] = msg['put_at']
       msg.delete('_rev')
