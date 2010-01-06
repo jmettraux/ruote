@@ -1,6 +1,10 @@
 
 = ruote - CHANGELOG.txt
 
+== ruote - 2.1.4          not yet released
+
+- Engine#add_service now returning just bound service
+
 
 == ruote - 2.1.3          released 2010/01/04
 

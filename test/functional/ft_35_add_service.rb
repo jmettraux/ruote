@@ -44,5 +44,13 @@ class FtAddServiceTest < Test::Unit::TestCase
     assert_equal MyService, @engine.context.toto.class
     assert_equal 'blue', @engine.context.toto.options['colour']
   end
+
+  def test_add_service_returns_service
+
+    toto = @engine.add_service(
+      'toto', 'ruote', 'FtAddServiceTest::MyService', 'colour' => 'blue')
+
+    assert_equal MyService, toto.class
+  end
 end
 

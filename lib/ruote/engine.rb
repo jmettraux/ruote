@@ -306,6 +306,8 @@ module Ruote
     #
     #   @engine.add_service('tracer', 'ruote/exp/tracer', 'Ruote::Exp::Tracer')
     #
+    # This method returns the service instance it just bound.
+    #
     def add_service (name, path_or_instance, classname=nil, opts=nil)
 
       @context.add_service(name, path_or_instance, classname, opts)
