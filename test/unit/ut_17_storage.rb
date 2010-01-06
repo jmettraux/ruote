@@ -134,5 +134,12 @@ class UtStorage < Test::Unit::TestCase
 
     assert_equal true, @s.put(h)
   end
+
+  def test_purge_type
+
+    @s.purge_type!('dogfood')
+
+    assert_equal 0, @s.get_many('dogfood').size
+  end
 end
 

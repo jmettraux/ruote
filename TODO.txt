@@ -169,6 +169,7 @@
 [o] add_branches : pass message to concurrent_iterator like a command expression
 [o] clean up persists present in #apply
 [o] maybe cancel should have a safely / redo_reply thing
+[o] implement Storage#clear!(type)
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -286,5 +287,4 @@
 
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
-[ ] implement Storage#clear!(type)
 

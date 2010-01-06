@@ -154,6 +154,11 @@ module Ruote
       @h[type] = {}
     end
 
+    def purge_type! (type)
+
+      @h[type] = {}
+    end
+
     def dump (type)
 
       s = "=== #{type} ===\n"

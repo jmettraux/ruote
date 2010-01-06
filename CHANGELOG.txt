@@ -3,6 +3,7 @@
 
 == ruote - 2.1.4          not yet released
 
+- implemented Storage#purge_type!(t)
 - Engine#add_service now returning just bound service
 
 

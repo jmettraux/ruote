@@ -82,6 +82,11 @@ module Ruote
     def add_type (type)
     end
 
+    def purge_type! (type)
+
+      @cloche.purge_type!(type)
+    end
+
     def dump (type)
 
       s = "=== #{type} ===\n"
