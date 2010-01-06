@@ -67,9 +67,8 @@ module Ruote
       @file.close rescue nil
     end
 
-    # Returns an array of Ruote::Record instances, each record represents
-    # a ruote engine [history] event.
-    # Returns an empty array if no history was found for the given wfid.
+    # Returns the messages concerning the process given by its wfid,
+    # or an empty array if there were no such process seen.
     #
     def by_process (wfid)
 
@@ -118,8 +117,8 @@ module Ruote
       end
     end
 
-    # Returns an array of Record instances for a given date, and any process
-    # instance.
+    # Returns an array of messages for a given day or an empty array if nothing
+    # happened at that date.
     #
     def by_date (date)
 

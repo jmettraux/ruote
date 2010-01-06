@@ -73,7 +73,7 @@ module Ruote
 
       key = "s_#{key}" unless key.match(/^s\_/)
 
-      if klass
+      service = if klass
 
         require(path)
 
@@ -87,6 +87,8 @@ module Ruote
       end
 
       self.class.class_eval %{ def #{key[2..-1]}; @conf['#{key}']; end }
+
+      service
     end
 
     def shutdown

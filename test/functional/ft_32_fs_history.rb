@@ -18,7 +18,7 @@ require 'ruote/log/fs_history'
 require 'ruote/part/no_op_participant'
 
 
-class FtHistoryTest < Test::Unit::TestCase
+class FtFsHistoryTest < Test::Unit::TestCase
   include FunctionalBase
 
   def test_launch

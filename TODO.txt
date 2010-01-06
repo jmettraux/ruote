@@ -286,4 +286,5 @@
 
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
+[ ] implement Storage#clear!(type)
 

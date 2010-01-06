@@ -24,7 +24,7 @@ class UtStorage < Test::Unit::TestCase
 
   def setup
     @s = determine_storage({})
-    @s.add_test_type('dogfood') if @s.respond_to?(:add_test_type)
+    @s.add_type('dogfood')
     @s.put(
       '_id' => 'toto',
       'type' => 'dogfood',

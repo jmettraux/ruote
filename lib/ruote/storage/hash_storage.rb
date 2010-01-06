@@ -70,7 +70,7 @@ module Ruote
         doc['put_at'] = Ruote.now_to_utc_s
         doc['_rev'] = doc['_rev'] + 1
 
-        (@h[doc['type']] ||= {})[doc['_id']] = Rufus::Json.dup(doc)
+        @h[doc['type']][doc['_id']] = Rufus::Json.dup(doc)
 
         nil
       end
@@ -149,6 +149,11 @@ module Ruote
       @h['configurations']['engine'] = @options
     end
 
+    def add_type (type)
+
+      @h[type] = {}
+    end
+
     def dump (type)
 
       s = "=== #{type} ===\n"
@@ -160,11 +165,6 @@ module Ruote
           s2 << "  #{k1} => #{v[k1].inspect}\n"
         end
       end
-    end
-
-    def add_test_type (type)
-
-      @h[type] = {}
     end
   end
 end
