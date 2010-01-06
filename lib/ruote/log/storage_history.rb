@@ -62,6 +62,10 @@ module Ruote
     end
 
     def by_date (date)
+
+      date = Time.parse(date.to_s).strftime('%F')
+
+      @context.storage.get_many('history', /^#{date} /)
     end
 
     #def history_to_tree (wfid)

@@ -52,6 +52,26 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
   def test_by_date
 
+    @engine.add_service(
+      'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
+
+    9.times do |i|
+      @engine.storage.put(
+        '_id' => "2010-01-06 09:37:47.11414#{i} UTC!0!!20100106-bichisosupo",
+        'type' => 'history')
+    end
+    9.times do |i|
+      @engine.storage.put(
+        '_id' => "2010-01-07 09:37:47.11414#{i} UTC!0!!20100107-bichitehoni",
+        'type' => 'history')
+    end
+
+    assert_equal 9, @engine.context.history.by_date('2010-01-06').size
+    assert_equal 9, @engine.context.history.by_date('2010-01-07').size
+  end
+
+  def test_range
+
     flunk
   end
 end
