@@ -215,8 +215,6 @@ module Ruote
 
       return false unless @storage.reserve(msg)
 
-      fexp = nil
-
       begin
 
         action = msg['action']
@@ -248,7 +246,7 @@ module Ruote
 
       rescue Exception => ex
 
-        handle_exception(msg, fexp, ex)
+        handle_exception(msg, nil, ex)
       end
 
       true
