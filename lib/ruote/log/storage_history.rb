@@ -60,15 +60,17 @@ module Ruote
 
       ids = @context.storage.ids('history')
 
-      [ Time.parse("#{ids.first.split(' ').first} 00:00:00 UTC"),
-        Time.parse("#{ids.last.split(' ').first} 24:00:00 UTC") ]
+      first = Time.parse("#{ids.first.split('!')[0]} 00:00:00 UTC")
+      last = Time.parse("#{ids.last.split('!')[0]} 00:00:00 UTC") + 24 * 3600
+
+      [ first, last ]
     end
 
     def by_date (date)
 
       date = Time.parse(date.to_s).strftime('%F')
 
-      @context.storage.get_many('history', /^#{date} /)
+      @context.storage.get_many('history', /^#{date}!/)
     end
 
     #def history_to_tree (wfid)
@@ -99,8 +101,10 @@ module Ruote
         msg['wfid'] || 'no_wfid'
       end
 
+      t = Time.parse(msg['put_at'])
+
       msg['original_id'] = msg['_id']
-      msg['_id'] = "#{msg['put_at']}!#{si}"
+      msg['_id'] = "#{t.strftime('%F')}!#{t.to_i}_#{"%06d" % t.usec}!#{si}"
       msg['type'] = 'history'
       msg['original_put_at'] = msg['put_at']
       msg.delete('_rev')
