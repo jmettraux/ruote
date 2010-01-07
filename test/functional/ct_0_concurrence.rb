@@ -27,7 +27,11 @@ class CtConcurrenceTest < Test::Unit::TestCase
     wfid = @engine0.launch(pdef)
     @engine0.step 4
 
-    $stderr.puts "*cough*" if @storage.get_msgs.size != 2
+    msgs = @storage.get_msgs
+    $stderr.puts "*cough*" if msgs.size != 2
+    #msgs.each do |m|
+    #  p [ m['action'], m['fei']['expid'], m['workitem'] ]
+    #end
 
     t0 = Thread.new { @engine1.step! }
     t1 = Thread.new { @engine0.step! }

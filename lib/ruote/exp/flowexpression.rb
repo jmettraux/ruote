@@ -146,6 +146,15 @@ module Ruote::Exp
     def self.do_action (context, msg)
 
       fexp = fetch(context, msg['fei'])
+
+      2.times do
+        unless fexp
+          sleep 0.028
+          fexp = fetch(context, msg['fei'])
+        end
+      end
+        # temporary couch solution :( TODO fix at the root
+
       fexp.send("do_#{msg['action']}", msg) if fexp
     end
 
