@@ -58,7 +58,10 @@ module Ruote
     #
     def range
 
-      # TODO : implement me
+      ids = @context.storage.ids('history')
+
+      [ Time.parse("#{ids.first.split(' ').first} 00:00:00 UTC"),
+        Time.parse("#{ids.last.split(' ').first} 24:00:00 UTC") ]
     end
 
     def by_date (date)

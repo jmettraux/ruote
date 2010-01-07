@@ -72,6 +72,11 @@ module Ruote
       @cloche.get_many(type, key, opts)
     end
 
+    def ids (type)
+
+      @cloche.ids(type)
+    end
+
     def purge!
 
       FileUtils.rm_rf(@cloche.dir)

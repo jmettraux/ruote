@@ -128,6 +128,13 @@ module Ruote
       end
     end
 
+    # Returns a sorted list of all the ids for a given type.
+    #
+    def ids (type)
+
+      @h[type].keys.sort
+    end
+
     def purge!
 
       @h = %w[

@@ -141,5 +141,14 @@ class UtStorage < Test::Unit::TestCase
 
     assert_equal 0, @s.get_many('dogfood').size
   end
+
+  def test_ids
+
+    @s.put('_id' => 'ouinouin', 'type' => 'dogfood', 'message' => 'testing')
+    @s.put('_id' => 'nada', 'type' => 'dogfood', 'message' => 'testing')
+    @s.put('_id' => 'estereo', 'type' => 'dogfood', 'message' => 'testing')
+
+    assert_equal %w[ estereo nada ouinouin toto ], @s.ids('dogfood')
+  end
 end
 
