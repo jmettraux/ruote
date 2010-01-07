@@ -145,15 +145,14 @@ module Ruote::Exp
 
     def self.do_action (context, msg)
 
-      fexp = fetch(context, msg['fei'])
+      fexp = nil
 
-      2.times do
-        unless fexp
-          sleep 0.028
-          fexp = fetch(context, msg['fei'])
-        end
+      3.times do
+        fexp = fetch(context, msg['fei'])
+        break if fexp
+        sleep 0.028
       end
-        # temporary couch solution :( TODO fix at the root
+        # this retry system is only useful with ruote-couch
 
       fexp.send("do_#{msg['action']}", msg) if fexp
     end
