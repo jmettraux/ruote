@@ -67,8 +67,7 @@ module Ruote
         # in case of message replay
 
       put(msg)
-        #, :update_rev => true)
-
+      #put(msg, :update_rev => true)
       #(@local_msgs ||= []) << options
     end
 
