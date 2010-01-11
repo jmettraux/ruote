@@ -1,7 +1,7 @@
 
 = ruote - CHANGELOG.txt
 
-== ruote - 2.1.4          not yet released
+== ruote - 2.1.4          released 2010/01/11
 
 - implemented StorageHistory
 - using yyyy-mm-dd instead of yyyy/mm/dd for Ruote.time_to_utc_s(t)
