@@ -202,6 +202,46 @@ class FtErrorsTest < Test::Unit::TestCase
     assert_equal %w[ alpha alpha done. ].join("\n"), @tracer.to_s
   end
 
+  class WeakCancelParticipant
+    include Ruote::LocalParticipant
+
+    def initialize (opts)
+    end
+    def consume (workitem)
+      # losing it
+    end
+    def do_not_thread
+      true
+    end
+    def cancel (fei, flavour)
+      raise "failure in #cancel"
+    end
+  end
+
+  def test_error_in_participant_cancel
+
+    pdef = Ruote.process_definition do
+      alpha
+    end
+
+    @engine.register_participant 'alpha', WeakCancelParticipant
+
+    noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    @engine.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    puts ps.errors.first.trace
+    puts ps.expressions.size
+  end
+
   def test_errors_and_subprocesses
 
     pdef = Ruote.process_definition do
