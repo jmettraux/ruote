@@ -27,6 +27,12 @@ require 'ruote/part/local_participant'
 
 module Ruote
 
+  #
+  # A participant that stores the workitem in the same storage used by the
+  # engine and the worker(s).
+  #
+  # Does not thread by default.
+  #
   class StorageParticipant
 
     include LocalParticipant
@@ -151,18 +157,20 @@ module Ruote
 
     def fetch_all
 
-      key = @store_name ? /^wi\_#{@store_name}::/ : nil
+      key = @store_name ? /^wi!#{@store_name}::/ : nil
 
       @context.storage.get_many('workitems', key)
     end
 
     def to_id (fei)
 
-      sid = Ruote.to_storage_id(fei)
+      a = [ Ruote.to_storage_id(fei) ]
 
-      sid = @store_name ? "#{store_name}::#{sid}" : sid
+      a.unshift(@store_name) if @store_name
 
-      "wi_#{sid}"
+      a.unshift('wi')
+
+      a.join('!')
     end
   end
 end
