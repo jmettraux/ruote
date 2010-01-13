@@ -137,6 +137,7 @@ module Ruote
         '_id' => "err_#{Ruote.to_storage_id(fei)}",
         'message' => ex.inspect,
         'trace' => ex.backtrace.join("\n"),
+        'fei' => fei,
         'msg' => msg
       ) if fei
     end

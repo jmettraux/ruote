@@ -96,7 +96,7 @@ module Ruote
 
     def find_root_expression (wfid)
 
-      get_many('expressions', /#{wfid}$/).sort { |a, b|
+      get_many('expressions', /!#{wfid}$/).sort { |a, b|
         a['fei']['expid'] <=> b['fei']['expid']
       }.select { |e|
         e['parent_id'].nil?

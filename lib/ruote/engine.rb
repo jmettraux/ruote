@@ -141,12 +141,12 @@ module Ruote
     #
     def process (wfid)
 
-      exps = @storage.get_many('expressions', /#{wfid}$/)
+      exps = @storage.get_many('expressions', /!#{wfid}$/)
 
       return nil if exps.size < 1
 
       ProcessStatus.new(
-        @context, exps, @storage.get_many('errors', /#{wfid}$/))
+        @context, exps, @storage.get_many('errors', /!#{wfid}$/))
     end
 
     # Returns an array of ProcessStatus instances.
