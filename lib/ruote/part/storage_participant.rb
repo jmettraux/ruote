@@ -139,14 +139,50 @@ module Ruote
       @context.storage.get_many('workitems', /!#{wfid}$/).map { |hwi| Ruote::Workitem.new(hwi) }
     end
 
-    # Return all workitems for the specified participant
+    # Returns all workitems for the specified participant name
     #
-    def by_participant( part )
+    def by_participant (participant_name)
 
-      all.select { |wi| wi.participant_name == part }
+
+      hwis = if @context.storage.respond_to?(:by_participant)
+
+        @context.storage.by_participant('workitems', participant_name)
+
+      else
+
+        fetch_all.select { |wi| wi['participant_name'] == participant_name }
+      end
+
+      hwis.collect { |hwi| Ruote::Workitem.new(hwi) }
     end
 
-    # Clean this participant out completely
+    # field : returns all the workitems with the given field name present.
+    #
+    # field and value : returns all the workitems with the given field name
+    # and the given value for that field.
+    #
+    # Warning : only some storages are optimized for such queries (like
+    # CouchStorage), the others will load all the workitems and then filter
+    # them.
+    #
+    def by_field (field, value=nil)
+
+      hwis = if @context.storage.respond_to?(:by_field)
+
+        @context.storage.by_field('workitems', field, value)
+
+      else
+
+        fetch_all.select { |hwi|
+          hwi['fields'].keys.include?(field) &&
+          (value.nil? || hwi['fields'][field] == value)
+        }
+      end
+
+      hwis.collect { |hwi| Ruote::Workitem.new(hwi) }
+    end
+
+    # Cleans this participant out completely
     #
     def purge!
 

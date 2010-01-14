@@ -93,19 +93,27 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 2, alpha.by_wfid(wfid).size
   end
 
-  def test_find_by_participant
-
-    pdef = Ruote.process_definition :name => 'def0' do
-      concurrence do
+  CON_AL_BRAVO = Ruote.process_definition :name => 'con_al_bravo' do
+    set 'f:place' => 'heiankyou'
+    concurrence do
+      sequence do
+        set 'f:character' => 'minamoto no hirosama'
         alpha
+      end
+      sequence do
+        set 'f:character' => 'seimei'
+        set 'f:adversary' => 'doson'
         bravo
       end
     end
+  end
+
+  def test_find_by_participant
 
     @engine.register_participant :alpha, Ruote::StorageParticipant
     @engine.register_participant :bravo, Ruote::StorageParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @engine.launch(CON_AL_BRAVO)
 
     wait_for(:bravo)
 
@@ -115,6 +123,42 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 2, part.size
     assert_equal 1, part.by_participant('alpha').size
     assert_equal 1, part.by_participant('bravo').size
+  end
+
+  def test_by_field
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @engine.register_participant :bravo, Ruote::StorageParticipant
+
+    wfid = @engine.launch(CON_AL_BRAVO)
+
+    wait_for(:bravo)
+
+    part = Ruote::StorageParticipant.new
+    part.context = @engine.context
+
+    assert_equal 2, part.size
+    assert_equal 2, part.by_field('place').size
+    assert_equal 2, part.by_field('character').size
+    assert_equal 1, part.by_field('adversary').size
+  end
+
+  def test_by_field_and_value
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @engine.register_participant :bravo, Ruote::StorageParticipant
+
+    wfid = @engine.launch(CON_AL_BRAVO)
+
+    wait_for(:bravo)
+
+    part = Ruote::StorageParticipant.new
+    part.context = @engine.context
+
+    assert_equal 2, part.size
+    assert_equal 0, part.by_field('place', 'nara').size
+    assert_equal 2, part.by_field('place', 'heiankyou').size
+    assert_equal 1, part.by_field('character', 'minamoto no hirosama').size
   end
 end
 
