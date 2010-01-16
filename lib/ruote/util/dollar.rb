@@ -151,8 +151,8 @@ module Ruote
 
       return '' if @fexp.context[:ruby_eval_allowed] != true
 
-      wi = @workitem
-      workitem = @workitem
+      wi = Ruote::Workitem.new(@workitem)
+      workitem = wi
 
       fe = @fexp
       fexp = @fexp
@@ -169,6 +169,5 @@ module Ruote
       eval(ruby_code, binding()).to_s
     end
   end
-
 end
 

@@ -86,5 +86,22 @@ class FtDollarTest < Test::Unit::TestCase
 
     assert_trace(pdef, '>3<')
   end
+
+  def test_r_and_wi
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set 'f:toto' => 'person'
+        echo "${r:wi.fields['toto']}"
+        echo "${r:workitem.fields['toto']}"
+      end
+    end
+
+    #noisy
+
+    @engine.context[:ruby_eval_allowed] = true
+
+    assert_trace pdef, "person\nperson"
+  end
 end
 
