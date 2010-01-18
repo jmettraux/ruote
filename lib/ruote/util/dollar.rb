@@ -168,6 +168,22 @@ module Ruote
 
       eval(ruby_code, binding()).to_s
     end
+
+    # This 'd' function can be called from inside ${r:...} notations.
+    #
+    #   pdef = Ruote.process_definition do
+    #     sequence do
+    #       set 'f:toto' => 'person'
+    #       echo "${r:d('f:toto')}"
+    #     end
+    #   end
+    #
+    # will yield "person".
+    #
+    def d (s)
+
+      Rufus.dsub("${#{s}}", self)
+    end
   end
 end
 

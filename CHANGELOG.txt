@@ -4,6 +4,7 @@
 
 == ruote - 2.1.5    not yet released
 
+- added d() to the $ notation : echo "${r: d('f:toto') }"
 - Engine#kill_process(wfid) can cure errored participant expressions
 - made sure ${r:wi} and ${r:workitem} is and instance of Ruote::Workitem
 - implemented StorageParticipant#by_field

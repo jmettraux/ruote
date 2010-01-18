@@ -103,5 +103,36 @@ class FtDollarTest < Test::Unit::TestCase
 
     assert_trace pdef, "person\nperson"
   end
+
+  def test_r_and_d
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set 'f:toto' => 'person'
+        echo "${r:d('f:toto')}"
+      end
+    end
+
+    #noisy
+
+    @engine.context[:ruby_eval_allowed] = true
+
+    assert_trace pdef, 'person'
+  end
+
+  def test_nested
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set 'f:a' => 'a'
+        set 'v:a' => 'AA'
+        echo '${v:${f:a}}'
+      end
+    end
+
+    #noisy
+
+    assert_trace pdef, 'AA'
+  end
 end
 
