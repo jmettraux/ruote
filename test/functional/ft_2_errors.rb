@@ -226,7 +226,7 @@ class FtErrorsTest < Test::Unit::TestCase
 
     @engine.register_participant 'alpha', WeakCancelParticipant
 
-    noisy
+    #noisy
 
     wfid = @engine.launch(pdef)
 
@@ -238,8 +238,17 @@ class FtErrorsTest < Test::Unit::TestCase
 
     ps = @engine.process(wfid)
 
-    puts ps.errors.first.trace
-    puts ps.expressions.size
+    #puts ps.errors.first.trace
+    assert_equal 1, ps.errors.size
+    assert_equal 2, ps.expressions.size
+
+    @engine.kill_process(wfid)
+
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    assert_nil ps
   end
 
   def test_errors_and_subprocesses

@@ -162,12 +162,17 @@ module Ruote::Exp
 
     def cancel (flavour)
 
-      # TODO : if flavour is 'kill', why not not trigger participant.cancel ?
-
       participant = @context.plist.lookup(h.participant_name)
-      participant.cancel(fei, flavour)
-        # TODO should this be threaded ?
-        # TODO should errors be intercepted here ?
+
+      if flavour == 'kill'
+        begin
+          participant.cancel(fei, 'kill')
+        rescue Exception => e
+          # intercept anything
+        end
+      else
+        participant.cancel(fei, flavour)
+      end
 
       reply_to_parent(h.applied_workitem)
     end
