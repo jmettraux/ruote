@@ -172,6 +172,7 @@
 [o] implement Storage#clear!(type)
 [o] ruote/util/time.rb utc_to_s 'YYYY/MM/DD' --> 'YYYY-MM-DD' (regex friendly)
 [x] store participant bytecode/AST ?
+[o] ${r:puts(d("f:nada"))}
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -290,6 +291,5 @@
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
-[ ] ${r:puts(d("f:nada"))}
 [ ] :ruby_eval_allowed vs 'ruby_eval_allowed'
 

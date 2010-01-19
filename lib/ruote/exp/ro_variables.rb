@@ -64,7 +64,9 @@ module Ruote::Exp
 
       if h.variables
 
-        val = h.variables[var]
+        #val = h.variables[var]
+        val = Ruote.lookup(h.variables, var)
+
         return val if val != nil
       end
 

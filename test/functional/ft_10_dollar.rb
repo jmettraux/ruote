@@ -43,6 +43,25 @@ class FtDollarTest < Test::Unit::TestCase
     assert_trace(pdef, %w[ a b0 c0 d0 ])
   end
 
+  def test_nested_v
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set(
+          :var => 'v0',
+          :val => {
+            'name' => 'toto',
+            'address' => [ 'e-street', 'atlantic_city' ] })
+        echo 'a:${v:v0.name}'
+        echo 'b:${v:v0.address.1}'
+      end
+    end
+
+    #noisy
+
+    assert_trace(pdef, %w[ a:toto b:atlantic_city ])
+  end
+
   def test_f
 
     pdef = Ruote.process_definition do
