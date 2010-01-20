@@ -133,7 +133,7 @@ module Ruote::Exp
   #
   # == ${ruby:'hello'}
   #
-  # Remember that, if the engine's :ruby_eval_allowed is set to true, the
+  # Remember that, if the engine's 'ruby_eval_allowed' is set to true, the
   # condition may contain Ruby code.
   #
   #   _when '${r:"hell" + "o"} == hello'

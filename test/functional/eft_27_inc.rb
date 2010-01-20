@@ -93,7 +93,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_inc_array
 
-    @engine.context[:ruby_eval_allowed] = true
+    @engine.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -113,7 +113,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_inc_array_head
 
-    @engine.context[:ruby_eval_allowed] = true
+    @engine.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -133,7 +133,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_inc_array_missing
 
-    @engine.context[:ruby_eval_allowed] = true
+    @engine.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -174,7 +174,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_dec_array
 
-    @engine.context[:ruby_eval_allowed] = true
+    @engine.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -198,7 +198,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_dec_to
 
-    @engine.context[:ruby_eval_allowed] = true
+    @engine.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -219,7 +219,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_dec_val
 
-    @engine.context[:ruby_eval_allowed] = true
+    @engine.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do

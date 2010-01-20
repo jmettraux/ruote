@@ -149,7 +149,7 @@ module Ruote
     #
     def call_ruby (ruby_code)
 
-      return '' if @fexp.context[:ruby_eval_allowed] != true
+      return '' if @fexp.context['ruby_eval_allowed'] != true
 
       wi = Ruote::Workitem.new(@workitem)
       workitem = wi

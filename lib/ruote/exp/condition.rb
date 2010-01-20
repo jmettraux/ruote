@@ -73,11 +73,6 @@ module Ruote::Exp
       s ? s.to_s.gsub('&amp;', '&').gsub('&gt;', '>').gsub('&lt;', '<') : nil
     end
 
-    #def self.ruby_eval (s)
-    #  treechecker.check_conditional(s)
-    #  eval(s)
-    #end
-
     def self.to_b (o)
 
       o = o.strip if o.is_a?(String)

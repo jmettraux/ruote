@@ -101,7 +101,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.context[:ruby_eval_allowed] = true
+    @engine.context['ruby_eval_allowed'] = true
 
     assert_trace(pdef, '>3<')
   end
@@ -118,7 +118,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.context[:ruby_eval_allowed] = true
+    @engine.context['ruby_eval_allowed'] = true
 
     assert_trace pdef, "person\nperson"
   end
@@ -134,7 +134,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.context[:ruby_eval_allowed] = true
+    @engine.context['ruby_eval_allowed'] = true
 
     assert_trace pdef, 'person'
   end
