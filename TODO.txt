@@ -174,6 +174,11 @@
 [x] store participant bytecode/AST ?
 [o] ${r:puts(d("f:nada"))}
 [o] :ruby_eval_allowed vs 'ruby_eval_allowed'
+[o] check : what if a reply on a concurrence wants to save, whereas the
+    concurrence terminated (got removed) meanwhile ?
+    the reply returns true...
+[o] implement StorageHistory
+[x] nuke FsHistory ? keep
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -280,15 +285,11 @@
 [ ] at expression ?
 [ ] listen to participants/errors/tags {in|out}
 
-[ ] implement StorageHistory
-[ ] nuke FsHistory ?
-
 [ ] remove abort_on_exception=true
-
-[ ] check : what if a reply on a concurrence wants to save, whereas the
-    concurrence terminated (got removed) meanwhile ?
-    the reply returns true...
 
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
+
+[ ] EngineParticipant
+
 
