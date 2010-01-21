@@ -43,6 +43,7 @@ module Ruote
       @context.worker.subscribe(:all, self) if @context.worker
 
       @noisy = false
+      @count = -1
     end
 
     def notify (msg)
