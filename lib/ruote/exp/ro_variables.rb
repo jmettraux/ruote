@@ -70,7 +70,9 @@ module Ruote::Exp
         return val if val != nil
       end
 
-      if h.parent_id
+      if h.parent_id && h.parent_id['engine_id'] == @context.engine_id
+        #
+        # do not lookup variables in a remote engine ...
 
         return parent.lookup_variable(var, prefix)
       end

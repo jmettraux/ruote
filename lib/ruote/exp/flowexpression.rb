@@ -145,6 +145,15 @@ module Ruote::Exp
 
     def self.do_action (context, msg)
 
+      fei = msg['fei']
+      action = msg['action']
+
+      if action == 'reply' && fei['engine_id'] != context.engine_id
+        ep = context.plist.lookup(fei['engine_id'])
+        ep.reply(fei, msg['workitem']) if ep
+        return
+      end
+
       fexp = nil
 
       3.times do
@@ -154,7 +163,7 @@ module Ruote::Exp
       end
         # this retry system is only useful with ruote-couch
 
-      fexp.send("do_#{msg['action']}", msg) if fexp
+      fexp.send("do_#{action}", msg) if fexp
     end
 
     def do_apply
@@ -490,6 +499,19 @@ module Ruote::Exp
       tree[2]
     end
 
+    # Generates a sub_wfid, without hitting storage.
+    #
+    # There's a better implementation for sure...
+    #
+    def get_next_sub_wfid
+
+      i = [
+        $$, Time.now.to_f.to_s, self.hash.to_s, @h['fei'].inspect
+      ].join('-').hash
+
+      (i < 0 ? "1#{i * -1}" : "0#{i}").to_s
+    end
+
     protected
 
     def pre_apply_child (child_index, workitem, forget)
@@ -517,19 +539,6 @@ module Ruote::Exp
       persist_or_raise unless forget
 
       @context.storage.put_msg('apply', msg)
-    end
-
-    # Generates a sub_wfid, without hitting storage.
-    #
-    # There's a better implementation for sure...
-    #
-    def get_next_sub_wfid
-
-      i = [
-        $$, Time.now.to_f.to_s, self.hash.to_s, @h['fei'].inspect
-      ].join('-').hash
-
-      (i < 0 ? "1#{i * -1}" : "0#{i}").to_s
     end
 
     def register_child (fei)

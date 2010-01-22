@@ -1,0 +1,202 @@
+
+#
+# testing ruote
+#
+# Wed Jan 20 22:35:20 JST 2010
+#
+# between Denpasar and Singapore
+#
+
+require File.join(File.dirname(__FILE__), 'base')
+
+require 'ruote'
+require 'ruote/storage/fs_storage'
+require 'ruote/part/hash_participant'
+require 'ruote/part/engine_participant'
+
+
+class FtEngineParticipantTest < Test::Unit::TestCase
+  #include FunctionalBase
+
+  def setup
+
+    @engine0 =
+      Ruote::Engine.new(
+        Ruote::Worker.new(
+          Ruote::FsStorage.new('work0', 'engine_id' => 'engine0')))
+    @engine1 =
+      Ruote::Engine.new(
+        Ruote::Worker.new(
+          Ruote::FsStorage.new('work1', 'engine_id' => 'engine1')))
+
+    @tracer0 = Tracer.new
+    @engine0.add_service('tracer', @tracer0)
+
+    @tracer1 = Tracer.new
+    @engine1.add_service('tracer', @tracer1)
+
+    @engine0.register_participant(
+      'engine1',
+      Ruote::EngineParticipant,
+      'storage_class' => Ruote::FsStorage,
+      'storage_path' => 'ruote/storage/fs_storage',
+      'storage_args' => 'work1')
+    @engine1.register_participant(
+      'engine0',
+      Ruote::EngineParticipant,
+      'storage_class' => Ruote::FsStorage,
+      'storage_path' => 'ruote/storage/fs_storage',
+      'storage_args' => 'work0')
+  end
+
+  def teardown
+
+    @engine0.shutdown
+    @engine1.shutdown
+
+    FileUtils.rm_rf('work0')
+    FileUtils.rm_rf('work1')
+  end
+
+  def noisy
+
+    @engine0.context.logger.noisy = true
+    @engine1.context.logger.noisy = true
+    @engine1.context.logger.color = '32' # green
+  end
+
+  def test_as_participant
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
+        participant :ref => 'engine1', :pdef => 'subp'
+        echo 'c'
+      end
+      define 'subp' do
+        echo 'b'
+      end
+    end
+
+    #noisy
+
+    wfid = @engine0.launch(pdef)
+    @engine0.wait_for(wfid)
+
+    assert_equal "a\nc", @tracer0.to_s
+    assert_equal "b", @tracer1.to_s
+  end
+
+  def test_as_subprocess
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
+        subp :engine => 'engine1'
+        echo 'c'
+      end
+      define 'subp' do
+        echo 'b'
+      end
+    end
+
+    #noisy
+
+    wfid = @engine0.launch(pdef)
+    @engine0.wait_for(wfid)
+
+    assert_equal "a\nc", @tracer0.to_s
+    assert_equal "b", @tracer1.to_s
+  end
+
+  def test_cancel_process
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
+        subp :engine => 'engine1'
+        echo 'c'
+      end
+      define 'subp' do
+        alpha
+      end
+    end
+
+    #noisy
+
+    alpha = @engine1.register_participant :alpha, Ruote::HashParticipant.new
+
+    wfid = @engine0.launch(pdef)
+
+    @engine1.wait_for(:alpha)
+
+    assert_equal 1, alpha.size
+    assert_not_nil alpha.first.fei.sub_wfid
+
+    @engine0.cancel_process(wfid)
+    @engine0.wait_for(wfid)
+
+    assert_equal 0, alpha.size
+
+    assert_equal "a", @tracer0.to_s
+    assert_equal "", @tracer1.to_s
+  end
+
+  def test_with_variables
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set 'v:v0' => 'b'
+        echo 'a'
+        subp :engine => 'engine1'
+        echo 'c'
+      end
+      define 'subp' do
+        echo '${r:engine_id}:${v:v0}'
+      end
+    end
+
+    @engine1.context['ruby_eval_allowed'] = true
+      # just for ${r:engine_id}
+
+    #noisy
+
+    wfid = @engine0.launch(pdef)
+    @engine0.wait_for(wfid)
+
+    assert_equal "a\nc", @tracer0.to_s
+    assert_equal "engine1:b", @tracer1.to_s
+
+    assert_nil @engine0.process(wfid)
+  end
+
+  def test_with_uri
+
+    flunk
+
+    path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'pdef.xml'))
+
+    pdef = Ruote.process_definition do
+      participant :ref => 'engine1', :pdef => path
+    end
+
+    noisy
+
+    wfid = @engine0.launch(pdef)
+    @engine0.wait_for(wfid)
+
+    assert_equal "", @tracer0.to_s
+    assert_equal "", @tracer1.to_s
+  end
+
+  def test_forget
+
+    flunk
+  end
+
+  def test_replay_gone_engine_participant
+
+    flunk
+  end
+end
+

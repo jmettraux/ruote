@@ -116,7 +116,7 @@ module Ruote::Exp
   #
   #   subprocess :ref => 'http://pdefs.example.org/account/def1.xml'
   #
-  # Remember that the :remote_definition_allowed option of the engine has
+  # Remember that the 'remote_definition_allowed' option of the engine has
   # to be set to true for the latter to work, else the engine will refuse
   # to load definitions over HTTP.
   #

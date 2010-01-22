@@ -151,6 +151,8 @@ module Ruote
 
       return '' if @fexp.context['ruby_eval_allowed'] != true
 
+      engine_id = @fexp.context.engine_id
+
       wi = Ruote::Workitem.new(@workitem)
       workitem = wi
 

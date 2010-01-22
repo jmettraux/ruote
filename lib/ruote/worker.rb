@@ -284,8 +284,9 @@ module Ruote
 
       exp_hash = {
         'fei' => msg['fei'] || {
-          'engine_id' => @context['engine_id'] || 'engine',
+          'engine_id' => @context.engine_id,
           'wfid' => msg['wfid'],
+          'sub_wfid' => msg['sub_wfid'],
           'expid' => '0' },
         'parent_id' => msg['parent_id'],
         'original_tree' => tree,
@@ -341,12 +342,21 @@ module Ruote
         tree[1]['ref'] = key
         tree[1]['original_ref'] = tree[0] if key != tree[0]
 
-        tree[0] = sub ? 'subprocess' : 'participant'
+        if sub && engine = tree[1]['engine']
 
-        [ sub ?
-            Ruote::Exp::SubprocessExpression :
-            Ruote::Exp::ParticipantExpression,
-          tree ]
+          tree[1]['ref'] = engine
+          tree[1]['def'] = key
+
+          [ Ruote::Exp::ParticipantExpression, [ 'participant', *tree[1..2] ] ]
+
+        elsif sub
+
+          [ Ruote::Exp::SubprocessExpression, [ 'subprocess', *tree[1..2] ] ]
+
+        else
+
+          [ Ruote::Exp::ParticipantExpression, [ 'participant', *tree[1..2] ] ]
+        end
       else
 
         [ nil, tree ]

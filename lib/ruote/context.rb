@@ -52,6 +52,11 @@ module Ruote
       initialize_services
     end
 
+    def engine_id
+
+      @conf['engine_id'] || 'engine'
+    end
+
     def [] (key)
 
       @conf[key]

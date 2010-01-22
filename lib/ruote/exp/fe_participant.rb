@@ -164,17 +164,18 @@ module Ruote::Exp
 
       participant = @context.plist.lookup(h.participant_name)
 
-      if flavour == 'kill'
+      r = if flavour == 'kill'
         begin
           participant.cancel(fei, 'kill')
         rescue Exception => e
           # intercept anything
+          nil
         end
       else
         participant.cancel(fei, flavour)
       end
 
-      reply_to_parent(h.applied_workitem)
+      reply_to_parent(h.applied_workitem) if r != false
     end
 
     def reply_to_parent (workitem)
