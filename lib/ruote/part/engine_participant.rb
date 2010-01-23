@@ -29,7 +29,77 @@ require 'ruote/part/local_participant'
 module Ruote
 
   #
-  # Letting [segment of] processes run in another engine
+  # A participant for pushing the execution of [segments of] processes to
+  # other engines.
+  #
+  # It works by giving the participant the connection information to the storage
+  # of the other engine.
+  #
+  # For instance :
+  #
+  #  engine0 =
+  #    Ruote::Engine.new(
+  #      Ruote::Worker.new(
+  #        Ruote::FsStorage.new('work0', 'engine_id' => 'engine0')))
+  #  engine1 =
+  #    Ruote::Engine.new(
+  #      Ruote::Worker.new(
+  #        Ruote::FsStorage.new('work1', 'engine_id' => 'engine1')))
+  #
+  #  engine0.register_participant('engine1',
+  #    Ruote::EngineParticipant,
+  #    'storage_class' => Ruote::FsStorage,
+  #    'storage_path' => 'ruote/storage/fs_storage',
+  #    'storage_args' => 'work1')
+  #  engine1.register_participant('engine0',
+  #    Ruote::EngineParticipant,
+  #    'storage_class' => Ruote::FsStorage,
+  #    'storage_path' => 'ruote/storage/fs_storage',
+  #    'storage_args' => 'work0')
+  #
+  # In this example, two engines are created (note that their 'engine_id' is
+  # explicitely set (else it would default to 'engine')). Each engine is then
+  # registered as participant in the other engine. The registration parameters
+  # detail the class and the arguments to the storage of the target engine.
+  #
+  # This example is a bit dry / flat. A real world example would perhaps detail
+  # a 'master' engine connected to 'departemental' engines, something more
+  # hierarchical.
+  #
+  # The example also binds reciprocally engines. If the delegated processes
+  # are always 'forgotten', one could imagine not binding the source engine
+  # as a participant in the target engine (not need to answer back).
+  #
+  # There are then two variants for calling a subprocess
+  #
+  #   subprocess :ref => 'subprocess_name', :engine => 'engine1'
+  #     # or
+  #   participant :ref => 'engine1', :pdef => 'subprocess_name'
+  #
+  # It's OK to go for the shorter versions :
+  #
+  #   subprocess_name :engine => 'engine1'
+  #     # or
+  #   participant 'engine1', :pdef => 'subprocess_name'
+  #   engine1 :pdef => 'subprocess_name'
+  #
+  # The subprocess is defined in the current process, or it's given via its
+  # URL. The third variant is a subprocess bound as an engine variable.
+  #
+  #   engine.variables['variant_3'] = Ruote.process_definition do
+  #     participant 'hello_world_3'
+  #   end
+  #
+  #   pdef = Ruote.process_definition do
+  #     sequence do
+  #       engine1 :pdef => 'variant_1'
+  #       engine1 :pdef => 'http://pdefs.example.com/variant_2.rb'
+  #       engine1 :pdef => 'variant_3'
+  #     end
+  #     define 'variant_1' do
+  #       participant 'hello_world_1'
+  #     end
+  #   end
   #
   class EngineParticipant
 
