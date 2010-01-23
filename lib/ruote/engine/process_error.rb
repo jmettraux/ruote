@@ -68,6 +68,19 @@ module Ruote
     def to_h
       @h
     end
+
+    protected
+
+    def to_dot (opts)
+
+      i = fei.to_storage_id
+      label = "error : #{message.gsub(/"/, "'")}"
+
+      [
+        "\"err_#{i}\" [ label = \"#{label}\" ];",
+        "\"err_#{i}\" -> \"#{i}\" [ style = \"dotted\" ];"
+      ]
+    end
   end
 end
 

@@ -100,7 +100,11 @@ module Ruote
     #
     def wfid
 
-      root_expression.fei.wfid
+      begin
+        root_expression.fei.wfid
+      rescue
+        @errors.first.fei.wfid
+      end
     end
 
     def definition_name
@@ -149,6 +153,16 @@ module Ruote
       end
 
       s
+    end
+
+    def to_dot (opts={})
+
+      s = [ "digraph \"process wfid #{wfid}\" {" ]
+      @expressions.each { |e| s.push(*e.send(:to_dot, opts)) }
+      @errors.each { |e| s.push(*e.send(:to_dot, opts)) }
+      s << "}"
+
+      s.join("\n")
     end
 
     def to_h

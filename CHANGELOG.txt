@@ -4,6 +4,7 @@
 
 == ruote - 2.1.5    not yet released
 
+- implemented ProcessStatus#to_dot
 - if a participant implementation cancel method returns false,
   reply_to_parent will not get called
 - changes about errors without [stored] expressions, they now appear in process

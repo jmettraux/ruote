@@ -199,15 +199,6 @@ module Ruote::Exp
 
     def reply_to_parent (workitem, delete=true)
 
-      #if delete && h.state.nil?
-      #  p @msg
-      #  if @msg && @msg['action'] == 'reply'
-      #    do_unpersist || return
-      #  else
-      #    unpersist_or_raise
-      #  end
-      #end
-
       if h.tagname
 
         unset_variable(h.tagname)
@@ -519,6 +510,31 @@ module Ruote::Exp
     end
 
     protected
+
+    def to_dot (opts)
+
+      i = fei()
+
+      label = "#{[ i.wfid, i.sub_wfid, i.expid].join(" ")} #{tree.first}"
+      label += " (#{h.state})" if h.state
+
+      a = []
+      a << "\"#{i.to_storage_id}\" [ label=\"#{label}\" ];"
+
+      # parent
+
+      if h.parent_id
+        a << "\"#{i.to_storage_id}\" -> \"#{parent_id.to_storage_id}\";"
+      end
+
+      # children
+
+      h.children.each do |cfei|
+        a << "\"#{i.to_storage_id}\" -> \"#{Ruote.to_storage_id(cfei)}\";"
+      end
+
+      a
+    end
 
     def pre_apply_child (child_index, workitem, forget)
 

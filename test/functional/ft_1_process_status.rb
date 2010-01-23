@@ -432,5 +432,48 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal 'alpha', h['participant_name']
     assert_equal ["participant", {"ref"=>"alpha"}, []], h['original_tree']
   end
+
+  def test_to_dot
+
+    pdef = Ruote.process_definition :name => 'my process' do
+      concurrence do
+        participant :ref => 'alpha'
+        participant :ref => 'bravo'
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    ps = @engine.process(wfid)
+
+    #puts
+    #puts ps.to_dot
+
+    dot = ps.to_dot
+    dot = dot.gsub(wfid, 'wfid').strip
+
+    assert_equal(
+      %{
+digraph "process wfid wfid" {
+"0!!wfid" [ label="wfid  0 define" ];
+"0!!wfid" -> "0_0!!wfid";
+"0_0!!wfid" [ label="wfid  0_0 concurrence" ];
+"0_0!!wfid" -> "0!!wfid";
+"0_0!!wfid" -> "0_0_0!!wfid";
+"0_0!!wfid" -> "0_0_1!!wfid";
+"0_0_0!!wfid" [ label="wfid  0_0_0 participant" ];
+"0_0_0!!wfid" -> "0_0!!wfid";
+"0_0_1!!wfid" [ label="wfid  0_0_1 participant" ];
+"0_0_1!!wfid" -> "0_0!!wfid";
+"err_0_0_1!!wfid" [ label = "error : #<ArgumentError: no participant named 'bravo'>" ];
+"err_0_0_1!!wfid" -> "0_0_1!!wfid" [ style = "dotted" ];
+}
+      }.strip,
+      dot)
+  end
 end
 

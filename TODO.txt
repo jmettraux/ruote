@@ -180,6 +180,8 @@
 [o] implement StorageHistory
 [x] nuke FsHistory ? keep
 [o] EngineParticipant
+[x] expstorage.to_dot
+[o] process_status.to_dot
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -288,9 +290,6 @@
 
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
-
-[x] expstorage.to_dot
-[ ] process_status.to_dot
 
 [ ] ruote-dm 2.1
 
