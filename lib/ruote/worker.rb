@@ -155,7 +155,7 @@ module Ruote
 
         @last_time = now
 
-        @storage.get_schedules(delta, now).each do|sche|
+        @storage.get_schedules(delta, now).each do |sche|
           trigger(sche)
         end
       end
