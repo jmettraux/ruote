@@ -113,14 +113,7 @@ module Ruote
         exp.unpersist_or_raise if exp
       end
 
-      #@storage.delete(err.to_h) # remove error
-        #
-        # done when the expression gets deleted
-        #
-        # but
-        #
-        # is there a case, 5 lines above, where there is no expression
-        # to delete ?
+      @storage.delete(err.to_h) # remove error
 
       @storage.put_msg(action, msg) # trigger replay
     end
@@ -142,11 +135,11 @@ module Ruote
     def process (wfid)
 
       exps = @storage.get_many('expressions', /!#{wfid}$/)
+      errs = @storage.get_many('errors', /!#{wfid}$/)
 
-      return nil if exps.size < 1
+      return nil if exps.empty? && errs.empty?
 
-      ProcessStatus.new(
-        @context, exps, @storage.get_many('errors', /!#{wfid}$/))
+      ProcessStatus.new(@context, exps, errs)
     end
 
     # Returns an array of ProcessStatus instances.

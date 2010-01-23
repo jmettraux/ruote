@@ -246,9 +246,7 @@ class FtErrorsTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
-
-    assert_nil ps
+    assert_nil @engine.process(wfid)
   end
 
   def test_errors_and_subprocesses

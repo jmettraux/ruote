@@ -69,13 +69,10 @@ module Ruote::Exp
 
       return r if r
 
-      if h.has_error
-
-        err = @context.storage.get(
-          'errors', "err_#{Ruote.to_storage_id(h.fei)}")
-
-        @context.storage.delete(err) if err
-      end
+      #if h.has_error
+      err = @context.storage.get('errors', "err_#{Ruote.to_storage_id(h.fei)}")
+      @context.storage.delete(err) if err
+      #end
 
       nil
     end

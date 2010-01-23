@@ -315,7 +315,7 @@ module Ruote
     def raise_unknown_expression_error (exp_hash)
 
       exp_hash['state'] = 'failed'
-      exp_hash['has_error'] = true
+      #exp_hash['has_error'] = true
 
       Ruote::Exp::RawExpression.new(@context, exp_hash).persist_or_raise
         # undigested expression is stored

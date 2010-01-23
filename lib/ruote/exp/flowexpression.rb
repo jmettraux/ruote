@@ -149,8 +149,14 @@ module Ruote::Exp
       action = msg['action']
 
       if action == 'reply' && fei['engine_id'] != context.engine_id
+
         ep = context.plist.lookup(fei['engine_id'])
-        ep.reply(fei, msg['workitem']) if ep
+
+        raise(
+          "no EngineParticipant found under name '#{fei['engine_id']}'"
+        ) unless ep
+
+        ep.reply(fei, msg['workitem'])
         return
       end
 

@@ -23,11 +23,17 @@ class FtEngineParticipantTest < Test::Unit::TestCase
     @engine0 =
       Ruote::Engine.new(
         Ruote::Worker.new(
-          Ruote::FsStorage.new('work0', 'engine_id' => 'engine0')))
+          Ruote::FsStorage.new(
+            'work0',
+            'engine_id' => 'engine0',
+            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
     @engine1 =
       Ruote::Engine.new(
         Ruote::Worker.new(
-          Ruote::FsStorage.new('work1', 'engine_id' => 'engine1')))
+          Ruote::FsStorage.new(
+            'work1',
+            'engine_id' => 'engine1',
+            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
 
     @tracer0 = Tracer.new
     @engine0.add_service('tracer', @tracer0)
@@ -191,12 +197,68 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
   def test_forget
 
-    flunk
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
+        participant :ref => 'engine1', :pdef => 'subp', :forget => true
+        echo 'c'
+      end
+      define 'subp' do
+        echo 'b'
+      end
+    end
+
+    #noisy
+
+    wfid = @engine0.launch(pdef)
+    @engine0.wait_for(wfid) # terminated
+    @engine0.wait_for(wfid) # ceased
+
+    assert_equal [], @engine0.processes
+    assert_equal [], @engine1.processes
   end
 
   def test_replay_gone_engine_participant
 
-    flunk
+    @engine1.unregister_participant('engine0')
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
+        participant :ref => 'engine1', :pdef => 'subp'
+        echo 'c'
+      end
+      define 'subp' do
+        echo 'b'
+      end
+    end
+
+    #noisy
+
+    wfid = @engine0.launch(pdef)
+    @engine1.wait_for(wfid) # error
+
+    errs = @engine1.process(wfid).errors
+
+    assert_equal 1, errs.size
+
+    # fix error cause
+
+    @engine1.register_participant(
+      'engine0',
+      Ruote::EngineParticipant,
+      'storage_class' => Ruote::FsStorage,
+      'storage_path' => 'ruote/storage/fs_storage',
+      'storage_args' => 'work0')
+
+    # replay
+
+    @engine1.replay_at_error(errs.first)
+
+    @engine0.wait_for(wfid)
+
+    assert_equal "a\nc", @tracer0.to_s
+    assert_equal "b", @tracer1.to_s
   end
 end
 

@@ -144,6 +144,7 @@ module Ruote
       end
       s << "   errors : #{@errors.size}\n"
       @errors.each do |e|
+        s << "     #{e.fei.to_storage_id} :\n" if e.fei
         s << "     #{e.inspect}\n"
       end
 

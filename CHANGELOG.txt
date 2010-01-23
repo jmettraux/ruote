@@ -4,6 +4,10 @@
 
 == ruote - 2.1.5    not yet released
 
+- if a participant implementation cancel method returns false,
+  reply_to_parent will not get called
+- changes about errors without [stored] expressions, they now appear in process
+  statuses
 - EngineParticipant implemented
 - 'ruby_eval_allowed' instead of :ruby_eval_allowed
 - ${v:customer.address.1} deep trick now ok (as it was ok for fields)

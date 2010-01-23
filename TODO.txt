@@ -179,6 +179,7 @@
     the reply returns true...
 [o] implement StorageHistory
 [x] nuke FsHistory ? keep
+[o] EngineParticipant
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -204,8 +205,6 @@
 [ ] pooltool.ru
 
 [ ] participant dispatch thread throttling ?
-
-[ ] expstorage.to_dot
 
 [ ] tailcall
 [ ] subprocesses participants (alias ?)
@@ -290,6 +289,8 @@
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
-[ ] EngineParticipant
+[x] expstorage.to_dot
+[ ] process_status.to_dot
 
+[ ] ruote-dm 2.1
 
