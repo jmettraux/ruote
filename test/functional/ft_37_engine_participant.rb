@@ -172,21 +172,21 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
   def test_with_uri
 
-    flunk
-
     path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'pdef.xml'))
 
     pdef = Ruote.process_definition do
       participant :ref => 'engine1', :pdef => path
     end
 
-    noisy
+    #noisy
 
     wfid = @engine0.launch(pdef)
     @engine0.wait_for(wfid)
 
     assert_equal "", @tracer0.to_s
-    assert_equal "", @tracer1.to_s
+    assert_equal "a\nb", @tracer1.to_s
+
+    assert_nil @engine0.process(wfid)
   end
 
   def test_forget

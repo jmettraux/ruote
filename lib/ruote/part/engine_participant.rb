@@ -22,6 +22,7 @@
 # Made in Singapore.
 #++
 
+require 'ruote/subprocess'
 require 'ruote/part/local_participant'
 
 
@@ -93,13 +94,13 @@ module Ruote
 
       pdef = params['def'] || params['pdef'] || params['tree']
 
-      key, value = fexp.iterative_var_lookup(pdef)
+      tree = Ruote.lookup_subprocess(fexp, pdef)
 
       raise(
-        ArgumentError.new("no process definition found for '#{pdef}'")
-      ) unless value
+        "couldn't find process definition behind '#{pdef}'"
+      ) unless tree
 
-      value.last
+      tree.last
     end
   end
 end

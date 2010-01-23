@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'ruote/subprocess'
+
 
 module Ruote::Exp
 
@@ -155,48 +157,13 @@ module Ruote::Exp
 
       raise "no subprocess referred in #{tree}" unless ref
 
-      pos, subtree = lookup_subprocess(ref)
+      pos, subtree = Ruote.lookup_subprocess(self, ref)
 
       vars = compile_atts
       vars.merge!('tree' => tree_children.first)
         # NOTE : we're taking the first child here...
 
       launch_sub(pos, subtree, :variables => vars)
-    end
-
-    protected
-
-    def lookup_subprocess (ref)
-
-      val = lookup_variable(ref)
-
-      # a classical subprocess stored in a variable ?
-
-      return [ '0', val ] if is_tree?(val)
-      return val if is_pos_tree?(val)
-
-      # maybe subprocess :ref => 'uri'
-
-      subtree = @context.parser.parse(ref) rescue nil
-
-      _, subtree = Ruote::Exp::DefineExpression.reorganize(subtree) \
-        if subtree && Ruote::Exp::DefineExpression.is_definition?(subtree)
-
-      return [ '0', subtree ] if is_tree?(subtree)
-
-      # no luck ...
-
-      raise "no subprocess named '#{ref}' found"
-    end
-
-    def is_tree? (a)
-
-      a.is_a?(Array) && a[1].is_a?(Hash) && a.size == 3
-    end
-
-    def is_pos_tree? (a)
-
-      a.is_a?(Array) && a.size == 2 && a[0].is_a?(String) && is_tree?(a[1])
     end
   end
 end
