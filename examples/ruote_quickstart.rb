@@ -9,8 +9,9 @@ require 'ruote/storage/fs_storage'
 
 engine = Ruote::Engine.new(
   Ruote::Worker.new(
-    Ruote::FsStorage.new("ruote_work")))
-    #Ruote::HashStorage.new))
+    Ruote::FsStorage.new(
+      'ruote_work',
+      's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
 
 # registering participants
 
