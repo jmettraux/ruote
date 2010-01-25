@@ -305,6 +305,23 @@ module Ruote
         exp_class = Ruote::Exp::SequenceExpression
       end
 
+      if exp_class == Ruote::Exp::SubprocessExpression && tree[1]['engine']
+        #
+        # the subprocess has to be transformed into an EngineParticipant...
+
+        exp_class = Ruote::Exp::ParticipantExpression
+
+        atts = tree[1]
+
+        if ref = atts.find { |k, v| v.nil? }
+          ref = ref.first
+          atts.delete(ref)
+        end
+
+        atts['pdef'] = atts['ref'] || ref
+        atts['ref'] = atts.delete('engine')
+      end
+
       raise_unknown_expression_error(exp_hash) unless exp_class
 
       exp = exp_class.new(@context, exp_hash.merge!('original_tree' => tree))
@@ -342,14 +359,11 @@ module Ruote
         tree[1]['ref'] = key
         tree[1]['original_ref'] = tree[0] if key != tree[0]
 
-        if sub && engine = tree[1]['engine']
-
-          tree[1]['ref'] = engine
-          tree[1]['def'] = key
-
-          [ Ruote::Exp::ParticipantExpression, [ 'participant', *tree[1..2] ] ]
-
-        elsif sub
+        #if sub && engine = tree[1]['engine']
+        #  tree[1]['ref'] = engine
+        #  tree[1]['def'] = key
+        #  [ Ruote::Exp::ParticipantExpression, [ 'participant', *tree[1..2] ] ]
+        if sub
 
           [ Ruote::Exp::SubprocessExpression, [ 'subprocess', *tree[1..2] ] ]
 

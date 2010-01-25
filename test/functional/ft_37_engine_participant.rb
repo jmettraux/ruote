@@ -98,6 +98,28 @@ class FtEngineParticipantTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       sequence do
         echo 'a'
+        subprocess 'subp', :engine => 'engine1'
+        echo 'c'
+      end
+      define 'subp' do
+        echo 'b'
+      end
+    end
+
+    #noisy
+
+    wfid = @engine0.launch(pdef)
+    @engine0.wait_for(wfid)
+
+    assert_equal "a\nc", @tracer0.to_s
+    assert_equal "b", @tracer1.to_s
+  end
+
+  def test_as_subprocess_2
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
         subp :engine => 'engine1'
         echo 'c'
       end
@@ -204,15 +226,24 @@ class FtEngineParticipantTest < Test::Unit::TestCase
         echo 'c'
       end
       define 'subp' do
-        echo 'b'
+        bravo
       end
     end
+
+    bravo = @engine1.register_participant :bravo, Ruote::HashParticipant.new
 
     #noisy
 
     wfid = @engine0.launch(pdef)
     @engine0.wait_for(wfid) # terminated
-    @engine0.wait_for(wfid) # ceased
+
+    assert_equal [], @engine0.processes
+
+    @engine1.wait_for(:bravo)
+
+    bravo.reply(bravo.first)
+
+    @engine1.wait_for(wfid) # ceased
 
     assert_equal [], @engine0.processes
     assert_equal [], @engine1.processes

@@ -182,6 +182,8 @@
 [o] EngineParticipant
 [x] expstorage.to_dot
 [o] process_status.to_dot
+[o] EngineParticipant : don't wait in case of forget (reply could NEVER come !)
+[x] align :forget behaviour on EngineParticipant forget... OK as it is
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -292,6 +294,4 @@
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
 [ ] ruote-dm 2.1
-
-[.] EngineParticipant : don't wait in case of forget (reply could NEVER come !)
 

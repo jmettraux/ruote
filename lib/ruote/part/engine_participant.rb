@@ -124,14 +124,22 @@ module Ruote
       fexp = Ruote::Exp::FlowExpression.fetch(@context, wi['fei'])
       params = wi['fields'].delete('params')
 
+      forget = (fexp.attribute(:forget).to_s == 'true')
+
       @storage.put_msg(
         'launch',
         'wfid' => wi['fei']['wfid'],
         'sub_wfid' => fexp.get_next_sub_wfid,
-        'parent_id' => wi['fei'],
+        'parent_id' => forget ? nil : wi['fei'],
         'tree' => determine_tree(fexp, params),
         'workitem' => wi,
         'variables' => fexp.compile_variables)
+
+      fexp.unpersist if forget
+        #
+        # special behaviour here in case of :forget => true :
+        # parent_id of remote expression is set to nil and local expression
+        # is unpersisted immediately
     end
 
     def cancel (fei, flavour)
