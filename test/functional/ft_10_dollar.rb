@@ -153,5 +153,21 @@ class FtDollarTest < Test::Unit::TestCase
 
     assert_trace pdef, 'AA'
   end
+
+  def test_wfid
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo '${fei}'
+        echo '${wfid}'
+      end
+    end
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(wfid)
+
+    assert_equal "0_0_0!!#{wfid}\n#{wfid}", @tracer.to_s
+  end
 end
 

@@ -76,8 +76,9 @@ module Ruote
 
     def [] (key)
 
+      return @fexp.fei.to_storage_id if key == 'fei'
       return @fexp.fei.wfid if key == 'wfid'
-      return @fexp.fei.parent_wfid if key == 'parent_wfid'
+      return @fexp.fei.sub_wfid if key == 'sub_wfid'
       return @fexp.fei.expid if key == 'expid'
 
       pr, k = extract_prefix(key)

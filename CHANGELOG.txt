@@ -4,6 +4,7 @@
 
 == ruote - 2.1.5    not yet released
 
+- dollar : made sure of ${fei} and ${wfid}
 - implemented ProcessStatus#to_dot
 - if a participant implementation cancel method returns false,
   reply_to_parent will not get called
