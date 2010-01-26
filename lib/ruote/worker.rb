@@ -359,10 +359,6 @@ module Ruote
         tree[1]['ref'] = key
         tree[1]['original_ref'] = tree[0] if key != tree[0]
 
-        #if sub && engine = tree[1]['engine']
-        #  tree[1]['ref'] = engine
-        #  tree[1]['def'] = key
-        #  [ Ruote::Exp::ParticipantExpression, [ 'participant', *tree[1..2] ] ]
         if sub
 
           [ Ruote::Exp::SubprocessExpression, [ 'subprocess', *tree[1..2] ] ]

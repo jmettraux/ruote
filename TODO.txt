@@ -295,3 +295,8 @@
 
 [ ] ruote-dm 2.1
 
+[ ] implement pause engine
+[ ] implement pause process
+
+[ ] engine.on_error = 'participant_name'
+
