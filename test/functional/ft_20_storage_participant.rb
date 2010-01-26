@@ -160,5 +160,42 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 2, part.by_field('place', 'heiankyou').size
     assert_equal 1, part.by_field('character', 'minamoto no hirosama').size
   end
+
+  def test_initialize_engine_then_opts
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.process_definition do
+      alpha
+    end)
+
+    wait_for(:alpha)
+
+    part = Ruote::StorageParticipant.new(@engine)
+
+    assert_equal 1, part.size
+  end
+
+  def test_cancel
+
+    pdef = Ruote.process_definition :name => 'def0' do
+      alpha
+    end
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    @engine.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    assert_nil @engine.process(wfid)
+    assert_equal 0, Ruote::StorageParticipant.new(@engine).size
+  end
 end
 

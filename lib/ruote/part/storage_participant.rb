@@ -40,7 +40,15 @@ module Ruote
 
     attr_accessor :context
 
-    def initialize (options={})
+    def initialize (engine_or_options={}, options=nil)
+
+      if engine_or_options.respond_to?(:context)
+        @context = engine_or_options.context
+      else
+        options = engine_or_options
+      end
+
+      options ||= {}
 
       @store_name = options['store_name']
     end
@@ -65,13 +73,13 @@ module Ruote
     end
     alias :update :consume
 
-    # Makes sure to remove the workitem from the in-memory hash.
+    # Removes the document/workitem from the storage
     #
     def cancel (fei, flavour)
 
-      doc = fetch(fei)
+      doc = fetch(fei.to_h)
 
-      r = @storage.delete(doc)
+      r = @context.storage.delete(doc)
 
       cancel(fei, flavour) if r != nil
     end
