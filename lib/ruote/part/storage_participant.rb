@@ -90,10 +90,12 @@ module Ruote
 
       doc = fetch(fei)
 
-      doc ? Ruote::WorkItem.new(doc) : nil
+      doc ? Ruote::Workitem.new(doc) : nil
     end
 
     def fetch (fei)
+
+      fei = fei.to_h if fei.respond_to?(:to_h)
 
       @context.storage.get('workitems', to_id(fei))
     end

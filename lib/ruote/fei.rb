@@ -75,6 +75,15 @@ module Ruote
       "#{hfei['expid']}!#{hfei['sub_wfid']}!#{hfei['wfid']}"
     end
 
+    def self.from_id (s, engine_id='engine')
+
+      ss = s.split('!')
+
+      FlowExpressionId.new(
+        'engine_id' => engine_id,
+        'expid' => ss[0], 'sub_wfid' => ss[1], 'wfid' => ss[2])
+    end
+
     # Returns the last number in the expid. For instance, if the expid is
     # '0_5_7', the child_id will be '7'.
     #

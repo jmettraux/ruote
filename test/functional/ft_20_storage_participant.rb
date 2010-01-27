@@ -36,6 +36,10 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal Ruote::Workitem, wi.class
 
+    wi = alpha[alpha.first.fei]
+
+    assert_equal Ruote::Workitem, wi.class
+
     alpha.reply(wi)
 
     wait_for(wfid)
