@@ -15,12 +15,12 @@ Kenneth Kalmer  http://www.opensourcery.co.za
 Contributors
 ------------
 
+Torsten Schoenebaum - ActiveResourceParticipant and much more
 Matt Nichols - http://github.com/mattnichols
 Nicholas Faiz - http://github.com/biv
 Chris Beer - http://github.com/cbeer
 Enrico Bianco - http://github.com/enricob
 Andrew Timberlake - timeout 'at'
-Torsten Schoenebaum - ActiveResourceParticipant and more
 Raphael Simon - error handling mechanism design and QA
 Maarten Oelering - bug reports and test cases
 Nick Petrella - socket listener issues and Python interactivity, dollar patch

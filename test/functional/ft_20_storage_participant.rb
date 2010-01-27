@@ -197,5 +197,39 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_nil @engine.process(wfid)
     assert_equal 0, Ruote::StorageParticipant.new(@engine).size
   end
+
+  def test_shared_participant
+
+    @engine.register_participant 'step_.*', Ruote::StorageParticipant
+
+    wfid = @engine.launch(
+      Ruote.process_definition { sequence { step_one; step_two } })
+
+    wait_for(:step_one)
+
+    participant = Ruote::StorageParticipant.new(@engine)
+
+    items = participant.by_wfid(wfid)
+
+    assert_equal 1, participant.size
+    assert_equal 1, items.size
+    assert_equal 'step_one', items.first.participant_name
+
+    participant.reply(items.first)
+
+    wait_for(:step_two)
+
+    items = participant.by_wfid(wfid)
+
+    assert_equal 1, participant.size
+    assert_equal 1, items.size
+    assert_equal 'step_two', items.first.participant_name
+
+    participant.reply(items.first)
+
+    wait_for(wfid)
+
+    assert_nil @engine.process(wfid)
+  end
 end
 

@@ -61,6 +61,8 @@ module Ruote
 
       doc = workitem.to_h
 
+      doc.delete('_rev')
+
       doc.merge!(
         'type' => 'workitems',
         '_id' => to_id(doc['fei']),

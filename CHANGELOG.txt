@@ -4,6 +4,7 @@
 
 == ruote - 2.1.5    not yet released
 
+- fixed StorageParticipant a to b flow, fix by Torsten
 - fixed StorageParticipant#cancel
 - dollar : made sure of ${fei} and ${wfid}
 - implemented ProcessStatus#to_dot
