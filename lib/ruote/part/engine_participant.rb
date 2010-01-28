@@ -37,25 +37,25 @@ module Ruote
   #
   # For instance :
   #
-  #  engine0 =
-  #    Ruote::Engine.new(
-  #      Ruote::Worker.new(
-  #        Ruote::FsStorage.new('work0', 'engine_id' => 'engine0')))
-  #  engine1 =
-  #    Ruote::Engine.new(
-  #      Ruote::Worker.new(
-  #        Ruote::FsStorage.new('work1', 'engine_id' => 'engine1')))
+  #   engine0 =
+  #     Ruote::Engine.new(
+  #       Ruote::Worker.new(
+  #         Ruote::FsStorage.new('work0', 'engine_id' => 'engine0')))
+  #   engine1 =
+  #     Ruote::Engine.new(
+  #       Ruote::Worker.new(
+  #         Ruote::FsStorage.new('work1', 'engine_id' => 'engine1')))
   #
-  #  engine0.register_participant('engine1',
-  #    Ruote::EngineParticipant,
-  #    'storage_class' => Ruote::FsStorage,
-  #    'storage_path' => 'ruote/storage/fs_storage',
-  #    'storage_args' => 'work1')
-  #  engine1.register_participant('engine0',
-  #    Ruote::EngineParticipant,
-  #    'storage_class' => Ruote::FsStorage,
-  #    'storage_path' => 'ruote/storage/fs_storage',
-  #    'storage_args' => 'work0')
+  #   engine0.register_participant('engine1',
+  #     Ruote::EngineParticipant,
+  #     'storage_class' => Ruote::FsStorage,
+  #     'storage_path' => 'ruote/storage/fs_storage',
+  #     'storage_args' => 'work1')
+  #   engine1.register_participant('engine0',
+  #     Ruote::EngineParticipant,
+  #     'storage_class' => Ruote::FsStorage,
+  #     'storage_path' => 'ruote/storage/fs_storage',
+  #     'storage_args' => 'work0')
   #
   # In this example, two engines are created (note that their 'engine_id' is
   # explicitely set (else it would default to 'engine')). Each engine is then
