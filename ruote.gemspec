@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer"]
-  s.date = %q{2010-01-14}
+  s.date = %q{2010-01-28}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -87,6 +87,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/parser/xml.rb",
      "lib/ruote/part/block_participant.rb",
      "lib/ruote/part/dispatch_pool.rb",
+     "lib/ruote/part/engine_participant.rb",
      "lib/ruote/part/hash_participant.rb",
      "lib/ruote/part/local_participant.rb",
      "lib/ruote/part/no_op_participant.rb",
@@ -100,6 +101,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/storage/base.rb",
      "lib/ruote/storage/fs_storage.rb",
      "lib/ruote/storage/hash_storage.rb",
+     "lib/ruote/subprocess.rb",
      "lib/ruote/tree_dot.rb",
      "lib/ruote/util/dollar.rb",
      "lib/ruote/util/hashdot.rb",
@@ -189,6 +191,7 @@ ruote is an open source ruby workflow engine.
      "test/functional/ft_34_cursor_rewind.rb",
      "test/functional/ft_35_add_service.rb",
      "test/functional/ft_36_storage_history.rb",
+     "test/functional/ft_37_engine_participant.rb",
      "test/functional/ft_3_participant_registration.rb",
      "test/functional/ft_4_cancel.rb",
      "test/functional/ft_5_on_error.rb",

@@ -2,7 +2,7 @@
 = ruote - CHANGELOG.txt
 
 
-== ruote - 2.1.5    not yet released
+== ruote - 2.1.5    released 2010/01/28
 
 - fixed StorageParticipant a to b flow, fix by Torsten
 - fixed StorageParticipant#cancel
