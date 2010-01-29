@@ -35,7 +35,8 @@ USERS = {
   '_none_' => 'http://s.twimg.com/a/1264550348/images/default_profile_0_normal.png',
   'john' => 'http://www.gravatar.com/avatar/8d96626e52beb1ff90f57a8e189e1e6f',
   'kenneth' => 'http://www.gravatar.com/avatar/8e033d0007374b14f6c213ede64d470b',
-  'torsten' => 'http://www.gravatar.com/avatar/3fa5d7edd1f21da184964146e062c8da'
+  'torsten' => 'http://www.gravatar.com/avatar/3fa5d7edd1f21da184964146e062c8da',
+  'postmodern' => 'http://a3.twimg.com/profile_images/261097869/postmodern_bigger.jpg'
 }
 
 
@@ -151,13 +152,10 @@ post '/work' do
     # fetch workitem from storage
 
   if params['action'] == 'resume'
-    n = params['next']
-    if n != '_none_'
-      workitem.fields['next'] = n
-      workitem.fields['task'] = params['task']
-      workitem.fields['last'] = Ruote.now_to_utc_s
-      PART.reply(workitem)
-    end
+    workitem.fields['next'] = params['next']
+    workitem.fields['task'] = params['task']
+    workitem.fields['last'] = Ruote.now_to_utc_s
+    PART.reply(workitem)
   else # params['action'] == 'terminate'
     workitem.fields.delete('next')
     PART.reply(workitem)
