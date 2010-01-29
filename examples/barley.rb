@@ -36,7 +36,8 @@ USERS = {
   'john' => 'http://www.gravatar.com/avatar/8d96626e52beb1ff90f57a8e189e1e6f',
   'kenneth' => 'http://www.gravatar.com/avatar/8e033d0007374b14f6c213ede64d470b',
   'torsten' => 'http://www.gravatar.com/avatar/3fa5d7edd1f21da184964146e062c8da',
-  'postmodern' => 'http://a3.twimg.com/profile_images/261097869/postmodern_bigger.jpg'
+  'postmodern' => 'http://a3.twimg.com/profile_images/261097869/postmodern_bigger.jpg',
+  'amedeo' => 'http://a1.twimg.com/profile_images/99817242/me_bigger.png'
 }
 
 
@@ -232,6 +233,7 @@ __END__
           font-weight: bold
         .wi_task
           opacity: 0.37
+          cursor: pointer
         .wi_wfid
           font-size: 70%
           vertical-align: middle
@@ -268,7 +270,7 @@ __END__
   %body
 
     #barley
-      barley
+      %span{ :onclick => "document.location.href = '/work';", :style => 'cursor: pointer;' } barley
 
     #message
       #{@message}
