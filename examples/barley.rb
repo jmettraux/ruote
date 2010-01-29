@@ -19,9 +19,11 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-#
-# Made in Japan.
 #++
+
+# featured in
+#   http://jmettraux.wordpress.com/2010/01/29/barley/
+
 
 require 'rubygems'
 
@@ -90,6 +92,12 @@ def h (s)
   Rack::Utils.escape_html(s)
 end
 
+def sort (workitems)
+  workitems.sort! do |wi0, wi1|
+    (wi0.fields['last'] || '') <=> (wi1.fields['last'] || '')
+  end
+end
+
 set :haml, { :format => :html5 }
 
 get '/' do
@@ -99,10 +107,7 @@ end
 get '/work' do
 
   @workitems = PART.all
-
-  @workitems.sort! do |wi0, wi1|
-    (wi0.fields['last'] || '') <=> (wi1.fields['last'] || '')
-  end
+  sort(@workitems)
 
   haml :work
 end
@@ -116,10 +121,7 @@ get '/work/:thing' do
   else
     PART.by_field('subject', t)
   end
-
-  @workitems.sort! do |wi0, wi1|
-    (wi0.fields['last'] || '') <=> (wi1.fields['last'] || '')
-  end
+  sort(@workitems)
 
   haml :work
 end
