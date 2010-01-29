@@ -253,6 +253,7 @@ __END__
         .trace
           opacity: 0.37
           margin-bottom: 4pt
+          cursor: pointer
         .trace_detail
           padding-left: 2pt
           border-left: 2.5pt solid #8EC1DA
