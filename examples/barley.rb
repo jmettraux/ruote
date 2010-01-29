@@ -90,6 +90,8 @@ require 'cgi'
 require 'sinatra'
 require 'haml'
 
+use_in_file_templates!
+
 def h (s)
   Rack::Utils.escape_html(s)
 end
