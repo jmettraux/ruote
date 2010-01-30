@@ -37,7 +37,8 @@ USERS = {
   'kenneth' => 'http://www.gravatar.com/avatar/8e033d0007374b14f6c213ede64d470b',
   'torsten' => 'http://www.gravatar.com/avatar/3fa5d7edd1f21da184964146e062c8da',
   'postmodern' => 'http://a3.twimg.com/profile_images/261097869/postmodern_bigger.jpg',
-  'amedeo' => 'http://a1.twimg.com/profile_images/99817242/me_bigger.png'
+  'amedeo' => 'http://a1.twimg.com/profile_images/99817242/me_bigger.png',
+  'radlepunktde' => 'http://a1.twimg.com/profile_images/303265014/radlepunktde_bigger.jpg'
 }
 
 
@@ -179,7 +180,8 @@ __END__
 
     %script( src='http://code.jquery.com/jquery-1.4.1.min.js' )
 
-    %link( href='http://gist.github.com/raw/286506/13f8e0a14ccef2ffa3345223e1fc6f3f2582206f/reset.css' type='text/css' rel='stylesheet' )
+    %link( href='http://barley.s3.amazonaws.com/reset.css' type='text/css' rel='stylesheet' )
+    %link( href='http://ruote.rubyforge.org/images/ruote.png' type='image/png' rel='icon' )
 
     %style
       :sass
