@@ -235,5 +235,24 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_nil @engine.process(wfid)
   end
+
+  def test_update_workitem
+
+    @engine.register_participant 'alpha', Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.process_definition { alpha })
+
+    alpha = Ruote::StorageParticipant.new(@engine)
+
+    wait_for(:alpha)
+
+    wi = alpha.first
+
+    wi.fields['jidai'] = 'heian'
+
+    alpha.update(wi)
+
+    assert_equal 'heian', alpha.first.fields['jidai']
+  end
 end
 

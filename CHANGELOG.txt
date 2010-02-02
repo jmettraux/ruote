@@ -2,6 +2,11 @@
 = ruote - CHANGELOG.txt
 
 
+== ruote - 2.1.6    not yet released
+
+- fixed issue about StorageParticipant#update, thanks Torsten
+
+
 == ruote - 2.1.5    released 2010/01/28
 
 - fixed StorageParticipant a to b flow, fix by Torsten

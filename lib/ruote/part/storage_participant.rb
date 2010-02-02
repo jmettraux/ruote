@@ -61,8 +61,6 @@ module Ruote
 
       doc = workitem.to_h
 
-      doc.delete('_rev')
-
       doc.merge!(
         'type' => 'workitems',
         '_id' => to_id(doc['fei']),
@@ -109,6 +107,8 @@ module Ruote
       r = @context.storage.delete(doc)
 
       return reply(workitem) if r != nil
+
+      workitem.h.delete('_rev')
 
       reply_to_engine(workitem)
     end
