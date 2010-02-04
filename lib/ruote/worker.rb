@@ -27,8 +27,6 @@ require 'ruote/fei'
 
 module Ruote
 
-  VERSION = '2.1.6'
-
   class Worker
 
     EXP_ACTIONS = %w[ reply cancel fail receive ]

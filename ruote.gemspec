@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruote}
-  s.version = "2.1.5"
+  s.version = "2.1.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer"]
-  s.date = %q{2010-01-28}
+  s.date = %q{2010-02-04}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -26,6 +26,7 @@ ruote is an open source ruby workflow engine.
      "README.rdoc",
      "Rakefile",
      "TODO.txt",
+     "examples/barley.rb",
      "examples/flickr_report.rb",
      "examples/ruote_quickstart.rb",
      "examples/web_first_page.rb",
@@ -113,6 +114,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/util/time.rb",
      "lib/ruote/util/tree.rb",
      "lib/ruote/util/treechecker.rb",
+     "lib/ruote/version.rb",
      "lib/ruote/worker.rb",
      "lib/ruote/workitem.rb",
      "phil.txt",

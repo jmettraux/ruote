@@ -22,7 +22,7 @@
 # Made in Japan.
 #++
 
-
+require 'ruote/version'
 require 'ruote/util/misc'
 require 'ruote/util/hashdot'
 

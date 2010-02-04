@@ -1,9 +1,9 @@
 
+require 'lib/ruote/version.rb'
+
 require 'rubygems'
 require 'rake'
 
-$:.unshift( File.join(File.dirname(__FILE__), 'lib') )
-require File.join(File.dirname(__FILE__), %w[ lib ruote worker.rb ])
 
 begin
 
