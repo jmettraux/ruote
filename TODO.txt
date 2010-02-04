@@ -300,3 +300,5 @@
 
 [ ] engine.on_error = 'participant_name'
 
+[ ] "open days" plugin / service / lambda ? is_open_day?(d)
+
