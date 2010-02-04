@@ -124,6 +124,8 @@ module Ruote
     # (all the children have been cancelled), the expression will get
     # re-applied.
     #
+    # TODO : new workitem
+    #
     def re_apply (fei)
 
       @context.storage.put_msg('cancel', 'fei' => fei.to_h, 're_apply' => true)

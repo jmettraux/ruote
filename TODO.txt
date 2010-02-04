@@ -302,3 +302,5 @@
 
 [ ] "open days" plugin / service / lambda ? is_open_day?(d)
 
+[ ] engine.re_apply(fei, wi) (thanks Torsten)... :wi => x, :tree => y...
+
