@@ -61,6 +61,7 @@ class UtStorage < Test::Unit::TestCase
     h = @s.get('dogfood', 'nada')
 
     assert_not_nil h['_rev']
+    assert_not_nil h['put_at']
   end
 
   def test_put_fail
@@ -91,6 +92,8 @@ class UtStorage < Test::Unit::TestCase
     assert_nil r
 
     doc = @s.get('dogfood', 'whiskas')
+
+    assert_not_nil doc['put_at']
 
     r = @s.put(doc)
     assert_nil r
