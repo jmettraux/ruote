@@ -112,7 +112,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     end
   end
 
-  def test_find_by_participant
+  def test_by_participant
 
     @engine.register_participant :alpha, Ruote::StorageParticipant
     @engine.register_participant :bravo, Ruote::StorageParticipant
@@ -125,6 +125,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     part.context = @engine.context
 
     assert_equal 2, part.size
+    #part.by_participant('alpha').each { |wi| p wi }
     assert_equal 1, part.by_participant('alpha').size
     assert_equal 1, part.by_participant('bravo').size
   end

@@ -38,14 +38,14 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     assert_trace pdef, "a\nb:f0:f0val\nc:f0:f0val:v0val"
   end
 
-  def test_block_result
-
-    pdef = Ruote.process_definition do
-      sequence do
-        alpha
-        echo '${f:__result__}'
-      end
+  TEST_BLOCK = Ruote.process_definition do
+    sequence do
+      alpha
+      echo '${f:__result__}'
     end
+  end
+
+  def test_block_result
 
     @engine.register_participant :alpha do |workitem|
       'seen'
@@ -53,7 +53,21 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'seen'
+    assert_trace TEST_BLOCK, 'seen'
+  end
+
+  def test_non_jsonfiable_result
+
+    t = Time.now
+
+    @engine.register_participant :alpha do |workitem|
+      t
+    end
+
+    #noisy
+
+    #assert_trace TEST_BLOCK, Ruote.time_to_utc_s(t)
+    assert_trace TEST_BLOCK, defined?(DataMapper) ? '' : t.to_s
   end
 end
 

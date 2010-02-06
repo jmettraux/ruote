@@ -13,7 +13,7 @@ def l (t)
 
     puts
     puts "=== #{t} :"
-    puts `ruby#{_v} #{t}`
+    puts `ruby#{_v} #{t} #{ARGV.join(' ')}`
 
     exit $?.exitstatus if $?.exitstatus != 0
   else

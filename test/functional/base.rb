@@ -29,6 +29,8 @@ module FunctionalBase
           determine_storage(
             's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
 
+    #p @engine.storage.class
+
     @tracer = Tracer.new
 
     @engine.add_service('tracer', @tracer)

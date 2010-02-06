@@ -50,9 +50,9 @@ class CtConcurrenceTest < Test::Unit::TestCase
       msgs.each do |m|
 
         fei = m['fei'] ?
-          Ruote::FlowExpressionId.to_s_id(m['fei']) : ''
+          Ruote::FlowExpressionId.to_storage_id(m['fei']) : ''
         wi_fei = m['workitem'] ?
-          Ruote::FlowExpressionId.to_s_id(m['workitem']['fei']) : ''
+          Ruote::FlowExpressionId.to_storage_id(m['workitem']['fei']) : ''
 
         p [ m['action'], fei, wi_fei ]
       end

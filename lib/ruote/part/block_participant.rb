@@ -87,7 +87,10 @@ module Ruote
           workitem, Ruote::Exp::FlowExpression.fetch(@context, workitem.h.fei))
       end
 
-      workitem.result = r if r != nil && r != workitem
+      if r != nil && r != workitem
+        #workitem.result = r
+        workitem.result = (Rufus::Json.dup(r) rescue nil)
+      end
 
       reply_to_engine(workitem)
     end
