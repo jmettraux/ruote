@@ -103,5 +103,13 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     assert_equal true, alpha.down
   end
+
+  def test_participant_list_of_names
+
+    pa = @engine.register_participant :alpha do |workitem|
+    end
+
+    assert_equal ['^alpha$'], @engine.context.plist.names
+  end
 end
 
