@@ -4,6 +4,7 @@
 
 == ruote - 2.1.6    not yet released
 
+- Engine#re_apply(fei, opts) where opts in [ :tree, :fields, :merge_in_fields ]
 - fixed issue about StorageParticipant#update, thanks Torsten
 
 

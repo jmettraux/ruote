@@ -318,10 +318,21 @@ module Ruote::Exp
       ] if h.state == 'timing_out'
 
       if h.state == 'cancelling'
+
         if t = msg['on_cancel']
+
           h.on_cancel = t
-        elsif msg['re_apply']
-          h.on_cancel = tree
+
+        elsif hra = msg['re_apply']
+
+          hra = {} if hra == true
+          h.on_cancel = hra['tree'] || tree
+          if fs = hra['fields']
+            h.applied_workitem['fields'] = fs
+          end
+          if mfs = hra['merge_in_fields']
+            h.applied_workitem['fields'].merge!(mfs)
+          end
         end
       end
 

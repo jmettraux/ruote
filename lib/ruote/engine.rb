@@ -124,11 +124,23 @@ module Ruote
     # (all the children have been cancelled), the expression will get
     # re-applied.
     #
-    # TODO : new workitem
+    # == options
     #
-    def re_apply (fei)
+    # :tree is used to completely change the tree of the expression at re_apply
+    #
+    #   engine.re_apply(fei, :tree => [ 'participant', { 'ref' => 'bob' }, [] ])
+    #
+    # :fields is used to replace the fields of the workitem at re_apply
+    #
+    #   engine.re_apply(fei, :fields => { 'customer' => 'bob' })
+    #
+    # :merge_in_fields is used to add / override fields
+    #
+    #   engine.re_apply(fei, :merge_in_fields => { 'customer' => 'bob' })
+    #
+    def re_apply (fei, opts={})
 
-      @context.storage.put_msg('cancel', 'fei' => fei.to_h, 're_apply' => true)
+      @context.storage.put_msg('cancel', 'fei' => fei.to_h, 're_apply' => opts)
     end
 
     # Returns a ProcessStatus instance describing the current status of

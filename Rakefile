@@ -60,7 +60,7 @@ CLEAN.include('pkg', 'rdoc', 'work', 'logs')
 task :default => [ :clean ]
 
 desc 'Upload the documentation to rubyforge'
-task :upload_rdoc => :rdoc do
+task :upload_rdoc => :yard do
   sh %{
     rsync -azv -e ssh \
       ruote_rdoc \
