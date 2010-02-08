@@ -177,6 +177,12 @@ module Ruote
       pa
     end
 
+    # Return a list of names (regex) for the registered participants
+    def names
+
+      get_list['list'].map { |re, pa| re }
+    end
+
     # Shuts down the 'instantiated participants' (engine worker participants)
     # if they respond to #shutdown.
     #
