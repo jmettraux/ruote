@@ -2,8 +2,9 @@
 = ruote - CHANGELOG.txt
 
 
-== ruote - 2.1.6    not yet released
+== ruote - 2.1.6    released 2010/02/08
 
+- welcoming ruote-dm (datamapper persistency)
 - Engine#re_apply(fei, opts) where opts in [ :tree, :fields, :merge_in_fields ]
 - fixed issue about StorageParticipant#update, thanks Torsten
 

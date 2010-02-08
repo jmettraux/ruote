@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer"]
-  s.date = %q{2010-02-04}
+  s.date = %q{2010-02-08}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -216,6 +216,7 @@ ruote is an open source ruby workflow engine.
      "test/pdef.xml",
      "test/test.rb",
      "test/test_helper.rb",
+     "test/unit/storage.rb",
      "test/unit/storages.rb",
      "test/unit/test.rb",
      "test/unit/ut_0_ruby_parser.rb",
@@ -224,7 +225,6 @@ ruote is an open source ruby workflow engine.
      "test/unit/ut_14_is_uri.rb",
      "test/unit/ut_15_util.rb",
      "test/unit/ut_16_parser.rb",
-     "test/unit/ut_17_storage.rb",
      "test/unit/ut_18_engine.rb",
      "test/unit/ut_1_fei.rb",
      "test/unit/ut_2_wfidgen.rb",
