@@ -2,6 +2,11 @@
 = ruote - CHANGELOG.txt
 
 
+== ruote - 2.1.7    not yet released
+
+- ParticipantList#names, thanks Kenneth
+
+
 == ruote - 2.1.6    released 2010/02/08
 
 - welcoming ruote-dm (datamapper persistency)
