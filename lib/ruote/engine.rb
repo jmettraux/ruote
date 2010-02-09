@@ -319,6 +319,21 @@ module Ruote
 
       @context.add_service(name, path_or_instance, classname, opts)
     end
+
+    # Sets a configuration option. Examples:
+    #
+    #   # allow remote workflow definitions (for subprocesses or when launching
+    #   # processes)
+    #   @engine.configure('remote_definition_allowed', true)
+    #
+    #   # allow ruby_eval
+    #   @engine.configure('ruby_eval_allowed', true)
+    #
+    def configure(config_key, value)
+      conf = @context.storage.get('configurations', 'engine')
+      conf[config_key] = value
+      @context.storage.put(conf)
+    end
   end
 
   #
