@@ -116,5 +116,12 @@ class UtRubyParserTest < Test::Unit::TestCase
       ["define", {}, [["redo", {"nada"=>nil}, []]]],
       tree)
   end
+
+  def test_to_tree
+
+    assert_equal(
+      [ 'sequence', {}, [ [ 'alpha', {}, [] ], [ 'bravo', {}, [] ] ] ],
+      Ruote.to_tree { sequence { alpha; bravo } })
+  end
 end
 

@@ -27,14 +27,67 @@ module Ruote
 
   # Not really a parser, more an AST builder.
   #
+  #   pdef = Ruote.define :name => 'take_out_garbage' do
+  #     sequence do
+  #       take_out_regular_garbage
+  #       take_out_glass
+  #       take_out_paper
+  #     end
+  #   end
+  #
+  #   engine.launch(pdef)
+  #
   def self.define (*attributes, &block)
 
     RubyDsl.create_branch('define', attributes, &block)
   end
 
+  # Same as Ruote.define()
+  #
+  #   pdef = Ruote.process_definition :name => 'take_out_garbage' do
+  #     sequence do
+  #       take_out_regular_garbage
+  #       take_out_paper
+  #     end
+  #   end
+  #
+  #   engine.launch(pdef)
+  #
   def self.process_definition (*attributes, &block)
 
     define(*attributes, &block)
+  end
+
+  # Similar in purpose to Ruote.define and Ruote.process_definition but
+  # instead of returning a [process] definition, returns the tree.
+  #
+  #   tree = Ruote.process_definition :name => 'take_out_garbage' do
+  #     sequence do
+  #       take_out_regular_garbage
+  #       take_out_paper
+  #     end
+  #   end
+  #
+  #   p tree
+  #     # => [ 'sequence', {}, [ [ 'take_out_regular_garbage', {}, [] ], [ 'take_out_paper', {}, [] ] ] ],
+  #
+  # This is useful when modifying a process instance via methods like re_apply :
+  #
+  #   engine.re_apply(
+  #     fei,
+  #     :tree => Ruote.to_tree {
+  #       sequence do
+  #         participant 'alfred'
+  #         participant 'bob'
+  #       end
+  #     })
+  #       #
+  #       # cancels the segment of process at fei and replaces it with
+  #       # a simple alfred-bob sequence.
+  #
+  def self.to_tree (&block)
+
+    RubyDsl.create_branch('x', {}, &block).last.first
   end
 
   # :nodoc:

@@ -186,6 +186,7 @@
 [x] align :forget behaviour on EngineParticipant forget... OK as it is
 [o] engine.re_apply(fei, wi) (thanks Torsten)... :wi => x, :tree => y...
 [o] ruote-dm 2.1
+[o] :tree => Ruote.to_tree { participant 'alpha' }
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -300,7 +301,5 @@
 
 [ ] engine.on_error = 'participant_name'
 
-[ ] "open days" plugin / service / lambda ? is_open_day?(d)
-
-[ ] :tree => Ruote.to_t { participant 'alpha' }
+[ ] "business days" plugin
 
