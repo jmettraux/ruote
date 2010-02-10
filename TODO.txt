@@ -303,3 +303,5 @@
 
 [ ] "business days" plugin
 
+[ ] issue with ruote-kit and inpa participants...
+

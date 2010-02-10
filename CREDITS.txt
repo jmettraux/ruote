@@ -8,14 +8,14 @@ Ruote (OpenWFEru) is an open source Ruby workflow (and sometimes BPM) engine.
 The main project team
 ---------------------
 
-John Mettraux  http://jmettraux.wordpress.com
-Kenneth Kalmer  http://www.opensourcery.co.za
+John Mettraux - http://jmettraux.wordpress.com
+Kenneth Kalmer - http://www.opensourcery.co.za
+Torsten Schoenebaum - http://github.com/tosch
 
 
 Contributors
 ------------
 
-Torsten Schoenebaum - ActiveResourceParticipant and much more
 Matt Nichols - http://github.com/mattnichols
 Nicholas Faiz - http://github.com/biv
 Chris Beer - http://github.com/cbeer

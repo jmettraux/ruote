@@ -3,13 +3,13 @@
 
 running all the tests
 
-  $ ruby19 test/test.rb
+  $ ruby test/test.rb
 
 running a specific test
 
-  $ ruby19 test/functional/ft_1_process_status.rb
+  $ ruby test/functional/ft_1_process_status.rb
 
 running a test with file persistence :
 
-  $ ruby19 test/functional/eft_2_sequence.rb -- --fs
+  $ ruby test/functional/eft_2_sequence.rb -- --fs
 
