@@ -30,6 +30,8 @@ require 'monitor'
 
 module Ruote
 
+  # An in-memory storage.
+  #
   class HashStorage
 
     include StorageBase
@@ -40,10 +42,11 @@ module Ruote
     def initialize (options={})
 
       super()
-
-      @options = options
+        # since were including MonitorMixin, this super() is necessary
 
       purge!
+
+      put(options.merge('type' => 'configurations', '_id' => 'engine'))
     end
 
     def put (doc, opts={})

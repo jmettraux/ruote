@@ -34,6 +34,8 @@ module Ruote
   #
   class Context
 
+    SERVICE_PREFIX = /^s\_/
+
     attr_reader :storage
     attr_accessor :worker
     attr_accessor :engine
@@ -41,7 +43,6 @@ module Ruote
     def initialize (storage, worker_or_engine)
 
       @storage = storage
-      @conf = default_conf.merge(@storage.get_configuration('engine') || {})
 
       @worker, @engine = if worker_or_engine.kind_of?(Ruote::Engine)
         [ worker_or_engine.worker, worker_or_engine ]
@@ -54,29 +55,37 @@ module Ruote
 
     def engine_id
 
-      @conf['engine_id'] || 'engine'
+      get_conf['engine_id'] || 'engine'
     end
 
     def [] (key)
 
-      @conf[key]
+      SERVICE_PREFIX.match(key) ? @services[key] : get_conf[key]
     end
 
     def []= (key, value)
 
-      @conf[key] = value
+      raise(
+        ArgumentError.new('use context#add_service to register services')
+      ) if SERVICE_PREFIX.match(key)
+
+      cf = get_conf
+      cf[key] = value
+      @storage.put(cf)
+
+      value
     end
 
     def keys
 
-      @conf.keys
+      get_conf.keys
     end
 
     def add_service (key, *args)
 
       path, klass, opts = args
 
-      key = "s_#{key}" unless key.match(/^s\_/)
+      key = "s_#{key}" unless SERVICE_PREFIX.match(key)
 
       service = if klass
 
@@ -85,13 +94,13 @@ module Ruote
         aa = [ self ]
         aa << opts if opts
 
-        @conf[key] = Ruote.constantize(klass).new(*aa)
+        @services[key] = Ruote.constantize(klass).new(*aa)
       else
 
-        @conf[key] = path
+        @services[key] = path
       end
 
-      self.class.class_eval %{ def #{key[2..-1]}; @conf['#{key}']; end }
+      self.class.class_eval %{ def #{key[2..-1]}; @services['#{key}']; end }
 
       service
     end
@@ -101,7 +110,7 @@ module Ruote
       @storage.shutdown if @storage.respond_to?(:shutdown)
       @worker.shutdown if @worker
 
-      @conf.values.each do |s|
+      @services.values.each do |s|
 
         s.shutdown if s.respond_to?(:shutdown)
       end
@@ -109,13 +118,20 @@ module Ruote
 
     protected
 
+    def get_conf
+
+      @storage.get_configuration('engine') || {}
+    end
+
     def initialize_services
 
-      @conf.keys.each do |key|
+      @services = {}
 
-        next unless key.match(/^s\_/)
+      default_conf.merge(get_conf).each do |key, value|
 
-        add_service(key, *@conf[key])
+        next unless SERVICE_PREFIX.match(key)
+
+        add_service(key, *value)
       end
     end
 

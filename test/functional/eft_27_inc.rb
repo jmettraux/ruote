@@ -113,7 +113,8 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_inc_array_head
 
-    @engine.context['ruby_eval_allowed'] = true
+    #@engine.context['ruby_eval_allowed'] = true
+    @engine.configure('ruby_eval_allowed', true)
 
     pdef = Ruote.process_definition do
       sequence do

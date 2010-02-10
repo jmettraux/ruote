@@ -329,10 +329,9 @@ module Ruote
     #   # allow ruby_eval
     #   @engine.configure('ruby_eval_allowed', true)
     #
-    def configure(config_key, value)
-      conf = @context.storage.get('configurations', 'engine')
-      conf[config_key] = value
-      @context.storage.put(conf)
+    def configure (config_key, value)
+
+      @context[config_key] = value
     end
   end
 

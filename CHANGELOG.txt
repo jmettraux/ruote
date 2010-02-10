@@ -4,6 +4,7 @@
 
 == ruote - 2.1.7    not yet released
 
+- Engine#configure(key, value), thanks Torsten
 - Ruote.to_tree (lightweight version of Ruote.process_definition)
 - ParticipantList#names, thanks Kenneth
 

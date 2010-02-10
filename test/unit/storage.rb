@@ -5,6 +5,8 @@
 # Mon Dec 14 15:03:13 JST 2009
 #
 
+require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
+
 begin
   require 'yajl'
 rescue LoadError
@@ -16,7 +18,6 @@ rescue LoadError
   # stick with net/http
 end
 
-require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
 require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
 
 
