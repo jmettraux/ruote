@@ -29,6 +29,12 @@ require 'ruote/util/hashdot'
 
 module Ruote
 
+  #
+  # A workitem can be thought of an "execution token", but with a payload
+  # (fields).
+  #
+  # The payload/fields MUST be JSONifiable.
+  #
   class Workitem
 
     attr_reader :h
@@ -44,27 +50,41 @@ module Ruote
       @h
     end
 
+    # Returns a Ruote::FlowExpressionId instance.
+    #
     def fei
 
       FlowExpressionId.new(h.fei)
     end
 
+    # Returns a complete copy of this workitem.
+    #
     def dup
 
-      Ruote.fulldup(self)
+      Workitem.new(Rufus::Json.dup(@h))
     end
 
+    # The participant for which this item is destined. Will be nil when
+    # the workitem is transiting inside of its process instance (as opposed
+    # to when it's being delivered outside of the engine).
+    #
     def participant_name
 
       @h['participant_name']
     end
 
+    # Returns the payload, ie the fields hash.
+    #
     def fields
 
       @h['fields']
     end
 
-    def fields=( fields )
+    # Sets all the fields in one sweep.
+    #
+    # Remember : the fields must be a JSONifiable hash.
+    #
+    def fields= (fields)
 
       @h['fields'] = fields
     end
@@ -93,20 +113,6 @@ module Ruote
   # TODO : clean me out !
   #
   class BakWorkitem
-
-    attr_accessor :fei
-    attr_accessor :fields
-    attr_accessor :participant_name
-
-    alias :f :fields
-    alias :attributes :fields
-    alias :attributes= :fields=
-
-    def initialize (fields={})
-
-      @fei = nil
-      @fields = fields
-    end
 
     # For a simple key
     #
@@ -145,36 +151,6 @@ module Ruote
     def set_field (key, value)
 
       Ruote.set(@fields, key, value)
-    end
-
-    # Returns a deep copy of this workitem instance.
-    #
-    def dup
-
-      Ruote.fulldup(self)
-    end
-
-    # Turns a workitem into a Ruby Hash (useful for JSON serializations)
-    #
-    def to_h
-
-      h = {}
-      h['fei'] = @fei.to_h
-      h['participant_name'] = @participant_name
-      h['fields'] = @fields
-
-      h
-    end
-
-    # Turns back a Ruby Hash into a workitem (well, attempts to)
-    #
-    def self.from_h (h)
-
-      wi = Workitem.new(h['fields'])
-      wi.fei = FlowExpressionId.from_h(h['fei'])
-      wi.participant_name = h['participant_name']
-
-      wi
     end
   end
 end

@@ -35,6 +35,7 @@ ruote is an open source ruby workflow engine.
     gem.add_development_dependency 'yard'
     gem.add_development_dependency 'builder'
     gem.add_development_dependency 'mailtrap'
+    gem.add_development_dependency 'jeweler'
 
     # Gem::Specification http://www.rubygems.org/read/chapter/20
   end
