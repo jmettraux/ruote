@@ -107,6 +107,23 @@ module Ruote
 
       fields['__result__'] = r
     end
+
+    # Warning : equality is based on fei and not on payload !
+    #
+    def == (other)
+
+      return false if other.class != self.class
+      self.h['fei'] == other.h['fei']
+    end
+
+    alias eql? ==
+
+    # Warning : hash is fei's hash.
+    #
+    def hash
+
+      self.h['fei'].hash
+    end
   end
 
   #
