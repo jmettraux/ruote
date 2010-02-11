@@ -39,7 +39,20 @@ module Ruote
   end
 
   #
-  # TODO : document me
+  # The FlowExpressionId (fei for short) is an process expression identifier.
+  # Each expression when instantiated gets a unique fei.
+  #
+  # Feis are also used in workitems, where the fei is the fei of the
+  # [participant] expression that emitted the workitem.
+  #
+  # Feis can thus indicate the position of a workitem in a process tree.
+  #
+  # Feis contain four pieces of information :
+  #
+  # * wfid : workflow instance id, the identifier for the process instance
+  # * sub_wfid : the identifier for the sub process within the main instance
+  # * expid : the expression id, where in the process tree
+  # * engine_id : only relevant in multi engine scenarii (defaults to 'engine')
   #
   class FlowExpressionId
 
@@ -66,12 +79,10 @@ module Ruote
     end
 
     def to_storage_id
-
       "#{@h['expid']}!#{@h['sub_wfid']}!#{@h['wfid']}"
     end
 
     def self.to_storage_id (hfei)
-
       "#{hfei['expid']}!#{hfei['sub_wfid']}!#{hfei['wfid']}"
     end
 
@@ -88,12 +99,10 @@ module Ruote
     # '0_5_7', the child_id will be '7'.
     #
     def child_id
-
       h.expid.split(CHILD_SEP).last.to_i
     end
 
     def hash
-
       to_storage_id.hash
     end
 
@@ -117,7 +126,6 @@ module Ruote
     # Returns child_id... For an expid of '0_1_4', this will be 4.
     #
     def self.child_id (h)
-
       h['expid'].split(CHILD_SEP).last.to_i
     end
 
