@@ -187,6 +187,7 @@
 [o] engine.re_apply(fei, wi) (thanks Torsten)... :wi => x, :tree => y...
 [o] ruote-dm 2.1
 [o] :tree => Ruote.to_tree { participant 'alpha' }
+[o] implement == eql? hash for workitem
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -304,6 +305,4 @@
 [ ] "business days" plugin
 
 [ ] issue with ruote-kit and inpa participants...
-
-[ ] implement == eql? hash for workitem
 

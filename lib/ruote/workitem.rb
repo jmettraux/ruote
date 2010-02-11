@@ -124,12 +124,6 @@ module Ruote
 
       self.h['fei'].hash
     end
-  end
-
-  #
-  # TODO : clean me out !
-  #
-  class BakWorkitem
 
     # For a simple key
     #
@@ -149,7 +143,7 @@ module Ruote
     #
     def lookup (key, container_lookup=false)
 
-      Ruote.lookup(@fields, key, container_lookup)
+      Ruote.lookup(@h['fields'], key, container_lookup)
     end
 
     # 'lf' for 'lookup field'
@@ -167,7 +161,7 @@ module Ruote
     #
     def set_field (key, value)
 
-      Ruote.set(@fields, key, value)
+      Ruote.set(@h['fields'], key, value)
     end
   end
 end

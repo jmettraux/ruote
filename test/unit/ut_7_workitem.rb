@@ -29,5 +29,20 @@ class UtWorkitemTest < Test::Unit::TestCase
     assert_equal w0.hash, w1.hash
     assert_not_equal w0.hash, w2.hash
   end
+
+  def test_lookup
+
+    w0 = Ruote::Workitem.new(
+      'fields' => {
+        'customer' => {
+          'name' => 'Jeff',
+          'address' => [ 'Cornwall Square 10', 'Singapore-La' ] } })
+
+    assert_equal 'Jeff', w0.lookup('customer.name')
+    assert_equal 'Singapore-La', w0.lf('customer.address.1')
+
+    w0.set_field('customer.address', [ 'Cornwall Square 10b', 'Singapore-La' ])
+    assert_equal 'Cornwall Square 10b', w0.lookup('customer.address.0')
+  end
 end
 
