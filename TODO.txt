@@ -305,3 +305,5 @@
 
 [ ] issue with ruote-kit and inpa participants...
 
+[ ] implement == eql? hash for workitem
+
