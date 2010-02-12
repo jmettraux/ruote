@@ -188,6 +188,9 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     #p page0, page1
     assert_equal 4, (page0 + page1).sort.uniq.size
+
+    assert_equal(
+      2, @part.query('place' => 'heiankyou', :participant => 'alpha').size)
   end
 
   def test_initialize_engine_then_opts
