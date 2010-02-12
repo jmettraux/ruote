@@ -190,6 +190,7 @@
 [o] implement == eql? hash for workitem
 [o] StorageParticipant#query(wfid, participant_name, {fields})
 [x] break fs_history, prepare for dm_history
+[o] part = engine.register_participant :alpha, StorageParticipant should work...
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)

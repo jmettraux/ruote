@@ -93,6 +93,9 @@ module Ruote
 
       else
 
+        return Ruote::StorageParticipant.new(@context) \
+          if entry.last.first == 'Ruote::StorageParticipant'
+
         nil
       end
     end
@@ -178,6 +181,7 @@ module Ruote
     end
 
     # Return a list of names (regex) for the registered participants
+    #
     def names
 
       get_list['list'].map { |re, pa| re }

@@ -279,5 +279,12 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal 'heian', alpha.first.fields['jidai']
   end
+
+  def test_registration
+
+    pa = @engine.register_participant 'alpha', Ruote::StorageParticipant
+
+    assert_equal Ruote::StorageParticipant, pa.class
+  end
 end
 

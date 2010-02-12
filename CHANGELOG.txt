@@ -4,6 +4,8 @@
 
 == ruote - 2.1.7    not yet released
 
+- engine.register_participant(x, Ruote::StorageParticipant) now returning
+  a instance of the participant, for easy query
 - StorageParticipant, added #query(criteria), thanks Torsten and Brett
 - Ruote::Workitem #lookup('deep.field') and #set_field('deep.field') are back
 - Ruote::Workitem added == and hash (list.uniq friendly), thanks Brett
