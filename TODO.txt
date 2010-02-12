@@ -188,6 +188,8 @@
 [o] ruote-dm 2.1
 [o] :tree => Ruote.to_tree { participant 'alpha' }
 [o] implement == eql? hash for workitem
+[o] StorageParticipant#query(wfid, participant_name, {fields})
+[x] break fs_history, prepare for dm_history
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -267,8 +269,6 @@
 [ ] implement kill_process! (kill_expression! ?)
 
 [ ] engine.force_reply_to_parent(fei) ?
-
-[ ] break fs_history, prepare for dm_history
 
 [ ] :on_timeout => :rewind (break, jump to x)...
 [ ] rewind 'x' where x is a tagname (command x)

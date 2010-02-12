@@ -4,6 +4,7 @@
 
 == ruote - 2.1.7    not yet released
 
+- StorageParticipant, added #query(criteria), thanks Torsten and Brett
 - Ruote::Workitem #lookup('deep.field') and #set_field('deep.field') are back
 - Ruote::Workitem added == and hash (list.uniq friendly), thanks Brett
 - Engine#configure(key, value), thanks Torsten

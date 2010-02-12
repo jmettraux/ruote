@@ -146,15 +146,16 @@ module Ruote
 
     # Return all workitems for the specified wfid
     #
-    def by_wfid( wfid )
+    def by_wfid (wfid)
 
-      @context.storage.get_many('workitems', /!#{wfid}$/).map { |hwi| Ruote::Workitem.new(hwi) }
+      @context.storage.get_many('workitems', /!#{wfid}$/).map { |hwi|
+        Ruote::Workitem.new(hwi)
+      }
     end
 
     # Returns all workitems for the specified participant name
     #
     def by_participant (participant_name)
-
 
       hwis = if @context.storage.respond_to?(:by_participant)
 
@@ -194,6 +195,56 @@ module Ruote
       hwis.collect { |hwi| Ruote::Workitem.new(hwi) }
     end
 
+    # Queries the store participant for workitems.
+    #
+    # Some examples :
+    #
+    #   part.query(:wfid => @wfid).size
+    #   part.query('place' => 'nara').size
+    #   part.query('place' => 'heiankyou').size
+    #   part.query(:wfid => @wfid, :place => 'heiankyou').size
+    #
+    # There are two 'reserved' criterion : 'wfid' and 'participant'
+    # ('participant_name' as well). The rest of the criteria are considered
+    # constraints for fields.
+    #
+    # 'offset' and 'limit' are reserved as well. They should prove useful
+    # for pagination.
+    #
+    # Note : the criteria is AND only, you'll have to do ORs (aggregation)
+    # by yourself.
+    #
+    def query (criteria)
+
+      cr = criteria.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+
+      return @context.storage.query_workitems(cr) \
+        if @context.storage.respond_to?(:query_workitems)
+
+      offset = cr.delete('offset')
+      limit = cr.delete('limit')
+
+      wfid = cr.delete('wfid')
+      pname = cr.delete('participant_name') || cr.delete('participant')
+
+      hwis = if wfid
+        @context.storage.get_many('workitems', /!#{wfid}$/)
+      else
+        fetch_all
+      end
+
+      hwis = hwis.select { |hwi|
+        Ruote::StorageParticipant.matches?(hwi, pname, cr)
+      }.collect { |hwi|
+        Ruote::Workitem.new(hwi)
+      }
+
+      offset = offset || 0
+      limit = limit || hwis.length
+
+      hwis[offset, limit]
+    end
+
     # Cleans this participant out completely
     #
     def purge!
@@ -201,8 +252,26 @@ module Ruote
       fetch_all.each { |hwi| @context.storage.delete( hwi ) }
     end
 
+    # Used by #query when filtering workitems.
+    #
+    def self.matches? (hwi, pname, criteria)
+
+      return false if pname && hwi['participant_name'] != pname
+
+      fields = hwi['fields']
+
+      criteria.each do |fname, fvalue|
+        return false if fields[fname] != fvalue
+      end
+
+      true
+    end
+
     protected
 
+    # Fetches all the workitems. If there is a @store_name, will only fetch
+    # the workitems in that store.
+    #
     def fetch_all
 
       key = @store_name ? /^wi!#{@store_name}::/ : nil
@@ -210,6 +279,8 @@ module Ruote
       @context.storage.get_many('workitems', key)
     end
 
+    # Computes the id for the document representing the document in the storage.
+    #
     def to_id (fei)
 
       a = [ Ruote.to_storage_id(fei) ]
