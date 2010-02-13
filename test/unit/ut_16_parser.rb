@@ -56,7 +56,7 @@ class PdefParserTest < Test::Unit::TestCase
       ]],
       tree)
 
-    File.delete(fn) # sooner or later, it will get erased
+    FileUtils.rm_f(fn) # sooner or later, it will get erased
   end
 
   def test_to_xml

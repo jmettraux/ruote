@@ -38,6 +38,8 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
   end
 
   ps = ARGV.select { |a| a.match(/^--/) }
+  ps.delete('--split')
+
   persistent = opts.delete(:persistent)
 
   if ps.include?('--fs')
