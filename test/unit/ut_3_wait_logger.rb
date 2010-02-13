@@ -27,7 +27,7 @@ class UtWaitLoggerTest < Test::Unit::TestCase
 
     engine = Ruote::Engine.new(Ruote::Worker.new(Ruote::HashStorage.new))
 
-    engine.context.logger.noisy = true
+    #engine.context.logger.noisy = true
 
     alpha = engine.register_participant :alpha, Ruote::HashParticipant.new
 
