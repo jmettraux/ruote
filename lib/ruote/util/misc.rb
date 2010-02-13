@@ -25,6 +25,10 @@
 
 module Ruote
 
+  # Will be set to true if the Ruby runtime is on Windows
+  #
+  WIN = RUBY_PLATFORM.match(/mswin|mingw/) != nil
+
   # Prints the current call stack to stdout
   #
   def self.p_caller (*msg)

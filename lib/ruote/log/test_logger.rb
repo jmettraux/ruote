@@ -194,6 +194,7 @@ module Ruote
 
     def color (mod, s, clear=false)
 
+      return s if Ruote::WIN
       return s unless STDOUT.tty?
 
       "[#{mod}m#{s}[0m#{clear ? '' : "[#{@color}m"}"
