@@ -47,7 +47,10 @@ module Ruote
 
     def get_raw
 
+      lraw = @last['raw'] + 0.01
+
       raw = Time.now.utc
+      while raw.to_f <= lraw; raw = raw + 0.01; end
 
       @last['raw'] = raw.to_f
 

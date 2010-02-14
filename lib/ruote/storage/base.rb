@@ -55,12 +55,13 @@ module Ruote
 
       # merge! is way faster than merge (no object creation probably)
 
-      t = Time.now
-      _id = "#{$$}-#{Thread.current.object_id}-#{t.to_i}.#{"%06d" % t.usec}"
+      @counter ||= 0
 
-      while _id == @last_id; _id = "#{_id}b"; end
-      @last_id = _id
-        # some platforms (windows) need that
+      t = Time.now
+      _id = "#{$$}-#{Thread.current.object_id}-#{t.to_i}.#{"%06d" % t.usec}-#{"%03d" % @counter}"
+
+      @counter = (@counter + 1) % 1000
+        # some platforms (windows) have shallow usecs, so adding that counter...
 
       msg = options.merge!('type' => 'msgs', '_id' => _id, 'action' => action)
 
