@@ -35,6 +35,8 @@ module Ruote
   #
   # A process definition parser.
   #
+  # Can parse XML, JSON, Ruby (and more) process definition representations.
+  #
   class Parser
 
     def initialize (context)
@@ -55,11 +57,9 @@ module Ruote
 
       if definition.index("\n") == nil
 
-        u = URI.parse(definition)
-
         raise ArgumentError.new(
           "remote process definitions are not allowed"
-        ) if u.scheme != nil && @context['remote_definition_allowed'] != true
+        ) if Ruote::Parser.remote?(definition) && @context['remote_definition_allowed'] != true
 
         return parse(open(definition).read)
       end
@@ -145,6 +145,15 @@ module Ruote
     def self.to_json (tree)
 
       tree.to_json
+    end
+
+    # Returns true if the defintion is a remote URI
+    #
+    def self.remote? (definition)
+
+      u = URI.parse(definition)
+
+      (u.scheme != nil) && ( ! ('A'..'Z').include?(u.scheme))
     end
 
     protected
