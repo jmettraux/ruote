@@ -22,8 +22,15 @@ def l (t)
 end
 
 
-Dir.glob(File.join(File.dirname(__FILE__), 'ct_*.rb')).sort.each { |t| l(t) }
-  # concurrence/collision tests, tests about 2+ instances of ruote colliding
+unless RUBY_PLATFORM.match(/mswin|mingw/)
+  #
+  # sorry but no more than 1 worker on windows !
+  #
+  # so no need to run those 2 workers tests
+  #
+  Dir.glob(File.join(File.dirname(__FILE__), 'ct_*.rb')).sort.each { |t| l(t) }
+    # concurrence/collision tests, tests about 2+ instances of ruote colliding
+end
 
 Dir.glob(File.join(File.dirname(__FILE__), 'ft_*.rb')).sort.each { |t| l(t) }
   # functional tests targetting features rather than expressions
