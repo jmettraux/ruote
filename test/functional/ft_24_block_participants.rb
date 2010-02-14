@@ -47,6 +47,9 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
   def test_block_result
 
+    return if Ruote::WIN
+      # defective 'json' lib on windows render this test useless
+
     @engine.register_participant :alpha do |workitem|
       'seen'
     end
@@ -57,6 +60,9 @@ class FtBlockParticipantTest < Test::Unit::TestCase
   end
 
   def test_non_jsonfiable_result
+
+    return if Ruote::WIN
+      # defective 'json' lib on windows render this test useless
 
     t = Time.now
 
