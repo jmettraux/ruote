@@ -35,8 +35,8 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
       end
     end
 
-    trapfile = '/tmp/ruote_mailtrap.txt'
-    FileUtils.rm(trapfile) rescue nil
+    trapfile = Ruote::WIN ? 'ruote_mailtrap.txt' : '/tmp/ruote_mailtrap.txt'
+    FileUtils.rm_f(trapfile)
 
     Thread.new do
       Trap.new('127.0.0.1', 2525, true, trapfile)
