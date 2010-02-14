@@ -4,6 +4,8 @@
 
 == ruote - 2.1.7    not yet released
 
+- now works on WinXP, Ruby 1.8.7
+- reformed msgs ids and adapted Ruote::StorageHistory
 - engine.register_participant(x, Ruote::StorageParticipant) now returning
   a instance of the participant, for easy query
 - StorageParticipant, added #query(criteria), thanks Torsten and Brett

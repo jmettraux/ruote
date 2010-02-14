@@ -34,6 +34,8 @@ module Ruote
   #
   class StorageHistory
 
+    DATE_REGEX = /!(\d{4}-\d{2}-\d{2})!/
+
     def initialize (context, options={})
 
       @context = context
@@ -60,8 +62,11 @@ module Ruote
 
       ids = @context.storage.ids('history')
 
-      first = Time.parse("#{ids.first.split('!')[0]} 00:00:00 UTC")
-      last = Time.parse("#{ids.last.split('!')[0]} 00:00:00 UTC") + 24 * 3600
+      fm = DATE_REGEX.match(ids.first)[1]
+      lm = DATE_REGEX.match(ids.last)[1]
+
+      first = Time.parse("#{fm} 00:00:00 UTC")
+      last = Time.parse("#{lm} 00:00:00 UTC") + 24 * 3600
 
       [ first, last ]
     end
@@ -70,7 +75,7 @@ module Ruote
 
       date = Time.parse(date.to_s).strftime('%Y-%m-%d')
 
-      @context.storage.get_many('history', /^#{date}!/)
+      @context.storage.get_many('history', /!#{date}!/)
     end
 
     #def history_to_tree (wfid)
@@ -101,12 +106,13 @@ module Ruote
         msg['wfid'] || 'no_wfid'
       end
 
-      t = Time.parse(msg['put_at'])
+      _id = msg['_id']
+      msg['original_id'] = _id
+      msg['_id'] = "#{_id}!#{si}"
 
-      msg['original_id'] = msg['_id']
-      msg['_id'] = "#{t.strftime('%Y-%m-%d')}!#{t.to_i}_#{"%06d" % t.usec}!#{si}"
       msg['type'] = 'history'
       msg['original_put_at'] = msg['put_at']
+
       msg.delete('_rev')
 
       @context.storage.put(msg)

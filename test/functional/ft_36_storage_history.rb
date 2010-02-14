@@ -57,12 +57,12 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
     6.times do |i|
       @engine.storage.put(
-        '_id' => "2010-01-06!11414#{i}!0!!20100106-bichisosupo",
+        '_id' => "!2010-01-06!11414#{i}!0!!20100106-bichisosupo",
         'type' => 'history')
     end
     7.times do |i|
       @engine.storage.put(
-        '_id' => "2010-01-07!11414#{i}!0!!20100107-bichitehoni",
+        '_id' => "!2010-01-07!11414#{i}!0!!20100107-bichitehoni",
         'type' => 'history')
     end
 
@@ -78,7 +78,7 @@ class FtStorageHistoryTest < Test::Unit::TestCase
     7.times do |i|
       i = i + 1
       @engine.storage.put(
-        '_id' => "2010-01-0#{i}!114147!0!!2010010#{i}-bichisosupo",
+        '_id' => "!2010-01-0#{i}!114147!0!!2010010#{i}-bichisosupo",
         'type' => 'history')
     end
 
