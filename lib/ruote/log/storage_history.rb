@@ -68,7 +68,7 @@ module Ruote
 
     def by_date (date)
 
-      date = Time.parse(date.to_s).strftime('%F')
+      date = Time.parse(date.to_s).strftime('%Y-%m-%d')
 
       @context.storage.get_many('history', /^#{date}!/)
     end
@@ -104,7 +104,7 @@ module Ruote
       t = Time.parse(msg['put_at'])
 
       msg['original_id'] = msg['_id']
-      msg['_id'] = "#{t.strftime('%F')}!#{t.to_i}_#{"%06d" % t.usec}!#{si}"
+      msg['_id'] = "#{t.strftime('%Y-%m-%d')}!#{t.to_i}_#{"%06d" % t.usec}!#{si}"
       msg['type'] = 'history'
       msg['original_put_at'] = msg['put_at']
       msg.delete('_rev')

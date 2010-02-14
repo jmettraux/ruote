@@ -5,14 +5,14 @@
 # Sun Oct  4 00:14:27 JST 2009
 #
 
+require File.join(File.dirname(__FILE__), 'base')
+
 begin
   require 'yajl'
 rescue LoadError
   require 'json'
 end
 Rufus::Json.detect_backend rescue nil
-
-require File.join(File.dirname(__FILE__), 'base')
 
 require 'ruote/log/fs_history'
 require 'ruote/part/no_op_participant'
@@ -57,6 +57,7 @@ class FtFsHistoryTest < Test::Unit::TestCase
 
   ensure
 
+    @engine.context.history.shutdown
     Dir['work/log/*'].each { |fn| FileUtils.rm(fn) }
   end
 
@@ -90,6 +91,7 @@ class FtFsHistoryTest < Test::Unit::TestCase
 
   ensure
 
+    @engine.context.history.shutdown
     Dir['work/log2/*'].each { |fn| FileUtils.rm(fn) }
   end
 
@@ -115,6 +117,7 @@ class FtFsHistoryTest < Test::Unit::TestCase
 
   ensure
 
+    @engine.context.history.shutdown
     Dir['work/log/*'].each { |fn| FileUtils.rm(fn) }
   end
 
@@ -145,6 +148,7 @@ class FtFsHistoryTest < Test::Unit::TestCase
 
   ensure
 
+    @engine.context.history.shutdown
     Dir['work/log/*'].each { |fn| FileUtils.rm(fn) }
   end
 
@@ -176,11 +180,12 @@ class FtFsHistoryTest < Test::Unit::TestCase
     assert_equal 4, @engine.context.history.by_date('2009-10-31').size
 
     assert_equal(
-      [ Time.parse(Time.now.strftime('%F')), Time.parse('2009-10-08') ],
+      [ Time.parse(Time.now.strftime('%Y-%m-%d')), Time.parse('2009-10-08') ],
       @engine.context.history.range)
 
   ensure
 
+    @engine.context.history.shutdown
     Dir['work/log/*'].each { |fn| FileUtils.rm(fn) }
   end
 end

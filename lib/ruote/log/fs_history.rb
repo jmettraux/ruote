@@ -122,7 +122,7 @@ module Ruote
     #
     def by_date (date)
 
-      date = Time.parse(date.to_s).strftime('%F')
+      date = Time.parse(date.to_s).strftime('%Y-%m-%d')
 
       lines = File.readlines(File.join(@path, "history_#{date}.json")) rescue []
 
@@ -158,7 +158,7 @@ module Ruote
       rotate_if_necessary
 
       @file.puts(Rufus::Json.encode(
-        [ "#{@last.strftime('%F %T')}.#{"%06d" % @last.usec}", msg ]))
+        [ "#{@last.strftime('%Y-%m-%d %T')}.#{"%06d" % @last.usec}", msg ]))
       @file.flush
     end
 
@@ -173,7 +173,7 @@ module Ruote
 
       @file.close rescue nil
 
-      fn = [ 'history', @last.strftime('%F') ].join('_') + '.json'
+      fn = [ 'history', @last.strftime('%Y-%m-%d') ].join('_') + '.json'
 
       @file = File.open(File.join(@path, fn), 'a')
     end
