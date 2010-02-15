@@ -252,7 +252,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a b c ]
+    assert_trace pdef, *%w[ a b c ].permutation.to_a
   end
 
   def test_merge_type_isolate
@@ -264,10 +264,10 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       bravo
     end
 
-    merged_fields = nil
+    mf = nil
 
     @engine.register_participant :bravo do |workitem|
-      merged_fields = workitem.fields
+      mf = workitem.fields
       nil
     end
 
@@ -275,12 +275,9 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     assert_trace(
       pdef, %w{ . . . })
-    assert_equal(
-      {"0" => { "f" => "a" },
-       "1" => { "f" => "b" },
-       "2" => { "f" => "c" },
-       "params" => { "ref" => "bravo" }},
-      merged_fields)
+
+    mf = ('0'..'2').to_a.map { |k| mf[k]['f'] }.sort
+    assert_equal %w[ a b c ], mf
   end
 
   def test_cancel
