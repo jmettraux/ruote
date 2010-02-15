@@ -25,7 +25,10 @@ class EftAddBranchesTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a b c d ]
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    assert_equal %w[ a b c d ], @tracer.to_a.sort
   end
 
   def test_add_branches_times
@@ -41,7 +44,10 @@ class EftAddBranchesTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ 1 2 3 4 5 ]
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    assert_equal %w[ 1 2 3 4 5 ], @tracer.to_a.sort
   end
 
   def test_add_branches_times_and_whatever
@@ -57,7 +63,10 @@ class EftAddBranchesTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ 1 2 3 a b ]
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    assert_equal %w[ 1 2 3 a b ], @tracer.to_a.sort
   end
 
   def test_add_branches_with_tag
@@ -78,9 +87,12 @@ class EftAddBranchesTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(
-      pdef,
-      "<:a\n<:b\n>:0\n>:1\n>:0\n>:1\n<:c\n<:c\n>:0\n>:1\n>:0\n>:1")
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    assert_equal(
+      %w[ <:a <:b <:c <:c >:0 >:0 >:0 >:0 >:1 >:1 >:1 >:1 ],
+      @tracer.to_a.sort)
   end
 end
 
