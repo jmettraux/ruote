@@ -51,6 +51,8 @@ module Ruote
 
     def put (doc, opts={})
 
+      i = @h.size
+
       synchronize do
 
         pre = get(doc['type'], doc['_id'])

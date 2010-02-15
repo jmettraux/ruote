@@ -507,6 +507,10 @@ module Ruote::Exp
       tree[2]
     end
 
+    # A tiny class-bound counter used when generating subprocesses ids.
+    #
+    @@sub_wfid_counter = -1
+
     # Generates a sub_wfid, without hitting storage.
     #
     # There's a better implementation for sure...
@@ -516,6 +520,9 @@ module Ruote::Exp
       i = [
         $$, Time.now.to_f.to_s, self.hash.to_s, @h['fei'].inspect
       ].join('-').hash
+
+      @@sub_wfid_counter = (@@sub_wfid_counter + 1) % 1000
+      i = i * 1000 + (@@sub_wfid_counter)
 
       (i < 0 ? "1#{i * -1}" : "0#{i}").to_s
     end

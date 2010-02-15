@@ -148,6 +148,11 @@ module Ruote
           interest = interest - 1
           @waiting = [ @waiting.first, interest ]
 
+          #@debug ||= {}
+          #c = @debug[action] ||= 0
+          #@debug[action] = c+1
+          #p [ interest, @debug ]
+
           (interest < 1)
 
         else # wfid

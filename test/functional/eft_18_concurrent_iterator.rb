@@ -298,13 +298,13 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     a_count = 0
     @engine.register_participant(:alpha) { |wi| a_count += 1 }
-    @engine.register_participant(:bravo, Ruote::NullParticipant.new)
+    @engine.register_participant(:bravo, Ruote::NullParticipant)
 
     #noisy
 
     wfid = @engine.launch(pdef)
 
-    wait_for(2 + 77 * 5)
+    wait_for(2 + n * 5)
     #p "=" * 80
 
     assert_equal n, a_count
