@@ -31,7 +31,24 @@ module Ruote
   # A participant that stores the workitem in the same storage used by the
   # engine and the worker(s).
   #
-  # Does not thread by default.
+  #   part = engine.register_participant 'alfred', Ruote::StorageParticipant
+  #
+  #   # ... a bit later
+  #
+  #   puts "workitems still open : "
+  #   part.each do |workitem|
+  #     puts "#{workitem.fei.wfid} - #{workitem.fields['params']['task']}"
+  #   end
+  #
+  #   # ... when done with a workitem
+  #
+  #   part.reply(workitem)
+  #     # this will remove the workitem from the storage and hand it back
+  #     # to the engine
+  #
+  # Does not thread by default (the engine will not spawn a dedicated thread
+  # to handle the delivery to this participant, the workitem will get stored
+  # via the main engine thread an basta).
   #
   class StorageParticipant
 
