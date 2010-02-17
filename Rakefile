@@ -31,8 +31,9 @@ ruote is an open source ruby workflow engine.
     gem.add_dependency 'rufus-scheduler', '>= 2.0.3'
     gem.add_dependency 'rufus-treechecker', '>= 1.0.3'
 
-    gem.add_development_dependency 'json'
+    gem.add_development_dependency 'rake'
     gem.add_development_dependency 'yard'
+    gem.add_development_dependency 'json'
     gem.add_development_dependency 'builder'
     gem.add_development_dependency 'mailtrap'
     gem.add_development_dependency 'jeweler'
