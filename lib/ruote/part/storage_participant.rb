@@ -48,7 +48,7 @@ module Ruote
   #
   # Does not thread by default (the engine will not spawn a dedicated thread
   # to handle the delivery to this participant, the workitem will get stored
-  # via the main engine thread an basta).
+  # via the main engine thread and basta).
   #
   class StorageParticipant
 
