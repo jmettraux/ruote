@@ -188,6 +188,19 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal(%w[ seen ], wi.fields['1'].keys)
   end
 
+  def test_concurrence_merge_type_stack
+
+    wi = run_concurrence({ :merge_type => :stack }, false)
+
+    assert_equal(
+      %w[ params stack stack_attributes ],
+      wi.fields.keys.collect { |k| k.to_s }.sort)
+
+    assert_equal({ 'ref' => 'alpha' }, wi.fields['params'])
+    assert_equal(%w[ seen ], wi.fields['stack'][0].keys)
+    assert_equal(%w[ seen ], wi.fields['stack'][1].keys)
+  end
+
   # helper
   #
   def run_test_count (remaining, noise)

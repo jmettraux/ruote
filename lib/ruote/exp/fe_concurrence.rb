@@ -90,7 +90,7 @@ module Ruote::Exp
   # highest and lowest refer to the position in the list of branch. It's useful
   # to set a fixed winner.
   #
-  #   concurrence :merge => highest do
+  #   concurrence :merge => :highest do
   #     alpha
   #     bravo
   #   end
@@ -108,6 +108,30 @@ module Ruote::Exp
   # :isolate will rearrange the resulting workitem payload so that there is
   # a new field for each branch. The name of each field is the index of the
   # branch from '0' to ...
+  #
+  # :stack will stack the workitems coming back from the concurrence branches
+  # in an array whose order is determined by the :merge attributes. The array
+  # is placed in the 'stack' field of the resulting workitem.
+  # Note that the :stack merge_type also creates a 'stack_attributes' field
+  # and populates it with the expanded attributes of the concurrence.
+  #
+  # Thus
+  #
+  #   sequence do
+  #     concurrence :merge => :highest, :merge_type => :stack do
+  #       reviewer1
+  #       reviewer2
+  #     end
+  #     editor
+  #   end
+  #
+  # will see the 'editor' receive a workitem whose fields look like :
+  #
+  #   { 'stack' => [{ ... reviewer1 fields ... }, { ... reviewer2 fields ... }],
+  #     'stack_attributes' => { 'merge'=> 'highest', 'merge_type' => 'stack' } }
+  #
+  # This could prove useful for participant having to deal with multiple merge
+  # strategy results.
   #
   #
   # === :over_if (and :over_unless)
@@ -140,7 +164,7 @@ module Ruote::Exp
       h.ccount = nil if h.ccount < 1
 
       h.cmerge = att(:merge, %w[ first last highest lowest ])
-      h.cmerge_type = att(:merge_type, %w[ override mix isolate ])
+      h.cmerge_type = att(:merge_type, %w[ override mix isolate stack ])
       h.remaining = att(:remaining, %w[ cancel forget ])
 
       h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}

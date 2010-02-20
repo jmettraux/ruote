@@ -280,6 +280,35 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal %w[ a b c ], mf
   end
 
+  def test_merge_type_stack
+
+    pdef = Ruote.process_definition do
+      concurrent_iterator :on => 'a, b', :to_f => 'f', :merge_type => 'stack' do
+        echo '.'
+      end
+      bravo
+    end
+
+    mf = nil
+
+    @engine.register_participant :bravo do |workitem|
+      mf = workitem.fields
+      nil
+    end
+
+    #noisy
+
+    assert_trace(
+      pdef,
+      %w{ . . })
+    assert_equal(
+      [["a"], ["b"]],
+      mf['stack'].collect { |f| f.values }.sort)
+    assert_equal(
+      {"on"=>"a, b", "to_f"=>"f", "merge_type"=>"stack"},
+      mf['stack_attributes'])
+  end
+
   def test_cancel
 
     n = 77
