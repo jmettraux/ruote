@@ -92,7 +92,7 @@ module Ruote
 
       FlowExpressionId.new(
         'engine_id' => engine_id,
-        'expid' => ss[0], 'sub_wfid' => ss[1], 'wfid' => ss[2])
+        'expid' => ss[-3], 'sub_wfid' => ss[-2], 'wfid' => ss[-1])
     end
 
     # Returns the last number in the expid. For instance, if the expid is

@@ -74,5 +74,18 @@ class UtFeiTest < Test::Unit::TestCase
     assert_equal f0.hash, f1.hash
     assert_not_equal f0.hash, f2.hash
   end
+
+  def test_from_id
+
+    assert_equal(
+      '0_0_1!!20100224-fake',
+      Ruote::FlowExpressionId.from_id('0_0_1!!20100224-fake').to_storage_id)
+    assert_equal(
+      '0_0_1!!20100224-fake',
+      Ruote::FlowExpressionId.from_id('wi!0_0_1!!20100224-fake').to_storage_id)
+    assert_equal(
+      '0_0_1!!20100224-fake',
+      Ruote::FlowExpressionId.from_id('wi!store!0_0_1!!20100224-fake').to_storage_id)
+  end
 end
 

@@ -308,3 +308,7 @@
 
 [ ] issue with ruote-kit and inpa participants...
 
+[ ] 'participant_registered' msgs seem to stay put in msgs queue
+
+[ ] let the storage participant leverage Ruote::FlowExpressionId.to_fei(x)
+
