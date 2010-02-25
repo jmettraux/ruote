@@ -7,6 +7,8 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
+require 'ruote/part/null_participant'
+
 
 class FtWorkerTest < Test::Unit::TestCase
   include FunctionalBase
@@ -41,6 +43,20 @@ class FtWorkerTest < Test::Unit::TestCase
     Thread.pass
 
     assert_equal 1, @engine.storage.get_many('msgs').size
+  end
+
+  def test_remaining_messages
+
+    @engine.register_participant :alfred, Ruote::NullParticipant
+
+    pdef = Ruote.process_definition do
+    end
+
+    assert_trace pdef, ''
+
+    sleep 0.300
+
+    assert_equal [], @engine.storage.get_msgs
   end
 end
 
