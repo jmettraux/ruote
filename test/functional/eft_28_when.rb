@@ -42,7 +42,7 @@ class EftWhenTest < Test::Unit::TestCase
       echo 'in'
       concurrence do
         sequence do
-          _when '${v:ok}', :freq => '1'
+          _when '${v:ok}', :freq => '1s'
           echo 'done.'
         end
         sequence do

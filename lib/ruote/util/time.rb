@@ -75,9 +75,7 @@ module Ruote
       #
       # duration
 
-      duration = s.to_f rescue Rufus.parse_time_string(s)
-
-      Time.now.utc.to_f + duration
+      Time.now.utc.to_f + Rufus.parse_time_string(s)
     end
 
     case at

@@ -4,6 +4,7 @@
 
 == ruote - 2.1.8    not yet released
 
+- fixed every('10m') bug. Thanks Gonzalo Suarez
 - Ruote::FlowExpressionId.from_id(s) more permissive
 - concurrence (and concurrent-iterator) :merge_type => :stack
 

@@ -38,6 +38,7 @@ Richard Jennings
 Feedback
 --------
 
+Gonzalo Suarez - many help
 Francisco Kiko - "is set" issue
 David Goldhirsch - EM participant block
 dlamotte - set :val => nil
