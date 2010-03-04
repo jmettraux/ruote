@@ -97,16 +97,18 @@ module Ruote
 
     def initialize (opts={}, &block)
 
-      @server = opts[:server] || '127.0.0.1'
-      @port = opts[:port] || 25
+      opts = opts.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
 
-      @from = opts[:from]
-      @to = opts[:to]
+      @server = opts['server'] || '127.0.0.1'
+      @port = opts['port'] || 25
 
-      @template = opts[:template]
+      @from = opts['from']
+      @to = opts['to']
+
+      @template = opts['template']
       @block_template = block
 
-      @notification = opts[:notification]
+      @notification = opts['notification']
     end
 
     def consume (workitem)
