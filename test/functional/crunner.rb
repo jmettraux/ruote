@@ -4,6 +4,8 @@ tnumber = ARGV.find { |a| a.match(/^\d+/) } || 2
 
 i = 0
 
+puts `ruby -v`
+
 loop do
 
   t = Dir["test/functional/ct_#{tnumber}_*.rb"].first
