@@ -24,6 +24,7 @@
 
 
 require 'rufus/dollar' # gem 'rufus-dollar'
+require 'ruote/util/lookup'
 require 'ruote/util/treechecker'
 
 

@@ -22,41 +22,57 @@
 # Made in Japan.
 #++
 
+require 'rufus/json'
+require 'ruote/util/dollar'
+
 
 module Ruote
 
   #
-  # This mixin expects that the class that includes it has a @template
-  # or a @block_template instance variable.
+  # Template rendering helper.
+  #
+  # (Currently only used by the SmtpParticipant, could prove useful for
+  # custom participants)
   #
   module TemplateMixin
 
-    def render_template (flow_expression, workitem)
+    def render_template (template, flow_expression, workitem)
 
-      template = if @block_template
+      template = (File.read(template) rescue nil) if is_a_file?(template)
 
-        case @block_template.arity
-          when 1 then @block_template.call(workitem)
-          when 2 then @block_template.call(workitem, flow_expression)
-          else @block_template.call(workitem, flow_expression, self)
-        end
+      return render_default_template(workitem) unless template
 
-      elsif @template
-
-        @template.is_a?(File) ? @template.read : @template.to_s
-
-      else
-
-        nil
-      end
-
-      raise(
-        ArgumentError.new('no @template or @block_template found')
-      ) unless template
-
+      template = template.to_s
       workitem = workitem.to_h if workitem.respond_to?(:to_h)
 
       Ruote.dosub(template, flow_expression, workitem)
+    end
+
+    # Simply returns a pretty-printed view of the workitem
+    #
+    def render_default_template (workitem)
+
+      workitem = workitem.to_h if workitem.respond_to?(:to_h)
+
+      s = []
+      s << "workitem for #{workitem['participant_name']}"
+      s << ''
+      s << Rufus::Json.encode(workitem['fei'])
+      s << ''
+      workitem['fields'].each do |key, value|
+        s << " - '#{key}'  ==>  #{Rufus::Json.encode(value)}"
+      end
+      s.join("\n")
+    end
+
+    protected
+
+    def is_a_file? (s)
+
+      return false unless s
+      return false if s.index("\n")
+
+      File.exist?(s)
     end
   end
 end

@@ -31,8 +31,7 @@ require 'ruote/part/template'
 module Ruote
 
   #
-  # A very stupid SMTP participant, doesn't even care about formatting its
-  # messages. This class is meant as a base for more complex email participants.
+  # A very stupid SMTP participant.
   #
   # == options
   #
@@ -43,10 +42,11 @@ module Ruote
   # * :template - a String template for the mail message
   # * :notification - when set to true, the flow will resume immediately after having sent the email
   #
+  #
   # == :template
   #
   #   @engine.register_participant(
-  #     :no_good_notification
+  #     :no_good_notification,
   #     Ruote::SmtpParticipant,
   #     :server => 'smtp.example.com'
   #     :port => 25,
@@ -59,33 +59,18 @@ module Ruote
   # process definitions (in this example, the workitem field email_subject will
   # be used as the subject of the email...)
   #
-  # == block template
   #
-  # Whereas the :template option accepts a String, the block template may
-  # be useful when more complex templates are to be computed.
+  # == :to or workitem.fields['email_target']
   #
-  #   @engine.register_participant(
-  #     :no_good_notification
-  #     Ruote::SmtpParticipant,
-  #     :server => 'smtp.example.com'
-  #     :port => 25,
-  #     :to => 'toto@example.com',
-  #     :from => 'john@example.com',
-  #     :notification => true
-  #   ) do
+  # The target of the email is either given via the workitem field
+  # 'email_target', either by the option :to. The workitem field takes
+  # precedence if both are present.
   #
-  #     s = []
-  #     s << "From: the boss"
-  #     s << "Date: ${r:Time.now.rfc2822}"
-  #     s << "Subject: ${f:email_subject}\n"
-  #     s << ""
-  #     3.times { s << "this is no good." }
-  #
-  #     s.join("\n")
-  #   end
+  # This parameter/option may be either a single (string) email address, either
+  # an array of (string) email addresses.
   #
   #
-  # == mail listener
+  # == final note : mail listener
   #
   # This participant cannot read POP/IMAP accounts for you. You have to
   # use a mail listener or get a web reply by placing a link in the message...
@@ -95,35 +80,29 @@ module Ruote
     include LocalParticipant
     include TemplateMixin
 
-    def initialize (opts={}, &block)
+    def initialize (opts)
 
-      opts = opts.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
-
-      @server = opts['server'] || '127.0.0.1'
-      @port = opts['port'] || 25
-
-      @from = opts['from']
-      @to = opts['to']
-
-      @template = opts['template']
-      @block_template = block
-
-      @notification = opts['notification']
+      @opts = opts.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
     end
 
     def consume (workitem)
 
-      to = workitem.fields['email_target'] || @to
+      to = workitem.fields['email_target'] || @opts['to']
       to = Array(to)
 
       text = render_template(
-        Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h), workitem)
+        @opts['template'],
+        Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h),
+        workitem)
 
-      Net::SMTP.start(@server, @port) do |smtp|
-        smtp.send_message(text, @from, *to)
+      server = @opts['server'] || '127.0.0.1'
+      port = @opts['port'] || 25
+
+      Net::SMTP.start(server, port) do |smtp|
+        smtp.send_message(text, @opts['from'] || 'ruote@example.org', *to)
       end
 
-      reply_to_engine(workitem) if @notification
+      reply_to_engine(workitem) if @opts['notification']
     end
 
     def cancel (fei, flavour)

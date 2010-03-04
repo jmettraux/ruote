@@ -100,7 +100,7 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
   Hello, do you want ${f:item} ?
       })
 
-    noisy
+    #noisy
 
     wfid = @engine.launch(pdef)
 

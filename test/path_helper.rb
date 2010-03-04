@@ -7,7 +7,7 @@
 
 # making sure the tests see ruote
 
-puts "ruby #{RUBY_VERSION} #{RUBY_PLATFORM}"
+puts `ruby -v`
 
 ruotelib = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
 $:.unshift(ruotelib) unless $:.include?(ruotelib)

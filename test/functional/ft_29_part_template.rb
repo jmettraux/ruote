@@ -20,14 +20,15 @@ class FtPartTemplateTest < Test::Unit::TestCase
 
     def initialize (opts={}, &block)
 
-      @block_template = block
       @template = opts[:template]
     end
 
     def consume (workitem)
 
       @context['s_tracer'] << render_template(
-        Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h), workitem)
+        @template,
+        Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h),
+        workitem)
       @context['s_tracer'] << "\n"
 
       reply_to_engine(workitem)
@@ -51,26 +52,6 @@ class FtPartTemplateTest < Test::Unit::TestCase
     @engine.register_participant(
       :alpha,
       MyParticipant.new(:template => "0:${v:var0}\n1:${f:field0}"))
-
-    assert_trace pdef, %w[ 0:v_value 1:f_value done. ]
-  end
-
-  def test_block_template
-
-    pdef = Ruote.process_definition :name => 'def0' do
-      set 'v:var0' => 'v_value'
-      set 'f:field0' => 'f_value'
-      alpha
-      echo 'done.'
-    end
-
-    #noisy
-
-    @engine.register_participant(
-      :alpha,
-      MyParticipant.new {
-        "0:${v:var0}\n1:${f:field0}"
-      })
 
     assert_trace pdef, %w[ 0:v_value 1:f_value done. ]
   end

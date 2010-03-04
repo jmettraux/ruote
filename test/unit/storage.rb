@@ -7,16 +7,8 @@
 
 require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
 
-begin
-  require 'yajl'
-rescue LoadError
-  require 'json'
-end
-begin
-  require 'patron'
-rescue LoadError
-  # stick with net/http
-end
+require_json
+require_patron
 
 require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
 
@@ -124,13 +116,6 @@ class UtStorage < Test::Unit::TestCase
   end
 
   def test_keys_should_be_string
-
-    #begin
-    #  require 'yajl'
-    #rescue LoadError
-    #  require 'json'
-    #end
-    #Rufus::Json.detect_backend
 
     doc = { '_id' => 'h0', 'type' => 'dogfood', :m0 => :z, :m1 => [ :a, :b ] }
 

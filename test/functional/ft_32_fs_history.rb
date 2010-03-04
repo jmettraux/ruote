@@ -7,11 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-begin
-  require 'yajl'
-rescue LoadError
-  require 'json'
-end
+require_json
 Rufus::Json.detect_backend rescue nil
 
 require 'ruote/log/fs_history'
