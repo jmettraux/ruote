@@ -65,7 +65,8 @@ module Ruote
       end
 
       raise ArgumentError.new(
-        "doesn't know how to parse definition (#{definition.class})")
+        "doesn't know how to parse definition (#{definition.class}) " +
+        "or error in process definition")
     end
 
     # Class method for parsing process definition (XML, Ruby, from file or
