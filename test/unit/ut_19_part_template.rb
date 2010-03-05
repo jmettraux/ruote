@@ -22,8 +22,8 @@ workitem for gonzalo
 
 {"wfid":"20100304-bidehachina","expid":"0_0_1"}
 
- - 'model'  ==>  "BMW 328 Mille Miglia"
  - 'car'  ==>  "BMW"
+ - 'model'  ==>  "BMW 328 Mille Miglia"
   }.strip
 
   def setup

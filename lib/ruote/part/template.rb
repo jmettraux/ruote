@@ -59,8 +59,8 @@ module Ruote
       s << ''
       s << Rufus::Json.encode(workitem['fei'])
       s << ''
-      workitem['fields'].each do |key, value|
-        s << " - '#{key}'  ==>  #{Rufus::Json.encode(value)}"
+      workitem['fields'].keys.sort.each do |key|
+        s << " - '#{key}'  ==>  #{Rufus::Json.encode(workitem['fields'][key])}"
       end
       s.join("\n")
     end

@@ -4,6 +4,7 @@
 
 == ruote - 2.1.8    not yet released
 
+- SmtpParticipant and ruote/part/template.rb reorganization
 - StorageParticipant when returned by engine#register was unusable. Fixed.
 - string keys for SmtpParticipant. Thanks Gonzalo
 - fixed every('10m') bug. Thanks Gonzalo Suarez
