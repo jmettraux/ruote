@@ -288,6 +288,8 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     pa = @engine.register_participant 'alpha', Ruote::StorageParticipant
 
     assert_equal Ruote::StorageParticipant, pa.class
+
+    assert_equal [], pa.all
   end
 end
 

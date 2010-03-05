@@ -61,6 +61,8 @@ module Ruote
 
       if engine_or_options.respond_to?(:context)
         @context = engine_or_options.context
+      elsif engine_or_options.is_a?(Ruote::Context)
+        @context = engine_or_options
       else
         options = engine_or_options
       end
