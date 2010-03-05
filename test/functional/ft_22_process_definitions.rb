@@ -76,5 +76,12 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
 
     assert_trace(path, %w[ a b ])
   end
+
+  def test_local_unexpanded_definition
+
+    path = File.join(File.dirname(__FILE__), '..', 'pdef.xml')
+
+    assert_trace(path, %w[ a b ])
+  end
 end
 
