@@ -84,5 +84,17 @@ module Ruote
       else at
     end
   end
+
+  # Waiting for a better implementation of it in rufus-scheduler 2.0.4
+  #
+  def self.is_cron_string (s)
+
+    ss = s.split(' ')
+
+    return false if ss.size < 5 || ss.size > 6
+    return false if s.match(/\d{4}/)
+
+    true
+  end
 end
 

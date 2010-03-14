@@ -144,7 +144,7 @@ module Ruote
 
       at = if s.is_a?(Time) # at or every
         at
-      elsif is_cron_string(s) # cron
+      elsif Ruote.is_cron_string(s) # cron
         Rufus::CronLine.new(s).next_time(Time.now + 1)
       else # at or every
         Ruote.s_to_at(s)
@@ -209,18 +209,6 @@ module Ruote
       now = Ruote.time_to_utc_s(now)
 
       scheds.select { |sched| sched['at'] <= now }
-    end
-
-    # Waiting for a better implementation of it in rufus-scheduler 2.0.4
-    #
-    def is_cron_string (s)
-
-      ss = s.split(' ')
-
-      return false if ss.size < 5 || ss.size > 6
-      return false if s.match(/\d{4}/)
-
-      true
     end
   end
 end
