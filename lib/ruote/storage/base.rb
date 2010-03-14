@@ -32,12 +32,6 @@ module Ruote
   #
   module StorageBase
 
-    def reserve (doc)
-
-      #(delete(doc) != true)
-      delete(doc).nil?
-    end
-
     #--
     # configurations
     #++

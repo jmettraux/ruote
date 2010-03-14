@@ -201,7 +201,7 @@ module Ruote
 
       msg = Ruote.fulldup(schedule['msg'])
 
-      return false unless @storage.reserve(schedule)
+      return false unless @storage.delete(schedule).nil?
 
       @storage.put_msg(msg.delete('action'), msg)
 
@@ -212,7 +212,7 @@ module Ruote
 
       return false if cannot_handle(msg)
 
-      return false unless @storage.reserve(msg)
+      return false unless @storage.delete(msg).nil?
 
       begin
 
