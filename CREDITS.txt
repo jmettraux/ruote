@@ -39,7 +39,7 @@ Feedback
 --------
 
 Gonzalo Suarez - many help
-Francisco Kiko - "is set" issue
+Francisco Kiko - many help
 David Goldhirsch - EM participant block
 dlamotte - set :val => nil
 jpr5 + asm

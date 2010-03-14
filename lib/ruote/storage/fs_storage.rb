@@ -38,15 +38,29 @@ require 'rufus/cloche'
 
 module Ruote
 
+  # A basic FS-bound ruote storage. Leverages rufus-cloche
+  # (http://github.com/jmettraux/rufus-cloche).
+  #
+  # Warning : for JRuby 1.4.0 on Ubuntu, passing the cloche_nolock option set
+  # to true seems necessary.
+  # See http://groups.google.com/group/openwferu-users/t/d82516ed3bdd8f23
+  #
   class FsStorage
 
     include StorageBase
 
+    # Creates a FsStorage pointing to the given dir.
+    #
+    # The options are classical engine configuration, but the 'cloche_nolock'
+    # option is read by the storage and followed.
+    #
     def initialize (dir, options={})
 
       FileUtils.mkdir_p(dir)
 
-      @cloche = Rufus::Cloche.new(:dir => dir)
+      @cloche = Rufus::Cloche.new(
+        :dir => dir, :nolock => options['cloche_nolock'])
+
       @options = options
 
       @cloche.put(@options.merge('type' => 'configurations', '_id' => 'engine'))

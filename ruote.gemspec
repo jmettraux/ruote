@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer", "Torsten Schoenebaum"]
-  s.date = %q{2010-03-02}
+  s.date = %q{2010-03-14}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -226,6 +226,7 @@ ruote is an open source ruby workflow engine.
      "test/unit/ut_15_util.rb",
      "test/unit/ut_16_parser.rb",
      "test/unit/ut_18_engine.rb",
+     "test/unit/ut_19_part_template.rb",
      "test/unit/ut_1_fei.rb",
      "test/unit/ut_2_wfidgen.rb",
      "test/unit/ut_3_wait_logger.rb",
@@ -252,7 +253,7 @@ ruote is an open source ruby workflow engine.
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rufus-json>, [">= 0.2.0"])
-      s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.14"])
+      s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.16"])
       s.add_runtime_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_runtime_dependency(%q<rufus-lru>, [">= 0"])
       s.add_runtime_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
@@ -266,7 +267,7 @@ ruote is an open source ruby workflow engine.
       s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
       s.add_dependency(%q<rufus-json>, [">= 0.2.0"])
-      s.add_dependency(%q<rufus-cloche>, [">= 0.1.14"])
+      s.add_dependency(%q<rufus-cloche>, [">= 0.1.16"])
       s.add_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_dependency(%q<rufus-lru>, [">= 0"])
       s.add_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
@@ -281,7 +282,7 @@ ruote is an open source ruby workflow engine.
     end
   else
     s.add_dependency(%q<rufus-json>, [">= 0.2.0"])
-    s.add_dependency(%q<rufus-cloche>, [">= 0.1.14"])
+    s.add_dependency(%q<rufus-cloche>, [">= 0.1.16"])
     s.add_dependency(%q<rufus-dollar>, [">= 0"])
     s.add_dependency(%q<rufus-lru>, [">= 0"])
     s.add_dependency(%q<rufus-mnemo>, [">= 1.1.0"])

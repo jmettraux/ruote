@@ -302,11 +302,19 @@
 [ ] implement pause engine
 [ ] implement pause process
 
-[ ] engine.on_error = 'participant_name'
+[ ] engine.on_error = 'participant_name' // 'subprocess_name'
 
 [ ] "business days" plugin
 
 [ ] issue with ruote-kit and inpa participants...
 
 [ ] let the storage participant leverage Ruote::FlowExpressionId.from_id(s)
+
+[ ] participant :ref => '${f:nada}', :or => 'xyz'
+    (look at OpenWFE manual, this feature already existed in there)
+    http://www.openwfe.org/manual/ch06s02.html#expression_participant
+    else-ref... list of participants...
+    ref="alpha && bravo", ref="alpha||bravo" (|| parallel :( )
+
+[ ] CompositeStorage.new('msgs' => AmqpStorage.new(''), ...)
 
