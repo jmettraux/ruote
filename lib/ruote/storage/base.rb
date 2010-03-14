@@ -137,7 +137,7 @@ module Ruote
     def put_schedule (flavour, owner_fei, s, msg)
 
       at = if s.is_a?(Time) # at or every
-        at
+        s
       elsif Ruote.is_cron_string(s) # cron
         Rufus::CronLine.new(s).next_time(Time.now + 1)
       else # at or every

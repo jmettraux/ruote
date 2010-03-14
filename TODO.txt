@@ -192,6 +192,7 @@
 [x] break fs_history, prepare for dm_history
 [o] part = engine.register_participant :alpha, StorageParticipant should work...
 [o] concurrence :merge_type => 'stack'
+[o] CompositeStorage.new('msgs' => AmqpStorage.new(''), ...)
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -315,6 +316,4 @@
     http://www.openwfe.org/manual/ch06s02.html#expression_participant
     else-ref... list of participants...
     ref="alpha && bravo", ref="alpha||bravo" (|| parallel :( )
-
-[ ] CompositeStorage.new('msgs' => AmqpStorage.new(''), ...)
 
