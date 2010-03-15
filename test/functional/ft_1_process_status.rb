@@ -84,6 +84,27 @@ class FtProcessStatusTest < Test::Unit::TestCase
       ps.variables)
   end
 
+  def test_errors
+
+    pdef = Ruote.process_definition 'my process' do
+      nada
+    end
+
+    wfid = @engine.launch( pdef )
+    wait_for( wfid )
+
+    errs = @engine.errors
+
+    assert_equal 1, errs.size
+
+    assert_equal wfid, errs.first['fei']['wfid']
+
+    err = @engine.errors( wfid )
+
+    assert_equal 1, err.size
+    assert_equal wfid, err.first['fei']['wfid']
+  end
+
   def test_tree
 
     pdef = Ruote.process_definition 'my process' do

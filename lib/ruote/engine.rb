@@ -149,7 +149,7 @@ module Ruote
     def process (wfid)
 
       exps = @storage.get_many('expressions', /!#{wfid}$/)
-      errs = @storage.get_many('errors', /!#{wfid}$/)
+      errs = self.errors( wfid )
 
       return nil if exps.empty? && errs.empty?
 
@@ -163,7 +163,7 @@ module Ruote
     def processes
 
       exps = @storage.get_many('expressions')
-      errs = @storage.get_many('errors')
+      errs = self.errors
 
       by_wfid = {}
 
@@ -175,6 +175,14 @@ module Ruote
       end
 
       by_wfid.values.collect { |xs, rs| ProcessStatus.new(@context, xs, rs) }
+    end
+
+    # Returns an array of current errors (hashes)
+    #
+    def errors( wfid = nil )
+      wfid.nil? ?
+        @storage.get_many('errors') :
+        @storage.get_many('errors', /!#{wfid}$/)
     end
 
     def shutdown
