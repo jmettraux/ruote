@@ -252,7 +252,12 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace *%w[ a b c ].permutation.to_a, pdef
+    #assert_trace(*%w[ a b c ].permutation.to_a, pdef)
+      # this is not ruby 1.8.7p72 friendly
+
+    perms = %w[ a b c ].permutation.to_a
+    perms << pdef
+    assert_trace(*perms)
   end
 
   def test_merge_type_isolate
