@@ -71,5 +71,25 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
 
     assert_trace('alpha 0_0_0', pdef)
   end
+
+  def test_dispatch_time
+
+    wis = []
+
+    pdef = Ruote.process_definition { alpha; alpha }
+
+    @engine.register_participant 'alpha' do |workitem|
+      wis << workitem.to_h.dup
+    end
+
+    assert_trace('', pdef)
+
+    assert_equal(
+      String,
+      wis.first['fields']['__dispatch_time__'].class)
+    assert_not_equal(
+      wis.first['fields']['__dispath_time__'],
+      wis.last['fields']['__dispatch_time__'])
+  end
 end
 

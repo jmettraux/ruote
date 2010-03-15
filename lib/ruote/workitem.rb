@@ -108,6 +108,13 @@ module Ruote
       fields['__result__'] = r
     end
 
+    # When was this workitem dispatched ?
+    #
+    def dispatch_time
+
+      fields['__dispatch_time__']
+    end
+
     # Warning : equality is based on fei and not on payload !
     #
     def == (other)

@@ -2,6 +2,11 @@
 = ruote - CHANGELOG.txt
 
 
+== ruote - 2.1.9    not yet released
+
+- workitem.fields['__dispatch_time__'] is now set
+
+
 == ruote - 2.1.8    released 2010/03/15
 
 - participant#schedule_timeout workaround for issue with JRuby 1.4.0 (1.8.7)
