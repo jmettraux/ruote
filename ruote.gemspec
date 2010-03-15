@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruote}
-  s.version = "2.1.8"
+  s.version = "2.1.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer", "Torsten Schoenebaum"]
-  s.date = %q{2010-03-15}
+  s.date = %q{2010-03-16}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
