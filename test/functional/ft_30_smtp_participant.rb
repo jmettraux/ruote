@@ -13,7 +13,7 @@ require 'ruote/part/smtp_participant'
 class NftSmtpParticipantTest < Test::Unit::TestCase
   include FunctionalBase
 
-  if RUBY_PLATFORM != 'java'
+  unless Ruote::JAVA
 
     require 'mailtrap' # sudo gem install mailtrap
 
@@ -26,7 +26,7 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
 
   def _test_smtp
 
-    return if RUBY_PLATFORM == 'java'
+    return if Ruote::JAVA
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
@@ -70,7 +70,7 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
 
   def test_smtp_non_instance_participant
 
-    return if RUBY_PLATFORM == 'java'
+    return if Ruote::JAVA
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do

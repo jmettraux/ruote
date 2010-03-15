@@ -27,7 +27,11 @@ module Ruote
 
   # Will be set to true if the Ruby runtime is on Windows
   #
-  WIN = RUBY_PLATFORM.match(/mswin|mingw/) != nil
+  WIN = (RUBY_PLATFORM.match(/mswin|mingw/) != nil)
+
+  # Will be set to true if the Ruby runtime is JRuby
+  #
+  JAVA = (RUBY_PLATFORM.match(/java/) != nil)
 
   # Prints the current call stack to stdout
   #
