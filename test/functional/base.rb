@@ -51,16 +51,14 @@ module FunctionalBase
     assert_equal count, c
   end
 
-  #   assert_trace(pdef, *expected_traces)
-  #   assert_trace(pdef, fields, *expected_traces)
+  #   assert_trace(*expected_traces, pdef)
+  #   assert_trace(*expected_traces, fields, pdef)
   #
-  def assert_trace (pdef, *expected_traces)
+  def assert_trace (*args)
 
-    fields = expected_traces.first.is_a?(Hash) ? expected_traces.shift : {}
-
-    expected_traces = expected_traces.collect do |et|
-      et.is_a?(Array) ? et.join("\n") : et
-    end
+    pdef = args.pop
+    fields = args.last.is_a?(Hash) ? args.pop : {}
+    expected_traces = args.collect { |et| et.is_a?(Array) ? et.join("\n") : et }
 
     wfid = @engine.launch(pdef, fields)
 

@@ -25,7 +25,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'alpha'
+    assert_trace 'alpha', pdef
 
     assert_log_count(1) { |e| e['action'] == 'dispatch' }
     assert_log_count(1) { |e| e['action'] == 'receive' }
@@ -43,7 +43,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'alpha'
+    assert_trace 'alpha', pdef
   end
 
   def test_participant_exp_name
@@ -58,7 +58,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'alpha'
+    assert_trace 'alpha', pdef
   end
 
   def test_participant_exp_name_tree_rewriting
@@ -93,7 +93,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ alpha charly ]
+    assert_trace %w[ alpha charly ], pdef
   end
 
   def test_participant_and_att_text
@@ -112,7 +112,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'done.'
+    assert_trace 'done.', pdef
 
     assert_equal(
       { "commander of the left guard"=>nil, "if"=>"true", "ref"=>"notify" },

@@ -37,7 +37,7 @@ class EftEchoTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'a')
+    assert_trace('a', pdef)
   end
 
   #def test_print_escape

@@ -35,7 +35,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, "a\nb:f0:f0val\nc:f0:f0val:v0val"
+    assert_trace "a\nb:f0:f0val\nc:f0:f0val:v0val", pdef
   end
 
   TEST_BLOCK = Ruote.process_definition do
@@ -56,7 +56,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace TEST_BLOCK, 'seen'
+    assert_trace 'seen', TEST_BLOCK
   end
 
   def test_non_jsonfiable_result
@@ -82,7 +82,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       t.to_s
     end
 
-    assert_trace TEST_BLOCK, expected
+    assert_trace expected, TEST_BLOCK
   end
 end
 

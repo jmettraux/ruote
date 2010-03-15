@@ -27,7 +27,7 @@ class EftUndoTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ over ]
+    assert_trace %w[ over ], pdef
 
     assert_equal 0, alpha.size
 
@@ -51,7 +51,7 @@ class EftUndoTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ over ]
+    assert_trace %w[ over ], pdef
 
     assert_equal 0, alpha.size
 
@@ -72,7 +72,7 @@ class EftUndoTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '.'
+    assert_trace '.', pdef
   end
 end
 

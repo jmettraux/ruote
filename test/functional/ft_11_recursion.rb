@@ -56,7 +56,7 @@ class FtRecursionTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ 1 2 3 4 5 6 ])
+    assert_trace(%w[ 1 2 3 4 5 6 ], pdef)
 
     #p alpha.wfids.uniq
 
@@ -79,7 +79,7 @@ class FtRecursionTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ 1 2 3 4 5 6 ]
+    assert_trace %w[ 1 2 3 4 5 6 ], pdef
 
     #p alpha.wfids.uniq
 

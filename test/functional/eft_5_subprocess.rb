@@ -22,7 +22,7 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'a'
+    assert_trace 'a', pdef
   end
 
   def test_subprocess_att_text
@@ -36,7 +36,7 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'a'
+    assert_trace 'a', pdef
   end
 
   def test_subprocess_exp_name
@@ -50,7 +50,7 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'a'
+    assert_trace 'a', pdef
   end
 
   def test_subprocess_if
@@ -68,7 +68,7 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a a ]
+    assert_trace %w[ a a ], pdef
   end
 
   def test_subprocess_atts_to_vars
@@ -82,7 +82,7 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'A:B'
+    assert_trace 'A:B', pdef
   end
 
   def test_subprocess_passing_tree
@@ -104,7 +104,7 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, ''
+    assert_trace '', pdef
 
     assert_equal ["noop", {}, []], tree
   end
@@ -121,7 +121,7 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ in a b out. ]
+    assert_trace %w[ in a b out. ], pdef
   end
 
   def test_missing_uri
@@ -158,7 +158,7 @@ class EftSubprocessTest < Test::Unit::TestCase
       echo 'in sub0'
     end
 
-    assert_trace pdef, "in sub0\ndone."
+    assert_trace "in sub0\ndone.", pdef
   end
 end
 

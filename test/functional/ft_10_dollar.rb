@@ -23,7 +23,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'field'
+    assert_trace 'field', pdef
   end
 
   def test_v
@@ -40,7 +40,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a b0 c0 d0 ])
+    assert_trace(%w[ a b0 c0 d0 ], pdef)
   end
 
   def test_nested_v
@@ -59,7 +59,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a:toto b:atlantic_city ])
+    assert_trace(%w[ a:toto b:atlantic_city ], pdef)
   end
 
   def test_f
@@ -75,7 +75,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a btoto cAsia ])
+    assert_trace(%w[ a btoto cAsia ], pdef)
   end
 
   def test_no_r
@@ -88,7 +88,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, '><')
+    assert_trace('><', pdef)
   end
 
   def test_r
@@ -103,7 +103,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     @engine.context['ruby_eval_allowed'] = true
 
-    assert_trace(pdef, '>3<')
+    assert_trace('>3<', pdef)
   end
 
   def test_r_and_wi
@@ -120,7 +120,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     @engine.context['ruby_eval_allowed'] = true
 
-    assert_trace pdef, "person\nperson"
+    assert_trace "person\nperson", pdef
   end
 
   def test_r_and_d
@@ -136,7 +136,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     @engine.context['ruby_eval_allowed'] = true
 
-    assert_trace pdef, 'person'
+    assert_trace 'person', pdef
   end
 
   def test_nested
@@ -151,7 +151,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'AA'
+    assert_trace 'AA', pdef
   end
 
   def test_wfid

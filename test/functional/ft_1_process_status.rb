@@ -353,7 +353,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a c c d ]
+    assert_trace %w[ a c c d ], pdef
 
     assert_equal(
       ["define", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["participant", {"ref"=>"charly"}, []]]], ["delta", {}, []]]],

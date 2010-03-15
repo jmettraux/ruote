@@ -22,7 +22,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, '')
+    assert_trace('', pdef)
   end
 
   def test_cursor
@@ -36,7 +36,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a b ])
+    assert_trace(%w[ a b ], pdef)
   end
 
   def test_skip
@@ -52,7 +52,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a c ])
+    assert_trace(%w[ a c ], pdef)
   end
 
   def test_break
@@ -67,7 +67,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'a')
+    assert_trace('a', pdef)
   end
 
   def test_stop
@@ -82,7 +82,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'a')
+    assert_trace('a', pdef)
   end
 
   def test_jump_to_tag
@@ -98,7 +98,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a c ])
+    assert_trace(%w[ a c ], pdef)
   end
 
   def test_jump_to_variable_tag
@@ -117,7 +117,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a b d ])
+    assert_trace(%w[ a b d ], pdef)
   end
 
   def test_rewind_if
@@ -140,7 +140,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a ] * 5)
+    assert_trace(%w[ a ] * 5, pdef)
   end
 
   def test_jump_to
@@ -171,7 +171,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a r a r a r p ]
+    assert_trace %w[ a r a r a r p ], pdef
       # ARP nostalgy....
   end
 
@@ -244,7 +244,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a b ]
+    assert_trace %w[ a b ], pdef
   end
 
   def test_break_if
@@ -258,7 +258,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'done.'
+    assert_trace 'done.', pdef
   end
 
   def test_over_unless
@@ -272,7 +272,7 @@ class EftCursorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'done.'
+    assert_trace 'done.', pdef
   end
 end
 

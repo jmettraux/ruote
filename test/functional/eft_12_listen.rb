@@ -148,7 +148,7 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "other:#{wi.fields['other']}\n"
     end
 
-    assert_trace(pdef, "alpha\nname:William Mandella other:nothing")
+    assert_trace("alpha\nname:William Mandella other:nothing", pdef)
   end
 
   def test_where

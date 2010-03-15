@@ -20,7 +20,7 @@ class EftSequenceTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, '')
+    assert_trace('', pdef)
   end
 
   def test_a_b_sequence
@@ -34,7 +34,7 @@ class EftSequenceTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, "a\nb")
+    assert_trace("a\nb", pdef)
   end
 
   def test_alice_bob_sequence
@@ -52,7 +52,7 @@ class EftSequenceTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, "alice\nbob")
+    assert_trace("alice\nbob", pdef)
   end
 end
 

@@ -20,7 +20,7 @@ class FtWorkerTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
     end
 
-    assert_trace pdef, ''
+    assert_trace '', pdef
 
     #puts; logger.log.each { |e| p e }; puts
     assert_equal %w[ launch terminated ], logger.log.map { |e| e['action'] }
@@ -52,7 +52,7 @@ class FtWorkerTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
     end
 
-    assert_trace pdef, ''
+    assert_trace '', pdef
 
     sleep 0.300
 

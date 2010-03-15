@@ -29,7 +29,7 @@ class FtConditionalTest < Test::Unit::TestCase
       end
     end
 
-    assert_trace(pdef, %w[ 2 a b d ])
+    assert_trace(%w[ 2 a b d ], pdef)
   end
 
   def test_string_equality_when_space
@@ -49,7 +49,7 @@ class FtConditionalTest < Test::Unit::TestCase
       end
     end
 
-    assert_trace(pdef, "some dude\na\nb\nd")
+    assert_trace("some dude\na\nb\nd", pdef)
   end
 
   def test_unless
@@ -62,15 +62,15 @@ class FtConditionalTest < Test::Unit::TestCase
       echo '.'
     end
 
-    assert_trace(pdef, { 'f' => 2000 }, %w[ 2000 i . ])
+    assert_trace(%w[ 2000 i . ], { 'f' => 2000 }, pdef)
 
     @tracer.clear
 
-    assert_trace(pdef, { 'f' => '2000' }, %w[ 2000 i . ])
+    assert_trace(%w[ 2000 i . ], { 'f' => '2000' }, pdef)
 
     @tracer.clear
 
-    assert_trace(pdef, { 'f' => 'other' }, %w[ other u . ])
+    assert_trace(%w[ other u . ], { 'f' => 'other' }, pdef)
   end
 end
 

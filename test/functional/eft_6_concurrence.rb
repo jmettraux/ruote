@@ -28,7 +28,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ alpha alpha ]
+    assert_trace %w[ alpha alpha ], pdef
   end
 
   def test_over_if
@@ -61,7 +61,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ alpha ] * 3)
+    assert_trace(%w[ alpha ] * 3, pdef)
 
     #assert_equal(
     #  {'1'=>{"seen"=>"indeed"}, '0'=>{}, "params"=>{"ref"=>"bravo"}},
@@ -105,7 +105,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a a done. ])
+    assert_trace(%w[ a a done. ], pdef)
   end
 
   def test_remaining_forget_when_no_remains
@@ -120,7 +120,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a b done. ], %w[ b a done. ]
+    assert_trace %w[ a b done. ], %w[ b a done. ], pdef
   end
 
   # helper

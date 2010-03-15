@@ -25,7 +25,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'caught')
+    assert_trace('caught', pdef)
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'fail' }.size
   end
@@ -72,7 +72,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ 1 2 done. ])
+    assert_trace(%w[ 1 2 done. ], pdef)
   end
 
   def test_on_error_undo
@@ -91,7 +91,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = assert_trace(pdef, %w[ a b d ])
+    wfid = assert_trace(%w[ a b d ], pdef)
 
     assert_nil @engine.process(wfid)
   end
@@ -124,7 +124,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'failed.')
+    assert_trace('failed.', pdef)
   end
 
   def test_with_concurrence
@@ -147,7 +147,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'done.'
+    assert_trace 'done.', pdef
     assert_equal 1, a_count
     assert_equal 1, e_count
   end

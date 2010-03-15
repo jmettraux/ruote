@@ -22,7 +22,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '-0-'
+    assert_trace '-0-', pdef
   end
 
   def test_set_to_nil
@@ -36,7 +36,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '--'
+    assert_trace '--', pdef
   end
 
   def test_set_var_in_subprocess
@@ -60,7 +60,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a b0 c0 d1 e0 ]
+    assert_trace %w[ a b0 c0 d1 e0 ], pdef
   end
 
   def test_unset_var
@@ -76,7 +76,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ -0- -- ]
+    assert_trace %w[ -0- -- ], pdef
   end
 
   def test_set_field
@@ -90,7 +90,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '-0-'
+    assert_trace '-0-', pdef
   end
 
   def test_set_field_to_array
@@ -104,7 +104,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '-b-'
+    assert_trace '-b-', pdef
   end
 
   def test_set_field_deep
@@ -119,7 +119,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '-aBc-'
+    assert_trace '-aBc-', pdef
   end
 
   def test_missing_value
@@ -134,7 +134,7 @@ class EftSetTest < Test::Unit::TestCase
       @tracer << workitem.fields.inspect
     end
 
-    assert_trace pdef, "{\"f\"=>nil}"
+    assert_trace '{"f"=>nil}', pdef
   end
 
   def test_field_value
@@ -149,7 +149,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'toto:toto'
+    assert_trace 'toto:toto', pdef
   end
 
   def test_escape
@@ -170,7 +170,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ nada:${nada} nada:${nada} ]
+    assert_trace %w[ nada:${nada} nada:${nada} ], pdef
   end
 
   def test_simpler_set
@@ -192,7 +192,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ 0/1/2 // ]
+    assert_trace %w[ 0/1/2 // ], pdef
   end
 
   def test_simpler_and_nested
@@ -207,7 +207,7 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '0/1'
+    assert_trace '0/1', pdef
   end
 
   def test_set_at_engine_level_is_forbidden

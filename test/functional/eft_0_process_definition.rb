@@ -16,8 +16,8 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
   def test_empty_procdef
 
     assert_trace(
-      Ruote.define(:name => 'test_1') { },
-      '')
+      '',
+      Ruote.define(:name => 'test_1') { })
   end
 
   def test_sub_definition

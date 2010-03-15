@@ -30,7 +30,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '2|2'
+    assert_trace '2|2', pdef
   end
 
   def test_inc_missing
@@ -49,7 +49,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '2|2'
+    assert_trace '2|2', pdef
   end
 
   def test_inc_delta
@@ -70,7 +70,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '6|8|3.0'
+    assert_trace '6|8|3.0', pdef
   end
 
   def test_inc_v_val
@@ -88,7 +88,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '4'
+    assert_trace '4', pdef
   end
 
   def test_inc_array
@@ -108,7 +108,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ alpha bravo charly ]
+    assert_trace %w[ alpha bravo charly ], pdef
   end
 
   def test_inc_array_head
@@ -129,7 +129,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ charly alpha bravo ]
+    assert_trace %w[ charly alpha bravo ], pdef
   end
 
   def test_inc_array_missing
@@ -149,7 +149,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ charly charly ]
+    assert_trace %w[ charly charly ], pdef
   end
 
   def test_dec
@@ -170,7 +170,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '3|3|-1'
+    assert_trace '3|3|-1', pdef
   end
 
   def test_dec_array
@@ -194,7 +194,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a.b b.c a ]
+    assert_trace %w[ a.b b.c a ], pdef
   end
 
   def test_dec_to
@@ -215,7 +215,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a.b c ]
+    assert_trace %w[ a.b c ], pdef
   end
 
   def test_dec_val
@@ -236,7 +236,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a.c b ]
+    assert_trace %w[ a.c b ], pdef
   end
 
   def test_cursor
@@ -254,7 +254,7 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a b c d ]
+    assert_trace %w[ a b c d ], pdef
   end
 
   def test_bare_inc

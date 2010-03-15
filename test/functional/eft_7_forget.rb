@@ -55,7 +55,7 @@ class EftForgetTest < Test::Unit::TestCase
   #    echo '2_${v:a}'
   #  end
   #  noisy
-  #  assert_trace pdef, %w[ 1_1 0_0 2_1 ]
+  #  assert_trace %w[ 1_1 0_0 2_1 ], pdef
   #end
 end
 

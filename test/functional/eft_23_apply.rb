@@ -23,7 +23,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ in out. ])
+    assert_trace(%w[ in out. ], pdef)
   end
 
   def test_apply_tree
@@ -34,7 +34,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'nada')
+    assert_trace('nada', pdef)
   end
 
   def test_apply_default_tree_variable
@@ -48,7 +48,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'nada')
+    assert_trace('nada', pdef)
   end
 
   def test_apply_tree_variable
@@ -62,7 +62,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'nada')
+    assert_trace('nada', pdef)
   end
 
   def test_apply_tree_field
@@ -77,7 +77,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'nada')
+    assert_trace('nada', pdef)
   end
 
   def test_apply_attributes_as_variables
@@ -88,7 +88,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'a:surf')
+    assert_trace('a:surf', pdef)
   end
 
   def test_apply_default_with_attributes_as_variables
@@ -103,7 +103,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a: a:surf ])
+    assert_trace(%w[ a: a:surf ], pdef)
   end
 
   def test_apply_within_subprocess
@@ -123,7 +123,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ nada ] * 3)
+    assert_trace(%w[ nada ] * 3, pdef)
   end
 
   def test_apply_within_subprocess_2
@@ -139,7 +139,7 @@ class EftApplyTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'nada')
+    assert_trace('nada', pdef)
   end
 end
 

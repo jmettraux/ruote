@@ -30,7 +30,7 @@ class EftEqualsTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ false ] * 4)
+    assert_trace(%w[ false ] * 4, pdef)
   end
 
   def test_true
@@ -49,7 +49,7 @@ class EftEqualsTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ true ] * 2)
+    assert_trace(%w[ true ] * 2, pdef)
   end
 end
 

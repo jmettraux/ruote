@@ -31,8 +31,8 @@ class FtFsHistoryTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid0 = assert_trace(pdef, "done.")
-    wfid1 = assert_trace(pdef, "done.\ndone.")
+    wfid0 = assert_trace("done.", pdef)
+    wfid1 = assert_trace("done.\ndone.", pdef)
 
     sleep 0.100
 
@@ -77,7 +77,7 @@ class FtFsHistoryTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid0 = assert_trace(pdef, "done.")
+    wfid0 = assert_trace("done.", pdef)
 
     sleep 0.100
 

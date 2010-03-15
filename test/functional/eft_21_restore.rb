@@ -26,7 +26,7 @@ class EftRestoreTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ -- -surf- ]
+    assert_trace %w[ -- -surf- ], pdef
   end
 
   def test_set_fields
@@ -40,7 +40,7 @@ class EftRestoreTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '-A-'
+    assert_trace '-A-', pdef
   end
 
   def test_set_fields_deep
@@ -55,7 +55,7 @@ class EftRestoreTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, '-B-'
+    assert_trace '-B-', pdef
   end
 end
 

@@ -25,7 +25,7 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'alpha')
+    assert_trace('alpha', pdef)
 
     Thread.pass
       # making sure the reply to the participant expression is intercepted
@@ -69,7 +69,7 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
       @tracer << "#{workitem.participant_name} #{workitem.fei.expid}\n"
     end
 
-    assert_trace(pdef, 'alpha 0_0_0')
+    assert_trace('alpha 0_0_0', pdef)
   end
 end
 

@@ -25,7 +25,7 @@ class BmSeqThousandTest < Test::Unit::TestCase
 
     noisy
 
-    assert_trace pdef, [ 'a' ] * n
+    assert_trace [ 'a' ] * n, pdef
   end
 end
 

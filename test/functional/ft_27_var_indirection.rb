@@ -27,7 +27,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'alpha'
+    assert_trace 'alpha', pdef
   end
 
   def test_subprocess_indirection
@@ -45,7 +45,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'a'
+    assert_trace 'a', pdef
   end
 
   def test_subprocess_indirection_uri
@@ -60,7 +60,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a b ]
+    assert_trace %w[ a b ], pdef
   end
 
   def test_subprocess_uri_set_as_engine_variable
@@ -73,7 +73,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
 
     @engine.variables['v'] = File.join(File.dirname(__FILE__), '..', 'pdef.xml')
 
-    assert_trace pdef, %w[ a b ]
+    assert_trace %w[ a b ], pdef
   end
 
   def test_subprocess_uri_set_as_engine_variable__absolute
@@ -87,7 +87,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
     @engine.variables['v'] = File.expand_path(
       File.join(File.dirname(__FILE__), '..', 'pdef.xml'))
 
-    assert_trace pdef, %w[ a b ]
+    assert_trace %w[ a b ], pdef
   end
 end
 

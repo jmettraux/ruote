@@ -26,7 +26,7 @@ class FtParticipantSubprocessPriorityTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'sub0'
+    assert_trace 'sub0', pdef
   end
 end
 

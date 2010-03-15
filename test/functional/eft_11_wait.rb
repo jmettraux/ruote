@@ -27,7 +27,7 @@ class EftWaitTest < Test::Unit::TestCase
     ts = []
     @engine.register_participant(:alpha) { ts << Time.now }
 
-    assert_trace pdef, 'done.'
+    assert_trace 'done.', pdef
 
     #p [ ts[1].sec, ts[0].sec ]
     assert [ 2, 3 ].include?((ts[1].sec - ts[0].sec) % 60)
@@ -73,7 +73,7 @@ class EftWaitTest < Test::Unit::TestCase
     ts = []
     @engine.register_participant(:alpha) { ts << Time.now }
 
-    assert_trace pdef, 'done.'
+    assert_trace 'done.', pdef
 
     #p ts
     assert ts[1] - ts[0] > 1.0, "#{ts[1] - ts[0]} should be > 1.0"
@@ -91,7 +91,7 @@ class EftWaitTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a b ]
+    assert_trace %w[ a b ], pdef
   end
 end
 

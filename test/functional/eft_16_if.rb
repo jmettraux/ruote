@@ -22,7 +22,7 @@ class EftIfTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'then')
+    assert_trace('then', pdef)
   end
 
   def test_else
@@ -36,7 +36,7 @@ class EftIfTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'else')
+    assert_trace('else', pdef)
   end
 
   def test_missing_then
@@ -51,7 +51,7 @@ class EftIfTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'done.')
+    assert_trace('done.', pdef)
   end
 
   def test_missing_else
@@ -67,7 +67,7 @@ class EftIfTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'done.')
+    assert_trace('done.', pdef)
   end
 
   def test_equals_true
@@ -82,7 +82,7 @@ class EftIfTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'then')
+    assert_trace('then', pdef)
   end
 
   def test_equals_false
@@ -97,7 +97,7 @@ class EftIfTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'else')
+    assert_trace('else', pdef)
   end
 
   def test_equals_true_no_then
@@ -113,7 +113,7 @@ class EftIfTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'done.')
+    assert_trace('done.', pdef)
   end
 
   def test_attribute_text
@@ -141,7 +141,7 @@ class EftIfTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ then else else else ])
+    assert_trace(%w[ then else else else ], pdef)
   end
 
   def test_xml_equals
@@ -161,11 +161,11 @@ class EftIfTest < Test::Unit::TestCase
       </process-definition>
     }
 
-    assert_trace(pdef, { 'state' => 'A' }, 'alpha')
+    assert_trace('alpha', { 'state' => 'A' }, pdef)
 
     @tracer.clear
 
-    assert_trace(pdef, { :state => 'A' }, 'alpha')
+    assert_trace('alpha', { :state => 'A' }, pdef)
   end
 end
 

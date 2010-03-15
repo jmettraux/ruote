@@ -22,7 +22,7 @@ class EftCommandTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'done.'
+    assert_trace 'done.', pdef
   end
 end
 

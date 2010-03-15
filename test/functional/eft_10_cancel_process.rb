@@ -23,7 +23,7 @@ class EftCancelProcessTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'a')
+    assert_trace('a', pdef)
 
     #assert_equal 3, logger.log.select { |e| e[1] == :entered_tag }.size
   end
@@ -40,7 +40,7 @@ class EftCancelProcessTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, "a\nb")
+    assert_trace("a\nb", pdef)
   end
 end
 

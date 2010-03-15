@@ -31,7 +31,7 @@ class EftWhenTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ in over done. ]
+    assert_trace %w[ in over done. ], pdef
 
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
@@ -55,7 +55,7 @@ class EftWhenTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ in over done. ]
+    assert_trace %w[ in over done. ], pdef
 
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
@@ -101,7 +101,7 @@ class EftWhenTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ in over done. ]
+    assert_trace %w[ in over done. ], pdef
 
     assert_equal 0, @engine.storage.get_many('schedules').size
   end

@@ -26,7 +26,7 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a b ])
+    assert_trace(%w[ a b ], pdef)
   end
 
   def test_remote_definitions_not_allowed
@@ -63,8 +63,8 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
     #p pdef.to_json
 
     assert_trace(
-      "[\"define\",{\"name\":\"test\"},[[\"sequence\",{},[[\"echo\",{\"a\":null},[]],[\"echo\",{\"b\":null},[]]]]]]",
-      %w[ a b ])
+      %w[ a b ],
+      "[\"define\",{\"name\":\"test\"},[[\"sequence\",{},[[\"echo\",{\"a\":null},[]],[\"echo\",{\"b\":null},[]]]]]]")
 
     Rufus::Json.backend = prev
       # back to initial state
@@ -74,14 +74,14 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
 
     path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'pdef.xml'))
 
-    assert_trace(path, %w[ a b ])
+    assert_trace(%w[ a b ], path)
   end
 
   def test_local_unexpanded_definition
 
     path = File.join(File.dirname(__FILE__), '..', 'pdef.xml')
 
-    assert_trace(path, %w[ a b ])
+    assert_trace(%w[ a b ], path)
   end
 end
 

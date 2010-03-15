@@ -37,7 +37,7 @@ class FtVariablesTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'done.')
+    assert_trace('done.', pdef)
 
     #logger.log.each { |e| p e }
 
@@ -66,7 +66,7 @@ class FtVariablesTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a0:b0:a0:b0 a1:b1:a0:b1 a0:b1:a0:b1 ])
+    assert_trace(%w[ a0:b0:a0:b0 a1:b1:a0:b1 a0:b1:a0:b1 ], pdef)
   end
 
   def test_engine_variables
@@ -84,7 +84,7 @@ class FtVariablesTest < Test::Unit::TestCase
 
     @engine.variables['vb'] = 'b0'
 
-    assert_trace(pdef, %w[ a0: b0:b0 done. ])
+    assert_trace(%w[ a0: b0:b0 done. ], pdef)
 
     assert_equal(
       1, logger.log.select { |e| e['action'] == 'variable_set' }.size)
@@ -119,7 +119,7 @@ class FtVariablesTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, 'done.'
+    assert_trace 'done.', pdef
 
     #p results
 

@@ -23,7 +23,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'done.')
+    assert_trace('done.', pdef)
   end
 
   def test_iterator
@@ -40,7 +40,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ])
+    assert_trace(%w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ], pdef)
   end
 
   def test_to_f
@@ -57,7 +57,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ])
+    assert_trace(%w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ], pdef)
   end
 
   PDEF0 = Ruote.process_definition :name => 'test' do
@@ -81,7 +81,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(PDEF0, %w[ alice bob done. ])
+    assert_trace(%w[ alice bob done. ], PDEF0)
   end
 
   def test_rewind
@@ -100,7 +100,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(PDEF0, %w[ alice bob alice bob charly done. ])
+    assert_trace(%w[ alice bob alice bob charly done. ], PDEF0)
   end
 
   def test_skip
@@ -115,7 +115,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(PDEF0, %w[ alice charly done.])
+    assert_trace(%w[ alice charly done.], PDEF0)
   end
 
   def test_jump
@@ -130,7 +130,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(PDEF0, %w[ alice charly done.])
+    assert_trace(%w[ alice charly done.], PDEF0)
   end
 
   def test_skip_command
@@ -150,7 +150,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ alice/0_0_0_0 charly/0_0_0_0 ])
+    assert_trace(%w[ alice/0_0_0_0 charly/0_0_0_0 ], pdef)
   end
 
   def test_break_if
@@ -167,7 +167,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a/0_0_0 b/0_0_0 ])
+    assert_trace(%w[ a/0_0_0 b/0_0_0 ], pdef)
   end
 
   def test_break_unless
@@ -185,7 +185,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ a/0_1_0 b/0_1_0 ])
+    assert_trace(%w[ a/0_1_0 b/0_1_0 ], pdef)
   end
 
   def test_iterator_with_hash_as_input
@@ -203,7 +203,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a:A b:B ]
+    assert_trace %w[ a:A b:B ], pdef
   end
 
   def test_implicit_i_variable
@@ -220,7 +220,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ alice:0/0_0_0 bob:1/0_0_0 charly:2/0_0_0 ])
+    assert_trace(%w[ alice:0/0_0_0 bob:1/0_0_0 charly:2/0_0_0 ], pdef)
   end
 
   def test_nested_break
@@ -241,7 +241,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ 0_a 1_a ]
+    assert_trace %w[ 0_a 1_a ], pdef
   end
 
   def test_external_break
@@ -261,7 +261,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ 1 2 ]
+    assert_trace %w[ 1 2 ], pdef
   end
 end
 

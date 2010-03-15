@@ -26,7 +26,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'done.')
+    assert_trace('done.', pdef)
   end
 
   def test_empty_list
@@ -42,7 +42,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, 'done.')
+    assert_trace('done.', pdef)
   end
 
   def test_iterator
@@ -192,7 +192,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ p1:a:A out ]
+    assert_trace %w[ p1:a:A out ], pdef
   end
 
   def test_without_to
@@ -205,7 +205,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a a ]
+    assert_trace %w[ a a ], pdef
   end
 
   def test_branches_att
@@ -218,7 +218,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, %w[ a a ]
+    assert_trace %w[ a a ], pdef
   end
 
   def test_implicit_i_variable
@@ -252,7 +252,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace pdef, *%w[ a b c ].permutation.to_a
+    assert_trace *%w[ a b c ].permutation.to_a, pdef
   end
 
   def test_merge_type_isolate
@@ -273,8 +273,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(
-      pdef, %w{ . . . })
+    assert_trace(%w[ . . . ], pdef)
 
     mf = ('0'..'2').to_a.map { |k| mf[k]['f'] }.sort
     assert_equal %w[ a b c ], mf
@@ -298,9 +297,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(
-      pdef,
-      %w{ . . })
+    assert_trace(%w[ . . ], pdef)
+
     assert_equal(
       [["a"], ["b"]],
       mf['stack'].collect { |f| f.values }.sort)

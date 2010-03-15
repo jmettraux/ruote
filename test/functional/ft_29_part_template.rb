@@ -53,7 +53,7 @@ class FtPartTemplateTest < Test::Unit::TestCase
       :alpha,
       MyParticipant.new(:template => "0:${v:var0}\n1:${f:field0}"))
 
-    assert_trace pdef, %w[ 0:v_value 1:f_value done. ]
+    assert_trace %w[ 0:v_value 1:f_value done. ], pdef
   end
 end
 

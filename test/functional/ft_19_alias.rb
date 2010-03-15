@@ -27,7 +27,7 @@ class FtAliasTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace(pdef, %w[ b:alpha b: ])
+    assert_trace(%w[ b:alpha b: ], pdef)
   end
 end
 

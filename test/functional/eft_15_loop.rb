@@ -38,7 +38,7 @@ class EftLoopTest < Test::Unit::TestCase
         if workitem.fields['count'] > 5
     end
 
-    assert_trace(pdef, %w[ a b a b a b ])
+    assert_trace(%w[ a b a b a b ], pdef)
   end
 
   def test_repeat
@@ -61,7 +61,7 @@ class EftLoopTest < Test::Unit::TestCase
         if workitem.fields['count'] > 5
     end
 
-    assert_trace(pdef, %w[ a a a a a a ])
+    assert_trace(%w[ a a a a a a ], pdef)
   end
 end
 
