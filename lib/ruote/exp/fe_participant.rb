@@ -201,7 +201,7 @@ module Ruote::Exp
 
       timeout =
         attribute(:timeout) ||
-        (p_info.respond_to?(:timeout) ? p_info.timeout : nil) ||
+        (p_info.timeout rescue nil) ||
         (p_info.is_a?(Array) ? p_info.last['timeout'] : nil)
 
       do_schedule_timeout(timeout)

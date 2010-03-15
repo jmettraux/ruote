@@ -4,6 +4,7 @@
 
 == ruote - 2.1.8    not yet released
 
+- participant#schedule_timeout workaround for issue with JRuby 1.4.0 (1.8.7)
 - implemented Ruote::CompositeStorage
 - leveraging rufus-cloche 0.1.16 and the 'cloche_nolock' option (FsStorage)
 - SmtpParticipant and ruote/part/template.rb reorganization
