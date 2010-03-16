@@ -131,6 +131,7 @@ class EftSetTest < Test::Unit::TestCase
 
     @engine.register_participant :alpha do |workitem|
       workitem.fields.delete('params')
+      workitem.fields.delete('dispatched_at')
       @tracer << workitem.fields.inspect
     end
 

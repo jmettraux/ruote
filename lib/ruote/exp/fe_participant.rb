@@ -181,7 +181,7 @@ module Ruote::Exp
     def reply_to_parent (workitem)
 
       workitem['fields'].delete('params')
-      workitem['fields'].delete('__dispatch_time__')
+      workitem['fields'].delete('dispatched_at')
       super(workitem)
     end
 

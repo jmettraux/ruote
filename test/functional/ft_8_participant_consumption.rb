@@ -85,11 +85,9 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
     assert_trace('', pdef)
 
     assert_equal(
-      String,
-      wis.first['fields']['__dispatch_time__'].class)
+      String, wis.first['fields']['dispatched_at'].class)
     assert_not_equal(
-      wis.first['fields']['__dispath_time__'],
-      wis.last['fields']['__dispatch_time__'])
+      wis.first['fields']['dispathed_at'], wis.last['fields']['dispatched_at'])
   end
 end
 

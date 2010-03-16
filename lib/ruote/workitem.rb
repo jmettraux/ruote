@@ -110,9 +110,9 @@ module Ruote
 
     # When was this workitem dispatched ?
     #
-    def dispatch_time
+    def dispatch_at
 
-      fields['__dispatch_time__']
+      fields['dispatched_at']
     end
 
     # Warning : equality is based on fei and not on payload !

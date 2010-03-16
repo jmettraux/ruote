@@ -56,7 +56,7 @@ module Ruote
 
       workitem = Ruote::Workitem.new(msg['workitem'])
 
-      workitem.fields['__dispatch_time__'] = Ruote.now_to_utc_s
+      workitem.fields['dispatched_at'] = Ruote.now_to_utc_s
 
       participant.consume(workitem)
     end

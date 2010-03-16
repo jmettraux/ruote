@@ -182,7 +182,10 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wi = run_concurrence({ :merge_type => :isolate }, false)
 
-    assert_equal(%w[ 0 1 params ], wi.fields.keys.collect { |k| k.to_s }.sort)
+    assert_equal(
+      %w[ 0 1 dispatched_at params ],
+      wi.fields.keys.collect { |k| k.to_s }.sort)
+
     assert_equal({ 'ref' => 'alpha' }, wi.fields['params'])
     assert_equal(%w[ seen ], wi.fields['0'].keys)
     assert_equal(%w[ seen ], wi.fields['1'].keys)
@@ -193,7 +196,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     wi = run_concurrence({ :merge_type => :stack }, false)
 
     assert_equal(
-      %w[ params stack stack_attributes ],
+      %w[ dispatched_at params stack stack_attributes ],
       wi.fields.keys.collect { |k| k.to_s }.sort)
 
     assert_equal({ 'ref' => 'alpha' }, wi.fields['params'])
