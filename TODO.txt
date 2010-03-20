@@ -317,3 +317,7 @@
     else-ref... list of participants...
     ref="alpha && bravo", ref="alpha||bravo" (|| parallel :( )
 
+[ ] LocalParticipant def consume; handle; reply; end
+
+[ ] lib/ruote/part/participant_list.rb l176 better error message !
+
