@@ -64,7 +64,6 @@ module Ruote::Exp
 
       if h.variables
 
-        #val = h.variables[var]
         val = Ruote.lookup(h.variables, var)
 
         return val if val != nil
@@ -74,7 +73,8 @@ module Ruote::Exp
         #
         # do not lookup variables in a remote engine ...
 
-        return parent.lookup_variable(var, prefix)
+        (return parent.lookup_variable(var, prefix)) rescue nil
+          # if the lookup fails (parent gone) then rescue and let go
       end
 
       @context.storage.get_engine_variable(var)
