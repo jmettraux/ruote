@@ -321,3 +321,5 @@
 
 [ ] lib/ruote/part/participant_list.rb l176 better error message !
 
+[ ] find better solution than "get all schedules"
+

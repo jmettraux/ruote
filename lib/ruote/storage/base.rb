@@ -116,22 +116,19 @@ module Ruote
 
     def get_schedules (delta, now)
 
-      if delta < 1.0
+      #if delta < 1.0
+      #  at = now.strftime('%Y%m%d%H%M%S')
+      #  get_many('schedules', /-#{at}$/)
+      #elsif delta < 60.0
+      #  at = now.strftime('%Y%m%d%H%M')
+      #  scheds = get_many('schedules', /-#{at}\d\d$/)
+      #  filter_schedules(scheds, now)
+      #else # load all the schedules
 
-        at = now.strftime('%Y%m%d%H%M%S')
-        get_many('schedules', /-#{at}$/)
+      scheds = get_many('schedules')
+      filter_schedules(scheds, now)
 
-      elsif delta < 60.0
-
-        at = now.strftime('%Y%m%d%H%M')
-        scheds = get_many('schedules', /-#{at}\d\d$/)
-        filter_schedules(scheds, now)
-
-      else # load all the schedules
-
-        scheds = get_many('schedules')
-        filter_schedules(scheds, now)
-      end
+      #end
     end
 
     def put_schedule (flavour, owner_fei, s, msg)
