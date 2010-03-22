@@ -2,7 +2,7 @@
 = ruote - CHANGELOG.txt
 
 
-== ruote - 2.1.9    not yet released
+== ruote - 2.1.9    released 2010/03/22
 
 - made participant.cancel occur asynchronously (as should be)
 - lookup_variable : making sure not to break when the parent exp is gone
