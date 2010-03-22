@@ -349,15 +349,6 @@ module Ruote::Exp
         # there are no children, nothing to cancel, let's just reply to
         # the parent expression
 
-      children = h.children.dup
-      h.children.clear
-        #
-        # there are children, let's send them the 'cancel' message as well,
-        # but at first, lets clear them from h.children (further cancel
-        # message to this expression will immediately trigger a reply_to_parent)
-        #
-        # do this 'cleaning' before the do_persist
-
       do_persist || return
         #
         # before firing the cancel message to the children
@@ -379,22 +370,21 @@ module Ruote::Exp
           'flavour' => flavour)
       end
 
-      unless children.find { |i| Ruote::Exp::FlowExpression.fetch(@context, i) }
-        #
-        # since none of the children could be found in the storage right now,
-        # it could mean that all children are already done or it could mean
-        # that they are not yet applied...
-        #
-        # just to be sure let's send a new cancel message to this expression
-        #
-        # it's very important, since if there is no child to cancel the parent
-        # the flow might get stuck here
-
-        @context.storage.put_msg(
-          'cancel',
-          'fei' => h.fei,
-          'flavour' => flavour)
-      end
+      #if ! children.find { |i| Ruote::Exp::FlowExpression.fetch(@context, i) }
+      #  #
+      #  # since none of the children could be found in the storage right now,
+      #  # it could mean that all children are already done or it could mean
+      #  # that they are not yet applied...
+      #  #
+      #  # just to be sure let's send a new cancel message to this expression
+      #  #
+      #  # it's very important, since if there is no child to cancel the parent
+      #  # the flow might get stuck here
+      #  @context.storage.put_msg(
+      #    'cancel',
+      #    'fei' => h.fei,
+      #    'flavour' => flavour)
+      #end
     end
 
     def do_fail (msg)

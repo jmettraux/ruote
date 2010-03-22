@@ -158,24 +158,23 @@ module Ruote::Exp
         'participant_name' => h.participant_name,
         'workitem' => h.applied_workitem,
         'for_engine_worker?' => participant_info.class != Array)
+          #
+          # NOTE : is this for_engine_worker? still necessary ?
     end
 
     def cancel (flavour)
 
-      participant = @context.plist.lookup(h.participant_name)
+      do_persist || return
+        #
+        # if do_persist returns false, it means we're operating on stale
+        # data and have thus to cease
 
-      r = if flavour == 'kill'
-        begin
-          participant.cancel(fei, 'kill')
-        rescue Exception => e
-          # intercept anything
-          nil
-        end
-      else
-        participant.cancel(fei, flavour)
-      end
-
-      reply_to_parent(h.applied_workitem) if r != false
+      @context.storage.put_msg(
+        'dispatch_cancel',
+        'fei' => h.fei,
+        'participant_name' => h.participant_name,
+        'flavour' => flavour,
+        'workitem' => h.applied_workitem)
     end
 
     def reply_to_parent (workitem)

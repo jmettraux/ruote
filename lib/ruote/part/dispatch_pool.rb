@@ -39,6 +39,38 @@ module Ruote
       @context = context
     end
 
+    def handle (msg)
+
+      case msg['action']
+        when 'dispatch'
+          dispatch(msg)
+        when 'dispatch_cancel'
+          dispatch_cancel(msg)
+        else
+          # simply discard message
+      end
+    end
+
+    protected
+
+    def dispatch_cancel (msg)
+
+      flavour = msg['flavour']
+
+      participant = @context.plist.lookup(msg['participant_name'])
+
+      begin
+        participant.cancel(Ruote::FlowExpressionId.new(msg['fei']), flavour)
+      rescue Exception => e
+        raise(e) if flavour != 'kill'
+      end
+
+      @context.storage.put_msg(
+        'reply',
+        'fei' => msg['fei'],
+        'workitem' => msg['workitem'])
+    end
+
     def dispatch (msg)
 
       participant = @context.plist.lookup(msg['participant_name'])
@@ -49,8 +81,6 @@ module Ruote
         do_threaded_dispatch(participant, msg)
       end
     end
-
-    protected
 
     def do_dispatch (participant, msg)
 

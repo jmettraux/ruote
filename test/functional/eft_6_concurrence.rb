@@ -233,12 +233,16 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
   def test_count
 
+    #noisy
+
     wfid = run_test_count('cancel', false)
 
     #puts
     #logger.log.each { |e| p e }
     #puts
     assert_equal 1, logger.log.select { |e| e['action'] == 'cancel' }.size
+
+    sleep 0.350 # since now dispatch_cancel occurs asynchronously...
 
     assert_equal 0, @alpha.size
     assert_equal 0, @bravo.size

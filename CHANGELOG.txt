@@ -4,6 +4,7 @@
 
 == ruote - 2.1.9    not yet released
 
+- made participant.cancel occur asynchronously (as should be)
 - lookup_variable : making sure not to break when the parent exp is gone
 - workitem.fields['__dispatch_time__'] is now set
 

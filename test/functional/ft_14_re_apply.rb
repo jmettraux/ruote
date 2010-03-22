@@ -22,7 +22,6 @@ class FtReApplyTest < Test::Unit::TestCase
 
   def test_re_apply
 
-
     alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
 
     #noisy

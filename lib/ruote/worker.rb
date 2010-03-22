@@ -228,10 +228,9 @@ module Ruote
 
           Ruote::Exp::FlowExpression.do_action(@context, msg)
 
-        elsif action == 'dispatch'
+        elsif action.match(/^dispatch/)
 
-          #dispatch(msg)
-          @context.dispatch_pool.dispatch(msg)
+          @context.dispatch_pool.handle(msg)
 
         elsif PROC_ACTIONS.include?(action)
 

@@ -164,6 +164,8 @@ class FtEngineParticipantTest < Test::Unit::TestCase
     @engine0.cancel_process(wfid)
     @engine0.wait_for(wfid)
 
+    sleep 0.350 # since dispatch_cancel is asyncrhonous now
+
     assert_equal 0, alpha.size
 
     assert_equal "a", @tracer0.to_s

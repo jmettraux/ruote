@@ -32,7 +32,7 @@ class FtTimeoutTest < Test::Unit::TestCase
 
     assert_equal 0, alpha.size
     assert_equal 1, bravo.size
-    assert_equal 1, logger.log.select { |e| e['flavour'] == 'timeout' }.size
+    assert_equal 2, logger.log.select { |e| e['flavour'] == 'timeout' }.size
     assert_equal 0, @engine.storage.get_many('schedules').size
 
     assert_not_nil bravo.first.fields['__timed_out__']
