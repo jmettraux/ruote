@@ -314,7 +314,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
   def test_cancel
 
-    n = 77
+    #n = 77
+    n = 14
 
     pdef = Ruote.process_definition do
       concurrent_iterator :times => n do
