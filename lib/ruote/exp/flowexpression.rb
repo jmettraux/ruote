@@ -344,18 +344,55 @@ module Ruote::Exp
     #
     def cancel (flavour)
 
-      return reply_to_parent(h.applied_workitem) \
-        unless h.children.find { |cfei| Ruote::Exp::FlowExpression.fetch(@context, cfei) }
+      return reply_to_parent(h.applied_workitem) if h.children.empty?
+        #
+        # there are no children, nothing to cancel, let's just reply to
+        # the parent expression
+
+      children = h.children.dup
+      h.children.clear
+        #
+        # there are children, let's send them the 'cancel' message as well,
+        # but at first, lets clear them from h.children (further cancel
+        # message to this expression will immediately trigger a reply_to_parent)
+        #
+        # do this 'cleaning' before the do_persist
 
       do_persist || return
+        #
         # before firing the cancel message to the children
+        #
+        # if the do_persist returns false, it means it failed, implying this
+        # expression is stale, let's return, thus discarding this cancel message
 
-      h.children.each do |cfei|
+      children.each do |cfei|
+        #
+        # let's send a cancel message to each of the children
+        #
+        # maybe some of them are gone or have not yet been applied, anyway,
+        # the message are sent
 
         @context.storage.put_msg(
           'cancel',
           'fei' => cfei,
           'parent_id' => h.fei, # indicating that this is a "cancel child"
+          'flavour' => flavour)
+      end
+
+      unless children.find { |i| Ruote::Exp::FlowExpression.fetch(@context, i) }
+        #
+        # since none of the children could be found in the storage right now,
+        # it could mean that all children are already done or it could mean
+        # that they are not yet applied...
+        #
+        # just to be sure let's send a new cancel message to this expression
+        #
+        # it's very important, since if there is no child to cancel the parent
+        # the flow might get stuck here
+
+        @context.storage.put_msg(
+          'cancel',
+          'fei' => h.fei,
           'flavour' => flavour)
       end
     end

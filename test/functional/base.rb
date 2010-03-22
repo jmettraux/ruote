@@ -34,6 +34,8 @@ module FunctionalBase
     @tracer = Tracer.new
 
     @engine.add_service('tracer', @tracer)
+
+    #noisy # uncommented, it makes all the tests noisy
   end
 
   def teardown

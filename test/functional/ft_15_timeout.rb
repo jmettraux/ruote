@@ -68,6 +68,16 @@ class FtTimeoutTest < Test::Unit::TestCase
 
   def test_on_timeout_redo
 
+    # with ruote-couch the 'cancel-process' operation gets overriden by
+    # the timeout cancel...
+    #
+    # 0 20 ca * 20100320-bipopimita {}
+    # 1 20   ca * 20100320-bipopimita  0 {"flavour"=>nil}
+    # 2 20     ca * 20100320-bipopimita  0_0 {"flavour"=>"timeout"}
+    # 3 20     ca * 20100320-bipopimita  0_0 {"flavour"=>nil, :pi=>"0!!20100320-bipopimita"}
+    #
+    # hence the multiple cancel at the end of the test
+
     pdef = Ruote.process_definition do
       alpha :timeout => '1.1', :on_timeout => 'redo'
     end
@@ -82,7 +92,10 @@ class FtTimeoutTest < Test::Unit::TestCase
     #logger.log.each { |e| p e['flavour'] }
     assert logger.log.select { |e| e['flavour'] == 'timeout' }.size >= 2
 
-    @engine.cancel_process(wfid)
+    3.times do
+      Thread.pass
+      @engine.cancel_process(wfid)
+    end
 
     wait_for(wfid)
 
@@ -195,7 +208,8 @@ class FtTimeoutTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    wait_for(9)
+    #wait_for(9)
+    wait_for(wfid)
 
     assert_nil @engine.process(wfid)
     assert_equal 0, alpha.size
