@@ -242,13 +242,21 @@ module Ruote
       end
 
       action = msg['action'][0, 2]
-      action = 'rc' if msg['action'] == 'receive'
-      action = color('4;32', action) if action == 'la'
-      action = color('4;31', action) if action == 'te'
-      action = color('31', action) if action == 'ce'
-      action = color('31', action) if action == 'ca'
-      action = color('4;33', action) if action == 'rc'
-      action = color('4;33', action) if action == 'di'
+      action = case msg['action']
+        when 'receive' then 'rc'
+        when 'dispatch_cancel' then 'dc'
+        else action
+      end
+      action = case action
+        when 'la' then color('4;32', action)
+        when 'te' then color('4;31', action)
+        when 'ce' then color('31', action)
+        when 'ca' then color('31', action)
+        when 'rc' then color('4;33', action)
+        when 'dc' then color('4;31', action)
+        when 'di' then color('4;33', action)
+        else action
+      end
 
       color(
         @color,
