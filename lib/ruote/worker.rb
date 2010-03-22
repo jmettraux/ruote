@@ -66,7 +66,7 @@ module Ruote
 
     def run_in_thread
 
-      Thread.abort_on_exception = true
+      #Thread.abort_on_exception = true
         # TODO : remove me at some point
 
       @running = true
