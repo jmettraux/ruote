@@ -30,7 +30,11 @@ class EftWaitTest < Test::Unit::TestCase
     assert_trace 'done.', pdef
 
     #p [ ts[1].sec, ts[0].sec ]
-    assert [ 2, 3 ].include?((ts[1].sec - ts[0].sec) % 60)
+    d = (ts[1].sec - ts[0].sec) % 60
+
+    assert(
+      [ 2, 3 ].include?(d),
+      "delta is #{d}, which isn't 2 or 3")
   end
 
   def test_cancel_wait
