@@ -174,7 +174,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal(
       1,
-      @part.query(:place => 'heiankyou', :adversary => 'B').size)
+      @part.query(:adversary => 'B', :place => 'heiankyou').size)
 
     assert_equal 2, @part.query('place' => 'heiankyou', :limit => 2).size
     assert_equal 4, @part.query('place' => 'heiankyou', :limit => 20).size
