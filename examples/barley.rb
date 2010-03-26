@@ -91,7 +91,8 @@ require 'cgi'
 require 'sinatra'
 require 'haml'
 
-use_in_file_templates!
+#use_in_file_templates!  # sinatra 0.9.x
+enable :inline_templates  # sinatra 1.0
 
 def h (s)
   Rack::Utils.escape_html(s)
