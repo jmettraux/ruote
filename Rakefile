@@ -48,7 +48,7 @@ end
 begin
   require 'yard'
   YARD::Rake::YardocTask.new do |doc|
-    doc.options = [ '-o', 'ruote_rdoc', '--title', "ruote #{Ruote::VERSION}" ]
+    doc.options = [ '-o', 'rdoc', '--title', "ruote #{Ruote::VERSION}" ]
   end
 rescue LoadError
   task :yard do
@@ -65,7 +65,7 @@ desc 'Upload the documentation to rubyforge'
 task :upload_rdoc => :yard do
   sh %{
     rsync -azv -e ssh \
-      ruote_rdoc \
+      rdoc \
       jmettraux@rubyforge.org:/var/www/gforge-projects/ruote/
   }
 end
