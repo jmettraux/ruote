@@ -193,6 +193,7 @@
 [o] part = engine.register_participant :alpha, StorageParticipant should work...
 [o] concurrence :merge_type => 'stack'
 [o] CompositeStorage.new('msgs' => AmqpStorage.new(''), ...)
+[x] let the storage participant leverage Ruote::FlowExpressionId.from_id(s)
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -309,8 +310,6 @@
 
 [ ] issue with ruote-kit and inpa participants...
 
-[ ] let the storage participant leverage Ruote::FlowExpressionId.from_id(s)
-
 [ ] participant :ref => '${f:nada}', :or => 'xyz'
     (look at OpenWFE manual, this feature already existed in there)
     http://www.openwfe.org/manual/ch06s02.html#expression_participant
@@ -322,4 +321,9 @@
 [ ] lib/ruote/part/participant_list.rb l176 better error message !
 
 [ ] find better solution than "get all schedules"
+
+[ ] worker : minuteman, make it cron triggerable
+    trap SIGUSR1 or USR2
+    maybe it's expensive to fire a [worker] process each minute
+    have to write the $$ (pid) somewhere for cron to pick it up
 
