@@ -27,6 +27,11 @@ require 'ruote/fei'
 
 module Ruote
 
+  #
+  # Workers fetch 'msgs' and 'schedules' from the storage and process them.
+  #
+  # Read more at http://ruote.rubyforge.org/configuration.html
+  #
   class Worker
 
     EXP_ACTIONS = %w[ reply cancel fail receive ]
