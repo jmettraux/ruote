@@ -38,6 +38,7 @@ require 'rufus/cloche'
 
 module Ruote
 
+  #
   # A basic FS-bound ruote storage. Leverages rufus-cloche
   # (http://github.com/jmettraux/rufus-cloche).
   #

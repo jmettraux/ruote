@@ -47,21 +47,7 @@ module Ruote
 
     def put_msg (action, options)
 
-      # merge! is way faster than merge (no object creation probably)
-
-      @counter ||= 0
-
-      t = Time.now.utc
-      ts = "#{t.strftime('%Y-%m-%d')}!#{t.to_i}.#{'%06d' % t.usec}"
-      _id = "#{$$}!#{Thread.current.object_id}!#{ts}!#{'%03d' % @counter}"
-
-      @counter = (@counter + 1) % 1000
-        # some platforms (windows) have shallow usecs, so adding that counter...
-
-      msg = options.merge!('type' => 'msgs', '_id' => _id, 'action' => action)
-
-      msg.delete('_rev')
-        # in case of message replay
+      msg = prepare_msg_doc(action, options)
 
       put(msg)
       #put(msg, :update_rev => true)
@@ -116,6 +102,9 @@ module Ruote
 
     def get_schedules (delta, now)
 
+      # TODO : bring that 'optimization' back in,
+      #        maybe every minute, if min != last_min ...
+
       #if delta < 1.0
       #  at = now.strftime('%Y%m%d%H%M%S')
       #  get_many('schedules', /-#{at}$/)
@@ -133,33 +122,10 @@ module Ruote
 
     def put_schedule (flavour, owner_fei, s, msg)
 
-      at = if s.is_a?(Time) # at or every
-        s
-      elsif Ruote.is_cron_string(s) # cron
-        Rufus::CronLine.new(s).next_time(Time.now + 1)
-      else # at or every
-        Ruote.s_to_at(s)
+      if doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
+        put(doc)
+        return doc['_id']
       end
-      at = at.utc
-
-      if at <= Time.now.utc && flavour == 'at'
-        put_msg(msg.delete('action'), msg)
-        return
-      end
-
-      sat = at.strftime('%Y%m%d%H%M%S')
-      i = "#{flavour}-#{Ruote.to_storage_id(owner_fei)}-#{sat}"
-
-      put(
-        '_id' => i,
-        'type' => 'schedules',
-        'flavour' => flavour,
-        'original' => s,
-        'at' => Ruote.time_to_utc_s(at),
-        'owner' => owner_fei,
-        'msg' => msg)
-
-      i
     end
 
     def delete_schedule (schedule_id)
@@ -186,6 +152,61 @@ module Ruote
     end
 
     protected
+
+    # Used by put_msg
+    #
+    def prepare_msg_doc (action, options)
+
+      # merge! is way faster than merge (no object creation probably)
+
+      @counter ||= 0
+
+      t = Time.now.utc
+      ts = "#{t.strftime('%Y-%m-%d')}!#{t.to_i}.#{'%06d' % t.usec}"
+      _id = "#{$$}!#{Thread.current.object_id}!#{ts}!#{'%03d' % @counter}"
+
+      @counter = (@counter + 1) % 1000
+        # some platforms (windows) have shallow usecs, so adding that counter...
+
+      msg = options.merge!('type' => 'msgs', '_id' => _id, 'action' => action)
+
+      msg.delete('_rev')
+        # in case of message replay
+
+      msg
+    end
+
+    # Used by put_schedule
+    #
+    def prepare_schedule_doc (flavour, owner_fei, s, msg)
+
+      at = if s.is_a?(Time) # at or every
+        s
+      elsif Ruote.is_cron_string(s) # cron
+        Rufus::CronLine.new(s).next_time(Time.now + 1)
+      else # at or every
+        Ruote.s_to_at(s)
+      end
+      at = at.utc
+
+      if at <= Time.now.utc && flavour == 'at'
+        put_msg(msg.delete('action'), msg)
+        return false
+      end
+
+      sat = at.strftime('%Y%m%d%H%M%S')
+      i = "#{flavour}-#{Ruote.to_storage_id(owner_fei)}-#{sat}"
+
+      {
+        '_id' => i,
+        'type' => 'schedules',
+        'flavour' => flavour,
+        'original' => s,
+        'at' => Ruote.time_to_utc_s(at),
+        'owner' => owner_fei,
+        'msg' => msg
+      }
+    end
 
     def get_engine_variables
 

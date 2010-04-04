@@ -58,13 +58,13 @@ class CtConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    if msg['action'] == 'error_intercepted'
+    if msg && msg['action'] == 'error_intercepted'
       #p @engine0.process(wfid).errors.first
       puts @engine0.process(wfid).errors.first.message
       puts @engine0.process(wfid).errors.first.trace
     end
 
-    assert_equal 1, msgs.size
+    assert_equal 1, msgs.size, 'exactly 1 message was expected'
     assert_equal 'reply', msg['action']
     assert_equal '0', msg['fei']['expid']
   end

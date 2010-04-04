@@ -153,7 +153,7 @@ class UtStorage < Test::Unit::TestCase
     @s.put('_id' => 'nada', 'type' => 'dogfood', 'message' => 'testing')
     @s.put('_id' => 'estereo', 'type' => 'dogfood', 'message' => 'testing')
 
-    assert_equal %w[ estereo nada ouinouin toto ], @s.ids('dogfood')
+    assert_equal %w[ estereo nada ouinouin toto ], @s.ids('dogfood').sort
   end
 
   def test_get_many

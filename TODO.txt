@@ -327,3 +327,9 @@
     maybe it's expensive to fire a [worker] process each minute
     have to write the $$ (pid) somewhere for cron to pick it up
 
+[ ] detach / attach segments of processes
+[ ] clone process ? (could be used by {de|at}tach)
+
+[ ] put_no_rev / del_no_rev (schedules, msgs)
+    ruote-dm, ruote-redis
+
