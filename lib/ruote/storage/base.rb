@@ -32,6 +32,14 @@ module Ruote
   #
   module StorageBase
 
+    # Attempts to delete a document, returns true if the deletion
+    # succeeded. This is used with msgs to reserve work on them.
+    #
+    def reserve (doc)
+
+      delete(doc).nil?
+    end
+
     #--
     # configurations
     #++
@@ -126,6 +134,8 @@ module Ruote
         put(doc)
         return doc['_id']
       end
+
+      nil
     end
 
     def delete_schedule (schedule_id)
