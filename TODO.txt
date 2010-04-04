@@ -330,6 +330,3 @@
 [ ] detach / attach segments of processes
 [ ] clone process ? (could be used by {de|at}tach)
 
-[ ] put_no_rev / del_no_rev (schedules, msgs)
-    ruote-dm, ruote-redis
-

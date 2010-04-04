@@ -106,7 +106,7 @@ module Ruote
         puts "\n== worker intercepted error =="
         puts
         p ex
-        ex.backtrace[0, 10].each { |l| puts l }
+        ex.backtrace[0, 20].each { |l| puts l }
         puts "..."
         puts
         puts "-- msg --"
