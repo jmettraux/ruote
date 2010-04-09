@@ -58,7 +58,39 @@ module Ruote
     #
     def root_expression
 
-      @expressions.find { |e| e.fei.expid == '0' && e.fei.sub_wfid == nil }
+      #@expressions.find { |e| e.fei.expid == '0' && e.fei.sub_wfid == nil }
+        # vanilla implementation
+
+      root_expressions.first
+    end
+
+    # Returns a list of all the expressions that have no parent expression.
+    # The list is sorted with the deeper (closer to the original root) first.
+    #
+    def root_expressions
+
+      roots = @expressions.select { |e| e.h.parent_id == nil }
+
+      roots = roots.inject({}) { |h, e|
+        h["#{e.h.fei['expid']}__#{e.h.fei['sub_wfid']}"] = e; h
+      }
+
+      roots.keys.sort.collect { |k| roots[k] }
+    end
+
+    # Given an expression id, returns the root (top ancestor) for its
+    # expression.
+    #
+    def root_expression_for (fei)
+
+      sfei = Ruote.sid(fei)
+
+      exp = @expressions.find { |fe| sfei == Ruote.sid(fe.fei) }
+
+      return nil unless exp
+      return exp if exp.parent_id.nil?
+
+      root_expression_for(exp.parent_id)
     end
 
     # Returns the process variables set for this process instance.

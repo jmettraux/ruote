@@ -330,3 +330,9 @@
 [ ] detach / attach segments of processes
 [ ] clone process ? (could be used by {de|at}tach)
 
+[ ] dollar.rb ${timestamp} ?
+
+[ ] toto :task => 'maw the lawn', :within => '3d'
+
+[ ] solve the ps#root_expression_for(fei) dilemma
+

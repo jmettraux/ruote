@@ -38,6 +38,15 @@ module Ruote
     Ruote::FlowExpressionId.to_storage_id(fei)
   end
 
+  # A shorter shortcut for
+  #
+  #   Ruote::FlowExpressionId.to_storage_id(fei)
+  #
+  def self.sid (fei)
+
+    Ruote::FlowExpressionId.to_storage_id(fei)
+  end
+
   #
   # The FlowExpressionId (fei for short) is an process expression identifier.
   # Each expression when instantiated gets a unique fei.
@@ -83,7 +92,10 @@ module Ruote
     end
 
     def self.to_storage_id (hfei)
-      "#{hfei['expid']}!#{hfei['sub_wfid']}!#{hfei['wfid']}"
+
+      hfei.respond_to?(:to_storage_id) ?
+        hfei.to_storage_id :
+        "#{hfei['expid']}!#{hfei['sub_wfid']}!#{hfei['wfid']}"
     end
 
     def self.from_id (s, engine_id='engine')
@@ -139,7 +151,7 @@ module Ruote
         return false if parent_fei[k] != other_fei[k]
       end
 
-      pei = other_fei['expid'].split(CHILD_SEP)[0..-2].join('_')
+      pei = other_fei['expid'].split(CHILD_SEP)[0..-2].join(CHILD_SEP)
 
       (pei == parent_fei['expid'])
     end
