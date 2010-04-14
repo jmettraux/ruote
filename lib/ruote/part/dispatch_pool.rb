@@ -80,6 +80,10 @@ module Ruote
       else
         do_threaded_dispatch(participant, msg)
       end
+
+      @context.storage.put_msg('dispatched', 'fei' => msg['fei'])
+        # once the consume is done, asynchronously flag the
+        # participant expression as 'dispatched'
     end
 
     def do_dispatch (participant, msg)
@@ -92,6 +96,10 @@ module Ruote
     end
 
     def do_threaded_dispatch (participant, msg)
+
+      # Maybe at some point a limit on the number of dispatch threads
+      # would be OK.
+      # Or maybe it's the job of an extension / subclass
 
       Thread.new do
         begin

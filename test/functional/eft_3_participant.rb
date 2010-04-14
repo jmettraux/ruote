@@ -28,6 +28,7 @@ class EftParticipantTest < Test::Unit::TestCase
     assert_trace 'alpha', pdef
 
     assert_log_count(1) { |e| e['action'] == 'dispatch' }
+    assert_log_count(1) { |e| e['action'] == 'dispatched' }
     assert_log_count(1) { |e| e['action'] == 'receive' }
   end
 
@@ -117,6 +118,34 @@ class EftParticipantTest < Test::Unit::TestCase
     assert_equal(
       { "commander of the left guard"=>nil, "if"=>"true", "ref"=>"notify" },
       atts)
+  end
+
+  def test_dispatched
+
+    part = @engine.register_participant :alpha do
+      sleep 1
+    end
+    def part.do_not_thread
+      false
+    end
+
+    pdef = Ruote.process_definition do
+      alpha
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    ps = @engine.process(wfid)
+
+    fexp = ps.expressions.find { |fe|
+      fe.class == Ruote::Exp::ParticipantExpression
+    }
+
+    assert_equal true, fexp.dispatched
   end
 end
 

@@ -4,6 +4,8 @@
 
 == ruote - 2.1.10    not yet released
 
+- participant exp : dispatched = true set right after dispatch
+
 
 == ruote - 2.1.9    released 2010/03/22
 

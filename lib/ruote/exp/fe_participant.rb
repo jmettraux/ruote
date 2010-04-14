@@ -120,6 +120,10 @@ module Ruote::Exp
 
     names :participant
 
+    # Should return true when the dispatch was successful.
+    #
+    h_reader :dispatched
+
     def apply
 
       #
@@ -185,6 +189,20 @@ module Ruote::Exp
     end
 
     protected
+
+    # Once the dispatching work (done by the dispatch pool) is done, a
+    # 'dispatched' msg is sent, we have to flag the participant expression
+    # as 'dispatched' => true
+    #
+    # See http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
+    # for the motivation.
+    #
+    def do_dispatched (msg)
+
+      h.dispatched = true
+      do_persist
+        # let's not care if it fails...
+    end
 
     # Overriden with an empty behaviour. The work is now done a bit later
     # via the #schedule_timeout method.

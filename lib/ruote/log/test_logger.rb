@@ -244,6 +244,7 @@ module Ruote
       action = msg['action'][0, 2]
       action = case msg['action']
         when 'receive' then 'rc'
+        when 'dispatched' then 'dd'
         when 'dispatch_cancel' then 'dc'
         else action
       end
@@ -253,8 +254,9 @@ module Ruote
         when 'ce' then color('31', action)
         when 'ca' then color('31', action)
         when 'rc' then color('4;33', action)
-        when 'dc' then color('4;31', action)
         when 'di' then color('4;33', action)
+        when 'dd' then color('4;33', action)
+        when 'dc' then color('4;31', action)
         else action
       end
 

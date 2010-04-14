@@ -38,18 +38,18 @@ class FtFsHistoryTest < Test::Unit::TestCase
 
     lines = File.readlines(Dir['work/log/*'].first)
 
-    assert_equal 17, lines.size
+    assert_equal 19, lines.size
     #lines.each { |l| puts l }
 
     h = @engine.context.history.by_process(wfid0)
     #h.each { |r| p r }
-    assert_equal 8, h.size
+    assert_equal 9, h.size
 
     # testing record.to_h
 
     h = @engine.context.history.by_process(wfid1)
     #h.each { |r| p r }
-    assert_equal 8, h.size
+    assert_equal 9, h.size
 
   ensure
 
@@ -83,7 +83,7 @@ class FtFsHistoryTest < Test::Unit::TestCase
 
     h = @engine.context.history.by_process(wfid0)
     #h.each { |r| p r }
-    assert_equal 11, h.size
+    assert_equal 12, h.size
 
   ensure
 

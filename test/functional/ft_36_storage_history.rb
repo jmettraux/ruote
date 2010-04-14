@@ -33,17 +33,17 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
     sleep 0.100
 
-    assert_equal 17, @engine.storage.get_many('history').size
+    assert_equal 19, @engine.storage.get_many('history').size
 
     h = @engine.context.history.by_process(wfid0)
     #h.each { |r| p r }
-    assert_equal 8, h.size
+    assert_equal 9, h.size
 
     # testing record.to_h
 
     h = @engine.context.history.by_process(wfid1)
     #h.each { |r| p r }
-    assert_equal 8, h.size
+    assert_equal 9, h.size
 
     history.clear!
 

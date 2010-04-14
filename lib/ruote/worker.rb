@@ -34,7 +34,7 @@ module Ruote
   #
   class Worker
 
-    EXP_ACTIONS = %w[ reply cancel fail receive ]
+    EXP_ACTIONS = %w[ reply cancel fail receive dispatched ]
       # 'apply' is comprised in 'launch'
       # 'receive' is a ParticipantExpression alias for 'reply'
 
@@ -265,6 +265,10 @@ module Ruote
       end
     end
 
+    # Should always return false. Except when the message is a 'dispatch'
+    # and it's for a participant only available to an 'engine_worker'
+    # (block participants, stateful participants)
+    #
     def cannot_handle (msg)
 
       return false if msg['action'] != 'dispatch'
