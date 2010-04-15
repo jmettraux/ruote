@@ -125,9 +125,6 @@ class EftParticipantTest < Test::Unit::TestCase
     part = @engine.register_participant :alpha do
       sleep 1
     end
-    def part.do_not_thread
-      false
-    end
 
     pdef = Ruote.process_definition do
       alpha
@@ -145,7 +142,8 @@ class EftParticipantTest < Test::Unit::TestCase
       fe.class == Ruote::Exp::ParticipantExpression
     }
 
-    assert_equal true, fexp.dispatched
+    assert_equal nil, fexp.dispatched
+      # not yet 'dispatched'
   end
 end
 

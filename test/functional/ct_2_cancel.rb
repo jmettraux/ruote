@@ -35,8 +35,9 @@ class CtCancelTest < Test::Unit::TestCase
     msgs = nil
     loop do
       msgs = @storage.get_msgs
-      break if msgs.size == 2
+      break if msgs.size == 3
       #p msgs.collect { |m| m['fei']['expid'] }.uniq
+      #p msgs.collect { |m| m['action'] }
       #break if
       #  msgs.size == 2 &&
       #  msgs.collect { |m| m['fei']['expid'] }.uniq == %w[ 0_0 ]
@@ -52,7 +53,7 @@ class CtCancelTest < Test::Unit::TestCase
 
     #puts
 
-    @engine0.step 4
+    @engine0.step 5
 
     sleep 0.010
 

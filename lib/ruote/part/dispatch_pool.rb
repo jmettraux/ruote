@@ -80,10 +80,6 @@ module Ruote
       else
         do_threaded_dispatch(participant, msg)
       end
-
-      @context.storage.put_msg('dispatched', 'fei' => msg['fei'])
-        # once the consume is done, asynchronously flag the
-        # participant expression as 'dispatched'
     end
 
     def do_dispatch (participant, msg)
@@ -93,6 +89,10 @@ module Ruote
       workitem.fields['dispatched_at'] = Ruote.now_to_utc_s
 
       participant.consume(workitem)
+
+      @context.storage.put_msg('dispatched', 'fei' => msg['fei'])
+        # once the consume is done, asynchronously flag the
+        # participant expression as 'dispatched'
     end
 
     def do_threaded_dispatch (participant, msg)
