@@ -87,7 +87,13 @@ module Ruote
     def shutdown
 
       @running = false
-      @run_thread.join if @run_thread
+
+      return unless @run_thread
+
+      begin
+        @run_thread.join
+      rescue Exception => e
+      end
     end
 
     # This method is public, since it's used by the DispatchPool when
