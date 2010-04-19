@@ -31,6 +31,8 @@ module Ruote
   # Assumes the class that includes this module has a #context method
   # that points to the worker or engine ruote context.
   #
+  # It's "local" because it has access to the ruote storage.
+  #
   module LocalParticipant
 
     attr_accessor :context
@@ -46,6 +48,41 @@ module Ruote
         'fei' => workitem.h.fei,
         'workitem' => workitem.h,
         'participant_name' => workitem.participant_name)
+    end
+
+    # WARNING : this method is only for 'stateless' participants, ie
+    # participants that are registered in the engine by passing their class
+    # and a set of options, like in
+    #
+    #   engine.register_participant 'alpha', MyParticipant, 'info' => 'none'
+    #
+    # This reject method replaces the workitem in the [internal] message queue
+    # of the ruote engine (since it's a local participant, it has access to
+    # the storage and it's thus easy).
+    # The idea is that another worker will pick up the workitem and
+    # do the participant dispatching.
+    #
+    # This is an advanced technique. It was requested by people who
+    # want to have multiple workers and have only certain worker/participants
+    # do the handling.
+    # Using reject is not the best method, it's probably better to implement
+    # this by re-opening the Ruote::Worker class and changing the
+    # cannot_handle(msg) method.
+    #
+    # reject could be useful anyway, not sure now, but one could imagine
+    # scenarii where some participants reject workitems temporarily (while
+    # the same participant on another worker would accept it).
+    #
+    # Well, here it is, use with care.
+    #
+    def reject (workitem)
+
+      @context.storage.put_msg(
+        'dispatch',
+        'fei' => workitem.h.fei,
+        'workitem' => workitem.h,
+        'participant_name' => workitem.participant_name,
+        'rejected' => true)
     end
   end
 end

@@ -38,6 +38,7 @@ Richard Jennings
 Feedback
 --------
 
+Avishai Shalom - discussion and ideas about participant/worker locality
 Olle (foenixx) - barley issue with Sinatra 1.0
 Gonzalo Suarez - many help
 Francisco Kiko - many help

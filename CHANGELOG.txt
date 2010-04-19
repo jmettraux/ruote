@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- LocalParticpant : added a reject(workitem) method
 - participant exp : dispatched = true set right after dispatch
 
 

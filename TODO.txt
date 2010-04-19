@@ -195,6 +195,7 @@
 [o] CompositeStorage.new('msgs' => AmqpStorage.new(''), ...)
 [x] let the storage participant leverage Ruote::FlowExpressionId.from_id(s)
 [o] Andrew's technique http://groups.google.com/group/openwferu-users/browse_thread/thread/c2aa4b53d1664d45/8523a1a5ee98fd71
+[o] Avishai : LocalParticipant : repost dispatch message
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -341,6 +342,5 @@
     and perhaps also on
     http://ruote.rubyforge.org/implementing_participants.html (Avish)
 
-[ ] Avishai : LocalParticipant : repost dispatch message
 [ ] Avishai : Worker : hook for rejecting the dispatch message
 
