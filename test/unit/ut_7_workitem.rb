@@ -44,5 +44,12 @@ class UtWorkitemTest < Test::Unit::TestCase
     w0.set_field('customer.address', [ 'Cornwall Square 10b', 'Singapore-La' ])
     assert_equal 'Cornwall Square 10b', w0.lookup('customer.address.0')
   end
+
+  #def test_indifferent_access
+  #  w0 = Ruote::Workitem.new(
+  #    'fields' => { 'customer' => 'john' })
+  #  assert_equal 'john', w0.fields['customer']
+  #  assert_equal 'john', w0.fields[:customer]
+  #end
 end
 

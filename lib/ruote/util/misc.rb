@@ -58,11 +58,11 @@ module Ruote
     rescue TypeError => te
     end
 
-    if object.is_a?(REXML::Element)
-      d = REXML::Document.new object.to_s
-      return d if object.kind_of?(REXML::Document)
-      return d.root
-    end
+    #if object.is_a?(REXML::Element)
+    #  d = REXML::Document.new object.to_s
+    #  return d if object.kind_of?(REXML::Document)
+    #  return d.root
+    #end
       # avoiding "TypeError: singleton can't be dumped"
 
     o = object.class.allocate

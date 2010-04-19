@@ -43,6 +43,18 @@ module Ruote
 
       @h = h
       class << @h; include Ruote::HashDot; end
+
+      #class << @h['fields']
+      #  alias_method :__get, :[]
+      #  alias_method :__set, :[]=
+      #  def [] (key)
+      #    __get(key.to_s)
+      #  end
+      #  def []= (key, value)
+      #    __set(key.to_s, value)
+      #  end
+      #end
+        # indifferent access, not activated for now
     end
 
     def to_h
