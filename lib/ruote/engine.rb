@@ -255,37 +255,42 @@ module Ruote
     #   engine.register_participant /^moon-.+/, MyParticipant.new('Saturn-V')
     #
     #
-    # == passing a block to a participant
+    # == 'stateless' participants are preferred over 'stateful' ones
     #
-    # Usually only the BlockParticipant cares about being passed a block :
+    # Ruote 2.1 is OK with 1 storage and 1+ workers. The workers may be
+    # in other ruby runtimes. This implies that if you have registered a
+    # participant instance (instead of passing its classname and options),
+    # that participant will only run in the worker 'embedded' in the engine
+    # where it was registered... Let me rephrase it, participants instantiated
+    # at registration time (and that includes block participants) only runs
+    # in one worker, always the same.
     #
-    #   engine.register_participant 'compute_sum' do |workitem|
-    #     workitem.fields['kilroy'] = 'was here'
-    #   end
+    # 'stateless' participants, instantiated at each dispatch, are preferred.
+    # Any worker can handle them.
     #
-    # But it's OK to pass a block to a custom participant :
+    # Block participants are still fine for demos (where the worker is included
+    # in the engine (see all the quickstarts). And small engines with 1 worker
+    # are not that bad, not everybody is building huge systems).
     #
-    #   require 'ruote/part/local_participant'
+    # Here is a 'stateless' participant example :
     #
-    #   class MyParticipant
-    #     include Ruote::LocalParticipant
+    #   class MyStatelessParticipant
     #     def initialize (opts)
-    #       @name = opts[:name]
-    #       @block = opts[:block]
+    #       @opts = opts
     #     end
     #     def consume (workitem)
-    #       workitem.fields['prestamp'] = Time.now
-    #       workitem.fields['author'] = @name
-    #       @block.call(workitem)
-    #       reply_to_engine(workitem)
+    #       workitem.fields['rocket_name'] = @opts['name']
+    #       send_to_the_moon(workitem)
+    #     end
+    #     def cancel (fei, flavour)
+    #       # do nothing
     #     end
     #   end
     #
-    #   engine.register_participant 'al', MyParticipant, :name => 'toto' do |wi|
-    #     wi.fields['nada'] = surf
-    #   end
+    #   engine.register_participant 'moon', MyStatelessParticipant, 'name' => 'saturn5'
     #
-    # The block is available under the :block option.
+    # Remember that the options (the hash that follows the class name), must be
+    # serialisable via JSON.
     #
     def register_participant (regex, participant=nil, opts={}, &block)
 
