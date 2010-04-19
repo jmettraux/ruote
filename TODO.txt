@@ -343,3 +343,6 @@
 
 [ ] Avishai : Worker : hook for rejecting the dispatch message
 
+[ ] Oleg's idea about participant on_reply
+    http://groups.google.com/group/openwferu-users/browse_thread/thread/2e6a95708c10847b
+
