@@ -390,7 +390,7 @@ module Ruote::Exp
     def do_fail (msg)
 
       @h['state'] = 'failing'
-      @h['applied_workitem']['fields']['__error__'] = msg['error']
+      @h['applied_workitem'] = msg['workitem']
 
       if h.children.size < 1
         reply_to_parent(@h['applied_workitem'])
@@ -474,7 +474,7 @@ module Ruote::Exp
 
     # Looks up parent with on_error attribute and triggers it
     #
-    def handle_on_error (error)
+    def handle_on_error (msg, error)
 
       return false if h.state == 'failing'
 
@@ -488,11 +488,15 @@ module Ruote::Exp
       return false if handler == ''
         # empty on_error handler nullifies ancestor's on_error
 
+      workitem = msg['workitem']
+
+      workitem['fields']['__error__'] = [
+        h.fei, Ruote.now_to_utc_s, error.class.to_s, error.message ]
+
       @context.storage.put_msg(
         'fail',
         'fei' => oe_parent.h.fei,
-        'error' => [
-          h.fei, Ruote.now_to_utc_s, error.class.to_s, error.message ])
+        'workitem' => workitem)
 
       true # yes, error is being handled.
     end

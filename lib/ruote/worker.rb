@@ -129,7 +129,7 @@ module Ruote
         fexp = Ruote::Exp::FlowExpression.fetch(@context, fei)
       end
 
-      return if fexp && fexp.handle_on_error(ex)
+      return if fexp && fexp.handle_on_error(msg, ex)
 
       # emit 'msg'
 

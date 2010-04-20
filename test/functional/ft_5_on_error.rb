@@ -161,13 +161,14 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    error = nil
+    workitem = nil
 
-    @engine.register_participant :troublemaker do
+    @engine.register_participant :troublemaker do |wi|
+      wi.fields['seen'] = true
       raise 'Beijing, we have a problem !'
     end
-    @engine.register_participant :troublespotter do |workitem|
-      error = workitem.error
+    @engine.register_participant :troublespotter do |wi|
+      workitem = wi
       @tracer << 'err...'
     end
 
@@ -181,8 +182,9 @@ class FtOnErrorTest < Test::Unit::TestCase
     #puts er.trace
 
     assert_equal 'err...', @tracer.to_s
-    assert_equal 4, error.size
-    assert_equal 'RuntimeError', error[2]
+    assert_equal 4, workitem.error.size
+    assert_equal 'RuntimeError', workitem.error[2]
+    assert_equal true, workitem.fields['seen']
   end
 end
 
