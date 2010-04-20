@@ -38,8 +38,8 @@ Richard Jennings
 Feedback
 --------
 
+Oleg (foenixx) - many suggestions and bug reports
 Avishai Shalom - discussion and ideas about participant/worker locality
-Olle (foenixx) - barley issue with Sinatra 1.0
 Gonzalo Suarez - many help
 Francisco Kiko - many help
 David Goldhirsch - EM participant block

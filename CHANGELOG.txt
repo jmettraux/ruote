@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- participant :on_error => 'x' broken. Fixed. Thanks Oleg.
 - Engine#workitem(fei) for advanced users
 - reintroduction of the 'listener' concept : lib/ruote/part/listener.rb
 - LocalParticpant : added a reject(workitem) method

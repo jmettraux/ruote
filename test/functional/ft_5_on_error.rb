@@ -151,5 +151,30 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal 1, a_count
     assert_equal 1, e_count
   end
+
+  def test_participant_on_error
+
+    pdef = Ruote.process_definition do
+      troublemaker :on_error => 'handle_error'
+      define 'handle_error' do
+        echo 'err...'
+      end
+    end
+
+    @engine.register_participant :troublemaker do
+      raise 'Beijing, we have a problem !'
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    #er = @engine.process(wfid).errors.first
+    #puts er.message
+    #puts er.trace
+
+    assert_equal 'err...', @tracer.to_s
+  end
 end
 

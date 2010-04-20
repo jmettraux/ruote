@@ -390,9 +390,13 @@ module Ruote::Exp
     def do_fail (msg)
 
       @h['state'] = 'failing'
-      persist_or_raise
 
-      h.children.each { |i| @context.storage.put_msg('cancel', 'fei' => i) }
+      if h.children.size < 1
+        reply_to_parent(@h['applied_workitem'])
+      else
+        persist_or_raise
+        h.children.each { |i| @context.storage.put_msg('cancel', 'fei' => i) }
+      end
     end
 
     #--
