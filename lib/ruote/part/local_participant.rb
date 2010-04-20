@@ -74,6 +74,21 @@ module Ruote
         'participant_name' => workitem.participant_name,
         'rejected' => true)
     end
+
+    def re_apply (workitem, opts={})
+
+      fexp = fetch_flow_expression(workitem)
+
+      opts = {
+        'fei' => fexp.h.fei,
+        'parent_id' => fexp.h.parent_id,
+        'tree' => fexp.tree,
+        'workitem' => workitem.h,
+        'variables' => nil
+      }
+
+      @context.storage.put_msg('apply', opts)
+    end
   end
 end
 

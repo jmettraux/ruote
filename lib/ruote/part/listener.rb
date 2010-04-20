@@ -66,6 +66,20 @@ module Ruote
         'workitem' => workitem.h,
         'participant_name' => workitem.participant_name)
     end
+
+    alias :reply :reply_to_engine
+
+    protected
+
+    # Convenience method, fetches the flow expression (ParticipantExpression)
+    # that emitted that workitem.
+    #
+    # Used in LocalParticipant#re_apply(wi) for example.
+    #
+    def fetch_flow_expression (workitem)
+
+      Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h)
+    end
   end
 end
 
