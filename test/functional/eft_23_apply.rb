@@ -141,5 +141,28 @@ class EftApplyTest < Test::Unit::TestCase
 
     assert_trace('nada', pdef)
   end
+
+  def test_apply_on_error
+
+    pdef = Ruote.process_definition do
+      handle do
+        sequence do
+          echo 'in'
+          nemo
+        end
+      end
+      define 'handle' do
+        apply :on_error => 'notify'
+        echo 'over.'
+      end
+      define 'notify' do
+        echo 'error'
+      end
+    end
+
+    #noisy
+
+    assert_trace(%w[ in error over. ], pdef)
+  end
 end
 

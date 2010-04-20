@@ -55,12 +55,34 @@ module Ruote::Exp
   #   echo 'nada'
   #
   #
+  # == on_error
+  #
+  # It's OK, to place an on_error on the apply
+  #
+  #   pdef = Ruote.process_definition do
+  #     handle do
+  #       sequence do
+  #         echo 'in'
+  #         nemo
+  #       end
+  #     end
+  #     define 'handle' do
+  #       apply :on_error => 'notify' # <==
+  #       echo 'over.'
+  #     end
+  #     define 'notify' do
+  #       echo 'error'
+  #     end
+  #   end
+  #
   class ApplyExpression < FlowExpression
 
     names :apply
 
     # TODO : maybe accept directly ruby and xml (and json)
     # TODO : _yield ?
+
+    # TODO : apply [ 'echo', { 'nada' => nil }, [] ]
 
     def apply
 
