@@ -150,6 +150,7 @@ class FtTimeoutTest < Test::Unit::TestCase
     wait_for(:alpha)
 
     assert_equal 1, alpha.size
+    assert_not_nil alpha.first.fields['__timed_out__']
   end
 
   def test_deep_on_timeout_error
