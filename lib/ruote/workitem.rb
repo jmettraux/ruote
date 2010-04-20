@@ -182,6 +182,18 @@ module Ruote
 
       Ruote.set(@h['fields'], key, value)
     end
+
+    # Shortcut for wi.fields['__timed_out__']
+    #
+    def timed_out
+      @h['fields']['__timed_out__']
+    end
+
+    # Shortcut for wi.fields['__error__']
+    #
+    def error
+      @h['fields']['__error__']
+    end
   end
 end
 
