@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'ruote/part/listener'
+
 
 module Ruote
 
@@ -35,20 +37,8 @@ module Ruote
   #
   module LocalParticipant
 
-    attr_accessor :context
-
-    # Sends back the workitem to the ruote engine.
-    #
-    def reply_to_engine (workitem)
-
-      # the local participant knows how to deal with the storage directly
-
-      @context.storage.put_msg(
-        'receive',
-        'fei' => workitem.h.fei,
-        'workitem' => workitem.h,
-        'participant_name' => workitem.participant_name)
-    end
+    include Listener
+      # the reply_to_engine method is there
 
     # WARNING : this method is only for 'stateless' participants, ie
     # participants that are registered in the engine by passing their class
