@@ -199,6 +199,8 @@
 [o] Rdoc Ruote::Engine.register_participant -> passing a block to a participant
     and perhaps also on
     http://ruote.rubyforge.org/implementing_participants.html (Avish)
+[x] wrap workitem in process error ? for on_error consumption (thanks Oleg)
+    doing workitem.fields['__error__'] = [ fei, time, error_message ]
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)

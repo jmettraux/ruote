@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- Workitem.error holds the error when on_error. Thanks Oleg.
 - Workitem#error and Workitem#timed_out shortcuts
 - participant :on_error => 'x' broken. Fixed. Thanks Oleg.
 - Engine#workitem(fei) for advanced users

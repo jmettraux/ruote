@@ -157,12 +157,18 @@ class FtOnErrorTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       troublemaker :on_error => 'handle_error'
       define 'handle_error' do
-        echo 'err...'
+        troublespotter
       end
     end
 
+    error = nil
+
     @engine.register_participant :troublemaker do
       raise 'Beijing, we have a problem !'
+    end
+    @engine.register_participant :troublespotter do |workitem|
+      error = workitem.error
+      @tracer << 'err...'
     end
 
     #noisy
@@ -175,6 +181,8 @@ class FtOnErrorTest < Test::Unit::TestCase
     #puts er.trace
 
     assert_equal 'err...', @tracer.to_s
+    assert_equal 4, error.size
+    assert_equal 'RuntimeError', error[2]
   end
 end
 
