@@ -98,6 +98,8 @@ module Ruote
         "#{hfei['expid']}!#{hfei['sub_wfid']}!#{hfei['wfid']}"
     end
 
+    # Turns the result of to_storage_id back to a FlowExpressionId instance.
+    #
     def self.from_id (s, engine_id='engine')
 
       ss = s.split('!')
@@ -105,6 +107,17 @@ module Ruote
       FlowExpressionId.new(
         'engine_id' => engine_id,
         'expid' => ss[-3], 'sub_wfid' => ss[-2], 'wfid' => ss[-1])
+    end
+
+    # Input : any fei representation, output, the fei as a hash.
+    #
+    # This method is currently used by engine#workitem(fei)
+    #
+    def self.to_h (fei)
+
+      return fei if fei.is_a?(Hash)
+      return fei.h if fei.respond_to?(:h)
+      from_id(fei.to_s).h
     end
 
     # Returns the last number in the expid. For instance, if the expid is

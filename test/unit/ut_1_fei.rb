@@ -87,5 +87,15 @@ class UtFeiTest < Test::Unit::TestCase
       '0_0_1!!20100224-fake',
       Ruote::FlowExpressionId.from_id('wi!store!0_0_1!!20100224-fake').to_storage_id)
   end
+
+  def test_to_h
+
+    assert_equal(
+      { 'engine_id' => 'engine',
+        'expid' => '0_0_1',
+        'sub_wfid' => '',
+        'wfid' => '20100224-fake' },
+      Ruote::FlowExpressionId.to_h('0_0_1!!20100224-fake'))
+  end
 end
 

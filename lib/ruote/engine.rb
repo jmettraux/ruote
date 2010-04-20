@@ -29,6 +29,12 @@ require 'ruote/receiver/base'
 
 module Ruote
 
+  #
+  # This class holds the 'engine' name, perhaps 'dashboard' would have been
+  # a better name. Anyway, the methods here allow to launch processes
+  # and to query about their status. There are also methods for fixing
+  # issues with stalled processes or processes stuck in errors.
+  #
   class Engine
 
     include ReceiverMixin
@@ -185,6 +191,9 @@ module Ruote
         @storage.get_many('errors', /!#{wfid}$/)
     end
 
+    # Shuts down the engine, mostly passes the shutdown message to the other
+    # services and hope they'll shut down properly.
+    #
     def shutdown
 
       @context.shutdown
@@ -345,6 +354,27 @@ module Ruote
     def configure (config_key, value)
 
       @context[config_key] = value
+    end
+
+    # A convenience methods for advanced users (like Oleg).
+    #
+    # Given a fei (flow expression id), fetches the workitem as stored in
+    # the expression with that fei.
+    # This is the "applied workitem", if the workitem is currently handed to
+    # a participant, this method will return the workitem as applied, not
+    # the workitem as saved by the participant/user in whatever worklist it
+    # uses. If you need that workitem, do the vanilla thing and ask it to
+    # the [storage] participant or its worklist.
+    #
+    # The fei might be a string fei (result of fei.to_storage_id), a
+    # FlowExpressionId instance or a hash.
+    #
+    def workitem (fei)
+
+      fexp = Ruote::Exp::FlowExpression.fetch(
+        @context, FlowExpressionId.to_h(fei))
+
+      Ruote::Workitem.new(fexp.h.applied_workitem)
     end
   end
 
