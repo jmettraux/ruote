@@ -96,6 +96,26 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_nil @engine.process(wfid)
   end
 
+  def test_on_error_undo__pass
+
+    @engine.register_participant :nemo do |wi|
+      wi.fields['fail_count'] = 1
+      raise 'nemo'
+    end
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'in'
+        nemo :on_error => 'undo'
+        echo '${f:error}|${f:fail_count}'
+      end
+    end
+
+    wfid = assert_trace(%w[ in |1 ], pdef)
+
+    assert_nil @engine.process(wfid)
+  end
+
   def test_missing_handler_triggers_regular_error
 
     pdef = Ruote.process_definition :on_error => 'failpath' do
