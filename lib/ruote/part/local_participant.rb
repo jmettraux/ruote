@@ -40,27 +40,75 @@ module Ruote
     include Listener
       # the reply_to_engine method is there
 
-    # TODO : document me
+    # Use this method to re_dispatch the workitem.
+    #
+    # It takes two options :in and :at for "later re_dispatch".
+    #
+    # Look at the unschedule_re_dispatch method for an example of
+    # participant implementation that uses re_dispatch.
+    #
+    # Without one of those options, the method is a "reject".
     #
     def re_dispatch (workitem, opts={})
 
-      #fexp = fetch_flow_expression(workitem)
-      #opts = {
-      #  'fei' => fexp.h.fei,
-      #  'parent_id' => fexp.h.parent_id,
-      #  'tree' => fexp.tree,
-      #  'workitem' => workitem.h,
-      #  'variables' => nil,
-      #  're_apply' => true
-      #}
-      #@context.storage.put_msg('apply', opts)
-
-      @context.storage.put_msg(
-        'dispatch',
+      msg = {
+        'action' => 'dispatch',
         'fei' => workitem.h.fei,
         'workitem' => workitem.h,
         'participant_name' => workitem.participant_name,
-        'rejected' => true)
+        'rejected' => true
+      }
+
+      if t = opts[:in] || opts[:at]
+
+        sched_id = @context.storage.put_schedule('at', workitem.h.fei, t, msg)
+
+        fexp = fetch_flow_expression(workitem)
+        fexp.h['re_dispatch_sched_id'] = sched_id
+        fexp.try_persist
+
+      else
+
+        @context.storage.put_msg('dispatch', msg)
+      end
+    end
+
+    # Cancels the scheduled re_dispatch, if any.
+    #
+    # An example or 'retrying participant' :
+    #
+    #   class RetryParticipant
+    #     include Ruote::LocalParticipant
+    #
+    #     def initialize (opts)
+    #       @opts = opts
+    #     end
+    #
+    #     def consume (workitem)
+    #       begin
+    #         do_the_job
+    #         reply(workitem)
+    #       rescue
+    #         re_dispatch(workitem, :in => @opts['delay'] || '1s')
+    #       end
+    #     end
+    #
+    #     def cancel (fei, flavour)
+    #       unschedule_re_dispatch(fei)
+    #     end
+    #   end
+    #
+    # Note how unschedule_re_dispatch is used in the cancel method. Warning,
+    # this example could loop forever...
+    #
+    def unschedule_re_dispatch (fei)
+
+      fexp = Ruote::Exp::FlowExpression.fetch(
+        @context, FlowExpressionId.to_h(fei))
+
+      if s = fexp.h['re_dispatch_sched_id']
+        @context.storage.delete_schedule(s)
+      end
     end
 
     # WARNING : this method is only for 'stateless' participants, ie

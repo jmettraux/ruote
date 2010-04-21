@@ -71,5 +71,66 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
     assert_trace(%w[ try0 try1 ], pdef)
   end
+
+  class RetryParticipant
+    include Ruote::LocalParticipant
+    def initialize (opts)
+      @opts = opts
+    end
+    def consume (workitem)
+      try = workitem.fields['try'] || 0
+      context.tracer << "#{Time.now.to_f}\n"
+      workitem.fields['try'] = try + 1
+      if (try == 0)
+        re_dispatch(workitem, :in => @opts['delay'] || '1s')
+      else
+        reply(workitem)
+      end
+    end
+    def cancel (fei, flavour)
+      unschedule_re_dispatch(fei)
+    end
+  end
+
+  def test_participant_re_dispatch_later
+
+    pdef = Ruote.process_definition do
+      alpha
+    end
+
+    @engine.register_participant :alpha, RetryParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
+
+    times = @tracer.to_s.split("\n").collect { |t| Float(t) }
+    t = times.last - times.first
+
+    assert t >= 1.0, "took less that 1 second"
+    assert t < 2.0, "took more than 1.99 second"
+  end
+
+  def test_participant_re_dispatch_later_cancel
+
+    pdef = Ruote.process_definition do
+      alpha
+    end
+
+    @engine.register_participant :alpha, RetryParticipant, 'delay' => '1m'
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    sleep 0.7
+
+    @engine.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    assert_equal 0, @engine.storage.get_many('schedules').size
+  end
 end
 
