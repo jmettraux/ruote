@@ -201,6 +201,7 @@
     http://ruote.rubyforge.org/implementing_participants.html (Avish)
 [o] wrap workitem in process error ? for on_error consumption (thanks Oleg)
     doing workitem.fields['__error__'] = [ fei, time, error_message ]
+[o] HashStorage should emit 'init persist fail' messages as well !
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)

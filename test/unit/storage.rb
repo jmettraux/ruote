@@ -92,6 +92,19 @@ class UtStorage < Test::Unit::TestCase
     assert_nil r
   end
 
+  def test_put_update_rev_twice
+
+    doc = { '_id' => 'ouinouin', 'type' => 'dogfood', 'message' => 'more' }
+
+    r = @s.put(doc, :update_rev => true)
+    assert_nil r
+
+    doc = { '_id' => 'ouinouin', 'type' => 'dogfood', 'message' => 'more' }
+
+    r = @s.put(doc, :update_rev => true)
+    assert_not_nil r
+  end
+
   def test_delete_fail
 
     assert_raise(ArgumentError) do

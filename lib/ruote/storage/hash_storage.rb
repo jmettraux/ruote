@@ -57,7 +57,8 @@ module Ruote
 
         pre = get(doc['type'], doc['_id'])
 
-        if pre && ( ! opts[:update_rev]) && pre['_rev'] != doc['_rev']
+        #if pre && ( ! opts[:update_rev]) && pre['_rev'] != doc['_rev']
+        if pre && pre['_rev'] != doc['_rev']
           return pre
         end
 
