@@ -108,14 +108,21 @@ module Ruote
     #   get(fei, 'colour')
     #     # => 'blue'
     #
+    # To return the whole stash
+    #
+    #   get(fei)
+    #     # => { 'colour' => 'blue' }
+    #
     # put & get are useful for a participant that needs to communicate
     # between its consume and its cancel.
     #
-    def get (fei, key)
+    def get (fei, key=nil)
 
       fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
 
-      (fexp.h['stash'][key] rescue nil)
+      stash = fexp.h['stash'] rescue {}
+
+      key ? stash[key] : stash
     end
   end
 end

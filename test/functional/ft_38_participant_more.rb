@@ -142,6 +142,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     end
     def cancel (fei, flavour)
       BLACKBOARD['token'] = get(fei, 'token')
+      BLACKBOARD['all'] = get(fei)
     end
   end
 
@@ -168,7 +169,8 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     @engine.cancel_process(wfid)
     wait_for(wfid)
 
-    assert_equal 'of esteem', BLACKBOARD['token']
+    assert_equal('of esteem', BLACKBOARD['token'])
+    assert_equal({ 'token' => 'of esteem' }, BLACKBOARD['all'])
   end
 end
 
