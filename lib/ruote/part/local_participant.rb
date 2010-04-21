@@ -84,7 +84,8 @@ module Ruote
         'parent_id' => fexp.h.parent_id,
         'tree' => fexp.tree,
         'workitem' => workitem.h,
-        'variables' => nil
+        'variables' => nil,
+        're_apply' => true
       }
 
       @context.storage.put_msg('apply', opts)

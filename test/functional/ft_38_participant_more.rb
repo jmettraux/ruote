@@ -30,6 +30,19 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     end
   end
 
+  def test_participant_reject
+
+    pdef = Ruote.process_definition do
+      alpha
+    end
+
+    @engine.register_participant :alpha, DifficultParticipant
+
+    #noisy
+
+    assert_trace(%w[ diff diff ], pdef)
+  end
+
   class FightingParticipant
     include Ruote::LocalParticipant
     def initialize (opts)
@@ -44,19 +57,6 @@ class FtParticipantMoreTest < Test::Unit::TestCase
         reply(workitem)
       end
     end
-  end
-
-  def test_participant_reject
-
-    pdef = Ruote.process_definition do
-      alpha
-    end
-
-    @engine.register_participant :alpha, DifficultParticipant
-
-    #noisy
-
-    assert_trace(%w[ diff diff ], pdef)
   end
 
   def test_participant_re_apply
