@@ -55,6 +55,53 @@ module Ruote::Exp
   #   echo 'nada'
   #
   #
+  # == apply and subprocesses
+  #
+  # There is an interesting way of using 'apply', it's close to the way of
+  # the Ruby "yield" expression.
+  #
+  #   pdef = Ruote.process_definition 'test' do
+  #     sequence do
+  #       handle do
+  #         participant 'alpha'
+  #       end
+  #       handle do
+  #         participant 'bravo'
+  #       end
+  #     end
+  #     define 'handle' do
+  #       sequence do
+  #         participant 'prepare_data'
+  #         apply
+  #         participant 'rearrange_data'
+  #       end
+  #     end
+  #   end
+  #
+  # With this process definition, the particpant alpha and bravo are handed
+  # a workitem in sequence, but each time, the data gets prepared and
+  # re-arranged.
+  #
+  # 'apply' simply picks the value of the tree to apply in the local variable
+  # 'tree'.
+  #
+  # Passing variables to applied trees is possible :
+  #
+  #   pdef = Ruote.process_definition do
+  #     handle do
+  #       participant '${v:target}', :message => 'x'
+  #     end
+  #     define 'handle' do
+  #       sequence do
+  #         participant 'prepare_data'
+  #         apply :v => 'alpha'
+  #         apply :v => 'bravo'
+  #         participant 'rearrange_data'
+  #       end
+  #     end
+  #   end
+  #
+  #
   # == on_error
   #
   # It's OK, to place an on_error on the apply
