@@ -80,6 +80,43 @@ module Ruote
 
       Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h)
     end
+
+    # Stashes values in the participant expression (in the storage).
+    #
+    #   put(workitem.fei, 'key' => 'value', 'colour' => 'blue')
+    #
+    # Remember that keys/values must be serializable in JSON.
+    #
+    # put & get are useful for a participant that needs to communicate
+    # between its consume and its cancel.
+    #
+    # See the thread at
+    # http://groups.google.com/group/openwferu-users/t/2e6a95708c10847b for the
+    # justification.
+    #
+    def put (fei, hash)
+
+      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
+
+      (fexp.h['stash'] ||= {}).merge!(hash)
+
+      fexp.persist_or_raise
+    end
+
+    # Fetches back a stashed value.
+    #
+    #   get(fei, 'colour')
+    #     # => 'blue'
+    #
+    # put & get are useful for a participant that needs to communicate
+    # between its consume and its cancel.
+    #
+    def get (fei, key)
+
+      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
+
+      (fexp.h['stash'][key] rescue nil)
+    end
   end
 end
 

@@ -123,14 +123,52 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     #noisy
 
     wfid = @engine.launch(pdef)
-
     sleep 0.7
 
     @engine.cancel_process(wfid)
-
     wait_for(wfid)
 
     assert_equal 0, @engine.storage.get_many('schedules').size
+  end
+
+  BLACKBOARD = {}
+
+  class StashingParticipant
+    include Ruote::LocalParticipant
+    def initialize (opts)
+    end
+    def consume (workitem)
+      put(workitem.fei, 'token' => workitem.params['token'])
+    end
+    def cancel (fei, flavour)
+      BLACKBOARD['token'] = get(fei, 'token')
+    end
+  end
+
+  def test_stash
+
+    BLACKBOARD.clear
+
+    pdef = Ruote.process_definition do
+      alpha :token => 'of esteem'
+    end
+
+    @engine.register_participant :alpha, StashingParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+    wait_for(:alpha)
+
+    ps = @engine.process(wfid)
+    fexp = ps.expressions.find { |e| e.fei.expid == '0_0' }
+
+    assert_equal({ 'token' => 'of esteem' }, fexp.h.stash)
+
+    @engine.cancel_process(wfid)
+    wait_for(wfid)
+
+    assert_equal 'of esteem', BLACKBOARD['token']
   end
 end
 

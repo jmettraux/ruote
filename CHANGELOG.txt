@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- LocalParticipant#put(fei, hash) #get(fei, key) for stashing info
 - LocalParticipant#re_dispatch(wi, opts)
 - bug in HashStorage, apply over apply didn't raise a persist error. Fixed.
 - keeping track of workitem fields as they were right before a participant error

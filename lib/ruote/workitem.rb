@@ -186,13 +186,31 @@ module Ruote
     # Shortcut for wi.fields['__timed_out__']
     #
     def timed_out
+
       @h['fields']['__timed_out__']
     end
 
     # Shortcut for wi.fields['__error__']
     #
     def error
+
       @h['fields']['__error__']
+    end
+
+    # Shortcut for wi.fields['params']
+    #
+    # When a participant is invoked like in
+    #
+    #    participant :ref => 'toto', :task => 'x"
+    #
+    # then
+    #
+    #    p workitem.params
+    #      # => { 'ref' => 'toto', 'task' => 'x' }
+    #
+    def params
+
+      @h['fields']['params']
     end
   end
 end
