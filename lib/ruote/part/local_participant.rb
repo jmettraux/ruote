@@ -40,6 +40,29 @@ module Ruote
     include Listener
       # the reply_to_engine method is there
 
+    # TODO : document me
+    #
+    def re_dispatch (workitem, opts={})
+
+      #fexp = fetch_flow_expression(workitem)
+      #opts = {
+      #  'fei' => fexp.h.fei,
+      #  'parent_id' => fexp.h.parent_id,
+      #  'tree' => fexp.tree,
+      #  'workitem' => workitem.h,
+      #  'variables' => nil,
+      #  're_apply' => true
+      #}
+      #@context.storage.put_msg('apply', opts)
+
+      @context.storage.put_msg(
+        'dispatch',
+        'fei' => workitem.h.fei,
+        'workitem' => workitem.h,
+        'participant_name' => workitem.participant_name,
+        'rejected' => true)
+    end
+
     # WARNING : this method is only for 'stateless' participants, ie
     # participants that are registered in the engine by passing their class
     # and a set of options, like in
@@ -65,31 +88,7 @@ module Ruote
     #
     # Well, here it is, use with care.
     #
-    def reject (workitem)
-
-      @context.storage.put_msg(
-        'dispatch',
-        'fei' => workitem.h.fei,
-        'workitem' => workitem.h,
-        'participant_name' => workitem.participant_name,
-        'rejected' => true)
-    end
-
-    def re_apply (workitem, opts={})
-
-      fexp = fetch_flow_expression(workitem)
-
-      opts = {
-        'fei' => fexp.h.fei,
-        'parent_id' => fexp.h.parent_id,
-        'tree' => fexp.tree,
-        'workitem' => workitem.h,
-        'variables' => nil,
-        're_apply' => true
-      }
-
-      @context.storage.put_msg('apply', opts)
-    end
+    alias :reject :re_dispatch
   end
 end
 

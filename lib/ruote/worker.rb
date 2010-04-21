@@ -338,14 +338,7 @@ module Ruote
 
       exp = exp_class.new(@context, exp_hash.merge!('original_tree' => tree))
 
-      if msg['re_apply'] # local participant re_apply
-        Ruote::Exp::FlowExpression.fetch(
-          @context, msg['fei']
-        ).unpersist_or_raise
-      end
-
       exp.initial_persist
-
       exp.do_apply
     end
 

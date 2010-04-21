@@ -52,14 +52,14 @@ class FtParticipantMoreTest < Test::Unit::TestCase
       context.tracer << "try#{try}\n"
       workitem.fields['try'] = try + 1
       if (try == 0)
-        re_apply(workitem)
+        re_dispatch(workitem)
       else
         reply(workitem)
       end
     end
   end
 
-  def test_participant_re_apply
+  def test_participant_re_dispatch
 
     pdef = Ruote.process_definition do
       alpha

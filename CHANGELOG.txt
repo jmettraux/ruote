@@ -4,8 +4,8 @@
 
 == ruote - 2.1.10    not yet released
 
+- LocalParticipant#re_dispatch(wi, opts)
 - bug in HashStorage, apply over apply didn't raise a persist error. Fixed.
-- LocalParticipant#re_apply(wi, opts)
 - keeping track of workitem fields as they were right before a participant error
 - Workitem.error holds the error when on_error. Thanks Oleg.
 - Workitem#error and Workitem#timed_out shortcuts
