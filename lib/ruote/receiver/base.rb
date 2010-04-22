@@ -29,30 +29,94 @@ module Ruote
   # The core methods for the Receiver class (sometimes a Mixin is easier
   # to integrate).
   #
-  # (The engine itself includes this mixin)
+  # (The engine itself includes this mixin, the LocalParticipant module
+  # includes it as well).
   #
   module ReceiverMixin
 
-    def receive (item)
-
-      reply(item)
-    end
-
-    def reply (workitem)
+    # This method pipes back a workitem into the engine, letting it resume
+    # in its flow, hopefully.
+    #
+    # It is aliased to 'reply' and 'reply_to_engine' (Since this module
+    # is include in the LocalParticipant module).
+    #
+    def receive (workitem)
 
       workitem = workitem.to_h if workitem.respond_to?(:to_h)
 
-      @storage.put_msg(
+      pname = workitem['participant_name']
+      # TODO : trigger participant.on_reply?
+
+      @context.storage.put_msg(
         'receive',
         'fei' => workitem['fei'],
         'workitem' => workitem,
-        'participant_name' => workitem['participant_name'],
+        'participant_name' => pname,
         'receiver' => sign)
     end
+
+    alias :reply :receive
+    alias :reply_to_engine :receive
 
     def sign
 
       self.class.to_s
+    end
+
+    protected
+
+    # Convenience method, fetches the flow expression (ParticipantExpression)
+    # that emitted that workitem.
+    #
+    # Used in LocalParticipant#re_apply(wi) for example.
+    #
+    def fetch_flow_expression (workitem)
+
+      Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h)
+    end
+
+    # Stashes values in the participant expression (in the storage).
+    #
+    #   put(workitem.fei, 'key' => 'value', 'colour' => 'blue')
+    #
+    # Remember that keys/values must be serializable in JSON.
+    #
+    # put & get are useful for a participant that needs to communicate
+    # between its consume and its cancel.
+    #
+    # See the thread at
+    # http://groups.google.com/group/openwferu-users/t/2e6a95708c10847b for the
+    # justification.
+    #
+    def put (fei, hash)
+
+      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
+
+      (fexp.h['stash'] ||= {}).merge!(hash)
+
+      fexp.persist_or_raise
+    end
+
+    # Fetches back a stashed value.
+    #
+    #   get(fei, 'colour')
+    #     # => 'blue'
+    #
+    # To return the whole stash
+    #
+    #   get(fei)
+    #     # => { 'colour' => 'blue' }
+    #
+    # put & get are useful for a participant that needs to communicate
+    # between its consume and its cancel.
+    #
+    def get (fei, key=nil)
+
+      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
+
+      stash = fexp.h['stash'] rescue {}
+
+      key ? stash[key] : stash
     end
   end
 
@@ -63,9 +127,9 @@ module Ruote
   class Receiver
     include ReceiverMixin
 
-    def initialize (storage, options={})
+    def initialize (context, options={})
 
-      @storage = storage
+      @context = context
       @options = options
     end
   end

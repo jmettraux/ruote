@@ -22,7 +22,7 @@
 # Made in Japan.
 #++
 
-require 'ruote/part/listener'
+require 'ruote/receiver/base'
 
 
 module Ruote
@@ -37,8 +37,10 @@ module Ruote
   #
   module LocalParticipant
 
-    include Listener
+    include ReceiverMixin
       # the reply_to_engine method is there
+
+    attr_accessor :context
 
     # Use this method to re_dispatch the workitem.
     #

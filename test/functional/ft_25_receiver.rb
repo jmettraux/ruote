@@ -53,7 +53,7 @@ class FtReceiverTest < Test::Unit::TestCase
 
   def test_my_receiver
 
-    receiver = MyReceiver.new(@engine.storage)
+    receiver = MyReceiver.new(@engine.context)
 
     #noisy
 
