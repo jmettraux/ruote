@@ -161,6 +161,8 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
+    sleep 0.350 # since wait_for(:alpha) releases too early sometimes
+
     ps = @engine.process(wfid)
     fexp = ps.expressions.find { |e| e.fei.expid == '0_0' }
 

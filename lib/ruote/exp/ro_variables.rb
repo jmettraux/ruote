@@ -139,9 +139,9 @@ module Ruote::Exp
     def un_set_variable (op, var, val, should_persist)
 
       if op == :set
-        h.variables[var] = val
+        Ruote.set(h.variables, var, val)
       else # op == :unset
-        h.variables.delete(var)
+        Ruote.unset(h.variables, var)
       end
 
       return unless should_persist

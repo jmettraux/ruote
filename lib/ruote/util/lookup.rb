@@ -34,8 +34,9 @@ module Ruote
     key, rest = pop_key(key)
     value = flookup(collection, key)
 
+    return [ key, collection ] if container_lookup && rest.size == 0
     return [ rest.first, value ] if container_lookup && rest.size == 1
-    return value if rest.empty?
+    return value if rest.size == 0
     return nil if value == nil
 
     lookup(value, rest)
@@ -59,7 +60,26 @@ module Ruote
     end
   end
 
-  protected
+  #   h = { 'customer' => { 'name' => 'alpha', 'rank' => '1st' } }
+  #   r = Ruote.unset(h, 'customer.rank')
+  #
+  #   h # => { 'customer' => { 'name' => 'alpha' } }
+  #   r # => '1st'
+  #
+  def Ruote.unset (collection, key)
+
+    k, c = lookup(collection, key, true)
+
+    return collection.delete(key) unless c
+
+    if c.is_a?(Array)
+      c.delete_at(Integer(k)) rescue nil
+    else
+      c.delete(k)
+    end
+  end
+
+  protected # well...
 
   def Ruote.pop_key (key)
 

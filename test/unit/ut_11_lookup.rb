@@ -47,5 +47,41 @@ class LookupTest < Test::Unit::TestCase
 
     assert_equal({"customer.name"=>"bravo"}, h)
   end
+
+  def test_hash_unset
+
+    h = { 'customer' => { 'name' => 'alpha', 'rank' => '1st' } }
+    r = Ruote.unset(h, 'customer.rank')
+
+    assert_equal('1st', r)
+    assert_equal({ 'customer' => { 'name' => 'alpha' } }, h)
+  end
+
+  def test_array_unset
+
+    h = { 'customers' => %w[ alpha bravo charly ] }
+    r = Ruote.unset(h, 'customers.1')
+
+    assert_equal('bravo', r)
+    assert_equal({ 'customers' => %w[ alpha charly ] }, h)
+  end
+
+  def test_array_unset_fail
+
+    h = { 'customers' => %w[ alpha bravo charly ] }
+    r = Ruote.unset(h, 'customers.x')
+
+    assert_equal(nil, r)
+    assert_equal({ 'customers' => %w[ alpha bravo charly ] }, h)
+  end
+
+  def test_unset_fail
+
+    h = { 'customer' => { 'name' => 'alpha', 'rank' => '1st' } }
+    r = Ruote.unset(h, 'customer.rank.0')
+
+    assert_equal(nil, r)
+    assert_equal({ 'customer' => { 'name' => 'alpha', 'rank' => '1st' } }, h)
+  end
 end
 

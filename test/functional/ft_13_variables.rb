@@ -127,5 +127,27 @@ class FtVariablesTest < Test::Unit::TestCase
     assert_match(/^0||\d+_\d+$/, results[1])
     assert_match(/^0\_0|\d+|\d+_\d+$/, results[2])
   end
+
+  def test_lookup_in_var
+
+    @engine.register_participant :echo_toto do |wi, fexp|
+      @tracer << fexp.lookup_variable('toto').join
+      @tracer << "\n"
+    end
+
+    pdef = Ruote.process_definition do
+
+      set 'v:toto' => %w[ a b c ]
+      echo '${v:toto.1}'
+
+      set 'v:toto.2' => 'C'
+      echo_toto
+
+      unset 'v:toto.1'
+      echo_toto
+    end
+
+    assert_trace(%w[ b abC aC ], pdef)
+  end
 end
 
