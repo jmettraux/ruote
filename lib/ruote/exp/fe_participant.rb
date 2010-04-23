@@ -181,6 +181,11 @@ module Ruote::Exp
         'workitem' => h.applied_workitem)
     end
 
+    #def reply (workitem)
+    # TODO place on_reply here, eventually
+    #  super
+    #end
+
     def reply_to_parent (workitem)
 
       workitem['fields'].delete('params')

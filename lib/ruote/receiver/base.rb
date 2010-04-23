@@ -44,14 +44,11 @@ module Ruote
 
       workitem = workitem.to_h if workitem.respond_to?(:to_h)
 
-      pname = workitem['participant_name']
-      # TODO : trigger participant.on_reply?
-
       @context.storage.put_msg(
         'receive',
         'fei' => workitem['fei'],
         'workitem' => workitem,
-        'participant_name' => pname,
+        'participant_name' => workitem['participant_name'],
         'receiver' => sign)
     end
 

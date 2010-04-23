@@ -348,4 +348,8 @@
 
 [ ] Oleg's idea about participant on_reply
     http://groups.google.com/group/openwferu-users/browse_thread/thread/2e6a95708c10847b
+    on_reply should be done in the receive action, not in Receiver
+    thus, in the ParticipantExpression
+
+[ ] Receiver should be OK with a storage or a context
 
