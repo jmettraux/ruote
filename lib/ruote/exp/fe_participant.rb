@@ -181,10 +181,15 @@ module Ruote::Exp
         'workitem' => h.applied_workitem)
     end
 
-    #def reply (workitem)
-    # TODO place on_reply here, eventually
-    #  super
-    #end
+    def reply (workitem)
+
+      pa = @context.plist.lookup(
+        workitem['participant_name'], :on_reply => true)
+
+      pa.on_reply(Ruote::Workitem.new(workitem)) if pa
+
+      super(workitem)
+    end
 
     def reply_to_parent (workitem)
 

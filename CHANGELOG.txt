@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- Participant#on_reply(workitem) manipulating workitems when they come back
 - set '${v:customers.0.name}' => 'x' now OK, was limited to fields. Thanks Oleg
 - LocalParticipant#put(fei, hash) #get(fei, key) for stashing info
 - LocalParticipant#re_dispatch(wi, opts)

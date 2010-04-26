@@ -160,12 +160,12 @@ module Ruote
       end
     end
 
-    def lookup (participant_name)
+    def lookup (participant_name, opts={})
 
       pi = lookup_info(participant_name)
 
       return nil unless pi
-      return pi unless pi.is_a?(Array)
+      return opts[:on_reply] ? nil : pi unless pi.is_a?(Array)
 
       class_name, options = pi
 
@@ -173,7 +173,13 @@ module Ruote
         require(rp)
       end
 
-      pa = Ruote.constantize(class_name).new(options)
+      pa_class = Ruote.constantize(class_name)
+      pa_m = pa_class.instance_methods
+
+      return nil if opts[:on_reply] && ! (
+        pa_m.include?(:on_reply) || pa_m.include?('on_reply'))
+
+      pa = pa_class.new(options)
 
       pa.context = @context if pa.respond_to?(:context=)
 

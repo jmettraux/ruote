@@ -69,6 +69,19 @@ module Ruote
       @h
     end
 
+    # 'apply', 'reply', 'receive', ... Indicates in which "direction" the
+    # error occured.
+    #
+    def action
+      @h['msg']['action']
+    end
+
+    # Exposes the workitem fields directly.
+    #
+    def fields
+      @h['msg']['workitem']['fields']
+    end
+
     protected
 
     def to_dot (opts)
