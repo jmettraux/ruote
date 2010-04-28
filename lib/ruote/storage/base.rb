@@ -57,7 +57,7 @@ module Ruote
 
       msg = prepare_msg_doc(action, options)
 
-      #put(msg)
+      put(msg)
 
       #put(msg, :update_rev => true)
       #(@local_msgs ||= []) << Ruote.fulldup(msg)

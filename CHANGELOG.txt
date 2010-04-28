@@ -14,7 +14,6 @@
 - Workitem#error and Workitem#timed_out shortcuts
 - participant :on_error => 'x' broken. Fixed. Thanks Oleg.
 - Engine#workitem(fei) for advanced users
-- reintroduction of the 'listener' concept : lib/ruote/part/listener.rb
 - LocalParticpant : added a reject(workitem) method
 - participant exp : dispatched = true set right after dispatch
 
