@@ -2,14 +2,14 @@
 $:.unshift('lib')
 
 require 'rubygems'
-require 'ruote/engine' # sudo gem install ruote
+require 'ruote' # sudo gem install ruote
 require 'atom/feed' # sudo gem install atom-tools
 require 'prawn' # sudo gem install prawn
 
 #
 # starting a transient engine (no need to make it persistent)
 
-engine = Ruote::Engine.new(:definition_in_launchitem_allowed => true)
+engine = Ruote::Engine.new(Ruote::Worker.new(Ruote::HashStorage.new()))
 
 #
 # a process that fetches the latest pictures from flickr.com and submits
@@ -47,7 +47,7 @@ engine.register_participant :get_pictures do |workitem|
 
   workitem.fields['pictures'] = feed.entries.inject([]) do |a, entry|
     a << [
-      entry.title,
+      entry.title.to_s,
       entry.authors.first.name,
       entry.links.last.href
     ]
@@ -94,10 +94,9 @@ end
 #
 # launching the process, requesting pictures tagged 'cat' and 'fish'
 
-li = Ruote::Launchitem.new(pdef)
-li.fields['tags'] = [ 'cat', 'fish' ]
+initial_workitem_fields = { 'tags' => [ 'cat', 'fish' ] }
 
-fei = engine.launch(li)
+fei = engine.launch(pdef, initial_workitem_fields)
 
 #
 # workflow engines are asynchronous beasts, have to wait for them
