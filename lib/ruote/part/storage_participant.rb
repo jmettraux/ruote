@@ -237,8 +237,9 @@ module Ruote
 
       cr = criteria.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
 
-      return @context.storage.query_workitems(cr) \
-        if @context.storage.respond_to?(:query_workitems)
+      return @context.storage.query_workitems(cr).collect { |h|
+        Ruote::Workitem.new(h)
+      } if @context.storage.respond_to?(:query_workitems)
 
       offset = cr.delete('offset')
       limit = cr.delete('limit')
