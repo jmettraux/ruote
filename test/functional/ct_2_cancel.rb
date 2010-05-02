@@ -29,7 +29,7 @@ class CtCancelTest < Test::Unit::TestCase
 
     @engine0.step 6
 
-    @engine1.cancel_expression(
+    @engine0.cancel_expression(
       { 'engine_id' => 'engine', 'wfid' => wfid, 'expid' => '0_0' })
 
     msgs = nil
@@ -43,7 +43,7 @@ class CtCancelTest < Test::Unit::TestCase
       #  msgs.collect { |m| m['fei']['expid'] }.uniq == %w[ 0_0 ]
     end
 
-    #msgs.each { |m| p m }
+    #msgs.each { |m| p m['action'] }
     #puts
 
     t1 = Thread.new { @engine1.do_step(msgs[1]) }
@@ -53,11 +53,11 @@ class CtCancelTest < Test::Unit::TestCase
 
     #puts
 
-    @engine0.step 5
+    @engine0.step 6
 
-    sleep 0.010
+    msgs = @storage.get_msgs.collect { |m| m['action'] }.join
 
-    assert_equal 0, @storage.get_msgs.size
+    assert [ '', 'terminated' ].include?(msgs), "'#{msgs}' is not OK"
 
     exps = @storage.get_many('expressions')
     exps.each { |exp|

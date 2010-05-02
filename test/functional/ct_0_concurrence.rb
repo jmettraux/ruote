@@ -54,7 +54,7 @@ class CtConcurrenceTest < Test::Unit::TestCase
         wi_fei = m['workitem'] ?
           Ruote::FlowExpressionId.to_storage_id(m['workitem']['fei']) : ''
 
-        p [ m['action'], fei, wi_fei ]
+        p [ m['action'], fei, :from, wi_fei ]
       end
     end
 

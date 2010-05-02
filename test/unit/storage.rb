@@ -24,6 +24,7 @@ class UtStorage < Test::Unit::TestCase
       'message' => 'testing')
   end
   def teardown
+
     @s.get_many('dogfood').each { |d| @s.delete(d) }
   end
 

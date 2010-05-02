@@ -15,3 +15,7 @@ puts "\n\n\n== dm_storage"
 puts
 puts `ruby -r yajl test/unit/storage.rb --dm`
 
+puts "\n\n\n== redis_storage"
+puts
+puts `ruby -r yajl test/unit/storage.rb --redis`
+

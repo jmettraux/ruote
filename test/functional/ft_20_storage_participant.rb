@@ -131,6 +131,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal 2, @part.size
     #@part.by_participant('alpha').each { |wi| p wi }
+    assert_equal Ruote::Workitem, @part.by_participant('alpha').first.class
     assert_equal 1, @part.by_participant('alpha').size
     assert_equal 1, @part.by_participant('bravo').size
   end
@@ -140,6 +141,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     prepare_al_bravo
 
     assert_equal 2, @part.size
+    assert_equal Ruote::Workitem, @part.by_field('place').first.class
     assert_equal 2, @part.by_field('place').size
     assert_equal 2, @part.by_field('character').size
     assert_equal 1, @part.by_field('adversary').size

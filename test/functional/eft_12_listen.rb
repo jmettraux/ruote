@@ -70,6 +70,8 @@ class EftListenTest < Test::Unit::TestCase
     wait_for(:bravo)
     wait_for(2)
 
+    sleep 0.001
+
     #p @tracer.to_s
 
     a = @tracer.to_a
