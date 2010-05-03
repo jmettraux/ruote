@@ -116,6 +116,17 @@ module Ruote
       end
     end
 
+    # Given a context, a worker, an engine or a storage, will return
+    # an instance of Ruote::Context.
+    #
+    def self.extract (cwes)
+
+      return cwes if cwes.is_a?(Ruote::Context) # context
+      return cwes.context if cwes.respond_to?(:context) # worker or engine
+
+      Ruote::Context.new(cwes, nil) # storage
+    end
+
     protected
 
     def get_conf

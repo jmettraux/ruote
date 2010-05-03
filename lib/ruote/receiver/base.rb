@@ -65,8 +65,6 @@ module Ruote
     # Convenience method, fetches the flow expression (ParticipantExpression)
     # that emitted that workitem.
     #
-    # Used in LocalParticipant#re_apply(wi) for example.
-    #
     def fetch_flow_expression (workitem)
 
       Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h)
@@ -124,9 +122,11 @@ module Ruote
   class Receiver
     include ReceiverMixin
 
-    def initialize (context, options={})
+    # Accepts context, worker, engine or storage as first argument.
+    #
+    def initialize (cwes, options={})
 
-      @context = context
+      @context = Ruote::Context.extract(cwes)
       @options = options
     end
   end

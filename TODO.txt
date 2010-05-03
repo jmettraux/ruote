@@ -206,6 +206,9 @@
     http://groups.google.com/group/openwferu-users/browse_thread/thread/2e6a95708c10847b
     on_reply should be done in the receive action, not in Receiver
     thus, in the ParticipantExpression
+[x] exp : step (jump to cursor tag ?) : there is already the jump expression
+[x] auto-participant re-apply
+[o] receiver should be OK with a storage or a context
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -213,18 +216,14 @@
 [ ] exp : filter-definition
 [x] exp : lose ?
 [x] exp : parameter
-[ ] exp : log
+[ ] exp : log : or could it be a participant ?
 
 [ ] exp : defined (not really necessary)
 [ ] exp : quote (not really necessary)
 [ ] exp : field / attribute (not really necessary)
 [ ] exp : variable (not really necessary)
 
-[ ] exp : step (jump to cursor tag ?)
-
 [ ] conditional : rprefix ! ${r:x} is perhaps sufficient
-
-[ ] auto-participant re-apply
 
 [ ] define without name (__result__)
 
@@ -247,6 +246,9 @@
 
 [ ] pause engine
 [ ] pause process instance
+    |
+    would it mean something like placing a paused list in the storage
+    and fetching it all the time ?
 
 [ ] file/fs_listener [example] ?
 
@@ -313,9 +315,6 @@
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
-[ ] implement pause engine
-[ ] implement pause process
-
 [ ] engine.on_error = 'participant_name' // 'subprocess_name'
 
 [ ] "business days" plugin
@@ -350,7 +349,8 @@
 
 [x] Avishai : Worker : hook for rejecting the dispatch message
 
-[ ] Receiver should be OK with a storage or a context
-
 [ ] engine.noisy = true shortcut
+
+[ ] re_apply_stalled
+    http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
 

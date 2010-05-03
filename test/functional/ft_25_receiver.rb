@@ -49,6 +49,24 @@ class FtReceiverTest < Test::Unit::TestCase
   end
 
   class MyReceiver < Ruote::Receiver
+    attr_reader :context
+  end
+
+  def test_my_receiver_init
+
+    cid = @engine.context.object_id
+
+    receiver = MyReceiver.new(@engine)
+    assert_equal cid, receiver.context.object_id
+
+    receiver = MyReceiver.new(@engine.context)
+    assert_equal cid, receiver.context.object_id
+
+    receiver = MyReceiver.new(@engine.worker)
+    assert_equal cid, receiver.context.object_id
+
+    receiver = MyReceiver.new(@engine.storage)
+    assert_not_equal cid, receiver.context.object_id
   end
 
   def test_my_receiver
