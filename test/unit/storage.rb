@@ -179,6 +179,8 @@ class UtStorage < Test::Unit::TestCase
     assert_equal 31, @s.get_many('dogfood').size
     assert_equal 10, @s.get_many('dogfood', nil, :limit => 10).size
     assert_equal 1, @s.get_many('dogfood', /!7$/).size
+    assert_equal 30, @s.get_many('dogfood', /^xx!/).size
+    assert_equal 30, @s.get_many('dogfood', /x/).size
   end
 end
 
