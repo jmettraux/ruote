@@ -58,15 +58,19 @@ class FtReceiverTest < Test::Unit::TestCase
 
     receiver = MyReceiver.new(@engine)
     assert_equal cid, receiver.context.object_id
+    assert_not_nil receiver.context.storage
 
     receiver = MyReceiver.new(@engine.context)
     assert_equal cid, receiver.context.object_id
+    assert_not_nil receiver.context.storage
 
     receiver = MyReceiver.new(@engine.worker)
     assert_equal cid, receiver.context.object_id
+    assert_not_nil receiver.context.storage
 
     receiver = MyReceiver.new(@engine.storage)
     assert_not_equal cid, receiver.context.object_id
+    assert_not_nil receiver.context.storage
   end
 
   def test_my_receiver
