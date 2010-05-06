@@ -354,3 +354,5 @@
 [ ] re_apply_stalled
     http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
 
+[ ] wait_for(:inactive) blocks until worker is inactive
+

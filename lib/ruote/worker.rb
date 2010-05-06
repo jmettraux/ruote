@@ -59,7 +59,7 @@ module Ruote
       @run_thread = nil
 
       @msgs = []
-      @sleep_time = 0.001
+      @sleep_time = 0.000
     end
 
     def run
@@ -71,7 +71,7 @@ module Ruote
 
     def run_in_thread
 
-      #Thread.abort_on_exception = true
+      Thread.abort_on_exception = true
         # TODO : remove me at some point
 
       @running = true
@@ -197,14 +197,14 @@ module Ruote
         break if Time.now.utc - @last_time >= 0.8
       end
 
-      #puts processed.to_s
+      #p processed
 
       if processed == 0
         @sleep_time += 0.001
         @sleep_time = 0.499 if @sleep_time > 0.499
         sleep(@sleep_time)
       else
-        @sleep_time = 0.001
+        @sleep_time = 0.000
       end
     end
 
