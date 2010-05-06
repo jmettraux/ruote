@@ -98,61 +98,6 @@ module Ruote
       end
     end
 
-    # This method is public, since it's used by the DispatchPool when
-    # reporting an error that occurred in the dispatch/consume thread of
-    # a participant.
-    #
-    def handle_exception (msg, fexp, ex)
-
-      wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
-      fei = msg['fei'] || (fexp.h.fei rescue nil)
-
-      # debug only
-
-      if ARGV.include?('-d')
-
-        puts "\n== worker intercepted error =="
-        puts
-        p ex
-        ex.backtrace[0, 20].each { |l| puts l }
-        puts "..."
-        puts
-        puts "-- msg --"
-        msg.keys.sort.each { |k|
-          puts "    #{k.inspect} =>\n#{msg[k].inspect}"
-        }
-        puts "-- . --"
-        puts
-      end
-
-      # on_error ?
-
-      if not(fexp) && fei
-        fexp = Ruote::Exp::FlowExpression.fetch(@context, fei)
-      end
-
-      return if fexp && fexp.handle_on_error(msg, ex)
-
-      # emit 'msg'
-
-      @storage.put_msg(
-        'error_intercepted',
-        'message' => ex.inspect,
-        'wfid' => wfid,
-        'msg' => msg)
-
-      # fill error in the error journal
-
-      @storage.put(
-        'type' => 'errors',
-        '_id' => "err_#{Ruote.to_storage_id(fei)}",
-        'message' => ex.inspect,
-        'trace' => ex.backtrace.join("\n"),
-        'fei' => fei,
-        'msg' => msg
-      ) if fei
-    end
-
     protected
 
     def step
@@ -255,9 +200,9 @@ module Ruote
 
         notify(msg)
 
-      rescue Exception => ex
+      rescue Exception => exception
 
-        handle_exception(msg, nil, ex)
+        @context.error_handler.handle(msg, nil, exception)
       end
 
       true

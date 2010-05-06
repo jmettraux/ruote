@@ -48,6 +48,8 @@ module Ruote
       @engine = nil
       @worker = worker
 
+      @services = {}
+
       initialize_services
     end
 
@@ -64,16 +66,27 @@ module Ruote
       self
     end
 
+    # Returns the engine_id (as set in the configuration under the key
+    # "engine_id"), or, by default, "engine".
+    #
     def engine_id
 
       get_conf['engine_id'] || 'engine'
     end
 
+    # Used for things like
+    #
+    #   if @context['ruby_eval_allowed']
+    #     # ...
+    #   end
+    #
     def [] (key)
 
       SERVICE_PREFIX.match(key) ? @services[key] : get_conf[key]
     end
 
+    # Mostly used by engine#configure
+    #
     def []= (key, value)
 
       raise(
@@ -116,15 +129,14 @@ module Ruote
       service
     end
 
+    # Takes care of shutting down every service registered in this context.
+    #
     def shutdown
 
       @storage.shutdown if @storage.respond_to?(:shutdown)
       @worker.shutdown if @worker
 
-      @services.values.each do |s|
-
-        s.shutdown if s.respond_to?(:shutdown)
-      end
+      @services.values.each { |s| s.shutdown if s.respond_to?(:shutdown) }
     end
 
     protected
@@ -135,8 +147,6 @@ module Ruote
     end
 
     def initialize_services
-
-      @services = {}
 
       default_conf.merge(get_conf).each do |key, value|
 
@@ -163,7 +173,9 @@ module Ruote
         's_dispatch_pool' => [
           'ruote/part/dispatch_pool', 'Ruote::DispatchPool' ],
         's_logger' => [
-          'ruote/log/wait_logger', 'Ruote::WaitLogger' ] }
+          'ruote/log/wait_logger', 'Ruote::WaitLogger' ],
+        's_error_handler' => [
+          'ruote/error_handler', 'Ruote::ErrorHandler' ] }
     end
   end
 end
