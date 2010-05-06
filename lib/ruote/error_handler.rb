@@ -44,7 +44,8 @@ module Ruote
     #
     def msg_handle (msg, exception)
 
-      fexp = Ruote::Exp::FlowExpression.fetch(@context, msg['workitem']['fei'])
+      fexp = Ruote::Exp::FlowExpression.fetch(
+        @context, msg['fei'] || msg['workitem']['fei'])
 
       handle(msg, fexp, exception)
     end
