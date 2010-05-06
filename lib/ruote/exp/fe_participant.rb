@@ -161,9 +161,7 @@ module Ruote::Exp
         'fei' => h.fei,
         'participant_name' => h.participant_name,
         'workitem' => h.applied_workitem,
-        'for_engine_worker?' => participant_info.class != Array)
-          #
-          # NOTE : is this for_engine_worker? still necessary ?
+        'for_engine_worker?' => (participant_info.class != Array))
     end
 
     def cancel (flavour)

@@ -107,11 +107,7 @@ module Ruote
           do_dispatch(participant, msg)
 
         rescue Exception => exception
-
-          @context.error_handler.handle(
-            msg,
-            Ruote::Exp::FlowExpression.fetch(@context, msg['workitem']['fei']),
-            exception)
+          @context.error_handler.msg_handle(msg, exception)
         end
       end
     end

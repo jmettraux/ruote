@@ -40,11 +40,33 @@ module Ruote
       @context = context
     end
 
-    # TODO : update that doc :
+    # As used by the dispatch pool and the worker.
     #
-    # This method is public, since it's used by the DispatchPool when
-    # reporting an error that occurred in the dispatch/consume thread of
-    # a participant.
+    def msg_handle (msg, exception)
+
+      fexp = Ruote::Exp::FlowExpression.fetch(@context, msg['workitem']['fei'])
+
+      handle(msg, fexp, exception)
+    end
+
+    # As used by some receivers (see ruote-beanstalk's receiver).
+    #
+    def action_handle (action, fei, exception)
+
+      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei)
+
+      msg = {
+        'action' => action,
+        'fei' => fei,
+        'participant_name' => fexp.h.participant_name,
+        'workitem' => fexp.h.applied_workitem }
+
+      handle(msg, fexp, exception)
+    end
+
+    protected
+
+    # As used by the worker.
     #
     def handle (msg, fexp, exception)
 
@@ -53,7 +75,7 @@ module Ruote
 
       # debug only
 
-      if ARGV.include?('-d')
+      if $DEBUG || ARGV.include?('-d')
 
         puts "\n== worker intercepted error =="
         puts
@@ -70,10 +92,6 @@ module Ruote
       end
 
       # on_error ?
-
-      if not(fexp) && fei
-        fexp = Ruote::Exp::FlowExpression.fetch(@context, fei)
-      end
 
       return if fexp && fexp.handle_on_error(msg, exception)
 

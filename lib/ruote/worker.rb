@@ -202,7 +202,7 @@ module Ruote
 
       rescue Exception => exception
 
-        @context.error_handler.handle(msg, nil, exception)
+        @context.error_handler.msg_handle(msg, exception)
       end
 
       true
