@@ -118,5 +118,60 @@ class FtReceiverTest < Test::Unit::TestCase
     rcv = logger.log.select { |e| e['action'] == 'receive' }.first
     assert_equal 'Ruote::Engine', rcv['receiver']
   end
+
+  class MyOtherParticipant
+    def initialize (receiver)
+      @receiver = receiver
+    end
+    def consume (workitem)
+      @receiver.pass(workitem.to_h)
+    end
+  end
+  class MyOtherReceiver < Ruote::Receiver
+    def initialize (context, opts={})
+      super(context, opts)
+      @count = 0
+    end
+    def pass (workitem)
+      if @count < 1
+        @context.error_handler.action_handle(
+          'dispatch', workitem['fei'], RuntimeError.new('something went wrong'))
+      else
+        reply(workitem)
+      end
+      @count = @count + 1
+    end
+  end
+
+  def test_receiver_triggered_dispatch_error
+
+    receiver = MyOtherReceiver.new(@engine)
+
+    @engine.register_participant :alpha, MyOtherParticipant.new(receiver)
+
+    pdef = Ruote.process_definition do
+      alpha
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+    err = ps.errors.first
+
+    assert_equal 1, ps.errors.size
+    assert_equal '#<RuntimeError: something went wrong>', err.message
+
+    @engine.replay_at_error(err)
+
+    wait_for(wfid)
+
+    ps = @engine.process(wfid)
+
+    assert_nil ps
+  end
 end
 

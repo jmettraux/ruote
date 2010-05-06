@@ -73,6 +73,8 @@ module Ruote
       wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
       fei = msg['fei'] || (fexp.h.fei rescue nil)
 
+      backtrace = exception.backtrace || []
+
       # debug only
 
       if $DEBUG || ARGV.include?('-d')
@@ -80,7 +82,7 @@ module Ruote
         puts "\n== worker intercepted error =="
         puts
         p exception
-        exception.backtrace[0, 20].each { |l| puts l }
+        puts backtrace[0, 20].join("\n")
         puts "..."
         puts
         puts "-- msg --"
@@ -109,7 +111,7 @@ module Ruote
         'type' => 'errors',
         '_id' => "err_#{Ruote.to_storage_id(fei)}",
         'message' => exception.inspect,
-        'trace' => exception.backtrace.join("\n"),
+        'trace' => backtrace.join("\n"),
         'fei' => fei,
         'msg' => msg
       ) if fei
