@@ -40,17 +40,28 @@ module Ruote
     attr_accessor :worker
     attr_accessor :engine
 
-    def initialize (storage, worker_or_engine)
+    def initialize (storage, worker=nil)
 
       @storage = storage
+      @storage.context = self
 
-      @worker, @engine = if worker_or_engine.kind_of?(Ruote::Engine)
-        [ worker_or_engine.worker, worker_or_engine ]
-      else
-        [ worker_or_engine, nil ]
-      end
+      @engine = nil
+      @worker = worker
 
       initialize_services
+    end
+
+    # A trick : in order to avoid
+    #
+    #   @context = o.respond_to?(:context) ? o.context : o
+    #   # or
+    #   #@context = o.is_a?(Ruote::Context) ? o : o.context
+    #
+    # simply letting a context say its context is itself.
+    #
+    def context
+
+      self
     end
 
     def engine_id
@@ -114,17 +125,6 @@ module Ruote
 
         s.shutdown if s.respond_to?(:shutdown)
       end
-    end
-
-    # Given a context, a worker, an engine or a storage, will return
-    # an instance of Ruote::Context.
-    #
-    def self.extract (cwes)
-
-      return cwes if cwes.is_a?(Ruote::Context) # context
-      return cwes.context if cwes.respond_to?(:context) # worker or engine
-
-      Ruote::Context.new(cwes, nil) # storage
     end
 
     protected

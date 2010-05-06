@@ -32,6 +32,16 @@ module Ruote
   #
   module StorageBase
 
+    def context
+
+      @context ||= Ruote::Context.new(self)
+    end
+
+    def context= (c)
+
+      @context = c
+    end
+
     # Attempts to delete a document, returns true if the deletion
     # succeeded. This is used with msgs to reserve work on them.
     #

@@ -48,10 +48,12 @@ module Ruote
 
     def initialize (storage)
 
-      @storage = storage
-
       @subscribers = []
-      @context = Ruote::Context.new(@storage, self)
+        # must be ready before the storage is created
+        # services like Logger to subscribe to the worker
+
+      @storage = storage
+      @context = Ruote::Context.new(storage, self)
 
       @last_time = Time.at(0.0).utc # 1970...
 

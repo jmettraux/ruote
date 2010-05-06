@@ -126,7 +126,7 @@ module Ruote
     #
     def initialize (cwes, options={})
 
-      @context = Ruote::Context.extract(cwes)
+      @context = cwes.context
       @options = options
     end
   end

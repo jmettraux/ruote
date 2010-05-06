@@ -39,36 +39,35 @@ module Ruote
 
     include ReceiverMixin
 
-    attr_reader :storage
-    attr_reader :worker
     attr_reader :context
     attr_reader :variables
 
     def initialize (worker_or_storage, run=true)
 
-      if worker_or_storage.respond_to?(:storage)
+      @context = worker_or_storage.context
+      @context.engine = self
 
-        @worker = worker_or_storage
-        @storage = @worker.storage
-        @context = @worker.context
-        @context.engine = self
-      else
+      @variables = EngineVariables.new(@context.storage)
 
-        @worker = nil
-        @storage = worker_or_storage
-        @context = Ruote::Context.new(@storage, self)
-      end
+      @context.worker.run_in_thread if @context.worker && run
+        # launch the worker if there is one
+    end
 
-      @variables = EngineVariables.new(@storage)
+    def storage
 
-      @worker.run_in_thread if @worker && run
+      @context.storage
+    end
+
+    def worker
+
+      @context.worker
     end
 
     def launch (process_definition, fields={}, variables={})
 
       wfid = @context.wfidgen.generate
 
-      @storage.put_msg(
+      @context.storage.put_msg(
         'launch',
         'wfid' => wfid,
         'tree' => @context.parser.parse(process_definition),
@@ -80,24 +79,24 @@ module Ruote
 
     def cancel_process (wfid)
 
-      @storage.put_msg('cancel_process', 'wfid' => wfid)
+      @context.storage.put_msg('cancel_process', 'wfid' => wfid)
     end
 
     def kill_process (wfid)
 
-      @storage.put_msg('kill_process', 'wfid' => wfid)
+      @context.storage.put_msg('kill_process', 'wfid' => wfid)
     end
 
     def cancel_expression (fei)
 
       fei = fei.to_h if fei.respond_to?(:to_h)
-      @storage.put_msg('cancel', 'fei' => fei)
+      @context.storage.put_msg('cancel', 'fei' => fei)
     end
 
     def kill_expression (fei)
 
       fei = fei.to_h if fei.respond_to?(:to_h)
-      @storage.put_msg('cancel', 'fei' => fei, 'flavour' => 'kill')
+      @context.storage.put_msg('cancel', 'fei' => fei, 'flavour' => 'kill')
     end
 
     # Replays at a given error (hopefully you fixed the cause of the error
@@ -119,9 +118,9 @@ module Ruote
         exp.unpersist_or_raise if exp
       end
 
-      @storage.delete(err.to_h) # remove error
+      @context.storage.delete(err.to_h) # remove error
 
-      @storage.put_msg(action, msg) # trigger replay
+      @context.storage.put_msg(action, msg) # trigger replay
     end
 
     # Re-applies an expression (given via its FlowExpressionId).
@@ -154,7 +153,7 @@ module Ruote
     #
     def process (wfid)
 
-      exps = @storage.get_many('expressions', /!#{wfid}$/)
+      exps = @context.storage.get_many('expressions', /!#{wfid}$/)
       errs = self.errors( wfid )
 
       return nil if exps.empty? && errs.empty?
@@ -168,7 +167,7 @@ module Ruote
     #
     def processes
 
-      exps = @storage.get_many('expressions')
+      exps = @context.storage.get_many('expressions')
       errs = self.errors
 
       by_wfid = {}
@@ -187,8 +186,8 @@ module Ruote
     #
     def errors( wfid = nil )
       wfid.nil? ?
-        @storage.get_many('errors') :
-        @storage.get_many('errors', /!#{wfid}$/)
+        @context.storage.get_many('errors') :
+        @context.storage.get_many('errors', /!#{wfid}$/)
     end
 
     # Shuts down the engine, mostly passes the shutdown message to the other

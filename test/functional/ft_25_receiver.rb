@@ -69,6 +69,11 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_not_nil receiver.context.storage
 
     receiver = MyReceiver.new(@engine.storage)
+    assert_equal cid, receiver.context.object_id
+    assert_not_nil receiver.context.storage
+
+    @engine.storage.instance_variable_set(:@context, nil)
+    receiver = MyReceiver.new(@engine.storage)
     assert_not_equal cid, receiver.context.object_id
     assert_not_nil receiver.context.storage
   end
