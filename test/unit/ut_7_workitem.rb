@@ -51,5 +51,21 @@ class UtWorkitemTest < Test::Unit::TestCase
   #  assert_equal 'john', w0.fields['customer']
   #  assert_equal 'john', w0.fields[:customer]
   #end
+
+  def test_sid
+
+    f0 = { 'expid' => '0', 'wfid' => '20101224-baba', 'engine_id' => 'engine' }
+    w0 = Ruote::Workitem.new('fei' => f0, 'fields' => { 'a' => 'A' })
+
+    assert_equal '0!!20101224-baba', w0.sid
+  end
+
+  def test_wfid
+
+    f0 = { 'expid' => '0', 'wfid' => '20101224-baba', 'engine_id' => 'engine' }
+    w0 = Ruote::Workitem.new('fei' => f0, 'fields' => { 'a' => 'A' })
+
+    assert_equal '20101224-baba', w0.wfid
+  end
 end
 

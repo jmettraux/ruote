@@ -57,9 +57,31 @@ module Ruote
         # indifferent access, not activated for now
     end
 
+    # Returns the underlying Hash instance.
+    #
     def to_h
 
       @h
+    end
+
+    # Returns the String id for this workitem (something like
+    # "0_0!!20100507-wagamama").
+    #
+    # It's in fact a shortcut for
+    #
+    #   Ruote::FlowExpressionId.to_storage_id(h.fei)
+    #
+    def sid
+
+      Ruote::FlowExpressionId.to_storage_id(h.fei)
+    end
+
+    # Returns the "workflow instance id" (unique process instance id) of
+    # the process instance which issued this workitem.
+    #
+    def wfid
+
+      h.fei['wfid']
     end
 
     # Returns a Ruote::FlowExpressionId instance.

@@ -4,6 +4,9 @@
 
 == ruote - 2.1.10    not yet released
 
+- workitem.sid shortcut for workitem.fei.to_storage_id
+- workitem.wfid shorcut for workitem.fei.wfid
+- new error_handler service
 - Receiver.new(x), x can be worker, engine, context or storage
 - Participant#on_reply(workitem) manipulating workitems when they come back
 - set '${v:customers.0.name}' => 'x' now OK, was limited to fields. Thanks Oleg
