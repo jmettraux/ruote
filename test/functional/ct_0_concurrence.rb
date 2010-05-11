@@ -25,46 +25,40 @@ class CtConcurrenceTest < Test::Unit::TestCase
     #noisy
 
     wfid = @engine0.launch(pdef)
-    @engine0.step 4
 
-    msgs = @storage.get_msgs
-    $stderr.puts "*cough*" if msgs.size != 2
-    #msgs.each do |m|
-    #  p [ m['action'], m['fei']['expid'], m['workitem'] ]
-    #end
+    replies = []
 
-    t0 = Thread.new { @engine1.step! }
-    t1 = Thread.new { @engine0.step! }
-    t0.join
-    t1.join
+    while replies.size < 2
 
-    #t0 = Thread.new { @engine1.step }
-    #@engine0.step
-    #t0.join
+      msg = @engine0.next_msg
 
-    msgs = @storage.get_msgs
-    msg = msgs.first
+      next unless msg
 
-    if msgs.size > 1 || (msg && msg['fei'] && msg['fei']['expid'] != '0')
-
-      msgs.each do |m|
-
-        fei = m['fei'] ?
-          Ruote::FlowExpressionId.to_storage_id(m['fei']) : ''
-        wi_fei = m['workitem'] ?
-          Ruote::FlowExpressionId.to_storage_id(m['workitem']['fei']) : ''
-
-        p [ m['action'], fei, :from, wi_fei ]
+      if msg['action'] == 'reply'
+        replies << msg
+      else
+        @engine0.do_process(msg)
       end
     end
 
-    if msg && msg['action'] == 'error_intercepted'
-      #p @engine0.process(wfid).errors.first
-      puts @engine0.process(wfid).errors.first.message
-      puts @engine0.process(wfid).errors.first.trace
+    replies.sort! { |a, b| a['put_at'] <=> b['put_at'] }
+
+    t0 = Thread.new { @engine1.do_process(replies[0]) }
+    t1 = Thread.new { @engine0.do_process(replies[1]) }
+    t0.join
+    t1.join
+
+    msgs = (1..77).to_a.inject({}) do |h, i|
+      Thread.pass
+      m = @engine0.next_msg
+      h[m['_id']] = m if m
+      h
     end
 
     assert_equal 1, msgs.size, 'exactly 1 message was expected'
+
+    msg = msgs.values.first
+
     assert_equal 'reply', msg['action']
     assert_equal '0', msg['fei']['expid']
   end

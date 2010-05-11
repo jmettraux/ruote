@@ -32,12 +32,23 @@ class Ruote::Worker
 end
 
 class Ruote::Engine
+
+  def next_msg
+    @msgs = @context.storage.get_msgs if ( ! @msgs) || @msgs.size < 1
+    @msgs.shift
+  end
+  def do_process (msg)
+    @context.worker.process(msg)
+  end
+
   def step (count=1)
     count.times { @context.worker.step_by_one }
   end
   def step!
-    r = @context.worker.step_by_one
-    step! if r == false
+    loop do
+      r = @context.worker.step_by_one
+      break if r
+    end
   end
   def walk
     while @context.worker.step_by_one do; end
