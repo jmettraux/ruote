@@ -30,32 +30,43 @@ class CtIteratorTest < Test::Unit::TestCase
 
     wfid = @engine0.launch(pdef)
 
-    #@engine0.step 11
-    msg = @engine0.step_until { |msg| msg['command'] != nil }
+    stop_msg = nil
 
-    assert_equal 'stop', msg['command'].first
-    assert_equal '0_0_0', msg['fei']['expid']
+    loop do
+      m = @engine0.next_msg
+      next unless m
+      if m['command']
+        stop_msg = m
+        break
+      end
+      @engine0.do_process(m)
+    end
 
-    msgs = @storage.get_msgs
+    assert_equal 'stop', stop_msg['command'].first
+    assert_equal '0_0_0', stop_msg['fei']['expid']
 
-    assert_equal 3, msgs.size
+    msg = nil
+    loop do
+      m = @engine0.next_msg
+      next unless m
+      msg = m
+      break
+    end
 
-    msgs = msgs - [ msg ]
-
-    assert_equal 2, msgs.size
-
-    msg1 = msgs.first
-
-    t0 = Thread.new { @engine1.do_step(msg) }
-    t1 = Thread.new { @engine0.do_step(msg1) }
+    t0 = Thread.new { @engine1.do_process(stop_msg) }
+    t1 = Thread.new { @engine0.do_process(msg) }
     t0.join
     t1.join
 
-    #@engine0.step 4
-    @engine1.walk
+    loop do
+      m = @engine0.next_msg
+      next unless m
+      break if m['action'] == 'terminated'
+      @engine0.do_process(m)
+    end
 
     assert_equal "1\n2", @tracer0.to_s
-    assert_equal "", @tracer1.to_s
+    assert_equal '', @tracer1.to_s
   end
 end
 
