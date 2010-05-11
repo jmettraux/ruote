@@ -32,8 +32,6 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
       msg = @engine0.next_msg
 
-      next unless msg
-
       if msg['action'] == 'reply'
         replies << msg
       else
@@ -48,16 +46,11 @@ class CtConcurrenceTest < Test::Unit::TestCase
     t0.join
     t1.join
 
-    msgs = (1..77).to_a.inject({}) do |h, i|
-      Thread.pass
-      m = @engine0.next_msg
-      h[m['_id']] = m if m
-      h
-    end
+    msgs = @engine0.gather_msgs
 
     assert_equal 1, msgs.size, 'exactly 1 message was expected'
 
-    msg = msgs.values.first
+    msg = msgs.first
 
     assert_equal 'reply', msg['action']
     assert_equal '0', msg['fei']['expid']

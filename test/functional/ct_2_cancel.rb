@@ -27,44 +27,50 @@ class CtCancelTest < Test::Unit::TestCase
 
     wfid = @engine0.launch(pdef)
 
-    @engine0.step 6
+    @engine0.step 7
+
+    dispatched_seen = false
+    reply_msg = nil
+
+    loop do
+      m = @engine0.next_msg
+      ma = m['action']
+      if ma == 'dispatched'
+        dispatched_seen = true
+        @engine0.do_process(m)
+        break if reply_msg
+      elsif ma == 'reply'
+        reply_msg = m
+        break
+      else
+        @engine0.do_process(m)
+      end
+    end
+
+    #p dispatched_seen
 
     @engine0.cancel_expression(
       { 'engine_id' => 'engine', 'wfid' => wfid, 'expid' => '0_0' })
 
-    msgs = nil
-    loop do
-      msgs = @storage.get_msgs
-      break if msgs.size == 3
-      #p msgs.collect { |m| m['fei']['expid'] }.uniq
-      #p msgs.collect { |m| m['action'] }
-      #break if
-      #  msgs.size == 2 &&
-      #  msgs.collect { |m| m['fei']['expid'] }.uniq == %w[ 0_0 ]
-    end
+    msgs = @engine0.gather_msgs
 
-    #msgs.each { |m| p m['action'] }
-    #puts
+    msgs = msgs - [ reply_msg ]
 
-    t1 = Thread.new { @engine1.do_step(msgs[1]) }
-    t0 = Thread.new { @engine0.do_step(msgs[0]) }
+    assert_equal 1, msgs.size
+    assert_equal 'cancel', msgs.first['action']
+
+    t1 = Thread.new { @engine1.do_process(msgs.first) }
+    t0 = Thread.new { @engine0.do_process(reply_msg) }
     t1.join
     t0.join
 
-    #puts
+    loop do
+      m = @engine0.next_msg
+      @engine0.do_process(m)
+      break if m['action'] == 'terminated'
+    end
 
-    @engine0.step 6
-
-    msgs = @storage.get_msgs.collect { |m| m['action'] }.join
-
-    assert [ '', 'terminated' ].include?(msgs), "'#{msgs}' is not OK"
-
-    exps = @storage.get_many('expressions')
-    exps.each { |exp|
-      p [ exp['fei']['expid'], exp['original_tree'] ]
-    } if exps.size > 0
-
-    assert_equal 0, exps.size
+    assert_nil @engine0.process(wfid)
   end
 end
 

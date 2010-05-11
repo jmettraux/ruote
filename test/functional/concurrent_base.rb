@@ -32,17 +32,46 @@ end
 
 class Ruote::Engine
 
-  def next_msg
+  def peek_msg
     @msgs = @context.storage.get_msgs if ( ! @msgs) || @msgs.size < 1
     @msgs.shift
   end
+
   def do_process (msg)
     @context.worker.process(msg)
   end
 
-  #def step (count=1)
-  #  count.times { @context.worker.step_by_one }
-  #end
+  def step (count)
+    return if count == 0
+    loop do
+      m = next_msg
+      next unless m
+      do_process(m)
+      break
+    end
+    step(count - 1)
+  end
+
+  def next_msg
+    loop do
+      if m = peek_msg
+        return m
+      end
+    end
+  end
+
+  def gather_msgs
+    (1..77).to_a.inject({}) { |h, i|
+      #(i % 10).times { Thread.pass }
+      sleep 0.001
+      m = peek_msg
+      h[m['_id']] = m if m
+      h
+    }.values.sort { |a, b|
+      a['put_at'] <=> b['put_at']
+    }
+  end
+
   #def step!
   #  loop do
   #    r = @context.worker.step_by_one

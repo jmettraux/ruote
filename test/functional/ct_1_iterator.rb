@@ -34,7 +34,6 @@ class CtIteratorTest < Test::Unit::TestCase
 
     loop do
       m = @engine0.next_msg
-      next unless m
       if m['command']
         stop_msg = m
         break
@@ -45,13 +44,7 @@ class CtIteratorTest < Test::Unit::TestCase
     assert_equal 'stop', stop_msg['command'].first
     assert_equal '0_0_0', stop_msg['fei']['expid']
 
-    msg = nil
-    loop do
-      m = @engine0.next_msg
-      next unless m
-      msg = m
-      break
-    end
+    msg = @engine0.next_msg
 
     t0 = Thread.new { @engine1.do_process(stop_msg) }
     t1 = Thread.new { @engine0.do_process(msg) }
@@ -60,7 +53,6 @@ class CtIteratorTest < Test::Unit::TestCase
 
     loop do
       m = @engine0.next_msg
-      next unless m
       break if m['action'] == 'terminated'
       @engine0.do_process(m)
     end
