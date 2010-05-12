@@ -15,7 +15,10 @@ def l (t)
     puts "=== #{t} :"
     puts `ruby#{_v} #{t} #{ARGV.join(' ')}`
 
-    exit $?.exitstatus if $?.exitstatus != 0
+    es = $?.exitstatus
+    es = es.nil? ? 66 : es.to_s.to_i
+
+    exit(es) if es != 0
   else
     load(t)
   end
