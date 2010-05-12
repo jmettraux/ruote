@@ -1,6 +1,5 @@
 
-dashdash = ''
-dashdash = '--' unless `ruby -v`.match(/^ruby 1\.9\./)
+dashdash = `ruby -v`.match(/^ruby 1\.9\./) ? '' : '--'
 
 puts "\n\n\n== in memory"
 puts
