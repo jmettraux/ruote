@@ -51,7 +51,8 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
 
     prev = Rufus::Json.backend
 
-    require 'json'
+    #require 'json' # json 1.4.3 being buggy...
+    require 'json/pure'
     Rufus::Json.backend = :json
 
     #pdef = Ruote.process_definition :name => 'test' do
