@@ -164,13 +164,13 @@ class FtEngineParticipantTest < Test::Unit::TestCase
     @engine0.cancel_process(wfid)
     @engine0.wait_for(wfid)
 
-    #sleep 0.700
-    @engine0.wait_for(1) # since dispatch_cancel is asynchronous now
+    #@engine0.wait_for(1) # since dispatch_cancel is asynchronous now
+    sleep 0.777 # but well sometimes the dispatch is too fast
 
     assert_equal 0, alpha.size
 
-    assert_equal "a", @tracer0.to_s
-    assert_equal "", @tracer1.to_s
+    assert_equal 'a', @tracer0.to_s
+    assert_equal '', @tracer1.to_s
   end
 
   def test_with_variables
