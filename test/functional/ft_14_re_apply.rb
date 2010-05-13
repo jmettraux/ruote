@@ -91,6 +91,8 @@ class FtReApplyTest < Test::Unit::TestCase
     wfid = @engine.launch(PDEF)
     wait_for(:alpha)
 
+    sleep 0.350 # threaded dispatch
+
     id0 = alpha.first.object_id
 
     # ... flow stalled ...
@@ -101,6 +103,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
     stalled_exp.update_tree([
       'participant', { 'ref' => 'alpha', 'activity' => 'mow lawn' }, [] ])
+    #p [ :stalled, stalled_exp.h['_rev'] ]
     stalled_exp.persist
 
     @engine.re_apply(stalled_exp.fei)

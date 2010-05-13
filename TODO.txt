@@ -209,6 +209,7 @@
 [x] exp : step (jump to cursor tag ?) : there is already the jump expression
 [x] auto-participant re-apply
 [o] receiver should be OK with a storage or a context
+[x] Avishai : Worker : hook for rejecting the dispatch message
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -346,8 +347,6 @@
 [ ] toto :task => 'maw the lawn', :within => '3d'
 
 [ ] solve the ps#root_expression_for(fei) dilemma
-
-[x] Avishai : Worker : hook for rejecting the dispatch message
 
 [ ] engine.noisy = true shortcut
 
