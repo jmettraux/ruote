@@ -104,7 +104,8 @@ module Ruote
         t = atts.find { |k, v| v == nil }
         if t
           atts.delete(t.first)
-          atts['ref'] = t.first
+          key = tree[0] == 'if' ? 'test' : 'ref'
+          atts[key] = t.first
         end
 
         atts = atts.inject({}) { |h, (k, v)| h[k.to_s.gsub(/\_/, '-')] = v; h }
