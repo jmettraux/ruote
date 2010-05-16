@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- dropped fs_history (storage_history is better)
 - parser to_xml _if 'x == b' --> <if test="x == b">
 - workitem.sid shortcut for workitem.fei.to_storage_id
 - workitem.wfid shorcut for workitem.fei.wfid

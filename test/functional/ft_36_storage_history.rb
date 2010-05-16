@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/log/fs_history'
+#require 'ruote/log/fs_history'
 require 'ruote/part/no_op_participant'
 
 
