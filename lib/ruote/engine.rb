@@ -371,7 +371,7 @@ module Ruote
     def workitem (fei)
 
       fexp = Ruote::Exp::FlowExpression.fetch(
-        @context, FlowExpressionId.to_h(fei))
+        @context, Ruote::FlowExpressionId.extract_h(fei))
 
       Ruote::Workitem.new(fexp.h.applied_workitem)
     end

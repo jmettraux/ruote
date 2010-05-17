@@ -106,7 +106,7 @@ module Ruote
     def unschedule_re_dispatch (fei)
 
       fexp = Ruote::Exp::FlowExpression.fetch(
-        @context, FlowExpressionId.to_h(fei))
+        @context, Ruote::FlowExpressionId.extract_h(fei))
 
       if s = fexp.h['re_dispatch_sched_id']
         @context.storage.delete_schedule(s)

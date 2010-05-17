@@ -23,7 +23,6 @@
 #++
 
 
-require 'ruote/workitem'
 require 'ruote/exp/condition'
 
 

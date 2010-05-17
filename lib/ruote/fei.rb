@@ -23,6 +23,7 @@
 #++
 
 require 'ruote/version'
+require 'ruote/workitem'
 require 'ruote/util/misc'
 require 'ruote/util/hashdot'
 
@@ -87,6 +88,10 @@ module Ruote
       @h['sub_wfid']
     end
 
+    def engine_id
+      @h['engine_id']
+    end
+
     def to_storage_id
       "#{@h['expid']}!#{@h['sub_wfid']}!#{@h['wfid']}"
     end
@@ -102,22 +107,7 @@ module Ruote
     #
     def self.from_id (s, engine_id='engine')
 
-      ss = s.split('!')
-
-      FlowExpressionId.new(
-        'engine_id' => engine_id,
-        'expid' => ss[-3], 'sub_wfid' => ss[-2], 'wfid' => ss[-1])
-    end
-
-    # Input : any fei representation, output, the fei as a hash.
-    #
-    # This method is currently used by engine#workitem(fei)
-    #
-    def self.to_h (fei)
-
-      return fei if fei.is_a?(Hash)
-      return fei.h if fei.respond_to?(:h)
-      from_id(fei.to_s).h
+      extract("#{engine_id}!#{s}")
     end
 
     # Returns the last number in the expid. For instance, if the expid is
@@ -167,6 +157,43 @@ module Ruote
       pei = other_fei['expid'].split(CHILD_SEP)[0..-2].join(CHILD_SEP)
 
       (pei == parent_fei['expid'])
+    end
+
+    # Attempts at extracting a FlowExpressionId from the given argument
+    # (workitem, string, ...)
+    #
+    # Uses .extract_h
+    #
+    def self.extract (arg)
+
+      FlowExpressionId.new(extract_h(arg))
+    end
+
+    # Attempts at extracting a FlowExpressionId (as a Hash instance) from the
+    # given argument (workitem, string, ...)
+    #
+    def self.extract_h (arg)
+
+      if arg.is_a?(Hash)
+        return arg if arg['expid']
+        return arg['fei'] if arg['fei']
+      end
+
+      return extract_h(arg.fei) if arg.respond_to?(:fei)
+      return arg.h if arg.is_a?(Ruote::FlowExpressionId)
+      return arg.h['fei'] if arg.is_a?(Ruote::Workitem)
+
+      if arg.is_a?(String)
+
+        ss = arg.split('!')
+
+        return {
+          'engine_id' => ss[-4] || 'engine',
+          'expid' => ss[-3], 'sub_wfid' => ss[-2], 'wfid' => ss[-1] }
+      end
+
+      raise ArgumentError.new(
+        "couldn't extract fei out of instance of #{arg.class}")
     end
   end
 end
