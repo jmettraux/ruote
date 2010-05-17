@@ -210,6 +210,10 @@
 [x] auto-participant re-apply
 [o] receiver should be OK with a storage or a context
 [x] Avishai : Worker : hook for rejecting the dispatch message
+[o] receiver / local participant : reply/forward/proceed/... mess : fix
+[o] storage participant : accept string for fei
+[o] => Ruote::FlowExpressionId.extract(x)
+[o] fei : place engine id in fei.to_storage_id (and back)
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -354,9 +358,4 @@
     http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
 
 [ ] wait_for(:inactive) blocks until worker is inactive
-
-[ ] receiver / local participant : reply/forward/proceed/... mess : fix
-[o] storage participant : accept string for fei
-[o] => Ruote::FlowExpressionId.extract(x)
-[o] fei : place engine id in fei.to_storage_id (and back)
 

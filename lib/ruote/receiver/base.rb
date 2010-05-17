@@ -37,9 +37,6 @@ module Ruote
     # This method pipes back a workitem into the engine, letting it resume
     # in its flow, hopefully.
     #
-    # It is aliased to 'reply' and 'reply_to_engine' (Since this module
-    # is include in the LocalParticipant module).
-    #
     def receive (workitem)
 
       workitem = workitem.to_h if workitem.respond_to?(:to_h)
@@ -52,9 +49,30 @@ module Ruote
         'receiver' => sign)
     end
 
-    alias :reply :receive
-    alias :reply_to_engine :receive
+    # Wraps a call to receive(workitem)
+    #
+    # Not aliasing so that if someone changes the receive implementation,
+    # reply is affected as well.
+    #
+    def reply (workitem)
 
+      receive (workitem)
+    end
+
+    # Wraps a call to receive(workitem)
+    #
+    # Not aliasing so that if someone changes the receive implementation,
+    # reply_to_engine is affected as well.
+    #
+    def reply_to_engine (workitem)
+
+      receive (workitem)
+    end
+
+    # A receiver signs a workitem when it comes back.
+    #
+    # Not used much as of now.
+    #
     def sign
 
       self.class.to_s

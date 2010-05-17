@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- receiver : reply and reply_to_engine : from aliases to wrappers
 - Ruote::StorageParticipant more flexibility for method args
 - Ruote::FlowExpressionId .extract_h and .extract
 - dropped fs_history (storage_history is better)
