@@ -96,7 +96,7 @@ module Ruote
     #
     def cancel (fei, flavour)
 
-      doc = fetch(fei.to_h)
+      doc = fetch(fei)
 
       r = @context.storage.delete(doc)
 
@@ -112,16 +112,18 @@ module Ruote
 
     def fetch (fei)
 
-      fei = fei.to_h if fei.respond_to?(:to_h)
+      hfei = Ruote::FlowExpressionId.extract_h(fei)
 
-      @context.storage.get('workitems', to_id(fei))
+      @context.storage.get('workitems', to_id(hfei))
     end
 
     # Removes the workitem from the in-memory hash and replies to the engine.
     #
     def reply (workitem)
 
-      doc = fetch(workitem.fei.to_h)
+      # TODO: change method name (receiver mess cleanup)
+
+      doc = fetch(Ruote::FlowExpressionId.extract_h(workitem))
 
       r = @context.storage.delete(doc)
 

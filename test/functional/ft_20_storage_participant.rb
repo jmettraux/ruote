@@ -37,7 +37,6 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal Ruote::Workitem, wi.class
 
     wi = alpha[alpha.first.fei]
-
     assert_equal Ruote::Workitem, wi.class
 
     alpha.reply(wi)
@@ -292,6 +291,23 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal Ruote::StorageParticipant, pa.class
 
     assert_equal [], pa.all
+  end
+
+  def test_various_args
+
+    sp = @engine.register_participant 'alpha', Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.process_definition { alpha })
+
+    wait_for(:alpha)
+
+    wi = sp.first
+
+    assert_equal wi, sp[wi]
+    assert_equal wi, sp[wi.fei]
+    assert_equal wi, sp[wi.to_h]
+    assert_equal wi, sp[wi.fei.to_h]
+    assert_equal wi, sp[wi.fei.to_storage_id]
   end
 end
 

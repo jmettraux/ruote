@@ -356,7 +356,7 @@
 [ ] wait_for(:inactive) blocks until worker is inactive
 
 [ ] receiver / local participant : reply/forward/proceed/... mess : fix
-[ ] storage participant : accept string for fei
+[o] storage participant : accept string for fei
 [o] => Ruote::FlowExpressionId.extract(x)
 [o] fei : place engine id in fei.to_storage_id (and back)
 

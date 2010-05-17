@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- Ruote::StorageParticipant more flexibility for method args
 - Ruote::FlowExpressionId .extract_h and .extract
 - dropped fs_history (storage_history is better)
 - parser to_xml _if 'x == b' --> <if test="x == b">
