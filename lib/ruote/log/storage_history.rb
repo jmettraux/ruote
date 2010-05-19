@@ -62,6 +62,8 @@ module Ruote
 
       ids = @context.storage.ids('history')
 
+      #p ids.sort == ids
+
       fm = DATE_REGEX.match(ids.first)[1]
       lm = DATE_REGEX.match(ids.last)[1]
 
