@@ -116,5 +116,28 @@ end
 
     assert_equal TREE1.to_json, Ruote::Parser.to_json(TREE1)
   end
+
+  DEF1 = %{
+Ruote.process_definition do
+  sequence do
+    alpha
+    set :field => 'f', :value => 'v'
+    bravo
+  end
+end
+  }
+
+  def test_from_ruby_file
+
+    fn = File.expand_path(File.join(File.dirname(__FILE__), '_ut_16_def1.rb'))
+
+    File.open(fn, 'wb') { |f| f.write(DEF1) }
+
+    assert_equal(
+      ["define", {}, [["sequence", {}, [["alpha", {}, []], ["set", {"field"=>"f", "value"=>"v"}, []], ["bravo", {}, []]]]]],
+      Ruote::Parser.parse(fn))
+
+    FileUtils.rm(fn)
+  end
 end
 
