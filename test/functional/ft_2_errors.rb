@@ -153,14 +153,11 @@ class FtErrorsTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
+    sleep 0.250 # grrr...
+
     ps = @engine.process(wfid)
 
     assert_equal 1, ps.errors.size
-
-    #p ps.expressions.size
-    #ps.expressions.each do |e|
-    #  p [ e.fei.to_s, e.class, e.state ]
-    #end
 
     @engine.replay_at_error(ps.errors.first)
 
