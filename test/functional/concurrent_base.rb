@@ -11,23 +11,6 @@ require File.join(File.dirname(__FILE__), 'base.rb')
 class Ruote::Worker
 
   public :process
-
-  #def step_by_one
-  #  msg = @storage.get_msgs.first
-  #  #p [ msg['action'], msg['fei'] ]
-  #  if msg
-  #    process(msg)
-  #  else
-  #    false
-  #  end
-  #end
-  #def step_until (&block)
-  #  loop do
-  #    msg = @storage.get_msgs.first
-  #    return msg if block.call(msg)
-  #    process(msg)
-  #  end
-  #end
 end
 
 class Ruote::Engine
@@ -71,22 +54,6 @@ class Ruote::Engine
       a['put_at'] <=> b['put_at']
     }
   end
-
-  #def step!
-  #  loop do
-  #    r = @context.worker.step_by_one
-  #    break if r
-  #  end
-  #end
-  #def walk
-  #  while @context.worker.step_by_one do; end
-  #end
-  #def do_step (msg)
-  #  @context.worker.process(msg)
-  #end
-  #def step_until (&block)
-  #  @context.worker.step_until(&block)
-  #end
 end
 
 
