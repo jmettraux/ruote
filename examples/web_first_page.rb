@@ -1,4 +1,14 @@
 
+#
+# This is not a runnable example, it's just a ruby source file that contains
+# the samples found at
+#
+#   http://ruote.rubyforge.org/index.html
+#
+# NOTE : this example need some rework. The use of block participants will
+# probably be avoided
+#
+
 require 'ruote'
 
 pdef = Ruote.process_definition :name => 'work' do
