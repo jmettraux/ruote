@@ -63,7 +63,7 @@ module Ruote
   # detail the class and the arguments to the storage of the target engine.
   #
   # This example is a bit dry / flat. A real world example would perhaps detail
-  # a 'master' engine connected to 'departemental' engines, something more
+  # a 'master' engine connected to 'departmental' engines, something more
   # hierarchical.
   #
   # The example also binds reciprocally engines. If the delegated processes
