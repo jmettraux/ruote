@@ -320,7 +320,9 @@
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
-[ ] engine.on_error = 'participant_name' // 'subprocess_name'
+[o] engine.on_error = 'participant_name' // 'subprocess_name'
+  should __error__ contain the tree ?
+[ ] engine.on_cancel = 'participant_name' // 'subprocess_name'
 
 [ ] "business days" plugin
 

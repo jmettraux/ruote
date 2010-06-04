@@ -474,6 +474,7 @@ module Ruote::Exp
       elsif h.parent_id
 
         par = parent
+          # :( get_parent would probably be a better name for #parent
 
         unless par
           puts "~~"
@@ -487,6 +488,9 @@ module Ruote::Exp
         par ? par.lookup_on_error : nil
 
       else
+
+        return self if @context['on_error']
+          # engine.on_error = x
 
         nil
       end
@@ -503,7 +507,7 @@ module Ruote::Exp
       return false unless oe_parent
         # no parent with on_error attribute found
 
-      handler = oe_parent.on_error.to_s
+      handler = (oe_parent.on_error || @context['on_error']).to_s
 
       return false if handler == ''
         # empty on_error handler nullifies ancestor's on_error
@@ -715,6 +719,9 @@ module Ruote::Exp
     def trigger (on, workitem)
 
       hon = h[on]
+
+      hon ||= @context['on_error'] if on == 'on_error'
+
       t = hon.is_a?(String) ? [ hon, {}, [] ] : hon
 
       if on == 'on_error'
