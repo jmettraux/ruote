@@ -9,6 +9,7 @@
 # probably be avoided
 #
 
+require 'rubygems'
 require 'ruote'
 
 pdef = Ruote.process_definition :name => 'work' do

@@ -16,6 +16,7 @@ Torsten Schoenebaum - http://github.com/tosch
 Contributors
 ------------
 
+Oleg Pudeyev - http://github.com/p
 Brett Anthoine - http://github.com/anb
 Matt Nichols - http://github.com/mattnichols
 Nicholas Faiz - http://github.com/biv
