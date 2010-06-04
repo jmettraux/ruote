@@ -25,6 +25,13 @@
 
 module Ruote
 
+  #
+  # The tracker service is used by the "listen" expression. This services
+  # sees all the msg processed by a worker and triggers any
+  # listener interested in a particular msg.
+  #
+  # Look at the ListenExpression for more details.
+  #
   class Tracker
 
     def initialize (context)
@@ -44,6 +51,9 @@ module Ruote
       end
     end
 
+    # The worker passes all the messages it has to process to the tracker via
+    # this method.
+    #
     def notify (msg)
 
       doc = @context.storage.get_trackers
@@ -67,16 +77,8 @@ module Ruote
       end
     end
 
-    def does_match? (msg, conditions)
-
-      conditions.each do |k, v|
-        val = msg[k]
-        return false unless val && val.match(v)
-      end
-
-      true
-    end
-
+    # Adds a tracker (usually when a 'listen' expression gets applied).
+    #
     def add_tracker (wfid, action, fei, conditions, msg, doc=nil)
 
       doc ||= @context.storage.get_trackers
@@ -94,6 +96,9 @@ module Ruote
         # the put failed, have to redo the work
     end
 
+    # Removes a tracker (usually when a 'listen' expression replies to its
+    # parent expression or is cancelled).
+    #
     def remove_tracker (fei, doc=nil)
 
       doc ||= @context.storage.get_trackers
@@ -104,6 +109,18 @@ module Ruote
 
       remove_tracker(fei, r) if r
         # the put failed, have to redo the work
+    end
+
+    protected
+
+    def does_match? (msg, conditions)
+
+      conditions.each do |k, v|
+        val = msg[k]
+        return false unless val && val.match(v)
+      end
+
+      true
     end
   end
 end

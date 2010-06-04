@@ -313,13 +313,13 @@
 
 [ ] empty iterator or concurrent-iterator, log ? crash ? empty while...
 [ ] at expression ?
-[ ] listen to participants/errors/tags {in|out}
 
 [ ] remove abort_on_exception=true
 
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
+[ ] listen to participants/errors/tags {in|out}
 [o] engine.on_error = 'participant_name' // 'subprocess_name'
   should __error__ contain the tree ?
 [ ] engine.on_cancel = 'participant_name' // 'subprocess_name'
