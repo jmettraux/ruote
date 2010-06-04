@@ -31,7 +31,27 @@ require 'ruote/util/hashdot'
 module Ruote::Exp
 
   #
-  # TODO : document me
+  # Ruote is a process definition interpreter. It doesn't directly "read"
+  # process definitions, it relies on a parser/generator to produce "abstract
+  # syntax trees" that look like
+  #
+  #   [ expression_name, { ... attributes ... }, [ children_expressions ] ]
+  #
+  # The nodes (and leaves) in the trees are expressions. This is the base
+  # class for all expressions.
+  #
+  # The most visible expressions are "define", "sequence" and "participant".
+  # Think :
+  #
+  #   pdef = Ruote.process_definition do
+  #     sequence do
+  #       participant :ref => 'customer'
+  #       participant :ref => 'accounting'
+  #       participant :ref => 'logistics'
+  #     end
+  #   end
+  #
+  # Each node is an expression...
   #
   class FlowExpression
 
