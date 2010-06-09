@@ -489,9 +489,6 @@ module Ruote::Exp
 
       else
 
-        return self if @context['on_error']
-          # engine.on_error = x
-
         nil
       end
     end
@@ -507,7 +504,7 @@ module Ruote::Exp
       return false unless oe_parent
         # no parent with on_error attribute found
 
-      handler = (oe_parent.on_error || @context['on_error']).to_s
+      handler = oe_parent.on_error.to_s
 
       return false if handler == ''
         # empty on_error handler nullifies ancestor's on_error
@@ -719,8 +716,6 @@ module Ruote::Exp
     def trigger (on, workitem)
 
       hon = h[on]
-
-      hon ||= @context['on_error'] if on == 'on_error'
 
       t = hon.is_a?(String) ? [ hon, {}, [] ] : hon
 

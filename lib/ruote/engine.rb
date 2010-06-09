@@ -325,13 +325,6 @@ module Ruote
         'regex' => re.to_s)
     end
 
-    # TODO : document me
-    #
-    def on_error= (participant_or_subprocess_name)
-
-      configure('on_error', participant_or_subprocess_name)
-    end
-
     # Adds a service locally (will not get propagated to other workers).
     #
     #   tracer = Tracer.new

@@ -320,8 +320,12 @@
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
 [ ] listen to participants/errors/tags {in|out}
-[o] engine.on_error = 'participant_name' // 'subprocess_name'
-  should __error__ contain the tree ?
+
+[x] engine.on_error = 'participant_name' // 'subprocess_name'
+    done at : http://github.com/jmettraux/ruote/commit/50292d954ff877f1f6615022216f346a7001b483
+    `--> reverting that for now, too dangerous
+
+[ ]  should __error__ contain the tree ?
 [ ] engine.on_cancel = 'participant_name' // 'subprocess_name'
 
 [ ] "business days" plugin
