@@ -139,7 +139,11 @@ module Ruote
 
       Array(@waiting.last).each do |interest|
 
-        over = if interest.is_a?(Symbol) # participant
+        over = if interest == :empty
+
+          (action == 'terminated' && @context.storage.empty?('expressions'))
+
+        elsif interest.is_a?(Symbol) # participant
 
           (action == 'dispatch' && msg['participant_name'] == interest.to_s)
 

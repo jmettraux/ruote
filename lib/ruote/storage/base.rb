@@ -93,6 +93,11 @@ module Ruote
       }
     end
 
+    def empty? (type)
+
+      (get_many(type) == [])
+    end
+
     #--
     # expressions
     #++

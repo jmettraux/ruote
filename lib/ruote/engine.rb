@@ -215,6 +215,11 @@ module Ruote
     #     # will make the current thread block until 5 messages have been
     #     # processed on the workqueue...
     #
+    #   engine.wait_for(:empty)
+    #     # will return as soon as the engine/storage is empty, ie as soon
+    #     # as there are no more processes running in the engine (no more
+    #     # expressions placed in the storage)
+    #
     def wait_for (item)
 
       logger = @context['s_logger']
