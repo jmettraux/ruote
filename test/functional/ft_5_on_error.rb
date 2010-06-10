@@ -30,6 +30,54 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal 1, logger.log.select { |e| e['action'] == 'fail' }.size
   end
 
+  def test_on_error_unknown_participant_name
+
+    pdef = Ruote.process_definition :name => 'test' do
+      participant :mark_started
+      sequence :on_error => :mark_failed do
+        participant :bogus
+      end
+      participant :mark_finished
+    end
+
+    @marks = []
+
+    @engine.register_participant 'mark\_.+' do |workitem|
+      @marks << workitem.participant_name
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    assert_equal %w[ mark_started mark_failed mark_finished ], @marks
+  end
+
+  def test_on_error_unknown_participant_name_2
+
+    pdef = Ruote.process_definition :name => 'test' do
+      participant :mark_started
+      participant :bogus, :on_error => :mark_failed
+      participant :mark_finished
+    end
+
+    @marks = []
+
+    @engine.register_participant 'mark\_.+' do |workitem|
+      @marks << workitem.participant_name
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+
+    assert_equal %w[ mark_started mark_failed mark_finished ], @marks
+  end
+
   def test_on_error_neutralization
 
     pdef = Ruote.process_definition do

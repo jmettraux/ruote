@@ -165,10 +165,13 @@ module Ruote::Exp
 
     def cancel (flavour)
 
+      return reply_to_parent(h.applied_workitem) unless h.participant_name
+        # no participant, reply immediately
+
       do_persist || return
         #
         # if do_persist returns false, it means we're operating on stale
-        # data and have thus to cease
+        # data and cannot continue
 
       @context.storage.put_msg(
         'dispatch_cancel',
