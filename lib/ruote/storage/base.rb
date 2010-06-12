@@ -93,6 +93,8 @@ module Ruote
       }
     end
 
+    # Returns true if there are no stored items of a given type.
+    #
     def empty? (type)
 
       (get_many(type) == [])
