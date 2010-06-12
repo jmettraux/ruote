@@ -98,20 +98,6 @@ module Ruote
       end
     end
 
-    # This method is only used by the engine.wait_for(:inactive) method.
-    # it returns true if the worker is idle (nothing to do). This implies
-    # that the fellow workers have nothing to do either.
-    #
-    def inactive?
-
-      # the cheapest tests first
-
-      (@msgs.size < 1 &&
-       @context.dispatch_pool.inactive? &&
-       @context.storage.empty?('schedules') &&
-       @context.storage.empty?('msgs'))
-    end
-
     protected
 
     def step

@@ -51,15 +51,6 @@ module Ruote
       end
     end
 
-    # Returns true if there are currently no [threaded] dispatches going on.
-    #
-    def inactive?
-
-      Thread.list.find { |t|
-        t[:name] && t[:name].match(/^dispatch /)
-      } == nil
-    end
-
     protected
 
     def dispatch_cancel (msg)
@@ -110,7 +101,7 @@ module Ruote
       # would be OK.
       # Or maybe it's the job of an extension / subclass
 
-      t = Thread.new do
+      Thread.new do
         begin
 
           do_dispatch(participant, msg)
@@ -119,8 +110,6 @@ module Ruote
           @context.error_handler.msg_handle(msg, exception)
         end
       end
-
-      t[:name] = "dispatch #{Ruote.sid(msg['fei'])} #{msg['participant_name']}"
     end
   end
 end

@@ -215,21 +215,10 @@ module Ruote
     #     # will make the current thread block until 5 messages have been
     #     # processed on the workqueue...
     #
-    # The following two techniques were requested and developed for Oleg :
-    #
     #   engine.wait_for(:empty)
     #     # will return as soon as the engine/storage is empty, ie as soon
     #     # as there are no more processes running in the engine (no more
     #     # expressions placed in the storage)
-    #
-    #   engine.wait_for(:inactive)
-    #     # will return as soon as the engine becomes idle, with all processes
-    #     # either terminated or stuck in an error
-    #     # (this implies, no schedules are pending
-    #
-    # Please note that engine.wait_for(:inactive) may only be accurate if
-    # there is 1 worker (and this worker is 'inside' of this engine) or
-    # if 'threaded dispatch' is disabled for all the participants.
     #
     def wait_for (item)
 

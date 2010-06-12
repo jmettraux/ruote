@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+#require 'ruote/util/tree'
+
 
 module Ruote
 
@@ -129,8 +131,6 @@ module Ruote
       end
     end
 
-    FINAL_ACTIONS = %w[ terminated ceased error_intercepted ]
-
     def check_interest (msg)
 
       over = false
@@ -139,11 +139,7 @@ module Ruote
 
       Array(@waiting.last).each do |interest|
 
-        over = if interest == :inactive
-
-          (FINAL_ACTIONS.include?(action) && @context.worker.inactive?)
-
-        elsif interest == :empty
+        over = if interest == :empty
 
           (action == 'terminated' && @context.storage.empty?('expressions'))
 
@@ -165,7 +161,8 @@ module Ruote
 
         else # wfid
 
-          (FINAL_ACTIONS.include?(action) && msg['wfid'] == interest)
+          %w[ terminated ceased error_intercepted ].include?(action) &&
+          msg['wfid'] == interest
         end
 
         break if over

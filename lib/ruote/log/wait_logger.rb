@@ -30,8 +30,6 @@ module Ruote
   #
   # A helper logger for quickstart examples.
   #
-  # Is the default logger, though it doesn't log much.
-  #
   class WaitLogger < TestLogger
 
     attr_accessor :noisy

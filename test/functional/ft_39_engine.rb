@@ -58,24 +58,5 @@ class FtEngineTest < Test::Unit::TestCase
 
     assert_equal [], @engine.processes
   end
-
-  def test_wait_for_inactive
-
-    pdef0 = Ruote.process_definition { alpha }
-    pdef1 = Ruote.process_definition { bravo }
-
-    @engine.register_participant :alpha, MyParticipant
-
-    #noisy
-
-    wfids = []
-
-    2.times { @engine.launch(pdef0) }
-    2.times { wfids << @engine.launch(pdef1) }
-
-    @engine.wait_for(:inactive)
-
-    assert_equal wfids.sort, @engine.processes.collect { |ps| ps.wfid }.sort
-  end
 end
 
