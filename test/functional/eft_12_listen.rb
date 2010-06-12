@@ -234,7 +234,6 @@ class EftListenTest < Test::Unit::TestCase
     ewfid = @engine.launch(emitting)
 
     wait_for(lwfid, ewfid)
-    wait_for(lwfid, ewfid)
 
     #assert_equal("edone.\nldone.", @tracer.to_s)
     assert_equal %w[ edone. ldone. ], @tracer.to_a.sort

@@ -58,5 +58,28 @@ class FtEngineTest < Test::Unit::TestCase
 
     assert_equal [], @engine.processes
   end
+
+  def test_wait_for_multiple
+
+    pdef0 = Ruote.process_definition { alpha }
+    pdef1 = Ruote.process_definition { bravo }
+
+    @engine.register_participant :alpha, MyParticipant
+
+    #noisy
+
+    wfids = []
+
+    2.times do
+      wfids << @engine.launch(pdef0)
+    end
+    2.times do
+      wfids << @engine.launch(pdef1)
+    end
+
+    @engine.wait_for(*wfids)
+
+    assert_equal 2, @engine.processes.size
+  end
 end
 

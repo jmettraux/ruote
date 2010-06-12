@@ -131,15 +131,15 @@ module Ruote
       end
     end
 
-    def check_interest (msg)
+    FINAL_ACTIONS = %w[ terminated ceased error_intercepted ]
 
-      over = false
+    def check_interest (msg)
 
       action = msg['action']
 
-      Array(@waiting.last).each do |interest|
+      @waiting.last.each do |interest|
 
-        over = if interest == :empty
+        satisfied = if interest == :empty
 
           (action == 'terminated' && @context.storage.empty?('expressions'))
 
@@ -149,26 +149,23 @@ module Ruote
 
         elsif interest.is_a?(Fixnum)
 
-          interest = interest - 1
-          @waiting = [ @waiting.first, interest ]
-
-          #@debug ||= {}
-          #c = @debug[action] ||= 0
-          #@debug[action] = c+1
-          #p [ interest, @debug ]
-
-          (interest < 1)
+          @waiting[-1] = @waiting[-1] - [ interest ]
+          if (interest > 1)
+            @waiting[-1] << (interest - 1)
+            false
+          else
+            true
+          end
 
         else # wfid
 
-          %w[ terminated ceased error_intercepted ].include?(action) &&
-          msg['wfid'] == interest
+          (FINAL_ACTIONS.include?(action) && msg['wfid'] == interest)
         end
 
-        break if over
+        @waiting[-1] = @waiting[-1] - [ interest ] if satisfied
       end
 
-      over
+      @waiting.last.size < 1
     end
 
     # <ESC>[{attr1};...;{attrn}m

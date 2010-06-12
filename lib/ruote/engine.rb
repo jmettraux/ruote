@@ -220,7 +220,11 @@ module Ruote
     #     # as there are no more processes running in the engine (no more
     #     # expressions placed in the storage)
     #
-    def wait_for (item)
+    # It's OK to wait for multiple wfids :
+    #
+    #   engine.wait_for('20100612-bezerijozo', '20100612-yakisoba')
+    #
+    def wait_for (*items)
 
       logger = @context['s_logger']
 
@@ -228,7 +232,7 @@ module Ruote
         "can't wait_for, there is no logger that responds to that call"
       ) unless logger.respond_to?(:wait_for)
 
-      logger.wait_for(item)
+      logger.wait_for(*items)
     end
 
     # Loads and parses the process definition at the given path.

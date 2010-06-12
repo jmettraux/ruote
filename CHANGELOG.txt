@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- engine.wait_for(*interests) unlocked
 - engine.wait_for(:empty)
 - fixed issue with participant 'x' and :on_error. Thanks Oleg.
 - receiver : reply and reply_to_engine : from aliases to wrappers

@@ -365,3 +365,5 @@
 
 [ ] wait_for(:inactive) blocks until worker is inactive
 
+[ ] storage0.copy_to(storage1) / migrate_to as requested by Matt Nichols
+
