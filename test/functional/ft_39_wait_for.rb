@@ -70,16 +70,31 @@ class FtEngineTest < Test::Unit::TestCase
 
     wfids = []
 
-    2.times do
-      wfids << @engine.launch(pdef0)
-    end
-    2.times do
-      wfids << @engine.launch(pdef1)
-    end
+    2.times { wfids << @engine.launch(pdef0) }
+    2.times { wfids << @engine.launch(pdef1) }
 
     @engine.wait_for(*wfids)
 
     assert_equal 2, @engine.processes.size
+  end
+
+  def test_wait_for_inactive
+
+    pdef0 = Ruote.process_definition { alpha }
+    pdef1 = Ruote.process_definition { bravo }
+
+    @engine.register_participant :alpha, MyParticipant
+
+    #noisy
+
+    wfids = []
+
+    2.times { @engine.launch(pdef0) }
+    2.times { wfids << @engine.launch(pdef1) }
+
+    @engine.wait_for(:inactive)
+
+    assert_equal wfids.sort, @engine.processes.collect { |ps| ps.wfid }.sort
   end
 end
 

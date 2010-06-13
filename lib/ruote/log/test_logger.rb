@@ -139,7 +139,11 @@ module Ruote
 
       @waiting.last.each do |interest|
 
-        satisfied = if interest == :empty
+        satisfied =  if interest == :inactive
+
+          (FINAL_ACTIONS.include?(action) && @context.worker.inactive?)
+
+        elsif interest == :empty
 
           (action == 'terminated' && @context.storage.empty?('expressions'))
 

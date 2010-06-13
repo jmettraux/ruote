@@ -98,6 +98,33 @@ module Ruote
       end
     end
 
+    # Returns true if the engine system is inactive, ie if all the process
+    # instances are terminated or are stuck in an error.
+    #
+    # NOTE : for now, if a branch of a process is in errors while another is
+    # still running, this methods will still consider the process instance
+    # as inactive (and it will return true if all the processes are considered
+    # inactive).
+    #
+    def inactive?
+
+      # the cheaper tests first
+
+      return false if @msgs.size > 0
+      return false unless @context.storage.empty?('schedules')
+      return false unless @context.storage.empty?('msgs')
+
+      wfids = @context.storage.get_many('expressions').collect { |exp|
+        exp['fei']['wfid']
+      }.sort.uniq
+
+      error_wfids = @context.storage.get_many('errors').collect { |err|
+        err['fei']['wfid']
+      }.sort.uniq
+
+      (wfids - error_wfids == [])
+    end
+
     protected
 
     def step
