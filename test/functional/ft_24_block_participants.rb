@@ -75,7 +75,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     #assert_trace TEST_BLOCK, Ruote.time_to_utc_s(t)
 
     expected = if defined?(DataMapper)
-      ''
+      DataMapper::VERSION >= '1.0.0' ? t.to_s : ''
     elsif Ruote::JAVA
       ''
     else
