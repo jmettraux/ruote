@@ -232,7 +232,7 @@ module Ruote
         "can't wait_for, there is no logger that responds to that call"
       ) unless logger.respond_to?(:wait_for)
 
-      logger.wait_for(*items)
+      logger.wait_for(items)
     end
 
     # Loads and parses the process definition at the given path.

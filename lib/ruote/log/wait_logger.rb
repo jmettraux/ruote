@@ -55,11 +55,13 @@ module Ruote
       check_msg(msg)
     end
 
-    def wait_for (interest)
+    def wait_for (interests)
 
-      @waiting = [ Thread.current, interest ]
+      @waiting = [ Thread.current, interests ]
 
       Thread.stop
+
+      # and when this thread gets woken up, go on and return __result__
 
       Thread.current['__result__']
     end

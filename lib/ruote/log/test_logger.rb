@@ -74,13 +74,15 @@ module Ruote
       check_waiting
     end
 
-    def wait_for (*interests)
+    def wait_for (interests)
 
       @waiting = [ Thread.current, interests ]
 
       check_waiting
 
       Thread.stop if @waiting
+
+      # and when this thread gets woken up, go on and return __result__
 
       Thread.current['__result__']
     end

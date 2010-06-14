@@ -98,7 +98,7 @@ module FunctionalBase
 
   def wait_for (*wfid_or_part)
 
-    @engine.context.logger.wait_for(*wfid_or_part)
+    @engine.wait_for(*wfid_or_part)
   end
 
   def assert_engine_clean (wfid)
