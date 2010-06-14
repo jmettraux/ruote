@@ -35,6 +35,9 @@ module Ruote
   # and to query about their status. There are also methods for fixing
   # issues with stalled processes or processes stuck in errors.
   #
+  # NOTE : the methods #launch and #reply are implemented in
+  # Ruote::ReceiverMixin
+  #
   class Engine
 
     include ReceiverMixin
@@ -61,20 +64,6 @@ module Ruote
     def worker
 
       @context.worker
-    end
-
-    def launch (process_definition, fields={}, variables={})
-
-      wfid = @context.wfidgen.generate
-
-      @context.storage.put_msg(
-        'launch',
-        'wfid' => wfid,
-        'tree' => @context.parser.parse(process_definition),
-        'workitem' => { 'fields' => fields },
-        'variables' => variables)
-
-      wfid
     end
 
     def cancel_process (wfid)

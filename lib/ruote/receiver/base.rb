@@ -49,6 +49,26 @@ module Ruote
         'receiver' => sign)
     end
 
+    # Given a process definitions and optional initial fields and variables,
+    # launches a new process instance.
+    #
+    # This method is mostly used from the Ruote::Engine class (which includes
+    # this mixin).
+    #
+    def launch (process_definition, fields={}, variables={})
+
+      wfid = @context.wfidgen.generate
+
+      @context.storage.put_msg(
+        'launch',
+        'wfid' => wfid,
+        'tree' => @context.parser.parse(process_definition),
+        'workitem' => { 'fields' => fields },
+        'variables' => variables)
+
+      wfid
+    end
+
     # Wraps a call to receive(workitem)
     #
     # Not aliasing so that if someone changes the receive implementation,
