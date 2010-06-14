@@ -68,7 +68,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
     begin
       load File.join(path, %w[ test functional_connection.rb ])
-    rescue
+    rescue LoadError => le
       load File.join(path, %w[ test integration_connection.rb ])
     end
 
