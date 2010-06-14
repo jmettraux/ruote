@@ -66,7 +66,11 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     lib, path = pers
     $:.unshift(File.join(path, 'lib'))
 
-    load File.join(path, %w[ test integration_connection.rb ])
+    begin
+      load File.join(path, %w[ test functional_connection.rb ])
+    rescue
+      load File.join(path, %w[ test integration_connection.rb ])
+    end
 
     new_storage(opts)
 
