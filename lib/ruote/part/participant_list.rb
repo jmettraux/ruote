@@ -93,8 +93,9 @@ module Ruote
 
       else
 
-        return Ruote::StorageParticipant.new(@context) \
-          if entry.last.first == 'Ruote::StorageParticipant'
+        if entry.last.first == 'Ruote::StorageParticipant'
+          return Ruote::StorageParticipant.new(@context)
+        end
 
         nil
       end
@@ -110,8 +111,9 @@ module Ruote
       code = nil
       entry = nil
 
-      name_or_participant = name_or_participant.to_s \
-        if name_or_participant.is_a?(Symbol)
+      if name_or_participant.is_a?(Symbol)
+        name_or_participant = name_or_participant.to_s
+      end
 
       if name_or_participant.is_a?(String)
 
@@ -179,8 +181,11 @@ module Ruote
       return nil if opts[:on_reply] && ! (
         pa_m.include?(:on_reply) || pa_m.include?('on_reply'))
 
-      pa = pa_class.new(options)
-
+      pa = if pa_class.instance_method(:initialize).arity > 0
+        pa_class.new(options)
+      else
+        pa_class.new
+      end
       pa.context = @context if pa.respond_to?(:context=)
 
       pa

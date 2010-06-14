@@ -105,7 +105,7 @@ module Ruote
 
     include LocalParticipant
 
-    def initialize (opts=nil)
+    def initialize (opts)
 
       if pa = opts['storage_path']
         require pa

@@ -20,18 +20,21 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
   def setup
 
+    @dir0 = "work0_#{$$}_#{self.object_id}_#{Time.now.to_f}"
+    @dir1 = "work1_#{$$}_#{self.object_id}_#{Time.now.to_f}"
+
     @engine0 =
       Ruote::Engine.new(
         Ruote::Worker.new(
           Ruote::FsStorage.new(
-            'work0',
+            @dir0,
             'engine_id' => 'engine0',
             's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
     @engine1 =
       Ruote::Engine.new(
         Ruote::Worker.new(
           Ruote::FsStorage.new(
-            'work1',
+            @dir1,
             'engine_id' => 'engine1',
             's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
 
@@ -46,13 +49,13 @@ class FtEngineParticipantTest < Test::Unit::TestCase
       Ruote::EngineParticipant,
       'storage_class' => Ruote::FsStorage,
       'storage_path' => 'ruote/storage/fs_storage',
-      'storage_args' => 'work1')
+      'storage_args' => @dir1)
     @engine1.register_participant(
       'engine0',
       Ruote::EngineParticipant,
       'storage_class' => Ruote::FsStorage,
       'storage_path' => 'ruote/storage/fs_storage',
-      'storage_args' => 'work0')
+      'storage_args' => @dir0)
   end
 
   def teardown
@@ -60,8 +63,8 @@ class FtEngineParticipantTest < Test::Unit::TestCase
     @engine0.shutdown
     @engine1.shutdown
 
-    FileUtils.rm_rf('work0')
-    FileUtils.rm_rf('work1')
+    FileUtils.rm_rf(@dir0)
+    FileUtils.rm_rf(@dir1)
   end
 
   def noisy
@@ -283,7 +286,7 @@ class FtEngineParticipantTest < Test::Unit::TestCase
       Ruote::EngineParticipant,
       'storage_class' => Ruote::FsStorage,
       'storage_path' => 'ruote/storage/fs_storage',
-      'storage_args' => 'work0')
+      'storage_args' => @dir0)
 
     # replay
 
