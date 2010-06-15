@@ -178,6 +178,35 @@ module Ruote
       put_engine_variable(k, v) unless put(vars).nil?
     end
 
+    #--
+    # migrations
+    #++
+
+    # Copies the content of this storage into a target storage.
+    #
+    # Of course, the target storage may be a different implementation.
+    #
+    def copy_to (target, opts={})
+
+      counter = 0
+
+      %w[
+        configurations errors expressions msgs schedules variables workitems
+      ].each do |type|
+
+        get_many(type).each do |item|
+
+          item.delete('_rev')
+          target.put(item)
+
+          counter += 1
+          puts("  #{type}/#{item['_id']}") if opts[:verbose]
+        end
+      end
+
+      counter
+    end
+
     protected
 
     # Used by put_msg

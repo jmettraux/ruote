@@ -4,6 +4,7 @@
 
 == ruote - 2.1.10    not yet released
 
+- storage#copy_to(other_storage) implemented
 - #launch moved from Engine to ReceiverMixin
 - participants without initialize(opts) are now allowed
 - engine.wait_for(:inactive)
