@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer", "Torsten Schoenebaum"]
-  s.date = %q{2010-04-01}
+  s.date = %q{2010-06-15}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -35,6 +35,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/engine.rb",
      "lib/ruote/engine/process_error.rb",
      "lib/ruote/engine/process_status.rb",
+     "lib/ruote/error_handler.rb",
      "lib/ruote/evt/tracker.rb",
      "lib/ruote/exp/command.rb",
      "lib/ruote/exp/commanded.rb",
@@ -79,7 +80,6 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/fei.rb",
      "lib/ruote/id/mnemo_wfid_generator.rb",
      "lib/ruote/id/wfid_generator.rb",
-     "lib/ruote/log/fs_history.rb",
      "lib/ruote/log/storage_history.rb",
      "lib/ruote/log/test_logger.rb",
      "lib/ruote/log/wait_logger.rb",
@@ -131,6 +131,7 @@ ruote is an open source ruby workflow engine.
      "test/functional/base.rb",
      "test/functional/concurrent_base.rb",
      "test/functional/crunner.rb",
+     "test/functional/crunner.sh",
      "test/functional/ct_0_concurrence.rb",
      "test/functional/ct_1_iterator.rb",
      "test/functional/ct_2_cancel.rb",
@@ -189,13 +190,17 @@ ruote is an open source ruby workflow engine.
      "test/functional/ft_2_errors.rb",
      "test/functional/ft_30_smtp_participant.rb",
      "test/functional/ft_31_part_blocking.rb",
-     "test/functional/ft_32_fs_history.rb",
      "test/functional/ft_33_participant_subprocess_priority.rb",
      "test/functional/ft_34_cursor_rewind.rb",
      "test/functional/ft_35_add_service.rb",
      "test/functional/ft_36_storage_history.rb",
      "test/functional/ft_37_engine_participant.rb",
+     "test/functional/ft_38_participant_more.rb",
+     "test/functional/ft_39_wait_for.rb",
      "test/functional/ft_3_participant_registration.rb",
+     "test/functional/ft_40_participant_on_reply.rb",
+     "test/functional/ft_41_participants.rb",
+     "test/functional/ft_42_storage_copy.rb",
      "test/functional/ft_4_cancel.rb",
      "test/functional/ft_5_on_error.rb",
      "test/functional/ft_6_on_cancel.rb",
@@ -212,7 +217,7 @@ ruote is an open source ruby workflow engine.
      "test/functional/rtest.rb",
      "test/functional/storage_helper.rb",
      "test/functional/test.rb",
-     "test/mpc_test.rb",
+     "test/functional/vertical.rb",
      "test/path_helper.rb",
      "test/pdef.xml",
      "test/test.rb",
@@ -243,7 +248,7 @@ ruote is an open source ruby workflow engine.
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{ruote}
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{an open source ruby workflow engine}
   s.test_files = [
     "test/test.rb"
@@ -254,8 +259,8 @@ ruote is an open source ruby workflow engine.
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<rufus-json>, [">= 0.2.0"])
-      s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.16"])
+      s.add_runtime_dependency(%q<rufus-json>, [">= 0.2.2"])
+      s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.17"])
       s.add_runtime_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_runtime_dependency(%q<rufus-lru>, [">= 0"])
       s.add_runtime_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
@@ -268,8 +273,8 @@ ruote is an open source ruby workflow engine.
       s.add_development_dependency(%q<mailtrap>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
-      s.add_dependency(%q<rufus-json>, [">= 0.2.0"])
-      s.add_dependency(%q<rufus-cloche>, [">= 0.1.16"])
+      s.add_dependency(%q<rufus-json>, [">= 0.2.2"])
+      s.add_dependency(%q<rufus-cloche>, [">= 0.1.17"])
       s.add_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_dependency(%q<rufus-lru>, [">= 0"])
       s.add_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
@@ -283,8 +288,8 @@ ruote is an open source ruby workflow engine.
       s.add_dependency(%q<jeweler>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rufus-json>, [">= 0.2.0"])
-    s.add_dependency(%q<rufus-cloche>, [">= 0.1.16"])
+    s.add_dependency(%q<rufus-json>, [">= 0.2.2"])
+    s.add_dependency(%q<rufus-cloche>, [">= 0.1.17"])
     s.add_dependency(%q<rufus-dollar>, [">= 0"])
     s.add_dependency(%q<rufus-lru>, [">= 0"])
     s.add_dependency(%q<rufus-mnemo>, [">= 1.1.0"])

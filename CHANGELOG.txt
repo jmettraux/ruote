@@ -2,7 +2,7 @@
 = ruote - CHANGELOG.txt
 
 
-== ruote - 2.1.10    not yet released
+== ruote - 2.1.10    released 2010/06/15
 
 - storage#copy_to(other_storage) implemented
 - #launch moved from Engine to ReceiverMixin
