@@ -45,7 +45,7 @@ module Ruote
   #   end
   #
   #
-  # == do_not_thead
+  # == do_not_thread
   #
   # By default, this participant (like most other participants) is executed
   # in its own thread (in a Ruby runtime where EventMachine is running,
