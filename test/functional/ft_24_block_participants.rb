@@ -62,7 +62,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
   def test_non_jsonfiable_result
 
     return if Ruote::WIN
-      # defective 'json' lib on windows render this test useless
+      # defective 'json' lib on windows renders this test useless
 
     t = Time.now
 
