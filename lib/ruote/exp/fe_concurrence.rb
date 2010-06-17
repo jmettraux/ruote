@@ -99,15 +99,23 @@ module Ruote::Exp
   #
   # === :merge_type
   #
+  # ==== :override
+  #
   # By default, the merge type is set to 'override', which means that the
   # 'winning' workitem's payload supplants all other workitems' payloads.
+  #
+  # ==== :mix
   #
   # Setting :merge_type to :mix, will actually attempt to merge field by field,
   # making sure that the field value of the winner(s) are used.
   #
+  # ==== :isolate
+  #
   # :isolate will rearrange the resulting workitem payload so that there is
   # a new field for each branch. The name of each field is the index of the
   # branch from '0' to ...
+  #
+  # ==== :stack
   #
   # :stack will stack the workitems coming back from the concurrence branches
   # in an array whose order is determined by the :merge attributes. The array
