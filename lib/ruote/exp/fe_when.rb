@@ -96,16 +96,16 @@ module Ruote::Exp
   # As said, the default 'check' frequency is 10 seconds. This can be changed
   # by using the :frequency (or :freq) attribute.
   #
-  #    sequence do
+  #   sequence do
   #
-  #      participant 'logistic_unit'
+  #     participant 'logistic_unit'
   #
-  #      _when '${v:/delivery_ok}', :frequency => '2d'
-  #        # block until delivery is OK (another branch of the process probably)
-  #        # check every two days
+  #     _when '${v:/delivery_ok}', :frequency => '2d'
+  #       # block until delivery is OK (another branch of the process probably)
+  #       # check every two days
   #
-  #      participant 'accounting_unit'
-  #    end
+  #     participant 'accounting_unit'
+  #   end
   #
   #
   # == :frequency and cron notation
