@@ -116,11 +116,11 @@ module Ruote
 
       wfids = @context.storage.get_many('expressions').collect { |exp|
         exp['fei']['wfid']
-      }.sort.uniq
+      }
 
       error_wfids = @context.storage.get_many('errors').collect { |err|
         err['fei']['wfid']
-      }.sort.uniq
+      }
 
       (wfids - error_wfids == [])
     end
