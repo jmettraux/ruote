@@ -512,7 +512,7 @@ module Ruote::Exp
       workitem = msg['workitem']
 
       workitem['fields']['__error__'] = [
-        h.fei, Ruote.now_to_utc_s, error.class.to_s, error.message ]
+        h.fei, Ruote.now_to_utc_s, error.class.to_s, error.message, error.backtrace ]
 
       @context.storage.put_msg(
         'fail',
