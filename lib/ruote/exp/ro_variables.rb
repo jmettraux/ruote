@@ -50,7 +50,7 @@ module Ruote::Exp
     end
 
     # Looks up the value of a variable in expression tree
-    # (seen from a leave, it looks more like a stack than a tree)
+    # (seen from a leaf, it looks more like a stack than a tree)
     #
     def lookup_variable (var, prefix=nil)
 
