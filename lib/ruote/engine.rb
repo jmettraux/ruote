@@ -54,6 +54,7 @@ module Ruote
     # If a worker instance is given as the first argument and the second
     # argument is true, engine will start the worker and will be able to both
     # manage and run workflows.
+    #
     def initialize (worker_or_storage, run=true)
 
       @context = worker_or_storage.context

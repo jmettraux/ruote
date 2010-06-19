@@ -214,6 +214,8 @@
 [o] storage participant : accept string for fei
 [o] => Ruote::FlowExpressionId.extract(x)
 [o] fei : place engine id in fei.to_storage_id (and back)
+[o] wait_for(:inactive) blocks until worker is inactive
+[o] storage0.copy_to(storage1) / migrate_to as requested by Matt Nichols
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -363,7 +365,5 @@
 [ ] re_apply_stalled
     http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
 
-[ ] wait_for(:inactive) blocks until worker is inactive
-
-[ ] storage0.copy_to(storage1) / migrate_to as requested by Matt Nichols
+[ ] engine.purge (arts style : worker.@msgs = [])
 
