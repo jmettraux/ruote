@@ -198,7 +198,7 @@ module Ruote
       @context.shutdown
     end
 
-    # This method expects there is a logger with a wait_for method in the
+    # This method expects there to be a logger with a wait_for method in the
     # context, else it will raise an exception.
     #
     # This method is only useful for test/quickstart/examples environments.
