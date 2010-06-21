@@ -12,6 +12,19 @@ Process definitions are mainly describing how workitems are routed to participan
 
 == usage
 
+grab ruote
+
+  gem install ruote
+  gem install yajl-ruby
+
+Note : the json gem has a serious bug :
+
+  http://github.com/flori/json/issues#issue/21
+
+So yajl-ruby is seriously recommended.
+
+Then
+
   require 'rubygems'
   require 'ruote'
   require 'ruote/storage/fs_storage'
