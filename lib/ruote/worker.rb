@@ -114,10 +114,9 @@ module Ruote
     # Returns true if the engine system is inactive, ie if all the process
     # instances are terminated or are stuck in an error.
     #
-    # NOTE : for now, if a branch of a process is in errors while another is
-    # still running, this methods will still consider the process instance
-    # as inactive (and it will return true if all the processes are considered
-    # inactive).
+    # NOTE : for now, if a branch of a process is in error while another is
+    # still running, this method will consider the process instance inactive
+    # (and it will return true if all the processes are considered inactive).
     #
     def inactive?
 
