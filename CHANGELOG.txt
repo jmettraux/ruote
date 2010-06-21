@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- Engine#join and Worker#join
 - workitem.error now includes error's backtrace (contributed by Rich Meyers)
 
 

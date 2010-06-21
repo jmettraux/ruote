@@ -183,7 +183,8 @@ module Ruote
 
     # Returns an array of current errors (hashes)
     #
-    def errors( wfid = nil )
+    def errors (wfid=nil)
+
       wfid.nil? ?
         @context.storage.get_many('errors') :
         @context.storage.get_many('errors', /!#{wfid}$/)
@@ -232,6 +233,14 @@ module Ruote
       ) unless logger.respond_to?(:wait_for)
 
       logger.wait_for(items)
+    end
+
+    # Joins the worker thread. If this engine has no nested worker, calling
+    # this method will simply return immediately.
+    #
+    def join
+
+      worker.join if worker
     end
 
     # Loads and parses the process definition at the given path.

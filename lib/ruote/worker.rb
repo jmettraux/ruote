@@ -64,6 +64,9 @@ module Ruote
       @sleep_time = 0.000
     end
 
+    # Runs the worker in the current thread. See #run_in_thread for running
+    # in a dedicated thread.
+    #
     def run
 
       while(@running) do
@@ -71,6 +74,8 @@ module Ruote
       end
     end
 
+    # Triggers the run method of the worker in a dedicated thread.
+    #
     def run_in_thread
 
       Thread.abort_on_exception = true
@@ -79,6 +84,14 @@ module Ruote
       @running = true
 
       @run_thread = Thread.new { run }
+    end
+
+    # Joins the run thread of this worker (if there is no such thread, this
+    # method will return immediately, without any effect).
+    #
+    def join
+
+      @run_thread.join if @run_thread
     end
 
     def subscribe (actions, subscriber)
