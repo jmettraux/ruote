@@ -16,6 +16,8 @@ Torsten Schoenebaum - http://github.com/tosch
 Contributors
 ------------
 
+Eric Dennis - http://github.com/threetee
+David Greaves - http://github.com/lbt
 Rich Meyers - http://github.com/richmeyers
 Oleg Pudeyev - http://github.com/p
 Brett Anthoine - http://github.com/anb
@@ -40,6 +42,7 @@ Richard Jennings
 Feedback
 --------
 
+Kaspar Schiess - http://github.com/kschiess
 Oleg (foenixx) - many suggestions and bug reports
 Avishai Shalom - discussion and ideas about participant/worker locality
 Gonzalo Suarez - many help
