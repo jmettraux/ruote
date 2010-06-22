@@ -55,6 +55,15 @@ module Ruote
       check_msg(msg)
     end
 
+    # Blocks until one or more interests are satisfied.
+    #
+    # Please see TestLogger#wait_for documentation for parameter
+    # explanation and important notes concerning usage from multiple
+    # threads concurrently.
+    #
+    # Just like TestLogger#wait_for, WaitLogger#wait_for cannot be
+    # used from more than one thread at a time.
+    #
     def wait_for (interests)
 
       @waiting = [ Thread.current, interests ]

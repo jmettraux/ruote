@@ -74,6 +74,19 @@ module Ruote
       check_waiting
     end
 
+    # Blocks until one or more interests are satisfied.
+    #
+    # interests must be an array of interests. Please refer to
+    # Engine#wait_for documentation for allowed values of each interest.
+    #
+    # If multiple interests are given, wait_for blocks until
+    # all of the interests are satisfied.
+    #
+    # wait_for may only be used by one thread at a time. If one
+    # thread calls wait_for and later another thread calls wait_for
+    # while the first thread is waiting, the first thread's
+    # interests are lost and the first thread will never wake up.
+    #
     def wait_for (interests)
 
       @waiting = [ Thread.current, interests ]
@@ -135,6 +148,18 @@ module Ruote
 
     FINAL_ACTIONS = %w[ terminated ceased error_intercepted ]
 
+    # Checks whether message msg matches any of interests being waited for.
+    #
+    # Some interests look for actions on particular workflows (e.g.,
+    # waiting for some workflow to finish). Other interests are not
+    # attached to any particular workflow (e.g., :inactive waits until
+    # the engine finishes processing all active and pending workflows)
+    # but are still satisfied when actions happen on workflows (e.g.,
+    # the last workflow being run finishes).
+    #
+    # Returns true if all interests being waited for have been satisfied,
+    # false otherwise.
+    #
     def check_interest (msg)
 
       action = msg['action']
