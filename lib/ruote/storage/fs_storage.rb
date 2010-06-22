@@ -35,6 +35,8 @@ Rufus::Json.detect_backend
 require 'rufus/cloche'
   # gem install rufus-cloche
 
+require 'ruote/storage/base'
+
 
 module Ruote
 
