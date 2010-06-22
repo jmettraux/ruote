@@ -102,6 +102,10 @@ module Ruote
 
       @context.storage.put_msg(
         'error_intercepted',
+        'error_class' => exception.class.name,
+        'error_message' => exception.message,
+        'error_backtrace' => exception.backtrace,
+        # for backward compatibility
         'message' => exception.inspect,
         'wfid' => wfid,
         'msg' => msg)
