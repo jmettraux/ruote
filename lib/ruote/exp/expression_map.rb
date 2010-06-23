@@ -50,39 +50,23 @@ module Ruote
   #
   class ExpressionMap
 
+    # Will load any expression in the Ruote::Exp:: namespace and map
+    # its names to its class.
+    #
     def initialize (worker)
 
       @map = {}
-      add(Ruote::Exp::RawExpression)
-      add(Ruote::Exp::DefineExpression)
-      add(Ruote::Exp::SequenceExpression)
-      add(Ruote::Exp::EchoExpression)
-      add(Ruote::Exp::ParticipantExpression)
-      add(Ruote::Exp::SetExpression)
-      add(Ruote::Exp::SubprocessExpression)
-      add(Ruote::Exp::ConcurrenceExpression)
-      add(Ruote::Exp::ConcurrentIteratorExpression)
-      add(Ruote::Exp::ForgetExpression)
-      add(Ruote::Exp::UndoExpression)
-      add(Ruote::Exp::RedoExpression)
-      add(Ruote::Exp::CancelProcessExpression)
-      add(Ruote::Exp::WaitExpression)
-      add(Ruote::Exp::ListenExpression)
-      add(Ruote::Exp::CommandExpression)
-      add(Ruote::Exp::IteratorExpression)
-      add(Ruote::Exp::CursorExpression)
-      add(Ruote::Exp::IfExpression)
-      add(Ruote::Exp::EqualsExpression)
-      add(Ruote::Exp::ReserveExpression)
-      add(Ruote::Exp::SaveExpression)
-      add(Ruote::Exp::RestoreExpression)
-      add(Ruote::Exp::NoOpExpression)
-      add(Ruote::Exp::ApplyExpression)
-      add(Ruote::Exp::AddBranchesExpression)
-      add(Ruote::Exp::ErrorExpression)
-      add(Ruote::Exp::IncExpression)
-      add(Ruote::Exp::WhenExpression)
-      add(Ruote::Exp::CronExpression)
+
+      Ruote::Exp.constants.each do |con|
+
+        con = con.to_s
+        next unless con.match(/Expression$/)
+
+        cla = Ruote::Exp.const_get(con)
+        next unless cla.respond_to?(:expression_names)
+
+        add(cla)
+      end
     end
 
     # Returns the expression class for the given expression name
