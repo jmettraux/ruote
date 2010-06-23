@@ -201,6 +201,10 @@ module Ruote
     # This method expects there to be a logger with a wait_for method in the
     # context, else it will raise an exception.
     #
+    # *WARNING* : wait_for() is meant for environments where there is a unique
+    # worker and that worker is nested in this engine. In a multiple worker
+    # environment wait_for doesn't see events handled by 'other' workers.
+    #
     # This method is only useful for test/quickstart/examples environments.
     #
     #   engine.wait_for(:alpha)
