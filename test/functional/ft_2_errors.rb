@@ -360,5 +360,20 @@ class FtErrorsTest < Test::Unit::TestCase
     assert_equal wfid, e['msg']['fei']['wfid']
     assert_equal 8, e.size
   end
+
+  def test_error_intercepted
+
+    pdef = Ruote.process_definition do
+      nada
+    end
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal 'RuntimeError', r['error_class']
+    assert_equal "unknown expression 'nada'", r['error_message']
+    assert_equal Array, r['error_backtrace'].class
+  end
 end
 
