@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), 'base')
 require 'ruote/part/storage_participant'
 
 
-class FtEngineTest < Test::Unit::TestCase
+class FtWaitForTest < Test::Unit::TestCase
   include FunctionalBase
 
   def test_workitem
@@ -95,6 +95,61 @@ class FtEngineTest < Test::Unit::TestCase
     @engine.wait_for(:inactive)
 
     assert_equal wfids.sort, @engine.processes.collect { |ps| ps.wfid }.sort
+  end
+
+  def test_wait_for_multithreaded
+
+    pdef = Ruote.process_definition { alpha }
+
+    sp = @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    seen = []
+
+    Thread.new do
+      @engine.wait_for(wfid)
+      seen << 'this'
+    end
+    Thread.new do
+      @engine.wait_for(wfid)
+      seen << 'that'
+    end
+
+    @engine.wait_for(:alpha)
+
+    sp.reply(sp.first)
+
+    @engine.wait_for(wfid)
+
+    sleep 0.100
+
+    assert_equal %w[ that this ], seen.sort
+    assert_equal [], @engine.context.logger.instance_variable_get(:@waiting)
+  end
+end
+
+class FtWaitLoggerTest < Test::Unit::TestCase
+
+  def test_wait_logger
+
+    engine = Ruote::Engine.new(Ruote::Worker.new(determine_storage({})))
+
+    sp = engine.register_participant :alpha, Ruote::StorageParticipant
+
+    pdef = Ruote.process_definition { alpha }
+
+    wfid = engine.launch(pdef)
+
+    sleep 0.500
+
+    sp.reply(sp.first)
+
+    r = engine.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
   end
 end
 

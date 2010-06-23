@@ -22,12 +22,14 @@
 # Made in Japan.
 #++
 
-#require 'ruote/util/tree'
+require 'ruote/log/pretty'
 
 
 module Ruote
 
   class TestLogger
+
+    include PrettyLogging
 
     attr_reader :seen
     attr_reader :log
@@ -52,19 +54,14 @@ module Ruote
 
       @seen = []
       @log = []
-      @waiting = nil
+      @waiting = []
 
       @count = -1
       @color = 33
       @noisy = false
-
-      # NOTE
-      # in case of troubles, why not have the wait_for has an event ?
     end
 
     def notify (msg)
-
-      #@context.storage.put(event.merge('type' => 'archived_msgs'))
 
       puts(pretty_print(msg)) if @noisy
 
@@ -89,11 +86,11 @@ module Ruote
     #
     def wait_for (interests)
 
-      @waiting = [ Thread.current, interests ]
+      @waiting << [ Thread.current, interests ]
 
       check_waiting
 
-      Thread.stop if @waiting
+      Thread.stop if @waiting.find { |w| w.first == Thread.current }
 
       # and when this thread gets woken up, go on and return __result__
 
@@ -122,27 +119,28 @@ module Ruote
 
     def check_waiting
 
-      return unless @waiting
+      return if @waiting.size < 1
 
       while msg = @seen.shift
-
-        break if check_msg(msg)
+        check_msg(msg)
       end
     end
 
     def check_msg (msg)
 
-      if check_interest(msg)
+      wakeup = []
 
-        thread = @waiting.first
-        @waiting = nil
+      @waiting.each do |thread, interests|
+
+        wakeup << thread if matches(interests, msg)
+      end
+
+      @waiting.delete_if { |t, i| i.size < 1 }
+
+      wakeup.each do |thread|
+
         thread['__result__'] = msg
         thread.wakeup
-
-        true
-      else
-
-        false
       end
     end
 
@@ -160,13 +158,13 @@ module Ruote
     # Returns true if all interests being waited for have been satisfied,
     # false otherwise.
     #
-    def check_interest (msg)
+    def matches (interests, msg)
 
       action = msg['action']
 
-      @waiting.last.each do |interest|
+      interests.each do |interest|
 
-        satisfied =  if interest == :inactive
+        satisfied = if interest == :inactive
 
           (FINAL_ACTIONS.include?(action) && @context.worker.inactive?)
 
@@ -180,9 +178,10 @@ module Ruote
 
         elsif interest.is_a?(Fixnum)
 
-          @waiting[-1] = @waiting[-1] - [ interest ]
+          interests.delete(interest)
+
           if (interest > 1)
-            @waiting[-1] << (interest - 1)
+            interests << (interest - 1)
             false
           else
             true
@@ -193,109 +192,10 @@ module Ruote
           (FINAL_ACTIONS.include?(action) && msg['wfid'] == interest)
         end
 
-        @waiting[-1] = @waiting[-1] - [ interest ] if satisfied
+        interests.delete(interest) if satisfied
       end
 
-      @waiting.last.size < 1
-    end
-
-    # <ESC>[{attr1};...;{attrn}m
-    #
-    # 0 Reset all attributes
-    # 1 Bright
-    # 2 Dim
-    # 4 Underscore
-    # 5 Blink
-    # 7 Reverse
-    # 8 Hidden
-    #
-    # Foreground Colours
-    # 30 Black
-    # 31 Red
-    # 32 Green
-    # 33 Yellow
-    # 34 Blue
-    # 35 Magenta
-    # 36 Cyan
-    # 37 White
-    #
-    # Background Colours
-    # 40 Black
-    # 41 Red
-    # 42 Green
-    # 43 Yellow
-    # 44 Blue
-    # 45 Magenta
-    # 46 Cyan
-    # 47 White
-
-    def color (mod, s, clear=false)
-
-      return s if Ruote::WIN
-      return s unless STDOUT.tty?
-
-      "[#{mod}m#{s}[0m#{clear ? '' : "[#{@color}m"}"
-    end
-
-    def pretty_print (msg)
-
-      @count += 1
-      @count = 0 if @count > 9
-
-      ei = self.object_id.to_s[-2..-1]
-
-      fei = msg['fei']
-      depth = fei ? fei['expid'].split('_').size : 0
-
-      i = fei ?
-        [ fei['wfid'], fei['sub_wfid'], fei['expid'] ].join(' ') :
-        msg['wfid']
-
-      rest = msg.dup
-      %w[
-        _id put_at _rev
-        type action
-        fei wfid variables
-      ].each { |k| rest.delete(k) }
-
-      if v = rest['parent_id']
-        rest['parent_id'] = Ruote.to_storage_id(v)
-      end
-      if v = rest.delete('workitem')
-        rest[:wi] = [
-          v['fei'] ? Ruote.to_storage_id(v['fei']) : nil,
-          v['fields'].size ]
-      end
-
-      { 'tree' => :t, 'parent_id' => :pi }.each do |k0, k1|
-        if v = rest.delete(k0)
-          rest[k1] = v
-        end
-      end
-
-      action = msg['action'][0, 2]
-      action = case msg['action']
-        when 'receive' then 'rc'
-        when 'dispatched' then 'dd'
-        when 'dispatch_cancel' then 'dc'
-        else action
-      end
-      action = case action
-        when 'la' then color('4;32', action)
-        when 'te' then color('4;31', action)
-        when 'ce' then color('31', action)
-        when 'ca' then color('31', action)
-        when 'rc' then color('4;33', action)
-        when 'di' then color('4;33', action)
-        when 'dd' then color('4;33', action)
-        when 'dc' then color('4;31', action)
-        else action
-      end
-
-      color(
-        @color,
-        "#{@count} #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}",
-        true)
+      interests.size < 1
     end
   end
 end

@@ -37,42 +37,24 @@ module Ruote
     def initialize (context)
 
       @context = context
-      @waiting = nil
       @color = 33
 
       @context.worker.subscribe(:all, self) if @context.worker
 
       @noisy = false
       @count = -1
+
+      @seen = []
+      @waiting = []
     end
 
     def notify (msg)
 
       puts(pretty_print(msg)) if @noisy
 
-      return unless @waiting
+      return if @waiting.size < 1
 
       check_msg(msg)
-    end
-
-    # Blocks until one or more interests are satisfied.
-    #
-    # Please see TestLogger#wait_for documentation for parameter
-    # explanation and important notes concerning usage from multiple
-    # threads concurrently.
-    #
-    # Just like TestLogger#wait_for, WaitLogger#wait_for cannot be
-    # used from more than one thread at a time.
-    #
-    def wait_for (interests)
-
-      @waiting = [ Thread.current, interests ]
-
-      Thread.stop
-
-      # and when this thread gets woken up, go on and return __result__
-
-      Thread.current['__result__']
     end
   end
 end
