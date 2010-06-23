@@ -4,6 +4,17 @@ require 'lib/ruote/version.rb'
 require 'rubygems'
 require 'rake'
 
+#
+# clean
+
+require 'rake/clean'
+CLEAN.include('pkg', 'rdoc', 'ruote_work', 'ruote_data', 'logs')
+
+task :default => [ :clean ]
+
+
+#
+# jeweler tasks
 
 begin
 
@@ -41,32 +52,51 @@ ruote is an open source ruby workflow engine.
     # Gem::Specification http://www.rubygems.org/read/chapter/20
   end
   Jeweler::GemcutterTasks.new
+
 rescue LoadError
   puts 'Jeweler (or a dependency) not available. Install it with: gem install jeweler'
 end
 
-begin
-  require 'yard'
-  YARD::Rake::YardocTask.new do |doc|
-    doc.options = [ '-o', 'rdoc', '--title', "ruote #{Ruote::VERSION}" ]
-  end
-rescue LoadError
-  task :yard do
-    abort 'YARD is not available. In order to run yardoc, you must: sudo gem install yard'
-  end
+
+#
+# rdoc
+
+#begin
+#  require 'yard'
+#  YARD::Rake::YardocTask.new do |doc|
+#    doc.options = [ '-o', 'rdoc', '--title', "ruote #{Ruote::VERSION}" ]
+#  end
+#rescue LoadError
+#  task :yard do
+#    abort 'YARD is not available. In order to run yardoc, you must: sudo gem install yard'
+#  end
+#end
+
+#
+# make sure to have rdoc 2.5.x to run that
+#
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rd|
+
+  rd.main = 'README.rdoc'
+  rd.rdoc_dir = 'rdoc'
+
+  rd.rdoc_files.include(
+    'README.rdoc', 'CHANGELOG.txt', 'CREDITS.txt', 'lib/**/*.rb')
+
+  rd.title = "ruote #{Ruote::VERSION}"
 end
 
-require 'rake/clean'
-CLEAN.include('pkg', 'rdoc', 'work', 'logs')
 
-task :default => [ :clean ]
+#
+# upload_rdoc
 
 desc 'Upload the documentation to rubyforge'
-task :upload_rdoc => :yard do
-  sh %{
-    rsync -azv -e ssh \
-      rdoc \
-      jmettraux@rubyforge.org:/var/www/gforge-projects/ruote/
-  }
+task :upload_rdoc => [ :clean, :rdoc ] do
+
+  account = 'jmettraux@rubyforge.org'
+  webdir = '/var/www/gforge-projects/ruote'
+
+  sh "rsync -azv -e ssh rdoc #{account}:#{webdir}/"
 end
 
