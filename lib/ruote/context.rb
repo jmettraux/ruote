@@ -125,6 +125,14 @@ module Ruote
       end
 
       self.class.class_eval %{ def #{key[2..-1]}; @services['#{key}']; end }
+        #
+        # This 'one-liner' will add an instance method to Context for this
+        # service.
+        #
+        # If the service key is 's_dishwasher', then the service will be
+        # available via Context#dishwasher.
+        #
+        # I.e. dishwasher = engine.context.dishwasher
 
       service
     end
