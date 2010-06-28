@@ -194,7 +194,9 @@ module Ruote
         configurations errors expressions msgs schedules variables workitems
       ].each do |type|
 
-        get_many(type).each do |item|
+        ids(type).each do |id|
+
+          item = get(type, id)
 
           item.delete('_rev')
           target.put(item)

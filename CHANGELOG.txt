@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- storage#copy_to(other_storage) item by item implementation
 - Engine#wait_for OK with multiple threads
 - ExpressionMap now loads all expressions in Ruote::Exp:: namespace
 - 'error_intercepted' msg now features error_class, _message and _backtrace (RM)
