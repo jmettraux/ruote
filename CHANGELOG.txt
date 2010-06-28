@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- error_handler : more error catching
 - storage#copy_to(other_storage) item by item implementation
 - Engine#wait_for OK with multiple threads
 - ExpressionMap now loads all expressions in Ruote::Exp:: namespace
