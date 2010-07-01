@@ -151,5 +151,25 @@ class FtWaitLoggerTest < Test::Unit::TestCase
 
     assert_equal 'terminated', r['action']
   end
+
+  def test_wait_logger_seen
+
+    engine = Ruote::Engine.new(Ruote::Worker.new(determine_storage({})))
+
+    #engine.context.logger.noisy = true
+
+    pdef = Ruote.process_definition { }
+
+    wfid = engine.launch(pdef)
+
+    sleep 0.500
+
+    assert_equal 2, engine.context.logger.instance_variable_get(:@seen).size
+
+    r = engine.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal 0, engine.context.logger.instance_variable_get(:@seen).size
+  end
 end
 

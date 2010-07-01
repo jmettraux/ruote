@@ -52,9 +52,13 @@ module Ruote
 
       puts(pretty_print(msg)) if @noisy
 
-      return if @waiting.size < 1
+      #return if @waiting.size < 1
+      #check_msg(msg)
 
-      check_msg(msg)
+      @seen << msg
+      @seen.shift if @seen.size > 147
+
+      check_waiting
     end
   end
 end
