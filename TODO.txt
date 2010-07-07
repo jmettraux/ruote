@@ -218,6 +218,7 @@
 [o] storage0.copy_to(storage1) / migrate_to as requested by Matt Nichols
 [o] check if rufus-lru is still needed
 [o] storage migration : eats all the memory :(
+[x] remove dependency on rufus-scheduler
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -369,5 +370,7 @@
 
 [ ] engine.purge (arts style : worker.@msgs = [])
 
-[ ] remove dependency on rufus-scheduler
+[ ] http://ruote.rubyforge.org/irclogs/ruote_2010-07-07.txt
+    configuration issue
+    maybe fail with a good error message when registering service...
 
