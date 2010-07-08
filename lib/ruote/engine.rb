@@ -346,6 +346,19 @@ module Ruote
         'regex' => re.to_s)
     end
 
+    # A convenience method for
+    #
+    #   sp = Ruote::StorageParticipant.new(engine)
+    #
+    # simply do
+    #
+    #   sp = engine.storage_participant
+    #
+    def storage_participant
+
+      @storage_participant ||= Ruote::StorageParticipant.new(self)
+    end
+
     # Adds a service locally (will not get propagated to other workers).
     #
     #   tracer = Tracer.new

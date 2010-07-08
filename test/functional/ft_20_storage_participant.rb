@@ -309,5 +309,17 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal wi, sp[wi.fei.to_h]
     assert_equal wi, sp[wi.fei.to_storage_id]
   end
+
+  def test_engine_storage_participant
+
+    @engine.register_participant 'step_.*', Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.process_definition { step_one })
+
+    wait_for(:step_one)
+
+    assert_equal 1, @engine.storage_participant.size
+    assert_equal 'step_one', @engine.storage_participant.first.participant_name
+  end
 end
 

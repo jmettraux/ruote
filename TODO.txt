@@ -219,6 +219,7 @@
 [o] check if rufus-lru is still needed
 [o] storage migration : eats all the memory :(
 [x] remove dependency on rufus-scheduler
+[o] engine.storage_participant
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
