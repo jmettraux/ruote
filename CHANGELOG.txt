@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- engine.noisy = true (a shortcut)
 - engine.storage_participant (a shortcut)
 - removed direct dependency on rufus-lru
 - WaitLogger : a transient @seen (Thanks Kaspar)

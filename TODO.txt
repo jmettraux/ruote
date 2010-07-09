@@ -220,6 +220,7 @@
 [o] storage migration : eats all the memory :(
 [x] remove dependency on rufus-scheduler
 [o] engine.storage_participant
+[o] engine.noisy = true shortcut
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -363,8 +364,6 @@
 [ ] toto :task => 'maw the lawn', :within => '3d'
 
 [ ] solve the ps#root_expression_for(fei) dilemma
-
-[ ] engine.noisy = true shortcut
 
 [ ] re_apply_stalled
     http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135

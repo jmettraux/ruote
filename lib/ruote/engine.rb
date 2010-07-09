@@ -409,6 +409,18 @@ module Ruote
 
       Ruote::Workitem.new(fexp.h.applied_workitem)
     end
+
+    # A debug helper :
+    #
+    #   engine.noisy = true
+    #
+    # will let the engine (in fact the worker) pour all the details of the
+    # executing process instances to STDOUT.
+    #
+    def noisy= (b)
+
+      @context.logger.noisy = b
+    end
   end
 
   #
