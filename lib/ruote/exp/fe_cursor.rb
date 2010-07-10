@@ -66,7 +66,7 @@ module Ruote::Exp
   #     publisher
   #   end
   #
-  # === break
+  # === stop, over & break
   #
   # Exits the cursor.
   #
@@ -74,9 +74,11 @@ module Ruote::Exp
   #     author
   #     reviewer
   #     rewind :if => '${f:review} == fix'
-  #     _break :if => '${f:review} == abort'
+  #     stop :if => '${f:review} == abort'
   #     publisher
   #   end
+  #
+  # '_break' or 'over' can be used instead of 'stop'.
   #
   # === skip & back
   #
