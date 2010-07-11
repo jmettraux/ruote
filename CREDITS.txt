@@ -42,6 +42,7 @@ Richard Jennings
 Feedback
 --------
 
+Don H. French - Engine#register_from_dir idea
 Kaspar Schiess - http://github.com/kschiess
 Oleg (foenixx) - many suggestions and bug reports
 Avishai Shalom - discussion and ideas about participant/worker locality

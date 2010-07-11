@@ -31,6 +31,10 @@ module Ruote
   #
   # Tracking participants to [business] processes.
   #
+  # The methods here are mostly called via the engine (registering /
+  # unregistering participants) and via the dispatch_pool (when handing
+  # workitems to participants).
+  #
   class ParticipantList
 
     attr_reader :instantiated_participants
@@ -41,9 +45,7 @@ module Ruote
       @instantiated_participants = {}
     end
 
-    # Registers the participant.
-    #
-    # Called by the register_participant method of the engine.
+    # Registers a participant. Called by Engine#register_participant.
     #
     def register (name, participant, options, block, list=nil)
 
@@ -104,6 +106,8 @@ module Ruote
     # Removes a participant, given via its name or directly from this
     # participant list.
     #
+    # Called usually by Engine#unregister_participant.
+    #
     def unregister (name_or_participant, list=nil)
 
       list ||= get_list
@@ -149,6 +153,37 @@ module Ruote
       @instantiated_participants.delete(code) if code
 
       entry.first
+    end
+
+    # This method is called by Engine#register_from_dir
+    #
+    def register_from_dir (dir)
+
+      current = local_participant_classes
+
+      Dir["#{dir}/*.rb"].each do |path|
+
+        load(path)
+
+        after = local_participant_classes
+
+        klass = (after - current).first
+
+        if klass
+
+          p_name = klass.respond_to?(:participant_regex) ?
+            klass.participant_regex :
+            File.basename(path, File.extname(path))
+
+          if p_name.is_a?(String) && m = p_name.match(/^\d+\_(.+)$/)
+            p_name = m[1]
+          end
+
+          register(p_name, klass, {}, nil)
+
+          current = after
+        end
+      end
     end
 
     def lookup_info (participant_name)
@@ -216,6 +251,17 @@ module Ruote
         { 'type' => 'configurations',
           '_id' => 'participant_list',
           'list' => [] }
+    end
+
+    # Returns an array of all the classes in the ObjectSpace that include the
+    # Ruote::LocalParticipant module.
+    #
+    def local_participant_classes
+
+      ObjectSpace.each_object(Class).inject([]) { |a, c|
+        a << c if c.include?(Ruote::LocalParticipant)
+        a
+      }
     end
   end
 end

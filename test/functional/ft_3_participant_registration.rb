@@ -97,7 +97,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
   def test_participant_shutdown
 
-    alpha = @engine.register_participant :alpha, MyParticipant.new
+    alpha = @engine.register :alpha, MyParticipant.new
 
     @engine.context.plist.shutdown
 
@@ -109,7 +109,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     pa = @engine.register_participant :alpha do |workitem|
     end
 
-    assert_equal ['^alpha$'], @engine.context.plist.names
+    assert_equal [ '^alpha$' ], @engine.context.plist.names
   end
 end
 

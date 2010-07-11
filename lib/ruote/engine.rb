@@ -370,6 +370,32 @@ module Ruote
 
     alias :unregister :unregister_participant
 
+    # Given a directory, will look at all the files ending in .rb
+    # Each of this file will be loaded, if it contains a participant
+    # implementation (the criterion is whether the class includes
+    # LocalParticipant) the name of the file will be used to register
+    # a participant for this class.
+    #
+    # For example, if there is a participants/toto.rb containing a
+    # participant implementation TotoParticipant, calling
+    #
+    #   engine.register_from_dir('participants')
+    #
+    # is equivalent to
+    #
+    #   require 'participants/toto.rb'
+    #   engine.register 'toto', TotoParticipant
+    #
+    # Nota bene :
+    #
+    # * no options are passed to participants
+    # * the alphabetical order determines the registration order
+    #
+    def register_from_dir (dir)
+
+      @context.plist.register_from_dir(dir)
+    end
+
     # A convenience method for
     #
     #   sp = Ruote::StorageParticipant.new(engine)
