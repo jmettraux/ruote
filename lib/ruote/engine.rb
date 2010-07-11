@@ -66,32 +66,52 @@ module Ruote
         # launch the worker if there is one
     end
 
+    # Returns the storage this engine works with passed at engine
+    # initialization.
+    #
     def storage
 
       @context.storage
     end
 
+    # Returns the worker nested inside this engine (passed at initialization).
+    # Returns nil if this engine is only linked to a storage (and the worker
+    # is running somewhere else (hopefully)).
+    #
     def worker
 
       @context.worker
     end
 
+    # Given a process identifier (wfid), cancels this process.
+    #
     def cancel_process (wfid)
 
       @context.storage.put_msg('cancel_process', 'wfid' => wfid)
     end
 
+    # Given a process identifier (wfid), kills this process. Killing is
+    # equivalent to cancelling, but when killing, :on_cancel attributes
+    # are not triggered.
+    #
     def kill_process (wfid)
 
       @context.storage.put_msg('kill_process', 'wfid' => wfid)
     end
 
+    # Cancels a segment of process instance. Since expressions are nodes in
+    # processes instances, cancelling an expression, will cancel the expression
+    # and all its children (the segment of process).
+    #
     def cancel_expression (fei)
 
       fei = fei.to_h if fei.respond_to?(:to_h)
       @context.storage.put_msg('cancel', 'fei' => fei)
     end
 
+    # Like #cancel_expression, but :on_cancel attributes (of the expressions)
+    # are not triggered.
+    #
     def kill_expression (fei)
 
       fei = fei.to_h if fei.respond_to?(:to_h)
@@ -333,6 +353,8 @@ module Ruote
       pa
     end
 
+    alias :register :register_participant
+
     # Removes/unregisters a participant from the engine.
     #
     def unregister_participant (name_or_participant)
@@ -345,6 +367,8 @@ module Ruote
         'participant_unregistered',
         'regex' => re.to_s)
     end
+
+    alias :unregister :unregister_participant
 
     # A convenience method for
     #

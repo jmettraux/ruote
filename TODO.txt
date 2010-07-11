@@ -374,3 +374,5 @@
     configuration issue
     maybe fail with a good error message when registering service...
 
+[ ] participant 'toto', :while => '${not_good}' (really ?)
+
