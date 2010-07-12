@@ -47,9 +47,7 @@ module Ruote
 
     # Registers a participant. Called by Engine#register_participant.
     #
-    def register (name, participant, options, block, list=nil)
-
-      list ||= get_list
+    def register (name, participant, options, block)
 
       options = options.inject({}) { |h, (k, v)|
         h[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
@@ -66,6 +64,8 @@ module Ruote
       key = (name.is_a?(Regexp) ? name : Regexp.new("^#{name}$")).source
 
       entry = [ key, entry ]
+
+      list = get_list
 
       list['list'].delete_if { |e| e.first == key }
 
@@ -108,12 +108,11 @@ module Ruote
     #
     # Called usually by Engine#unregister_participant.
     #
-    def unregister (name_or_participant, list=nil)
-
-      list ||= get_list
+    def unregister (name_or_participant)
 
       code = nil
       entry = nil
+      list = get_list
 
       if name_or_participant.is_a?(Symbol)
         name_or_participant = name_or_participant.to_s
@@ -214,6 +213,8 @@ module Ruote
 
     protected
 
+    # Fetches and returns the participant list in the storage.
+    #
     def get_list
 
       @context.storage.get_configuration('participant_list') ||
