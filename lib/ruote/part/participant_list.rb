@@ -155,37 +155,6 @@ module Ruote
       entry.first
     end
 
-    # This method is called by Engine#register_from_dir
-    #
-    def register_from_dir (dir)
-
-      current = local_participant_classes
-
-      Dir["#{dir}/*.rb"].each do |path|
-
-        load(path)
-
-        after = local_participant_classes
-
-        klass = (after - current).first
-
-        if klass
-
-          p_name = klass.respond_to?(:participant_regex) ?
-            klass.participant_regex :
-            File.basename(path, File.extname(path))
-
-          if p_name.is_a?(String) && m = p_name.match(/^\d+\_(.+)$/)
-            p_name = m[1]
-          end
-
-          register(p_name, klass, {}, nil)
-
-          current = after
-        end
-      end
-    end
-
     def lookup_info (participant_name)
 
       re, pa = get_list['list'].find { |rr, pp| participant_name.match(rr) }
