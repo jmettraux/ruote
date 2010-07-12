@@ -382,3 +382,5 @@
 [ ] provide a mean for a participant to reject a workitem (intra plist)
     on_reply and now filter ?
 
+[ ] rw : upgrade [register_]participant documentation
+

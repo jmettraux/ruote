@@ -4,8 +4,9 @@
 
 == ruote - 2.1.11    not yet released
 
-- engine#register_from_dir (Thanks Don)
-- engine#[un]register for #[un]register_participant
+- engine.register_participant 'al', 'AlParticipant', :require_path => 'pa/th'
+- engine.register_participant 'al', 'AlParticipant', :load_path => 'pa/th'
+- engine.[un]register for .[un]register_participant
 - engine.noisy = true (a shortcut)
 - engine.storage_participant (a shortcut)
 - removed direct dependency on rufus-lru

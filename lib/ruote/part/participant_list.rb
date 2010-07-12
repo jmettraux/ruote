@@ -54,7 +54,7 @@ module Ruote
         h
       }
 
-      entry = if participant.is_a?(Class)
+      entry = if participant.is_a?(Class) || participant.is_a?(String)
         [ participant.to_s, options ]
       else
         "inpa_#{name.inspect}"
@@ -170,12 +170,18 @@ module Ruote
       pi = lookup_info(participant_name)
 
       return nil unless pi
-      return opts[:on_reply] ? nil : pi unless pi.is_a?(Array)
+        # not found
+
+      return (opts[:on_reply] ? nil : pi) unless pi.is_a?(Array)
+        # if pi is not an array reply pi, unless it's a on_reply lookup
 
       class_name, options = pi
 
       if rp = options['require_path']
         require(rp)
+      end
+      if lp = options['load_path']
+        load(lp)
       end
 
       pa_class = Ruote.constantize(class_name)

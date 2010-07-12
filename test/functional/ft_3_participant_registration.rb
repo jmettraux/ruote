@@ -111,5 +111,138 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     assert_equal [ '^alpha$' ], @engine.context.plist.names
   end
+
+  def test_register_require_path
+
+    rpath = File.join(
+      File.dirname(__FILE__), "#{Time.now.to_f}_#{$$}_required_participant")
+    path = "#{rpath}.rb"
+
+    File.open(path, 'wb') do |f|
+      f.write(%{
+        class RequiredParticipant
+          include Ruote::LocalParticipant
+          def initialize (opts)
+            @opts = opts
+          end
+          def consume (workitem)
+            workitem.fields['message'] = @opts['message']
+            reply(workitem)
+          end
+        end
+      })
+    end
+
+    @engine.register_participant(
+      :alfred,
+      'RequiredParticipant',
+      :require_path => rpath, :message => 'hello')
+
+    assert_equal [ '^alfred$' ], @engine.context.plist.names
+
+    # first run
+
+    assert_equal(
+      [ 'RequiredParticipant',
+        { 'require_path' => rpath, 'message' => 'hello' } ],
+      @engine.context.plist.lookup_info('alfred'))
+
+    wfid = @engine.launch(Ruote.define { alfred })
+    r = @engine.wait_for(wfid)
+
+    assert_equal 'hello', r['workitem']['fields']['message']
+
+    # second run
+
+    File.open(path, 'wb') do |f|
+      f.write(%{
+        class RequiredParticipant
+          include Ruote::LocalParticipant
+          def initialize (opts)
+            @opts = opts
+          end
+          def consume (workitem)
+            workitem.fields['message'] = 'second run'
+            reply(workitem)
+          end
+        end
+      })
+    end
+
+    wfid = @engine.launch(Ruote.define { alfred })
+    r = @engine.wait_for(wfid)
+
+    # since it's a 'require', the code isn't reloaded
+
+    assert_equal 'hello', r['workitem']['fields']['message']
+
+    FileUtils.rm(path)
+  end
+
+  def test_reqister_load_path
+
+    path = File.join(
+      File.dirname(__FILE__), "#{Time.now.to_f}_#{$$}_loaded_participant.rb")
+
+    File.open(path, 'wb') do |f|
+      f.write(%{
+        class LoadedParticipant
+          include Ruote::LocalParticipant
+          def initialize (opts)
+            @opts = opts
+          end
+          def consume (workitem)
+            workitem.fields['message'] = @opts['message']
+            reply(workitem)
+          end
+        end
+      })
+    end
+
+    @engine.register_participant(
+      :alfred,
+      'LoadedParticipant',
+      :load_path => path, :message => 'bondzoi')
+
+    assert_equal [ '^alfred$' ], @engine.context.plist.names
+
+    # first run
+
+    assert_equal(
+      [ 'LoadedParticipant',
+        { 'load_path' => path, 'message' => 'bondzoi' } ],
+      @engine.context.plist.lookup_info('alfred'))
+
+    wfid = @engine.launch(Ruote.define { alfred })
+    r = @engine.wait_for(wfid)
+
+    assert_equal 'bondzoi', r['workitem']['fields']['message']
+
+    # second run
+
+    File.open(path, 'wb') do |f|
+      f.write(%{
+        class LoadedParticipant
+          include Ruote::LocalParticipant
+          def initialize (opts)
+            @opts = opts
+          end
+          def consume (workitem)
+            workitem.fields['message'] = 'second run'
+            reply(workitem)
+          end
+        end
+      })
+    end
+
+    wfid = @engine.launch(Ruote.define { alfred })
+    r = @engine.wait_for(wfid)
+
+    # since it's a 'load', the code is reloaded
+
+    assert_equal 'second run', r['workitem']['fields']['message']
+
+    FileUtils.rm(path)
+  end
 end
 

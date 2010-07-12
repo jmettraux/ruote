@@ -341,6 +341,21 @@ module Ruote
     # Remember that the options (the hash that follows the class name), must be
     # serialisable via JSON.
     #
+    #
+    # == require_path and load_path
+    #
+    # It's OK to register a participant by passing it's full classname as a
+    # String.
+    #
+    #   engine.register_participant(
+    #     'auditor', 'AuditParticipant', 'require_path' => 'part/audit.rb')
+    #   engine.register_participant(
+    #     'auto_decision', 'DecParticipant', 'load_path' => 'part/dec.rb')
+    #
+    # Note the option load_path / require_path that point to the ruby file
+    # containing the participant implementation. 'require' will load and eval
+    # the ruby code only once, 'load' each time.
+    #
     def register_participant (regex, participant=nil, opts={}, &block)
 
       pa = @context.plist.register(regex, participant, opts, block)
@@ -354,7 +369,6 @@ module Ruote
     end
 
     alias :register :register_participant
-    #
     #--
     # maybe later
     #def register (*args, &block)
