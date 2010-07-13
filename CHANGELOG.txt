@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- engine.participant_list and .participant_list=
 - engine.register_participant 'al', 'AlParticipant', :require_path => 'pa/th'
 - engine.register_participant 'al', 'AlParticipant', :load_path => 'pa/th'
 - engine.[un]register for .[un]register_participant

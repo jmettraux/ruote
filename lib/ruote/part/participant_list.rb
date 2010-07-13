@@ -204,7 +204,7 @@ module Ruote
     #
     def names
 
-      get_list['list'].map { |re, pa| re }
+      get_list['list'].collect { |re, pa| re }
     end
 
     # Shuts down the 'instantiated participants' (engine worker participants)
@@ -215,6 +215,36 @@ module Ruote
       @instantiated_participants.each { |re, pa|
         pa.shutdown if pa.respond_to?(:shutdown)
       }
+    end
+
+    # Used by Engine#participant_list
+    #
+    # Returns a representation of this participant list as an array of
+    # ParticipantEntry instances.
+    #
+    def list
+
+      get_list['list'].collect { |e| ParticipantEntry.new(e) }
+    end
+
+    # Used by Engine#participant_list=
+    #
+    # Takes as input an array of ParticipantEntry instances and updates
+    # this participant list with it.
+    #
+    # See ParticipantList#list
+    #
+    def list= (pl)
+
+      list = get_list
+      list['list'] = pl.collect { |pe| pe.to_a }
+
+      if r = @context.storage.put(list)
+        #
+        # put failed, have to redo it
+        #
+        list= (pl)
+      end
     end
 
     protected
@@ -238,6 +268,38 @@ module Ruote
         a << c if c.include?(Ruote::LocalParticipant)
         a
       }
+    end
+  end
+
+  #
+  # A helper class, for ParticipantList#list, which returns a list (order
+  # matters) of ParticipantEntry instances.
+  #
+  # See Engine#participant_list
+  #
+  class ParticipantEntry
+
+    attr_accessor :regex, :classname, :options
+
+    def initialize (a)
+      @regex = a.first
+      if a.last.is_a?(Array)
+        @classname = a.last.first
+        @options = a.last.last
+      else
+        @classname = a.last
+        @options = nil
+      end
+    end
+
+    def to_a
+      @classname.match(/^inpa\_/) ?
+        [ @regex, @classname ] :
+        [ @regex, [ @classname, @options ] ]
+    end
+
+    def to_s
+      "/#{@regex}/ ==> #{@classname} #{@opts.inspect}"
     end
   end
 end

@@ -7,6 +7,8 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
+require 'ruote'
+
 
 class FtParticipantRegistrationTest < Test::Unit::TestCase
   include FunctionalBase
@@ -28,6 +30,10 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal(
       [ 'inpa_:alpha' ],
       @engine.context.plist.instantiated_participants.collect { |e| e.first })
+
+    assert_equal(
+      [ [ '^alpha$', 'inpa_:alpha' ] ],
+      @engine.participant_list.collect { |pe| pe.to_a })
   end
 
   def test_double_registration
@@ -243,6 +249,40 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal 'second run', r['workitem']['fields']['message']
 
     FileUtils.rm(path)
+  end
+
+  def test_participant_list
+
+    #noisy
+
+    @engine.register_participant 'alpha', Ruote::StorageParticipant
+
+    assert_equal(
+      [ '/^alpha$/ ==> Ruote::StorageParticipant nil' ],
+      @engine.participant_list.collect { |pe| pe.to_s })
+
+    # launching a process with a missing participant
+
+    wfid = @engine.launch(Ruote.define { bravo })
+    @engine.wait_for(wfid)
+
+    assert_equal 1, @engine.process(wfid).errors.size
+
+    # fixing the error by updating the participant list
+
+    list = @engine.participant_list
+    list.first.regex = '^.+$' # instead of '^alpha$'
+    @engine.participant_list = list
+
+    # replay at error
+
+    @engine.replay_at_error(@engine.process(wfid).errors.first)
+    @engine.wait_for(:bravo)
+
+    # bravo should hold a workitem
+
+    assert_equal 1, @engine.storage_participant.size
+    assert_equal 'bravo', @engine.storage_participant.first.participant_name
   end
 end
 

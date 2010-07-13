@@ -384,3 +384,5 @@
 
 [ ] rw : upgrade [register_]participant documentation
 
+[ ] engine.wfids (lighter than engine.processes)
+

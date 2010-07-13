@@ -336,7 +336,8 @@ module Ruote
     #     end
     #   end
     #
-    #   engine.register_participant 'moon', MyStatelessParticipant, 'name' => 'saturn5'
+    #   engine.register_participant(
+    #     'moon', MyStatelessParticipant, 'name' => 'saturn5')
     #
     # Remember that the options (the hash that follows the class name), must be
     # serialisable via JSON.
@@ -394,6 +395,40 @@ module Ruote
     end
 
     alias :unregister :unregister_participant
+
+    # Returns a list of Ruote::ParticipantEntry instances.
+    #
+    #   engine.register_participant :alpha, MyParticipant, 'message' => 'hello'
+    #
+    #   # interrogate participant list
+    #   #
+    #   list = engine.participant_list
+    #   participant = list.first
+    #   p participant.regex
+    #     # => "^alpha$"
+    #   p participant.classname
+    #     # => "MyParticipant"
+    #   p participant.options
+    #     # => {"message"=>"hello"}
+    #
+    #   # update participant list
+    #   #
+    #   participant.regex = '^alfred$'
+    #   engine.participant_list = list
+    #
+    def participant_list
+
+      @context.plist.list
+    end
+
+    # Accepts a list of Ruote::ParticipantEntry instances.
+    #
+    # See Engine#participant_list
+    #
+    def participant_list= (pl)
+
+      @context.plist.list = pl
+    end
 
     # A convenience method for
     #
