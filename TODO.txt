@@ -386,3 +386,6 @@
 
 [ ] engine.wfids (lighter than engine.processes)
 
+[ ] (ft_27) set "v:mypart" => [ 'MyParticipant', {} ]
+    binding a participant on the fly (just for this process)
+
