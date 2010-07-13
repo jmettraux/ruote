@@ -377,7 +377,7 @@
 [ ] participant 'toto', :while => '${not_good}' (really ?)
 
 [ ] engine.register_from_dir() have a way to re-evaluate the dir
-[ ] OR remove engine.register_from_dir()
+[o] OR remove engine.register_from_dir()
 [ ] AND provide a better register &block
 [ ] provide a mean for a participant to reject a workitem (intra plist)
     on_reply and now filter ?
