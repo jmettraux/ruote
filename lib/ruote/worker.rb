@@ -39,6 +39,7 @@ module Ruote
       # 'receive' is a ParticipantExpression alias for 'reply'
 
     PROC_ACTIONS = %w[ cancel_process kill_process ]
+    DISP_ACTIONS = %w[ dispatch dispatch_cancel ]
 
     attr_reader :storage
     attr_reader :context
@@ -225,7 +226,7 @@ module Ruote
 
           Ruote::Exp::FlowExpression.do_action(@context, msg)
 
-        elsif action.match(/^dispatch/)
+        elsif DISP_ACTIONS.include?(action)
 
           @context.dispatch_pool.handle(msg)
 
