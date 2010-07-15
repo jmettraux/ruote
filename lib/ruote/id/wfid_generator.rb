@@ -50,7 +50,7 @@ module Ruote
       lraw = @last['raw'] + 0.01
 
       raw = Time.now.utc
-      while raw.to_f <= lraw; raw = raw + 0.01; end
+      raw = raw + 0.01 while raw.to_f <= lraw
 
       @last['raw'] = raw.to_f
 

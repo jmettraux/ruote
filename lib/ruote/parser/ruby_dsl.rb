@@ -117,9 +117,7 @@ module Ruote
 
     def self.create_branch (name, attributes, &block)
 
-      while name[0, 1] == '_'
-        name = name[1..-1]
-      end
+      name = name[1..-1] while name[0, 1] == '_'
 
       h = attributes.inject({}) { |h1, a|
         a.is_a?(Hash) ? h1.merge!(a) : h1[a] = nil

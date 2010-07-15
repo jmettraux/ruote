@@ -70,9 +70,7 @@ module Ruote
     #
     def run
 
-      while(@running) do
-        step
-      end
+      step while @running
     end
 
     # Triggers the run method of the worker in a dedicated thread.

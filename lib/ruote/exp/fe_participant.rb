@@ -128,13 +128,11 @@ module Ruote::Exp
       #
       # determine participant
 
-      h.participant_name = attribute(:ref) || attribute_text
+      h.participant_name = (attribute(:ref) || attribute_text).to_s
 
-      h.participant_name = h.participant_name.to_s
-
-      if h.participant_name == ''
-        raise ArgumentError.new("no participant name specified")
-      end
+      raise ArgumentError.new(
+        "no participant name specified"
+      ) if h.participant_name == ''
 
       participant_info = @context.plist.lookup_info(h.participant_name)
 
