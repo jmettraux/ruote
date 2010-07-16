@@ -184,6 +184,12 @@ module Ruote
     #
     # WARNING : this is an expensive operation.
     #
+    # Please note, if you're interested only in processes that have errors,
+    # Engine#errors is a more efficient mean.
+    #
+    # To simply list the wfids of the currently running, Engine#process_wfids
+    # is way cheaper to call.
+    #
     def processes
 
       exps = @context.storage.get_many('expressions')
@@ -198,7 +204,9 @@ module Ruote
         (by_wfid[err['msg']['fei']['wfid']] ||= [ [], [] ]).last << err
       end
 
-      by_wfid.values.collect { |xs, rs| ProcessStatus.new(@context, xs, rs) }
+      by_wfid.values.collect { |expressions, errors|
+        ProcessStatus.new(@context, expressions, errors)
+      }
     end
 
     # Returns an array of current errors (hashes)
@@ -208,6 +216,19 @@ module Ruote
       wfid.nil? ?
         @context.storage.get_many('errors') :
         @context.storage.get_many('errors', /!#{wfid}$/)
+    end
+
+    # Returns a [sorted] list of wfids of the process instances currently
+    # running in the engine.
+    #
+    # This operation is substantially less costly than Engine#processes (though
+    # the 'how substantially' depends on the storage chosen).
+    #
+    def process_wfids
+
+      @context.storage.ids('expressions').collect { |sfei|
+        sfei.split('!').last
+      }.uniq.sort
     end
 
     # Shuts down the engine, mostly passes the shutdown message to the other

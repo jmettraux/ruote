@@ -224,6 +224,7 @@
 [o] (ft_27) set "v:mypart" => [ 'MyParticipant', {} ]
     binding a participant on the fly (just for this process)
 [o] participant timeout as an instance method
+[o] engine.process_wfids (lighter than engine.processes)
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -387,5 +388,5 @@
 
 [ ] rw : upgrade [register_]participant documentation
 
-[ ] engine.wfids (lighter than engine.processes)
+[ ] StorageParticipant#by_store[_name]
 

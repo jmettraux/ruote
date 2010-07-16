@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class FtProcessStatusTest < Test::Unit::TestCase
@@ -495,6 +495,19 @@ digraph "process wfid wfid" {
 }
       }.strip,
       dot)
+  end
+
+  def test_process_wfids
+
+    pdef = Ruote.define { alpha }
+
+    @engine.register_participant 'alpha', Ruote::StorageParticipant
+
+    wfids = (1..7).inject([]) { |a, i| a << @engine.launch(pdef); a }.sort
+
+    sleep 0.350
+
+    assert_equal wfids, @engine.process_wfids
   end
 end
 
