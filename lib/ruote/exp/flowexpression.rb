@@ -169,8 +169,13 @@ module Ruote::Exp
       action = msg['action']
 
       if action == 'reply' && fei['engine_id'] != context.engine_id
+        #
+        # the reply has to go to another engine, let's locate the
+        # 'engine participant' and give it the workitem/reply
+        #
+        # see ft_37 for a test/example
 
-        ep = context.plist.lookup(fei['engine_id'])
+        ep = context.plist.instantiate(fei['engine_id'])
 
         raise(
           "no EngineParticipant found under name '#{fei['engine_id']}'"
@@ -179,6 +184,8 @@ module Ruote::Exp
         ep.reply(fei, msg['workitem'])
         return
       end
+
+      # normal case
 
       fexp = nil
 
@@ -669,9 +676,7 @@ module Ruote::Exp
     def do_schedule_timeout (timeout)
 
       return unless timeout
-
-      #h.timeout_at = Ruote.s_to_at(timeout)
-      #return if not(h.timeout_at) || h.timeout_at < Time.now.utc + 1.0
+      return if timeout.strip == ''
 
       h.timeout_schedule_id = @context.storage.put_schedule(
         'at',

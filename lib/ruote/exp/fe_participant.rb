@@ -123,6 +123,8 @@ module Ruote::Exp
     #
     h_reader :dispatched
 
+    h_reader :participant
+
     def apply
 
       #
@@ -134,7 +136,8 @@ module Ruote::Exp
         "no participant name specified"
       ) if h.participant_name == ''
 
-      participant_info = @context.plist.lookup_info(h.participant_name)
+      participant_info =
+        h.participant || @context.plist.lookup_info(h.participant_name)
 
       raise(ArgumentError.new(
         "no participant named #{h.participant_name.inspect}")
@@ -157,6 +160,7 @@ module Ruote::Exp
         'dispatch',
         'fei' => h.fei,
         'participant_name' => h.participant_name,
+        'participant' => h.participant,
         'workitem' => h.applied_workitem,
         'for_engine_worker?' => (participant_info.class != Array))
     end
@@ -175,14 +179,17 @@ module Ruote::Exp
         'dispatch_cancel',
         'fei' => h.fei,
         'participant_name' => h.participant_name,
+        'participant' => h.participant,
         'flavour' => flavour,
         'workitem' => h.applied_workitem)
     end
 
     def reply (workitem)
 
-      pa = @context.plist.lookup(
-        workitem['participant_name'], :on_reply => true)
+      pa = @context.plist.instantiate(
+        { 'participant_name' => h.participant_name,
+          'participant' => h.participant },
+        :if_respond_to? => :on_reply)
 
       pa.on_reply(Ruote::Workitem.new(workitem)) if pa
 
@@ -225,10 +232,12 @@ module Ruote::Exp
     #
     def schedule_timeout (p_info)
 
-      timeout =
-        attribute(:timeout) ||
-        (p_info.timeout rescue nil) ||
-        (p_info.is_a?(Array) ? p_info.last['timeout'] : nil)
+      timeout = attribute(:timeout)
+
+      unless timeout
+        pa = @context.plist.instantiate(p_info, :if_respond_to? => :timeout)
+        timeout = pa.timeout if pa
+      end
 
       do_schedule_timeout(timeout)
     end

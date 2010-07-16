@@ -221,6 +221,9 @@
 [x] remove dependency on rufus-scheduler
 [o] engine.storage_participant
 [o] engine.noisy = true shortcut
+[o] (ft_27) set "v:mypart" => [ 'MyParticipant', {} ]
+    binding a participant on the fly (just for this process)
+[o] participant timeout as an instance method
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -385,7 +388,4 @@
 [ ] rw : upgrade [register_]participant documentation
 
 [ ] engine.wfids (lighter than engine.processes)
-
-[ ] (ft_27) set "v:mypart" => [ 'MyParticipant', {} ]
-    binding a participant on the fly (just for this process)
 

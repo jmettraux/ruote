@@ -294,7 +294,8 @@ module Ruote
 
       if not exp_class
 
-        exp_class, tree = lookup_subprocess_or_participant(exp_hash)
+        exp_class, tree, part = lookup_subprocess_or_participant(exp_hash)
+        exp_hash['participant'] = part if part
 
       elsif msg['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
         def_name, tree = Ruote::Exp::DefineExpression.reorganize(tree)
@@ -350,6 +351,7 @@ module Ruote
       part = @context.plist.lookup_info(key)
 
       sub = key if (not sub) && (not part) && Ruote.is_uri?(key)
+        #
         # for when a variable points to the URI of a[n external] subprocess
 
       if sub or part
@@ -357,14 +359,26 @@ module Ruote
         tree[1]['ref'] = key
         tree[1]['original_ref'] = tree[0] if key != tree[0]
 
+        if sub.is_a?(Array) && sub.length == 2 && sub.last.is_a?(Hash)
+          #
+          # we have found a participant register in a variable
+          #
+          part = sub
+          sub = nil
+        end
+
         if sub
-          [ Ruote::Exp::SubprocessExpression, [ 'subprocess', *tree[1..2] ] ]
+          [ Ruote::Exp::SubprocessExpression,
+            [ 'subprocess', *tree[1..2] ],
+            nil ]
         else
-          [ Ruote::Exp::ParticipantExpression, [ 'participant', *tree[1..2] ] ]
+          [ Ruote::Exp::ParticipantExpression,
+            [ 'participant', *tree[1..2] ],
+            part.is_a?(Array) ? part : nil ]
         end
       else
 
-        [ nil, tree ]
+        [ nil, tree, nil ]
       end
     end
 

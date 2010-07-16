@@ -154,6 +154,11 @@ module Ruote
       entry.first
     end
 
+    # Given a participant name, returns
+    #
+    # Returns nil if there is no participant registered that covers the given
+    # participant name.
+    #
     def lookup_info (participant_name)
 
       re, pa = get_list['list'].find { |rr, pp| participant_name.match(rr) }
@@ -165,15 +170,25 @@ module Ruote
       end
     end
 
-    def lookup (participant_name, opts={})
+    # Returns an instance of a participant
+    #
+    def instantiate (o, opts={})
 
-      pi = lookup_info(participant_name)
+      pi = (o.is_a?(String) || o.is_a?(Array) || o.respond_to?(:consume)) ?
+        o :
+        o['participant'] || o['participant_name']
+
+      pi = lookup_info(pi) if pi.is_a?(String)
 
       return nil unless pi
         # not found
 
-      return (opts[:on_reply] ? nil : pi) unless pi.is_a?(Array)
-        # if pi is not an array reply pi, unless it's a on_reply lookup
+      irt = opts[:if_respond_to?]
+
+      if pi.respond_to?(:consume)
+        return nil if irt && ( ! pi.respond_to?(irt))
+        return pi
+      end
 
       class_name, options = pi
 
@@ -187,8 +202,9 @@ module Ruote
       pa_class = Ruote.constantize(class_name)
       pa_m = pa_class.instance_methods
 
-      return nil if opts[:on_reply] && ! (
-        pa_m.include?(:on_reply) || pa_m.include?('on_reply'))
+      if irt && ! (pa_m.include?(irt.to_s) || pa_m.include?(irt.to_sym))
+        return nil
+      end
 
       pa = if pa_class.instance_method(:initialize).arity > 0
         pa_class.new(options)
