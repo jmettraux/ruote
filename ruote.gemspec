@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer", "Torsten Schoenebaum"]
-  s.date = %q{2010-07-03}
+  s.date = %q{2010-07-17}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -199,9 +199,11 @@ ruote is an open source ruby workflow engine.
      "test/functional/ft_38_participant_more.rb",
      "test/functional/ft_39_wait_for.rb",
      "test/functional/ft_3_participant_registration.rb",
-     "test/functional/ft_40_participant_on_reply.rb",
+     "test/functional/ft_40_wait_logger.rb",
      "test/functional/ft_41_participants.rb",
      "test/functional/ft_42_storage_copy.rb",
+     "test/functional/ft_43_participant_on_reply.rb",
+     "test/functional/ft_44_var_participant.rb",
      "test/functional/ft_4_cancel.rb",
      "test/functional/ft_5_on_error.rb",
      "test/functional/ft_6_on_cancel.rb",
@@ -249,7 +251,7 @@ ruote is an open source ruby workflow engine.
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{ruote}
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{an open source ruby workflow engine}
   s.test_files = [
     "test/test.rb"
