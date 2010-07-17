@@ -34,7 +34,7 @@ ruote is an open source ruby workflow engine.
     gem.rubyforge_project = 'ruote'
     gem.test_file = 'test/test.rb'
 
-    gem.add_dependency 'rufus-json', '>= 0.2.3'
+    gem.add_dependency 'rufus-json', '>= 0.2.4'
     gem.add_dependency 'rufus-cloche', '>= 0.1.17'
     gem.add_dependency 'rufus-dollar'
     gem.add_dependency 'rufus-mnemo', '>= 1.1.0'
