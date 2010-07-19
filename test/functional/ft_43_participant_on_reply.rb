@@ -41,6 +41,23 @@ class FtParticipantOnReplyTest < Test::Unit::TestCase
     assert_trace('hello', pdef)
   end
 
+  def test_instantiated_participant_on_reply
+
+    pdef = Ruote.process_definition do
+      sequence do
+        alpha
+        echo '${f:message}'
+      end
+    end
+
+    @engine.register_participant :alpha, MyParticipant.new(nil)
+      # instantiated participant :-(
+
+    #noisy
+
+    assert_trace('hello', pdef)
+  end
+
   class AwkwardParticipant
     include Ruote::LocalParticipant
     def initialize (opts)
