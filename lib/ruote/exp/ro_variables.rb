@@ -118,7 +118,9 @@ module Ruote::Exp
       fexp.un_set_variable(:unset, v, nil, should_persist)
     end
 
-    # This method is mostly used by the expression pool when looking up
+    # TODO : redoc rewrite needed
+    #
+    # This method is mostly used by the worker when looking up
     # a process name or participant name bound under a variable.
     #
     def iterative_var_lookup (k)

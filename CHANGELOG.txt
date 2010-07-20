@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- 'ref' expression (pointing to participants or subprocesses)
 - engine.process_wfids (list process instance wfids)
 - set 'v:alpha' => [ 'MyParticipant', { 'flavour' => 'vanilla' }]
   participants registered as variables (just for that process instance)
