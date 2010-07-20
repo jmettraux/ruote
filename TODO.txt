@@ -389,4 +389,5 @@
 [ ] rw : upgrade [register_]participant documentation
 
 [ ] StorageParticipant#by_store[_name]
+    maybe : reform the store_name system !
 

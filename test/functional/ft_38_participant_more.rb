@@ -30,6 +30,8 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     end
   end
 
+  # Reject and re_dispatch are aliases.
+  #
   def test_participant_reject
 
     pdef = Ruote.process_definition do
@@ -59,6 +61,8 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     end
   end
 
+  # Reject and re_dispatch are aliases.
+  #
   def test_participant_re_dispatch
 
     pdef = Ruote.process_definition do
@@ -92,6 +96,11 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     end
   end
 
+  # Reject and re_dispatch are aliases.
+  #
+  # re_dispatch with an :in or an :at parameter makes sure the dispatch is
+  # performed once more, but a bit later (:in / :at timepoint).
+  #
   def test_participant_re_dispatch_later
 
     pdef = Ruote.process_definition do
@@ -112,6 +121,9 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     assert t < 2.0, "took more than 1.99 second"
   end
 
+  # Making sure that when a process gets cancelled, its 'later' re-dispatches
+  # are cancelled as well.
+  #
   def test_participant_re_dispatch_later_cancel
 
     pdef = Ruote.process_definition do
@@ -146,6 +158,9 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     end
   end
 
+  # Stashing lets a stateless participant 'stash' state via put() and get()
+  # into the engine.
+  #
   def test_stash
 
     BLACKBOARD.clear
