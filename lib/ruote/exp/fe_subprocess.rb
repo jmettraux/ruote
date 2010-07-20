@@ -153,6 +153,8 @@ module Ruote::Exp
 
     def apply
 
+      return invoke_engine_participant if attribute(:engine)
+
       ref = attribute(:ref) || attribute_text
 
       raise "no subprocess referred in #{tree}" unless ref
@@ -164,6 +166,23 @@ module Ruote::Exp
         # NOTE : we're taking the first child here...
 
       launch_sub(pos, subtree, :variables => vars)
+    end
+
+    protected
+
+    def invoke_engine_participant
+
+      atts = tree[1]
+
+      if ref = atts.find { |k, v| v.nil? }
+        ref = ref.first
+        atts.delete(ref)
+      end
+      atts['pdef'] = atts['ref'] || ref
+      atts['ref'] = atts.delete('engine')
+
+      @h['name'] = 'participant'
+      Ruote::Exp::ParticipantExpression.new(@context, @h).apply
     end
   end
 end

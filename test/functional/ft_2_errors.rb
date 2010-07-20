@@ -49,7 +49,7 @@ class FtErrorsTest < Test::Unit::TestCase
 
     ps = @engine.process(wfid)
 
-    exp = ps.expressions.find { |fe| fe.class == Ruote::Exp::RawExpression }
+    exp = ps.expressions.find { |fe| fe.class == Ruote::Exp::RefExpression }
 
     assert_not_nil exp
 
@@ -115,7 +115,7 @@ class FtErrorsTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
 
     err = ps.errors.first
-    assert_equal [ 'nada', {}, [] ], err.tree
+    assert_equal [ 'nada', { 'ref' => 'nada' }, [] ], err.tree
 
     err.tree = [ 'alpha', {}, [] ]
     @engine.replay_at_error(err)
@@ -372,7 +372,7 @@ class FtErrorsTest < Test::Unit::TestCase
     r = @engine.wait_for(wfid)
 
     assert_equal 'RuntimeError', r['error_class']
-    assert_equal "unknown expression 'nada'", r['error_message']
+    assert_equal "unknown participant or subprocess 'nada'", r['error_message']
     assert_equal Array, r['error_backtrace'].class
   end
 end

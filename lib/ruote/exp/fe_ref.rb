@@ -53,13 +53,61 @@ module Ruote::Exp
 
       key = (attribute(:ref) || attribute_text).to_s
 
-      _, value = iterative_var_lookup(key)
-
-      new_exp = if value
-        Ruote::Exp::SubprocessExpression.new(@context, @h)
-      else
-        Ruote::Exp::ParticipantExpression.new(@context, @h)
+      if name != 'ref'
+        key = name
+        tree[1]['ref'] = key
       end
+
+      key2, value = iterative_var_lookup(key)
+
+      tree[1]['ref'] = key2 if key2
+      tree[1]['original_ref'] = key if key2 != key
+
+      #p [ key, key2, value ]
+
+      unless value
+        #
+        # seems like it's participant
+
+        @h['participant'] = @context.plist.lookup_info(tree[1]['ref'])
+
+        value = key2 if ( ! @h['participant']) && (key2 != key)
+      end
+
+      if value.is_a?(Array) && value.size == 2 && value.last.is_a?(Hash)
+        #
+        # participant 'defined' in var
+
+        @h['participant'] = value
+      end
+
+      unless value || @h['participant']
+        #
+        # unknown participant or subprocess
+
+        @h['state'] = 'failed'
+        persist_or_raise
+
+        raise("unknown participant or subprocess '#{tree[1]['ref']}'")
+      end
+
+      new_exp = if @h['participant']
+
+        @h['participant'] = nil if @h['participant'].respond_to?(:consume)
+          # instantiated participant
+
+        tree[0] = 'participant'
+        @h['name'] = 'participant'
+        Ruote::Exp::ParticipantExpression.new(@context, @h)
+      else
+
+        tree[0] = 'subprocess'
+        @h['name'] = 'subprocess'
+        Ruote::Exp::SubprocessExpression.new(@context, @h)
+      end
+
+      #new_exp.initial_persist
+        # not necessary
 
       new_exp.apply
     end

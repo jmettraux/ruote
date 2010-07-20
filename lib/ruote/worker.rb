@@ -294,8 +294,9 @@ module Ruote
 
       if not exp_class
 
-        exp_class, tree, part = lookup_subprocess_or_participant(exp_hash)
-        exp_hash['participant'] = part if part
+        #exp_class, tree, part = lookup_subprocess_or_participant(exp_hash)
+        #exp_hash['participant'] = part if part
+        exp_class = Ruote::Exp::RefExpression
 
       elsif msg['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
         def_name, tree = Ruote::Exp::DefineExpression.reorganize(tree)
@@ -303,83 +304,10 @@ module Ruote
         exp_class = Ruote::Exp::SequenceExpression
       end
 
-      if exp_class == Ruote::Exp::SubprocessExpression && tree[1]['engine']
-        #
-        # the subprocess has to be transformed into an EngineParticipant...
-
-        exp_class = Ruote::Exp::ParticipantExpression
-
-        atts = tree[1]
-
-        if ref = atts.find { |k, v| v.nil? }
-          ref = ref.first
-          atts.delete(ref)
-        end
-
-        atts['pdef'] = atts['ref'] || ref
-        atts['ref'] = atts.delete('engine')
-      end
-
-      raise_unknown_expression_error(exp_hash) unless exp_class
-
       exp = exp_class.new(@context, exp_hash.merge!('original_tree' => tree))
 
       exp.initial_persist
       exp.do_apply
-    end
-
-    def raise_unknown_expression_error (exp_hash)
-
-      exp_hash['state'] = 'failed'
-      #exp_hash['has_error'] = true
-
-      Ruote::Exp::RawExpression.new(@context, exp_hash).persist_or_raise
-        # undigested expression is stored
-
-      raise "unknown expression '#{exp_hash['original_tree'].first}'"
-    end
-
-    def lookup_subprocess_or_participant (exp_hash)
-
-      tree = exp_hash['original_tree']
-
-      key, value = Ruote::Exp::FlowExpression.new(
-        @context, exp_hash.merge('name' => 'temporary')
-      ).iterative_var_lookup(tree[0])
-
-      sub = value
-      part = @context.plist.lookup_info(key)
-
-      sub = key if (not sub) && (not part) && Ruote.is_uri?(key)
-        #
-        # for when a variable points to the URI of a[n external] subprocess
-
-      if sub or part
-
-        tree[1]['ref'] = key
-        tree[1]['original_ref'] = tree[0] if key != tree[0]
-
-        if sub.is_a?(Array) && sub.length == 2 && sub.last.is_a?(Hash)
-          #
-          # we have found a participant register in a variable
-          #
-          part = sub
-          sub = nil
-        end
-
-        if sub
-          [ Ruote::Exp::SubprocessExpression,
-            [ 'subprocess', *tree[1..2] ],
-            nil ]
-        else
-          [ Ruote::Exp::ParticipantExpression,
-            [ 'participant', *tree[1..2] ],
-            part.is_a?(Array) ? part : nil ]
-        end
-      else
-
-        [ nil, tree, nil ]
-      end
     end
 
     def cancel_process (msg)

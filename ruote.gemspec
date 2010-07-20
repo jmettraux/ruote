@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer", "Torsten Schoenebaum"]
-  s.date = %q{2010-07-17}
+  s.date = %q{2010-07-20}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -61,6 +61,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/exp/fe_noop.rb",
      "lib/ruote/exp/fe_participant.rb",
      "lib/ruote/exp/fe_redo.rb",
+     "lib/ruote/exp/fe_ref.rb",
      "lib/ruote/exp/fe_reserve.rb",
      "lib/ruote/exp/fe_restore.rb",
      "lib/ruote/exp/fe_save.rb",
@@ -73,7 +74,6 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/exp/flowexpression.rb",
      "lib/ruote/exp/iterator.rb",
      "lib/ruote/exp/merge.rb",
-     "lib/ruote/exp/raw.rb",
      "lib/ruote/exp/ro_attributes.rb",
      "lib/ruote/exp/ro_persist.rb",
      "lib/ruote/exp/ro_variables.rb",
@@ -159,6 +159,7 @@ ruote is an open source ruby workflow engine.
      "test/functional/eft_28_when.rb",
      "test/functional/eft_29_cron.rb",
      "test/functional/eft_2_sequence.rb",
+     "test/functional/eft_30_ref.rb",
      "test/functional/eft_3_participant.rb",
      "test/functional/eft_4_set.rb",
      "test/functional/eft_5_subprocess.rb",
