@@ -63,13 +63,12 @@ module Ruote::Exp
       tree[1]['ref'] = key2 if key2
       tree[1]['original_ref'] = key if key2 != key
 
-      #p [ key, key2, value ]
-
       unless value
         #
         # seems like it's participant
 
-        @h['participant'] = @context.plist.lookup_info(tree[1]['ref'])
+        @h['participant'] =
+          @context.plist.lookup_info(tree[1]['ref'], h.applied_workitem)
 
         value = key2 if ( ! @h['participant']) && (key2 != key)
       end

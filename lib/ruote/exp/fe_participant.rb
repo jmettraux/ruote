@@ -137,7 +137,12 @@ module Ruote::Exp
       ) if h.participant_name == ''
 
       participant_info =
-        h.participant || @context.plist.lookup_info(h.participant_name)
+        h.participant ||
+        @context.plist.lookup_info(h.participant_name, h.applied_workitem)
+
+      unless participant_info.respond_to?(:consume)
+        h.participant = participant_info
+      end
 
       raise(ArgumentError.new(
         "no participant named #{h.participant_name.inspect}")
@@ -186,10 +191,11 @@ module Ruote::Exp
 
     def reply (workitem)
 
-      pa = @context.plist.instantiate(
-        { 'participant_name' => h.participant_name,
-          'participant' => h.participant },
-        :if_respond_to? => :on_reply)
+      pinfo =
+        h.participant ||
+        @context.plist.lookup_info(h.participant_name, workitem)
+
+      pa = @context.plist.instantiate(pinfo, :if_respond_to? => :on_reply)
 
       pa.on_reply(Ruote::Workitem.new(workitem)) if pa
 

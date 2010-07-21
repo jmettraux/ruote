@@ -151,7 +151,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal(
       [ 'RequiredParticipant',
         { 'require_path' => rpath, 'message' => 'hello' } ],
-      @engine.context.plist.lookup_info('alfred'))
+      @engine.context.plist.lookup_info('alfred', nil))
 
     wfid = @engine.launch(Ruote.define { alfred })
     r = @engine.wait_for(wfid)
@@ -217,7 +217,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal(
       [ 'LoadedParticipant',
         { 'load_path' => path, 'message' => 'bondzoi' } ],
-      @engine.context.plist.lookup_info('alfred'))
+      @engine.context.plist.lookup_info('alfred', nil))
 
     wfid = @engine.launch(Ruote.define { alfred })
     r = @engine.wait_for(wfid)

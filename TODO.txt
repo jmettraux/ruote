@@ -383,11 +383,13 @@
 [ ] engine.register_from_dir() have a way to re-evaluate the dir
 [o] OR remove engine.register_from_dir()
 [ ] AND provide a better register &block
-[ ] provide a mean for a participant to reject a workitem (intra plist)
+[o] provide a mean for a participant to reject a workitem (intra plist)
     on_reply and now filter ?
 
 [ ] rw : upgrade [register_]participant documentation
 
 [ ] StorageParticipant#by_store[_name]
     maybe : reform the store_name system !
+
+[ ] rename 'parser' to 'reader'
 

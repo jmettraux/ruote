@@ -175,13 +175,14 @@ module Ruote::Exp
         #
         # see ft_37 for a test/example
 
-        ep = context.plist.instantiate(fei['engine_id'])
+        engine_participant =
+          context.plist.lookup(fei['engine_id'], msg['workitem'])
 
         raise(
           "no EngineParticipant found under name '#{fei['engine_id']}'"
-        ) unless ep
+        ) unless engine_participant
 
-        ep.reply(fei, msg['workitem'])
+        engine_participant.reply(fei, msg['workitem'])
         return
       end
 

@@ -57,7 +57,7 @@ module Ruote
 
       flavour = msg['flavour']
 
-      participant = @context.plist.instantiate(msg)
+      participant = @context.plist.instantiate(msg['participant'])
 
       begin
         participant.cancel(Ruote::FlowExpressionId.new(msg['fei']), flavour)
@@ -73,7 +73,8 @@ module Ruote
 
     def dispatch (msg)
 
-      participant = @context.plist.instantiate(msg)
+      participant = @context.plist.lookup(
+        msg['participant'] || msg['participant_name'], msg['workitem'])
 
       if participant.respond_to?(:do_not_thread) && participant.do_not_thread
         do_dispatch(participant, msg)

@@ -154,43 +154,61 @@ module Ruote
       entry.first
     end
 
+    # Returns a participant instance, or nil if there is no participant
+    # for the given participant name.
+    #
+    # Mostly a combination of #lookup_info and #instantiate.
+    #
+    def lookup (participant_name, workitem, opts={})
+
+      pinfo = participant_name
+
+      if participant_name.is_a?(String) && participant_name[0, 5] != 'inpa_'
+        pinfo = lookup_info(participant_name, workitem)
+      end
+
+      pinfo ? instantiate(pinfo, opts) : nil
+    end
+
     # Given a participant name, returns
     #
     # Returns nil if there is no participant registered that covers the given
     # participant name.
     #
-    def lookup_info (participant_name)
+    def lookup_info (pname, workitem)
 
-      re, pa = get_list['list'].find { |rr, pp| participant_name.match(rr) }
+      get_list['list'].each do |regex, pinfo|
 
-      case pa
-        when nil then nil
-        when String then @instantiated_participants[pa]
-        else pa
+        next unless pname.match(regex)
+
+        pa = instantiate(pinfo, :if_respond_to? => :accept?)
+
+        return pinfo unless pa
+
+        return pinfo if pa.accept?(
+          Ruote::Workitem.new(workitem.merge('participant_name' => pname))
+        )
       end
+
+      nil
     end
 
     # Returns an instance of a participant
     #
-    def instantiate (o, opts={})
-
-      pi = (o.is_a?(String) || o.is_a?(Array) || o.respond_to?(:consume)) ?
-        o :
-        o['participant'] || o['participant_name']
-
-      pi = lookup_info(pi) if pi.is_a?(String)
-
-      return nil unless pi
-        # not found
+    def instantiate (pinfo, opts={})
 
       irt = opts[:if_respond_to?]
 
-      if pi.respond_to?(:consume)
-        return nil if irt && ( ! pi.respond_to?(irt))
-        return pi
+      pinfo = @instantiated_participants[pinfo] if pinfo.is_a?(String)
+
+      if pinfo.respond_to?(:consume)
+        return (pinfo.respond_to?(irt) ? pinfo : nil) if irt
+        return pinfo
       end
 
-      class_name, options = pi
+      return nil unless pinfo
+
+      pa_class_name, options = pinfo
 
       if rp = options['require_path']
         require(rp)
@@ -199,7 +217,7 @@ module Ruote
         load(lp)
       end
 
-      pa_class = Ruote.constantize(class_name)
+      pa_class = Ruote.constantize(pa_class_name)
       pa_m = pa_class.instance_methods
 
       if irt && ! (pa_m.include?(irt.to_s) || pa_m.include?(irt.to_sym))
@@ -309,7 +327,7 @@ module Ruote
     end
 
     def to_a
-      @classname.match(/^inpa\_/) ?
+      @classname[0, 5] == 'inpa_' ?
         [ @regex, @classname ] :
         [ @regex, [ @classname, @options ] ]
     end
