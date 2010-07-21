@@ -284,5 +284,30 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal 1, @engine.storage_participant.size
     assert_equal 'bravo', @engine.storage_participant.first.participant_name
   end
+
+  class ParticipantCharlie; end
+
+  def test_register_block
+
+    @engine.register do
+      alpha 'Participants::Alpha', 'flavour' => 'vanilla'
+      participant 'bravo', 'Participants::Bravo', :flavour => 'peach'
+      catchall 'Participants::Charlie', 'flavour' => 'coconut'
+    end
+
+    assert_equal 3, @engine.participant_list.size
+
+    assert_equal(
+      %w[ ^alpha$ ^bravo$ ^.+$ ],
+      @engine.participant_list.collect { |pe| pe.regex.to_s })
+
+    assert_equal(
+      %w[ Participants::Alpha Participants::Bravo Participants::Charlie ],
+      @engine.participant_list.collect { |pe| pe.classname })
+
+    assert_equal(
+      %w[ vanilla peach coconut ],
+      @engine.participant_list.collect { |pe| pe.options['flavour'] })
+  end
 end
 

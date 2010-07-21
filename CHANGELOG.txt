@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- engine.register { block } (Torsten)
 - participant.accept?(workitem)
 - 'ref' expression (pointing to participants or subprocesses)
 - engine.process_wfids (list process instance wfids)

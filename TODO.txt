@@ -382,7 +382,7 @@
 
 [ ] engine.register_from_dir() have a way to re-evaluate the dir
 [o] OR remove engine.register_from_dir()
-[ ] AND provide a better register &block
+[o] AND provide a better register &block
 [o] provide a mean for a participant to reject a workitem (intra plist)
     on_reply and now filter ?
 

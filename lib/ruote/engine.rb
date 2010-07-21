@@ -390,17 +390,29 @@ module Ruote
       pa
     end
 
-    alias :register :register_participant
-    #--
-    # maybe later
-    #def register (*args, &block)
-    #  if args.size > 0
-    #    register_participant(*args, &block)
-    #  else
-    #    # TODO
-    #  end
-    #end
-    #++
+    # A shorter version of #register_participant
+    #
+    #   engine.register 'alice', MailParticipant, :target => 'alice@example.com'
+    #
+    # or a block registering mechanism.
+    #
+    #   engine.register do
+    #     alpha 'Participants::Alpha', 'flavour' => 'vanilla'
+    #     participant 'bravo', 'Participants::Bravo', :flavour => 'peach'
+    #     catchall ParticipantCharlie, 'flavour' => 'coconut'
+    #   end
+    #
+    # Originally implemented in ruote-kit by Torsten Schoenebaum.
+    #
+    def register (*args, &block)
+
+      if args.size > 0
+        register_participant(*args, &block)
+      else
+        proxy = ParticipantRegistrationProxy.new(self)
+        block.arity < 1 ? proxy.instance_eval(&block) : block.call(proxy)
+      end
+    end
 
     # Removes/unregisters a participant from the engine.
     #
@@ -549,6 +561,39 @@ module Ruote
     def []= (k, v)
 
       @storage.put_engine_variable(k, v)
+    end
+  end
+
+  #
+  # Engine#register uses this proxy when it's passed a block.
+  #
+  # Originally written by Torsten Schoenebaum for ruote-kit.
+  #
+  class ParticipantRegistrationProxy
+
+    def initialize (engine)
+
+      @engine = engine
+    end
+
+    def participant (name, klass, options)
+
+      @engine.register_participant(name, klass, options)
+    end
+
+    def catchall (*args)
+
+      klass = args.empty? ? Ruote::StorageParticipant : args.first
+      options = args[1] || {}
+
+      participant('.+', klass, options)
+    end
+
+    # Maybe a bit audacious...
+    #
+    def method_missing (method_name, *args)
+
+      participant(method_name, *args)
     end
   end
 end
