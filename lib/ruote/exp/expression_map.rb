@@ -30,7 +30,6 @@ end
 end
 
 require 'ruote/exp/flowexpression'
-require 'ruote/exp/raw'
 
 
 exppath = File.dirname(__FILE__)
