@@ -576,7 +576,7 @@ module Ruote
       @engine = engine
     end
 
-    def participant (name, klass, options)
+    def participant (name, klass, options={})
 
       @engine.register_participant(name, klass, options)
     end

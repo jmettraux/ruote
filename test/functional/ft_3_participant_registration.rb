@@ -292,22 +292,26 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     @engine.register do
       alpha 'Participants::Alpha', 'flavour' => 'vanilla'
       participant 'bravo', 'Participants::Bravo', :flavour => 'peach'
-      catchall 'Participants::Charlie', 'flavour' => 'coconut'
+      participant 'charlie', 'Participants::Charlie'
+      catchall 'Participants::Zebda', 'flavour' => 'coconut'
     end
 
-    assert_equal 3, @engine.participant_list.size
+    assert_equal 4, @engine.participant_list.size
 
     assert_equal(
-      %w[ ^alpha$ ^bravo$ ^.+$ ],
+      %w[ ^alpha$ ^bravo$ ^charlie$ ^.+$ ],
       @engine.participant_list.collect { |pe| pe.regex.to_s })
 
     assert_equal(
-      %w[ Participants::Alpha Participants::Bravo Participants::Charlie ],
+      %w[ Participants::Alpha
+          Participants::Bravo
+          Participants::Charlie
+          Participants::Zebda ],
       @engine.participant_list.collect { |pe| pe.classname })
 
     assert_equal(
-      %w[ vanilla peach coconut ],
-      @engine.participant_list.collect { |pe| pe.options['flavour'] })
+      %w[ vanilla peach nil coconut ],
+      @engine.participant_list.collect { |pe| pe.options['flavour'] || 'nil' })
   end
 end
 
