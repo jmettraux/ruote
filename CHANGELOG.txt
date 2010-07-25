@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- engine.errors(wfid=nil) now returns array of ProcessError instances
 - engine.register { block } (Torsten)
 - participant.accept?(workitem)
 - 'ref' expression (pointing to participants or subprocesses)

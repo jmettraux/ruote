@@ -49,9 +49,7 @@ module Ruote
         Ruote::Exp::FlowExpression.from_h(context, e) }
       @expressions.sort! { |a, b| a.fei.expid <=> b.fei.expid }
 
-      @errors = errors.collect { |e|
-        ProcessError.new(e) }
-      @errors.sort! { |a, b| a.fei.expid <=> b.fei.expid }
+      @errors = errors.sort! { |a, b| a.fei.expid <=> b.fei.expid }
     end
 
     # Returns the expression at the root of the process instance.

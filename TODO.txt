@@ -393,3 +393,5 @@
 
 [ ] rename 'parser' to 'reader'
 
+[ ] ParticipantEntry is a bit brittle when editing engine.participant_list
+

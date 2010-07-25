@@ -201,7 +201,7 @@ module Ruote
         (by_wfid[exp['fei']['wfid']] ||= [ [], [] ]).first << exp
       end
       errs.each do |err|
-        (by_wfid[err['msg']['fei']['wfid']] ||= [ [], [] ]).last << err
+        (by_wfid[err.wfid] ||= [ [], [] ]).last << err
       end
 
       by_wfid.values.collect { |expressions, errors|
@@ -213,9 +213,11 @@ module Ruote
     #
     def errors (wfid=nil)
 
-      wfid.nil? ?
+      errs = wfid.nil? ?
         @context.storage.get_many('errors') :
         @context.storage.get_many('errors', /!#{wfid}$/)
+
+      errs.collect { |err| ProcessError.new(err) }
     end
 
     # Returns a [sorted] list of wfids of the process instances currently

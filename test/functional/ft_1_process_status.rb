@@ -97,12 +97,12 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal 1, errs.size
 
-    assert_equal wfid, errs.first['fei']['wfid']
+    assert_equal wfid, errs.first.wfid
 
     err = @engine.errors( wfid )
 
     assert_equal 1, err.size
-    assert_equal wfid, err.first['fei']['wfid']
+    assert_equal wfid, err.first.wfid
   end
 
   def test_tree

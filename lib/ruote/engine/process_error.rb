@@ -50,6 +50,10 @@ module Ruote
       Ruote::FlowExpressionId.new(msg['fei'])
     end
 
+    def wfid
+      msg['fei']['wfid']
+    end
+
     def tree
       @h['msg']['tree']
     end
