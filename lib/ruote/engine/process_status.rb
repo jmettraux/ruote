@@ -289,30 +289,24 @@ module Ruote
       s.join("\n")
     end
 
-    # Mostly used by ruote-kit.
-    #
-    def to_h
-
-      h = {}
-
-      %w[
-        wfid
-        definition_name definition_revision
-        original_tree current_tree
-        variables tags
-      ].each { |m| h[m] = self.send(m) }
-
-      h['launched_time'] = launched_time
-      h['last_active'] = last_active
-
-      # all_variables and all_tags ?
-
-      h['root_expression'] = nil
-      h['expressions'] = @expressions.collect { |e| e.fei.to_h }
-      h['errors'] = @errors.collect { |e| e.to_h }
-
-      h
-    end
+    #--
+    #def to_h
+    #  h = {}
+    #  %w[
+    #    wfid
+    #    definition_name definition_revision
+    #    original_tree current_tree
+    #    variables tags
+    #  ].each { |m| h[m] = self.send(m) }
+    #  h['launched_time'] = launched_time
+    #  h['last_active'] = last_active
+    #  # all_variables and all_tags ?
+    #  h['root_expression'] = nil
+    #  h['expressions'] = @expressions.collect { |e| e.fei.to_h }
+    #  h['errors'] = @errors.collect { |e| e.to_h }
+    #  h
+    #end
+    #++
 
     # Returns the current version of the process definition tree. If no
     # manipulation (gardening) was performed on the tree, this method yields
