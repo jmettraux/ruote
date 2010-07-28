@@ -173,11 +173,12 @@ module Ruote
     def process (wfid)
 
       exps = @context.storage.get_many('expressions', /!#{wfid}$/)
-      errs = self.errors( wfid )
+      errs = self.errors(wfid)
+      swis = @context.storage.get_many('workitems', /!#{wfid}$/)
 
       return nil if exps.empty? && errs.empty?
 
-      ProcessStatus.new(@context, exps, errs)
+      ProcessStatus.new(@context, exps, errs, swis)
     end
 
     # Returns an array of ProcessStatus instances.
@@ -194,18 +195,22 @@ module Ruote
 
       exps = @context.storage.get_many('expressions')
       errs = self.errors
+      swis = @context.storage.get_many('workitems')
 
       by_wfid = {}
 
       exps.each do |exp|
-        (by_wfid[exp['fei']['wfid']] ||= [ [], [] ]).first << exp
+        (by_wfid[exp['fei']['wfid']] ||= [ [], [], [] ])[0] << exp
       end
       errs.each do |err|
-        (by_wfid[err.wfid] ||= [ [], [] ]).last << err
+        (by_wfid[err.wfid] ||= [ [], [], [] ])[1] << err
+      end
+      swis.each do |swi|
+        (by_wfid[swi['fei']['wfid']] ||= [ [], [], [] ])[2] << swi
       end
 
-      by_wfid.values.collect { |expressions, errors|
-        ProcessStatus.new(@context, expressions, errors)
+      by_wfid.values.collect { |expressions, errors, workitems|
+        ProcessStatus.new(@context, expressions, errors, workitems)
       }
     end
 

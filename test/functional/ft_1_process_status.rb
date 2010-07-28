@@ -556,5 +556,30 @@ digraph "process wfid wfid" {
 
     assert t1 > t0
   end
+
+  def test_ps_with_stored_workitems
+
+    @engine.register_participant '.+', Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.define { alpha })
+    @engine.wait_for(:alpha)
+
+    ps = @engine.process(wfid)
+
+    assert_equal 1, ps.stored_workitems.size
+    assert_equal Ruote::Workitem, ps.stored_workitems.first.class
+  end
+
+  def test_ps_without_stored_workitems
+
+    @engine.register_participant '.+', Ruote::NullParticipant
+
+    wfid = @engine.launch(Ruote.define { alpha })
+    @engine.wait_for(:alpha)
+
+    ps = @engine.process(wfid)
+
+    assert_equal 0, ps.stored_workitems.size
+  end
 end
 

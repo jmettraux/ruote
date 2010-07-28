@@ -43,13 +43,24 @@ module Ruote
     #
     attr_reader :errors
 
-    def initialize (context, expressions, errors)
+    # An array of the workitems currently in the storage participant for this
+    # process instance.
+    #
+    # Do not confuse with #workitems
+    #
+    attr_reader :stored_workitems
+
+    def initialize (context, expressions, errors, stored_workitems)
 
       @expressions = expressions.collect { |e|
         Ruote::Exp::FlowExpression.from_h(context, e) }
       @expressions.sort! { |a, b| a.fei.expid <=> b.fei.expid }
 
       @errors = errors.sort! { |a, b| a.fei.expid <=> b.fei.expid }
+
+      @stored_workitems = stored_workitems.collect { |h|
+        Ruote::Workitem.new(h)
+      }
     end
 
     # Returns the expression at the root of the process instance.
