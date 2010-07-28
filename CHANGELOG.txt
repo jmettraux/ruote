@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- engine.process(wfid).position (where in the process ?)
 - engine.errors(wfid=nil) now returns array of ProcessError instances
 - engine.register { block } (Torsten)
 - participant.accept?(workitem)

@@ -509,5 +509,23 @@ digraph "process wfid wfid" {
 
     assert_equal wfids, @engine.process_wfids
   end
+
+  def test_position
+
+    pdef = Ruote.define do
+      alpha :task => 'clean car'
+    end
+
+    @engine.register_participant '.+', Ruote::StorageParticipant
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(:alpha)
+
+    assert_equal(
+      %w[ alpha ], @engine.process(wfid).position)
+
+    assert_equal(
+      [ [ 'alpha', 'clean car' ] ], @engine.process(wfid).position(:task))
+  end
 end
 

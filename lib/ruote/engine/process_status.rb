@@ -139,14 +139,54 @@ module Ruote
       end
     end
 
+    # For a process
+    #
+    #   Ruote.process_definition :name => 'review', :revision => '0.1' do
+    #     author
+    #     reviewer
+    #   end
+    #
+    # will yield 'review'.
+    #
     def definition_name
 
       root_expression.attribute('name') || root_expression.attribute_text
     end
 
+    # For a process
+    #
+    #   Ruote.process_definition :name => 'review', :revision => '0.1' do
+    #     author
+    #     reviewer
+    #   end
+    #
+    # will yield '0.1'.
+    #
     def definition_revision
 
       root_expression.attribute('revision')
+    end
+
+    # Returns the 'position' of the process.
+    #
+    #   pdef = Ruote.process_definition do
+    #     alpha :task => 'clean car'
+    #   end
+    #   wfid = engine.launch(pdef)
+    #
+    #   engine.process(wfid) # => [ 'alpha' ]
+    #   engine.process(wfid, :task) # => [ [ 'alpha', 'clean car' ] ]
+    #
+    # A process with concurrent branches will yield multiple 'positions'.
+    #
+    def position (attribute=nil)
+
+      @expressions.select { |fexp|
+        fexp.is_a?(Ruote::Exp::ParticipantExpression)
+      }.collect { |fexp|
+        pn = fexp.h.applied_workitem['participant_name']
+        attribute ? [ pn, fexp.attribute(attribute) ] : pn
+      }
     end
 
     # Returns the process definition tree as it was when this process instance
@@ -187,6 +227,9 @@ module Ruote
       s
     end
 
+    # Returns a 'dot' representation of the process. A graph describing
+    # the tree of flow expressions that compose the process.
+    #
     def to_dot (opts={})
 
       s = [ "digraph \"process wfid #{wfid}\" {" ]
