@@ -522,10 +522,14 @@ digraph "process wfid wfid" {
     @engine.wait_for(:alpha)
 
     assert_equal(
-      %w[ alpha ], @engine.process(wfid).position)
+      [ [ '0_0', 'alpha', { 'task' => 'clean car' } ] ],
+      @engine.process(wfid).position)
+
+    # #position leverages #workitems
 
     assert_equal(
-      [ [ 'alpha', 'clean car' ] ], @engine.process(wfid).position(:task))
+      [ 'alpha' ],
+      @engine.process(wfid).workitems.collect { |wi| wi.participant_name })
   end
 
   def test_last_active

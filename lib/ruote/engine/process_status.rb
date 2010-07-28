@@ -174,18 +174,45 @@ module Ruote
     #   end
     #   wfid = engine.launch(pdef)
     #
-    #   engine.process(wfid) # => [ 'alpha' ]
-    #   engine.process(wfid, :task) # => [ [ 'alpha', 'clean car' ] ]
+    #   sleep 0.500
+    #
+    #   engine.process(wfid) # => [["0_0", "alpha", {"task"=>"clean car"}]]
     #
     # A process with concurrent branches will yield multiple 'positions'.
     #
-    def position (attribute=nil)
+    # It uses #workitems underneath.
+    #
+    def position
+
+      workitems.collect { |wi|
+        r = [ wi.fei.expid, wi.participant_name ]
+        params = wi.fields['params'].dup
+        params.delete('ref')
+        r << params
+        r
+      }
+    end
+
+    # Returns a list of the workitems currently 'out' to participants
+    #
+    # For example, with an instance of
+    #
+    #   Ruote.process_definition do
+    #     concurrence do
+    #       alpha :task => 'clean car'
+    #       bravo :task => 'sell car'
+    #     end
+    #   end
+    #
+    # calling engine.process(wfid).workitems will yield two workitems
+    # (alpha and bravo).
+    #
+    def workitems
 
       @expressions.select { |fexp|
         fexp.is_a?(Ruote::Exp::ParticipantExpression)
       }.collect { |fexp|
-        pn = fexp.h.applied_workitem['participant_name']
-        attribute ? [ pn, fexp.attribute(attribute) ] : pn
+        Ruote::Workitem.new(fexp.h.applied_workitem)
       }
     end
 
