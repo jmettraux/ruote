@@ -289,6 +289,8 @@ module Ruote
       s.join("\n")
     end
 
+    # Mostly used by ruote-kit.
+    #
     def to_h
 
       h = {}
@@ -300,7 +302,8 @@ module Ruote
         variables tags
       ].each { |m| h[m] = self.send(m) }
 
-      h['launched_time'] = launched_time.to_s
+      h['launched_time'] = launched_time
+      h['last_active'] = last_active
 
       # all_variables and all_tags ?
 

@@ -120,7 +120,7 @@ module Ruote::Exp
     end
 
     # Turns this FlowExpression instance into a Hash (well, just hands back
-    # the base hash behind it.
+    # the base hash behind it).
     #
     def to_h
 
