@@ -207,6 +207,9 @@ module Ruote
     # calling engine.process(wfid).workitems will yield two workitems
     # (alpha and bravo).
     #
+    # Warning : do not confuse the workitems here with the workitems held
+    # in a storage participant or equivalent.
+    #
     def workitems
 
       @expressions.select { |fexp|
