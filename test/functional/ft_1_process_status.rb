@@ -510,28 +510,6 @@ digraph "process wfid wfid" {
     assert_equal wfids, @engine.process_wfids
   end
 
-  def test_position
-
-    pdef = Ruote.define do
-      alpha :task => 'clean car'
-    end
-
-    @engine.register_participant '.+', Ruote::StorageParticipant
-
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(:alpha)
-
-    assert_equal(
-      [ [ '0_0', 'alpha', { 'task' => 'clean car' } ] ],
-      @engine.process(wfid).position)
-
-    # #position leverages #workitems
-
-    assert_equal(
-      [ 'alpha' ],
-      @engine.process(wfid).workitems.collect { |wi| wi.participant_name })
-  end
-
   def test_last_active
 
     pdef = Ruote.define do
@@ -555,6 +533,28 @@ digraph "process wfid wfid" {
     t1 = Time.parse(@engine.process(wfid).last_active)
 
     assert t1 > t0
+  end
+
+  def test_position
+
+    pdef = Ruote.define do
+      alpha :task => 'clean car'
+    end
+
+    @engine.register_participant '.+', Ruote::StorageParticipant
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(:alpha)
+
+    assert_equal(
+      [ [ "0_0!!#{wfid}", 'alpha', { 'task' => 'clean car' } ] ],
+      @engine.process(wfid).position)
+
+    # #position leverages #workitems
+
+    assert_equal(
+      [ 'alpha' ],
+      @engine.process(wfid).workitems.collect { |wi| wi.participant_name })
   end
 
   def test_ps_with_stored_workitems

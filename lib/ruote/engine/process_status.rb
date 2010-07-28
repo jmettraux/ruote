@@ -196,7 +196,7 @@ module Ruote
     def position
 
       workitems.collect { |wi|
-        r = [ wi.fei.expid, wi.participant_name ]
+        r = [ wi.fei.sid, wi.participant_name ]
         params = wi.fields['params'].dup
         params.delete('ref')
         r << params

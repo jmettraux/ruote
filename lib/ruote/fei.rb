@@ -96,6 +96,8 @@ module Ruote
       "#{@h['expid']}!#{@h['sub_wfid']}!#{@h['wfid']}"
     end
 
+    alias sid to_storage_id
+
     def self.to_storage_id (hfei)
 
       hfei.respond_to?(:to_storage_id) ?
