@@ -189,6 +189,14 @@ module Ruote
       }
     end
 
+    # Returns a parseable UTC datetime string which indicates when the process
+    # was last active.
+    #
+    def last_active
+
+      @expressions.collect { |fexp| fexp.h.put_at }.max
+    end
+
     # Returns the process definition tree as it was when this process instance
     # was launched.
     #

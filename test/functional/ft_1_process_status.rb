@@ -527,5 +527,30 @@ digraph "process wfid wfid" {
     assert_equal(
       [ [ 'alpha', 'clean car' ] ], @engine.process(wfid).position(:task))
   end
+
+  def test_last_active
+
+    pdef = Ruote.define do
+      alpha
+      bravo
+    end
+
+    @engine.register_participant '.+', Ruote::StorageParticipant
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+
+    t0 = Time.parse(@engine.process(wfid).last_active)
+
+    sp = @engine.storage_participant
+    sp.reply(sp.first)
+
+    @engine.wait_for(:bravo)
+
+    t1 = Time.parse(@engine.process(wfid).last_active)
+
+    assert t1 > t0
+  end
 end
 
