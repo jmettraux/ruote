@@ -144,7 +144,7 @@ module Ruote
 
     # When was this workitem dispatched ?
     #
-    def dispatch_at
+    def dispatched_at
 
       fields['dispatched_at']
     end
