@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- engine.participant_list= more tolerant about its input
 - engine.process(wfid).stored_workitems
 - engine.process(wfid).workitems and .position
 - engine.process(wfid).last_active

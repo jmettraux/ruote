@@ -258,7 +258,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     @engine.register_participant 'alpha', Ruote::StorageParticipant
 
     assert_equal(
-      [ '/^alpha$/ ==> Ruote::StorageParticipant nil' ],
+      [ '/^alpha$/ ==> Ruote::StorageParticipant {}' ],
       @engine.participant_list.collect { |pe| pe.to_s })
 
     # launching a process with a missing participant
@@ -283,6 +283,43 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     assert_equal 1, @engine.storage_participant.size
     assert_equal 'bravo', @engine.storage_participant.first.participant_name
+  end
+
+  def test_participant_list_update
+
+    @engine.register_participant 'alpha', Ruote::StorageParticipant
+
+    assert_equal(
+      [ '/^alpha$/ ==> Ruote::StorageParticipant {}' ],
+      @engine.participant_list.collect { |pe| pe.to_s })
+
+    @engine.participant_list = [
+      { 'regex' => '^bravo$',
+        'classname' => 'Ruote::StorageParticipant',
+        'options' => {} },
+      { 'regex' => '^charly$',
+        'classname' => 'Ruote::StorageParticipant',
+        'options' => {} }
+    ]
+
+    assert_equal(
+      [
+        '/^bravo$/ ==> Ruote::StorageParticipant {}',
+        '/^charly$/ ==> Ruote::StorageParticipant {}'
+      ],
+      @engine.participant_list.collect { |pe| pe.to_s })
+
+    @engine.participant_list = [
+      [ '^charly$', [ 'Ruote::StorageParticipant', {} ] ],
+      [ '^bravo$', [ 'Ruote::StorageParticipant', {} ] ]
+    ]
+
+    assert_equal(
+      [
+        '/^charly$/ ==> Ruote::StorageParticipant {}',
+        '/^bravo$/ ==> Ruote::StorageParticipant {}'
+      ],
+      @engine.participant_list.collect { |pe| pe.to_s })
   end
 
   class ParticipantCharlie; end

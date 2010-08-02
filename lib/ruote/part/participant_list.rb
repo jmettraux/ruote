@@ -271,7 +271,7 @@ module Ruote
     def list= (pl)
 
       list = get_list
-      list['list'] = pl.collect { |pe| pe.to_a }
+      list['list'] = pl.collect { |e| ParticipantEntry.read(e) }
 
       if r = @context.storage.put(list)
         #
@@ -293,16 +293,17 @@ module Ruote
           'list' => [] }
     end
 
+    #--
     # Returns an array of all the classes in the ObjectSpace that include the
     # Ruote::LocalParticipant module.
     #
-    def local_participant_classes
-
-      ObjectSpace.each_object(Class).inject([]) { |a, c|
-        a << c if c.include?(Ruote::LocalParticipant)
-        a
-      }
-    end
+    #def local_participant_classes
+    #  ObjectSpace.each_object(Class).inject([]) { |a, c|
+    #    a << c if c.include?(Ruote::LocalParticipant)
+    #    a
+    #  }
+    #end
+    #++
   end
 
   #
@@ -333,7 +334,23 @@ module Ruote
     end
 
     def to_s
-      "/#{@regex}/ ==> #{@classname} #{@opts.inspect}"
+      "/#{@regex}/ ==> #{@classname} #{@options.inspect}"
+    end
+
+    def self.read (elt)
+
+      if elt.is_a?(ParticipantEntry)
+        return elt.to_a
+      end
+
+      if elt.is_a?(Hash)
+        return elt['classname'][0, 5] == 'inpa_' ?
+          [ elt['regex'], elt['classname'] ] :
+          [ elt['regex'], [ elt['classname'], elt['options'] ] ]
+      end
+
+      # else elt is a Array
+      elt
     end
   end
 end
