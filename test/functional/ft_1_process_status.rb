@@ -575,5 +575,28 @@ digraph "process wfid wfid" {
 
     assert_equal 0, ps.stored_workitems.size
   end
+
+  def test_schedules
+
+    @engine.register_participant '.+', Ruote::NullParticipant
+
+    wfid = @engine.launch(Ruote.define { alpha :timeout => '2d' })
+    @engine.wait_for(:alpha)
+
+    assert_equal 1, @engine.schedules.size
+  end
+
+  def test_ps_and_schedules
+
+    @engine.register_participant '.+', Ruote::NullParticipant
+
+    wfid = @engine.launch(Ruote.define { alpha :timeout => '2d' })
+    @engine.wait_for(:alpha)
+
+    ps = @engine.process(wfid)
+
+    assert_equal 1, ps.schedules.size
+    assert_equal "0_0!!#{wfid}", ps.schedules.first.target.sid
+  end
 end
 

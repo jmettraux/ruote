@@ -38,11 +38,6 @@ module Ruote
     #
     attr_reader :expressions
 
-    # An array of errors currently plaguing the process instance. Hopefully,
-    # this array is empty.
-    #
-    attr_reader :errors
-
     # An array of the workitems currently in the storage participant for this
     # process instance.
     #
@@ -50,17 +45,29 @@ module Ruote
     #
     attr_reader :stored_workitems
 
-    def initialize (context, expressions, errors, stored_workitems)
+    # An array of errors currently plaguing the process instance. Hopefully,
+    # this array is empty.
+    #
+    attr_reader :errors
+
+    # An array of schedules (open structs yielding information about the
+    # schedules of this process)
+    #
+    attr_reader :schedules
+
+    def initialize (context, expressions, stored_workitems, errors, schedules)
 
       @expressions = expressions.collect { |e|
         Ruote::Exp::FlowExpression.from_h(context, e) }
       @expressions.sort! { |a, b| a.fei.expid <=> b.fei.expid }
 
-      @errors = errors.sort! { |a, b| a.fei.expid <=> b.fei.expid }
-
       @stored_workitems = stored_workitems.collect { |h|
         Ruote::Workitem.new(h)
       }
+
+      @errors = errors.sort! { |a, b| a.fei.expid <=> b.fei.expid }
+
+      @schedules = schedules.sort! { |a, b| a.owner.sid <=> b.owner.sid }
     end
 
     # Returns the expression at the root of the process instance.
@@ -257,23 +264,28 @@ module Ruote
 
       "(process_status wfid '#{wfid}', " +
       "expressions #{@expressions.size}, " +
-      "errors #{@errors.size})"
+      "stored_workitems #{@stored_workitems.size}, " +
+      "errors #{@errors.size}, " +
+      "schedules #{@schedules.size}, " +
+      ")"
     end
 
     def inspect
 
-      s = "== #{self.class} ==\n"
-      s << "   expressions : #{@expressions.size}\n"
+      s = [ "== #{self.class} ==" ]
+      s << "   expressions : #{@expressions.size}"
       @expressions.each do |e|
-        s << "     #{e.fei.to_storage_id} : #{e}\n"
+        s << "     #{e.fei.to_storage_id} : #{e}"
       end
-      s << "   errors : #{@errors.size}\n"
+      s << "   errors : #{@errors.size}"
       @errors.each do |e|
-        s << "     #{e.fei.to_storage_id} :\n" if e.fei
-        s << "     #{e.inspect}\n"
+        s << "     #{e.fei.to_storage_id} :" if e.fei
+        s << "     #{e.inspect}"
       end
+      s << "   schedules : #{@schedules.size}"
+      s << "   stored workitems : #{@stored_workitems.size}"
 
-      s
+      s.join("\n") + "\n"
     end
 
     # Returns a 'dot' representation of the process. A graph describing

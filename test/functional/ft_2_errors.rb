@@ -19,8 +19,6 @@ class FtErrorsTest < Test::Unit::TestCase
       nada
     end
 
-    #noisy
-
     wfid = @engine.launch(pdef)
     wait_for(wfid)
 

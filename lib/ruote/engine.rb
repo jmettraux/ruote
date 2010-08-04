@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'ostruct'
 require 'ruote/context'
 require 'ruote/engine/process_status'
 require 'ruote/receiver/base'
@@ -173,13 +174,14 @@ module Ruote
     def process (wfid)
 
       exps = @context.storage.get_many('expressions', /!#{wfid}$/)
-      errs = self.errors(wfid)
       swis = @context.storage.get_many('workitems', /!#{wfid}$/)
+      errs = self.errors(wfid)
+      schs = self.schedules(wfid)
 
-      return nil if exps.empty? && errs.empty?
+      return nil if exps.empty? and errs.empty?
 
-      ProcessStatus.new(@context, exps, errs, swis)
-    end
+      ProcessStatus.new(@context, exps, swis, errs, schs)
+   end
 
     # Returns an array of ProcessStatus instances.
     #
@@ -194,23 +196,27 @@ module Ruote
     def processes
 
       exps = @context.storage.get_many('expressions')
-      errs = self.errors
       swis = @context.storage.get_many('workitems')
+      errs = self.errors
+      schs = self.schedules
 
       by_wfid = {}
 
       exps.each do |exp|
-        (by_wfid[exp['fei']['wfid']] ||= [ [], [], [] ])[0] << exp
-      end
-      errs.each do |err|
-        (by_wfid[err.wfid] ||= [ [], [], [] ])[1] << err
+        (by_wfid[exp['fei']['wfid']] ||= [ [], [], [], [] ])[0] << exp
       end
       swis.each do |swi|
-        (by_wfid[swi['fei']['wfid']] ||= [ [], [], [] ])[2] << swi
+        (by_wfid[swi['fei']['wfid']] ||= [ [], [], [], [] ])[1] << swi
+      end
+      errs.each do |err|
+        (by_wfid[err.wfid] ||= [ [], [], [], [] ])[2] << err
+      end
+      schs.each do |sch|
+        (by_wfid[sch.wfid] ||= [ [], [], [], [] ])[3] << sch
       end
 
-      by_wfid.values.collect { |expressions, errors, workitems|
-        ProcessStatus.new(@context, expressions, errors, workitems)
+      by_wfid.values.collect { |expressions, workitems, errors, schedules|
+        ProcessStatus.new(@context, expressions, workitems, errors, schedules)
       }
     end
 
@@ -223,6 +229,20 @@ module Ruote
         @context.storage.get_many('errors', /!#{wfid}$/)
 
       errs.collect { |err| ProcessError.new(err) }
+    end
+
+    # Returns an array of schedules. Those schedules are open structs
+    # with various properties, like target, owner, at, put_at, ...
+    #
+    # Introduced mostly for ruote-kit.
+    #
+    def schedules (wfid=nil)
+
+      scheds = wfid.nil? ?
+        @context.storage.get_many('schedules') :
+        @context.storage.get_many('schedules', /!#{wfid}-\d+$/)
+
+      scheds.collect { |sched| Ruote.schedule_to_h(sched) }
     end
 
     # Returns a [sorted] list of wfids of the process instances currently
@@ -602,6 +622,27 @@ module Ruote
 
       participant(method_name, *args)
     end
+  end
+
+  # Refines a schedule as found in the ruote storage into something a bit
+  # easier to present.
+  #
+  def self.schedule_to_h (sched)
+
+    h = sched.dup
+
+    h.delete('_rev')
+    h.delete('type')
+    msg = h.delete('msg')
+    owner = h.delete('owner')
+
+    h['wfid'] = owner['wfid']
+    h['action'] = msg['action']
+    h['type'] = msg['flavour']
+    h['owner'] = Ruote::FlowExpressionId.new(owner)
+    h['target'] = Ruote::FlowExpressionId.new(msg['fei'])
+
+    OpenStruct.new(h)
   end
 end
 
