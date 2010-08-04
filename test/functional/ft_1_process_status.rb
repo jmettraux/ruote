@@ -596,7 +596,7 @@ digraph "process wfid wfid" {
     ps = @engine.process(wfid)
 
     assert_equal 1, ps.schedules.size
-    assert_equal "0_0!!#{wfid}", ps.schedules.first.target.sid
+    assert_equal "0_0!!#{wfid}", ps.schedules.first['target'].sid
   end
 end
 

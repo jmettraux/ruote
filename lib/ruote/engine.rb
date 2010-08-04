@@ -22,7 +22,6 @@
 # Made in Japan.
 #++
 
-require 'ostruct'
 require 'ruote/context'
 require 'ruote/engine/process_status'
 require 'ruote/receiver/base'
@@ -212,7 +211,7 @@ module Ruote
         (by_wfid[err.wfid] ||= [ [], [], [], [] ])[2] << err
       end
       schs.each do |sch|
-        (by_wfid[sch.wfid] ||= [ [], [], [], [] ])[3] << sch
+        (by_wfid[sch['wfid']] ||= [ [], [], [], [] ])[3] << sch
       end
 
       by_wfid.values.collect { |expressions, workitems, errors, schedules|
@@ -642,7 +641,7 @@ module Ruote
     h['owner'] = Ruote::FlowExpressionId.new(owner)
     h['target'] = Ruote::FlowExpressionId.new(msg['fei'])
 
-    OpenStruct.new(h)
+    h
   end
 end
 
