@@ -80,7 +80,9 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
       end
     end
 
-    trapfile = Ruote::WIN ? 'ruote_mailtrap.txt' : '/tmp/ruote_mailtrap.txt'
+    trapfile = "ruote_mailtrap_#{$$}_#{Time.now.to_f}.txt"
+
+    trapfile = Ruote::WIN ? trapfile : "/tmp/#{trapfile}"
     FileUtils.rm_f(trapfile)
 
     t = Thread.new do
@@ -108,7 +110,10 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
     #sleep 0.450
     wait_for(wfid)
 
-    assert_match(/want cat food/, File.read(trapfile))
+    trapped = File.read(trapfile)
+    FileUtils.rm_f(trapfile)
+
+    assert_match /want cat food/, trapped
     assert_nil @engine.process(wfid)
 
     t.kill
