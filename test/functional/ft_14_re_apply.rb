@@ -8,6 +8,7 @@
 require File.join(File.dirname(__FILE__), 'base')
 
 require 'ruote/part/hash_participant'
+require 'ruote/part/storage_participant'
 
 
 class FtReApplyTest < Test::Unit::TestCase
@@ -218,6 +219,37 @@ class FtReApplyTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_equal "re_applied\ndone.", @tracer.to_s
+  end
+
+  def test_new_tree_and_process_status_current_tree
+
+    @engine.register_participant '.+', Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.define { alpha })
+
+    @engine.wait_for(:alpha)
+
+    assert_equal(
+      [ 'define', {}, [ [ 'participant', { 'ref' => 'alpha' }, [] ] ] ],
+      @engine.process(wfid).current_tree)
+
+    fei = @engine.storage_participant.first.fei
+
+    @engine.re_apply(fei, :tree => [ 'bravo', {}, [] ])
+
+    @engine.wait_for(:bravo)
+
+    assert_equal(
+      'bravo',
+      @engine.storage_participant.first.participant_name)
+
+    assert_equal(
+      [ 'participant', { 'ref' => 'bravo', '_triggered' => 'on_re_apply' }, [] ],
+      @engine.process(wfid).expressions.last.tree)
+
+    assert_equal(
+      [ 'define', {}, [ [ 'participant', { 'ref' => 'bravo', '_triggered' => 'on_re_apply' }, [] ] ] ],
+      @engine.process(wfid).current_tree)
   end
 end
 

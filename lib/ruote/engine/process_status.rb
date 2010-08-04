@@ -317,15 +317,21 @@ module Ruote
       h = Ruote.decompose_tree(original_tree)
 
       @expressions.sort { |e0, e1|
+
         e0.fei.expid <=> e1.fei.expid
+
       }.each { |e|
-        tree = if v = e.tree[1]['_triggered']
+
+        trigger = e.tree[1]['_triggered']
+
+        tree = if trigger && trigger != 'on_re_apply'
           t = original_tree_from_parent(e).dup
-          t[1]['_triggered'] = v
+          t[1]['_triggered'] = trigger
           t
         else
           e.tree
         end
+
         h.merge!(Ruote.decompose_tree(tree, e.fei.expid))
       }
 
@@ -356,7 +362,6 @@ module Ruote
     return nil unless t
 
     t << []
-
     i = 0
 
     loop do

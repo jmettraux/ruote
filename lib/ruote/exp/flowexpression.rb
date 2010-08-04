@@ -248,6 +248,10 @@ module Ruote::Exp
 
         trigger('on_cancel', workitem)
 
+      elsif (h.state == 'cancelling') and h.on_re_apply
+
+        trigger('on_re_apply', workitem)
+
       elsif (h.state == 'timing_out') and h.on_timeout
 
         trigger('on_timeout', workitem)
@@ -354,7 +358,9 @@ module Ruote::Exp
         elsif hra = msg['re_apply']
 
           hra = {} if hra == true
-          h.on_cancel = hra['tree'] || tree
+
+          h.on_re_apply = hra['tree'] || tree
+
           if fs = hra['fields']
             h.applied_workitem['fields'] = fs
           end
@@ -717,7 +723,7 @@ module Ruote::Exp
         }.merge!(opts))
     end
 
-    # 'on_{error|timeout|cancel}' triggering
+    # 'on_{error|timeout|cancel|re_apply}' triggering
     #
     def trigger (on, workitem)
 
