@@ -42,7 +42,10 @@ module Ruote::Exp
   #
   # == :for and :until
   #
-  # TODO
+  # 'wait' accepts as well :
+  #
+  #   wait :for => '30d' # wait for 30 days
+  #   wait :until => '2011/12/10 12:00:00' # any parseable date/time format
   #
   class WaitExpression < FlowExpression
 
