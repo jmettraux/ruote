@@ -126,11 +126,16 @@ module Ruote
           @h[type].values.select { |doc| doc['_id'].match(key) } :
           @h[type].values
 
-        if l = opts[:limit]
-          docs[0, l]
-        else
-          docs
+        docs = docs.sort_by { |d| d['_id'] }
+
+        if s = opts[:skip]
+          docs = docs[s..-1]
         end
+        if l = opts[:limit]
+          docs = docs[0, l]
+        end
+
+        opts[:count] ? docs.size : docs
       end
     end
 

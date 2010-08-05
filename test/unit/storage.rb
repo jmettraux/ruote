@@ -182,5 +182,24 @@ class UtStorage < Test::Unit::TestCase
     assert_equal 30, @s.get_many('dogfood', /^xx!/).size
     assert_equal 30, @s.get_many('dogfood', /x/).size
   end
+
+  def test_get_many_options
+
+    30.times do |i|
+      @s.put('_id' => "yy!#{i}", 'type' => 'dogfood', 'msg' => "whatever #{i}")
+    end
+
+    assert_equal 10, @s.get_many('dogfood', nil, :limit => 10).size
+    assert_equal 31, @s.get_many('dogfood', nil, :count => true)
+
+    assert_equal(
+      %w[ toto yy!0 yy!1 yy!10 ],
+      @s.get_many(
+        'dogfood', nil, :skip => 0, :limit => 4).collect { |d| d['_id'] })
+    assert_equal(
+      %w[ yy!10 yy!11 yy!12 ],
+      @s.get_many(
+        'dogfood', nil, :skip => 3, :limit => 3).collect { |d| d['_id'] })
+  end
 end
 
