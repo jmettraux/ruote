@@ -55,7 +55,7 @@ module Ruote
       (return Rufus::Json.decode(definition)) rescue nil
       (return ruby_eval(definition)) rescue nil
 
-      if definition.index("\n") == nil
+      if definition.index("\n").nil? && definition.index(' ').nil?
 
         raise ArgumentError.new(
           "remote process definitions are not allowed"

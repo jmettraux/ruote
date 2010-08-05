@@ -7,7 +7,8 @@
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
-require 'ruote/parser/ruby_dsl'
+require 'ruote/parser'
+#require 'ruote/parser/ruby_dsl'
 
 
 class UtRubyParserTest < Test::Unit::TestCase
@@ -122,6 +123,35 @@ class UtRubyParserTest < Test::Unit::TestCase
     assert_equal(
       [ 'sequence', {}, [ [ 'alpha', {}, [] ], [ 'bravo', {}, [] ] ] ],
       Ruote.to_tree { sequence { alpha; bravo } })
+  end
+
+  def test_raise
+
+    #assert_raise Nada do
+      Ruote::Parser.parse %{ Ruote.define { alpha } }
+    #end
+
+    assert_raise ArgumentError do
+      Ruote::Parser.parse %{ Ruote.define { abort } }
+    end
+    assert_raise ArgumentError do
+      Ruote::Parser.parse %{ Ruote.define { exit } }
+    end
+    assert_raise ArgumentError do
+      Ruote::Parser.parse %{ Ruote.define { exit! } }
+    end
+
+    assert_raise ArgumentError do
+      Ruote::Parser.parse %{ Ruote.define { x = Kernel } }
+    end
+
+    assert_raise ArgumentError do
+      Ruote::Parser.parse %{ Ruote.define { module Nada; end } }
+    end
+
+    assert_raise ArgumentError do
+      Ruote::Parser.parse %{ Ruote.define { File.read('stuff') } }
+    end
   end
 end
 
