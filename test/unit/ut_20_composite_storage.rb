@@ -20,7 +20,7 @@ class UtCompositeStorageTest < Test::Unit::TestCase
 
     cs = Ruote::CompositeStorage.new(default, 'msgs' => msgs)
 
-    cs.put('action' => 'terminate', 'type' => 'msgs', 'id' => 'xxx')
+    cs.put('action' => 'terminate', 'type' => 'msgs', '_id' => 'xxx')
     cs.put_msg('terminate', 'type' => 'msgs')
     cs.put_schedule('at', {}, Time.now + 10, 'action' => 'reply')
 
