@@ -294,11 +294,11 @@ module Ruote
 
       if not exp_class
 
-        #exp_class, tree, part = lookup_subprocess_or_participant(exp_hash)
-        #exp_hash['participant'] = part if part
         exp_class = Ruote::Exp::RefExpression
 
-      elsif msg['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
+      #elsif msg['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
+      elsif is_launch?(msg, exp_class)
+
         def_name, tree = Ruote::Exp::DefineExpression.reorganize(tree)
         variables[def_name] = [ '0', tree ] if def_name
         exp_class = Ruote::Exp::SequenceExpression
@@ -308,6 +308,13 @@ module Ruote
 
       exp.initial_persist
       exp.do_apply
+    end
+
+    def is_launch? (msg, exp_class)
+
+      return false if exp_class != Ruote::Exp::DefineExpression
+      return true if msg['action'] == 'launch'
+      (msg['trigger'] == 'on_re_apply')
     end
 
     def cancel_process (msg)

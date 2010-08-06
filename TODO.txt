@@ -399,4 +399,6 @@
 [o] storage_participant.query : use skip and limit
 [ ] engine.processes use skip and limit
 [ ] engine.errors use skip and limit
+[ ] process_count and error_count ?
+[ ] engine.ps(wfid) (shortcut ?)
 

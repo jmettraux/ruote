@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- fixed issue when re-applying root expressions (Thanks Brett)
 - storage_participant.query using :skip and :limit
 - engine.schedules([wfid]) and ProcessStatus#schedules
 - differentiating on_re_apply from on_cancel (process gardening)

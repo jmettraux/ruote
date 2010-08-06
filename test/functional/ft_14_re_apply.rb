@@ -251,5 +251,49 @@ class FtReApplyTest < Test::Unit::TestCase
       [ 'define', {}, [ [ 'participant', { 'ref' => 'bravo', '_triggered' => 'on_re_apply' }, [] ] ] ],
       @engine.process(wfid).current_tree)
   end
+
+  # Issue reported by Brett Anthoine
+  #
+  def test_re_apply_root
+
+    @engine.register_participant '.+', Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.define { alpha })
+
+    @engine.wait_for(:alpha)
+    at0 = @engine.storage_participant.first.dispatched_at
+
+    root = @engine.process(wfid).root_expression
+    @engine.re_apply(root.fei)
+
+    @engine.wait_for(:alpha)
+    at1 = @engine.storage_participant.first.dispatched_at
+
+    assert at1 > at0
+  end
+
+  def test_re_apply_define
+
+    @engine.register_participant '.+', Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.define do
+      sub0
+      define 'sub0' do
+        alpha
+      end
+    end)
+
+    @engine.wait_for(:alpha)
+    at0 = @engine.storage_participant.first.dispatched_at
+
+    exp = @engine.process(wfid).expressions[1]
+
+    @engine.re_apply(exp.fei)
+
+    @engine.wait_for(:alpha)
+    at1 = @engine.storage_participant.first.dispatched_at
+
+    assert at1 > at0
+  end
 end
 
