@@ -138,7 +138,7 @@ module Ruote
     #
     def size
 
-      fetch_all.size
+      fetch_all(:count => true)
     end
 
     # Iterates over the workitems stored in here.
@@ -150,9 +150,9 @@ module Ruote
 
     # Returns all the workitems stored in here.
     #
-    def all
+    def all (opts={})
 
-      fetch_all.map { |hwi| Ruote::Workitem.new(hwi) }
+      fetch_all(opts).map { |hwi| Ruote::Workitem.new(hwi) }
     end
 
     # A convenience method (especially when testing), returns the first
@@ -176,15 +176,17 @@ module Ruote
 
     # Returns all workitems for the specified participant name
     #
-    def by_participant (participant_name)
+    def by_participant (participant_name, opts={})
 
       hwis = if @context.storage.respond_to?(:by_participant)
 
-        @context.storage.by_participant('workitems', participant_name)
+        @context.storage.by_participant('workitems', participant_name, opts)
 
       else
 
-        fetch_all.select { |wi| wi['participant_name'] == participant_name }
+        fetch_all(opts).select { |wi|
+          wi['participant_name'] == participant_name
+        }
       end
 
       hwis.collect { |hwi| Ruote::Workitem.new(hwi) }
@@ -230,7 +232,7 @@ module Ruote
     # constraints for fields.
     #
     # 'offset' and 'limit' are reserved as well. They should prove useful
-    # for pagination.
+    # for pagination. 'skip' can be used instead of 'offset'.
     #
     # Note : the criteria is AND only, you'll have to do ORs (aggregation)
     # by yourself.
@@ -243,28 +245,22 @@ module Ruote
         Ruote::Workitem.new(h)
       } if @context.storage.respond_to?(:query_workitems)
 
-      offset = cr.delete('offset')
-      limit = cr.delete('limit')
+      opts = {}
+      opts[:skip] = cr.delete('offset') || cr.delete('skip')
+      opts[:limit] = cr.delete('limit')
 
       wfid = cr.delete('wfid')
       pname = cr.delete('participant_name') || cr.delete('participant')
 
-      hwis = if wfid
-        @context.storage.get_many('workitems', /!#{wfid}$/)
-      else
-        fetch_all
-      end
+      hwis = wfid ?
+        @context.storage.get_many('workitems', /!#{wfid}$/, opts) :
+        fetch_all(opts)
 
-      hwis = hwis.select { |hwi|
+      hwis.select { |hwi|
         Ruote::StorageParticipant.matches?(hwi, pname, cr)
       }.collect { |hwi|
         Ruote::Workitem.new(hwi)
       }
-
-      offset = offset || 0
-      limit = limit || hwis.length
-
-      hwis[offset, limit]
     end
 
     # Cleans this participant out completely
@@ -294,11 +290,12 @@ module Ruote
     # Fetches all the workitems. If there is a @store_name, will only fetch
     # the workitems in that store.
     #
-    def fetch_all
+    def fetch_all (opts={})
 
-      key = @store_name ? /^wi!#{@store_name}::/ : nil
-
-      @context.storage.get_many('workitems', key)
+      @context.storage.get_many(
+        'workitems',
+        @store_name ? /^wi!#{@store_name}::/ : nil,
+        opts)
     end
 
     # Computes the id for the document representing the document in the storage.

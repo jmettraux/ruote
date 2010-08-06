@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- storage_participant.query using :skip and :limit
 - engine.schedules([wfid]) and ProcessStatus#schedules
 - differentiating on_re_apply from on_cancel (process gardening)
 - engine.participant_list= more tolerant about its input

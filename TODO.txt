@@ -395,3 +395,8 @@
 
 [ ] ParticipantEntry is a bit brittle when editing engine.participant_list
 
+[ ] storage.get_many(x, y, :descending => true) ?
+[o] storage_participant.query : use skip and limit
+[ ] engine.processes use skip and limit
+[ ] engine.errors use skip and limit
+
