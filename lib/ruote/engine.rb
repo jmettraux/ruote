@@ -172,19 +172,13 @@ module Ruote
     #
     def process (wfid)
 
-      exps = @context.storage.get_many('expressions', /!#{wfid}$/)
-      swis = @context.storage.get_many('workitems', /!#{wfid}$/)
-      errs = self.errors(wfid)
-      schs = self.schedules(wfid)
-
-      return nil if exps.empty? and errs.empty?
-
-      ProcessStatus.new(@context, exps, swis, errs, schs)
-   end
+      list_processes([ wfid ]).first
+    end
 
     # Returns an array of ProcessStatus instances.
     #
-    # WARNING : this is an expensive operation.
+    # WARNING : this is an expensive operation, but it understands :skip
+    # and :limit, so pagination is our friend.
     #
     # Please note, if you're interested only in processes that have errors,
     # Engine#errors is a more efficient mean.
@@ -192,40 +186,37 @@ module Ruote
     # To simply list the wfids of the currently running, Engine#process_wfids
     # is way cheaper to call.
     #
-    def processes
+    def processes (opts={})
 
-      exps = @context.storage.get_many('expressions')
-      swis = @context.storage.get_many('workitems')
-      errs = self.errors
-      schs = self.schedules
+      wfids = nil
 
-      by_wfid = {}
+      if opts.size > 0
 
-      exps.each do |exp|
-        (by_wfid[exp['fei']['wfid']] ||= [ [], [], [], [] ])[0] << exp
-      end
-      swis.each do |swi|
-        (by_wfid[swi['fei']['wfid']] ||= [ [], [], [], [] ])[1] << swi
-      end
-      errs.each do |err|
-        (by_wfid[err.wfid] ||= [ [], [], [], [] ])[2] << err
-      end
-      schs.each do |sch|
-        (by_wfid[sch['wfid']] ||= [ [], [], [], [] ])[3] << sch
+        wfids = @context.storage.expression_wfids(opts)
+
+        return wfids.size if opts[:count]
       end
 
-      by_wfid.values.collect { |expressions, workitems, errors, schedules|
-        ProcessStatus.new(@context, expressions, workitems, errors, schedules)
-      }
+      list_processes(wfids)
     end
 
     # Returns an array of current errors (hashes)
     #
+    # Can be called in two ways :
+    #
+    #   engine.errors(wfid)
+    #
+    # and
+    #
+    #   engine.errors(:skip => 100, :limit => 100)
+    #
     def errors (wfid=nil)
 
+      wfid, options = wfid.is_a?(Hash) ? [ nil, wfid ] : [ wfid, {} ]
+
       errs = wfid.nil? ?
-        @context.storage.get_many('errors') :
-        @context.storage.get_many('errors', /!#{wfid}$/)
+        @context.storage.get_many('errors', nil, options) :
+        @context.storage.get_many('errors', wfid)
 
       errs.collect { |err| ProcessError.new(err) }
     end
@@ -235,10 +226,20 @@ module Ruote
     #
     # Introduced mostly for ruote-kit.
     #
+    # Can be called in two ways :
+    #
+    #   engine.schedules(wfid)
+    #
+    # and
+    #
+    #   engine.schedules(:skip => 100, :limit => 100)
+    #
     def schedules (wfid=nil)
 
+      wfid, options = wfid.is_a?(Hash) ? [ nil, wfid ] : [ wfid, {} ]
+
       scheds = wfid.nil? ?
-        @context.storage.get_many('schedules') :
+        @context.storage.get_many('schedules', nil, options) :
         @context.storage.get_many('schedules', /!#{wfid}-\d+$/)
 
       scheds.collect { |sched| Ruote.schedule_to_h(sched) }
@@ -563,6 +564,44 @@ module Ruote
     def noisy= (b)
 
       @context.logger.noisy = b
+    end
+
+    protected
+
+    # Used by #process and #processes
+    #
+    def list_processes (wfids)
+
+      swfids = wfids ? wfids.collect { |wfid| /!#{wfid}-\d+$/ } : nil
+
+      exps = @context.storage.get_many('expressions', wfids)
+      swis = @context.storage.get_many('workitems', wfids)
+      errs = @context.storage.get_many('errors', wfids)
+      schs = @context.storage.get_many('schedules', swfids)
+
+      errs = errs.collect { |err| ProcessError.new(err) }
+      schs = schs.collect { |sch| Ruote.schedule_to_h(sch) }
+
+      by_wfid = {}
+
+      exps.each do |exp|
+        (by_wfid[exp['fei']['wfid']] ||= [ [], [], [], [] ])[0] << exp
+      end
+      swis.each do |swi|
+        (by_wfid[swi['fei']['wfid']] ||= [ [], [], [], [] ])[1] << swi
+      end
+      errs.each do |err|
+        (by_wfid[err.wfid] ||= [ [], [], [], [] ])[2] << err
+      end
+      schs.each do |sch|
+        (by_wfid[sch['wfid']] ||= [ [], [], [], [] ])[3] << sch
+      end
+
+      by_wfid.values.collect { |expressions, workitems, errors, schedules|
+        ProcessStatus.new(@context, expressions, workitems, errors, schedules)
+      }.sort_by { |ps|
+        ps.wfid
+      }
     end
   end
 

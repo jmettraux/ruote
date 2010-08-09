@@ -150,11 +150,7 @@ module Ruote
     #
     def wfid
 
-      begin
-        root_expression.fei.wfid
-      rescue
-        @errors.first.fei.wfid
-      end
+      @expressions.any? ? @expressions.first.fei.wfid : @errors.first.fei.wfid
     end
 
     # For a process

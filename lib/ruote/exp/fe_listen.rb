@@ -136,13 +136,13 @@ module Ruote::Exp
       h.lmerge = attribute(:merge).to_s
       h.lmerge = 'true' if h.lmerge == ''
 
-      h.wfid = attribute(:wfid).to_s
-      h.wfid = %w[ same current true ].include?(h.wfid)
+      h.lwfid = attribute(:wfid).to_s
+      h.lwfid = %w[ same current true ].include?(h.lwfid)
 
       persist_or_raise
 
       @context.tracker.add_tracker(
-        h.wfid ? h.fei['wfid'] : nil,
+        h.lwfid ? h.fei['wfid'] : nil,
         h.upon,
         h.fei,
         { 'participant_name' => h.to },

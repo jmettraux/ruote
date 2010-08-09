@@ -57,7 +57,6 @@ module Ruote
 
         pre = get(doc['type'], doc['_id'])
 
-        #if pre && ( ! opts[:update_rev]) && pre['_rev'] != doc['_rev']
         if pre && pre['_rev'] != doc['_rev']
           return pre
         end
@@ -122,20 +121,23 @@ module Ruote
 
       synchronize do
 
-        docs = key ?
-          @h[type].values.select { |doc| doc['_id'].match(key) } :
+        keys = key ?
+          Array(key).map { |k| k.is_a?(String) ? "!#{k}" : k } : nil
+
+        docs = keys ?
+          @h[type].values.select { |doc|
+            Ruote::StorageBase.key_match?(keys, doc)
+          } :
           @h[type].values
 
         docs = docs.sort_by { |d| d['_id'] }
 
-        if s = opts[:skip]
-          docs = docs[s..-1]
-        end
-        if l = opts[:limit]
-          docs = docs[0, l]
-        end
+        return docs.size if opts[:count]
 
-        opts[:count] ? docs.size : docs
+        skip = opts[:skip] || 0
+        limit = opts[:limit] || docs.size
+
+        docs[skip, limit]
       end
     end
 

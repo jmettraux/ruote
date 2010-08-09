@@ -36,23 +36,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal(
       {"my process"=>["0", ["define", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]]]},
       ps.variables)
-
-    ## checking process_status.to_h
-    #h = ps.to_h
-    ##p h
-    #assert_equal wfid, h['wfid']
-    #assert_equal 2, h['expressions'].size
-    #assert_equal 'my process', h['definition_name']
-    #assert_equal Time, Time.parse(h['launched_time']).class
-    #assert_equal(
-    #  ["define", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]],
-    #  h['original_tree'])
-    #assert_equal(
-    #  ["define", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]],
-    #  h['current_tree'])
-    #assert_equal(
-    #  {"my process"=>["0", ["define", {"name"=>"my process"}, [["participant", {"ref"=>"alpha"}, []]]]]},
-    #  h['variables'])
   end
 
   def test_variables
@@ -491,19 +474,6 @@ digraph "process wfid wfid" {
       dot)
   end
 
-  def test_process_wfids
-
-    pdef = Ruote.define { alpha }
-
-    @engine.register_participant 'alpha', Ruote::StorageParticipant
-
-    wfids = (1..7).inject([]) { |a, i| a << @engine.launch(pdef); a }.sort
-
-    sleep 0.350
-
-    assert_equal wfids, @engine.process_wfids
-  end
-
   def test_last_active
 
     pdef = Ruote.define do
@@ -590,6 +560,8 @@ digraph "process wfid wfid" {
 
     @engine.register_participant '.+', Ruote::NullParticipant
 
+    #noisy
+
     wfid = @engine.launch(Ruote.define { alpha :timeout => '2d' })
     @engine.wait_for(:alpha)
 
@@ -597,6 +569,36 @@ digraph "process wfid wfid" {
 
     assert_equal 1, ps.schedules.size
     assert_equal "0_0!!#{wfid}", ps.schedules.first['target'].sid
+  end
+
+  def test_ps_pagination
+
+    n = 7
+
+    @engine.register_participant '.+', Ruote::StorageParticipant
+
+    wfids = (1..n).collect { |i|
+      @engine.launch(Ruote.define { alpha })
+    }.sort
+
+    while @engine.storage_participant.size < n; sleep 0.140; end
+
+    assert_equal wfids, @engine.process_wfids
+
+    assert_equal(
+      wfids,
+      @engine.processes.collect { |ps| ps.wfid })
+
+    assert_equal(
+      wfids[0, 3],
+      @engine.processes(:limit => 3).collect { |ps| ps.wfid })
+    assert_equal(
+      wfids[3, 3],
+      @engine.processes(:skip => 3, :limit => 3).collect { |ps| ps.wfid })
+
+    assert_equal(
+      n,
+      @engine.processes(:count => true))
   end
 end
 

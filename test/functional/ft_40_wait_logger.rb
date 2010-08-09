@@ -28,7 +28,8 @@ class FtWaitLoggerTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.500
+    r = @engine.wait_for(:alpha)
+    assert_equal 'dispatch', r['action']
 
     sp.reply(sp.first)
 
@@ -47,7 +48,7 @@ class FtWaitLoggerTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 0.500
+    sleep 1.400 # worst case is ruote-couch
 
     assert_equal 2, @engine.context.logger.instance_variable_get(:@seen).size
 

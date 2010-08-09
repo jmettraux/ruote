@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class EftParticipantTest < Test::Unit::TestCase
@@ -35,58 +35,58 @@ class EftParticipantTest < Test::Unit::TestCase
   def test_participant_att_text
 
     pdef = Ruote.process_definition do
-      participant :alpha
+      participant :bravo
     end
 
-    @engine.register_participant :alpha do |workitem|
-      @tracer << 'alpha'
+    @engine.register_participant :bravo do |workitem|
+      @tracer << 'bravo'
     end
 
     #noisy
 
-    assert_trace 'alpha', pdef
+    assert_trace 'bravo', pdef
   end
 
   def test_participant_exp_name
 
     pdef = Ruote.process_definition do
-      alpha
+      charly
     end
 
-    @engine.register_participant :alpha do |workitem|
-      @tracer << 'alpha'
+    @engine.register_participant :charly do |workitem|
+      @tracer << 'charly'
     end
 
     #noisy
 
-    assert_trace 'alpha', pdef
+    assert_trace 'charly', pdef
   end
 
   def test_participant_exp_name_tree_rewriting
 
     pdef = Ruote.process_definition do
-      alpha :tag => 'whatever'
+      delta :tag => 'whatever'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    delta = @engine.register_participant :delta, Ruote::HashParticipant.new
 
     @engine.launch(pdef)
-    wait_for(:alpha)
+    wait_for(:delta)
 
     assert_equal(
-      ['participant', {'tag'=>'whatever', 'ref'=>'alpha'}, []],
-      Ruote::Exp::FlowExpression.fetch(@engine.context, alpha.first.h.fei).tree)
+      ['participant', {'tag'=>'whatever', 'ref'=>'delta'}, []],
+      Ruote::Exp::FlowExpression.fetch(@engine.context, delta.first.h.fei).tree)
   end
 
   def test_participant_if
 
     pdef = Ruote.process_definition do
-      alpha
-      bravo :if => 'false == true'
-      charly
+      eecho
+      fox :if => 'false == true'
+      gamma
     end
 
-    %w[ alpha bravo charly ].each do |pname|
+    %w[ eecho fox gamma ].each do |pname|
       @engine.register_participant pname do |workitem|
         @tracer << "#{pname}\n"
       end
@@ -94,7 +94,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace %w[ alpha charly ], pdef
+    assert_trace %w[ eecho gamma ], pdef
   end
 
   def test_participant_and_att_text
@@ -122,19 +122,20 @@ class EftParticipantTest < Test::Unit::TestCase
 
   def test_dispatched
 
-    part = @engine.register_participant :alpha do
-      sleep 1
-    end
+    #@engine.register_participant :hotel do
+    #  sleep 1
+    #end
+    @engine.register_participant :hotel, Ruote::NullParticipant
 
     pdef = Ruote.process_definition do
-      alpha
+      hotel
     end
 
     #noisy
 
     wfid = @engine.launch(pdef)
 
-    wait_for(:alpha)
+    wait_for(:hotel)
 
     ps = @engine.process(wfid)
 

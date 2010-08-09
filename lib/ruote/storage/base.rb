@@ -95,7 +95,7 @@ module Ruote
 
     def empty? (type)
 
-      (get_many(type) == [])
+      (get_many(type, nil, :count => true) == 0)
     end
 
     #--
@@ -104,11 +104,30 @@ module Ruote
 
     def find_root_expression (wfid)
 
-      get_many('expressions', /!#{wfid}$/).sort { |a, b|
+      get_many('expressions', wfid).sort { |a, b|
         a['fei']['expid'] <=> b['fei']['expid']
       }.select { |e|
         e['parent_id'].nil?
       }.first
+    end
+
+    # Given all the expressions stored here, returns a sorted list of unique
+    # wfids (this is used in Engine#processes(opts).
+    #
+    # Understands :skip and :limit options.
+    #
+    # This is a base implementation, different storage implementations may
+    # come up with different implementations (think CouchDB,  which could
+    # provide a view for it).
+    #
+    def expression_wfids (opts)
+
+      wfids = ids('expressions').collect { |fei| fei.split('!').last }.uniq.sort
+
+      skip = opts[:skip] || 0
+      limit = opts[:limit] || wfids.length
+
+      wfids[skip, limit]
     end
 
     #--
@@ -145,14 +164,20 @@ module Ruote
       #end
     end
 
+    # Places schedule in storage. Returns the id of the 'schedule' document.
+    # If the schedule got triggered immediately, nil is returned.
+    #
     def put_schedule (flavour, owner_fei, s, msg)
 
-      if doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
-        put(doc)
-        return doc['_id']
-      end
+      doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
 
-      nil
+      return nil unless doc
+
+      r = put(doc)
+
+      raise "put_schedule failed" if r != nil
+
+      doc['_id']
     end
 
     def delete_schedule (schedule_id)
@@ -274,11 +299,35 @@ module Ruote
 
     # Returns all the ats whose due date arrived (now or earlier)
     #
-    def filter_schedules (scheds, now)
+    def filter_schedules (schedules, now)
 
       now = Ruote.time_to_utc_s(now)
 
-      scheds.select { |sched| sched['at'] <= now }
+      schedules.select { |sch| sch['at'] <= now }
+    end
+
+    ## Returns true if the doc wfid is included in the wfids passed.
+    ##
+    #def wfid_match? (doc, wfids)
+    #  wfids.find { |wfid| doc['_id'].index(wfid) } != nil
+    #end
+
+    # Used by #get_many. Returns true whenever one of the keys matches the
+    # doc['_id']. Works with strings (_id ends with key) or regexes (_id matches
+    # key).
+    #
+    # It's a class method meant to be used by the various storage
+    # implementations.
+    #
+    def self.key_match? (keys, doc)
+
+      _id = doc['_id']
+
+      if keys.first.is_a?(String)
+        keys.find { |key| _id[-key.length..-1] == key }
+      else # Regexp
+        keys.find { |key| key.match(_id) }
+      end
     end
   end
 end

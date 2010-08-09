@@ -169,7 +169,7 @@ module Ruote
     #
     def by_wfid (wfid)
 
-      @context.storage.get_many('workitems', /!#{wfid}$/).map { |hwi|
+      @context.storage.get_many('workitems', wfid).collect { |hwi|
         Ruote::Workitem.new(hwi)
       }
     end
@@ -253,8 +253,7 @@ module Ruote
       pname = cr.delete('participant_name') || cr.delete('participant')
 
       hwis = wfid ?
-        @context.storage.get_many('workitems', /!#{wfid}$/, opts) :
-        fetch_all(opts)
+        @context.storage.get_many('workitems', wfid, opts) : fetch_all(opts)
 
       hwis.select { |hwi|
         Ruote::StorageParticipant.matches?(hwi, pname, cr)

@@ -113,5 +113,28 @@ class EftRefTest < Test::Unit::TestCase
     assert_nil @engine.process(wfid)
     assert_equal 'alpha', @tracer.to_s
   end
+
+  # Making sure that the ref expression forces the triggered subprocess to
+  # consider its timeout.
+  #
+  def test_ref_and_subprocess_timeout
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    pdef = Ruote.process_definition do
+      define 'sub0' do
+        alpha
+      end
+      sub0 :timeout => '2d'
+    end
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(:alpha)
+
+    scheds = @engine.schedules
+
+    assert_equal 1, scheds.size
+    assert_equal '0_1', scheds.first['target'].expid
+  end
 end
 

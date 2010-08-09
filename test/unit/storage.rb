@@ -173,11 +173,16 @@ class UtStorage < Test::Unit::TestCase
   def test_get_many
 
     30.times do |i|
-      @s.put('_id' => "xx!#{i}", 'type' => 'dogfood', 'msg' => "whatever #{i}")
+      @s.put(
+        '_id' => "xx!#{i}",
+        'type' => 'dogfood',
+        'wfid' => i.to_s,
+        'msg' => "whatever #{i}")
     end
 
     assert_equal 31, @s.get_many('dogfood').size
     assert_equal 10, @s.get_many('dogfood', nil, :limit => 10).size
+    assert_equal 1, @s.get_many('dogfood', '7').size
     assert_equal 1, @s.get_many('dogfood', /!7$/).size
     assert_equal 30, @s.get_many('dogfood', /^xx!/).size
     assert_equal 30, @s.get_many('dogfood', /x/).size

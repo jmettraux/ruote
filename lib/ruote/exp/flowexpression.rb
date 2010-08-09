@@ -670,7 +670,7 @@ module Ruote::Exp
       end
     end
 
-    # Called by do_apply. Overriden in ParticipantExpression.
+    # Called by do_apply. Overriden in ParticipantExpression and RefExpression.
     #
     def consider_timeout
 

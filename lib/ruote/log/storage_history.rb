@@ -52,7 +52,7 @@ module Ruote
 
     def by_process (wfid)
 
-      @context.storage.get_many('history', /!#{wfid}$/)
+      @context.storage.get_many('history', wfid)
     end
     alias :by_wfid :by_process
 
