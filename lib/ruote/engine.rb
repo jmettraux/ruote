@@ -605,7 +605,11 @@ module Ruote
         wfids
       end
 
-      wfids.collect { |wfid| ProcessStatus.new(@context, *by_wfid[wfid]) }
+      wfids.inject([]) { |a, wfid|
+        info = by_wfid[wfid]
+        a << ProcessStatus.new(@context, *info) if info
+        a
+      }
     end
   end
 
