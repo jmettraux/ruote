@@ -122,10 +122,12 @@ class EftParticipantTest < Test::Unit::TestCase
 
   def test_dispatched
 
-    #@engine.register_participant :hotel do
-    #  sleep 1
-    #end
-    @engine.register_participant :hotel, Ruote::NullParticipant
+    flunk # re-consider me
+
+    @engine.register_participant :hotel do
+      sleep 1
+    end
+    #@engine.register_participant :hotel, Ruote::NullParticipant
 
     pdef = Ruote.process_definition do
       hotel
