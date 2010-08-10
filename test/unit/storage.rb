@@ -191,20 +191,45 @@ class UtStorage < Test::Unit::TestCase
   def test_get_many_options
 
     30.times do |i|
-      @s.put('_id' => "yy!#{i}", 'type' => 'dogfood', 'msg' => "whatever #{i}")
+      @s.put(
+        '_id' => sprintf("yy!%0.2d", i),
+        'type' => 'dogfood',
+        'msg' => "whatever #{i}")
     end
 
+    # limit
+
     assert_equal 10, @s.get_many('dogfood', nil, :limit => 10).size
+
+    # count
+
     assert_equal 31, @s.get_many('dogfood', nil, :count => true)
 
+    # skip and limit
+
     assert_equal(
-      %w[ toto yy!0 yy!1 yy!10 ],
+      %w[ toto yy!00 yy!01 yy!02 ],
       @s.get_many(
-        'dogfood', nil, :skip => 0, :limit => 4).collect { |d| d['_id'] })
+        'dogfood', nil, :skip => 0, :limit => 4
+      ).collect { |d| d['_id'] })
     assert_equal(
-      %w[ yy!10 yy!11 yy!12 ],
+      %w[ yy!02 yy!03 yy!04 ],
       @s.get_many(
-        'dogfood', nil, :skip => 3, :limit => 3).collect { |d| d['_id'] })
+        'dogfood', nil, :skip => 3, :limit => 3
+      ).collect { |d| d['_id'] })
+
+    # skip, limit and reverse
+
+    assert_equal(
+      %w[ yy!29 yy!28 yy!27 ],
+      @s.get_many(
+        'dogfood', nil, :skip => 0, :limit => 3, :descending => true
+      ).collect { |d| d['_id'] })
+    assert_equal(
+      %w[ yy!29 yy!28 yy!27 ],
+      @s.get_many(
+        'dogfood', nil, :skip => 0, :limit => 3, :descending => true
+      ).collect { |d| d['_id'] })
   end
 end
 

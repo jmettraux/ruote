@@ -592,9 +592,23 @@ digraph "process wfid wfid" {
     assert_equal(
       wfids[0, 3],
       @engine.processes(:limit => 3).collect { |ps| ps.wfid })
+
     assert_equal(
       wfids[3, 3],
       @engine.processes(:skip => 3, :limit => 3).collect { |ps| ps.wfid })
+
+    #puts "==="
+    #wfids.each { |wfid| puts wfid }
+    #puts "---"
+    #@engine.processes(:limit => 3, :descending => false).collect { |ps| ps.wfid }.each { |wfid| puts wfid }
+    #puts "---"
+    #@engine.processes(:limit => 3, :descending => true).collect { |ps| ps.wfid }.each { |wfid| puts wfid }
+
+    assert_equal(
+      wfids.reverse[0, 3],
+      @engine.processes(
+        :limit => 3, :descending => true
+      ).collect { |ps| ps.wfid })
 
     assert_equal(
       n,

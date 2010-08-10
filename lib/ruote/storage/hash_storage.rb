@@ -134,6 +134,8 @@ module Ruote
 
         return docs.size if opts[:count]
 
+        docs = docs.reverse if opts[:descending]
+
         skip = opts[:skip] || 0
         limit = opts[:limit] || docs.size
 

@@ -114,7 +114,7 @@ module Ruote
     # Given all the expressions stored here, returns a sorted list of unique
     # wfids (this is used in Engine#processes(opts).
     #
-    # Understands :skip and :limit options.
+    # Understands the :skip, :limit and :descending options.
     #
     # This is a base implementation, different storage implementations may
     # come up with different implementations (think CouchDB,  which could
@@ -123,6 +123,8 @@ module Ruote
     def expression_wfids (opts)
 
       wfids = ids('expressions').collect { |fei| fei.split('!').last }.uniq.sort
+
+      wfids = wfids.reverse if opts[:descending]
 
       skip = opts[:skip] || 0
       limit = opts[:limit] || wfids.length

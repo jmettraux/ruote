@@ -172,7 +172,7 @@ module Ruote
     #
     def process (wfid)
 
-      list_processes([ wfid ]).first
+      list_processes([ wfid ], {}).first
     end
 
     # Returns an array of ProcessStatus instances.
@@ -197,7 +197,7 @@ module Ruote
         return wfids.size if opts[:count]
       end
 
-      list_processes(wfids)
+      list_processes(wfids, opts)
     end
 
     # Returns an array of current errors (hashes)
@@ -570,7 +570,7 @@ module Ruote
 
     # Used by #process and #processes
     #
-    def list_processes (wfids)
+    def list_processes (wfids, opts)
 
       swfids = wfids ? wfids.collect { |wfid| /!#{wfid}-\d+$/ } : nil
 
@@ -597,11 +597,15 @@ module Ruote
         (by_wfid[sch['wfid']] ||= [ [], [], [], [] ])[3] << sch
       end
 
-      by_wfid.values.collect { |expressions, workitems, errors, schedules|
-        ProcessStatus.new(@context, expressions, workitems, errors, schedules)
-      }.sort_by { |ps|
-        ps.wfid
-      }
+      wfids = if wfids
+        wfids
+      else
+        wfids = by_wfid.keys.sort
+        wfids = wfids.reverse if opts[:descending]
+        wfids
+      end
+
+      wfids.collect { |wfid| ProcessStatus.new(@context, *by_wfid[wfid]) }
     end
   end
 
