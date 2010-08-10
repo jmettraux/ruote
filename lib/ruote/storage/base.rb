@@ -104,8 +104,8 @@ module Ruote
 
     def find_root_expression (wfid)
 
-      get_many('expressions', wfid).sort { |a, b|
-        a['fei']['expid'] <=> b['fei']['expid']
+      get_many('expressions', wfid).sort_by { |fexp|
+        fexp['fei']['expid']
       }.select { |e|
         e['parent_id'].nil?
       }.first

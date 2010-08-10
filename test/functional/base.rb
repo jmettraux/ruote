@@ -22,6 +22,8 @@ module FunctionalBase
     #require 'ruote/util/look'
     #Ruote::Look.dump_lsof
     #Ruote::Look.dump_lsof_count
+      #
+      # uncomment this when "too many open files"
 
     @engine =
       Ruote::Engine.new(
@@ -44,6 +46,7 @@ module FunctionalBase
 
     @engine.shutdown
     @engine.context.storage.purge!
+    @engine.context.storage.close if @engine.context.storage.respond_to?(:close)
   end
 
   def assert_log_count (count, &block)
