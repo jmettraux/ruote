@@ -244,6 +244,8 @@ module Ruote
         @context.storage.get_many('schedules', nil, options) :
         @context.storage.get_many('schedules', /!#{wfid}-\d+$/)
 
+      return scheds if options[:count]
+
       scheds.collect { |sched| Ruote.schedule_to_h(sched) }
     end
 

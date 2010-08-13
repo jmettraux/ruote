@@ -556,6 +556,7 @@ digraph "process wfid wfid" {
     @engine.wait_for(:alpha)
 
     assert_equal 1, @engine.schedules.size
+    assert_equal 1, @engine.schedules(:count => true)
   end
 
   def test_ps_and_schedules
