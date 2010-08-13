@@ -67,8 +67,8 @@ class FtProcessStatusTest < Test::Unit::TestCase
       nada
     end
 
-    wfid = @engine.launch( pdef )
-    wait_for( wfid )
+    wfid = @engine.launch(pdef)
+    wait_for(wfid)
 
     errs = @engine.errors
 
@@ -76,10 +76,12 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal wfid, errs.first.wfid
 
-    err = @engine.errors( wfid )
+    err = @engine.errors(wfid)
 
     assert_equal 1, err.size
     assert_equal wfid, err.first.wfid
+
+    assert_equal 1, @engine.errors(:count => true)
   end
 
   def test_tree

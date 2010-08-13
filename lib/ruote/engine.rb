@@ -218,6 +218,8 @@ module Ruote
         @context.storage.get_many('errors', nil, options) :
         @context.storage.get_many('errors', wfid)
 
+      return errs if options[:count]
+
       errs.collect { |err| ProcessError.new(err) }
     end
 
