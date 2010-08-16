@@ -248,12 +248,15 @@ module Ruote
       opts = {}
       opts[:skip] = cr.delete('offset') || cr.delete('skip')
       opts[:limit] = cr.delete('limit')
+      opts[:count] = cr.delete('count')
 
       wfid = cr.delete('wfid')
       pname = cr.delete('participant_name') || cr.delete('participant')
 
       hwis = wfid ?
         @context.storage.get_many('workitems', wfid, opts) : fetch_all(opts)
+
+      return hwis if opts[:count]
 
       hwis.select { |hwi|
         Ruote::StorageParticipant.matches?(hwi, pname, cr)
