@@ -241,9 +241,9 @@ module Ruote
 
       cr = criteria.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
 
-      return @context.storage.query_workitems(cr).collect { |h|
-        Ruote::Workitem.new(h)
-      } if @context.storage.respond_to?(:query_workitems)
+      if @context.storage.respond_to?(:query_workitems)
+        return @context.storage.query_workitems(cr)
+      end
 
       opts = {}
       opts[:skip] = cr.delete('offset') || cr.delete('skip')
