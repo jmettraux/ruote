@@ -350,5 +350,16 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       %w[ vanilla peach nil coconut ],
       @engine.participant_list.collect { |pe| pe.options['flavour'] || 'nil' })
   end
+
+  def test_register_block_catchall_default
+
+    @engine.register do
+      catchall
+    end
+
+    assert_equal(
+      %w[ Ruote::StorageParticipant ],
+      @engine.participant_list.collect { |pe| pe.classname })
+  end
 end
 
