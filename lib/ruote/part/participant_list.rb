@@ -350,6 +350,11 @@ module Ruote
       end
 
       # else elt is a Array
+
+      if elt.size == 3
+        return [ elt[0], [ elt[1], elt[2] ] ]
+      end
+
       elt
     end
   end

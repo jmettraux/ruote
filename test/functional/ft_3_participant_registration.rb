@@ -293,6 +293,8 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       [ '/^alpha$/ ==> Ruote::StorageParticipant {}' ],
       @engine.participant_list.collect { |pe| pe.to_s })
 
+    # 0
+
     @engine.participant_list = [
       { 'regex' => '^bravo$',
         'classname' => 'Ruote::StorageParticipant',
@@ -309,6 +311,8 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       ],
       @engine.participant_list.collect { |pe| pe.to_s })
 
+    # 1
+
     @engine.participant_list = [
       [ '^charly$', [ 'Ruote::StorageParticipant', {} ] ],
       [ '^bravo$', [ 'Ruote::StorageParticipant', {} ] ]
@@ -318,6 +322,20 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       [
         '/^charly$/ ==> Ruote::StorageParticipant {}',
         '/^bravo$/ ==> Ruote::StorageParticipant {}'
+      ],
+      @engine.participant_list.collect { |pe| pe.to_s })
+
+    # 2
+
+    @engine.participant_list = [
+      [ '^delta$', Ruote::StorageParticipant, {} ],
+      [ '^echo$', 'Ruote::StorageParticipant', {} ]
+    ]
+
+    assert_equal(
+      [
+        '/^delta$/ ==> Ruote::StorageParticipant {}',
+        '/^echo$/ ==> Ruote::StorageParticipant {}'
       ],
       @engine.participant_list.collect { |pe| pe.to_s })
   end
