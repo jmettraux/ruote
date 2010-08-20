@@ -55,15 +55,29 @@ module Ruote
     # argument is true, engine will start the worker and will be able to both
     # manage and run workflows.
     #
-    def initialize (worker_or_storage, run=true)
+    # If the second options is set to { :join => true }, the worker wil
+    # be started and run in the current thread.
+    #
+    def initialize (worker_or_storage, opts=true)
 
       @context = worker_or_storage.context
       @context.engine = self
 
       @variables = EngineVariables.new(@context.storage)
 
-      @context.worker.run_in_thread if @context.worker && run
-        # launch the worker if there is one
+      if @context.worker
+        if opts == true
+          @context.worker.run_in_thread
+            # runs worker in its own thread
+        elsif opts == { :join => true }
+          @context.worker.run
+            # runs worker in current thread (and doesn't return)
+        #else
+          # worker is not run
+        end
+      #else
+        # no worker
+      end
     end
 
     # Returns the storage this engine works with passed at engine

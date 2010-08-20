@@ -4,6 +4,8 @@
 
 == ruote - 2.1.11    not yet released
 
+- Engine.new(worker, :join => true) will let the worker run in the current
+  thread (and not return)
 - StorageParticipant#query(:count => true)
 - storage.get_many(type, keys, :descending => true)
 - engine.processes(:skip => 50, limit => 50)
