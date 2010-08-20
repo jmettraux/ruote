@@ -47,6 +47,7 @@ class Ruote::Engine
     (1..77).to_a.inject({}) { |h, i|
       #(i % 10).times { Thread.pass }
       sleep 0.001
+      sleep 0.050 # couch :-(
       m = peek_msg
       h[m['_id']] = m if m
       h

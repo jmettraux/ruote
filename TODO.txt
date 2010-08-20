@@ -225,6 +225,10 @@
     binding a participant on the fly (just for this process)
 [o] participant timeout as an instance method
 [o] engine.process_wfids (lighter than engine.processes)
+[o] storage.get_many(x, y, :descending => true) ?
+[o] storage_participant.query : use skip and limit
+[o] engine.processes use skip and limit
+[o] engine.errors use skip and limit
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -395,10 +399,6 @@
 
 [ ] ParticipantEntry is a bit brittle when editing engine.participant_list
 
-[ ] storage.get_many(x, y, :descending => true) ?
-[o] storage_participant.query : use skip and limit
-[ ] engine.processes use skip and limit
-[ ] engine.errors use skip and limit
 [ ] process_count and error_count ?
 [ ] engine.ps(wfid) (shortcut ?)
 

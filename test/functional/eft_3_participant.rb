@@ -122,12 +122,9 @@ class EftParticipantTest < Test::Unit::TestCase
 
   def test_dispatched
 
-    flunk # re-consider me
-
     @engine.register_participant :hotel do
-      sleep 1
+      sleep 5
     end
-    #@engine.register_participant :hotel, Ruote::NullParticipant
 
     pdef = Ruote.process_definition do
       hotel
@@ -137,7 +134,9 @@ class EftParticipantTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    wait_for(:hotel)
+    #wait_for(:hotel)
+    sleep 0.777
+    sleep 1 # just for ruote-couch :-(
 
     ps = @engine.process(wfid)
 
