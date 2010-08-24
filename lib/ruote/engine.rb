@@ -195,7 +195,7 @@ module Ruote
     # and :limit, so pagination is our friend.
     #
     # Please note, if you're interested only in processes that have errors,
-    # Engine#errors is a more efficient mean.
+    # Engine#errors is a more efficient means.
     #
     # To simply list the wfids of the currently running, Engine#process_wfids
     # is way cheaper to call.
@@ -411,7 +411,7 @@ module Ruote
     #
     # == require_path and load_path
     #
-    # It's OK to register a participant by passing it's full classname as a
+    # It's OK to register a participant by passing its full classname as a
     # String.
     #
     #   engine.register_participant(
