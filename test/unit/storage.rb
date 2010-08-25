@@ -16,6 +16,7 @@ require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
 class UtStorage < Test::Unit::TestCase
 
   def setup
+
     @s = determine_storage({})
     @s.add_type('dogfood')
     @s.put(

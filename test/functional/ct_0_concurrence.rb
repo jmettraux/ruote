@@ -41,6 +41,8 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
     replies.sort! { |a, b| a['put_at'] <=> b['put_at'] }
 
+    #replies.each { |r| p r }
+
     t0 = Thread.new { @engine1.do_process(replies[0]) }
     t1 = Thread.new { @engine0.do_process(replies[1]) }
     t0.join
