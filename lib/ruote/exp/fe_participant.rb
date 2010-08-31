@@ -241,8 +241,13 @@ module Ruote::Exp
       timeout = attribute(:timeout)
 
       unless timeout
+
         pa = @context.plist.instantiate(p_info, :if_respond_to? => :timeout)
-        timeout = pa.timeout if pa
+
+        timeout = pa.timeout if pa && pa.method(:timeout).arity == 0
+          #
+          # the arity check is for jruby which seems to have a timeout
+          # method here and there
       end
 
       do_schedule_timeout(timeout)
