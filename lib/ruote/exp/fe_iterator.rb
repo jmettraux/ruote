@@ -78,6 +78,17 @@ module Ruote::Exp
   #   end
   #
   #
+  # == the classical case
+  #
+  # Iterating over a workitem field :
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     iterator :on_field => 'customers', :to_f => 'customer'
+  #       participant '${f:customer}'
+  #     end
+  #   end
+  #
+  #
   # == break/rewind/continue/skip/jump
   #
   # The 'iterator' expression understands a certain the following commands :

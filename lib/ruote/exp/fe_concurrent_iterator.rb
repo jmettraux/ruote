@@ -32,6 +32,9 @@ module Ruote::Exp
   #
   # This expression is a cross between 'concurrence' and 'iterator'.
   #
+  # Please look at the documentation of 'iterator' to learn more about the
+  # common options between 'iterator' and 'concurrent-iterator'.
+  #
   #   pdef = Ruote.process_definition :name => 'test' do
   #     concurrent_iterator :on_val => 'alice, bob, charly', :to_var => 'v' do
   #       participant '${v:v}'
