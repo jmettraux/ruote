@@ -7,6 +7,8 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
+require 'ruote/participant'
+
 
 class EftIteratorTest < Test::Unit::TestCase
   include FunctionalBase
@@ -26,7 +28,15 @@ class EftIteratorTest < Test::Unit::TestCase
     assert_trace('done.', pdef)
   end
 
-  def test_iterator
+  class TraceParticipant
+    include Ruote::LocalParticipant
+    def consume (wi)
+      context.tracer << "#{wi.participant_name}/#{wi.fei.expid}\n"
+      reply(wi)
+    end
+  end
+
+  def test_on_val
 
     pdef = Ruote.process_definition :name => 'test' do
       iterator :on_val => 'alice, bob, charly', :to_var => 'v' do
@@ -34,13 +44,38 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*' do |workitem|
-      @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
-    end
+    @engine.register_participant '.*', TraceParticipant
 
     #noisy
 
     assert_trace(%w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ], pdef)
+  end
+
+  def test_on__list
+
+    pdef = Ruote.process_definition :name => 'test' do
+      iterator :on => 'alice, bob, charly', :to_var => 'v' do
+        participant '${v:v}'
+      end
+    end
+
+    @engine.register_participant '.*', TraceParticipant
+
+    assert_trace(%w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ], pdef)
+  end
+
+  def test_on_f
+
+    pdef = Ruote.process_definition :name => 'test' do
+      set :f => 'people', :val => %w[ alice bob charly ]
+      iterator :on_f => 'people', :to_var => 'v' do
+        participant '${v:v}'
+      end
+    end
+
+    @engine.register_participant '.*', TraceParticipant
+
+    assert_trace(%w[ alice/0_1_0 bob/0_1_0 charly/0_1_0 ], pdef)
   end
 
   def test_to_f
