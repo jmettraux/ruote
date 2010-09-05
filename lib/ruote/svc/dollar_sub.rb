@@ -54,7 +54,7 @@ module Ruote
 
       if text.is_a?(String)
 
-        Rufus.dsub(text, FlowDict.new(flow_expression, workitem))
+        Rufus.dsub(text, dict_class.new(flow_expression, workitem))
 
       elsif text.is_a?(Array)
 
@@ -74,17 +74,36 @@ module Ruote
       end
     end
 
+    # This method is public, for easy overriding. This implementation returns
+    # Ruote::Dollar::Dict whose instances are used to extrapolate dollar
+    # strings like "${f:customer}" or "${r:Time.now.to_s}/${f:year_target}"
     #
-    # Wrapping a process expression and the current workitem as a
-    # Hash object ready for lookup at substitution time.
+    def dict_class
+
+      ::Ruote::Dollar::Dict
+    end
+  end
+
+
+  #
+  # A mini-namespace Ruote::Dollar for Dict and RubyContext, just to separate
+  # them from the rest of Ruote.
+  #
+  module Dollar
+
     #
-    class FlowDict
+    # Wrapping a flow expression and the current workitem as a
+    # Hash-like object ready for lookup at substitution time.
+    #
+    class Dict
 
-      def initialize (flow_expression, workitem, default_prefix='f')
+      attr_reader :fexp
+      attr_reader :workitem
 
-        @fexp = flow_expression
+      def initialize (flowexpression, workitem)
+
+        @fexp = flowexpression
         @workitem = workitem
-        @default_prefix = default_prefix
       end
 
       def [] (key)
@@ -140,7 +159,7 @@ module Ruote
         case pr
           when 'v' then @fexp.lookup_variable(key)
           when 'f' then Ruote.lookup(@workitem['fields'], key)
-          when 'r' then call_ruby(key)
+          when 'r' then ruby_eval(key)
           else nil
         end
       end
@@ -149,7 +168,8 @@ module Ruote
 
         i = key.index(':')
 
-        return [ @default_prefix, key ] if not i
+        return [ 'f', key ] if not i
+          # 'f' is the default prefix (field, not variable)
 
         pr = key[0..i-1] # until ':'
         pr = pr[0, 2] # the first two chars
@@ -159,30 +179,45 @@ module Ruote
         [ pr, key[i+1..-1] ]
       end
 
-      # The ${r:1+2} stuff. ("3").
+      # TODO : rdoc me
       #
-      def call_ruby (ruby_code)
+      def ruby_eval (ruby_code)
 
         return '' if @fexp.context['ruby_eval_allowed'] != true
 
-        engine_id = @fexp.context.engine_id
-
-        wi = Ruote::Workitem.new(@workitem)
-        workitem = wi
-
-        fe = @fexp
-        fexp = @fexp
-        flow_expression = @fexp
-        fei = @fexp.fei
-          #
-          # some simple notations made available to ${ruby:...}
-          # notations
-
         @fexp.context.treechecker.check(ruby_code)
 
-        # clear for eval...
+        RubyContext.new(self).instance_eval(ruby_code)
+      end
+    end
 
-        eval(ruby_code, binding()).to_s
+    # Dict uses this RubyContext class to evaluate ruby code. The method
+    # of this instance are directly visible to "${r:ruby_code}" ruby code.
+    #
+    class RubyContext < Ruote::BlankSlate
+
+      attr_reader :workitem
+
+      def initialize (dict)
+
+        @dict = dict
+        @workitem = Ruote::Workitem.new(@dict.workitem)
+      end
+
+      def flow_expression
+        @dict.fexp
+      end
+      alias fe flow_expression
+      alias fexp flow_expression
+
+      def fei
+        @dict.fexp.fei
+      end
+
+      alias wi workitem
+
+      def engine_id
+        @dict.fexp.context.engine_id
       end
 
       # This 'd' function can be called from inside ${r:...} notations.
@@ -198,8 +233,11 @@ module Ruote
       #
       def d (s)
 
-        Rufus.dsub("${#{s}}", self)
+        Rufus.dsub("${#{s}}", @dict)
       end
+
+      #def method_missing (m, *args)
+      #end
     end
   end
 end

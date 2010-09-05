@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- Ruote::Dollar::Dict and Ruote::Dollar::RubyContext
 - made Ruote.dsub a service : @context.dollar_sub.s(...) (idea: Nathan Stults)
 - moved simpler services to ruote/svc/
 - using BlankSlate for ruby process definitions
