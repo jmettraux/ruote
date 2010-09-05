@@ -27,7 +27,10 @@ class UtPartTemplateTest < Test::Unit::TestCase
   DEFAULT = %{
 workitem for gonzalo
 
-{"wfid":"20100304-bidehachina","expid":"0_0_1"}
+{
+  "wfid": "20100304-bidehachina",
+  "expid": "0_0_1"
+}
 
  - 'car'  ==>  "BMW"
  - 'model'  ==>  "BMW 328 Mille Miglia"
