@@ -22,7 +22,7 @@
 # Made in Singapore.
 #++
 
-require 'ruote/subprocess'
+require 'ruote/util/subprocess'
 require 'ruote/part/local_participant'
 
 

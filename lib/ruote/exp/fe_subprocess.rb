@@ -22,7 +22,7 @@
 # Made in Japan.
 #++
 
-require 'ruote/subprocess'
+require 'ruote/util/subprocess'
 
 
 module Ruote::Exp

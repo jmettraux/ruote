@@ -231,6 +231,7 @@
 [o] engine.errors use skip and limit
 [o] ParticipantEntry is a bit brittle when editing engine.participant_list
 [o] use blank slate for process definition
+[o] lib/ruote/svc for treechecker, error_handler and co (tree_checker)
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -401,6 +402,4 @@
 
 [ ] process_count and error_count ? (processes(:count => true))
 [ ] engine.ps(wfid) (shortcut ?)
-
-[ ] lib/ruote/svc for treechecker, error_handler and co (tree_checker)
 

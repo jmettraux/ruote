@@ -32,13 +32,11 @@ end
 require 'ruote/exp/flowexpression'
 
 
-exppath = File.dirname(__FILE__)
+exppath = File.join(File.dirname(__FILE__), '..', 'exp')
 
-Dir.new(exppath).entries.select { |p|
-  p.match(/^fe_.*\.rb$/)
-}.each { |p|
-  require exppath + '/' + p
-}
+Dir.new(exppath).entries.each do |pa|
+  require(File.join('ruote', 'exp', pa)) if pa.match(/^fe_.*\.rb$/)
+end
 
 
 module Ruote
@@ -46,6 +44,19 @@ module Ruote
   #
   # Mapping from expression names (sequence, concurrence, ...) to expression
   # classes (Ruote::SequenceExpression, Ruote::ConcurrenceExpression, ...)
+  #
+  # Requiring this ruote/svc/expression_map.rb file will automatically load
+  # all the expressions in ruote/exp/fe_*.rb.
+  #
+  # When the ExpressionMap is
+  # instantiated by the engine, it will look at the Ruote::Exp namespace
+  # and register as expression any constant in there whose name ends with
+  # "Expression", like "SequenceExpression" or "ParticipantExpression".
+  #
+  # So adding expressions to ruote should be as simple as making sure the
+  # engine sees your classes under Ruote::Exp before it instantiates this
+  # expression map (so that the expression map will automatically register
+  # your expressions).
   #
   class ExpressionMap
 

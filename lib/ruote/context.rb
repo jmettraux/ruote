@@ -171,19 +171,19 @@ module Ruote
         's_parser' => [
           'ruote/parser', 'Ruote::Parser' ],
         's_treechecker' => [
-          'ruote/util/treechecker', 'Ruote::TreeChecker' ],
+          'ruote/svc/treechecker', 'Ruote::TreeChecker' ],
         's_expmap' => [
-           'ruote/exp/expression_map', 'Ruote::ExpressionMap' ],
+           'ruote/svc/expression_map', 'Ruote::ExpressionMap' ],
         's_tracker' => [
-          'ruote/evt/tracker', 'Ruote::Tracker' ],
+          'ruote/svc/tracker', 'Ruote::Tracker' ],
         's_plist' => [
-          'ruote/part/participant_list', 'Ruote::ParticipantList' ],
+          'ruote/svc/participant_list', 'Ruote::ParticipantList' ],
         's_dispatch_pool' => [
-          'ruote/part/dispatch_pool', 'Ruote::DispatchPool' ],
+          'ruote/svc/dispatch_pool', 'Ruote::DispatchPool' ],
         's_logger' => [
           'ruote/log/wait_logger', 'Ruote::WaitLogger' ],
         's_error_handler' => [
-          'ruote/error_handler', 'Ruote::ErrorHandler' ] }
+          'ruote/svc/error_handler', 'Ruote::ErrorHandler' ] }
     end
   end
 end
