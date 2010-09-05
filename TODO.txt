@@ -229,6 +229,8 @@
 [o] storage_participant.query : use skip and limit
 [o] engine.processes use skip and limit
 [o] engine.errors use skip and limit
+[o] ParticipantEntry is a bit brittle when editing engine.participant_list
+[o] use blank slate for process definition
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -397,8 +399,8 @@
 
 [ ] rename 'parser' to 'reader'
 
-[ ] ParticipantEntry is a bit brittle when editing engine.participant_list
-
-[ ] process_count and error_count ?
+[ ] process_count and error_count ? (processes(:count => true))
 [ ] engine.ps(wfid) (shortcut ?)
+
+[ ] lib/ruote/svc for treechecker, error_handler and co (tree_checker)
 

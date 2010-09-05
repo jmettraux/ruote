@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- using BlankSlate for ruby process definitions
 - Engine.new(worker, :join => true) will let the worker run in the current
   thread (and not return)
 - StorageParticipant#query(:count => true)

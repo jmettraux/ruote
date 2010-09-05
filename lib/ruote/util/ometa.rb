@@ -29,9 +29,9 @@
 
 module Ruote
 
+  # meta a la lucky stiff
+  #
   module WithMeta
-    #
-    # meta a la lucky stiff
 
     def self.included(target)
 
@@ -40,15 +40,31 @@ module Ruote
           self
         end
       end
-      def target.meta_eval (&block)
+      def target.meta_eval(&block)
         metaclass.instance_eval(&block)
       end
-      def target.meta_def (method_name, &block)
+      def target.meta_def(method_name, &block)
         meta_eval { define_method method_name, &block }
       end
-      def class_def (method_name, &block)
+      def class_def(method_name, &block)
         class_eval { define_method name, &block }
       end
+    end
+  end
+
+  # A blank slate of a class
+  #
+  class BlankSlate
+
+    instance_methods.each do |m|
+
+      next if %w[
+        method_missing respond_to? instance_eval object_id
+      ].include?(m.to_s)
+
+      next if m.to_s.match(/^__/)
+
+      undef_method(m)
     end
   end
 end

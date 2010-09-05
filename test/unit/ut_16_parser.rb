@@ -139,5 +139,25 @@ end
 
     FileUtils.rm(fn)
   end
+
+  # Make sure that ruby method names like 'freeze' or 'clone' can be used
+  # in process definitions.
+  #
+  def test_ruby_blank_slate
+
+    t = Ruote::Parser.parse(%{
+      Ruote.define do
+        freeze
+        clone
+        untrust
+      end
+    })
+
+    assert_equal(
+      [ 'define', {}, [
+        [ 'freeze', {}, [] ], [ 'clone', {}, [] ], [ 'untrust', {}, [] ]
+      ] ],
+      t)
+  end
 end
 

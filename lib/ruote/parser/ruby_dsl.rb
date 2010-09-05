@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'ruote/util/ometa'
+
 
 module Ruote
 
@@ -94,7 +96,7 @@ module Ruote
   #
   module RubyDsl
 
-    class BranchContext
+    class BranchContext < Ruote::BlankSlate
 
       def initialize (name, attributes)
 
