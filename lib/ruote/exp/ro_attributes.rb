@@ -60,7 +60,7 @@ module Ruote::Exp
       elsif escape
         v
       else
-        Ruote.dosub(v, self, workitem)
+        @context.dollar_sub.s(v, self, workitem)
       end
 
       v = v.to_s if v and string
@@ -130,7 +130,7 @@ module Ruote::Exp
     def expand_atts (opts={})
 
       attributes.keys.inject({}) { |r, k|
-        kk = Ruote.dosub(k, self, h.applied_workitem)
+        kk = @context.dollar_sub.s(k, self, h.applied_workitem)
         r[kk] = attribute(k, h.applied_workitem, opts)
         r
       }
@@ -152,7 +152,7 @@ module Ruote::Exp
 
       text = attributes.keys.find { |k| attributes[k] == nil }
 
-      Ruote.dosub(text.to_s, self, workitem)
+      @context.dollar_sub.s(text.to_s, self, workitem)
     end
 
     protected
@@ -163,6 +163,8 @@ module Ruote::Exp
         attribute(:to_f) || attribute(:to_fld) || attribute(:to_field) ]
     end
 
+    # Val and Value (Sense and Sensibility ?)
+    #
     VV = %w[ val value ]
 
     def s_cartesian (a0, a1)
@@ -182,11 +184,6 @@ module Ruote::Exp
         lookup_variable(k)
 
       elsif k = has_att(*flds)
-
-        #k = attribute(k, @applied_workitem, att_options)
-
-        #@applied_workitem.attributes[k.to_s] ||
-        #@applied_workitem.attributes[k.to_s.to_sym]
 
         k = attribute(k, h.applied_workitem, att_options)
         h.applied_workitem['fields'][k]

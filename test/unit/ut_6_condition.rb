@@ -7,8 +7,8 @@
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
-require 'ruote/exp/expression_map'
-require 'ruote/util/treechecker'
+require 'ruote/svc/treechecker'
+require 'ruote/svc/expression_map'
 
 
 class ConditionTest < Test::Unit::TestCase

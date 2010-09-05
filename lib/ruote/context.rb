@@ -180,10 +180,12 @@ module Ruote
           'ruote/svc/participant_list', 'Ruote::ParticipantList' ],
         's_dispatch_pool' => [
           'ruote/svc/dispatch_pool', 'Ruote::DispatchPool' ],
-        's_logger' => [
-          'ruote/log/wait_logger', 'Ruote::WaitLogger' ],
+        's_dollar_sub' => [
+          'ruote/svc/dollar_sub', 'Ruote::DollarSubstitution' ],
         's_error_handler' => [
-          'ruote/svc/error_handler', 'Ruote::ErrorHandler' ] }
+          'ruote/svc/error_handler', 'Ruote::ErrorHandler' ],
+        's_logger' => [
+          'ruote/log/wait_logger', 'Ruote::WaitLogger' ] }
     end
   end
 end

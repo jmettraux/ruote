@@ -77,7 +77,7 @@ module Ruote
       unless @parser
 
         require 'ostruct'
-        require 'ruote/util/treechecker'
+        require 'ruote/svc/treechecker'
 
         @parser = Ruote::Parser.new(
           OpenStruct.new('treechecker' => Ruote::TreeChecker.new({})))

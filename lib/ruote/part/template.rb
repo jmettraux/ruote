@@ -23,7 +23,6 @@
 #++
 
 require 'rufus/json'
-require 'ruote/util/dollar'
 
 
 module Ruote
@@ -34,8 +33,14 @@ module Ruote
   # (Currently only used by the SmtpParticipant, could prove useful for
   # custom participants)
   #
+  # This module expects to find the ruote @context available (probably
+  # accessible thanks to the Ruote::LocalParticipant module, see
+  # Ruote::SmtpParticipant as an example).
+  #
   module TemplateMixin
 
+    # Do the rendering.
+    #
     def render_template (template, flow_expression, workitem)
 
       template = (File.read(template) rescue nil) if is_a_file?(template)
@@ -45,7 +50,7 @@ module Ruote
       template = template.to_s
       workitem = workitem.to_h if workitem.respond_to?(:to_h)
 
-      Ruote.dosub(template, flow_expression, workitem)
+      @context.dollar_sub.s(template, flow_expression, workitem)
     end
 
     # Simply returns a pretty-printed view of the workitem

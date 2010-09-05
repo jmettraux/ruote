@@ -403,3 +403,5 @@
 [ ] process_count and error_count ? (processes(:count => true))
 [ ] engine.ps(wfid) (shortcut ?)
 
+[ ] part/template.rb, use Rufus::Json.pretty_encode
+

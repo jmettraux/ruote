@@ -8,13 +8,20 @@
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 require_json
+require 'ruote/context'
 require 'ruote/part/template'
+require 'ruote/storage/hash_storage'
 
 
 class UtPartTemplateTest < Test::Unit::TestCase
 
   class MyParticipant
     include ::Ruote::TemplateMixin
+
+    def initialize
+
+      @context = ::Ruote::Context.new(::Ruote::HashStorage.new)
+    end
   end
 
   DEFAULT = %{

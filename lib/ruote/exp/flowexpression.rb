@@ -24,7 +24,6 @@
 
 require 'ruote/util/time'
 require 'ruote/util/ometa'
-require 'ruote/util/dollar'
 require 'ruote/util/hashdot'
 
 
