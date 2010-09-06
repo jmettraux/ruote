@@ -154,7 +154,7 @@ class FtDollarTest < Test::Unit::TestCase
     assert_trace 'AA', pdef
   end
 
-  def test_wfid
+  def test_fei_and_wfid
 
     pdef = Ruote.process_definition do
       sequence do
@@ -168,6 +168,22 @@ class FtDollarTest < Test::Unit::TestCase
     @engine.wait_for(wfid)
 
     assert_equal "0_0_0!!#{wfid}\n#{wfid}", @tracer.to_s
+  end
+
+  def test_direct_access_to_fields
+
+    pdef = Ruote.process_definition do
+      sequence do
+        set 'f:a' => [ 'alpha', 'bravo', 'charly' ]
+        echo '${r:a.join("/")}'
+      end
+    end
+
+    @engine.context['ruby_eval_allowed'] = true
+
+    #noisy
+
+    assert_trace 'alpha/bravo/charly', pdef
   end
 end
 

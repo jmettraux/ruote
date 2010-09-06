@@ -204,18 +204,25 @@ module Ruote
         @workitem = Ruote::Workitem.new(@dict.workitem)
       end
 
+      # The FlowExpression for which the rendering/substitution is occurring.
+      #
       def flow_expression
         @dict.fexp
       end
       alias fe flow_expression
       alias fexp flow_expression
 
+      # The FlowExpressionId of the expression for which the
+      # rendering/substitution is occurring.
+      #
       def fei
         @dict.fexp.fei
       end
 
       alias wi workitem
 
+      # The engine_id, if any.
+      #
       def engine_id
         @dict.fexp.context.engine_id
       end
@@ -236,8 +243,22 @@ module Ruote
         Rufus.dsub("${#{s}}", @dict)
       end
 
-      #def method_missing (m, *args)
-      #end
+      # Given a workitem with the field "newspaper" set to "NYT",
+      # "${r:newspaper}" will eval to "NYT".
+      #
+      # If the field "cars" hold the value [ "bmw", "volkswagen" ],
+      # "${r:cars[0]}" will eval to "bmw".
+      #
+      # Else the regular NoMethodError will be raised.
+      #
+      def method_missing (m, *args)
+
+        if args.length < 1 && v = @workitem.fields[m.to_s]
+          return v
+        end
+
+        super
+      end
     end
   end
 end
