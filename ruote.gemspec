@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer", "Torsten Schoenebaum"]
-  s.date = %q{2010-08-09}
+  s.date = %q{2010-09-06}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -35,12 +35,9 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/engine.rb",
      "lib/ruote/engine/process_error.rb",
      "lib/ruote/engine/process_status.rb",
-     "lib/ruote/error_handler.rb",
-     "lib/ruote/evt/tracker.rb",
      "lib/ruote/exp/command.rb",
      "lib/ruote/exp/commanded.rb",
      "lib/ruote/exp/condition.rb",
-     "lib/ruote/exp/expression_map.rb",
      "lib/ruote/exp/fe_add_branches.rb",
      "lib/ruote/exp/fe_apply.rb",
      "lib/ruote/exp/fe_cancel_process.rb",
@@ -88,13 +85,11 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/parser/ruby_dsl.rb",
      "lib/ruote/parser/xml.rb",
      "lib/ruote/part/block_participant.rb",
-     "lib/ruote/part/dispatch_pool.rb",
      "lib/ruote/part/engine_participant.rb",
      "lib/ruote/part/hash_participant.rb",
      "lib/ruote/part/local_participant.rb",
      "lib/ruote/part/no_op_participant.rb",
      "lib/ruote/part/null_participant.rb",
-     "lib/ruote/part/participant_list.rb",
      "lib/ruote/part/smtp_participant.rb",
      "lib/ruote/part/storage_participant.rb",
      "lib/ruote/part/template.rb",
@@ -104,18 +99,23 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/storage/composite_storage.rb",
      "lib/ruote/storage/fs_storage.rb",
      "lib/ruote/storage/hash_storage.rb",
-     "lib/ruote/subprocess.rb",
+     "lib/ruote/svc/dispatch_pool.rb",
+     "lib/ruote/svc/dollar_sub.rb",
+     "lib/ruote/svc/error_handler.rb",
+     "lib/ruote/svc/expression_map.rb",
+     "lib/ruote/svc/participant_list.rb",
+     "lib/ruote/svc/tracker.rb",
+     "lib/ruote/svc/treechecker.rb",
      "lib/ruote/tree_dot.rb",
-     "lib/ruote/util/dollar.rb",
      "lib/ruote/util/hashdot.rb",
      "lib/ruote/util/look.rb",
      "lib/ruote/util/lookup.rb",
      "lib/ruote/util/misc.rb",
      "lib/ruote/util/ometa.rb",
      "lib/ruote/util/serializer.rb",
+     "lib/ruote/util/subprocess.rb",
      "lib/ruote/util/time.rb",
      "lib/ruote/util/tree.rb",
-     "lib/ruote/util/treechecker.rb",
      "lib/ruote/version.rb",
      "lib/ruote/worker.rb",
      "lib/ruote/workitem.rb",
@@ -263,9 +263,9 @@ ruote is an open source ruby workflow engine.
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<rufus-json>, [">= 0.2.4"])
-      s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.19"])
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<rufus-json>, [">= 0.2.5"])
+      s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.20"])
       s.add_runtime_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_runtime_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
       s.add_runtime_dependency(%q<rufus-scheduler>, [">= 2.0.5"])
@@ -277,8 +277,8 @@ ruote is an open source ruby workflow engine.
       s.add_development_dependency(%q<mailtrap>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
-      s.add_dependency(%q<rufus-json>, [">= 0.2.4"])
-      s.add_dependency(%q<rufus-cloche>, [">= 0.1.19"])
+      s.add_dependency(%q<rufus-json>, [">= 0.2.5"])
+      s.add_dependency(%q<rufus-cloche>, [">= 0.1.20"])
       s.add_dependency(%q<rufus-dollar>, [">= 0"])
       s.add_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
       s.add_dependency(%q<rufus-scheduler>, [">= 2.0.5"])
@@ -291,8 +291,8 @@ ruote is an open source ruby workflow engine.
       s.add_dependency(%q<jeweler>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rufus-json>, [">= 0.2.4"])
-    s.add_dependency(%q<rufus-cloche>, [">= 0.1.19"])
+    s.add_dependency(%q<rufus-json>, [">= 0.2.5"])
+    s.add_dependency(%q<rufus-cloche>, [">= 0.1.20"])
     s.add_dependency(%q<rufus-dollar>, [">= 0"])
     s.add_dependency(%q<rufus-mnemo>, [">= 1.1.0"])
     s.add_dependency(%q<rufus-scheduler>, [">= 2.0.5"])
