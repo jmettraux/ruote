@@ -42,6 +42,7 @@ Richard Jennings
 Feedback
 --------
 
+Marc Lee - storage.clear consistency
 Nathan Stults - enhanced dollar substitution and service
 Don H. French - Engine#register_from_dir idea
 Kaspar Schiess - http://github.com/kschiess

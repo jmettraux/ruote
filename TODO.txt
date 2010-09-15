@@ -233,6 +233,7 @@
 [o] use blank slate for process definition
 [o] lib/ruote/svc for treechecker, error_handler and co (tree_checker)
 [o] part/template.rb, use Rufus::Json.pretty_encode
+[o] storage.clear OR storage.purge! OR both (cf discussion with marc_lee) !!
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)

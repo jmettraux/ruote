@@ -12,21 +12,25 @@ require_patron
 
 require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
 
+#
+# note : using the 'errors' type, but this test is about generic storage, not
+#        about errors per se.
+#
 
 class UtStorage < Test::Unit::TestCase
 
   def setup
 
     @s = determine_storage({})
-    @s.add_type('dogfood')
+    #@s.add_type('errors')
     @s.put(
       '_id' => 'toto',
-      'type' => 'dogfood',
+      'type' => 'errors',
       'message' => 'testing')
   end
   def teardown
 
-    @s.get_many('dogfood').each { |d| @s.delete(d) }
+    @s.get_many('errors').each { |d| @s.delete(d) }
   end
 
   def test_get_configuration
@@ -36,24 +40,24 @@ class UtStorage < Test::Unit::TestCase
 
   def test_get
 
-    h = @s.get('dogfood', 'toto')
+    h = @s.get('errors', 'toto')
 
     assert_not_nil h['_rev']
 
-    h = @s.get('dogfood', 'nada')
+    h = @s.get('errors', 'nada')
 
     assert_nil h
   end
 
   def test_put
 
-    doc =  { '_id' => 'nada', 'type' => 'dogfood', 'message' => 'testing (2)' }
+    doc =  { '_id' => 'nada', 'type' => 'errors', 'message' => 'testing (2)' }
 
     @s.put(doc)
 
     assert_nil doc['_rev']
 
-    h = @s.get('dogfood', 'nada')
+    h = @s.get('errors', 'nada')
 
     assert_not_nil h['_rev']
     assert_not_nil h['put_at']
@@ -61,7 +65,7 @@ class UtStorage < Test::Unit::TestCase
 
   def test_put_fail
 
-    r = @s.put('_id' => 'toto', 'type' => 'dogfood', 'message' => 'more')
+    r = @s.put('_id' => 'toto', 'type' => 'errors', 'message' => 'more')
 
     assert_equal 'toto', r['_id']
     assert_not_nil r['_rev']
@@ -69,7 +73,7 @@ class UtStorage < Test::Unit::TestCase
 
   def test_put_update_rev
 
-    doc = { '_id' => 'ouinouin', 'type' => 'dogfood', 'message' => 'more' }
+    doc = { '_id' => 'ouinouin', 'type' => 'errors', 'message' => 'more' }
 
     r = @s.put(doc, :update_rev => true)
 
@@ -78,15 +82,15 @@ class UtStorage < Test::Unit::TestCase
 
   def test_put_put_and_put
 
-    doc = { '_id' => 'whiskas', 'type' => 'dogfood', 'message' => 'miam' }
+    doc = { '_id' => 'whiskas', 'type' => 'errors', 'message' => 'miam' }
 
     r = @s.put(doc)
-    doc = @s.get('dogfood', 'whiskas')
+    doc = @s.get('errors', 'whiskas')
 
     r = @s.put(doc)
     assert_nil r
 
-    doc = @s.get('dogfood', 'whiskas')
+    doc = @s.get('errors', 'whiskas')
 
     assert_not_nil doc['put_at']
 
@@ -96,12 +100,12 @@ class UtStorage < Test::Unit::TestCase
 
   def test_put_update_rev_twice
 
-    doc = { '_id' => 'ouinouin', 'type' => 'dogfood', 'message' => 'more' }
+    doc = { '_id' => 'ouinouin', 'type' => 'errors', 'message' => 'more' }
 
     r = @s.put(doc, :update_rev => true)
     assert_nil r
 
-    doc = { '_id' => 'ouinouin', 'type' => 'dogfood', 'message' => 'more' }
+    doc = { '_id' => 'ouinouin', 'type' => 'errors', 'message' => 'more' }
 
     r = @s.put(doc, :update_rev => true)
     assert_not_nil r
@@ -116,7 +120,7 @@ class UtStorage < Test::Unit::TestCase
 
   def test_delete
 
-    doc = @s.get('dogfood', 'toto')
+    doc = @s.get('errors', 'toto')
 
     r = @s.delete(doc)
 
@@ -125,18 +129,18 @@ class UtStorage < Test::Unit::TestCase
 
   def test_delete_missing
 
-    r = @s.delete('_id' => 'x', '_rev' => '12-13231123132', 'type' => 'dogfood')
+    r = @s.delete('_id' => 'x', '_rev' => '12-13231123132', 'type' => 'errors')
 
     assert_equal true, r
   end
 
   def test_keys_should_be_string
 
-    doc = { '_id' => 'h0', 'type' => 'dogfood', :m0 => :z, :m1 => [ :a, :b ] }
+    doc = { '_id' => 'h0', 'type' => 'errors', :m0 => :z, :m1 => [ :a, :b ] }
 
     @s.put(doc)
 
-    doc = @s.get('dogfood', 'h0')
+    doc = @s.get('errors', 'h0')
 
     assert_equal 'z', doc['m0']
     assert_equal %w[ a b ], doc['m1']
@@ -146,7 +150,7 @@ class UtStorage < Test::Unit::TestCase
   #
   def test_put_gone
 
-    h = @s.get('dogfood', 'toto')
+    h = @s.get('errors', 'toto')
 
     assert_nil @s.delete(h)
 
@@ -157,18 +161,30 @@ class UtStorage < Test::Unit::TestCase
 
   def test_purge_type
 
-    @s.purge_type!('dogfood')
+    @s.purge_type!('errors')
 
-    assert_equal 0, @s.get_many('dogfood').size
+    assert_equal 0, @s.get_many('errors').size
   end
+
+  def test_clear
+
+    @s.clear
+
+    assert_equal 0, @s.get_many('errors').size
+  end
+
+  #def test_purge
+  #  @s.purge!
+  #  assert_equal 0, @s.get_many('errors').size
+  #end
 
   def test_ids
 
-    @s.put('_id' => 'ouinouin', 'type' => 'dogfood', 'message' => 'testing')
-    @s.put('_id' => 'nada', 'type' => 'dogfood', 'message' => 'testing')
-    @s.put('_id' => 'estereo', 'type' => 'dogfood', 'message' => 'testing')
+    @s.put('_id' => 'ouinouin', 'type' => 'errors', 'message' => 'testing')
+    @s.put('_id' => 'nada', 'type' => 'errors', 'message' => 'testing')
+    @s.put('_id' => 'estereo', 'type' => 'errors', 'message' => 'testing')
 
-    assert_equal %w[ estereo nada ouinouin toto ], @s.ids('dogfood').sort
+    assert_equal %w[ estereo nada ouinouin toto ], @s.ids('errors').sort
   end
 
   def test_get_many
@@ -176,17 +192,17 @@ class UtStorage < Test::Unit::TestCase
     30.times do |i|
       @s.put(
         '_id' => "xx!#{i}",
-        'type' => 'dogfood',
+        'type' => 'errors',
         'wfid' => i.to_s,
         'msg' => "whatever #{i}")
     end
 
-    assert_equal 31, @s.get_many('dogfood').size
-    assert_equal 10, @s.get_many('dogfood', nil, :limit => 10).size
-    assert_equal 1, @s.get_many('dogfood', '7').size
-    assert_equal 1, @s.get_many('dogfood', /!7$/).size
-    assert_equal 30, @s.get_many('dogfood', /^xx!/).size
-    assert_equal 30, @s.get_many('dogfood', /x/).size
+    assert_equal 31, @s.get_many('errors').size
+    assert_equal 10, @s.get_many('errors', nil, :limit => 10).size
+    assert_equal 1, @s.get_many('errors', '7').size
+    assert_equal 1, @s.get_many('errors', /!7$/).size
+    assert_equal 30, @s.get_many('errors', /^xx!/).size
+    assert_equal 30, @s.get_many('errors', /x/).size
   end
 
   def test_get_many_options
@@ -194,29 +210,29 @@ class UtStorage < Test::Unit::TestCase
     30.times do |i|
       @s.put(
         '_id' => sprintf("yy!%0.2d", i),
-        'type' => 'dogfood',
+        'type' => 'errors',
         'msg' => "whatever #{i}")
     end
 
     # limit
 
-    assert_equal 10, @s.get_many('dogfood', nil, :limit => 10).size
+    assert_equal 10, @s.get_many('errors', nil, :limit => 10).size
 
     # count
 
-    assert_equal 31, @s.get_many('dogfood', nil, :count => true)
+    assert_equal 31, @s.get_many('errors', nil, :count => true)
 
     # skip and limit
 
     assert_equal(
       %w[ toto yy!00 yy!01 yy!02 ],
       @s.get_many(
-        'dogfood', nil, :skip => 0, :limit => 4
+        'errors', nil, :skip => 0, :limit => 4
       ).collect { |d| d['_id'] })
     assert_equal(
       %w[ yy!02 yy!03 yy!04 ],
       @s.get_many(
-        'dogfood', nil, :skip => 3, :limit => 3
+        'errors', nil, :skip => 3, :limit => 3
       ).collect { |d| d['_id'] })
 
     # skip, limit and reverse
@@ -224,12 +240,12 @@ class UtStorage < Test::Unit::TestCase
     assert_equal(
       %w[ yy!29 yy!28 yy!27 ],
       @s.get_many(
-        'dogfood', nil, :skip => 0, :limit => 3, :descending => true
+        'errors', nil, :skip => 0, :limit => 3, :descending => true
       ).collect { |d| d['_id'] })
     assert_equal(
       %w[ yy!29 yy!28 yy!27 ],
       @s.get_many(
-        'dogfood', nil, :skip => 0, :limit => 3, :descending => true
+        'errors', nil, :skip => 0, :limit => 3, :descending => true
       ).collect { |d| d['_id'] })
   end
 end

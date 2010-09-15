@@ -100,10 +100,16 @@ module Ruote
       @cloche.ids(type)
     end
 
+    # Clears the storage completely.
+    #
     def purge!
 
       FileUtils.rm_rf(@cloche.dir)
     end
+
+    # Clears the storage completely.
+    #
+    alias clear purge!
 
     # No need for that here (FsStorage adds type on the fly).
     #
