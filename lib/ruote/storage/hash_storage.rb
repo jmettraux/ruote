@@ -150,7 +150,7 @@ module Ruote
       @h[type].keys.sort
     end
 
-    # Clears the storage
+    # Purges the storage completely.
     #
     def purge!
 
@@ -172,10 +172,6 @@ module Ruote
 
       @h['configurations']['engine'] = @options
     end
-
-    # Clears the storage
-    #
-    alias clear purge!
 
     def add_type (type)
 

@@ -236,6 +236,18 @@ module Ruote
       counter
     end
 
+    # Used when doing integration tests, removes all
+    # msgs, schedules, errors, expressions and workitems.
+    #
+    # NOTE that it doesn't remove engine variables (danger)
+    #
+    def clear
+
+      %w[ msgs schedules errors expressions workitems ].each do |type|
+        purge_type!(type)
+      end
+    end
+
     protected
 
     # Used by put_msg
