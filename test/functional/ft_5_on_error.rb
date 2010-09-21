@@ -7,6 +7,8 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
+require 'ruote/participant'
+
 
 class FtOnErrorTest < Test::Unit::TestCase
   include FunctionalBase
@@ -255,6 +257,40 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal 'Beijing, we have a problem !', workitem.error[3]
     assert_equal Array, workitem.error[4].class
     assert_equal true, workitem.fields['seen']
+  end
+
+  class Murphy
+    include Ruote::LocalParticipant
+
+    def cancel (fei, flavour)
+      # nothing to do
+    end
+    def consume (workitem)
+      raise "something got wrong"
+    end
+  end
+
+  def test_subprocess_on_error
+
+    pdef = Ruote.process_definition do
+      sequence :on_error => 'error_path' do
+        murphy
+      end
+      define 'error_path' do
+        catcher
+      end
+    end
+
+    @engine.register do
+      murphy Murphy
+      catchall
+    end
+
+    #@engine.noisy = true
+
+    @engine.launch(pdef)
+
+    @engine.wait_for(:catcher)
   end
 end
 
