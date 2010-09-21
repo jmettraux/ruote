@@ -335,7 +335,7 @@ module Ruote
     #
     def self.key_match? (keys, doc)
 
-      _id = doc['_id']
+      _id = doc.is_a?(Hash) ? doc['_id'] : doc
 
       if keys.first.is_a?(String)
         keys.find { |key| _id[-key.length..-1] == key }

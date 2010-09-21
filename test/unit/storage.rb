@@ -22,7 +22,9 @@ class UtStorage < Test::Unit::TestCase
   def setup
 
     @s = determine_storage({})
+
     #@s.add_type('errors')
+
     @s.put(
       '_id' => 'toto',
       'type' => 'errors',
@@ -30,7 +32,9 @@ class UtStorage < Test::Unit::TestCase
   end
   def teardown
 
-    @s.get_many('errors').each { |d| @s.delete(d) }
+    @s.get_many('errors').each do |d|
+      @s.delete(d)
+    end
   end
 
   def test_get_configuration
@@ -51,13 +55,14 @@ class UtStorage < Test::Unit::TestCase
 
   def test_put
 
-    doc =  { '_id' => 'nada', 'type' => 'errors', 'message' => 'testing (2)' }
+    doc =  {
+      '_id' => 'test_put', 'type' => 'errors', 'message' => 'testing (2)' }
 
     @s.put(doc)
 
     assert_nil doc['_rev']
 
-    h = @s.get('errors', 'nada')
+    h = @s.get('errors', 'test_put')
 
     assert_not_nil h['_rev']
     assert_not_nil h['put_at']
@@ -73,7 +78,7 @@ class UtStorage < Test::Unit::TestCase
 
   def test_put_update_rev
 
-    doc = { '_id' => 'ouinouin', 'type' => 'errors', 'message' => 'more' }
+    doc = { '_id' => 'tpur', 'type' => 'errors', 'message' => 'more' }
 
     r = @s.put(doc, :update_rev => true)
 
@@ -100,18 +105,20 @@ class UtStorage < Test::Unit::TestCase
 
   def test_put_update_rev_twice
 
-    doc = { '_id' => 'ouinouin', 'type' => 'errors', 'message' => 'more' }
+    doc = { '_id' => 'tpurt', 'type' => 'errors', 'message' => 'more' }
 
     r = @s.put(doc, :update_rev => true)
     assert_nil r
 
-    doc = { '_id' => 'ouinouin', 'type' => 'errors', 'message' => 'more' }
+    doc = { '_id' => 'tpurt', 'type' => 'errors', 'message' => 'more' }
 
     r = @s.put(doc, :update_rev => true)
     assert_not_nil r
   end
 
   def test_delete_fail
+
+    # missing _rev
 
     assert_raise(ArgumentError) do
       @s.delete('_id' => 'toto')
@@ -180,11 +187,11 @@ class UtStorage < Test::Unit::TestCase
 
   def test_ids
 
-    @s.put('_id' => 'ouinouin', 'type' => 'errors', 'message' => 'testing')
-    @s.put('_id' => 'nada', 'type' => 'errors', 'message' => 'testing')
-    @s.put('_id' => 'estereo', 'type' => 'errors', 'message' => 'testing')
+    @s.put('_id' => 't_ids0', 'type' => 'errors', 'message' => 'testing')
+    @s.put('_id' => 't_ids1', 'type' => 'errors', 'message' => 'testing')
+    @s.put('_id' => 't_ids2', 'type' => 'errors', 'message' => 'testing')
 
-    assert_equal %w[ estereo nada ouinouin toto ], @s.ids('errors').sort
+    assert_equal %w[ t_ids0 t_ids1 t_ids2 toto ], @s.ids('errors').sort
   end
 
   def test_get_many
@@ -198,11 +205,11 @@ class UtStorage < Test::Unit::TestCase
     end
 
     assert_equal 31, @s.get_many('errors').size
-    assert_equal 10, @s.get_many('errors', nil, :limit => 10).size
     assert_equal 1, @s.get_many('errors', '7').size
     assert_equal 1, @s.get_many('errors', /!7$/).size
     assert_equal 30, @s.get_many('errors', /^xx!/).size
     assert_equal 30, @s.get_many('errors', /x/).size
+    assert_equal 10, @s.get_many('errors', nil, :limit => 10).size
   end
 
   def test_get_many_options
