@@ -234,6 +234,33 @@ module Ruote
 
       @h['fields']['params']
     end
+
+    # (advanced)
+    #
+    # Shortcut for wi.fields['__command__']
+    #
+    # __command__ is read by the 'cursor' and the 'iterator' expressions
+    # when a workitem reaches it (apply and reply).
+    #
+    def commmand
+
+      @h['fields']['__command__']
+    end
+
+    # (advanced)
+    #
+    # Shortcut for wi.fields['__command__'] = x
+    #
+    # __command__ is read by the 'cursor' and the 'iterator' expressions
+    # when a workitem reaches it (apply and reply).
+    #
+    def command= (com)
+
+      com = com.is_a?(Array) ? com : com.split(' ')
+      com[1] = com[1].to_i if com[1]
+
+      @h['fields']['__command__'] = com
+    end
   end
 end
 
