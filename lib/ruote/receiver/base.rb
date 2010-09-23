@@ -106,15 +106,25 @@ module Ruote
       self.class.to_s
     end
 
-    protected
-
-    # Convenience method, fetches the flow expression (ParticipantExpression)
-    # that emitted that workitem.
+    # Convenience method, given a workitem or a fei, returns the
+    # corresponding flow expession.
     #
-    def fetch_flow_expression (workitem)
+    def fetch_flow_expression (workitem_or_fei)
 
-      Ruote::Exp::FlowExpression.fetch(@context, workitem.fei.to_h)
+      Ruote::Exp::FlowExpression.fetch(
+        @context,
+        Ruote::FlowExpressionId.extract_h(workitem_or_fei))
     end
+
+    # For example :
+    #
+    #   fexp = engine.fexp(fei)
+    #     # or
+    #   fexp = engine.fexp(workitem)
+    #
+    alias fexp fetch_flow_expression
+
+    protected
 
     # Stashes values in the participant expression (in the storage).
     #

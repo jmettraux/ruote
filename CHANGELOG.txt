@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- fetch_flow_expression made public and aliased to fexp
 - ${r:workitem_field} (idea: Nathan Stults)
 - Ruote::Dollar::Dict and Ruote::Dollar::RubyContext
 - made Ruote.dsub a service : @context.dollar_sub.s(...) (idea: Nathan Stults)
