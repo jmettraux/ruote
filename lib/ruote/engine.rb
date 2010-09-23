@@ -36,7 +36,7 @@ module Ruote
   # issues with stalled processes or processes stuck in errors.
   #
   # NOTE : the methods #launch and #reply are implemented in
-  # Ruote::ReceiverMixin
+  # Ruote::ReceiverMixin (this Engine class has all the methods of a Receiver).
   #
   class Engine
 
