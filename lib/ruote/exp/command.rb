@@ -43,6 +43,8 @@ module Ruote::Exp
       command, step = lookup_attribute_command(workitem) unless command
       command = 'break' if command == 'over' || command == 'stop'
 
+      step = 1 if step == ''
+
       return nil if command == nil
 
       if command == 'back'
