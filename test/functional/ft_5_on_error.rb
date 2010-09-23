@@ -282,7 +282,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     end
 
     @engine.register do
-      murphy Murphy
+      murphy FtOnErrorTest::Murphy
       catchall
     end
 
