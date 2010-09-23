@@ -86,6 +86,12 @@ module Ruote
       @h['msg']['workitem']['fields']
     end
 
+    # Returns an instance of Ruote::Workitem
+    #
+    def workitem
+      Ruote::Workitem.new(msg['workitem'])
+    end
+
     protected
 
     def to_dot (opts)
