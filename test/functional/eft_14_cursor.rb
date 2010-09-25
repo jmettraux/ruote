@@ -274,5 +274,44 @@ class EftCursorTest < Test::Unit::TestCase
 
     assert_trace 'done.', pdef
   end
+
+  class Alpha
+    include Ruote::LocalParticipant
+    def consume (workitem)
+      workitem.command = 'break'
+      reply_to_engine(workitem)
+    end
+    def cancel (fei, flavour)
+    end
+  end
+  class Bravo < Alpha
+    def consume (workitem)
+      workitem.command = 'skip 1'
+      reply_to_engine(workitem)
+    end
+  end
+
+  def test_cursor_and_workitem
+
+    pdef = Ruote.define do
+      cursor do
+        echo 'in'
+        bravo
+        echo 'mid'
+        alpha
+        echo 'out'
+      end
+      echo 'done.'
+    end
+
+    #noisy
+
+    @engine.register do
+      alpha EftCursorTest::Alpha
+      bravo EftCursorTest::Bravo
+    end
+
+    assert_trace "in\ndone.", pdef
+  end
 end
 
