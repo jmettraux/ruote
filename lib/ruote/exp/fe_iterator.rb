@@ -108,6 +108,35 @@ module Ruote::Exp
   #     end
   #   end
   #
+  # == iterator command in the workitem
+  #
+  # It's OK to issue a command to the iterator from a participant via the
+  # workitem.
+  #
+  #   pdef = Ruote.process_definition do
+  #     iterator :times => 10
+  #       sequence do
+  #         participant 'accounting'
+  #         participant 'adjust'
+  #       end
+  #     end
+  #   end
+  #
+  # where
+  #
+  #   class Adjust
+  #     include Ruote::LocalParticipant
+  #     def consume (workitem)
+  #       workitem.command = 'break' if workitem.fields['amount'] > 10_000
+  #       reply_to_engine(workitem)
+  #     end
+  #     def cancel (fei, flavour)
+  #     end
+  #   end
+  #
+  # A completely stupid example... The adjust participant will make the
+  # loop break if the amount reaches 10_000 (euros?).
+  #
   #
   # == break/rewind/continue/skip/jump with :ref
   #

@@ -161,6 +161,44 @@ module Ruote::Exp
   # cursor, but it will break the main 'cursor' (and thus break the whole
   # review process).
   #
+  # == cursor command in the workitem
+  #
+  # The command expressions are merely setting the workitem field '__command__'
+  # with an array value [ {command}, {arg} ].
+  #
+  # For example,
+  #
+  #   jump :to => 'author'
+  #     # is equivalent to
+  #   set 'field:__command__' => 'author'
+  #
+  # It is entirely OK to have a participant implementation that sets __command__
+  # by itself.
+  #
+  #   class Reviewer
+  #     include Ruote::LocalParticipant
+  #
+  #     def consume (workitem)
+  #       # somehow review the book
+  #       if review == 'bad'
+  #         #workitem.fields['__command__'] = [ 'rewind' ] # old style
+  #         workitem.command = 'rewind' # new style
+  #       else
+  #         # let it go
+  #       end
+  #       reply_to_engine(workitem)
+  #     end
+  #
+  #     def cancel (fei, flavour)
+  #       # cancel if review is still going on...
+  #     end
+  #   end
+  #
+  # This example uses the Ruote::Workitem#command= method which can be fed
+  # strings like 'rewind', 'skip 2', 'jump to author' or the equivalent arrays
+  # [ 'rewind' ], [ 'skip', 2 ], [ 'jump', 'author' ].
+  #
+  #
   # == :break_if / :rewind_if
   #
   # As an attribute of the cursor/repeat expression, you can set a :break_if.
@@ -210,6 +248,8 @@ module Ruote::Exp
 
     protected
 
+    # Determines which child expression of the cursor is to be applied next.
+    #
     def move_on (workitem=h.applied_workitem)
 
       position = workitem['fei'] == h.fei ?
@@ -236,6 +276,8 @@ module Ruote::Exp
       end
     end
 
+    # Will return true if this instance is about a 'loop' or a 'repeat'.
+    #
     def is_loop?
 
       name == 'loop' || name == 'repeat'
