@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- Engine#launch_single for 1! instance processes (Thanks Eric)
 - Workitem#command and #command= helpers
 - ProcessError#workitem helper
 - fetch_flow_expression made public and aliased to fexp

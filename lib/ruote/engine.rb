@@ -97,6 +97,61 @@ module Ruote
       @context.worker
     end
 
+    # Quick note : the implementation of launch is found in the module
+    # Ruote::ReceiverMixin that the engine includes.
+    #
+    # Some processes have to have one and only one instance of themselves
+    # running, these are called 'singles' ('singleton' is too object-oriented).
+    #
+    # When called, this method will check if an instance of the pdef is
+    # already running (it uses the process definition name attribute), if
+    # yes, it will return without having launched anything. If there is no
+    # such process running, it will launch it (and register it).
+    #
+    # Returns the wfid (workflow instance id) of the running single.
+    #
+    def launch_single (process_definition, fields={}, variables={})
+
+      tree = @context.parser.parse(process_definition)
+      name = tree[1]['name'] || (tree[1].find { |k, v| v.nil? } || []).first
+
+      raise ArgumentError.new(
+        'process definition is missing a name, cannot launch as single'
+      ) unless name
+
+      singles = @context.storage.get('variables', 'singles') || {
+        '_id' => 'singles', 'type' => 'variables', 'h' => {}
+      }
+      wfid = singles['h'][name]
+
+      return wfid if wfid && process(wfid) != nil
+        # process is already running
+
+      wfid = @context.wfidgen.generate
+
+      singles['h'][name] = wfid
+
+      r = @context.storage.put(singles)
+
+      return launch_single(tree, fields, variables) unless r.nil?
+        #
+        # the put failed, back to the start...
+        #
+        # all this to prevent races between multiple engines,
+        # multiple launch_single calls (from different Ruby runtimes)
+
+      # ... green for launch
+
+      @context.storage.put_msg(
+        'launch',
+        'wfid' => wfid,
+        'tree' => tree,
+        'workitem' => { 'fields' => fields },
+        'variables' => variables)
+
+      wfid
+    end
+
     # Given a process identifier (wfid), cancels this process.
     #
     def cancel_process (wfid)

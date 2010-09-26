@@ -42,6 +42,7 @@ Richard Jennings
 Feedback
 --------
 
+Eric Platon - engine.launch_single idea
 Marc Lee - storage.clear consistency
 Nathan Stults - enhanced dollar substitution and service
 Don H. French - Engine#register_from_dir idea
