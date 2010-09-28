@@ -617,5 +617,25 @@ digraph "process wfid wfid" {
       n,
       @engine.processes(:count => true))
   end
+
+  # Issue identified by David Goodlad :
+  #
+  # http://gist.github.com/600451
+  #
+  def test_ps_and_schedules
+
+    pdef = Ruote.define do
+      concurrence do
+        wait '4h'
+        wait '2h'
+      end
+    end
+
+    @engine.launch(pdef)
+
+    sleep 0.400
+
+    assert_equal 1, @engine.processes.size
+  end
 end
 

@@ -4,6 +4,7 @@
 
 == ruote - 2.1.11    not yet released
 
+- Engine#process broken with process where schedule count > 1 (Thanks David)
 - Engine#launch_single for 1! instance processes (Thanks Eric)
 - Workitem#command and #command= helpers
 - ProcessError#workitem helper

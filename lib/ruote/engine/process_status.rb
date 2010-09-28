@@ -66,8 +66,7 @@ module Ruote
       }
 
       @errors = errors.sort! { |a, b| a.fei.expid <=> b.fei.expid }
-
-      @schedules = schedules.sort! { |a, b| a.owner.sid <=> b.owner.sid }
+      @schedules = schedules.sort! { |a, b| a['owner'].sid <=> b['owner'].sid }
     end
 
     # Returns the expression at the root of the process instance.
