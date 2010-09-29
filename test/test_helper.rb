@@ -22,7 +22,7 @@ end
 def require_patron
   begin
     require 'patron'
-  rescue LoadError
+  rescue LoadError => le
     # stick with net/http
   end
 end

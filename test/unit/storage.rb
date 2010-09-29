@@ -8,7 +8,7 @@
 require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
 
 require_json
-require_patron
+#require_patron
 
 require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
 
