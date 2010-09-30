@@ -32,7 +32,7 @@ class FtLaunchSingleTest < Test::Unit::TestCase
 
     assert_equal(
       wfid,
-      @engine.storage.get('variables', 'singles')['h']['unique_process'])
+      @engine.storage.get('variables', 'singles')['h']['unique_process'].first)
 
     sleep 0.400
 

@@ -122,14 +122,16 @@ module Ruote
       singles = @context.storage.get('variables', 'singles') || {
         '_id' => 'singles', 'type' => 'variables', 'h' => {}
       }
-      wfid = singles['h'][name]
+      wfid, timestamp = singles['h'][name]
 
-      return wfid if wfid && process(wfid) != nil
+      if wfid && (timestamp + 1.0 < Time.now.to_f || process(wfid) != nil)
+        return wfid
+      end
         # process is already running
 
       wfid = @context.wfidgen.generate
 
-      singles['h'][name] = wfid
+      singles['h'][name] = [ wfid, Time.now.to_f ]
 
       r = @context.storage.put(singles)
 
