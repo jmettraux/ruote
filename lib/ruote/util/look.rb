@@ -37,8 +37,11 @@ module Ruote
 
     def self.dump_lsof
 
+      result = lsof
+
       puts '= lsof =' + '=' * 71
-      puts lsof
+      puts result
+      puts result.split("\n").size
       puts '=' * 80
     end
 
