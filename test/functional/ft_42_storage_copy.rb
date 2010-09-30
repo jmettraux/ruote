@@ -27,6 +27,8 @@ class FtStorageCopyTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
+    sleep 0.100 # making sure msgs have all been processed
+
     target = Ruote::HashStorage.new
     source = @engine.context.storage
 
@@ -52,6 +54,8 @@ class FtStorageCopyTest < Test::Unit::TestCase
     end)
 
     engine.wait_for(:alpha)
+
+    sleep 0.100 # making sure msgs have all been processed
 
     source = engine.context.storage
     target = @engine.context.storage
