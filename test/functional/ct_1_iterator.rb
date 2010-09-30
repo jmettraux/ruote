@@ -11,6 +11,9 @@ require File.join(File.dirname(__FILE__), 'concurrent_base')
 class CtIteratorTest < Test::Unit::TestCase
   include ConcurrentBase
 
+  # Test proper handling of collisions between an iterator and another worker
+  # passing a stop command.
+  #
   def test_collision
 
     pdef = Ruote.process_definition do

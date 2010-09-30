@@ -11,6 +11,11 @@ require File.join(File.dirname(__FILE__), 'concurrent_base')
 class CtCancelTest < Test::Unit::TestCase
   include ConcurrentBase
 
+  # A collision between a reply and a cancel
+  #
+  # The first one to occur should neutralize the other (and the flow should
+  # not stall).
+  #
   def test_collision
 
     pdef = Ruote.process_definition do

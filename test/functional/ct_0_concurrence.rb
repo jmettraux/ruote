@@ -13,6 +13,10 @@ require File.join(File.dirname(__FILE__), 'concurrent_base')
 class CtConcurrenceTest < Test::Unit::TestCase
   include ConcurrentBase
 
+  # A collision between two workers replying to the same concurrence expression.
+  #
+  # Worker 0 replies for echo 'a' while worker 1 replies for echo 'b'.
+  #
   def test_collision
 
     pdef = Ruote.process_definition do
