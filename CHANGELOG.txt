@@ -2,7 +2,7 @@
 = ruote - CHANGELOG.txt
 
 
-== ruote - 2.1.11    not yet released
+== ruote - 2.1.11    released 2010/10/01
 
 - Engine#process broken with process where schedule count > 1 (Thanks David)
 - Engine#launch_single for 1! instance processes (Thanks Eric)
