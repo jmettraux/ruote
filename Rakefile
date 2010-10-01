@@ -60,17 +60,6 @@ end
 #
 # rdoc
 
-#begin
-#  require 'yard'
-#  YARD::Rake::YardocTask.new do |doc|
-#    doc.options = [ '-o', 'rdoc', '--title', "ruote #{Ruote::VERSION}" ]
-#  end
-#rescue LoadError
-#  task :yard do
-#    abort 'YARD is not available. In order to run yardoc, you must: sudo gem install yard'
-#  end
-#end
-
 #
 # make sure to have rdoc 2.5.x to run that
 #
