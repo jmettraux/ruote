@@ -34,13 +34,13 @@ class FtLaunchSingleTest < Test::Unit::TestCase
       wfid,
       @engine.storage.get('variables', 'singles')['h']['unique_process'].first)
 
-    sleep 0.400
+    sleep 0.700
 
     assert_not_nil @engine.process(wfid)
 
     wfid1 = @engine.launch_single(pdef)
 
-    sleep 0.400
+    sleep 0.700
 
     assert_equal wfid, wfid1
     assert_equal 1, @engine.processes.size
