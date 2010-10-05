@@ -36,6 +36,31 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       @engine.participant_list.collect { |pe| pe.to_a })
   end
 
+  def test_participant_register_position
+
+    @engine.register_participant :ur, Ruote::StorageParticipant
+
+    assert_equal(
+      %w[ ^ur$ ],
+      @engine.participant_list.collect { |pe| pe.regex.to_s })
+
+    @engine.register_participant(
+      :first, Ruote::StorageParticipant, :position => :first)
+    @engine.register_participant(
+      :last, Ruote::StorageParticipant, :position => :last)
+
+    assert_equal(
+      %w[ ^first$ ^ur$ ^last$ ],
+      @engine.participant_list.collect { |pe| pe.regex.to_s })
+
+    @engine.register_participant(
+      :x, Ruote::StorageParticipant, :position => -2)
+
+    assert_equal(
+      %w[ ^first$ ^ur$ ^x$ ^last$ ],
+      @engine.participant_list.collect { |pe| pe.regex.to_s })
+  end
+
   def test_double_registration
 
     @engine.register_participant :alpha do |workitem|
