@@ -76,14 +76,13 @@ MIT
 
 == Links
 
-http://ruote.rubyforge.org
-http://github.com/jmettraux/ruote
-
-http://jmettraux.wordpress.com (blog)
+* http://ruote.rubyforge.org
+* http://github.com/jmettraux/ruote
+* http://jmettraux.wordpress.com (blog)
 
 
 == feedback
 
-mailing list : http://groups.google.com/group/openwferu-users
-irc : irc.freenode.net #ruote
+* mailing list : http://groups.google.com/group/openwferu-users
+* irc : irc.freenode.net #ruote
 
