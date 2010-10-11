@@ -2,6 +2,11 @@
 = ruote - CHANGELOG.txt
 
 
+== ruote - 2.1.12    not yet released
+
+- ${r:xxx} when ruby_eval_allowed == false now raises an error
+
+
 == ruote - 2.1.11    released 2010/10/01
 
 - Engine#process broken with process where schedule count > 1 (Thanks David)

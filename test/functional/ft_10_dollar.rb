@@ -88,7 +88,14 @@ class FtDollarTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_trace('><', pdef)
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(wfid)
+
+    assert_equal(
+      "#<ArgumentError: 'ruby_eval_allowed' is set to false, cannot evaluate" +
+      " >1 + 2< (http://ruote.rubyforge.org/dollar.html)>",
+      @engine.errors.first.message)
   end
 
   def test_r

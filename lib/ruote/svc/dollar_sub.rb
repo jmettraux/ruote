@@ -183,7 +183,11 @@ module Ruote
       #
       def ruby_eval (ruby_code)
 
-        return '' if @fexp.context['ruby_eval_allowed'] != true
+        raise ArgumentError.new(
+          "'ruby_eval_allowed' is set to false, cannot evaluate >" +
+          ruby_code +
+          "< (http://ruote.rubyforge.org/dollar.html)"
+        ) if @fexp.context['ruby_eval_allowed'] != true
 
         @fexp.context.treechecker.check(ruby_code)
 
