@@ -74,7 +74,7 @@ see http://github.com/jmettraux/ruote/tree/ruote2.1/test
 MIT
 
 
-== Links
+== links
 
 * http://ruote.rubyforge.org
 * http://github.com/jmettraux/ruote

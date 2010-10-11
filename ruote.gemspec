@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruote}
-  s.version = "2.1.11"
+  s.version = "2.1.12"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer", "Torsten Schoenebaum"]
-  s.date = %q{2010-10-01}
+  s.date = %q{2010-10-11}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -255,7 +255,7 @@ ruote is an open source ruby workflow engine.
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{ruote}
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{an open source ruby workflow engine}
   s.test_files = [
     "test/test.rb"
@@ -265,7 +265,7 @@ ruote is an open source ruby workflow engine.
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rufus-json>, [">= 0.2.5"])
       s.add_runtime_dependency(%q<rufus-cloche>, [">= 0.1.20"])
       s.add_runtime_dependency(%q<rufus-dollar>, [">= 0"])

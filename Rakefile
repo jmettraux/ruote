@@ -1,4 +1,6 @@
 
+$:.unshift('.') # 1.9.2
+
 require 'lib/ruote/version.rb'
 
 require 'rubygems'
