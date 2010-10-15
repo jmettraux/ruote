@@ -337,25 +337,40 @@ module Ruote
       "/#{@regex}/ ==> #{@classname} #{@options.inspect}"
     end
 
+    # Makes sense of whatever is given to it, returns something like
+    #
+    #   [ regex, [ klass, opts ] ]
+    #
     def self.read (elt)
 
-      if elt.is_a?(ParticipantEntry)
-        return elt.to_a
-      end
+      return elt.to_a if elt.is_a?(ParticipantEntry)
 
       if elt.is_a?(Hash)
-        return elt['classname'][0, 5] == 'inpa_' ?
-          [ elt['regex'], elt['classname'] ] :
-          [ elt['regex'], [ elt['classname'], elt['options'] ] ]
+
+        options = elt['options'] || elt.reject { |k, v|
+          %w[ name regex regexp class classname ].include?(k)
+        }
+
+        name = elt.find { |k, v| v == nil }
+        if name
+          name = name.first
+          elt.delete(name)
+          options.delete(name)
+        end
+        name = name || elt['name'] || elt['regex'] || elt['regexp']
+        regex = Ruote.regex_or_s(name)
+
+        klass = elt['classname'] || elt['class']
+
+        return klass[0, 5] == 'inpa_' ?
+          [ regex, klass ] : [ regex, [ klass, options ] ]
       end
 
       # else elt is a Array
 
-      if elt.size == 3
-        return [ elt[0], [ elt[1], elt[2] ] ]
-      end
+      return [ Ruote.regex_or_s(elt[0]), [ elt[1], elt[2] ] ] if elt.size == 3
 
-      elt
+      [ Ruote.regex_or_s(elt[0]), elt[1] ]
     end
   end
 end

@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- 'registerp' expression
 - ${r:xxx} when ruby_eval_allowed == false now raises an error
 
 

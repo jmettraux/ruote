@@ -140,5 +140,14 @@ module Ruote
       nil
     end
   end
+
+  #   regex_or_s("(?-mix:nada)") #==> /nada/
+  #   regex_or_s("nada") #==> "nada"
+  #   regex_or_s(/nada/) #==> /nada/
+  #
+  def self.regex_or_s (s)
+
+    regex_from_s(s) || s
+  end
 end
 
