@@ -71,16 +71,13 @@ module Ruote::Exp
 
       ATT_COMMANDS.each do |com|
 
-        c =
-          attribute("#{com}_#{dir}", workitem) ||
-          attribute("#{com}-#{dir}", workitem)
+        c = attribute("#{com}_#{dir}", workitem)
 
         next unless c
 
         c = Condition.true?(c)
 
-        return [ com, nil ] \
-          if (dir == 'if' && c) || (dir == 'unless' && ( ! c))
+        return [ com, nil ] if (dir == 'if' && c) || (dir == 'unless' && ( ! c))
       end
 
       nil
