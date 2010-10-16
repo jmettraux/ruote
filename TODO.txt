@@ -409,3 +409,5 @@
 
 [ ] a run of ruby -w
 
+[ ] previous_command field ? not really necessary
+

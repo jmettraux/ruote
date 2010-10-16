@@ -106,14 +106,23 @@ class EftRegisterpTest < Test::Unit::TestCase
       @engine.participant_list.collect { |e| e.to_a })
   end
 
-  def test_register_from_workitem_and_attributes
-
-    flunk
-  end
-
   def test_unregister
 
-    flunk
+    #@engine.noisy = true
+
+    @engine.context['registerp_allowed'] = true
+
+    pdef = Ruote.define do
+      registerp 'alpha', :class => 'C', :opt0 => 'val_a'
+      unregisterp 'alpha'
+    end
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal(
+      [],
+      @engine.participant_list.collect { |e| e.to_a })
   end
 end
 

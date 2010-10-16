@@ -77,6 +77,9 @@ module Ruote::Exp
     end
   end
 
+  #
+  # TODO
+  #
   class UnregisterpExpression < RegisterpExpression
 
     names :unregisterp
@@ -84,6 +87,19 @@ module Ruote::Exp
     def apply
 
       registerp_allowed?
+
+      name = attribute(:name) || attribute_text
+
+      result = begin
+        context.engine.unregister_participant(name)
+        true
+      rescue
+        false
+      end
+
+      h.applied_workitem['fields']['__result__'] = result
+
+      reply_to_parent(h.applied_workitem)
     end
   end
 end
