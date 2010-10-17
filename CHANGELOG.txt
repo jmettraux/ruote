@@ -4,6 +4,8 @@
 
 == ruote - 2.1.12    not yet released
 
+- fixed issue with ProcessStatus#position and errors in ParticipantExpression
+  (Thanks Eric Smith)
 - 'registerp' and 'unregisterp' expressions
 - ${r:xxx} when ruby_eval_allowed == false now raises an error
 

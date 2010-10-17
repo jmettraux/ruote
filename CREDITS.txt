@@ -2,7 +2,7 @@
 CREDITS
 =======
 
-Ruote (OpenWFEru) is an open source Ruby workflow (and sometimes BPM) engine.
+Ruote is an open source Ruby workflow engine.
 
 
 The main project team
@@ -16,6 +16,7 @@ Torsten Schoenebaum - http://github.com/tosch
 Contributors
 ------------
 
+Eric Smith - position when error patch
 David Goodlad - http://github.com/dgoodlad
 Eric Dennis - http://github.com/threetee
 David Greaves - http://github.com/lbt

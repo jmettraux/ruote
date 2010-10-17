@@ -523,25 +523,23 @@ digraph "process wfid wfid" {
       @engine.process(wfid).workitems.collect { |wi| wi.participant_name })
   end
 
-#  def test_position_when_error
-#
-#    pdef = Ruote.define do
-#      concurrence do
-#        error 'something went wrong'
-#        alpha :task => 'clean car'
-#      end
-#    end
-#
-#    @engine.register_participant '.+', Ruote::StorageParticipant
-#
-#    wfid = @engine.launch(pdef)
-#    @engine.wait_for(:alpha)
-#
-#    sleep 0.400
-#
-#    p @engine.process(wfid).errors.size
-#    p @engine.process(wfid).position
-#  end
+  def test_position_when_error
+
+    pdef = Ruote.define do
+      participant
+    end
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal 1, @engine.process(wfid).errors.size
+
+    assert_equal(
+      [ [ "0_0!!#{wfid}",
+          nil,
+          { 'error' => '#<ArgumentError: no participant name specified>' } ] ],
+      @engine.process(wfid).position)
+  end
 
   def test_ps_with_stored_workitems
 

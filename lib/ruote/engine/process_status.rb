@@ -198,9 +198,15 @@ module Ruote
     def position
 
       workitems.collect { |wi|
+
         r = [ wi.fei.sid, wi.participant_name ]
-        params = wi.fields['params'].dup
+
+        params = (wi.fields['params'] || {}).dup
         params.delete('ref')
+
+        err = errors.find { |err| err.fei == wi.fei }
+        params['error'] = err.message if err
+
         r << params
         r
       }
