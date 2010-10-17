@@ -357,8 +357,14 @@ module Ruote
           elt.delete(name)
           options.delete(name)
         end
-        name = name || elt['name'] || elt['regex'] || elt['regexp']
-        regex = Ruote.regex_or_s(name)
+        name = name || elt['name']
+        name = Ruote.regex_or_s(name)
+
+        regex = name
+        unless name
+          regex = Ruote.regex_or_s(elt['regex'] || elt['regexp'])
+          regex = regex.is_a?(String) ? Regexp.new(regex) : regex
+        end
 
         klass = elt['classname'] || elt['class']
 
