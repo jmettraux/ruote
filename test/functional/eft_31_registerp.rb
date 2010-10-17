@@ -41,6 +41,7 @@ class EftRegisterpTest < Test::Unit::TestCase
       registerp 'alpha', :class => 'C', :opt0 => 'val_a'
       registerp /bravo/, :class => 'C', :opt0 => 'val_b'
       registerp :regex => /charly/, :class => 'C', :opt0 => 'val_c'
+      registerp :regex => 'delta', :class => 'C', :opt0 => 'val_d'
     end
 
     wfid = @engine.launch(pdef)
@@ -50,7 +51,8 @@ class EftRegisterpTest < Test::Unit::TestCase
       [
         [ '^alpha$', [ 'C', { 'opt0' => 'val_a' } ] ],
         [ 'bravo', [ 'C', { 'opt0' => 'val_b' } ] ],
-        [ 'charly', [ 'C', { 'opt0' => 'val_c' } ] ]
+        [ 'charly', [ 'C', { 'opt0' => 'val_c' } ] ],
+        [ 'delta', [ 'C', { 'opt0' => 'val_d' } ] ]
       ],
       @engine.participant_list.collect { |e| e.to_a })
   end

@@ -26,7 +26,24 @@
 module Ruote::Exp
 
   #
-  # TODO
+  # This expressions lets one register participants directly from a process
+  # definition.
+  #
+  #   pdef = Ruote.define do
+  #
+  #     registerp 'alpha', :class => 'MyParticipant', :target => 'mail'
+  #       # register participant named 'alpha' with the given class
+  #       # and some attributes
+  #
+  #     registerp /^user_.+/, :class => 'MyParticipant'
+  #     registerp :regex => '^user_.+', :class => 'MyParticipant'
+  #       # register participant with a given regular expression
+  #
+  #     registerp 'admin', :class => 'MyParticipant', :position => -2
+  #       # register participant 'admin' as second to last in participant list
+  #   end
+  #
+  # TODO : continue
   #
   class RegisterpExpression < FlowExpression
 
