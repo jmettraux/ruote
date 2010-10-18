@@ -26,6 +26,8 @@
 module Ruote::Exp
 
   #
+  # (Since ruote 2.1.12)
+  #
   # This expressions lets one register participants directly from a process
   # definition.
   #
@@ -43,7 +45,17 @@ module Ruote::Exp
   #       # register participant 'admin' as second to last in participant list
   #   end
   #
-  # TODO : continue
+  # Participant info can be given as attributes to the expression (see code
+  # above) or via the workitem.
+  #
+  #   pdef = Ruote.define do
+  #
+  #     registerp :participant => 'participant'
+  #       # participant info is found in the field 'participant'
+  #
+  #     registerp :participants => 'participants'
+  #       # an array of participant info is found in the field 'participants'
+  #   end
   #
   class RegisterpExpression < FlowExpression
 
@@ -95,7 +107,19 @@ module Ruote::Exp
   end
 
   #
-  # TODO
+  # (Since ruote 2.1.12)
+  #
+  # Unregisters a participant.
+  #
+  #   Ruote.process_definition do
+  #     unregisterp 'alfred'
+  #     unregisterp :name => 'bob'
+  #   end
+  #
+  # Shows the same behaviour as
+  #
+  #   engine.unregister_participant 'alfred'
+  #   engine.unregister_participant 'bob'
   #
   class UnregisterpExpression < RegisterpExpression
 
