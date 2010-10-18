@@ -57,6 +57,9 @@ module Ruote::Exp
   #       # an array of participant info is found in the field 'participants'
   #   end
   #
+  # The expression 'unregisterp' can be used to remove participants from the
+  # participant list.
+  #
   class RegisterpExpression < FlowExpression
 
     names :registerp
@@ -103,44 +106,6 @@ module Ruote::Exp
       name, (klass, opts) = Ruote::ParticipantEntry.read(info)
 
       context.engine.register_participant(name, klass, opts)
-    end
-  end
-
-  #
-  # (Since ruote 2.1.12)
-  #
-  # Unregisters a participant.
-  #
-  #   Ruote.process_definition do
-  #     unregisterp 'alfred'
-  #     unregisterp :name => 'bob'
-  #   end
-  #
-  # Shows the same behaviour as
-  #
-  #   engine.unregister_participant 'alfred'
-  #   engine.unregister_participant 'bob'
-  #
-  class UnregisterpExpression < RegisterpExpression
-
-    names :unregisterp
-
-    def apply
-
-      registerp_allowed?
-
-      name = attribute(:name) || attribute_text
-
-      result = begin
-        context.engine.unregister_participant(name)
-        true
-      rescue
-        false
-      end
-
-      h.applied_workitem['fields']['__result__'] = result
-
-      reply_to_parent(h.applied_workitem)
     end
   end
 end

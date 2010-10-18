@@ -409,5 +409,5 @@
 
 [ ] a run of ruby -w
 
-[ ] previous_command field ? not really necessary
+[ ] cursor : previous_command field ? not really necessary with :break_if => x
 
