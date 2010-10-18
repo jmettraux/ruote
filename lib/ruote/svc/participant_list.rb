@@ -271,7 +271,12 @@ module Ruote
     def list= (pl)
 
       list = get_list
-      list['list'] = pl.collect { |e| ParticipantEntry.read(e) }
+      list['list'] = pl.collect { |e|
+        ParticipantEntry.read(e)
+      }.collect { |e|
+        e[0] = e[0].source if e[0].is_a?(Regexp)
+        e
+      }
 
       if r = @context.storage.put(list)
         #
