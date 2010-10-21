@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'ruote/exp/fe_registerp'
+
 
 module Ruote::Exp
 
