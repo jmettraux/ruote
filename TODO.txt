@@ -234,6 +234,7 @@
 [o] lib/ruote/svc for treechecker, error_handler and co (tree_checker)
 [o] part/template.rb, use Rufus::Json.pretty_encode
 [o] storage.clear OR storage.purge! OR both (cf discussion with marc_lee) !!
+[o] Nathan : throw error on ${ruby:...} when ruby_eval_allowed is not set
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : case (is it necessary ?)
@@ -405,9 +406,11 @@
 [ ] process_count and error_count ? (processes(:count => true))
 [ ] engine.ps(wfid) (shortcut ?)
 
-[ ] Nathan : throw error on ${ruby:...} when ruby_eval_allowed is not set
-
 [ ] a run of ruby -w
 
-[ ] cursor : previous_command field ? not really necessary with :break_if => x
+[x] cursor : previous_command field ? not really necessary with :break_if => x
+
+[ ] participant params['tags'] = [ a, b, c ] ? costly (x expressions to read)
+    but passing them in the workitem could be fun
+    field['__tags__'] ?
 
