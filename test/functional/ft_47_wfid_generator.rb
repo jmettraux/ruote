@@ -35,5 +35,20 @@ class FtWfidGeneratorTest < Test::Unit::TestCase
 
     assert_not_nil @engine.context.wfidgen.generate
   end
+
+  def test_generate_after_a_put_failed
+
+    assert_not_nil @engine.context.wfidgen.generate
+
+    @engine.context.wfidgen.instance_eval do
+      if @last['_rev'].is_a?(String)
+        @last['_rev'] = 'xyz'
+      else # integer
+        @last['_rev'] = 123456789
+      end
+    end
+
+    assert_not_nil @engine.context.wfidgen.generate
+  end
 end
 

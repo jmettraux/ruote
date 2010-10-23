@@ -54,14 +54,21 @@ module Ruote
 
       @last['raw'] = raw.to_f
 
-      last = @context.storage.put(@last)
+      last = @context.storage.put(@last, :update_rev => true)
 
-      if last
+      if last == true
+        #
+        # 'last' is gone, have to put new one
+        @last.delete('_rev')
+        get_raw
+
+      elsif last
         #
         # put failed, have to re-ask
         #
         @last = last
         get_raw
+
       else
         #
         # put successful, we can build a new wfid
