@@ -237,12 +237,13 @@
 [o] Nathan : throw error on ${ruby:...} when ruby_eval_allowed is not set
 
 [ ] exp : exp (restricted form of eval ?)
-[ ] exp : case (is it necessary ?)
 [ ] exp : filter
 [ ] exp : filter-definition
 [x] exp : lose ?
 [x] exp : parameter
 [ ] exp : log : or could it be a participant ?
+
+[ ] exp : case (is it necessary ?) (guards ?) (hard for ruote-fluo)
 
 [ ] exp : defined (not really necessary)
 [ ] exp : quote (not really necessary)
@@ -413,4 +414,6 @@
 [ ] participant params['tags'] = [ a, b, c ] ? costly (x expressions to read)
     but passing them in the workitem could be fun
     field['__tags__'] ?
+
+[ ] register :overwrite { ... } ?
 
