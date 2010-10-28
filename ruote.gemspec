@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux", "Kenneth Kalmer", "Torsten Schoenebaum"]
-  s.date = %q{2010-10-11}
+  s.date = %q{2010-10-28}
   s.description = %q{
 ruote is an open source ruby workflow engine.
     }
@@ -60,6 +60,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/exp/fe_participant.rb",
      "lib/ruote/exp/fe_redo.rb",
      "lib/ruote/exp/fe_ref.rb",
+     "lib/ruote/exp/fe_registerp.rb",
      "lib/ruote/exp/fe_reserve.rb",
      "lib/ruote/exp/fe_restore.rb",
      "lib/ruote/exp/fe_save.rb",
@@ -67,6 +68,7 @@ ruote is an open source ruby workflow engine.
      "lib/ruote/exp/fe_set.rb",
      "lib/ruote/exp/fe_subprocess.rb",
      "lib/ruote/exp/fe_undo.rb",
+     "lib/ruote/exp/fe_unregisterp.rb",
      "lib/ruote/exp/fe_wait.rb",
      "lib/ruote/exp/fe_when.rb",
      "lib/ruote/exp/flowexpression.rb",
@@ -126,6 +128,7 @@ ruote is an open source ruby workflow engine.
      "test/bm/ci.rb",
      "test/bm/ici.rb",
      "test/bm/juuman.rb",
+     "test/bm/launch_bench.rb",
      "test/bm/load_26c.rb",
      "test/bm/mega.rb",
      "test/bm/seq_thousand.rb",
@@ -161,6 +164,7 @@ ruote is an open source ruby workflow engine.
      "test/functional/eft_29_cron.rb",
      "test/functional/eft_2_sequence.rb",
      "test/functional/eft_30_ref.rb",
+     "test/functional/eft_31_registerp.rb",
      "test/functional/eft_3_participant.rb",
      "test/functional/eft_4_set.rb",
      "test/functional/eft_5_subprocess.rb",
@@ -208,6 +212,7 @@ ruote is an open source ruby workflow engine.
      "test/functional/ft_44_var_participant.rb",
      "test/functional/ft_45_participant_accept.rb",
      "test/functional/ft_46_launch_single.rb",
+     "test/functional/ft_47_wfid_generator.rb",
      "test/functional/ft_4_cancel.rb",
      "test/functional/ft_5_on_error.rb",
      "test/functional/ft_6_on_cancel.rb",
@@ -242,7 +247,6 @@ ruote is an open source ruby workflow engine.
      "test/unit/ut_19_part_template.rb",
      "test/unit/ut_1_fei.rb",
      "test/unit/ut_20_composite_storage.rb",
-     "test/unit/ut_2_wfidgen.rb",
      "test/unit/ut_3_wait_logger.rb",
      "test/unit/ut_4_expmap.rb",
      "test/unit/ut_5_tree.rb",

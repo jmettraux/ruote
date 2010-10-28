@@ -415,5 +415,8 @@
     but passing them in the workitem could be fun
     field['__tags__'] ?
 
-[ ] register :overwrite { ... } ?
+[ ] register :overwrite { ... } ? (wipes all the participants)
+[ ] simple worker hooks ? (as discussed with @hassox)
+    on_terminate... ? only works in the same process as the worker
+    only for tests...
 
