@@ -269,7 +269,7 @@ module Ruote
     #
     def purge!
 
-      fetch_all.each { |hwi| @context.storage.delete( hwi ) }
+      fetch_all.each { |hwi| @context.storage.delete(hwi) }
     end
 
     # Used by #query when filtering workitems.

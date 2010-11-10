@@ -420,3 +420,11 @@
     on_terminate... ? only works in the same process as the worker
     only for tests...
 
+[ ] storage_participant.by_participant([ a, b, c, d ], opts)
+    storage_participant.by_participant(a, b, c, d, opts) too
+      leverage things like
+      http://wiki.apache.org/couchdb/HTTP_view_API#Querying_Options
+    2.1.12
+
+[ ] website : add piece of doc about running workers on their own
+
