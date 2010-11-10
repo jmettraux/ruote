@@ -257,7 +257,8 @@ module Ruote
     def command= (com)
 
       com = com.is_a?(Array) ? com : com.split(' ')
-      com[1] = com[1].to_i if com[1]
+      com = [ com.first, com.last ]
+      com[1] = com[1].to_i if com[1] unless com[0] == 'jump'
 
       @h['fields']['__command__'] = com
     end

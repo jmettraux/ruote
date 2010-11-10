@@ -313,5 +313,64 @@ class EftCursorTest < Test::Unit::TestCase
 
     assert_trace "in\ndone.", pdef
   end
+
+  class Charly
+    include Ruote::LocalParticipant
+    def initialize(opts)
+      @opts = opts
+    end
+    def consume (workitem)
+      workitem.command = @opts['command']
+      reply_to_engine(workitem)
+    end
+    def cancel (fei, flavour)
+    end
+  end
+
+  JUMP_DEF = Ruote.process_definition do
+    cursor do
+      echo 'top'
+      charly
+      echo 'middle'
+      delta
+      echo 'bottom'
+    end
+  end
+
+  def test_workitem_command_and_jump_array
+
+    #noisy
+
+    @engine.register do
+      charly EftCursorTest::Charly, 'command' => [ 'jump', 'delta' ]
+      catchall Ruote::NoOpParticipant
+    end
+
+    assert_trace "top\nbottom", JUMP_DEF
+  end
+
+  def test_workitem_command_and_jump_string
+
+    #noisy
+
+    @engine.register do
+      charly EftCursorTest::Charly, 'command' => 'jump delta'
+      catchall Ruote::NoOpParticipant
+    end
+
+    assert_trace "top\nbottom", JUMP_DEF
+  end
+
+  def test_workitem_command_and_jump_to_string
+
+    #noisy
+
+    @engine.register do
+      charly EftCursorTest::Charly, 'command' => 'jump to delta'
+      catchall Ruote::NoOpParticipant
+    end
+
+    assert_trace "top\nbottom", JUMP_DEF
+  end
 end
 

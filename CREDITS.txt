@@ -9,13 +9,14 @@ The main project team
 ---------------------
 
 John Mettraux - http://jmettraux.wordpress.com
-Kenneth Kalmer - http://www.opensourcery.co.za
 Torsten Schoenebaum - http://github.com/tosch
+Kenneth Kalmer - http://www.opensourcery.co.za
 
 
 Contributors
 ------------
 
+Fix Peña - 'jump to' bug patch
 Eric Smith - position when error patch
 David Goodlad - http://github.com/dgoodlad
 Eric Dennis - http://github.com/threetee
