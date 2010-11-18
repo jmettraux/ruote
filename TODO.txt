@@ -428,3 +428,7 @@
 
 [ ] website : add piece of doc about running workers on their own
 
+[ ] use treetop for more complex "${f:x} AND ${f:y}" ?
+    (systems like Rails require it anyway)
+[ ] receiver/base.rb : fexp.lookup_variable --> lookup_variable ?
+

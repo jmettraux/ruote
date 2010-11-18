@@ -84,7 +84,7 @@ module Ruote
     #
     def reply (workitem)
 
-      receive (workitem)
+      receive(workitem)
     end
 
     # Wraps a call to receive(workitem)
@@ -94,7 +94,7 @@ module Ruote
     #
     def reply_to_engine (workitem)
 
-      receive (workitem)
+      receive(workitem)
     end
 
     # A receiver signs a workitem when it comes back.
