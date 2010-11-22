@@ -87,7 +87,7 @@ module Ruote::Exp
 
     include CommandMixin
 
-    names :skip, :back, :jump, :rewind, :continue, :break, :stop
+    names :skip, :back, :jump, :rewind, :continue, :break, :stop, :over
 
     def apply
 

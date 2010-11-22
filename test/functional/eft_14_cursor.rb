@@ -85,6 +85,21 @@ class EftCursorTest < Test::Unit::TestCase
     assert_trace('a', pdef)
   end
 
+  def test_over
+
+    pdef = Ruote.process_definition :name => 'test' do
+      cursor do
+        echo 'a'
+        over
+        echo 'b'
+      end
+    end
+
+    #noisy
+
+    assert_trace('a', pdef)
+  end
+
   def test_jump_to_tag
 
     pdef = Ruote.process_definition :name => 'test' do

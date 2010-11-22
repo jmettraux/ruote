@@ -45,7 +45,7 @@ Richard Jennings
 Feedback
 --------
 
-Daniel Neighman "hassox" - :on_timeout => "error" and wfid_generator issues
+Daniel Neighman "hassox" - :on_timeout => "error" and many issue reports
 Eric Platon - engine.launch_single idea
 Marc Lee - storage.clear consistency
 Nathan Stults - enhanced dollar substitution and service
