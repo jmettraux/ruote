@@ -204,8 +204,9 @@ module Ruote
         params = (wi.fields['params'] || {}).dup
         params.delete('ref')
 
-        err = errors.find { |err| err.fei == wi.fei }
-        params['error'] = err.message if err
+        if err = errors.find { |e| e.fei == wi.fei }
+          params['error'] = err.message
+        end
 
         r << params
         r

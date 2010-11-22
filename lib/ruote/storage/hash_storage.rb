@@ -44,6 +44,8 @@ module Ruote
       super()
         # since were including MonitorMixin, this super() is necessary
 
+      @options = options
+
       purge!
 
       put(options.merge('type' => 'configurations', '_id' => 'engine'))

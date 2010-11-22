@@ -74,8 +74,8 @@ module Ruote::Exp
 
       elsif pas = attribute('participants')
 
-        h.applied_workitem['fields'][pas].each do |pa|
-          register_participant(pa)
+        h.applied_workitem['fields'][pas].each do |part|
+          register_participant(part)
         end
 
       else
