@@ -434,3 +434,5 @@
 
 [ ] engine/receiver #reply(workitem or fexp or fei) ?
 
+[ ] workitem : #as_json and #from_json
+

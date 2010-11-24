@@ -42,7 +42,7 @@ class FtWfidGeneratorTest < Test::Unit::TestCase
 
     @engine.context.wfidgen.instance_eval do
       if @last['_rev'].is_a?(String)
-        @last['_rev'] = 'xyz'
+        @last['_rev'] = '1-cc9bc774f00b65ee28a6c0e4f26474de'
       else # integer
         @last['_rev'] = 123456789
       end
