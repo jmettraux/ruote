@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- implemented the 'lose' expression
 - fixed issue with "over" (Thanks Daniel 'hassox' Neighman)
 - fixed issue with workitem.command = 'jump to x' (Thanks Fix Peña)
 - fixed issue with ProcessStatus#position and errors in ParticipantExpression
