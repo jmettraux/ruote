@@ -68,5 +68,27 @@ class FtForgetTest < Test::Unit::TestCase
     #p ps.original_tree
     #p ps.current_tree
   end
+
+  def test_forget_true_string
+
+    pdef = Ruote.process_definition do
+      concurrence :count => 1 do
+        alpha :forget => 'true'
+        bravo
+      end
+      charly
+    end
+
+    @engine.register_participant '.+' do |wi|
+      @tracer << wi.participant_name + "\n"
+    end
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(wfid)
+    wait_for(wfid)
+
+    assert_equal "alpha\nbravo\ncharly", @tracer.to_s
+  end
 end
 
