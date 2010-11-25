@@ -45,6 +45,7 @@ Richard Jennings
 Feedback
 --------
 
+Claudio Petasecca Donati - 'lose' expression and attribute reminder
 Daniel Neighman "hassox" - :on_timeout => "error" and many issue reports
 Eric Platon - engine.launch_single idea
 Marc Lee - storage.clear consistency

@@ -216,6 +216,10 @@ module Ruote::Exp
         h.forgotten = true
 
         @context.storage.put_msg('reply', 'fei' => i, 'workitem' => wi)
+
+      elsif attribute(:lose).to_s == 'true'
+
+        h.lost = true
       end
 
       consider_tag
@@ -230,8 +234,7 @@ module Ruote::Exp
 
         unset_variable(h.tagname)
 
-        @context.storage.put_msg(
-          'left_tag', 'tag' => h.tagname, 'fei' => h.fei)
+        @context.storage.put_msg('left_tag', 'tag' => h.tagname, 'fei' => h.fei)
       end
 
       if h.timeout_schedule_id && h.state != 'timing_out'
@@ -243,25 +246,26 @@ module Ruote::Exp
 
         trigger('on_error', workitem)
 
-      elsif (h.state == 'cancelling') and h.on_cancel
+      elsif h.state == 'cancelling' and h.on_cancel
 
         trigger('on_cancel', workitem)
 
-      elsif (h.state == 'cancelling') and h.on_re_apply
+      elsif h.state == 'cancelling' and h.on_re_apply
 
         trigger('on_re_apply', workitem)
 
-      elsif (h.state == 'timing_out') and h.on_timeout
+      elsif h.state == 'timing_out' and h.on_timeout
 
         trigger('on_timeout', workitem)
 
+      elsif h.lost and h.state == nil
+
+        # do not reply, sit here (and wait for cancellation probably)
+
       else # vanilla reply
 
-        #unpersist_or_raise if delete
-        #try_unpersist if delete
-        if delete
-          do_unpersist || return
-        end
+        (do_unpersist || return) if delete
+          # remove expression from storage
 
         if h.parent_id
 

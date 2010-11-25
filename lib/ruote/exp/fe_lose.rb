@@ -65,6 +65,26 @@ module Ruote::Exp
   #
   # 'lose' on its own acts like a dead-end.
   #
+  #
+  # == the :lose attribute
+  #
+  # Every expression understands the 'lose' attribute :
+  #
+  #   Ruote.process_definition do
+  #     concurrence :count => 1 do
+  #       alfred
+  #       sequence :lose => true do
+  #         wait '2d'
+  #         send_reminder_to_alfred
+  #         wait '2h'
+  #         send_alarm_to_boss
+  #       end
+  #     end
+  #   end
+  #
+  # Probably produces definitions more compact than when using the 'lose'
+  # expression.
+  #
   class LoseExpression < FlowExpression
 
     names :lose
