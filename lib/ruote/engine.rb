@@ -608,6 +608,18 @@ module Ruote
       @context[config_key] = value
     end
 
+    # Returns a configuration value.
+    #
+    #   engine.configure('ruby_eval_allowed', true)
+    #
+    #   p engine.configuration('ruby_eval_allowed')
+    #     # => true
+    #
+    def configuration (config_key)
+
+      @context[config_key]
+    end
+
     # A convenience methods for advanced users (like Oleg).
     #
     # Given a fei (flow expression id), fetches the workitem as stored in

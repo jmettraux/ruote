@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- engine#configuration(key) (counterpart to engine#configure(key, value))
 - implemented the :lose attribute
 - implemented the 'lose' expression
 - fixed issue with "over" (Thanks Daniel 'hassox' Neighman)

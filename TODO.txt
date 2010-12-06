@@ -371,9 +371,6 @@
     maybe it's expensive to fire a [worker] process each minute
     have to write the $$ (pid) somewhere for cron to pick it up
 
-[ ] detach / attach segments of processes
-[ ] clone process ? (could be used by {de|at}tach)
-
 [ ] dollar.rb ${timestamp} ?
 
 [ ] toto :task => 'maw the lawn', :within => '3d'
@@ -437,3 +434,9 @@
 [ ] workitem : #as_json and #from_json
 
 [ ] wait ~~> at
+
+[ ] concurrence : add_child ?
+    How would that impact concurrent_iterator's add_branches ?
+[ ] detach / attach segments of processes
+[ ] clone process ? (could be used by {de|at}tach)
+
