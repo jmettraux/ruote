@@ -620,6 +620,62 @@ module Ruote
       @context[config_key]
     end
 
+    # Returns the hash of notifications.
+    #
+    # Currently (2.1.12), this hash should be empty or only contain an entry
+    # for 'on_error'.
+    #
+    # The values are arrays of strings or process definitions trees.
+    #
+    def notifications
+
+      @context['notifications'] || {}
+    end
+
+    # Updates the hash of notifications in one go (writes to the storage).
+    #
+    def notifications= (notifs)
+
+      notifs.keys.each do |key|
+        v = notifs[key]
+        v = Array(v)
+        v = [ v ] if Ruote::Exp::DefineExpression.is_definition?(v)
+        notifs[key] = v
+      end
+
+      @context['notifications'] = notifs
+    end
+
+    # A shortcut for
+    #
+    #   engine.notifications['on_error']
+    #
+    def on_error
+
+      notifications['on_error']
+    end
+
+    # Setting the notifications for errors in one go.
+    #
+    #   engine.on_error = participant_name
+    #
+    #   engine.on_error = subprocess_name
+    #
+    #   engine.on_error = Ruote.process_definition do
+    #     alpha
+    #   end
+    #
+    #   engine.on_error = [ participant_a, participant_b ]
+    #
+    #   # and so on ...
+    #
+    def on_error= (targets)
+
+      ns = self.notifications
+      ns['on_error'] = targets
+      self.notifications = ns
+    end
+
     # A convenience methods for advanced users (like Oleg).
     #
     # Given a fei (flow expression id), fetches the workitem as stored in

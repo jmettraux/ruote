@@ -99,6 +99,10 @@ module Ruote
 
       return if fexp && fexp.handle_on_error(msg, exception)
 
+      # engine.on_error ?
+
+      hand_to_engine_on_error(msg, fexp, exception)
+
       # emit 'msg'
 
       @context.storage.put_msg(
@@ -121,6 +125,26 @@ module Ruote
         'fei' => fei,
         'msg' => msg
       ) if fei
+    end
+
+    def hand_to_engine_on_error (msg, fexp, exception)
+
+      nos = (@context['notifications'] || {})['on_error']
+
+      return if nos.nil? or nos.empty?
+
+      nos.each do |no|
+
+        tree = no.is_a?(Array) ? no : [ 'define', {}, [ [ no, {}, [] ] ] ]
+
+        @context.storage.put_msg(
+          'launch',
+          'wfid' => fexp.fei.wfid,
+          'sub_wfid' => fexp.get_next_sub_wfid,
+          'tree' => tree,
+          'workitem' => msg['workitem'],
+          'variables' => fexp.compile_variables)
+      end
     end
   end
 end

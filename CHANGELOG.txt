@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- engine#on_error = [] registering error notifications and the like
 - engine#configuration(key) (counterpart to engine#configure(key, value))
 - implemented the :lose attribute
 - implemented the 'lose' expression
