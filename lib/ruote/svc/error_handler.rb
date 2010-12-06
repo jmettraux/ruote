@@ -133,6 +133,10 @@ module Ruote
 
       return if nos.nil? or nos.empty?
 
+      workitem = Ruote.fulldup(msg['workitem'])
+
+      Ruote::Workitem.fill_error(workitem, fexp.fei, exception)
+
       nos.each do |no|
 
         tree = no.is_a?(Array) ? no : [ 'define', {}, [ [ no, {}, [] ] ] ]
@@ -142,7 +146,7 @@ module Ruote
           'wfid' => fexp.fei.wfid,
           'sub_wfid' => fexp.get_next_sub_wfid,
           'tree' => tree,
-          'workitem' => msg['workitem'],
+          'workitem' => workitem,
           'variables' => fexp.compile_variables)
       end
     end

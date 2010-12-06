@@ -137,6 +137,27 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
     assert_equal 1, @engine.processes.size
   end
 
+  def test_on_error_workitem
+
+    @engine.register 'supervisor', Supervisor
+    @engine.on_error = 'supervisor'
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(WRONGY, 'colour' => 'crimson')
+
+    @engine.wait_for(wfid)
+    @engine.wait_for(:supervisor)
+
+    sleep 0.350
+      # unfortunately waiting for a participant triggers right
+      # before the consume
+
+    wi = $seen.first
+
+    assert_not_nil wi.error
+  end
+
   #def test_on_error_class
   #  flunk
   #end
