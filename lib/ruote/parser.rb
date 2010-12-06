@@ -49,7 +49,7 @@ module Ruote
     #
     def parse (definition)
 
-      return definition if definition.is_a?(Array) and definition.size == 3
+      return definition if Ruote.is_tree?(definition)
 
       (return XmlParser.parse(definition)) rescue nil
       (return Rufus::Json.decode(definition)) rescue nil

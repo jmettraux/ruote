@@ -639,7 +639,7 @@ module Ruote
       notifs.keys.each do |key|
         v = notifs[key]
         v = Array(v)
-        v = [ v ] if Ruote::Exp::DefineExpression.is_definition?(v)
+        v = [ v ] if Ruote.is_tree?(v)
         notifs[key] = v
       end
 

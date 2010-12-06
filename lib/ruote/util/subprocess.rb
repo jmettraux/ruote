@@ -45,8 +45,9 @@ module Ruote
 
     subtree = fexp.context.parser.parse(ref) rescue nil
 
-    _, subtree = Ruote::Exp::DefineExpression.reorganize(subtree) \
-      if subtree && Ruote::Exp::DefineExpression.is_definition?(subtree)
+    if subtree && is_definition_tree?(subtree)
+      _, subtree = Ruote::Exp::DefineExpression.reorganize(subtree)
+    end
 
     return [ '0', subtree ] if is_tree?(subtree)
 
@@ -55,14 +56,33 @@ module Ruote
     raise "no subprocess named '#{ref}' found"
   end
 
-  def self.is_tree? (a)
+  # Returns true if the argument is a process definition tree (whose root
+  # is 'define', 'process_definition' or 'workflow_definition'.
+  #
+  def self.is_definition_tree? (arg)
 
-    a.is_a?(Array) && a[1].is_a?(Hash) && a.size == 3
+    Ruote::Exp::DefineExpression.is_definition?(arg) && is_tree?(arg)
   end
 
-  def self.is_pos_tree? (a)
+  # Returns true if the given argument is a process definition tree
+  # (its root doesn't need to be 'define' or 'process_definition' though).
+  #
+  def self.is_tree? (arg)
 
-    a.is_a?(Array) && a.size == 2 && a[0].is_a?(String) && is_tree?(a[1])
+    arg.is_a?(Array) &&
+    arg.collect { |e| e.class } == [ String, Hash, Array ] &&
+    (arg.last.empty? || arg.last.find { |e| ! is_tree?(e) }.nil?)
+  end
+
+  # Mainly used by Ruote.lookup_subprocess, returns true if the argument is
+  # is an array [ position, tree ].
+  #
+  def self.is_pos_tree? (arg)
+
+    arg.is_a?(Array) &&
+    arg.size == 2 &&
+    arg[0].is_a?(String) &&
+    is_tree?(arg[1])
   end
 end
 
