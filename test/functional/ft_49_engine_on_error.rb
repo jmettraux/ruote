@@ -158,6 +158,23 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
     assert_not_nil wi.error
   end
 
+  def test_cascade_prevention
+
+    @engine.on_error = Ruote.define { error "nada" }
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(WRONGY, 'colour' => 'purple')
+
+    @engine.wait_for(wfid)
+    @engine.wait_for(wfid)
+
+    sleep 0.700
+      # give it a bit of time, to make sure no supplementary errors crop up
+
+    assert_equal 2, @engine.process(wfid).errors.size
+  end
+
   #def test_on_error_class
   #  flunk
   #end
