@@ -129,14 +129,16 @@ module Ruote
 
     def hand_to_engine_on_error (msg, fexp, exception)
 
-      return if msg['workitem']['fields']['__error__']
+      workitem = msg['workitem'] || { 'fields' => {} }
+
+      return if workitem['fields']['__error__']
         # cascade prevention
 
       nos = (@context['notifications'] || {})['on_error']
 
       return if nos.nil? or nos.empty?
 
-      workitem = Ruote.fulldup(msg['workitem'])
+      workitem = Ruote.fulldup(workitem)
 
       Ruote::Workitem.fill_error(workitem, fexp.fei, exception)
 
