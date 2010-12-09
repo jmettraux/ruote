@@ -222,7 +222,7 @@ module Ruote::Exp
       msgs = []
 
       tree_children.each_with_index do |c, i|
-        msgs << pre_apply_child(i, h.applied_workitem.dup, false)
+        msgs << pre_apply_child(i, h.applied_workitem.dup, {})
       end
 
       persist_or_raise

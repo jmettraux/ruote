@@ -628,9 +628,12 @@ module Ruote::Exp
       a
     end
 
-    def pre_apply_child (child_index, workitem, forget)
+    def pre_apply_child (child_index, workitem, opts)
 
       child_fei = h.fei.merge('expid' => "#{h.fei['expid']}_#{child_index}")
+      child_fei['sub_wfid'] = get_next_sub_wfid if opts[:sub_wfid]
+
+      forget = opts[:forget]
 
       h.children << child_fei unless forget
 
@@ -646,11 +649,12 @@ module Ruote::Exp
       msg
     end
 
-    def apply_child (child_index, workitem, forget=false)
+    def apply_child (child_index, workitem, opts={})
 
-      msg = pre_apply_child(child_index, workitem, forget)
+      msg = pre_apply_child(child_index, workitem, opts)
 
-      persist_or_raise unless forget
+      persist_or_raise unless opts[:forget]
+        # no need to persist the parent (this) if the child is to be forgotten
 
       @context.storage.put_msg('apply', msg)
     end
