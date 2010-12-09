@@ -270,8 +270,8 @@ module Ruote::Exp
       position = 0 if position >= tree_children.size && is_loop?
 
       if position < tree_children.size
-        apply_child(position, workitem)
-        #apply_child(position, workitem, :sub_wfid => true)
+        #apply_child(position, workitem)
+        apply_child(position, workitem, :sub_wfid => true)
       else
         reply_to_parent(workitem)
       end

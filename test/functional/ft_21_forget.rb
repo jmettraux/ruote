@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/storage_participant'
+require 'ruote/participant'
 
 
 class FtForgetTest < Test::Unit::TestCase
@@ -88,7 +88,34 @@ class FtForgetTest < Test::Unit::TestCase
     wait_for(wfid)
     wait_for(wfid)
 
-    assert_equal "alpha\nbravo\ncharly", @tracer.to_s
+    #assert_equal "alpha\nbravo\ncharly", @tracer.to_s
+    assert_equal %w[ alpha bravo charly ], @tracer.to_a.sort
+  end
+
+  def test_forget_and_cursor
+
+    pdef = Ruote.define do
+      cursor do
+        alpha :forget => true
+        bravo
+        rewind
+      end
+    end
+
+    @engine.register_participant 'alpha', Ruote::NullParticipant
+      # this participant never replies
+
+    @engine.register_participant 'bravo', Ruote::NoOpParticipant
+      # this one simply replies
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:bravo)
+    @engine.wait_for(:bravo)
+
+    assert_not_nil @engine.process(wfid)
   end
 end
 

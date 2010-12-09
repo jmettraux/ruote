@@ -84,8 +84,11 @@ class FtCursorRewindTest < Test::Unit::TestCase
 
     wi = bravo.first
 
-    wi.h['fei']['expid'] = wi.h['fei']['expid'][0..-3] # parent wfid
+    exp = @engine.process(wfid).expressions.find { |e| e.name == 'cursor' }
+    wi.h['fei'] = exp.h.fei
     wi.fields['__command__'] = [ 'jump', 'alpha' ]
+      #
+      # passing the "jump alpha" command to the cursor directly
 
     @engine.reply(wi)
 

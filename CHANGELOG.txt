@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- cursor : giving a sub_wfid to children (play nice with :forget)
 - Ruote.is_tree?(o) .is_definition_tree?(o) consolidated
 - engine#on_error = [] registering error notifications and the like
 - engine#configuration(key) (counterpart to engine#configure(key, value))

@@ -150,9 +150,13 @@ module Ruote
       @h
     end
 
+    # Returns true if other_fei is the fei of a child expression of
+    # parent_fei.
+    #
     def self.direct_child? (parent_fei, other_fei)
 
-      %w[ sub_wfid wfid engine_id ].each do |k|
+      #%w[ sub_wfid wfid engine_id ].each do |k|
+      %w[ wfid engine_id ].each do |k|
         return false if parent_fei[k] != other_fei[k]
       end
 

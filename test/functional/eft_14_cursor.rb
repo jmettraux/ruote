@@ -329,6 +329,23 @@ class EftCursorTest < Test::Unit::TestCase
     assert_trace "in\ndone.", pdef
   end
 
+  def test_cursor_with_lonely_rewind
+
+    pdef = Ruote.define do
+      cursor do
+        rewind
+      end
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(9)
+
+    assert_not_nil @engine.process(wfid)
+  end
+
   class Charly
     include Ruote::LocalParticipant
     def initialize(opts)
