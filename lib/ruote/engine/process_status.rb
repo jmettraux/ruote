@@ -277,15 +277,22 @@ module Ruote
       s = [ "== #{self.class} ==" ]
       s << "   expressions : #{@expressions.size}"
       @expressions.each do |e|
-        s << "     #{e.fei.to_storage_id} : #{e}"
-      end
-      s << "   errors : #{@errors.size}"
-      @errors.each do |e|
-        s << "     #{e.fei.to_storage_id} :" if e.fei
-        s << "     #{e.inspect}"
+        s << "     #{e.fei.to_storage_id} : #{e.name} #{e.attributes}"
       end
       s << "   schedules : #{@schedules.size}"
       s << "   stored workitems : #{@stored_workitems.size}"
+      s << "   errors : #{@errors.size}"
+      @errors.each do |e|
+        s << "     ***"
+        s << "     #{e.fei.to_storage_id} :" if e.fei
+        s << "     action : #{e.action}"
+        s << "     message : #{e.message}"
+        s << "     trace :"
+        e.trace.split("\n").each do |line|
+          s << "       #{line}"
+        end
+        s << "     fields : #{e.fields}"
+      end
 
       s.join("\n") + "\n"
     end
