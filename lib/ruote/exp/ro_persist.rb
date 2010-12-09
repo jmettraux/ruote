@@ -44,7 +44,8 @@ module Ruote::Exp
 
       raise(
         "initial_persist failed for " +
-        "#{Ruote.to_storage_id(h.fei)} #{tree.first} // #{r.inspect}"
+        #"#{Ruote.to_storage_id(h.fei)} #{tree.first} // #{r.inspect}"
+        "#{Ruote.to_storage_id(h.fei)} #{tree[0]} #{tree[1].inspect}"
       ) if r != nil
 
       nil

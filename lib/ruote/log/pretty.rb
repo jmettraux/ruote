@@ -127,10 +127,31 @@ module Ruote
         else action
       end
 
-      color(
-        @color,
-        "#{@count} #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}",
-        true)
+      if msg['action'] == 'error_intercepted'
+
+        tail = []
+        tail << '  ' + rest['error_class']
+        tail << '  ' + rest['error_message']
+        rest['error_backtrace'].each do |line|
+          tail << '  ' + line
+        end
+
+        color(
+          @color,
+          "#{@count} #{ei} #{'  ' * depth}#{action} * #{i}",
+          true
+        ) +
+        "\n" +
+        color(
+          @color,
+          tail.join("\n"),
+          true)
+      else
+        color(
+          @color,
+          "#{@count} #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}",
+          true)
+      end
     end
   end
 end
