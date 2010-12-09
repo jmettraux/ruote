@@ -44,5 +44,21 @@ class UtMiscTest < Test::Unit::TestCase
     assert_equal 'nada', Ruote.regex_or_s('nada')
     assert_equal nil, Ruote.regex_or_s(nil)
   end
+
+  class Klass
+    def initialize (s)
+      @s = s
+    end
+  end
+
+  def test_fulldup
+
+    a = Klass.new('hello')
+    b = Ruote.fulldup(a)
+
+    assert_equal Klass, b.class
+    assert_not_equal a.object_id, b.object_id
+    assert_equal 'hello', b.instance_variable_get(:@s)
+  end
 end
 

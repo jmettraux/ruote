@@ -223,6 +223,7 @@ ruote is an open source ruby workflow engine.
     "test/functional/ft_49_engine_on_error.rb",
     "test/functional/ft_4_cancel.rb",
     "test/functional/ft_50_engine_config.rb",
+    "test/functional/ft_51_misc.rb",
     "test/functional/ft_5_on_error.rb",
     "test/functional/ft_6_on_cancel.rb",
     "test/functional/ft_7_tags.rb",
