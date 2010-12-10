@@ -69,8 +69,8 @@ module Ruote
   #
   def self.is_tree? (arg)
 
-    arg.is_a?(Array) &&
-    arg.collect { |e| e.class } == [ String, Hash, Array ] &&
+    arg.is_a?(Array) && arg.size == 3 &&
+    arg[0].is_a?(String) && arg[1].is_a?(Hash) && arg[2].is_a?(Array) &&
     (arg.last.empty? || arg.last.find { |e| ! is_tree?(e) }.nil?)
   end
 

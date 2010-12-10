@@ -16,6 +16,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 Contributors
 ------------
 
+Patrick Gannon - fix for compatibility with ruote-mongodb
 Fix Peña - 'jump to' bug patch
 Eric Smith - position when error patch
 David Goodlad - http://github.com/dgoodlad

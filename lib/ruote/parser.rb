@@ -28,6 +28,7 @@ require 'open-uri'
 require 'rufus/json'
 require 'ruote/parser/ruby_dsl' # just making sure it's loaded
 require 'ruote/parser/xml'
+require 'ruote/util/subprocess'
 
 
 module Ruote
