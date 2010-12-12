@@ -85,6 +85,7 @@ module Ruote
       i = fei ?
         [ fei['wfid'], fei['sub_wfid'], fei['expid'] ].join(' ') :
         msg['wfid']
+      wfid = fei ? fei['wfid'] : msg['wfid']
 
       rest = msg.dup
       %w[
@@ -130,10 +131,10 @@ module Ruote
       if msg['action'] == 'error_intercepted'
 
         tail = []
-        tail << '  ' + rest['error_class']
-        tail << '  ' + rest['error_message']
+        tail << "  #{wfid} #{rest['error_class']}"
+        tail << "  #{wfid} #{rest['error_message']}"
         rest['error_backtrace'].each do |line|
-          tail << '  ' + line
+          tail << "  #{wfid} #{line}"
         end
 
         color(
