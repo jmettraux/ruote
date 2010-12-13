@@ -274,7 +274,8 @@ module Ruote
 
     def inspect
 
-      vars = all_variables.inject({}) { |h, (k, v)| h[Ruote.sid(k)] = v; h }
+      vars = variables rescue nil
+      avars = all_variables.inject({}) { |h, (k, v)| h[Ruote.sid(k)] = v; h }
 
       s = [ "== #{self.class} ==" ]
       s << "   expressions : #{@expressions.size}"
@@ -283,7 +284,8 @@ module Ruote
       end
       s << "   schedules : #{@schedules.size}"
       s << "   stored workitems : #{@stored_workitems.size}"
-      s << "   all_variables : #{vars.inspect}"
+      s << "   variables :     #{vars.inspect}"
+      s << "   all_variables : #{avars.inspect}"
       s << "   errors : #{@errors.size}"
       @errors.each do |e|
         s << "     ***"

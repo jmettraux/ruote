@@ -90,7 +90,9 @@ module Ruote
         puts "-- msg --"
         key_length = msg.keys.collect { |k| k.length }.max + 1
         msg.keys.sort.each { |k|
-          printf("%*s : %s\n", key_length, k, msg[k].inspect)
+          v = msg[k]
+          v = Ruote.sid(v) if k == 'fei'
+          printf("%*s : %s\n", key_length, k, v.inspect)
         }
         puts "-- . --"
         puts
