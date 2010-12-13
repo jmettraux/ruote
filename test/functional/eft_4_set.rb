@@ -223,9 +223,8 @@ class EftSetTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
-
-    assert_equal 1, ps.errors.size
+    assert_nil @engine.process(wfid)
+    assert_nil @engine.variables['v']
   end
 end
 

@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class FtTagsTest < Test::Unit::TestCase
@@ -83,6 +83,30 @@ class FtTagsTest < Test::Unit::TestCase
     wait_for(:alpha)
 
     assert_equal 0, @engine.process(wfid).tags.size
+  end
+
+  def test_unset_tag_when_parent_gone
+
+    pdef = Ruote.process_definition do
+      concurrence :count => 1 do
+        alpha :tag => 'main'
+        sequence do
+          bravo
+          undo :ref => 'main'
+        end
+      end
+    end
+
+    #@engine.noisy = true
+
+    @engine.register :alpha, Ruote::NullParticipant
+    @engine.register :bravo, Ruote::NoOpParticipant
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(23)
+
+    assert_nil @engine.process(wfid)
   end
 end
 

@@ -95,9 +95,10 @@ module Ruote::Exp
 
       fexp, v = locate_var(var)
 
-      raise(
-        ArgumentError.new("cannot set var at engine level : #{var}")
-      ) if fexp.nil?
+      #raise(
+      #  ArgumentError.new("cannot set var at engine level : #{var}")
+      #) if fexp.nil?
+      return if fexp.nil?
 
       fexp.un_set_variable(:set, v, val, true)
     end
@@ -108,9 +109,10 @@ module Ruote::Exp
 
       fexp, v = locate_var(var)
 
-      raise(
-        ArgumentError.new("cannot set var at engine level : #{var}")
-      ) if fexp.nil?
+      #raise(
+      #  ArgumentError.new("cannot unset var at engine level : #{var}")
+      #) if fexp.nil?
+      return if fexp.nil?
 
       should_persist = (fexp.h.fei != h.fei)
         # don't use a ticket when expression wants to modify its own vars
@@ -189,9 +191,13 @@ module Ruote::Exp
       # no prefix...
 
       return [ self, var ] if h.variables
-      return parent.locate_var(var, prefix) if h.parent_id
 
-      raise "uprooted var lookup, something went wrong"
+      if par = parent
+        return parent.locate_var(var, prefix) rescue nil
+      end
+
+      #raise "uprooted var lookup, something went wrong"
+      [ nil, nil ]
     end
   end
 end
