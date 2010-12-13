@@ -493,14 +493,15 @@ module Ruote::Exp
         par = parent
           # :( get_parent would probably be a better name for #parent
 
-        unless par
-          puts "~~"
-          puts "parent gone for"
-          p h.fei
-          p h.parent_id
-          p tree
-          puts "~~"
-        end
+        #if par.nil? && ($DEBUG || ARGV.include?('-d'))
+        #  puts "~~"
+        #  puts "parent gone for"
+        #  puts "fei          #{Ruote.sid(h.fei)}"
+        #  puts "tree         #{tree.inspect}"
+        #  puts "replying to  #{Ruote.sid(h.parent_id)}"
+        #  puts "~~"
+        #end
+          # is sometimes helpful during debug sessions
 
         par ? par.lookup_on_error : nil
 
