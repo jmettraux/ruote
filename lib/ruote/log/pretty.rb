@@ -103,6 +103,10 @@ module Ruote
           v['fields'].size ]
       end
 
+      #if t = rest.delete('tree')
+      #  rest[:t] = color(37, t.inspect, true)
+      #end
+
       { 'tree' => :t, 'parent_id' => :pi }.each do |k0, k1|
         if v = rest.delete(k0)
           rest[k1] = v
@@ -147,7 +151,9 @@ module Ruote
           @color,
           tail.join("\n"),
           true)
+
       else
+
         color(
           @color,
           "#{@count} #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}",
