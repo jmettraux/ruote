@@ -42,5 +42,41 @@ class EftRedoTest < Test::Unit::TestCase
 
     assert_equal 3, logger.log.select { |e| e['action'] == 'entered_tag' }.size
   end
+
+  def test_redo_missing_tag
+
+    pdef = Ruote.process_definition do
+      _redo :nada
+      echo '.'
+    end
+
+    assert_trace '.', pdef
+  end
+
+  def test_redo_tag_pointing_nowhere
+
+    pdef = Ruote.process_definition do
+      set 'v:nada' => []
+      _redo :nada
+      echo '.'
+    end
+
+    #@engine.noisy = true
+
+    assert_trace '.', pdef
+  end
+
+  def test_redo_tag_pointing_to_missing_fei
+
+    pdef = Ruote.process_definition do
+      set 'v:nada' => { 'wfid' => '${wfid}', 'expid' => '${expid}', 'engine_id' => '${engine_id}' }
+      _redo :nada
+      echo '.'
+    end
+
+    #@engine.noisy = true
+
+    assert_trace '.', pdef
+  end
 end
 

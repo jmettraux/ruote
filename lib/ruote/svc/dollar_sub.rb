@@ -112,6 +112,7 @@ module Ruote
         return @fexp.fei.wfid if key == 'wfid'
         return @fexp.fei.sub_wfid if key == 'sub_wfid'
         return @fexp.fei.expid if key == 'expid'
+        return @fexp.fei.engine_id if key == 'engine_id'
 
         pr, k = extract_prefix(key)
 

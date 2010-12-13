@@ -74,5 +74,41 @@ class EftUndoTest < Test::Unit::TestCase
 
     assert_trace '.', pdef
   end
+
+  def test_undo_missing_tag
+
+    pdef = Ruote.process_definition do
+      cancel :nada
+      echo '.'
+    end
+
+    assert_trace '.', pdef
+  end
+
+  def test_undo_tag_pointing_nowhere
+
+    pdef = Ruote.process_definition do
+      set 'v:nada' => []
+      cancel :nada
+      echo '.'
+    end
+
+    #@engine.noisy = true
+
+    assert_trace '.', pdef
+  end
+
+  def test_undo_tag_pointing_to_missing_fei
+
+    pdef = Ruote.process_definition do
+      set 'v:nada' => { 'wfid' => '${wfid}', 'expid' => '${expid}', 'engine_id' => '${engine_id}' }
+      cancel :nada
+      echo '.'
+    end
+
+    #@engine.noisy = true
+
+    assert_trace '.', pdef
+  end
 end
 

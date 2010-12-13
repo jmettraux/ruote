@@ -57,7 +57,7 @@ module Ruote::Exp
       ref = attribute(:ref) || attribute_text
       tag = ref ? lookup_variable(ref) : nil
 
-      if tag
+      if tag && Ruote.is_a_fei?(tag)
 
         @context.storage.put_msg('cancel', 'fei' => tag, 're_apply' => true)
 

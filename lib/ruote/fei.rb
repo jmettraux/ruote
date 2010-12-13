@@ -48,6 +48,15 @@ module Ruote
     Ruote::FlowExpressionId.to_storage_id(fei)
   end
 
+  # A shortcut for
+  #
+  #   Ruote::FlowExpressionId.is_a_fei?(o)
+  #
+  def self.is_a_fei? (o)
+
+    Ruote::FlowExpressionId.is_a_fei?(o)
+  end
+
   #
   # The FlowExpressionId (fei for short) is an process expression identifier.
   # Each expression when instantiated gets a unique fei.

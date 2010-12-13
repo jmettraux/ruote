@@ -88,8 +88,9 @@ module Ruote
         puts "..."
         puts
         puts "-- msg --"
+        key_length = msg.keys.collect { |k| k.length }.max + 1
         msg.keys.sort.each { |k|
-          puts "    #{k.inspect} =>\n#{msg[k].inspect}"
+          printf("%*s : %s\n", key_length, k, msg[k].inspect)
         }
         puts "-- . --"
         puts
