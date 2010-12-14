@@ -599,7 +599,7 @@ module Ruote::Exp
       @@sub_wfid_counter = (@@sub_wfid_counter + 1) % 1000
       i = i * 1000 + (@@sub_wfid_counter)
 
-      (i < 0 ? "1#{i * -1}" : "0#{i}").to_s
+      i < 0 ? "1#{i * -1}" : "0#{i}"
     end
 
     protected
