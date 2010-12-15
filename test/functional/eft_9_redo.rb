@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class EftRedoTest < Test::Unit::TestCase
@@ -77,6 +77,28 @@ class EftRedoTest < Test::Unit::TestCase
     #@engine.noisy = true
 
     assert_trace '.', pdef
+  end
+
+  def test_forget_and_redo
+
+    pdef = Ruote.process_definition do
+      sequence :tag => 'x' do
+        alpha :forget => true
+        _redo 'x'
+      end
+    end
+
+    #noisy
+
+    @engine.register 'alpha', Ruote::StorageParticipant
+
+    wfid = @engine.launch(pdef)
+
+    sleep 2
+
+    assert @engine.storage_participant.size > 1
+    assert_not_nil @engine.process(wfid)
+    assert_equal [], @engine.errors
   end
 end
 
