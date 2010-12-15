@@ -717,10 +717,11 @@ module Ruote
 
       swfids = wfids ? wfids.collect { |wfid| /!#{wfid}-\d+$/ } : nil
 
-      exps = @context.storage.get_many('expressions', wfids)
-      swis = @context.storage.get_many('workitems', wfids)
-      errs = @context.storage.get_many('errors', wfids)
-      schs = @context.storage.get_many('schedules', swfids)
+      exps = @context.storage.get_many('expressions', wfids).compact
+      swis = @context.storage.get_many('workitems', wfids).compact
+      errs = @context.storage.get_many('errors', wfids).compact
+      schs = @context.storage.get_many('schedules', swfids).compact
+        # some slow storages needs the compaction... couch...
 
       errs = errs.collect { |err| ProcessError.new(err) }
       schs = schs.collect { |sch| Ruote.schedule_to_h(sch) }
