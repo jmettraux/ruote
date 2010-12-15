@@ -117,8 +117,10 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    fei = alpha.first.fei.dup
-    fei.h['expid'] = '0_1'
+    fei = @engine.process(wfid).expressions.find { |e|
+      e.fei.expid == '0_1'
+    }.fei
+
     @engine.cancel_expression(fei)
 
     wait_for(:bravo)

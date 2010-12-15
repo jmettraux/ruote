@@ -444,7 +444,7 @@ module Ruote::Exp
     def launch_sub (pos, subtree, opts={})
 
       i = h.fei.dup
-      i['sub_wfid'] = get_next_sub_wfid
+      i['sub_wfid'] = Ruote.generate_subid(subtree)
       i['expid'] = pos
 
       #p '=== launch_sub ==='
@@ -582,26 +582,6 @@ module Ruote::Exp
       tree[2]
     end
 
-    # A tiny class-bound counter used when generating subprocesses ids.
-    #
-    @@sub_wfid_counter = -1
-
-    # Generates a sub_wfid, without hitting storage.
-    #
-    # There's a better implementation for sure...
-    #
-    def get_next_sub_wfid
-
-      i = [
-        $$, Time.now.to_f.to_s, self.hash.to_s, @h['fei'].inspect
-      ].join('-').hash
-
-      @@sub_wfid_counter = (@@sub_wfid_counter + 1) % 1000
-      i = i * 1000 + (@@sub_wfid_counter)
-
-      i < 0 ? "1#{i * -1}" : "0#{i}"
-    end
-
     protected
 
     def to_dot (opts)
@@ -629,12 +609,11 @@ module Ruote::Exp
       a
     end
 
-    def pre_apply_child (child_index, workitem, opts)
+    def pre_apply_child (child_index, workitem, forget)
 
-      child_fei = h.fei.merge('expid' => "#{h.fei['expid']}_#{child_index}")
-      child_fei['sub_wfid'] = get_next_sub_wfid if opts[:sub_wfid]
-
-      forget = opts[:forget]
+      child_fei = h.fei.merge(
+        'expid' => "#{h.fei['expid']}_#{child_index}",
+        'sub_wfid' => Ruote.generate_subid(self))
 
       h.children << child_fei unless forget
 
@@ -650,11 +629,11 @@ module Ruote::Exp
       msg
     end
 
-    def apply_child (child_index, workitem, opts={})
+    def apply_child (child_index, workitem, forget=false)
 
-      msg = pre_apply_child(child_index, workitem, opts)
+      msg = pre_apply_child(child_index, workitem, forget)
 
-      persist_or_raise unless opts[:forget]
+      persist_or_raise unless forget
         # no need to persist the parent (this) if the child is to be forgotten
 
       @context.storage.put_msg('apply', msg)

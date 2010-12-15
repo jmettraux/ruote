@@ -83,7 +83,7 @@ module Ruote
       depth = fei ? fei['expid'].split('_').size : 0
 
       i = fei ?
-        [ fei['wfid'], fei['sub_wfid'], fei['expid'] ].join(' ') :
+        [ fei['wfid'], fei['sub_wfid'][0, 5], fei['expid'] ].join(' ') :
         msg['wfid']
       wfid = fei ? fei['wfid'] : msg['wfid']
 

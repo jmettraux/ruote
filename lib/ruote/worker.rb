@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'digest/md5'
 require 'ruote/fei'
 
 
@@ -283,7 +284,7 @@ module Ruote
         'fei' => msg['fei'] || {
           'engine_id' => @context.engine_id,
           'wfid' => msg['wfid'],
-          'sub_wfid' => msg['sub_wfid'],
+          'sub_wfid' => Ruote.generate_subid(msg),
           'expid' => '0' },
         'parent_id' => msg['parent_id'],
         'original_tree' => tree,
@@ -296,7 +297,6 @@ module Ruote
 
         exp_class = Ruote::Exp::RefExpression
 
-      #elsif msg['action'] == 'launch' && exp_class == Ruote::Exp::DefineExpression
       elsif is_launch?(msg, exp_class)
 
         def_name, tree = Ruote::Exp::DefineExpression.reorganize(tree)

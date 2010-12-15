@@ -25,9 +25,11 @@ class FtWaitForTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    wait_for(:alpha)
+    r = wait_for(:alpha)
 
-    assert_equal Ruote::Workitem, @engine.workitem("0_0!!#{wfid}").class
+    assert_equal(
+      Ruote::Workitem,
+      @engine.workitem(Ruote.sid(r['fei'])).class)
   end
 
   class MyParticipant

@@ -66,7 +66,7 @@ module Ruote::Exp
     def apply
 
       tree_children.each_with_index do |t, index|
-        apply_child(index, Ruote.fulldup(h.applied_workitem), :forget => true)
+        apply_child(index, Ruote.fulldup(h.applied_workitem), true)
       end
 
       reply_to_parent(h.applied_workitem)

@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- subid (sub_wfid) for every expression
 - undo and redo : more robust (broken tags)
 - cursor : giving a sub_wfid to children (play nice with :forget)
 - Ruote.is_tree?(o) .is_definition_tree?(o) consolidated

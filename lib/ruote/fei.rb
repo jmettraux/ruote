@@ -57,6 +57,19 @@ module Ruote
     Ruote::FlowExpressionId.is_a_fei?(o)
   end
 
+  # This function is used to generate the subids (sub_wfid). Each flow
+  # expression receives such an id (it's useful for cursors, loops and
+  # forgotten branches).
+  #
+  # The salt's object_id is used when composing the string that gets
+  # digested. One should not pass always the same object as salt.
+  #
+  def self.generate_subid (salt)
+
+    Digest::MD5.hexdigest(
+      "#{salt.object_id}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
+  end
+
   #
   # The FlowExpressionId (fei for short) is an process expression identifier.
   # Each expression when instantiated gets a unique fei.

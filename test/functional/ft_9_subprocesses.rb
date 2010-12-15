@@ -55,7 +55,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
     assert_equal 2, logger.log.select { |e| e['action'] == 'launch' }.size
   end
 
-  def test_next_sub_wfid
+  def test_subid
 
     pdef = Ruote.process_definition do
       sequence do

@@ -169,41 +169,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
       ps.original_tree)
   end
 
-  def test_sub_processes
-
-    pdef = Ruote.process_definition do
-      define 'sub0' do
-        alpha
-      end
-      sequence do
-        sub0
-      end
-    end
-
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
-
-    #noisy
-
-    wfid = @engine.launch(pdef)
-
-    wait_for(:alpha)
-
-    assert_equal wfid, alpha.first.fei.wfid
-    assert_not_nil alpha.first.fei.sub_wfid
-
-    ps = @engine.process(wfid)
-
-    #ps.expressions.each { |e| puts e.fei.to_s }
-
-    assert_equal 5, ps.expressions.size
-
-    wfids = ps.expressions.collect { |e|
-      [ e.fei.wfid, e.fei.sub_wfid ].join('|')
-    }.sort.uniq
-
-    assert_equal 2, wfids.size
-  end
-
   def test_all_variables
 
     pdef = Ruote.process_definition do
@@ -454,20 +419,24 @@ class FtProcessStatusTest < Test::Unit::TestCase
     #puts ps.to_dot
 
     dot = ps.to_dot
-    dot = dot.gsub(wfid, 'wfid').strip
+
+    dot = dot.gsub(wfid, 'wfid')
+    dot = dot.gsub(/![^!]+!/, '!!')
+    dot = dot.gsub(/wfid [^ ]+ /, 'wfid ')
+    dot = dot.strip
 
     assert_equal(
       %{
-digraph "process wfid wfid" {
-"0!!wfid" [ label="wfid  0 define" ];
+digraph "process wfid {
+"0!!wfid" [ label="wfid 0 define" ];
 "0!!wfid" -> "0_0!!wfid";
-"0_0!!wfid" [ label="wfid  0_0 concurrence" ];
+"0_0!!wfid" [ label="wfid 0_0 concurrence" ];
 "0_0!!wfid" -> "0!!wfid";
 "0_0!!wfid" -> "0_0_0!!wfid";
 "0_0!!wfid" -> "0_0_1!!wfid";
-"0_0_0!!wfid" [ label="wfid  0_0_0 participant" ];
+"0_0_0!!wfid" [ label="wfid 0_0_0 participant" ];
 "0_0_0!!wfid" -> "0_0!!wfid";
-"0_0_1!!wfid" [ label="wfid  0_0_1 participant" ];
+"0_0_1!!wfid" [ label="wfid 0_0_1 participant" ];
 "0_0_1!!wfid" -> "0_0!!wfid";
 "err_0_0_1!!wfid" [ label = "error : #<ArgumentError: no participant named 'bravo'>" ];
 "err_0_0_1!!wfid" -> "0_0_1!!wfid" [ style = "dotted" ];
@@ -513,8 +482,8 @@ digraph "process wfid wfid" {
     @engine.wait_for(:alpha)
 
     assert_equal(
-      [ [ "0_0!!#{wfid}", 'alpha', { 'task' => 'clean car' } ] ],
-      @engine.process(wfid).position)
+      [ [ 'alpha', { 'task' => 'clean car' } ] ],
+      @engine.process(wfid).position.collect { |pos| pos[1..-1] })
 
     # #position leverages #workitems
 
@@ -535,10 +504,9 @@ digraph "process wfid wfid" {
     assert_equal 1, @engine.process(wfid).errors.size
 
     assert_equal(
-      [ [ "0_0!!#{wfid}",
-          nil,
+      [ [ nil,
           { 'error' => '#<ArgumentError: no participant name specified>' } ] ],
-      @engine.process(wfid).position)
+      @engine.process(wfid).position.collect { |pos| pos[1..-1] })
   end
 
   def test_ps_with_stored_workitems

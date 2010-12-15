@@ -91,7 +91,7 @@ module Ruote
         key_length = msg.keys.collect { |k| k.length }.max + 1
         msg.keys.sort.each { |k|
           v = msg[k]
-          v = Ruote.sid(v) if k == 'fei'
+          v = Ruote.sid(v) if k == 'fei' || k == 'parent_id'
           printf("%*s : %s\n", key_length, k, v.inspect)
         }
         puts "-- . --"
@@ -152,7 +152,7 @@ module Ruote
         @context.storage.put_msg(
           'launch',
           'wfid' => fexp.fei.wfid,
-          'sub_wfid' => fexp.get_next_sub_wfid,
+          #'sub_wfid' => fexp.get_next_sub_wfid,
           'tree' => tree,
           'workitem' => workitem,
           'variables' => fexp.compile_variables)

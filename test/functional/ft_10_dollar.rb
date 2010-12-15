@@ -174,7 +174,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     @engine.wait_for(wfid)
 
-    assert_equal "0_0_0!!#{wfid}\n#{wfid}", @tracer.to_s
+    assert_match /^0_0_0![^!]+!#{wfid}\n#{wfid}$/, @tracer.to_s
   end
 
   def test_direct_access_to_fields
