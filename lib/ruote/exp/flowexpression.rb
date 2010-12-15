@@ -443,13 +443,13 @@ module Ruote::Exp
 
     def launch_sub (pos, subtree, opts={})
 
-      i = h.fei.dup
-      i['sub_wfid'] = Ruote.generate_subid(subtree)
-      i['expid'] = pos
+      i = h.fei.merge(
+        'subid' => Ruote.generate_subid(subtree),
+        'expid' => pos)
 
       #p '=== launch_sub ==='
-      #p [ :launcher, h.fei['expid'], h.fei['sub_wfid'], h.fei['wfid'] ]
-      #p [ :launched, i['expid'], i['sub_wfid'], i['wfid'] ]
+      #p [ :launcher, h.fei['expid'], h.fei['subid'], h.fei['wfid'] ]
+      #p [ :launched, i['expid'], i['subid'], i['wfid'] ]
 
       forget = opts[:forget]
 
@@ -588,7 +588,7 @@ module Ruote::Exp
 
       i = fei()
 
-      label = "#{[ i.wfid, i.sub_wfid, i.expid].join(" ")} #{tree.first}"
+      label = "#{[ i.wfid, i.subid, i.expid].join(' ')} #{tree.first}"
       label += " (#{h.state})" if h.state
 
       a = []
@@ -613,7 +613,7 @@ module Ruote::Exp
 
       child_fei = h.fei.merge(
         'expid' => "#{h.fei['expid']}_#{child_index}",
-        'sub_wfid' => Ruote.generate_subid(self))
+        'subid' => Ruote.generate_subid(self))
 
       h.children << child_fei unless forget
 

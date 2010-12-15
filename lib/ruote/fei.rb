@@ -57,7 +57,7 @@ module Ruote
     Ruote::FlowExpressionId.is_a_fei?(o)
   end
 
-  # This function is used to generate the subids (sub_wfid). Each flow
+  # This function is used to generate the subids. Each flow
   # expression receives such an id (it's useful for cursors, loops and
   # forgotten branches).
   #
@@ -82,7 +82,7 @@ module Ruote
   # Feis contain four pieces of information :
   #
   # * wfid : workflow instance id, the identifier for the process instance
-  # * sub_wfid : the identifier for the sub process within the main instance
+  # * subid : a unique identifier for expressions (useful in loops)
   # * expid : the expression id, where in the process tree
   # * engine_id : only relevant in multi engine scenarii (defaults to 'engine')
   #
@@ -96,35 +96,30 @@ module Ruote
 
       @h = h
       class << h; include Ruote::HashDot; end
+
+      @h['subid'] = @h.delete('sub_wfid') if @h['sub_wfid']
+        # TODO : for 2.1.13, remove this
     end
 
-    def expid
-      @h['expid']
-    end
+    def expid; @h['expid']; end
+    def wfid; @h['wfid']; end
+    def engine_id; @h['engine_id']; end
+    def subid; @h['subid']; end
 
-    def wfid
-      @h['wfid']
-    end
-
-    def sub_wfid
-      @h['sub_wfid']
-    end
-
-    def engine_id
-      @h['engine_id']
-    end
+    alias sub_wfid subid
 
     def to_storage_id
-      "#{@h['expid']}!#{@h['sub_wfid']}!#{@h['wfid']}"
+      "#{@h['expid']}!#{@h['subid']}!#{@h['wfid']}"
     end
-
     alias sid to_storage_id
 
     def self.to_storage_id (hfei)
 
       hfei.respond_to?(:to_storage_id) ?
         hfei.to_storage_id :
-        "#{hfei['expid']}!#{hfei['sub_wfid']}!#{hfei['wfid']}"
+        "#{hfei['expid']}!#{hfei['subid'] || hfei['sub_wfid']}!#{hfei['wfid']}"
+
+      # TODO : for 2.1.13, remove the subid || sub_wfid trick
     end
 
     # Turns the result of to_storage_id back to a FlowExpressionId instance.
@@ -138,13 +133,18 @@ module Ruote
     # '0_5_7', the child_id will be '7'.
     #
     def child_id
+
       h.expid.split(CHILD_SEP).last.to_i
     end
 
     def hash
+
       to_storage_id.hash
     end
 
+    # Returns true if the other is a FlowExpressionId instance and it
+    # points to the same expression as this one.
+    #
     def == (other)
 
       return false unless other.is_a?(Ruote::FlowExpressionId)
@@ -154,21 +154,25 @@ module Ruote
 
     alias eql? ==
 
+    SUBS = %w[ subid sub_wfid ]
+    IDS = %w[ engine_id expid wfid ]
+
     # Returns true if the h is a representation of a FlowExpressionId instance.
     #
     def self.is_a_fei? (h)
 
-      h.respond_to?(:keys) &&
-      (h.keys - [ 'sub_wfid' ]).sort == %w[ engine_id expid wfid ]
+      h.respond_to?(:keys) && (h.keys - SUBS).sort == IDS
     end
 
     # Returns child_id... For an expid of '0_1_4', this will be 4.
     #
     def self.child_id (h)
+
       h['expid'].split(CHILD_SEP).last.to_i
     end
 
     def to_h
+
       @h
     end
 
@@ -177,7 +181,6 @@ module Ruote
     #
     def self.direct_child? (parent_fei, other_fei)
 
-      #%w[ sub_wfid wfid engine_id ].each do |k|
       %w[ wfid engine_id ].each do |k|
         return false if parent_fei[k] != other_fei[k]
       end
@@ -217,7 +220,9 @@ module Ruote
 
         return {
           'engine_id' => ss[-4] || 'engine',
-          'expid' => ss[-3], 'sub_wfid' => ss[-2], 'wfid' => ss[-1] }
+          'expid' => ss[-3],
+          'subid' => ss[-2],
+          'wfid' => ss[-1] }
       end
 
       raise ArgumentError.new(

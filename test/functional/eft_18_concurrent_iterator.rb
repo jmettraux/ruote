@@ -380,7 +380,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     @engine.register_participant '.*' do |workitem|
 
-      @subs << workitem.fei.sub_wfid
+      @subs << workitem.fei.subid
 
       @tracer << [
         workitem.participant_name, workitem.fei.expid

@@ -15,10 +15,13 @@ class UtFeiTest < Test::Unit::TestCase
   def test_misc
 
     fei = Ruote::FlowExpressionId.new(
-      'expid' => '0_0', 'wfid' => '20101224-bababa', 'engine_id' => 'engine')
+      'expid' => '0_0',
+      'wfid' => '20101224-bababa',
+      'subid' => '5dbf4ce1553453baa17c2213d239e5fa',
+      'engine_id' => 'engine')
 
     assert_equal(
-      '0_0!!20101224-bababa',
+      '0_0!5dbf4ce1553453baa17c2213d239e5fa!20101224-bababa',
       fei.to_storage_id)
 
     assert_equal(
@@ -26,7 +29,10 @@ class UtFeiTest < Test::Unit::TestCase
       fei.child_id)
 
     assert_equal(
-      {"wfid"=>"20101224-bababa", "engine_id"=>"engine", "expid"=>"0_0"},
+      { 'expid' => '0_0',
+        'wfid' => '20101224-bababa',
+        'subid' => '5dbf4ce1553453baa17c2213d239e5fa',
+        'engine_id' => 'engine' },
       fei.to_h)
   end
 
@@ -100,19 +106,50 @@ class UtFeiTest < Test::Unit::TestCase
     assert_equal(
       { 'engine_id' => 'engine',
         'expid' => '0_0_1',
-        'sub_wfid' => '',
+        'subid' => '5dbf4ce1553453baa17c2213d239e5fa',
         'wfid' => '20100224-fake' },
-      Ruote::FlowExpressionId.extract_h('0_0_1!!20100224-fake'))
+      Ruote::FlowExpressionId.extract_h(
+        '0_0_1!5dbf4ce1553453baa17c2213d239e5fa!20100224-fake'))
   end
 
   def test_extract
+
     assert_equal(
       Ruote::FlowExpressionId.new(
-        { 'engine_id' => 'engine',
-          'expid' => '0_0_1',
-          'sub_wfid' => '',
-          'wfid' => '20100224-fake' }),
-      Ruote::FlowExpressionId.extract('0_0_1!!20100224-fake'))
+        'engine_id' => 'engine',
+        'expid' => '0_0_1',
+        'subid' => '5dbf4ce1553453baa17c2213d239e5fa',
+        'wfid' => '20100224-fake'),
+      Ruote::FlowExpressionId.extract(
+        '0_0_1!5dbf4ce1553453baa17c2213d239e5fa!20100224-fake'))
+  end
+
+  def test_subid_backward_compatibility__subid
+
+    fei = Ruote::FlowExpressionId.new(
+      'engine_id' => 'engine',
+      'expid' => '0_0_1',
+      'subid' => 'd7ca677379e2a1f4933402b9196cf2a1',
+      'wfid' => '20100224-fake')
+
+    assert_equal 'd7ca677379e2a1f4933402b9196cf2a1', fei.sub_wfid
+    assert_equal 'd7ca677379e2a1f4933402b9196cf2a1', fei.subid
+    assert_equal 'd7ca677379e2a1f4933402b9196cf2a1', fei.h['subid']
+    assert_nil fei.h['sub_wfid']
+  end
+
+  def test_subid_backward_compatibility__sub_wfid
+
+    fei = Ruote::FlowExpressionId.new(
+      'engine_id' => 'engine',
+      'expid' => '0_0_1',
+      'sub_wfid' => 'd7ca677379e2a1f4933402b9196cf2a1',
+      'wfid' => '20100224-fake')
+
+    assert_equal 'd7ca677379e2a1f4933402b9196cf2a1', fei.sub_wfid
+    assert_equal 'd7ca677379e2a1f4933402b9196cf2a1', fei.subid
+    assert_equal 'd7ca677379e2a1f4933402b9196cf2a1', fei.h['subid']
+    assert_nil fei.h['sub_wfid']
   end
 end
 

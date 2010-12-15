@@ -25,7 +25,7 @@ class FtRecursionTest < Test::Unit::TestCase
 
     def consume (workitem)
 
-      @wfids << "#{workitem.fei.wfid}|#{workitem.fei.sub_wfid}"
+      @wfids << "#{workitem.fei.wfid}|#{workitem.fei.subid}"
 
       workitem.fields['count'] ||= 0
       workitem.fields['count'] = workitem.fields['count'] + 1

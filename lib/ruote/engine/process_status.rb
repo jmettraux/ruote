@@ -73,9 +73,6 @@ module Ruote
     #
     def root_expression
 
-      #@expressions.find { |e| e.fei.expid == '0' && e.fei.sub_wfid == nil }
-        # vanilla implementation
-
       root_expressions.first
     end
 
@@ -87,7 +84,7 @@ module Ruote
       roots = @expressions.select { |e| e.h.parent_id == nil }
 
       roots = roots.inject({}) { |h, e|
-        h["#{e.h.fei['expid']}__#{e.h.fei['sub_wfid']}"] = e; h
+        h["#{e.h.fei['expid']}__#{e.h.fei['subid']}"] = e; h
       }
 
       roots.keys.sort.collect { |k| roots[k] }

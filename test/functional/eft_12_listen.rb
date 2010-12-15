@@ -58,7 +58,7 @@ class EftListenTest < Test::Unit::TestCase
       @tracer << "a\n"
     end
     @engine.register_participant :bravo do |workitem|
-      @tracer << "#{workitem.fei.wfid}|#{workitem.fei.sub_wfid}"
+      @tracer << "#{workitem.fei.wfid}|#{workitem.fei.subid}"
       @tracer << "\n"
     end
 

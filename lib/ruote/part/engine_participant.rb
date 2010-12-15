@@ -129,7 +129,6 @@ module Ruote
       @storage.put_msg(
         'launch',
         'wfid' => wi['fei']['wfid'],
-        #'sub_wfid' => fexp.get_next_sub_wfid,
         'parent_id' => forget ? nil : wi['fei'],
         'tree' => determine_tree(fexp, params),
         'workitem' => wi,

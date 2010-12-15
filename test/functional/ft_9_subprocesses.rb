@@ -73,7 +73,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
     wfids = []
 
     @engine.register_participant :alpha do |workitem|
-      wfids << workitem.fei.sub_wfid
+      wfids << workitem.fei.subid
     end
 
     #noisy

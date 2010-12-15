@@ -278,7 +278,7 @@ class FtErrorsTest < Test::Unit::TestCase
     err = ps.errors.first
 
     assert_equal wfid, err.fei.wfid
-    assert_not_nil err.fei.sub_wfid
+    assert_not_nil err.fei.subid
 
     @engine.replay_at_error(err)
 

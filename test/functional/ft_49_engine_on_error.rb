@@ -66,7 +66,7 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
     assert_equal 1, $seen.size
     assert_equal 'yellow', $seen.first.fields['colour']
     assert_equal 'vanilla', $seen.first.fields['flavour']
-    assert_not_nil $seen.first.fei.sub_wfid
+    assert_not_nil $seen.first.fei.subid
 
     # TODO : look for error message and such
 

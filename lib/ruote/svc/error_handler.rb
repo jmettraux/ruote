@@ -152,7 +152,6 @@ module Ruote
         @context.storage.put_msg(
           'launch',
           'wfid' => fexp.fei.wfid,
-          #'sub_wfid' => fexp.get_next_sub_wfid,
           'tree' => tree,
           'workitem' => workitem,
           'variables' => fexp.compile_variables)

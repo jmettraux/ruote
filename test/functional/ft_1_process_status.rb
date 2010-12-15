@@ -353,7 +353,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     wait_for(:alpha)
 
     assert_match wfid, alpha.first.fei.wfid
-    assert_not_nil alpha.first.fei.sub_wfid
+    assert_not_nil alpha.first.fei.subid
 
     assert_equal 0, @engine.process(wfid).errors.size
     assert_equal 4, @engine.process(wfid).expressions.size

@@ -162,7 +162,7 @@ class FtEngineParticipantTest < Test::Unit::TestCase
     @engine1.wait_for(:alpha)
 
     assert_equal 1, alpha.size
-    assert_not_nil alpha.first.fei.sub_wfid
+    assert_not_nil alpha.first.fei.subid
 
     @engine0.cancel_process(wfid)
     @engine0.wait_for(wfid)

@@ -110,7 +110,8 @@ module Ruote
 
         return @fexp.fei.to_storage_id if key == 'fei'
         return @fexp.fei.wfid if key == 'wfid'
-        return @fexp.fei.sub_wfid if key == 'sub_wfid'
+        return @fexp.fei.subid if key == 'subid'
+        return @fexp.fei.subid if key == 'sub_wfid' # deprecated in 2.1.12
         return @fexp.fei.expid if key == 'expid'
         return @fexp.fei.engine_id if key == 'engine_id'
 
