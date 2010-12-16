@@ -1,71 +1,79 @@
 
 $:.unshift('.') # 1.9.2
 
+require 'rubygems'
+
+require 'rake'
+require 'rake/clean'
+require 'rake/rdoctask'
+
 require 'lib/ruote/version.rb'
 
-require 'rubygems'
-require 'rake'
 
 #
 # clean
 
-require 'rake/clean'
-CLEAN.include('pkg', 'rdoc', 'ruote_work', 'ruote_data', 'logs')
+CLEAN.include('pkg', 'rdoc', 'ruote_work', 'ruote_data')
 
 task :default => [ :clean ]
 
 
 #
-# jeweler tasks
+# gem
 
-begin
+GEM_VERSION = Ruote::VERSION
 
-  require 'jeweler'
 
-  Jeweler::Tasks.new do |gem|
+desc %{
+  synchronizes the version in the gemspec with the one in the project
+}
+task :update_version do
 
-    gem.version = Ruote::VERSION
-    gem.name = 'ruote'
-    gem.summary = 'an open source ruby workflow engine'
-    gem.description = %{
-ruote is an open source ruby workflow engine.
-    }
-    gem.email = 'jmettraux@gmail.com'
-    gem.homepage = 'http://ruote.rubyforge.org'
-    gem.authors = [ 'John Mettraux', 'Kenneth Kalmer', 'Torsten Schoenebaum' ]
-    gem.rubyforge_project = 'ruote'
-    gem.test_file = 'test/test.rb'
+  GEMSPEC_FILE = Dir['*.gemspec'].first
 
-    gem.add_dependency 'rufus-json', '>= 0.2.5'
-    gem.add_dependency 'rufus-cloche', '>= 0.1.20'
-    gem.add_dependency 'rufus-dollar'
-    gem.add_dependency 'rufus-mnemo', '>= 1.1.0'
-    gem.add_dependency 'rufus-scheduler', '>= 2.0.5'
-    gem.add_dependency 'rufus-treechecker', '>= 1.0.3'
+  lines = File.readlines(GEMSPEC_FILE)
 
-    gem.add_development_dependency 'rake'
-    gem.add_development_dependency 'yard'
-    gem.add_development_dependency 'json'
-    gem.add_development_dependency 'builder'
-    gem.add_development_dependency 'mailtrap'
-    gem.add_development_dependency 'jeweler'
-
-    # Gem::Specification http://www.rubygems.org/read/chapter/20
+  File.open(GEMSPEC_FILE, 'wb') do |f|
+    lines.each do |line|
+      f.puts(
+        line.match(/ s\.version /) ? "  s.version = '#{GEM_VERSION}'" : line)
+    end
   end
-  Jeweler::GemcutterTasks.new
+end
 
-rescue LoadError
-  puts 'Jeweler (or a dependency) not available. Install it with: gem install jeweler'
+desc %{
+  validates the gemspec
+}
+task :gemspec => :update_version do
+
+  GEMSPEC = eval(File.read(GEMSPEC_FILE))
+  GEMSPEC.validate
+end
+
+desc %{
+  builds the gem and places it in pkg/
+}
+task :build => :gemspec do
+
+  sh "gem build #{GEMSPEC_FILE}"
+  sh "mkdir pkg" rescue nil
+  sh "mv #{GEMSPEC.name}-#{GEMSPEC.version}.gem pkg/"
+end
+
+desc %{
+  builds the gem and pushes it to rubygems.org
+}
+task :push => :build do
+
+  sh "gem push pkg/#{GEMSPEC.name}-#{GEMSPEC.version}.gem"
 end
 
 
 #
 # rdoc
-
 #
 # make sure to have rdoc 2.5.x to run that
-#
-require 'rake/rdoctask'
+
 Rake::RDocTask.new do |rd|
 
   rd.main = 'README.rdoc'
@@ -81,7 +89,9 @@ end
 #
 # upload_rdoc
 
-desc 'Upload the documentation to rubyforge'
+desc %{
+  upload the rdoc to rubyforge
+}
 task :upload_rdoc => [ :clean, :rdoc ] do
 
   account = 'jmettraux@rubyforge.org'
