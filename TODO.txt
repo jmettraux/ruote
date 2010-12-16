@@ -235,6 +235,7 @@
 [o] part/template.rb, use Rufus::Json.pretty_encode
 [o] storage.clear OR storage.purge! OR both (cf discussion with marc_lee) !!
 [o] Nathan : throw error on ${ruby:...} when ruby_eval_allowed is not set
+[o] engine.kill and engine.cancel should accept fei, fexp or wfid
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -440,6 +441,7 @@
 [ ] detach / attach segments of processes
 [ ] clone process ? (could be used by {de|at}tach)
 
-[ ] engine.kill and engine.cancel should accept fei, fexp or wfid
 [ ] console for InformatiQ
+
+[ ] BlockParticipant : proc.to_source
 

@@ -57,6 +57,16 @@ module Ruote
     Ruote::FlowExpressionId.is_a_fei?(o)
   end
 
+  # Will do its best to return a wfid (String) or a fei (Hash instance)
+  # extract from the given o argument.
+  #
+  def self.extract_id (o)
+
+    return o if o.is_a?(String) and o.index('!').nil? # wfid
+
+    Ruote::FlowExpressionId.extract_h(o)
+  end
+
   # This function is used to generate the subids. Each flow
   # expression receives such an id (it's useful for cursors, loops and
   # forgotten branches).

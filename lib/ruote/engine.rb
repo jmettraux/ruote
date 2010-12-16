@@ -189,6 +189,34 @@ module Ruote
       @context.storage.put_msg('cancel', 'fei' => fei, 'flavour' => 'kill')
     end
 
+    # Given a workitem or a fei, will do a cancel_expression,
+    # else it's a wfid and it does a cancel_process.
+    #
+    def cancel (wi_or_fei_or_wfid)
+
+      target = Ruote.extract_id(wi_or_fei_or_wfid)
+
+      if target.is_a?(String)
+        cancel_process(target)
+      else
+        cancel_expression(target)
+      end
+    end
+
+    # Given a workitem or a fei, will do a kill_expression,
+    # else it's a wfid and it does a kill_process.
+    #
+    def kill (wi_or_fei_or_wfid)
+
+      target = Ruote.extract_id(wi_or_fei_or_wfid)
+
+      if target.is_a?(String)
+        kill_process(target)
+      else
+        kill_expression(target)
+      end
+    end
+
     # Replays at a given error (hopefully you fixed the cause of the error
     # before replaying...)
     #

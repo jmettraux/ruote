@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- Engine #cancel and #kill (expression or process, whichever)
 - subid (sub_wfid) for every expression
 - undo and redo : more robust (broken tags)
 - cursor : giving a sub_wfid to children (play nice with :forget)
