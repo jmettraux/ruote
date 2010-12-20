@@ -224,10 +224,10 @@ module Ruote
         return nil
       end
 
-      pa = if pa_class.instance_method(:initialize).arity > 0
-        pa_class.new(options)
-      else
+      pa = if pa_class.instance_method(:initialize).arity == 0
         pa_class.new
+      else
+        pa_class.new(options)
       end
       pa.context = @context if pa.respond_to?(:context=)
 
