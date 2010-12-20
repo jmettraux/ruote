@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'digest/md5'
+
 require 'ruote/version'
 require 'ruote/workitem'
 require 'ruote/util/misc'
