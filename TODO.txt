@@ -444,3 +444,7 @@
 
 [ ] BlockParticipant : proc.to_source
 
+[ ] StorageHistory : add a method to list all wfids (for by_wfid)
+
+[ ] mimic rufus-dollar's Rakefile
+
