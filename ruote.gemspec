@@ -3,7 +3,7 @@
 Gem::Specification.new do |s|
 
   s.name = 'ruote'
-  s.version = '2.1.12'
+  s.version = File.read('lib/ruote/version.rb').match(/VERSION = '([^']+)'/)[1]
   s.platform = Gem::Platform::RUBY
   s.authors = [ 'John Mettraux', 'Kenneth Kalmer', 'Torsten Schoenebaum' ]
   s.email = [ 'jmettraux@gmail.com' ]
@@ -14,7 +14,12 @@ Gem::Specification.new do |s|
 ruote is an open source Ruby workflow engine
   }
 
-  s.files = `git ls-files`.split("\n")
+  #s.files = `git ls-files`.split("\n")
+  s.files = Dir[
+    'Rakefile',
+    'lib/**/*.rb', 'spec/**/*.rb', 'test/**/*.rb',
+    '*.gemspec', '*.txt', '*.rdoc', '*.md'
+  ]
 
   s.add_runtime_dependency 'rufus-json', '>= 0.2.5'
   s.add_runtime_dependency 'rufus-cloche', '>= 0.1.20'
