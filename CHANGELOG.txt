@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- workitem.tags (workitem['fields']['__tags__']
 - better participant initialization (Thanks Neil Pennell)
 - Engine #cancel and #kill (expression or process, whichever)
 - subid (sub_wfid) for every expression

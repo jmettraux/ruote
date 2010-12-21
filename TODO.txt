@@ -236,6 +236,9 @@
 [o] storage.clear OR storage.purge! OR both (cf discussion with marc_lee) !!
 [o] Nathan : throw error on ${ruby:...} when ruby_eval_allowed is not set
 [o] engine.kill and engine.cancel should accept fei, fexp or wfid
+[o] participant params['tags'] = [ a, b, c ] ? costly (x expressions to read)
+    but passing them in the workitem could be fun
+    field['__tags__'] ?
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -408,10 +411,6 @@
 [ ] a run of ruby -w
 
 [x] cursor : previous_command field ? not really necessary with :break_if => x
-
-[ ] participant params['tags'] = [ a, b, c ] ? costly (x expressions to read)
-    but passing them in the workitem could be fun
-    field['__tags__'] ?
 
 [ ] register :overwrite { ... } ? (wipes all the participants)
 [ ] simple worker hooks ? (as discussed with @hassox)

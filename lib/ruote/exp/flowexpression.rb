@@ -234,6 +234,8 @@ module Ruote::Exp
 
         unset_variable(h.tagname)
 
+        Ruote::Workitem.remove_tag(workitem, h.tagname)
+
         @context.storage.put_msg('left_tag', 'tag' => h.tagname, 'fei' => h.fei)
       end
 
@@ -650,6 +652,8 @@ module Ruote::Exp
       if h.tagname = attribute(:tag)
 
         set_variable(h.tagname, h.fei)
+
+        Ruote::Workitem.add_tag(h.applied_workitem, h.tagname)
 
         @context.storage.put_msg(
           'entered_tag', 'tag' => h.tagname, 'fei' => h.fei)

@@ -110,5 +110,45 @@ class FtTagsTest < Test::Unit::TestCase
 
     assert_nil @engine.process(wfid)
   end
+
+  def test_tags_and_workitems
+
+    pdef = Ruote.define do
+      sequence :tag => 'first-stage' do
+        alpha
+      end
+      sequence :tag => 'second-stage' do
+        bravo
+        charly :tag => 'third-stage'
+      end
+      david
+    end
+
+    @engine.register { catchall }
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(:alpha)
+    wi = @engine.storage_participant.first
+
+    assert_equal %w[ first-stage ], wi.tags
+
+    @engine.storage_participant.reply(wi)
+    @engine.wait_for(:bravo)
+    wi = @engine.storage_participant.first
+
+    assert_equal %w[ second-stage ], wi.tags
+
+    @engine.storage_participant.reply(wi)
+    @engine.wait_for(:charly)
+    wi = @engine.storage_participant.first
+
+    assert_equal %w[ second-stage third-stage ], wi.tags
+
+    @engine.storage_participant.reply(wi)
+    @engine.wait_for(:david)
+    wi = @engine.storage_participant.first
+
+    assert_equal [], wi.tags
+  end
 end
 

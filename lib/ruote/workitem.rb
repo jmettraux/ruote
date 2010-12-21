@@ -263,6 +263,36 @@ module Ruote
       @h['fields']['__command__'] = com
     end
 
+    # Shortcut for wi.fields['__tags__']
+    #
+    def tags
+
+      @h['fields']['__tags__'] || []
+    end
+
+    # Used by FlowExpression when entering a tag.
+    #
+    def self.add_tag (hworkitem, tag)
+
+      (hworkitem['fields']['__tags__'] ||= []) << tag
+    end
+
+    # Used by FlowExpression when leaving a tag.
+    #
+    def self.remove_tag (hworkitem, tag)
+
+      # it's a bit convoluted... trying to cope with potential inconsistencies
+      #
+      # normally, it should only be a tags.pop(), but since user have
+      # access to the workitem and its fields... better be safe than sorry
+
+      tags = (hworkitem['fields']['__tags__'] || [])
+
+      if index = tags.rindex(tag)
+        tags.delete_at(index)
+      end
+    end
+
     # Populates the '__error__' field in the workitem (passed in its raw
     # hash form as first argument) with info for the given error that occured
     # at the given fexp.
