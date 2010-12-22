@@ -92,11 +92,6 @@ module Ruote
 
       @checker.check(ruby_code) if @checker
     end
-
-    def check_conditional (ruby_code)
-
-      @cchecker.check(ruby_code) if @checker
-    end
   end
 end
 
