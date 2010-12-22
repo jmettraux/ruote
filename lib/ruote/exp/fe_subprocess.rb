@@ -147,6 +147,28 @@ module Ruote::Exp
   # The latter may make process definitions quite readable (but blur the
   # distinction between expressions, call to participants or to subprocesses).
   #
+  #
+  # == subprocess trees bound at engine level
+  #
+  # It's OK to place a process tree directly in an engine variable :
+  #
+  #   engine.variables['inventory_check'] = Ruote.process_definition do
+  #     cursor do
+  #       manager :task => 'hire inventory team'
+  #       floor_manager :task => 'lead inventory'
+  #       manager :task => 'check results'
+  #       rewind :unless => '${inventory_successful}'
+  #     end
+  #   end
+  #
+  # Then, from the main process :
+  #
+  #   sequence do
+  #     # ...
+  #     inventory_check
+  #     # ...
+  #   end
+  #
   class SubprocessExpression < FlowExpression
 
     names :subprocess
