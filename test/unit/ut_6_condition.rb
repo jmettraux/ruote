@@ -43,7 +43,12 @@ class ConditionTest < Test::Unit::TestCase
     assert_equal result, Ruote::Exp::Condition.apply?(sif, sunless)
   end
 
-  def assert_b (b, conditional)
+  def assert_b (b, conditional=nil)
+
+    if conditional == nil
+      conditional = b
+      b = true
+    end
 
     assert_equal(
       b,
@@ -120,9 +125,11 @@ class ConditionTest < Test::Unit::TestCase
 
   def test_emptiness
 
-    assert_b true, ' == '
+    assert_b false, ' == '
     assert_b false, " == ''"
     assert_b false, ' == ""'
+    assert_b false, ' == a'
+    assert_b false, 'a == '
   end
 
   def test_strip
@@ -134,5 +141,22 @@ class ConditionTest < Test::Unit::TestCase
     assert_not_skip true, :if => 'a  == a'
     assert_not_skip true, :if => 'a==a'
   end
+
+  def test_boolean_literals
+
+    assert_b true, true
+    assert_b false, false
+  end
+
+  def test_complex_strings
+
+    assert_b true, "'some dude' == 'some dude'"
+    assert_b true, "some dude == \"some dude\""
+  end
+
+  #def test_and
+  #  assert_b "1 and 2 and 3"
+  #  assert_b "1 && 2 && 3"
+  #end
 end
 

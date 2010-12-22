@@ -25,10 +25,13 @@
 
 module Ruote::Exp
 
+  #
+  # A few helper methods for evaluating :if and :unless expression
+  # attributes in process definitions.
+  #
   module Condition
 
-    SET_REGEX = /(\S*?)( +is)?( +not)?( +set)$/
-    COMPARISON_REGEX = /(.*?) *(==|!=|>=|<=|>|<|=~) *(.*)/
+    SET_REGEX = /^(\S*?)( +is)?( +not)?( +set)$/
 
     def self.apply? (sif, sunless)
 
@@ -38,77 +41,69 @@ module Ruote::Exp
       true
     end
 
-    # TODO : rconditional
-    #        is it really necessary ? there is already ${r:xxx}
-
     def self.true? (conditional)
 
-      conditional = unescape(conditional)
+      conditional = unescape(conditional.to_s)
 
       if m = SET_REGEX.match(conditional)
-        eval_is(m)
-      elsif m = COMPARISON_REGEX.match(conditional)
-        compare(m)
-      else
-        to_b(conditional)
+        return evl_set(m)
       end
+
+      evl(conditional) ? true : false
     end
 
     protected
 
-    def self.eval_is (match)
+    def self.parse (conditional)
 
-      match = match[1..-2].select { |e| e != nil }
+      Rufus::TreeChecker.parse(conditional)
 
-      negative = match.find { |m| m == ' not' }
-
-      first = match.first.strip
-      is_set = first != '' && first != 'is'
-
-      negative ? (not is_set) : is_set
+    rescue => e
+      [ :false ]
     end
 
     def self.unescape (s)
 
-      s ? s.to_s.gsub('&amp;', '&').gsub('&gt;', '>').gsub('&lt;', '<') : nil
+      s.gsub('&amp;', '&').gsub('&gt;', '>').gsub('&lt;', '<')
     end
 
-    def self.to_b (o)
+    COMPARATORS = %w[ == > < != >= <= ].collect { |c| c.to_sym }
 
-      o = o.strip if o.is_a?(String)
+    def self.evl (tree)
 
-      not(o == nil || o == false || o == 'false' || o == '')
-    end
+      return evl(parse(tree)) if tree.is_a?(String)
 
-    def self.compare (m)
+      return nil if tree == []
 
-      return (m[1].=~(Regexp.new(m[3])) != nil) if m[2] == '=~'
+      return tree.last if tree.first == :str
+      return tree.last if tree.first == :lit
+      return true if tree == [ :true ]
+      return false if tree == [ :false ]
 
-      a = narrow_to_f(m[1])
-      b = narrow_to_f(m[3])
+      return ( ! evl(tree.last)) if tree.first == :not
 
-      if a.class != b.class
-        a = m[1]
-        b = m[3]
+      if tree[0] == :call && tree[2] == :=~
+        return evl(tree[1]) =~ Regexp.new(evl(tree.last.last).to_s)
       end
 
-      #a.send(m[2], b)
-        # ruby 1.8.x doesn't like that one
+      if tree[0] == :call && COMPARATORS.include?(tree[2])
+        return evl(tree[1]).send(tree[2], evl(tree.last.last))
+      end
 
-      a = strip(a)
-      b = strip(b)
+      if tree[0] == :call && tree[1] == nil
+        return tree[2].to_s
+      end
 
-      m[2] == '!=' ? ( ! a.send('==', b)) : a.send(m[2], b)
+      raise ArgumentError.new("cannot deal with : #{tree.inspect}")
     end
 
-    def self.narrow_to_f (s)
+    def self.evl_set (match)
 
-      Float(s) rescue s
-    end
+      set = evl(match[1])
+      set = set != nil && set != ''
+      set = false if match[1].match(/is$/) && match[2].nil?
 
-    def self.strip (s)
-
-      s.respond_to?(:strip) ? s.strip : s
+      match[3].nil? ? set : ( ! set)
     end
   end
 end

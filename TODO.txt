@@ -239,6 +239,9 @@
 [o] participant params['tags'] = [ a, b, c ] ? costly (x expressions to read)
     but passing them in the workitem could be fun
     field['__tags__'] ?
+[x] use treetop for more complex "${f:x} AND ${f:y}" ?
+    (systems like Rails require it anyway)
+    NO : using ruby_parser instead
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -425,8 +428,6 @@
 
 [ ] website : add piece of doc about running workers on their own
 
-[ ] use treetop for more complex "${f:x} AND ${f:y}" ?
-    (systems like Rails require it anyway)
 [ ] receiver/base.rb : fexp.lookup_variable --> lookup_variable ?
 
 [ ] engine/receiver #reply(workitem or fexp or fei) ?
@@ -447,4 +448,6 @@
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
 
 [ ] mimic rufus-dollar's Rakefile
+
+[ ] TreeChecker : exclude_fvccall :at_exit
 

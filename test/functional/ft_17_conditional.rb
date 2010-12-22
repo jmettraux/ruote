@@ -45,11 +45,12 @@ class FtConditionalTest < Test::Unit::TestCase
         echo 'a', :if => '${f:d}'
         echo 'b', :if => '${f:d} == some dude'
         echo 'c', :if => "${f:d} == 'some dude'"
-        echo 'd', :if => '${f:d} is set'
+        echo 'd', :if => "${f:d} == ${'f:d}"
+        echo 'e', :if => '${f:d} is set'
       end
     end
 
-    assert_trace("some dude\na\nb\nd", pdef)
+    assert_trace("some dude\na\nc\nd\ne", pdef)
   end
 
   def test_unless
