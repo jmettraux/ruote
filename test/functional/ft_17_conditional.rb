@@ -73,5 +73,27 @@ class FtConditionalTest < Test::Unit::TestCase
 
     assert_trace(%w[ other u . ], { 'f' => 'other' }, pdef)
   end
+
+  def test_and_or
+
+    pdef = Ruote.process_definition do
+
+      set 'f:t' => true
+      set 'f:f' => false
+
+      sequence do
+
+        echo '${f:t}/${f:f}'
+
+        echo 'a', :if => '${f:t}'
+        echo 'b', :if => '${f:t} or ${f:f}'
+        echo 'c', :if => '${f:t} and ${f:f}'
+        echo 'd', :if => '${f:t} and (${f:t} or ${f:f})'
+        echo 'e', :if => '${f:t} and (${f:t} and ${f:f})'
+      end
+    end
+
+    assert_trace(%w[ true/false a b d ], pdef)
+  end
 end
 

@@ -82,6 +82,13 @@ module Ruote::Exp
 
       return ( ! evl(tree.last)) if tree.first == :not
 
+      if tree[0] == :and
+        return evl(tree[1]) && evl(tree[2])
+      end
+      if tree[0] == :or
+        return evl(tree[1]) || evl(tree[2])
+      end
+
       if tree[0] == :call && tree[2] == :=~
         return evl(tree[1]) =~ Regexp.new(evl(tree.last.last).to_s)
       end

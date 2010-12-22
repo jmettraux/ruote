@@ -192,5 +192,18 @@ class FtDollarTest < Test::Unit::TestCase
 
     assert_trace 'alpha/bravo/charly', pdef
   end
+
+  def test_dollar_quote
+
+    pdef = Ruote.define do
+      set 'f:a' => 'alpha'
+      set 'f:b' => 'bra vo'
+      echo '${"f:a}'
+      echo "${'f:a}"
+      echo 'ok', :if => "${'f:b} == 'bra vo'"
+    end
+
+    assert_trace %w[ "alpha" "alpha" ok ], pdef
+  end
 end
 

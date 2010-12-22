@@ -154,9 +154,28 @@ class ConditionTest < Test::Unit::TestCase
     assert_b true, "some dude == \"some dude\""
   end
 
-  #def test_and
-  #  assert_b "1 and 2 and 3"
-  #  assert_b "1 && 2 && 3"
-  #end
+  def test_and_or
+
+    assert_b "1 and 2 and 3"
+    assert_b "1 && 2 && 3"
+
+    assert_b "1 or 2 or 3"
+    assert_b "1 || 2 || 3"
+
+    assert_b true, "true or false"
+
+    assert_b true, "true and (true or false)"
+    assert_b false, "true and (true and false)"
+
+    assert_b true, "'a' and ('b' and 'c')"
+  end
+
+  def test_not
+
+    assert_b true, "not false"
+    assert_b false, "not true"
+    assert_b true, "! false"
+    assert_b false, " ! true"
+  end
 end
 
