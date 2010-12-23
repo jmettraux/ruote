@@ -125,7 +125,7 @@ class UtRubyParserTest < Test::Unit::TestCase
       Ruote.to_tree { sequence { alpha; bravo } })
   end
 
-  def test_raise
+  def test_treechecker
 
     #assert_raise Nada do
       Ruote::Parser.parse %{ Ruote.define { alpha } }
@@ -151,6 +151,10 @@ class UtRubyParserTest < Test::Unit::TestCase
 
     assert_raise ArgumentError do
       Ruote::Parser.parse %{ Ruote.define { File.read('stuff') } }
+    end
+
+    assert_raise ArgumentError do
+      Ruote::Parser.parse %{ Ruote.define { at_exit { } } }
     end
   end
 end

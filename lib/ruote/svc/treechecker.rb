@@ -43,6 +43,7 @@ module Ruote
 
         exclude_fvccall :abort, :exit, :exit!
         exclude_fvccall :system, :fork, :syscall, :trap, :require, :load
+        exclude_fvccall :at_exit
 
         #exclude_call_to :class
         exclude_fvcall :private, :public, :protected
