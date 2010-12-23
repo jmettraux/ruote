@@ -7,15 +7,23 @@ require 'rake'
 require 'rake/clean'
 require 'rake/rdoctask'
 
-require 'lib/ruote/version.rb'
-
 
 #
 # clean
 
 CLEAN.include('pkg', 'rdoc', 'ruote_work', 'ruote_data')
 
-task :default => [ :clean ]
+
+#
+# test
+
+task :test do
+
+  sh 'ruby test/unit/test.rb'
+  sh 'ruby test/functional/test.rb'
+end
+
+task :default => [ :test ]
 
 
 #

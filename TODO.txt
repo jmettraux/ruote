@@ -242,6 +242,15 @@
 [x] use treetop for more complex "${f:x} AND ${f:y}" ?
     (systems like Rails require it anyway)
     NO : using ruby_parser instead
+[o] TreeChecker : exclude_fvccall :at_exit
+[o] _if '${f:x} == ${f:y} || ${f:x} == ${f:z}'
+[x] beanstalk [as a] workqueue ?
+[o] tree.to_xml (require builder ?)
+[o] tree.to_ruby
+[o] __command__ + tag (rewind that cursor there, not the current one)
+[o] rewind 'x' where x is a tagname (command x)
+[o] solve the ps#root_expression_for(fei) dilemma
+[x] condition : "${f:x} [is] empty" / this one is hard
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -268,10 +277,6 @@
 [ ] tailcall
 [ ] subprocesses participants (alias ?)
 
-[ ] __command__ + tag (rewind that cursor there, not the current one)
-
-[ ] beanstalk [as a] workqueue ?
-
 [ ] recursion : should cope with modified trees 'main' => :tree ??
 
 [ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
@@ -285,9 +290,6 @@
     and fetching it all the time ?
 
 [ ] file/fs_listener [example] ?
-
-[ ] tree.to_xml (require builder ?)
-[ ] tree.to_rb
 
 [ ] concurrence / concurrent_iterator : merge plugin ?
     use participant for that ?
@@ -309,13 +311,6 @@
 
 [ ] @children diff/undiff idea ?
 
-[ ] write doc about engine options (multi-process !)
-[ ] _if '${f:x} == ${f:y} || ${f:x} == ${f:z}'
-
-[ ] document the dollar notation / substitution / extrapolation
-
-[ ] condition : "${f:x} [is] empty" / this one is hard
-
 [ ] ruote/exp/fe_set.rb:147: warning: already initialized constant PREFIX_REGEX
 
 [ ] implement kill_process! (kill_expression! ?)
@@ -323,11 +318,8 @@
 [ ] engine.force_reply_to_parent(fei) ?
 
 [ ] :on_timeout => :rewind (break, jump to x)...
-[ ] rewind 'x' where x is a tagname (command x)
 
 [ ] repeat : have a counter in a variable (:to => x maybe) (subprocessid ?)
-
-[ ] when : add test for cancelling when child has been triggered / is running
 
 [ ] engine.cancel_forgotten_children(wfid) ?
 
@@ -354,7 +346,7 @@
     done at : http://github.com/jmettraux/ruote/commit/50292d954ff877f1f6615022216f346a7001b483
     `--> reverting that for now, too dangerous
 
-[ ]  should __error__ contain the tree ?
+[ ] should __error__ contain the tree ?
 [ ] engine.on_cancel = 'participant_name' // 'subprocess_name'
 
 [ ] "business days" plugin
@@ -382,8 +374,6 @@
 
 [ ] toto :task => 'maw the lawn', :within => '3d'
 
-[ ] solve the ps#root_expression_for(fei) dilemma
-
 [ ] re_apply_stalled
     http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
 
@@ -400,8 +390,6 @@
 [o] AND provide a better register &block
 [o] provide a mean for a participant to reject a workitem (intra plist)
     on_reply and now filter ?
-
-[ ] rw : upgrade [register_]participant documentation
 
 [ ] StorageParticipant#by_store[_name]
     maybe : reform the store_name system !
@@ -433,6 +421,9 @@
 [ ] engine/receiver #reply(workitem or fexp or fei) ?
 
 [ ] workitem : #as_json and #from_json
+    since ruote depends on rufus-json...
+
+[ ] workitem : short constructor, cf http://groups.google.com/group/openwferu-users/browse_thread/thread/c52d207d85e4b93e
 
 [ ] wait ~~> at
 
@@ -447,7 +438,5 @@
 
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
 
-[ ] mimic rufus-dollar's Rakefile
-
-[ ] TreeChecker : exclude_fvccall :at_exit
+[.] when : add test for cancelling when child has been triggered / is running
 
