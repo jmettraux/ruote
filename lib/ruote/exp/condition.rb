@@ -58,7 +58,14 @@ module Ruote::Exp
 
       Rufus::TreeChecker.parse(conditional)
 
+    rescue NoMethodError => nme
+
+      raise NoMethodError.new(
+        "/!\\ please upgrade your rufus-treechecker gem /!\\"
+      )
+
     rescue => e
+
       [ :false ]
     end
 
