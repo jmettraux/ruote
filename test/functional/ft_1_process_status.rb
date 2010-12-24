@@ -623,5 +623,19 @@ digraph "process wfid {
 
     assert_equal 1, @engine.processes.size
   end
+
+  def test_ps
+
+    @engine.register 'alpha', Ruote::NullParticipant
+
+    wfid = nil
+
+    2.times { wfid = @engine.launch(Ruote.define { alpha }) }
+
+    @engine.wait_for(2)
+
+    assert_equal 2, @engine.ps.size
+    assert_equal wfid, @engine.ps(wfid).wfid
+  end
 end
 

@@ -299,6 +299,14 @@ module Ruote
       list_processes(wfids, opts)
     end
 
+    # Returns a list of processes or the process status of a given process
+    # instance.
+    #
+    def ps (wfid=nil)
+
+      wfid == nil ? processes : process(wfid)
+    end
+
     # Returns an array of current errors (hashes)
     #
     # Can be called in two ways :

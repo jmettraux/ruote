@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- engine.ps(wfid=nil)
 - when : made sure child is cancelled as well
 - :if => '${f:a} and ${f:b}'
 - workitem.tags (workitem['fields']['__tags__']

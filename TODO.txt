@@ -252,6 +252,7 @@
 [o] solve the ps#root_expression_for(fei) dilemma
 [x] condition : "${f:x} [is] empty" / this one is hard
 [o] when : add test for cancelling when child has been triggered / is running
+[o] engine.ps(wfid)
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -397,7 +398,6 @@
 [ ] rename 'parser' to 'reader'
 
 [ ] process_count and error_count ? (processes(:count => true))
-[ ] engine.ps(wfid) (shortcut ?)
 
 [ ] a run of ruby -w
 
@@ -437,6 +437,8 @@
 [ ] BlockParticipant : proc.to_source
 
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
+
+[ ] on_error => retry / pass / ignore ?
 
 [ ] case exp : smarter one ?
 
