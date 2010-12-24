@@ -125,7 +125,7 @@ class EftRefTest < Test::Unit::TestCase
       define 'sub0' do
         alpha
       end
-      sub0 :timeout => '2d'
+      ref 'sub0', :timeout => '2d'
     end
 
     wfid = @engine.launch(pdef)
@@ -135,6 +135,21 @@ class EftRefTest < Test::Unit::TestCase
 
     assert_equal 1, scheds.size
     assert_equal '0_1', scheds.first['target'].expid
+  end
+
+  def test_missing_ref_and_undo
+
+    pdef = Ruote.process_definition do
+      ref 'nemo', :on_error => 'undo'
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(wfid)
+
+    assert_nil @engine.process(wfid)
   end
 end
 
