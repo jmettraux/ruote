@@ -632,7 +632,7 @@ digraph "process wfid {
 
     2.times { wfid = @engine.launch(Ruote.define { alpha }) }
 
-    @engine.wait_for(2)
+    @engine.wait_for(4)
 
     assert_equal 2, @engine.ps.size
     assert_equal wfid, @engine.ps(wfid).wfid
