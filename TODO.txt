@@ -251,6 +251,7 @@
 [o] rewind 'x' where x is a tagname (command x)
 [o] solve the ps#root_expression_for(fei) dilemma
 [x] condition : "${f:x} [is] empty" / this one is hard
+[o] when : add test for cancelling when child has been triggered / is running
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -328,7 +329,6 @@
 [ ] double-check on_cancel rewrite (ft_1_process_status)
 
 [ ] verify get_last/get_raw logic, no + 0.0001...
-[ ] case exp : smarter one ?
 [ ] spare 1 get_msg by caching msg (but keep 'deleting')
 [ ] [un]set_var : via message ? should be ok like that... Not much traffic there
 
@@ -438,5 +438,5 @@
 
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
 
-[.] when : add test for cancelling when child has been triggered / is running
+[ ] case exp : smarter one ?
 

@@ -9,6 +9,8 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
+require 'ruote/participant'
+
 
 class EftWhenTest < Test::Unit::TestCase
   include FunctionalBase
@@ -80,6 +82,30 @@ class EftWhenTest < Test::Unit::TestCase
     wait_for(4)
 
     assert_nil @engine.process(wfid)
+    assert_equal 0, @engine.storage.get_many('schedules').size
+  end
+
+  def test_cancel_when_child_is_active
+
+    pdef = Ruote.process_definition do
+      as_soon_as 'true', :freq => '10d' do
+        alpha
+      end
+    end
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+
+    @engine.cancel(wfid)
+
+    @engine.wait_for(wfid)
+
+    assert_equal 0, @engine.storage_participant.size
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
