@@ -256,6 +256,7 @@
 [x] alias "when" to "whenever" ?
 [x] alias "when" to "on" / "upon"
 [o] alias "when" to "once"  "once x == y do"
+[o] condition : "${'x} [is] empty" since ${array} => "[]"
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -442,7 +443,10 @@
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
 
 [ ] on_error => retry / pass / ignore ?
-[ ] condition : "${'x} [is] empty" since ${array} => "[]"
+
+[ ] doc : enhance doc on conditinal (and, empty, null, ...)
 
 [ ] case exp : smarter one ?
+
+[ ] .nil? .empty? .set? for "${x}.nil?"
 

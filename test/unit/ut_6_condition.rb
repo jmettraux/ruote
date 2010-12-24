@@ -177,5 +177,80 @@ class ConditionTest < Test::Unit::TestCase
     assert_b true, "! false"
     assert_b false, " ! true"
   end
+
+  def assert_e (target, code)
+
+    assert_equal(
+      target,
+      Ruote::Exp::Condition.eval(code),
+      ">#{code}< was expected to eval to #{target.inspect}")
+  end
+
+  def test_eval
+
+    assert_e nil, "nil"
+
+    assert_e true, "true"
+    assert_e false, "false"
+    assert_e 'alice', '"alice"'
+    assert_e 1, '1'
+
+    assert_e([ 1, 2, 3 ], "[ 1, 2, 3 ]")
+    assert_e({ 'a' => 2, 'b' => 2.0 }, "{ 'a' => 2, 'b' => 2.0 }")
+  end
+
+  def test_is_empty
+
+    assert_b "'' empty"
+    assert_b "'' is empty"
+    assert_b '"" empty'
+    assert_b '"" is empty'
+
+    assert_b "[] empty"
+    assert_b "[] is empty"
+
+    assert_b "{} empty"
+    assert_b "{} is empty"
+
+    assert_b false, "[1] is empty"
+    assert_b false, "{1=>2} is empty"
+  end
+
+  def test_is_not_empty
+
+    assert_b false, "'' not empty"
+    assert_b false, "'' is not empty"
+    assert_b false, '"" not empty'
+    assert_b false, '"" is not empty'
+
+    assert_b false, "[] not empty"
+    assert_b false, "[] is not empty"
+
+    assert_b false, "{} not empty"
+    assert_b false, "{} is not empty"
+
+    assert_b true, "[1] is not empty"
+    assert_b true, "{1=>2} is not empty"
+  end
+
+  def test_null
+
+    assert_b "nil == nil"
+    assert_b "1 != nil"
+    assert_b false, "1 == nil"
+    assert_b false, "nil != nil"
+
+    assert_b "nil null"
+    assert_b "nil is null"
+
+    assert_b false, "nil not null"
+    assert_b false, "nil is not null"
+
+    assert_b false, "1 null"
+    assert_b false, "1 is null"
+
+    assert_b true, "1 not null"
+    assert_b true, "1 is not null"
+  end
 end
 

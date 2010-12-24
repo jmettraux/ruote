@@ -31,7 +31,11 @@ module Ruote::Exp
   #
   module Condition
 
-    SET_REGEX = /^(\S*?)( +is)?( +not)?( +set)$/
+    REGEXES = {
+      'evl_set' => /^(.+?)( +is)?( +not)?( +set)$/,
+      'evl_null' => /^(.+?)( +is)?( +not)?( +null)$/,
+      'evl_empty' => /^(.+[\]}"'])( +is)?( +not)?( +empty)$/
+    }
 
     def self.apply? (sif, sunless)
 
@@ -41,15 +45,29 @@ module Ruote::Exp
       true
     end
 
+    # Returns true if the given conditional string evaluates to true.
+    #
     def self.true? (conditional)
 
       conditional = unescape(conditional.to_s)
 
-      if m = SET_REGEX.match(conditional)
-        return evl_set(m)
+      REGEXES.each do |method, regex|
+        if m = regex.match(conditional)
+          return self.send(method, m)
+        end
       end
 
       evl(conditional) ? true : false
+    end
+
+    # Evaluates the given [conditional] code string and returns the
+    # result.
+    #
+    # Note : this is not a full Ruby evaluation !
+    #
+    def self.eval (code)
+
+      evl(code)
     end
 
     protected
@@ -84,6 +102,7 @@ module Ruote::Exp
 
       return tree.last if tree.first == :str
       return tree.last if tree.first == :lit
+      return nil if tree == [ :nil ]
       return true if tree == [ :true ]
       return false if tree == [ :false ]
 
@@ -94,6 +113,13 @@ module Ruote::Exp
       end
       if tree[0] == :or
         return evl(tree[1]) || evl(tree[2])
+      end
+
+      if tree[0] == :array
+        return tree[1..-1].collect { |e| evl(e) }
+      end
+      if tree[0] == :hash
+        return Hash.[](*tree[1..-1].collect { |e| evl(e) })
       end
 
       if tree[0] == :call && tree[2] == :=~
@@ -118,6 +144,26 @@ module Ruote::Exp
       set = false if match[1].match(/is$/) && match[2].nil?
 
       match[3].nil? ? set : ( ! set)
+    end
+
+    def self.evl_empty (match)
+
+      object = evl(match[1])
+
+      empty = if object.respond_to?(:empty?)
+        object.empty?
+      elsif object.nil?
+        true
+      else
+        false
+      end
+
+      ( ! match[3].nil? ^ empty)
+    end
+
+    def self.evl_null (match)
+
+      ( ! match[3].nil? ^ evl(match[1]).nil?)
     end
   end
 end

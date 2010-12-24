@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- conditionals : "${x} is empty" and "${x} is null"
 - once expression (once, _when, as_soon_as)
 - let expression (a sequence with its own variable scope)
 - engine.ps(wfid=nil)
