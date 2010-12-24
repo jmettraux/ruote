@@ -12,15 +12,15 @@ require File.join(File.dirname(__FILE__), 'base')
 require 'ruote/participant'
 
 
-class EftWhenTest < Test::Unit::TestCase
+class EftOnceTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_when
+  def test_once
 
     pdef = Ruote.process_definition do
       echo 'in'
       concurrence do
-        _when '${v:ok}', :freq => '1s' do
+        once '${v:ok}', :freq => '1s' do
           echo 'done.'
         end
         sequence do
@@ -38,13 +38,13 @@ class EftWhenTest < Test::Unit::TestCase
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
-  def test_when_blocking
+  def test_once_blocking
 
     pdef = Ruote.process_definition do
       echo 'in'
       concurrence do
         sequence do
-          _when '${v:ok}', :freq => '1s'
+          once '${v:ok}', :freq => '1s'
           echo 'done.'
         end
         sequence do
@@ -65,7 +65,7 @@ class EftWhenTest < Test::Unit::TestCase
   def test_cancel
 
     pdef = Ruote.process_definition do
-      _when '${v:ok}', :freq => '10d'
+      once '${v:ok}', :freq => '10d'
       echo 'done.'
     end
 
@@ -85,7 +85,7 @@ class EftWhenTest < Test::Unit::TestCase
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
-  def test_cancel_when_child_is_active
+  def test_cancel_once_child_is_active
 
     pdef = Ruote.process_definition do
       as_soon_as 'true', :freq => '10d' do
@@ -109,7 +109,7 @@ class EftWhenTest < Test::Unit::TestCase
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
-  def test_when_cron
+  def test_once_cron
 
     pdef = Ruote.process_definition do
       echo 'in'

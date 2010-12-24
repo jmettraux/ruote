@@ -13,12 +13,12 @@ class RtWhenTest < Test::Unit::TestCase
   include FunctionalBase
   include RestartBase
 
-  def test_when_and_restart
+  def test_once_and_restart
 
     do_test('1s')
   end
 
-  def test_when_cron_and_restart
+  def test_once_cron_and_restart
 
     do_test('* * * * * *')
   end
@@ -32,7 +32,7 @@ class RtWhenTest < Test::Unit::TestCase
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
         echo 'in'
-        _when '${v:resume}', :freq => freq
+        once '${v:resume}', :freq => freq
         echo 'out.'
       end
     end

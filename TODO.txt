@@ -253,6 +253,9 @@
 [x] condition : "${f:x} [is] empty" / this one is hard
 [o] when : add test for cancelling when child has been triggered / is running
 [o] engine.ps(wfid)
+[x] alias "when" to "whenever" ?
+[x] alias "when" to "on" / "upon"
+[o] alias "when" to "once"  "once x == y do"
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -439,8 +442,7 @@
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
 
 [ ] on_error => retry / pass / ignore ?
+[ ] condition : "${'x} [is] empty" since ${array} => "[]"
 
 [ ] case exp : smarter one ?
-
-[ ] condition : "${'x} [is] empty" since ${array} => "[]"
 

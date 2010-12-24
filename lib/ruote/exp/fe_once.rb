@@ -26,14 +26,14 @@
 module Ruote::Exp
 
   #
-  # The 'when' expression verifies if a condition is true, if not it will
-  # block and after 10 seconds it will check again.
+  # The 'once' / 'when' expression verifies if a condition is true,
+  # if not it will block and after 10 seconds it will check again.
   # If true, it will resume or it will execute its child expression (before
   # resuming).
   #
   #   concurrence do
   #
-  #     _when '${v:/invoice_status} == emitted' do
+  #     once '${v:/invoice_status} == emitted' do
   #       open_customer_support_account
   #     end
   #
@@ -44,8 +44,6 @@ module Ruote::Exp
   #     end
   #   end
   #
-  # Note the '_when' since 'when' is a Ruby keyword :-(
-  #
   # The condition is usually something about variables, since the workitem that
   # this expression has access to is always the one that reached it, at apply
   # time.
@@ -55,7 +53,7 @@ module Ruote::Exp
   #
   #   sequence do
   #     first_stage
-  #     _when '${v:ready_for_second_stage}'
+  #     once '${v:ready_for_second_stage}'
   #     second_stage
   #   end
   #
@@ -64,7 +62,7 @@ module Ruote::Exp
   # 'sequence'.
   #
   #   concurrence do
-  #     _when :test => '${v:go_on} == yes' do
+  #     once :test => '${v:go_on} == yes' do
   #       subprocess :ref => 'final_stage'
   #     end
   #     sequence do
@@ -80,13 +78,13 @@ module Ruote::Exp
   # if you prefer it this way, you can use the :test attribute to formulate the
   # condition :
   #
-  #   <when test="${v:ready}">
+  #   <once test="${v:ready}">
   #     <participant ref="role_publisher" />
-  #   </when>
+  #   </once>
   #
   # In a Ruby process definition :
   #
-  #   _when :test => '${v:ready}' do
+  #   once :test => '${v:ready}' do
   #     participant :ref => 'role_publisher'
   #   end
   #
@@ -98,7 +96,7 @@ module Ruote::Exp
   #
   #   sequence do
   #     participant 'logistic_unit'
-  #     _when '${v:/delivery_ok}', :frequency => '2d'
+  #     once '${v:/delivery_ok}', :frequency => '2d'
   #       # block until delivery is OK (another branch of the process probably)
   #       # check every two days
   #     participant 'accounting_unit'
@@ -109,8 +107,8 @@ module Ruote::Exp
   #
   # It's OK to pass a 'cron string' to the :frequency attribute.
   #
-  #   _when '${v:delivery_complete}', :freq => '5 0 * * *'
-  #     # this 'when' will check its condition once per day, five minutes
+  #   once '${v:delivery_complete}', :freq => '5 0 * * *'
+  #     # this 'once' will check its condition once per day, five minutes
   #     # after midnight
   #
   # See "man 5 crontab" on your favourite unix system for the details of
@@ -124,7 +122,7 @@ module Ruote::Exp
   # Don't forget that this expression, like all the other expressions accepts
   # the :timeout attribute. It's perhaps better to use :timeout when there is
   # a child expression, so that the child won't get 'triggered' in case of
-  # timeout. When there is no child expression and the 'when' behaves in a
+  # timeout. When there is no child expression and the 'once' behaves in a
   # 'blocking way', a timeout will unblock, as if the condition became true.
   #
   #
@@ -133,13 +131,19 @@ module Ruote::Exp
   # Remember that, if the engine's 'ruby_eval_allowed' is set to true, the
   # condition may contain Ruby code.
   #
-  #   _when '${r:"hell" + "o"} == hello'
+  #   once '${r:"hell" + "o"} == hello'
   #
   # This Ruby code is checked before hand against malicious code, but beware...
   #
-  class WhenExpression < FlowExpression
+  #
+  # == aliases
+  #
+  # 'once', '_when' and 'as_soon_as' are three different names for this
+  # expression.
+  #
+  class OnceExpression < FlowExpression
 
-    names :when, :as_soon_as
+    names :once, :when, :as_soon_as
 
     def apply
 
