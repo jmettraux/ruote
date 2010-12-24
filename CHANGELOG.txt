@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- let expression (a sequence with its own variable scope)
 - engine.ps(wfid=nil)
 - when : made sure child is cancelled as well
 - :if => '${f:a} and ${f:b}'

@@ -96,5 +96,39 @@ class FtCaseTest < Test::Unit::TestCase
     r = @engine.wait_for(wfid)
     assert_equal 'a', r['workitem']['fields']['result']
   end
+
+  # Works as well, but the cases are bound in the global/process scope
+  #
+  def test_let_lambda
+
+    pdef = Ruote.define do
+
+      define 'a' do
+        echo 'global_a'
+      end
+
+      let do
+        define 'a' do
+          echo 'a'
+        end
+        define 'b' do
+          echo 'b'
+        end
+        subprocess '${the_case}'
+      end
+
+      subprocess 'a'
+    end
+
+    wfid = @engine.launch(pdef, 'the_case' => 'a')
+    @engine.wait_for(wfid)
+    assert_equal %w[ a global_a ], @tracer.to_a
+
+    @tracer.clear
+
+    wfid = @engine.launch(pdef, 'the_case' => 'b')
+    @engine.wait_for(wfid)
+    assert_equal %w[ b global_a ], @tracer.to_a
+  end
 end
 
