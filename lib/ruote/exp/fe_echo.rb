@@ -40,7 +40,7 @@ module Ruote::Exp
 
     def apply
 
-      text = "#{attribute_text}\n"
+      text = "#{attribute(:text) || attribute_text}\n"
 
       if t = @context['s_tracer']
         t << text

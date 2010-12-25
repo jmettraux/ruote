@@ -40,6 +40,15 @@ class EftEchoTest < Test::Unit::TestCase
     assert_trace('a', pdef)
   end
 
+  def test_echo_text
+
+    pdef = Ruote.define do
+      echo :text => 'a'
+    end
+
+    assert_trace('a', pdef)
+  end
+
   #def test_print_escape
   #  pdef = OpenWFE.process_definition :name => 'test' do
   #    sequence do
