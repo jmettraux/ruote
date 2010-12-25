@@ -71,9 +71,9 @@ class EftRegisterpTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef,
       'participants' => [
         [ 'alpha', 'C', { 'opt0' => 'val_a' } ],
-        [ /bravo/, 'C', { 'opt0' => 'val_b' } ]
+        [ '/bravo/', 'C', { 'opt0' => 'val_b' } ]
       ],
-      'participant' => [ /charly/, 'C', { 'opt0' => 'val_c' } ])
+      'participant' => [ '/charly/', 'C', { 'opt0' => 'val_c' } ])
 
     @engine.wait_for(wfid)
 

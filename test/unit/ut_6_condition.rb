@@ -197,6 +197,8 @@ class ConditionTest < Test::Unit::TestCase
 
     assert_e([ 1, 2, 3 ], "[ 1, 2, 3 ]")
     assert_e({ 'a' => 2, 'b' => 2.0 }, "{ 'a' => 2, 'b' => 2.0 }")
+
+    assert_e /^a/, "/^a/"
   end
 
   def test_is_empty
@@ -251,6 +253,12 @@ class ConditionTest < Test::Unit::TestCase
 
     assert_b true, "1 not null"
     assert_b true, "1 is not null"
+  end
+
+  def test_comparators
+
+    assert_b "alpha =~ /^a/"
+    assert_b false, "alpha =~ /^b/"
   end
 end
 

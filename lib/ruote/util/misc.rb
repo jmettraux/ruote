@@ -124,30 +124,36 @@ module Ruote
     s.split('::').inject(Object) { |c, n| n == '' ? c : c.const_get(n) }
   end
 
-  # Upon receiving something like
-  #
-  #   "(?-mix:nada)"
-  #
-  # will return
-  #
-  #   /nada/
-  #
-  def self.regex_from_s (s)
+#  # Upon receiving something like
+#  #
+#  #   "(?-mix:nada)"
+#  #
+#  # will return
+#  #
+#  #   /nada/
+#  #
+#  def self.regex_from_s (s)
+#
+#    if s.is_a?(String) && m = s.match(/^\(\?-mix:(.+)\)$/)
+#      Regexp.new(m[1])
+#    else
+#      nil
+#    end
+#  end
 
-    if s.is_a?(String) && m = s.match(/^\(\?-mix:(.+)\)$/)
-      Regexp.new(m[1])
-    else
-      nil
-    end
-  end
+  SREGEX = /^\s*\/(.*)\/\s*$/
 
-  #   regex_or_s("(?-mix:nada)") #==> /nada/
+  #   regex_or_s("/nada/") #==> /nada/
   #   regex_or_s("nada") #==> "nada"
   #   regex_or_s(/nada/) #==> /nada/
   #
   def self.regex_or_s (s)
 
-    regex_from_s(s) || s
+    if s.is_a?(String) && m = SREGEX.match(s)
+      Regexp.new(m[1])
+    else
+      s
+    end
   end
 end
 

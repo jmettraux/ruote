@@ -19,8 +19,8 @@ CLEAN.include('pkg', 'rdoc', 'ruote_work', 'ruote_data')
 
 task :test do
 
-  sh 'ruby test/unit/test.rb'
-  sh 'ruby test/functional/test.rb'
+  sh 'ruby -I. test/unit/test.rb'
+  sh 'ruby -I. test/functional/test.rb'
 end
 
 task :default => [ :test ]

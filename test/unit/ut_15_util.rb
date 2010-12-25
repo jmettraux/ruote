@@ -31,16 +31,9 @@ class UtMiscTest < Test::Unit::TestCase
     assert_equal 1.0, Ruote.narrow_to_number('1.0')
   end
 
-  def test_regex_from_s
-
-    assert_equal /bravo/, Ruote.regex_from_s('(?-mix:bravo)')
-    assert_equal nil, Ruote.regex_from_s('nada')
-    assert_equal nil, Ruote.regex_from_s(nil)
-  end
-
   def test_regex_or_s
 
-    assert_equal /bravo/, Ruote.regex_or_s('(?-mix:bravo)')
+    assert_equal /bravo/, Ruote.regex_or_s('/bravo/')
     assert_equal 'nada', Ruote.regex_or_s('nada')
     assert_equal nil, Ruote.regex_or_s(nil)
   end

@@ -157,5 +157,35 @@ class UtRubyParserTest < Test::Unit::TestCase
       Ruote::Parser.parse %{ Ruote.define { at_exit { } } }
     end
   end
+
+  def test_attribute_text_regexp
+
+    tree = Ruote.define do
+      given "${target}" do
+        of "/^employee-/" do
+        end
+        of /^customer-/ do
+        end
+      end
+    end
+
+    assert_equal(
+      ["define", {}, [
+        ["given", {"${target}"=>nil}, [
+          ["of", {"/^employee-/"=>nil}, []],
+          ["of", {"/^customer-/"=>nil}, []]]]]],
+      tree)
+  end
+
+  def test_attribute_value_regexp
+
+    tree = Ruote.define do
+      subprocess 'alpha', :match => /^nada$/
+    end
+
+    assert_equal(
+      ["define", {}, [["subprocess", {"alpha"=>nil, "match"=>"/^nada$/"}, []]]],
+      tree)
+  end
 end
 

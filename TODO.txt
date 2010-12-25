@@ -436,7 +436,7 @@
 [ ] detach / attach segments of processes
 [ ] clone process ? (could be used by {de|at}tach)
 
-[ ] console for InformatiQ
+[ ] console for InformatiQ / console or dashboard or tool ?
 
 [ ] BlockParticipant : proc.to_source
 
