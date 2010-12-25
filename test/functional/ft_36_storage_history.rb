@@ -28,7 +28,7 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid0 = assert_trace("done.", pdef)
+    wfid0 = assert_trace('done.', pdef)
     wfid1 = assert_trace("done.\ndone.", pdef)
 
     sleep 0.100

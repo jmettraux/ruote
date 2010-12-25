@@ -63,6 +63,11 @@ module FunctionalBase
   #
   def assert_trace (*args)
 
+    if args.last == :clear
+      args.pop
+      @tracer.clear
+    end
+
     pdef = args.pop
     fields = args.last.is_a?(Hash) ? args.pop : {}
     expected_traces = args.collect { |et| et.is_a?(Array) ? et.join("\n") : et }
