@@ -122,10 +122,21 @@ module Ruote
       name = name[1..-1] while name[0, 1] == '_'
 
       h = attributes.inject({}) { |h1, a|
+
         a.is_a?(Hash) ? h1.merge!(a) : h1[a] = nil
+
         h1
+
       }.inject({}) { |h1, (k, v)|
-        h1[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
+
+        k = k.is_a?(Regexp) ? k.inspect : k.to_s
+        v = case v
+          when Symbol; v.to_s
+          when Regexp; v.inspect
+          else v
+        end
+        h1[k] = v
+
         h1
       }
 
@@ -135,4 +146,5 @@ module Ruote
     end
   end
 end
+
 

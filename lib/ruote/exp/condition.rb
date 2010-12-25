@@ -122,6 +122,9 @@ module Ruote::Exp
         return Hash.[](*tree[1..-1].collect { |e| evl(e) })
       end
 
+      if tree[0] == :match3
+        return evl(tree[2]) =~ evl(tree[1])
+      end
       if tree[0] == :call && tree[2] == :=~
         return evl(tree[1]) =~ Regexp.new(evl(tree.last.last).to_s)
       end

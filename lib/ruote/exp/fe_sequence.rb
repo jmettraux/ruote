@@ -46,8 +46,7 @@ module Ruote::Exp
     def reply (workitem)
 
       position = workitem['fei'] == h.fei ?
-        0 :
-        Ruote::FlowExpressionId.new(workitem['fei']).child_id + 1
+        0 : Ruote::FlowExpressionId.new(workitem['fei']).child_id + 1
 
       if position < tree_children.size
         apply_child(position, workitem)

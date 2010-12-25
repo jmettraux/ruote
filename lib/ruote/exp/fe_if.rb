@@ -61,7 +61,14 @@ module Ruote::Exp
   #
   # == shorter
   #
-  # It's ok to shortcircuit the _if expression like this :
+  # The :test can be shortened to a :t :
+  #
+  #   _if :t => '${f:customer.name} == Fred' do
+  #     subprocess 'premium_course'
+  #     subprocess 'regular_course'
+  #   end
+  #
+  # When using Ruby to generate the process definition tree, you can simply do :
   #
   #   _if '${f:customer.name} == Fred' do
   #     subprocess 'premium_course'
@@ -84,16 +91,13 @@ module Ruote::Exp
       if workitem['fei'] == h.fei # apply --> reply
 
         h.test = attribute(:test)
+        h.test = attribute(:t) if h.test.nil?
         h.test = attribute_text if h.test.nil?
         h.test = nil if h.test == ''
 
-        offset = if h.test != nil
-          Condition.true?(h.test) ? 0 : 1
-        else
-          0
-        end
+        offset = (h.test.nil? || Condition.true?(h.test)) ? 0 : 1
 
-        apply_child_if_present(offset, workitem)
+        apply_child(offset, workitem)
 
       else # reply from a child
 
@@ -103,18 +107,17 @@ module Ruote::Exp
 
         else
 
-          apply_child_if_present(
-            workitem['fields']['__result__'] == true ? 1 : 2, workitem)
+          apply_child(workitem['fields']['__result__'] == true ? 1 : 2, workitem)
         end
       end
     end
 
     protected
 
-    def apply_child_if_present (index, workitem)
+    def apply_child (index, workitem)
 
       if tree_children[index]
-        apply_child(index, workitem)
+        super
       else
         reply_to_parent(workitem)
       end

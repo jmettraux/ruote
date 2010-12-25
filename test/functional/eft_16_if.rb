@@ -167,5 +167,17 @@ class EftIfTest < Test::Unit::TestCase
 
     assert_trace('alpha', { :state => 'A' }, pdef)
   end
+
+  def test_t
+
+    pdef = Ruote.define do
+      _if :t => 'true' do
+        echo 'then'
+      end
+      echo 'done.'
+    end
+
+    assert_trace("then\ndone.", pdef)
+  end
 end
 
