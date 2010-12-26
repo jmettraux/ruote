@@ -293,7 +293,7 @@ module Ruote
         e.trace.split("\n").each do |line|
           s << "       #{line}"
         end
-        s << "     fields : #{e.fields}"
+        s << "     fields : #{e.fields.inspect}"
       end
 
       s.join("\n") + "\n"
