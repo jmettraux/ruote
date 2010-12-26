@@ -19,11 +19,3 @@ def require_json
   end
 end
 
-def require_patron
-  begin
-    require 'patron'
-  rescue LoadError => le
-    # stick with net/http
-  end
-end
-

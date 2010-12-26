@@ -263,22 +263,24 @@
 [o] on_error => retry / pass
 [o] workitem : #as_json and #from_json
     since ruote depends on rufus-json...
+[x] engine.on_error = 'participant_name' // 'subprocess_name'
+    done at : http://github.com/jmettraux/ruote/commit/50292d954ff877f1f6615022216f346a7001b483
+    `--> reverting that for now, too dangerous
+[o] process_count and error_count ? (processes(:count => true))
+[o] exp : case (is it necessary ?) (guards ?) (hard for ruote-fluo)
+[o] exp : lose
+[o] conditional : rprefix ! ${r:x} is perhaps sufficient
 
-[ ] exp : exp (restricted form of eval ?)
+[ ] exp : exp (restricted form of eval ?) (is it apply ?)
 [ ] exp : filter
 [ ] exp : filter-definition
-[x] exp : lose ?
 [x] exp : parameter
 [ ] exp : log : or could it be a participant ?
-
-[ ] exp : case (is it necessary ?) (guards ?) (hard for ruote-fluo)
 
 [ ] exp : defined (not really necessary)
 [ ] exp : quote (not really necessary)
 [ ] exp : field / attribute (not really necessary)
 [ ] exp : variable (not really necessary)
-
-[ ] conditional : rprefix ! ${r:x} is perhaps sufficient
 
 [ ] define without name (__result__)
 
@@ -290,8 +292,6 @@
 [ ] subprocesses participants (alias ?)
 
 [ ] recursion : should cope with modified trees 'main' => :tree ??
-
-[ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
 
 [ ] set :var => 'y' { '2342342' }
 
@@ -344,16 +344,12 @@
 [ ] [un]set_var : via message ? should be ok like that... Not much traffic there
 
 [ ] empty iterator or concurrent-iterator, log ? crash ? empty while...
-[ ] at expression ?
 
 [ ] remove abort_on_exception=true
 
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
-[x] engine.on_error = 'participant_name' // 'subprocess_name'
-    done at : http://github.com/jmettraux/ruote/commit/50292d954ff877f1f6615022216f346a7001b483
-    `--> reverting that for now, too dangerous
 
 [ ] should __error__ contain the tree ?
 [ ] engine.on_cancel = 'participant_name' // 'subprocess_name'
@@ -369,8 +365,6 @@
     ref="alpha && bravo", ref="alpha||bravo" (|| parallel :( )
 
 [ ] LocalParticipant def consume; handle; reply; end
-
-[ ] lib/ruote/part/participant_list.rb l176 better error message !
 
 [ ] find better solution than "get all schedules"
 
@@ -405,8 +399,6 @@
 
 [ ] rename 'parser' to 'reader'
 
-[ ] process_count and error_count ? (processes(:count => true))
-
 [ ] a run of ruby -w
 
 [x] cursor : previous_command field ? not really necessary with :break_if => x
@@ -419,15 +411,13 @@
       http://wiki.apache.org/couchdb/HTTP_view_API#Querying_Options
     2.1.12
 
-[ ] website : add piece of doc about running workers on their own
-
 [ ] receiver/base.rb : fexp.lookup_variable --> lookup_variable ?
 
 [ ] engine/receiver #reply(workitem or fexp or fei) ?
 
 [ ] workitem : short constructor, cf http://groups.google.com/group/openwferu-users/browse_thread/thread/c52d207d85e4b93e
 
-[ ] wait ~~> at
+[ ] at expression ? :names :wait, :at
 
 [ ] concurrence : add_child ?
     How would that impact concurrent_iterator's add_branches ?
@@ -436,21 +426,25 @@
 
 [ ] console for InformatiQ / console or dashboard or tool ?
 
-[ ] BlockParticipant : proc.to_source
+[ ] BlockParticipant : proc.to_source thanks to sourcify
 
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
 
 [ ] doc : enhance doc on conditional (and, empty, null, ...)
 [ ] doc : document engine.on_{error|terminate}
 [ ] doc : document on_error = retry and on_error = pass
+[ ] doc : add piece of doc about running workers on their own
 
 [ ] .nil? .empty? .set? for "${x}.nil?"
 
 [ ] listen to participants/errors/tags {in|out}
-
 [ ] engine.on_terminate, similar to on_error
 
 [ ] ruote cheatsheet
+[ ] ruote slides
 
-[ ] rename require_patron in test/test_helper.rb
+[ ] /!\ resurrect CI
+
+[ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
+    "${customer} in [ 1, 2, 3 ]"
 
