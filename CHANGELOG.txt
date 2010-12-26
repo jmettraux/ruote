@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- Ruote::Workitem .from_json #as_json
 - :on_error => redo/retry // undo/pass
 - given : a case/switch ruote equivalent
 - conditionals : "${x} is empty" and "${x} is null"

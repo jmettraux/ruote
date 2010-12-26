@@ -261,6 +261,8 @@
     on_terminate... ? only works in the same process as the worker
     only for tests...
 [o] on_error => retry / pass
+[o] workitem : #as_json and #from_json
+    since ruote depends on rufus-json...
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -423,9 +425,6 @@
 
 [ ] engine/receiver #reply(workitem or fexp or fei) ?
 
-[ ] workitem : #as_json and #from_json
-    since ruote depends on rufus-json...
-
 [ ] workitem : short constructor, cf http://groups.google.com/group/openwferu-users/browse_thread/thread/c52d207d85e4b93e
 
 [ ] wait ~~> at
@@ -452,4 +451,6 @@
 [ ] engine.on_terminate, similar to on_error
 
 [ ] ruote cheatsheet
+
+[ ] rename require_patron in test/test_helper.rb
 

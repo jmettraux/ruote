@@ -10,6 +10,9 @@ require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 require 'ruote/fei'
 require 'ruote/workitem'
 
+require_json
+require 'rufus/json'
+
 
 class UtWorkitemTest < Test::Unit::TestCase
 
@@ -66,6 +69,31 @@ class UtWorkitemTest < Test::Unit::TestCase
     w0 = Ruote::Workitem.new('fei' => f0, 'fields' => { 'a' => 'A' })
 
     assert_equal '20101224-baba', w0.wfid
+  end
+
+  WI = {
+    'fei' => {
+      'expid' => '0',
+      'wfid' => '20101224-baba',
+      'engine_id' => 'engine',
+      'subid' => '123423fde6' },
+    'participant_name' => 'john',
+    'fields' => {
+      'customer' => 'swissre'
+    }
+  }
+  WI_JSON = ::Rufus::Json.encode(WI)
+  WI_PRETTY_JSON = ::Rufus::Json.pretty_encode(WI)
+
+  def test_from_json
+
+    assert_equal WI, Ruote::Workitem.from_json(WI_JSON).h
+    assert_equal WI, Ruote::Workitem.from_json(WI_PRETTY_JSON).h
+  end
+
+  def test_as_json
+
+    assert_equal WI, Rufus::Json.decode(Ruote::Workitem.new(WI).as_json)
   end
 end
 

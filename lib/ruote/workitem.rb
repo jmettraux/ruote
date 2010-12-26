@@ -310,6 +310,28 @@ module Ruote
         err.backtrace
       ]
     end
+
+    # Encodes this workitem as JSON. If pretty is set to true, will output
+    # prettified JSON.
+    #
+    def as_json (pretty=false)
+
+      pretty ? Rufus::Json.pretty_encode(@h) : Rufus::Json.encode(@h)
+    end
+
+    # Given a JSON String, decodes and returns a Ruote::Workitem instance.3
+    # If the decode thing is not an object/hash, will raise an ArgumentError.
+    #
+    def self.from_json (json)
+
+      h = Rufus::Json.decode(json)
+
+      raise ArgumentError(
+        "Arg not a JSON hash/object, but a #{h.class}. Cannot create workitem"
+      ) unless h.is_a?(Hash)
+
+      self.new(h)
+    end
   end
 end
 
