@@ -723,20 +723,21 @@ module Ruote::Exp
 
       if on == 'on_error'
 
-        if hon == 'redo'
+        if hon == 'redo' or hon =='retry'
 
           t = tree
 
-        elsif hon == 'undo'
+        elsif hon == 'undo' or hon == 'pass'
 
           h.state = 'failed'
           reply_to_parent(workitem)
+
           return
         end
 
       elsif on == 'on_timeout'
 
-        t = tree if hon == 'redo'
+        t = tree if hon == 'redo' or hon == 'retry'
       end
 
       supplant_with(t, 'trigger' => on)

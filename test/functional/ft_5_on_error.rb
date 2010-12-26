@@ -103,6 +103,21 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal(1, ps.errors.size)
   end
 
+  class TroubleMaker
+    include Ruote::LocalParticipant
+    def consume (workitem)
+      hits = (workitem.fields['hits'] || 0) + 1
+      workitem.fields['hits'] = hits
+      workitem.trace << "#{hits.to_s}\n"
+      raise 'Houston, we have a problem !' if hits == 1
+      workitem.trace << 'done.'
+      reply(workitem)
+    end
+    def cancel (fei, flavour)
+      # nothing to do
+    end
+  end
+
   def test_on_error_redo
 
     pdef = Ruote.process_definition do
@@ -111,16 +126,20 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    hits = 0
+    @engine.register_participant :troublemaker, TroubleMaker
 
-    @engine.register_participant :troublemaker do
-      hits += 1
-      @tracer << "#{hits.to_s}\n"
-      raise 'Houston, we have a problem !' if hits == 1
-      @tracer << 'done.'
+    assert_trace(%w[ 1 2 done. ], pdef)
+  end
+
+  def test_on_error_retry
+
+    pdef = Ruote.process_definition do
+      sequence :on_error => :retry do
+        troublemaker
+      end
     end
 
-    #noisy
+    @engine.register_participant :troublemaker, TroubleMaker
 
     assert_trace(%w[ 1 2 done. ], pdef)
   end
@@ -146,7 +165,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_nil @engine.process(wfid)
   end
 
-  def test_on_error_undo__pass
+  def test_on_error_undo_single_expression
 
     @engine.register_participant :nemo do |wi|
       wi.fields['fail_count'] = 1
@@ -162,6 +181,27 @@ class FtOnErrorTest < Test::Unit::TestCase
     end
 
     wfid = assert_trace(%w[ in |1 ], pdef)
+
+    assert_nil @engine.process(wfid)
+  end
+
+  def test_on_error_pass
+
+    pdef = Ruote.process_definition do
+      sequence do
+        echo 'a'
+        sequence :on_error => :pass do
+          echo 'b'
+          nemo
+          echo 'c'
+        end
+        echo 'd'
+      end
+    end
+
+    #noisy
+
+    wfid = assert_trace(%w[ a b d ], pdef)
 
     assert_nil @engine.process(wfid)
   end

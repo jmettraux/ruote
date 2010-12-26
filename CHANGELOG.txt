@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- :on_error => redo/retry // undo/pass
 - given : a case/switch ruote equivalent
 - conditionals : "${x} is empty" and "${x} is null"
 - once expression (once, _when, as_soon_as)

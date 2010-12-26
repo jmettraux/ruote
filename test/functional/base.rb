@@ -74,15 +74,16 @@ module FunctionalBase
 
     wfid = @engine.launch(pdef, fields)
 
-    wait_for(wfid)
-
-    #yield(@engine) if block_given?
+    r = wait_for(wfid)
 
     assert_engine_clean(wfid)
 
+    trace = r['workitem']['fields']['_trace']
+    trace = trace ? trace.join('') : @tracer.to_s
+
     if expected_traces.length > 0
-      ok, nok = expected_traces.partition { |et| @tracer.to_s == et }
-      assert_equal(nok.first, @tracer.to_s) if ok.empty?
+      ok, nok = expected_traces.partition { |et| trace == et }
+      assert_equal(nok.first, trace) if ok.empty?
     end
 
     assert(true)
@@ -171,6 +172,14 @@ module FunctionalBase
     puts @tracer.to_s
     puts '--->8---'
     puts
+  end
+end
+
+# Re-opening workitem for a shortcut to a '_trace' field
+#
+class Ruote::Workitem
+  def trace
+    @h['fields']['_trace'] ||= []
   end
 end
 

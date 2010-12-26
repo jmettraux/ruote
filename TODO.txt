@@ -257,6 +257,10 @@
 [x] alias "when" to "on" / "upon"
 [o] alias "when" to "once"  "once x == y do"
 [o] condition : "${'x} [is] empty" since ${array} => "[]"
+[x] simple worker hooks ? (as discussed with @hassox)
+    on_terminate... ? only works in the same process as the worker
+    only for tests...
+[o] on_error => retry / pass
 
 [ ] exp : exp (restricted form of eval ?)
 [ ] exp : filter
@@ -345,8 +349,6 @@
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
-[ ] listen to participants/errors/tags {in|out}
-
 [x] engine.on_error = 'participant_name' // 'subprocess_name'
     done at : http://github.com/jmettraux/ruote/commit/50292d954ff877f1f6615022216f346a7001b483
     `--> reverting that for now, too dangerous
@@ -408,9 +410,6 @@
 [x] cursor : previous_command field ? not really necessary with :break_if => x
 
 [ ] register :overwrite { ... } ? (wipes all the participants)
-[ ] simple worker hooks ? (as discussed with @hassox)
-    on_terminate... ? only works in the same process as the worker
-    only for tests...
 
 [ ] storage_participant.by_participant([ a, b, c, d ], opts)
     storage_participant.by_participant(a, b, c, d, opts) too
@@ -442,11 +441,15 @@
 
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
 
-[ ] on_error => retry / pass / ignore ?
-
-[ ] doc : enhance doc on conditinal (and, empty, null, ...)
-
-[ ] case exp : smarter one ?
+[ ] doc : enhance doc on conditional (and, empty, null, ...)
+[ ] doc : document engine.on_{error|terminate}
+[ ] doc : document on_error = retry and on_error = pass
 
 [ ] .nil? .empty? .set? for "${x}.nil?"
+
+[ ] listen to participants/errors/tags {in|out}
+
+[ ] engine.on_terminate, similar to on_error
+
+[ ] ruote cheatsheet
 

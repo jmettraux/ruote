@@ -91,7 +91,7 @@ module Ruote
         key_length = msg.keys.collect { |k| k.length }.max + 1
         msg.keys.sort.each { |k|
           v = msg[k]
-          v = Ruote.sid(v) if k == 'fei' || k == 'parent_id'
+          v = (Ruote.sid(v) rescue nil) if k == 'fei' || k == 'parent_id'
           printf("%*s : %s\n", key_length, k, v.inspect)
         }
         puts "-- . --"
