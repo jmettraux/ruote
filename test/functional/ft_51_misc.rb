@@ -32,5 +32,35 @@ class FtMiscTest < Test::Unit::TestCase
 
     assert_not_nil result
   end
+
+  class NoCancel
+    def consume (workitem)
+      # do nothing
+    end
+    # no cancel method implementation
+  end
+
+  def test_participant_missing_cancel_method
+
+    pdef = Ruote.define do
+      participant 'no_cancel'
+    end
+
+    @engine.register 'no_cancel', NoCancel
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:no_cancel)
+
+    @engine.cancel(wfid)
+
+    @engine.wait_for(wfid)
+
+    assert_match(
+      /undefined method `cancel' for/,
+      @engine.ps(wfid).errors.first.message)
+  end
 end
 
