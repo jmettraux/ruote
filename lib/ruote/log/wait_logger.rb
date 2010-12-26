@@ -30,6 +30,8 @@ module Ruote
   #
   # A helper logger for quickstart examples.
   #
+  # Keeps a maximum of 147 messages.
+  #
   class WaitLogger < TestLogger
 
     attr_accessor :noisy
