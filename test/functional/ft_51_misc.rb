@@ -17,6 +17,7 @@ class FtMiscTest < Test::Unit::TestCase
     result = String.new
     out = StringIO.new(result, 'w+')
 
+    prev = $stdout
     $stdout = out
 
     @engine.noisy = true
@@ -28,7 +29,7 @@ class FtMiscTest < Test::Unit::TestCase
     @engine.wait_for(wfid)
 
     out.close
-    $stdout = STDOUT
+    $stdout = prev
 
     assert_not_nil result
   end
