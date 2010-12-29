@@ -31,6 +31,18 @@ module Ruote::Exp
   #
   module Condition
 
+    #
+    # A runtime error for unusable comparison strings.
+    #
+    class ConditionError < RuntimeError
+
+      def initialize (code)
+        super(
+          "couldn't interpret >#{code}<, " +
+          "if it comes from a ${xx} construct, please use ${\"xx} or ${'yy}")
+      end
+    end
+
     REGEXES = {
       'evl_set' => /^(.+?)( +is)?( +not)?( +set)$/,
       'evl_null' => /^(.+?)( +is)?( +not)?( +null)$/,
@@ -58,6 +70,10 @@ module Ruote::Exp
       end
 
       evl(conditional) ? true : false
+
+    rescue ArgumentError => ae
+
+      raise ConditionError.new(conditional)
     end
 
     # Evaluates the given [conditional] code string and returns the
@@ -68,6 +84,10 @@ module Ruote::Exp
     def self.eval (code)
 
       evl(code)
+
+    rescue ArgumentError => ae
+
+      raise ConditionError.new(code)
     end
 
     protected
@@ -102,25 +122,18 @@ module Ruote::Exp
 
       return tree.last if tree.first == :str
       return tree.last if tree.first == :lit
+      return tree.last.to_s if tree.first == :const
       return nil if tree == [ :nil ]
       return true if tree == [ :true ]
       return false if tree == [ :false ]
 
       return ( ! evl(tree.last)) if tree.first == :not
 
-      if tree[0] == :and
-        return evl(tree[1]) && evl(tree[2])
-      end
-      if tree[0] == :or
-        return evl(tree[1]) || evl(tree[2])
-      end
+      return evl(tree[1]) && evl(tree[2]) if tree[0] == :and
+      return evl(tree[1]) || evl(tree[2]) if tree[0] == :or
 
-      if tree[0] == :array
-        return tree[1..-1].collect { |e| evl(e) }
-      end
-      if tree[0] == :hash
-        return Hash.[](*tree[1..-1].collect { |e| evl(e) })
-      end
+      return tree[1..-1].collect { |e| evl(e) } if tree[0] == :array
+      return Hash.[](*tree[1..-1].collect { |e| evl(e) }) if tree[0] == :hash
 
       if tree[0] == :match3
         return evl(tree[2]) =~ evl(tree[1])
@@ -133,11 +146,21 @@ module Ruote::Exp
         return evl(tree[1]).send(tree[2], evl(tree.last.last))
       end
 
-      if tree[0] == :call && tree[1] == nil
-        return tree[2].to_s
-      end
+      return flatten(tree) if tree[0] == :call
 
-      raise ArgumentError.new("cannot deal with : #{tree.inspect}")
+      raise ArgumentError
+
+      #require 'ruby2ruby'
+      #Ruby2Ruby.new.process(Sexp.from_array(tree))
+        # returns the raw Ruby as a String
+        # it's nice but "Loan/Grant" becomes "(Loan / Grant)"
+    end
+
+    KEYWORDS = %w[ call const arglist ].collect { |w| w.to_sym }
+
+    def self.flatten (tree)
+
+      (tree.flatten - KEYWORDS).collect { |e| e.nil? ? ' ' : e.to_s }.join.strip
     end
 
     def self.evl_set (match)

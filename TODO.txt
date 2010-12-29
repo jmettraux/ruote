@@ -329,6 +329,7 @@
 [ ] engine.force_reply_to_parent(fei) ?
 
 [ ] :on_timeout => :rewind (break, jump to x)...
+[ ] :on_error => :rewind (break, jump to x)...
 
 [ ] repeat : have a counter in a variable (:to => x maybe) (subprocessid ?)
 
@@ -349,11 +350,9 @@
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
 
-
 [ ] should __error__ contain the tree ?
 [ ] engine.on_cancel = 'participant_name' // 'subprocess_name'
-
-[ ] "business days" plugin
+    bof
 
 [ ] issue with ruote-kit and inpa participants...
 
@@ -375,6 +374,8 @@
 [ ] dollar.rb ${timestamp} ?
 
 [ ] toto :task => 'maw the lawn', :within => '3d'
+    alias to timeout
+[ ] "business days" plugin
 
 [ ] re_apply_stalled
     http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
@@ -427,8 +428,6 @@
 
 [ ] BlockParticipant : proc.to_source thanks to sourcify
 
-[ ] StorageHistory : add a method to list all wfids (for by_wfid)
-
 [ ] doc : enhance doc on conditional (and, empty, null, ...)
 [ ] doc : document engine.on_{error|terminate}
 [ ] doc : document on_error = retry and on_error = pass
@@ -453,4 +452,5 @@
     the default history would be storage based but with LRU turned on
     for the HashStorage one...
     like WaitLogger only remembers 147 msgs...
+[ ] StorageHistory : add a method to list all wfids (for by_wfid)
 

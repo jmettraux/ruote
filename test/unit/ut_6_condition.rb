@@ -64,6 +64,8 @@ class ConditionTest < Test::Unit::TestCase
 
     assert_not_skip true, :if => 'a == a'
     assert_not_skip true, :if => '"a" == "a"'
+
+    assert_not_skip true, :if => 'blah blah blah'
   end
 
   def test_unless
@@ -199,6 +201,10 @@ class ConditionTest < Test::Unit::TestCase
     assert_e({ 'a' => 2, 'b' => 2.0 }, "{ 'a' => 2, 'b' => 2.0 }")
 
     assert_e /^a/, "/^a/"
+
+    assert_e 'Loan', 'Loan'
+    assert_e 'Loan/Grant', 'Loan/Grant'
+    assert_e 'Loan/Grant', 'Loan / Grant'
   end
 
   def test_is_empty
