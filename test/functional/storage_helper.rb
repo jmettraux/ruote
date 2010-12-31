@@ -13,10 +13,10 @@ def locate_storage_impl (arg)
 
   pers = arg[2..-1]
 
-  path = File.expand_path(
-    File.join(File.dirname(__FILE__), %w[ .. .. .. ], "ruote-#{pers}"))
+  path = Dir[File.expand_path(
+    File.join(File.dirname(__FILE__), %w[ .. .. .. ], "ruote-#{pers}*"))].first
 
-  (File.exist?(path) && File.directory?(path)) ? [ pers, path ] : nil
+  File.directory?(path) ? [ pers, path ] : nil
 end
 
 #
@@ -56,10 +56,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
   elsif not ps.empty?
 
     pers = nil
-    ps.each do |a|
-      pers = locate_storage_impl(a)
-      break if pers
-    end
+    ps.find { |a| pers = locate_storage_impl(a) }
 
     raise "no persistence found (#{ps.inspect})" unless pers
 
@@ -67,14 +64,19 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     $:.unshift(File.join(path, 'lib'))
 
     begin
-      load File.join(path, %w[ test functional_connection.rb ])
+      load 'test/functional_connection.rb'
     rescue LoadError => le
       begin
-        load File.join(path, %w[ test integration_connection.rb ])
+        load File.join(path, %w[ test functional_connection.rb ])
       rescue LoadError => lee
-        p le
-        p lee
-        raise lee
+        begin
+          load File.join(path, %w[ test integration_connection.rb ])
+        rescue LoadError => leee
+          p le
+          p lee
+          p leee
+          raise leee
+        end
       end
     end
 
