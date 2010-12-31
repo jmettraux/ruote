@@ -619,7 +619,7 @@ digraph "process wfid {
 
     @engine.launch(pdef)
 
-    sleep 0.400
+    sleep 0.500
 
     assert_equal 1, @engine.processes.size
   end
