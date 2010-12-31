@@ -11,6 +11,9 @@ require_json
 
 require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
 
+require 'ruote/fei'
+
+
 #
 # note : using the 'errors' type, but this test is about generic storage, not
 #        about errors per se.
