@@ -154,6 +154,7 @@ class ConditionTest < Test::Unit::TestCase
 
     assert_b true, "'some dude' == 'some dude'"
     assert_b true, "some dude == \"some dude\""
+    assert_b true, "some dude == 'some dude'"
   end
 
   def test_and_or
@@ -259,6 +260,30 @@ class ConditionTest < Test::Unit::TestCase
 
     assert_b true, "1 not null"
     assert_b true, "1 is not null"
+  end
+
+  def test_in
+
+    assert_b "1 in [1, 2]"
+    assert_b "1 in {1 => 2}"
+
+    assert_b false, "3 in [1, 2]"
+    assert_b false, "2 in {1 => 2}"
+  end
+
+  def test_not_in
+
+    assert_b "7 not in [1, 2]"
+    assert_b "2 not in {1 => 2}"
+
+    assert_b false, "1 not in [1, 2]"
+    assert_b false, "1 not in {1 => 2}"
+  end
+
+  def test_in_gone_bad
+
+    assert_b false, "1 in [1 2]"
+    assert_b false, "1 in {x}"
   end
 
   def test_comparators

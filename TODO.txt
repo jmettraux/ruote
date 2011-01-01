@@ -271,6 +271,10 @@
 [o] exp : lose
 [o] conditional : rprefix ! ${r:x} is perhaps sufficient
 [o] implement kill_process! (kill_expression! ?)
+[o] /!\ resurrect CI
+[o] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
+    "${customer} in [ 1, 2, 3 ]"
+    "${customer} in { 'x' => 1 }"
 
 [ ] exp : exp (restricted form of eval ?) (is it apply ?)
 [ ] exp : filter
@@ -440,12 +444,6 @@
 
 [ ] ruote cheatsheet
 [ ] ruote slides
-
-[ ] /!\ resurrect CI
-
-[ ] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
-    "${customer} in [ 1, 2, 3 ]"
-    "${customer} in { 'x' => 1 }"
 
 [ ] like we have a default WaitLogger, why not have a default HistoryLogger ?
     so that context.history always returns something...

@@ -46,7 +46,8 @@ module Ruote::Exp
     REGEXES = {
       'evl_set' => /^(.+?)( +is)?( +not)?( +set)$/,
       'evl_null' => /^(.+?)( +is)?( +not)?( +null)$/,
-      'evl_empty' => /^(.+[\]}"'])( +is)?( +not)?( +empty)$/
+      'evl_empty' => /^(.+[\]}"'])( +is)?( +not)?( +empty)$/,
+      'evl_in' => /^(.+?)( +is)?( +not)?( +in +)(\[.*\]|{.*})$/
     }
 
     def self.apply? (sif, sunless)
@@ -190,6 +191,11 @@ module Ruote::Exp
     def self.evl_null (match)
 
       ( ! match[3].nil? ^ evl(match[1]).nil?)
+    end
+
+    def self.evl_in (match)
+
+      ( ! match[3].nil? ^ evl(match[5]).include?(evl(match[1]))) rescue false
     end
   end
 end
