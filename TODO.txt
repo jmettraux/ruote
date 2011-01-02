@@ -328,10 +328,6 @@
 
 [ ] @children diff/undiff idea ?
 
-[ ] ruote/exp/fe_set.rb:147: warning: already initialized constant PREFIX_REGEX
-
-[ ] engine.force_reply_to_parent(fei) ?
-
 [ ] :on_timeout => :rewind (break, jump to x)...
 [ ] :on_error => :rewind (break, jump to x)...
 
@@ -418,8 +414,9 @@
 [ ] receiver/base.rb : fexp.lookup_variable --> lookup_variable ?
 
 [ ] engine/receiver #reply(workitem or fexp or fei) ?
-
 [ ] workitem : short constructor, cf http://groups.google.com/group/openwferu-users/browse_thread/thread/c52d207d85e4b93e
+[ ] engine.force_reply_to_parent(fei) ?
+    but, this is a cancel_expression(fei)
 
 [ ] at expression ? :names :wait, :at
 
