@@ -47,7 +47,7 @@ module Ruote::Exp
       'evl_set' => /^(.+?)( +is)?( +not)?( +set)$/,
       'evl_null' => /^(.+?)( +is)?( +not)?( +null)$/,
       'evl_empty' => /^(.+[\]}"'])( +is)?( +not)?( +empty)$/,
-      'evl_in' => /^(.+?)( +is)?( +not)?( +in +)(\[.*\]|{.*})$/
+      'evl_in' => /^(.+?)( +is)?( +not)?( +in +)(\[.*\]|\{.*})$/
     }
 
     def self.apply? (sif, sunless)
