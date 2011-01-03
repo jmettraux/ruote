@@ -7,11 +7,10 @@
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
-require 'ruote/parser'
-#require 'ruote/parser/ruby_dsl'
+require 'ruote/reader'
 
 
-class UtRubyParserTest < Test::Unit::TestCase
+class UtRubyReaderTest < Test::Unit::TestCase
 
   #def test_whatever
   #  tree = Ruote.define do
@@ -128,33 +127,33 @@ class UtRubyParserTest < Test::Unit::TestCase
   def test_treechecker
 
     #assert_raise Nada do
-      Ruote::Parser.parse %{ Ruote.define { alpha } }
+      Ruote::Reader.read %{ Ruote.define { alpha } }
     #end
 
     assert_raise ArgumentError do
-      Ruote::Parser.parse %{ Ruote.define { abort } }
+      Ruote::Reader.read %{ Ruote.define { abort } }
     end
     assert_raise ArgumentError do
-      Ruote::Parser.parse %{ Ruote.define { exit } }
+      Ruote::Reader.read %{ Ruote.define { exit } }
     end
     assert_raise ArgumentError do
-      Ruote::Parser.parse %{ Ruote.define { exit! } }
-    end
-
-    assert_raise ArgumentError do
-      Ruote::Parser.parse %{ Ruote.define { x = Kernel } }
+      Ruote::Reader.read %{ Ruote.define { exit! } }
     end
 
     assert_raise ArgumentError do
-      Ruote::Parser.parse %{ Ruote.define { module Nada; end } }
+      Ruote::Reader.read %{ Ruote.define { x = Kernel } }
     end
 
     assert_raise ArgumentError do
-      Ruote::Parser.parse %{ Ruote.define { File.read('stuff') } }
+      Ruote::Reader.read %{ Ruote.define { module Nada; end } }
     end
 
     assert_raise ArgumentError do
-      Ruote::Parser.parse %{ Ruote.define { at_exit { } } }
+      Ruote::Reader.read %{ Ruote.define { File.read('stuff') } }
+    end
+
+    assert_raise ArgumentError do
+      Ruote::Reader.read %{ Ruote.define { at_exit { } } }
     end
   end
 

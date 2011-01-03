@@ -28,7 +28,7 @@ module Ruote
   # Turning a tree into a numbered string view
   #
   #   require 'ruote/util/tree'
-  #   require 'ruote/parser/ruby_dsl'
+  #   require 'ruote/reader/ruby_dsl'
   #
   #   pdef = Ruote.process_definition :name => 'def0' do
   #     sequence do

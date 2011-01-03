@@ -26,19 +26,19 @@
 require 'uri'
 require 'open-uri'
 require 'rufus/json'
-require 'ruote/parser/ruby_dsl' # just making sure it's loaded
-require 'ruote/parser/xml'
+require 'ruote/reader/ruby_dsl' # just making sure it's loaded
+require 'ruote/reader/xml'
 require 'ruote/util/subprocess'
 
 
 module Ruote
 
   #
-  # A process definition parser.
+  # A process definition reader.
   #
-  # Can parse XML, JSON, Ruby (and more) process definition representations.
+  # Can reader XML, JSON, Ruby (and more) process definition representations.
   #
-  class Parser
+  class Reader
 
     def initialize (context)
 
@@ -48,11 +48,11 @@ module Ruote
     # Turns the input into a ruote syntax tree (raw process definition).
     # This method is used by engine.launch(x) for example.
     #
-    def parse (definition)
+    def read (definition)
 
       return definition if Ruote.is_tree?(definition)
 
-      (return XmlParser.parse(definition)) rescue nil
+      (return XmlReader.read(definition)) rescue nil
       (return Rufus::Json.decode(definition)) rescue nil
       (return ruby_eval(definition)) rescue nil
 
@@ -60,31 +60,31 @@ module Ruote
 
         raise ArgumentError.new(
           "remote process definitions are not allowed"
-        ) if Ruote::Parser.remote?(definition) && @context['remote_definition_allowed'] != true
+        ) if Ruote::Reader.remote?(definition) && @context['remote_definition_allowed'] != true
 
-        return parse(open(definition).read)
+        return read(open(definition).read)
       end
 
       raise ArgumentError.new(
-        "doesn't know how to parse definition (#{definition.class}) " +
+        "doesn't know how to read definition (#{definition.class}) " +
         "or error in process definition")
     end
 
     # Class method for parsing process definition (XML, Ruby, from file or
     # from a string, ...) to syntax trees. Used by ruote-fluo for example.
     #
-    def self.parse (d)
+    def self.read (d)
 
-      unless @parser
+      unless @reader
 
         require 'ostruct'
         require 'ruote/svc/treechecker'
 
-        @parser = Ruote::Parser.new(
+        @reader = Ruote::Reader.new(
           OpenStruct.new('treechecker' => Ruote::TreeChecker.new({})))
       end
 
-      @parser.parse(d)
+      @reader.read(d)
     end
 
     # Turns the given process definition tree (ruote syntax tree) to an XML

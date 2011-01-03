@@ -29,7 +29,7 @@ module Ruote
 
   #
   # A sort of internal registry, via a shared instance of this class, the worker
-  # and the engine can access subservices like parser, treechecker,
+  # and the engine can access subservices like reader, treechecker,
   # wfid_generator and so on.
   #
   class Context
@@ -168,8 +168,8 @@ module Ruote
 
       { 's_wfidgen' => [
           'ruote/id/mnemo_wfid_generator', 'Ruote::MnemoWfidGenerator' ],
-        's_parser' => [
-          'ruote/parser', 'Ruote::Parser' ],
+        's_reader' => [
+          'ruote/reader', 'Ruote::Reader' ],
         's_treechecker' => [
           'ruote/svc/treechecker', 'Ruote::TreeChecker' ],
         's_expmap' => [

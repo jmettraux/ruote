@@ -57,7 +57,7 @@ module Ruote
     #
     # process_definition must be a result of Ruote.process_definition call
     # or XML or JSON serialized process definition, as accepted by
-    # Ruote::Parser#parse.
+    # Ruote::Reader#read.
     #
     # fields are workflow parameters that will be placed in workitem.fields.
     #
@@ -70,7 +70,7 @@ module Ruote
       @context.storage.put_msg(
         'launch',
         'wfid' => wfid,
-        'tree' => @context.parser.parse(process_definition),
+        'tree' => @context.reader.read(process_definition),
         'workitem' => { 'fields' => fields },
         'variables' => variables)
 

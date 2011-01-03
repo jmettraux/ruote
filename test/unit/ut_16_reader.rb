@@ -7,10 +7,10 @@
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
-require 'ruote/parser'
+require 'ruote/reader'
 
 
-class PdefParserTest < Test::Unit::TestCase
+class PdefReaderTest < Test::Unit::TestCase
 
   DEF0 = %{
     Ruote.define :name => 'nada' do
@@ -22,7 +22,7 @@ class PdefParserTest < Test::Unit::TestCase
   }
 
 
-  TREE1 = Ruote::Parser.parse(%{
+  TREE1 = Ruote::Reader.read(%{
     Ruote.define :name => 'nada' do
       sequence do
         alpha
@@ -33,7 +33,7 @@ class PdefParserTest < Test::Unit::TestCase
 
   def test_from_string
 
-    tree = Ruote::Parser.parse(DEF0)
+    tree = Ruote::Reader.read(DEF0)
 
     assert_equal(
       ["define", {"name"=>"nada"}, [
@@ -48,7 +48,7 @@ class PdefParserTest < Test::Unit::TestCase
 
     File.open(fn, 'w') { |f| f.write(DEF0) }
 
-    tree = Ruote::Parser.parse(fn)
+    tree = Ruote::Reader.read(fn)
 
     assert_equal(
       ["define", {"name"=>"nada"}, [
@@ -61,7 +61,6 @@ class PdefParserTest < Test::Unit::TestCase
 
   def test_to_xml
 
-    #puts Ruote::Parser.to_xml(TREE1, :indent => 2)
     assert_equal(
       %{
 <?xml version="1.0" encoding="UTF-8"?>
@@ -72,7 +71,7 @@ class PdefParserTest < Test::Unit::TestCase
   </sequence>
 </define>
       }.strip,
-      Ruote::Parser.to_xml(TREE1, :indent => 2).strip)
+      Ruote::Reader.to_xml(TREE1, :indent => 2).strip)
   end
 
   def test_if_to_xml
@@ -92,12 +91,11 @@ class PdefParserTest < Test::Unit::TestCase
   </if>
 </define>
       }.strip,
-      Ruote::Parser.to_xml(tree, :indent => 2).strip)
+      Ruote::Reader.to_xml(tree, :indent => 2).strip)
   end
 
   def test_to_ruby
 
-    #puts Ruote::Parser.to_ruby(TREE1)
     assert_equal(
       %{
 Ruote.process_definition :name => "nada" do
@@ -107,14 +105,14 @@ Ruote.process_definition :name => "nada" do
   end
 end
       }.strip,
-      Ruote::Parser.to_ruby(TREE1).strip)
+      Ruote::Reader.to_ruby(TREE1).strip)
   end
 
   def test_to_json
 
     require 'json'
 
-    assert_equal TREE1.to_json, Ruote::Parser.to_json(TREE1)
+    assert_equal TREE1.to_json, Ruote::Reader.to_json(TREE1)
   end
 
   DEF1 = %{
@@ -135,7 +133,7 @@ end
 
     assert_equal(
       ["define", {}, [["sequence", {}, [["alpha", {}, []], ["set", {"field"=>"f", "value"=>"v"}, []], ["bravo", {}, []]]]]],
-      Ruote::Parser.parse(fn))
+      Ruote::Reader.read(fn))
 
     FileUtils.rm(fn)
   end
@@ -145,7 +143,7 @@ end
   #
   def test_ruby_blank_slate
 
-    t = Ruote::Parser.parse(%{
+    t = Ruote::Reader.read(%{
       Ruote.define do
         freeze
         clone

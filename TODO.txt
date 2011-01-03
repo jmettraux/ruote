@@ -275,6 +275,7 @@
 [o] user3 :rif => "!wi.fields['approvers'].include?('user3')" : 'in' operator
     "${customer} in [ 1, 2, 3 ]"
     "${customer} in { 'x' => 1 }"
+[o] rename 'parser' to 'reader'
 
 [ ] exp : exp (restricted form of eval ?) (is it apply ?)
 [ ] exp : filter
@@ -395,8 +396,6 @@
 [ ] StorageParticipant#by_store[_name]
     maybe : reform the store_name system !
 
-[ ] rename 'parser' to 'reader'
-
 [ ] a run of ruby -w
 
 [x] cursor : previous_command field ? not really necessary with :break_if => x
@@ -447,4 +446,6 @@
     for the HashStorage one...
     like WaitLogger only remembers 147 msgs...
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
+
+[ ] ft_42 : maybe require storage to output ids already sorted
 

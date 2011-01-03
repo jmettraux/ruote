@@ -10,9 +10,7 @@ require 'fileutils'
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 require File.join(File.dirname(__FILE__), 'storage_helper.rb')
 
-require 'ruote/engine'
-require 'ruote/worker'
-require 'ruote/parser/ruby_dsl'
+require 'ruote'
 
 
 module FunctionalBase

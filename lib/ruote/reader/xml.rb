@@ -31,10 +31,10 @@ module Ruote
   #
   # Turns an XML string into a process definition tree.
   #
-  module XmlParser
+  module XmlReader
 
     #
-    # A helper class to store the temporary tree while it gets parsed.
+    # A helper class to store the temporary tree while it gets read.
     #
     class Node
 
@@ -54,6 +54,7 @@ module Ruote
       end
 
       def to_a
+
         [ @name, @attributes, @children.collect { |c| c.to_a } ]
       end
     end
@@ -61,7 +62,7 @@ module Ruote
     #
     # Parses the XML string into a process definition tree (array of arrays).
     #
-    def self.parse (s)
+    def self.read (s)
 
       parser = REXML::Parsers::SAX2Parser.new(s)
 

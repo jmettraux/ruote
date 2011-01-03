@@ -112,7 +112,7 @@ module Ruote
     #
     def launch_single (process_definition, fields={}, variables={})
 
-      tree = @context.parser.parse(process_definition)
+      tree = @context.reader.read(process_definition)
       name = tree[1]['name'] || (tree[1].find { |k, v| v.nil? } || []).first
 
       raise ArgumentError.new(
@@ -426,11 +426,11 @@ module Ruote
       worker.join if worker
     end
 
-    # Loads and parses the process definition at the given path.
+    # Loads (and turns into a tree) the process definition at the given path.
     #
     def load_definition (path)
 
-      @context.parser.parse(path)
+      @context.reader.read(path)
     end
 
     # Registers a participant in the engine. Returns the participant instance.

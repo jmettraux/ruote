@@ -7,14 +7,14 @@
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
-require 'ruote/parser/xml'
+require 'ruote/reader/xml'
 
 
-class RubyParserTest < Test::Unit::TestCase
+class XmlReaderTest < Test::Unit::TestCase
 
   def test_sequence
 
-    tree = Ruote::XmlParser.parse(%{
+    tree = Ruote::XmlReader.read(%{
 <define name="nada">
   <sequence>
     <alpha/>
@@ -32,7 +32,7 @@ class RubyParserTest < Test::Unit::TestCase
 
   def test_echo
 
-    tree = Ruote::XmlParser.parse(%{
+    tree = Ruote::XmlReader.read(%{
 <process-definition name="nada">
   <echo>la vida loca</echo>
 </process-definition>
@@ -45,7 +45,7 @@ class RubyParserTest < Test::Unit::TestCase
 
   def test_concurrent_iterator
 
-    tree = Ruote::XmlParser.parse(%{
+    tree = Ruote::XmlReader.read(%{
 <process-definition name="nada">
   <concurrent-iterator on-field="toti" to-field="toto">
   </concurrent-iterator>

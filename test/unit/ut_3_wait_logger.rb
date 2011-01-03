@@ -7,7 +7,6 @@
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
-require 'ruote/parser/ruby_dsl'
 require 'ruote/engine'
 require 'ruote/worker'
 require 'ruote/storage/hash_storage'

@@ -43,7 +43,7 @@ module Ruote
 
     # maybe subprocess :ref => 'uri'
 
-    subtree = fexp.context.parser.parse(ref) rescue nil
+    subtree = fexp.context.reader.read(ref) rescue nil
 
     if subtree && is_definition_tree?(subtree)
       _, subtree = Ruote::Exp::DefineExpression.reorganize(subtree)

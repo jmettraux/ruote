@@ -27,7 +27,7 @@ require 'ruote/util/ometa'
 
 module Ruote
 
-  # Not really a parser, more an AST builder.
+  # Not really a reader, more an AST builder.
   #
   #   pdef = Ruote.define :name => 'take_out_garbage' do
   #     sequence do
@@ -146,5 +146,4 @@ module Ruote
     end
   end
 end
-
 
