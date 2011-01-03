@@ -289,8 +289,6 @@
 
 [ ] define without name (__result__)
 
-[ ] pooltool.ru
-
 [ ] participant dispatch thread throttling ?
 
 [ ] tailcall
@@ -426,6 +424,7 @@
 [ ] clone process ? (could be used by {de|at}tach)
 
 [ ] console for InformatiQ / console or dashboard or tool ?
+[ ] pooltool.ru : there are already storage copy methods
 
 [ ] BlockParticipant : proc.to_source thanks to sourcify
 

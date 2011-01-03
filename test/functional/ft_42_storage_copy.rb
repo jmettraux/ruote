@@ -36,7 +36,7 @@ class FtStorageCopyTest < Test::Unit::TestCase
     count = source.copy_to(target)
 
     assert_equal 8, count
-    assert_equal source.ids('expressions'), target.ids('expressions')
+    assert_equal source.ids('expressions').sort, target.ids('expressions').sort
   end
 
   def test_copy_from_hash_storage
@@ -64,7 +64,7 @@ class FtStorageCopyTest < Test::Unit::TestCase
     count = source.copy_to(target)
 
     assert_equal 8, count
-    assert_equal source.ids('expressions'), target.ids('expressions')
+    assert_equal source.ids('expressions').sort, target.ids('expressions').sort
     assert_not_nil @engine.process(wfid)
   end
 end
