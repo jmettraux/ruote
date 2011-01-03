@@ -103,8 +103,16 @@ module Ruote::Exp
   #
   # The :to attribute has already been seen, it can be replaced by the :on one.
   #
-  # Those two attributes are expected to hold regular expressions, so it's OK to
-  # write things like :
+  #   listen :to => 'alpha'
+  #
+  # is equivalent to
+  #
+  #   listen :on => 'alpha'
+  #
+  #
+  # == :to (:on) and regular expressions
+  #
+  # It's OK to write things like :
   #
   #   listen :to => "^user\_.+"
   #
