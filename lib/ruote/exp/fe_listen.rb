@@ -123,12 +123,27 @@ module Ruote::Exp
   # To listen for workitems for all the participant whose name start with
   # "user_".
   #
+  #
   # == :wfid
   #
   # By default, a listen expression listens for any workitem/participant event
   # in the engine. Setting the :wfid attribute to 'true' or 'same' or 'current'
   # will make the listen expression only care for events belonging to the
   # same process instance (same wfid).
+  #
+  #
+  # == :where
+  #
+  # The :wfid can be considered a 'guard'. Another tool for guarding listen
+  # is to use the :where attribute.
+  #
+  #   listen :to => 'alpha', :where => '${customer.state} == CA'
+  #
+  # The listen will trigger only if the workitem has a customer field with
+  # a subfield state containing the value "CA".
+  #
+  # The documentation about the dollar notation and the one about common
+  # attributes :if and :unless applies for the :where attribute.
   #
   class ListenExpression < FlowExpression
 
