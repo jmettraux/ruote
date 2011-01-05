@@ -157,14 +157,21 @@ class FtTagsTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register 'alpha', Ruote::NullParticipant
+    @engine.register 'alpha', Ruote::StorageParticipant
 
     #noisy
 
-    @engine.launch(pdef)
+    wfid = @engine.launch(pdef)
     @engine.wait_for(:alpha)
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'entered_tag' }.size
+
+    wi = @engine.storage_participant.first
+    @engine.storage_participant.reply(wi)
+
+    @engine.wait_for(wfid)
+
+    assert_equal 1, logger.log.select { |e| e['action'] == 'left_tag' }.size
   end
 end
 
