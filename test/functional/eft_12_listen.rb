@@ -268,5 +268,34 @@ class EftListenTest < Test::Unit::TestCase
     ps = @engine.process(lwfid)
     assert_equal(3, ps.expressions.size)
   end
+
+  def test_listen_to_tag
+
+    listening = Ruote.process_definition do
+      concurrence do
+        listen :to => :first_phase, :upon => :leaving do
+          echo 'left'
+        end
+        listen :to => :first_phase, :upon => :entering do
+          echo 'entered'
+        end
+      end
+    end
+    emitting = Ruote.process_definition do
+      sequence :tag => :first_phase do
+        echo 'in'
+      end
+      echo 'edone.'
+    end
+
+    #noisy
+
+    lwfid = @engine.launch(listening)
+    ewfid = @engine.launch(emitting)
+
+    wait_for(ewfid)
+
+    assert_equal(%w[ in entered edone. left ], @tracer.to_a)
+  end
 end
 

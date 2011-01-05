@@ -43,7 +43,7 @@ module Ruote::Exp
   #
   # It can be used in two ways : 'blocking' or 'triggering'. In both cases
   # the listen expression 'reacts' upon activity (incoming or outgoing workitem)
-  # happening on a channel (a participant name).
+  # happening on a channel (a participant name or a tag name).
   #
   # == blocking
   #
@@ -99,6 +99,26 @@ module Ruote::Exp
   # Can be set to 'reply', to react on workitems being handed back to the
   # engine by the participant.
   #
+  # Setting :upon to 'entering' or 'leaving' tells the listen to focus on
+  # tag events.
+  #
+  #   sequence do
+  #     sequence :tag => 'phase_one' do
+  #       alpha
+  #     end
+  #     sequence :tag => 'phase_two' do
+  #       bravo
+  #     end
+  #   end
+  #
+  # In this dummy process definition, there are four tag events :
+  #
+  # * 'entering' 'phase_one'
+  # * 'leaving' 'phase_one'
+  # * 'entering' 'phase_two'
+  # * 'leaving' 'phase_two'
+  #
+  #
   # == :to and :on
   #
   # The :to attribute has already been seen, it can be replaced by the :on one.
@@ -149,12 +169,16 @@ module Ruote::Exp
 
     names :listen, :receive, :intercept
 
+    UPONS = {
+      'apply' => 'dispatch', 'reply' => 'receive',
+      'entering' => 'entered_tag', 'leaving' => 'left_tag'
+    }
+
     def apply
 
       h.to = attribute(:to) || attribute(:on)
 
-      upon = attribute(:upon) || 'apply'
-      h.upon = (upon == 'reply') ? 'receive' : 'dispatch'
+      h.upon = UPONS[attribute(:upon) || 'apply']
 
       h.lmerge = attribute(:merge).to_s
       h.lmerge = 'true' if h.lmerge == ''
@@ -164,11 +188,17 @@ module Ruote::Exp
 
       persist_or_raise
 
+      condition = if h.upon == 'dispatch' || h.upon == 'receive'
+        { 'participant_name' => h.to }
+      else
+        { 'tag' => h.to }
+      end
+
       @context.tracker.add_tracker(
         h.lwfid ? h.fei['wfid'] : nil,
         h.upon,
         h.fei,
-        { 'participant_name' => h.to },
+        condition,
         { 'action' => 'reply', 'fei' => h.fei, 'flavour' => 'listen' })
     end
 

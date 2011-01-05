@@ -236,7 +236,11 @@ module Ruote::Exp
 
         Ruote::Workitem.remove_tag(workitem, h.tagname)
 
-        @context.storage.put_msg('left_tag', 'tag' => h.tagname, 'fei' => h.fei)
+        @context.storage.put_msg(
+          'left_tag',
+          'tag' => h.tagname,
+          'fei' => h.fei,
+          'workitem' => workitem)
       end
 
       if h.timeout_schedule_id && h.state != 'timing_out'
@@ -656,7 +660,10 @@ module Ruote::Exp
         Ruote::Workitem.add_tag(h.applied_workitem, h.tagname)
 
         @context.storage.put_msg(
-          'entered_tag', 'tag' => h.tagname, 'fei' => h.fei)
+          'entered_tag',
+          'tag' => h.tagname,
+          'fei' => h.fei,
+          'workitem' => h.applied_workitem)
       end
     end
 

@@ -434,7 +434,11 @@
 
 [ ] .nil? .empty? .set? for "${x}.nil?"
 
-[ ] listen to participants/errors/tags {in|out}
+[ ] listen to errors {in|out}
+[o] listen to tags {entering|leaving}
+[ ] listen to launch/terminate, listen :process => :x, :upon => 'launching'
+[o] listen condition ? :when => '${x} == y', :constraint, :only, ...
+    it's :where and it's not documented :-( but it's tested :-)
 [ ] engine.on_terminate, similar to on_error
 
 [ ] ruote cheatsheet

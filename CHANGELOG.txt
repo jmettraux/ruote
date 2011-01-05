@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- listen :to => 'tagname', :upon => 'entering' / 'leaving'
 - Ruote::Parser becomes Ruote::Reader
 - :if => "${customer} in ${customer_list}", :if => "4 in {4 => 5}"
 - Ruote::Workitem .from_json #as_json
