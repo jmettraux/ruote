@@ -150,5 +150,21 @@ class FtTagsTest < Test::Unit::TestCase
 
     assert_equal [], wi.tags
   end
+
+  def test_tag_and_define
+
+    pdef = Ruote.define :tag => 'nada' do
+      alpha
+    end
+
+    @engine.register 'alpha', Ruote::NullParticipant
+
+    #noisy
+
+    @engine.launch(pdef)
+    @engine.wait_for(:alpha)
+
+    assert_equal 1, logger.log.select { |e| e['action'] == 'entered_tag' }.size
+  end
 end
 

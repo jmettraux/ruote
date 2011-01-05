@@ -95,12 +95,7 @@ module Ruote::Exp
 
       fexp, v = locate_var(var)
 
-      #raise(
-      #  ArgumentError.new("cannot set var at engine level : #{var}")
-      #) if fexp.nil?
-      return if fexp.nil?
-
-      fexp.un_set_variable(:set, v, val, true)
+      fexp.un_set_variable(:set, v, val, (fexp.h.fei != h.fei)) if fexp
     end
 
     # Unbinds a variables.
@@ -109,15 +104,7 @@ module Ruote::Exp
 
       fexp, v = locate_var(var)
 
-      #raise(
-      #  ArgumentError.new("cannot unset var at engine level : #{var}")
-      #) if fexp.nil?
-      return if fexp.nil?
-
-      should_persist = (fexp.h.fei != h.fei)
-        # don't use a ticket when expression wants to modify its own vars
-
-      fexp.un_set_variable(:unset, v, nil, should_persist)
+      fexp.un_set_variable(:unset, v, nil, (fexp.h.fei != h.fei)) if fexp
     end
 
     # TODO : redoc rewrite needed
