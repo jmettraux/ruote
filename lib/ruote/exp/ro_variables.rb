@@ -148,14 +148,12 @@ module Ruote::Exp
         Ruote.unset(h.variables, var)
       end
 
-      return unless should_persist
-
-      if r = try_persist # persist failed, have to retry
+      if should_persist && r = try_persist # persist failed, have to retry
 
         @h = r
         un_set_variable(op, var, val, true)
 
-      else # success
+      else # success (even when should_persist == false)
 
         @context.storage.put_msg("variable_#{op}", 'var' => var, 'fei' => h.fei)
       end
