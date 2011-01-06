@@ -37,7 +37,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     exit 0
   end
 
-  ps = ARGV.select { |a| a.match(/^--/) }
+  ps = ARGV.select { |a| a.match(/^--[a-z]/) }
   ps.delete('--split')
 
   persistent = opts.delete(:persistent)
