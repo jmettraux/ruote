@@ -35,7 +35,7 @@ module FunctionalBase
 
     @engine.add_service('tracer', @tracer)
 
-    noisy if ARGV.include?('-n')
+    noisy if ARGV.include?('-N')
 
     #noisy # uncommented, it makes all the tests noisy
   end
