@@ -656,42 +656,20 @@ module Ruote
       @context[config_key]
     end
 
-    # Returns the hash of notifications.
+    # Returns the process tree triggered in case of error.
     #
-    # Currently (2.1.12), this hash should be empty or only contain an entry
-    # for 'on_error'.
+    # Note that this 'on_error' doesn't trigger if an on_error is defined
+    # in the process itself.
     #
-    # The values are arrays of strings or process definitions trees.
-    #
-    def notifications
-
-      @context['notifications'] || {}
-    end
-
-    # Updates the hash of notifications in one go (writes to the storage).
-    #
-    def notifications= (notifs)
-
-      notifs.keys.each do |key|
-        v = notifs[key]
-        v = Array(v)
-        v = [ v ] if Ruote.is_tree?(v)
-        notifs[key] = v
-      end
-
-      @context['notifications'] = notifs
-    end
-
-    # A shortcut for
-    #
-    #   engine.notifications['on_error']
+    # Returns nil if there is no 'on_error' set.
     #
     def on_error
 
-      notifications['on_error']
+      @context.storage.get_trackers['trackers']['on_error']['msg']['tree'] rescue nil
     end
 
-    # Setting the notifications for errors in one go.
+    # Sets a participant or subprocess to be triggered when an error occurs
+    # in a process instance.
     #
     #   engine.on_error = participant_name
     #
@@ -701,15 +679,22 @@ module Ruote
     #     alpha
     #   end
     #
-    #   engine.on_error = [ participant_a, participant_b ]
+    # Note that this 'on_error' doesn't trigger if an on_error is defined
+    # in the process itself.
     #
-    #   # and so on ...
-    #
-    def on_error= (targets)
+    def on_error= (target)
 
-      ns = self.notifications
-      ns['on_error'] = targets
-      self.notifications = ns
+      @context.tracker.add_tracker(
+        nil, # do not track a specific wfid
+        'error_intercepted', # react on 'error_intercepted' msgs
+        'on_error', # the identifier
+        nil, # no specific condition
+        { 'action' => 'launch',
+          'wfid' => 'replace',
+          'tree' => target.is_a?(String) ?
+            [ 'define', {}, [ [ target, {}, [] ] ] ] : target,
+          'workitem' => 'replace',
+          'variables' => 'compile' })
     end
 
     # A convenience methods for advanced users (like Oleg).

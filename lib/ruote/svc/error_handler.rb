@@ -102,20 +102,21 @@ module Ruote
 
       return if fexp && fexp.handle_on_error(msg, exception)
 
-      # engine.on_error ?
-
-      hand_to_engine_on_error(msg, fexp, exception)
-
       # emit 'msg'
+      #
+      # (this message might get intercepted by a tracker)
 
       @context.storage.put_msg(
         'error_intercepted',
-        'error_class' => exception.class.name,
-        'error_message' => exception.message,
-        'error_backtrace' => exception.backtrace,
-        # for backward compatibility
-        'message' => exception.inspect,
+        'error' => {
+          'fei' => fei,
+          'at' => Ruote.now_to_utc_s,
+          'class' => exception.class.name,
+          'message' => exception.message,
+          'trace' => backtrace
+        },
         'wfid' => wfid,
+        'fei' => fei,
         'msg' => msg)
 
       # fill error in the error journal
@@ -128,34 +129,6 @@ module Ruote
         'fei' => fei,
         'msg' => msg
       ) if fei
-    end
-
-    def hand_to_engine_on_error (msg, fexp, exception)
-
-      workitem = msg['workitem'] || { 'fields' => {} }
-
-      return if workitem['fields']['__error__']
-        # cascade prevention
-
-      nos = (@context['notifications'] || {})['on_error']
-
-      return if nos.nil? or nos.empty?
-
-      workitem = Ruote.fulldup(workitem)
-
-      Ruote::Workitem.fill_error(workitem, fexp.fei, exception)
-
-      nos.each do |no|
-
-        tree = no.is_a?(Array) ? no : [ 'define', {}, [ [ no, {}, [] ] ] ]
-
-        @context.storage.put_msg(
-          'launch',
-          'wfid' => fexp.fei.wfid,
-          'tree' => tree,
-          'workitem' => workitem,
-          'variables' => fexp.compile_variables)
-      end
     end
   end
 end

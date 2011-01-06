@@ -293,9 +293,9 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_equal 'err...', @tracer.to_s
     assert_equal 5, workitem.error.size
-    assert_equal 'RuntimeError', workitem.error[2]
-    assert_equal 'Beijing, we have a problem !', workitem.error[3]
-    assert_equal Array, workitem.error[4].class
+    assert_equal 'RuntimeError', workitem.error['class']
+    assert_equal 'Beijing, we have a problem !', workitem.error['message']
+    assert_equal Array, workitem.error['trace'].class
     assert_equal true, workitem.fields['seen']
   end
 

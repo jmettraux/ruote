@@ -337,22 +337,6 @@ class FtErrorsTest < Test::Unit::TestCase
     assert_nil @engine.process(wfid)
   end
 
-  #def test_ps_to_h
-  #  pdef = Ruote.process_definition do
-  #    error 'nada'
-  #  end
-  #  #noisy
-  #  wfid = @engine.launch(pdef)
-  #  wait_for(wfid)
-  #  ps = @engine.process(wfid)
-  #  es = ps.to_h['errors']
-  #  e = es.first
-  #  assert_equal 1, es.size
-  #  assert_equal 'reply', e['msg']['action']
-  #  assert_equal wfid, e['msg']['fei']['wfid']
-  #  assert_equal 8, e.size
-  #end
-
   def test_error_intercepted
 
     pdef = Ruote.process_definition do
@@ -363,9 +347,9 @@ class FtErrorsTest < Test::Unit::TestCase
 
     r = @engine.wait_for(wfid)
 
-    assert_equal 'RuntimeError', r['error_class']
-    assert_equal "unknown participant or subprocess 'nada'", r['error_message']
-    assert_equal Array, r['error_backtrace'].class
+    assert_equal 'RuntimeError', r['error']['class']
+    assert_equal "unknown participant or subprocess 'nada'", r['error']['message']
+    assert_equal Array, r['error']['trace'].class
   end
 end
 

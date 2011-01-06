@@ -197,9 +197,12 @@ module Ruote::Exp
       @context.tracker.add_tracker(
         h.lwfid ? h.fei['wfid'] : nil,
         h.upon,
-        h.fei,
+        Ruote.to_storage_id(h.fei),
         condition,
-        { 'action' => 'reply', 'fei' => h.fei, 'flavour' => 'listen' })
+        { 'action' => 'reply',
+          'fei' => h.fei,
+          'workitem' => 'replace',
+          'flavour' => 'listen' })
     end
 
     def reply (workitem)

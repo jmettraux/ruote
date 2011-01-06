@@ -56,43 +56,65 @@ module Ruote
     #
     def notify (msg)
 
-      doc = @context.storage.get_trackers
+      m_error = msg['error']
+      m_wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
+      m_action = msg['action']
 
-      doc['trackers'].values.each do |tracker|
+      @context.storage.get_trackers['trackers'].values.each do |tracker|
+
+        # filter msgs
 
         t_wfid = tracker['wfid']
         t_action = tracker['action']
-        m_wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
 
         next if t_wfid && t_wfid != m_wfid
-        next if t_action && t_action != msg['action']
+        next if t_action && t_action != m_action
 
         next unless does_match?(msg, tracker['conditions'])
 
+        msg = msg['msg'] if m_action == 'error_intercepted'
+
+        next if m_action == 'error_intercepted' && msg['workitem']['fields']['__error__']
+
+        # prepare and emit/put 'reaction' message
+
         m = tracker['msg']
 
-        @context.storage.put_msg(
-          m.delete('action'),
-          m.merge!('workitem' => msg['workitem']))
+        action = m.delete('action')
+
+        m['wfid'] = m_wfid if m['wfid'] == 'replace'
+        m['workitem'] = msg['workitem'] if m['workitem'] == 'replace'
+
+        if m_action == 'error_intercepted'
+          #m['workitem'] ||= { 'fields' => {} }
+          m['workitem']['fields']['__error__'] = m_error
+        end
+
+        if m['variables'] == 'compile'
+          fexp = Ruote::Exp::FlowExpression.fetch(@context, msg['fei'])
+          m['variables'] = fexp ? fexp.compile_variables : {}
+        end
+
+        @context.storage.put_msg(action, m)
       end
     end
 
     # Adds a tracker (usually when a 'listen' expression gets applied).
     #
-    def add_tracker (wfid, action, fei, conditions, msg, doc=nil)
+    def add_tracker (wfid, action, id, conditions, msg)
 
-      doc ||= @context.storage.get_trackers
+      doc = @context.storage.get_trackers
 
-      doc['trackers'][Ruote.to_storage_id(fei)] =
+      doc['trackers'][id] =
         { 'wfid' => wfid,
           'action' => action,
-          'fei' => fei,
+          'id' => id,
           'conditions' => conditions,
           'msg' => msg }
 
       r = @context.storage.put(doc)
 
-      add_tracker(wfid, action, fei, msg, r) if r
+      add_tracker(wfid, action, id, msg) if r
         # the put failed, have to redo the work
     end
 
@@ -114,6 +136,8 @@ module Ruote
     protected
 
     def does_match? (msg, conditions)
+
+      return true unless conditions
 
       conditions.each do |k, v|
         val = msg[k]

@@ -81,6 +81,13 @@ module Ruote
 
         nil
       end
+
+    rescue => e
+      puts "=" * 80
+      File.open('doc.json', 'wb') do |f|
+        f.puts Rufus::Json.pretty_encode(doc)
+      end
+      raise e
     end
 
     def get (type, key)

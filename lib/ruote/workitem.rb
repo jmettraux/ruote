@@ -293,24 +293,6 @@ module Ruote
       end
     end
 
-    # Populates the '__error__' field in the workitem (passed in its raw
-    # hash form as first argument) with info for the given error that occured
-    # at the given fexp.
-    #
-    # This class method is used by error handlers, it has no value for
-    # regular ruote users.
-    #
-    def self.fill_error (hworkitem, fei, err)
-
-      hworkitem['fields']['__error__'] = [
-        fei.is_a?(Ruote::FlowExpressionId) ? fei.h : fei,
-        Ruote.now_to_utc_s,
-        err.class.to_s,
-        err.message,
-        err.backtrace
-      ]
-    end
-
     # Encodes this workitem as JSON. If pretty is set to true, will output
     # prettified JSON.
     #

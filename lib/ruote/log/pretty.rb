@@ -135,9 +135,9 @@ module Ruote
       if msg['action'] == 'error_intercepted'
 
         tail = []
-        tail << "  #{wfid} #{rest['error_class']}"
-        tail << "  #{wfid} #{rest['error_message']}"
-        rest['error_backtrace'].each do |line|
+        tail << "  #{wfid} #{rest['error']['class']}"
+        tail << "  #{wfid} #{rest['error']['message']}"
+        rest['error']['trace'].each do |line|
           tail << "  #{wfid} #{line}"
         end
 

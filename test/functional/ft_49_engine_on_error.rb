@@ -18,16 +18,17 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
     $seen = []
   end
 
+  def test_no_on_error
+
+    assert_nil @engine.on_error
+  end
+
   def test_on_error
 
     @engine.on_error = 'supervisor'
 
     assert_equal(
-      { 'on_error' => [ 'supervisor' ] },
-      @engine.notifications)
-
-    assert_equal(
-      [ 'supervisor' ],
+      [ 'define', {}, [ [ 'supervisor', {}, [] ] ] ],
       @engine.on_error)
   end
 
