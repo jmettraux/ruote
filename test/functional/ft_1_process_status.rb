@@ -223,7 +223,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     ps = @engine.process(wfid)
 
-    assert_equal 2, ps.tags.size
+    assert_equal %w[ main part ], ps.tags.keys.sort
 
     assert_equal 2, ps.all_tags.size
     assert_kind_of Array, ps.all_tags['main']

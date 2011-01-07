@@ -128,7 +128,7 @@ module Ruote
     #
     def tags
 
-      variables.select { |k, v| FlowExpressionId.is_a_fei?(v) }
+      Hash[variables.select { |k, v| FlowExpressionId.is_a_fei?(v) }]
     end
 
     # Returns a hash tagname => array of feis of all the tags set in the process
