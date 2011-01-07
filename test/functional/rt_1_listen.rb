@@ -23,7 +23,7 @@ class RtListenTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       concurrence do
         sequence do
-          listen :to => '^al.*', :upon => 'reply'
+          listen :to => '/^al.*/', :upon => 'reply'
           echo 'done.'
         end
         alpha

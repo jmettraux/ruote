@@ -149,8 +149,15 @@ module Ruote
       return true unless conditions
 
       conditions.each do |k, v|
+
         val = msg[k]
-        return false unless val && val.match(v)
+        v = Ruote.regex_or_s(v)
+
+        if v.is_a?(String)
+          return false unless val && v == val
+        else
+          return false unless val && v.match(val)
+        end
       end
 
       true

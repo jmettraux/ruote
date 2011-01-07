@@ -134,7 +134,7 @@ module Ruote::Exp
   #
   # It's OK to write things like :
   #
-  #   listen :to => "^user\_.+"
+  #   listen :to => "/^user\_.+/"
   #
   # or
   #

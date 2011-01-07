@@ -16,7 +16,7 @@ class EftListenTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       concurrence do
         sequence do
-          listen :to => '^al.*'
+          listen :to => '/^al.*/'
           echo '1'
         end
         sequence do
@@ -44,7 +44,7 @@ class EftListenTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition do
       concurrence do
-        listen :to => '^al.*' do
+        listen :to => /^al.*/ do
           bravo
         end
         sequence do
@@ -94,11 +94,11 @@ class EftListenTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       concurrence do
         sequence do
-          listen :to => '^al.*', :merge => false
+          listen :to => /^al.*/, :merge => false
           bravo
         end
         sequence do
-          listen :to => '^al.*', :upon => 'reply'
+          listen :to => '/^al.*/', :upon => 'reply'
           bravo
         end
         sequence do
@@ -130,7 +130,7 @@ class EftListenTest < Test::Unit::TestCase
       set :f => 'other', :val => 'nothing'
       concurrence do
         sequence do
-          listen :to => '^al.*', :merge => 'override', :upon => 'reply'
+          listen :to => '/^al.*/', :merge => 'override', :upon => 'reply'
           bravo
         end
         sequence do
@@ -296,6 +296,42 @@ class EftListenTest < Test::Unit::TestCase
     wait_for(ewfid)
 
     assert_equal(%w[ in entered edone. left ], @tracer.to_a)
+  end
+
+  def test_listen_and_doesnt_match
+
+    pdef = Ruote.define do
+      concurrence :count => 1 do
+        listen :to => 'stone', :upon => 'entering' do
+          echo 'stone'
+        end
+        sequence :tag => 'milestone' do
+          echo 'milestone'
+        end
+      end
+    end
+
+    assert_trace "milestone", pdef
+  end
+
+  def test_listen_and_do_match
+
+    pdef = Ruote.define do
+      concurrence :count => 1 do
+        listen :to => /stone/, :upon => 'entering' do
+          echo 'stone'
+        end
+        sequence :tag => 'milestone' do
+          echo 'milestone'
+        end
+      end
+    end
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(wfid)
+
+    assert_equal %w[ milestone stone ], @tracer.to_a
   end
 end
 
