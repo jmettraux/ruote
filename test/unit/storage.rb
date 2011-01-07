@@ -267,6 +267,13 @@ class UtStorage < Test::Unit::TestCase
     assert_equal 31, @s.ids('errors').length
   end
 
+  def test_ids_are_sorted
+
+    load_30_errors
+
+    assert_equal @s.ids('errors').sort, @s.ids('errors')
+  end
+
   protected
 
   def load_30_errors
