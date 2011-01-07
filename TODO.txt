@@ -375,6 +375,7 @@
 [ ] toto :task => 'maw the lawn', :within => '3d'
     alias to timeout
 [ ] "business days" plugin
+[ ] participant 'toto', :while => '${not_good}' (really ?)
 
 [ ] re_apply_stalled
     http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
@@ -384,8 +385,6 @@
 [ ] http://ruote.rubyforge.org/irclogs/ruote_2010-07-07.txt
     configuration issue
     maybe fail with a good error message when registering service...
-
-[ ] participant 'toto', :while => '${not_good}' (really ?)
 
 [ ] engine.register_from_dir() have a way to re-evaluate the dir
 [o] OR remove engine.register_from_dir()
@@ -443,7 +442,7 @@
     not really necessary...
 [o] listen condition ? :when => '${x} == y', :constraint, :only, ...
     it's :where and it's not documented :-( but it's tested :-)
-[ ] engine#on_terminate, similar to on_error
+[o] engine#on_terminate, similar to on_error
 [o] let engine#on_error use svc/tracker.rb instead of 'notifications'
 
 [ ] ruote cheatsheet

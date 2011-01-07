@@ -60,7 +60,7 @@ module Ruote
       m_wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
       m_action = msg['action']
 
-      @context.storage.get_trackers['trackers'].values.each do |tracker|
+      @context.storage.get_trackers['trackers'].each do |tracker_id, tracker|
 
         # filter msgs
 
@@ -74,7 +74,13 @@ module Ruote
 
         msg = msg['msg'] if m_action == 'error_intercepted'
 
-        next if m_action == 'error_intercepted' && msg['workitem']['fields']['__error__']
+        if tracker_id == 'on_error' || tracker_id == 'on_terminate'
+
+          fields = msg['workitem']['fields']
+
+          next if m_action == 'error_intercepted' && fields['__error__']
+          next if m_action == 'terminated' && (fields['__error__'] || fields['__terminate__'])
+        end
 
         # prepare and emit/put 'reaction' message
 
@@ -83,11 +89,14 @@ module Ruote
         action = m.delete('action')
 
         m['wfid'] = m_wfid if m['wfid'] == 'replace'
+        m['wfid'] ||= @context.wfidgen.generate
+
         m['workitem'] = msg['workitem'] if m['workitem'] == 'replace'
 
-        if m_action == 'error_intercepted'
-          #m['workitem'] ||= { 'fields' => {} }
+        if tracker_id == 'on_error' && m_action == 'error_intercepted'
           m['workitem']['fields']['__error__'] = m_error
+        elsif tracker_id == 'on_terminate' && m_action == 'terminated'
+          m['workitem']['fields']['__terminate__'] = { 'wfid' => m_wfid }
         end
 
         if m['variables'] == 'compile'

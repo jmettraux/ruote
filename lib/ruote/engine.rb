@@ -656,7 +656,7 @@ module Ruote
       @context[config_key]
     end
 
-    # Returns the process tree triggered in case of error.
+    # Returns the process tree that is triggered in case of error.
     #
     # Note that this 'on_error' doesn't trigger if an on_error is defined
     # in the process itself.
@@ -665,7 +665,25 @@ module Ruote
     #
     def on_error
 
-      @context.storage.get_trackers['trackers']['on_error']['msg']['tree'] rescue nil
+      @context.storage.get_trackers['trackers']['on_error']['msg']['tree']
+
+    rescue
+      nil
+    end
+
+    # Returns the process tree that is triggered in case of process termination.
+    #
+    # Note that a termination process doesn't raise a termination process when
+    # it terminates itself.
+    #
+    # Returns nil if there is no 'on_terminate' set.
+    #
+    def on_terminate
+
+      @context.storage.get_trackers['trackers']['on_terminate']['msg']['tree']
+
+    rescue
+      nil
     end
 
     # Sets a participant or subprocess to be triggered when an error occurs
@@ -697,6 +715,37 @@ module Ruote
           'variables' => 'compile' })
     end
 
+    # Sets a participant or a subprocess that is to be launched/called whenever
+    # a regular process terminates.
+    #
+    #   engine.on_terminate = participant_name
+    #
+    #   engine.on_terminate = subprocess_name
+    #
+    #   engine.on_terminate = Ruote.define do
+    #     alpha
+    #     bravo
+    #   end
+    #
+    # Note that a termination process doesn't raise a termination process when
+    # it terminates itself.
+    #
+    # on_terminate processes are not triggered for on_error processes.
+    # on_error processes are triggered for on_terminate processes as well.
+    #
+    def on_terminate= (target)
+
+      @context.tracker.add_tracker(
+        nil, # do not track a specific wfid
+        'terminated', # react on 'error_intercepted' msgs
+        'on_terminate', # the identifier
+        nil, # no specific condition
+        { 'action' => 'launch',
+          'tree' => target.is_a?(String) ?
+            [ 'define', {}, [ [ target, {}, [] ] ] ] : target,
+          'workitem' => 'replace' })
+    end
+
     # A convenience methods for advanced users (like Oleg).
     #
     # Given a fei (flow expression id), fetches the workitem as stored in
@@ -709,6 +758,9 @@ module Ruote
     #
     # The fei might be a string fei (result of fei.to_storage_id), a
     # FlowExpressionId instance or a hash.
+    #
+    # on_terminate processes are not triggered for on_error processes.
+    # on_error processes are triggered for on_terminate processes as well.
     #
     def workitem (fei)
 
