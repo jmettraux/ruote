@@ -23,9 +23,35 @@ class FtPatternsTest < Test::Unit::TestCase
   # expired). Note that the execution does not influence the state itself, i.e.
   # unlike normal control-flow dependencies it is a test rather than a trigger.
 
+  #MILESTONE = Ruote.define do
+  #
+  #  concurrence :count => 1 do
+  #
+  #    sequence do
+  #      participant 'a'
+  #      participant 'b', :tag => 'milestone'
+  #      participant 'c'
+  #    end
+  #
+  #    listen :to => 'milestone', :upon => 'entering', :wfid => true do
+  #      concurrence :count => 1 do
+  #        listen :to => 'milestone', :upon => 'leaving', :wfid => true
+  #        participant 'd'
+  #      end
+  #    end
+  #  end
+  #end
+    # this works, but, if the participant d implementation is 'fast', the
+    # milestone could be left before the inner listen is reached.
+    # This listen could thus listen for an event that already occurred and
+    # thus be locked...
+    #
+    # the revised version makes sure the milestone is listened to (bot#
+    # entering and leaving) before participant b is reached.
+
   MILESTONE = Ruote.define do
 
-    concurrence :count => 1 do
+    concurrence do
 
       sequence do
         participant 'a'
@@ -33,11 +59,12 @@ class FtPatternsTest < Test::Unit::TestCase
         participant 'c'
       end
 
-      listen :to => 'milestone', :upon => 'entering', :wfid => true do
-        concurrence :count => 1 do
-          listen :to => 'milestone', :upon => 'leaving', :wfid => true
+      concurrence :count => 1 do
+        sequence do
+          listen :to => 'milestone', :upon => 'entering', :wfid => true
           participant 'd'
         end
+        listen :to => 'milestone', :upon => 'leaving', :wfid => true
       end
     end
   end
