@@ -85,9 +85,18 @@ module Ruote::Exp
   #     set 'f_${v:v}' => 'val2'
   #   end
   #
+  # == set and rset
+  #
+  # Some gems (Sinatra) for example may provide a set method that hides calls
+  # to set when building process definitions (see http://groups.google.com/group/openwferu-users/browse_thread/thread/9ac606e30ada686e)
+  #
+  # A workaround is to write 'rset' instead of 'set'.
+  #
+  #   rset 'customer' => 'Jeff'
+  #
   class SetExpression < FlowExpression
 
-    names :set, :unset
+    names :rset, :set, :unset
 
     def apply
 

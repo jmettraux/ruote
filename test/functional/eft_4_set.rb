@@ -226,5 +226,20 @@ class EftSetTest < Test::Unit::TestCase
     assert_nil @engine.process(wfid)
     assert_nil @engine.variables['v']
   end
+
+  # 'rset' is an alias for 'set'.
+  #
+  # motivation at http://groups.google.com/group/openwferu-users/browse_thread/thread/9ac606e30ada686e
+  #
+  def test_rset
+
+    wfid = @engine.launch(Ruote.define do
+      rset 'developer' => 'Rebo'
+    end)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal 'Rebo', r['workitem']['fields']['developer']
+  end
 end
 
