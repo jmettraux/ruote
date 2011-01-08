@@ -48,6 +48,10 @@ module Ruote::Exp
   #     end
   #   end
   #
+  # (There is a big difference though, a redo will restart with the workitem
+  # as it was when the workitem entered the tagged region, while the rewind
+  # keeps the workitem as is)
+  #
   class RedoExpression < FlowExpression
 
     names :redo
