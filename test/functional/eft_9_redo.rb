@@ -100,5 +100,38 @@ class EftRedoTest < Test::Unit::TestCase
     assert_not_nil @engine.process(wfid)
     assert_equal [], @engine.errors
   end
+
+  class Alpha
+    include Ruote::LocalParticipant
+    @@seen = false
+    def consume(workitem)
+      (workitem.fields['alpha'] ||= []) << 'x'
+      workitem.fields['over'] = @@seen
+      @@seen = true
+      reply_to_engine(workitem)
+    end
+  end
+
+  def test_redo__blank_workitem
+
+    @engine.register do
+      alpha Alpha
+    end
+
+    pdef = Ruote.process_definition do
+      sequence :tag => 'x' do
+        alpha
+        _redo 'x', :unless => '${over}'
+      end
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal %w[ x ], r['workitem']['fields']['alpha']
+  end
 end
 

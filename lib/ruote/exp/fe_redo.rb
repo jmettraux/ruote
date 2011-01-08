@@ -29,8 +29,8 @@ module Ruote::Exp
   # Undoes and the redoes (re-applies) an expression identified by a tag.
   #
   #   pdef = Ruote.process_definition do
-  #     sequence do
-  #       alpha :tag => 'kilroy'
+  #     sequence :tag => 'kilroy' do
+  #       alpha
   #       _redo :ref => 'kilroy', :unless => '${f:ok} == true'
   #     end
   #   end
@@ -43,7 +43,7 @@ module Ruote::Exp
   #
   #   pdef = Ruote.process_definition do
   #     cursor do
-  #       alpha :tag => 'kilroy'
+  #       alpha
   #       rewind :unless => '${f:ok} == true'
   #     end
   #   end
