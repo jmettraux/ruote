@@ -1,4 +1,4 @@
-#--
+
 # Copyright (c) 2005-2011, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -864,9 +864,9 @@ module Ruote
       @engine = engine
     end
 
-    def participant (name, klass, options={})
+    def participant (name, klass=nil, options={}, &block)
 
-      @engine.register_participant(name, klass, options)
+      @engine.register_participant(name, klass, options, &block)
     end
 
     def catchall (*args)

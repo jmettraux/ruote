@@ -373,25 +373,31 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       alpha 'Participants::Alpha', 'flavour' => 'vanilla'
       participant 'bravo', 'Participants::Bravo', :flavour => 'peach'
       participant 'charlie', 'Participants::Charlie'
+      participant 'david' do |wi|
+        p wi
+      end
       catchall 'Participants::Zebda', 'flavour' => 'coconut'
     end
 
-    assert_equal 4, @engine.participant_list.size
+    assert_equal 5, @engine.participant_list.size
 
     assert_equal(
-      %w[ ^alpha$ ^bravo$ ^charlie$ ^.+$ ],
+      %w[ ^alpha$ ^bravo$ ^charlie$ ^david$ ^.+$ ],
       @engine.participant_list.collect { |pe| pe.regex.to_s })
 
     assert_equal(
       %w[ Participants::Alpha
           Participants::Bravo
           Participants::Charlie
+          inpa_"david"
           Participants::Zebda ],
       @engine.participant_list.collect { |pe| pe.classname })
 
     assert_equal(
-      %w[ vanilla peach nil coconut ],
-      @engine.participant_list.collect { |pe| pe.options['flavour'] || 'nil' })
+      %w[ vanilla peach nil nil coconut ],
+      @engine.participant_list.collect { |pe|
+        (pe.options['flavour'] || 'nil') rescue 'nil'
+      })
   end
 
   def test_register_block_catchall_default

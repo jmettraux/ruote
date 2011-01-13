@@ -47,8 +47,9 @@ Richard Jennings
 Feedback
 --------
 
+Hery - Engine#register and block participants
 Gonzalo Suarez - many many help
-rebo - 'set' issue with Sinatra
+Rebo - 'set' issue with Sinatra
 Copper Hill - test coverage enhancements
 Claudio Petasecca Donati - 'lose' expression and attribute reminder
 Daniel Neighman "hassox" - :on_timeout => "error" and many issue reports
