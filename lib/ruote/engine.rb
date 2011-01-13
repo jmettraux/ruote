@@ -124,10 +124,8 @@ module Ruote
       }
       wfid, timestamp = singles['h'][name]
 
-      if wfid && (timestamp + 1.0 < Time.now.to_f || process(wfid) != nil)
-        return wfid
-      end
-        # process is already running
+      return wfid if wfid && (ps(wfid) || Time.now.to_f - timestamp < 1.0)
+        # return wfid if 'singleton' process is already running
 
       wfid = @context.wfidgen.generate
 

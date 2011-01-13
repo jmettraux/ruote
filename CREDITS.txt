@@ -47,6 +47,7 @@ Richard Jennings
 Feedback
 --------
 
+Gonzalo Suarez - many many help
 rebo - 'set' issue with Sinatra
 Copper Hill - test coverage enhancements
 Claudio Petasecca Donati - 'lose' expression and attribute reminder
@@ -58,7 +59,6 @@ Don H. French - Engine#register_from_dir idea
 Kaspar Schiess - http://github.com/kschiess
 Oleg (foenixx) - many suggestions and bug reports
 Avishai Shalom - discussion and ideas about participant/worker locality
-Gonzalo Suarez - many help
 Francisco Kiko - many help
 David Goldhirsch - EM participant block
 dlamotte - set :val => nil

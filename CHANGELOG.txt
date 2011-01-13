@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- fixed Engine#launch_single relaunch issue (Thanks Gonzalo)
 - 'rset', an alias for the 'set' expression (Thanks Rebo)
 - listen :to => /x/ or "/x/" required for regular expressions
 - engine#on_terminate = participant_name / subprocess_name / tree
