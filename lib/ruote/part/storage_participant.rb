@@ -64,12 +64,12 @@ module Ruote
       elsif engine_or_options.is_a?(Ruote::Context)
         @context = engine_or_options
       else
-        options = engine_or_options
+        @options = engine_or_options
       end
 
-      options ||= {}
+      @options ||= {}
 
-      @store_name = options['store_name']
+      @store_name = @options['store_name']
     end
 
     # No need for a separate thread when delivering to this participant.
