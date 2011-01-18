@@ -186,9 +186,6 @@ module Ruote::Exp
 
     def cancel (flavour)
 
-      #@context.storage.delete_schedule(h.job_id)
-      #reply_to_parent(h.applied_workitem)
-
       @context.storage.delete_schedule(h.job_id)
       super
     end

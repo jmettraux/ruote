@@ -456,3 +456,5 @@
 
 [ ] alias concurrent-iterator to citerator
 
+[ ] Participant#rtimeout(workitem=nil)
+

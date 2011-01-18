@@ -184,6 +184,8 @@ module Ruote
 
     def delete_schedule (schedule_id)
 
+      return if schedule_id.nil?
+
       s = get('schedules', schedule_id)
       delete(s) if s
     end
