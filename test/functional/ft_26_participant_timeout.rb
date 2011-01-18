@@ -26,7 +26,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
     bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
 
     class << alpha
-      def timeout
+      def rtimeout
         '1s'
       end
     end
@@ -54,7 +54,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
     def cancel (fei, flavour)
       # do nothing
     end
-    def timeout
+    def rtimeout
       '1s'
     end
     def do_not_thread
@@ -113,7 +113,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
     def cancel (fei, flavour)
       # do nothing
     end
-    def timeout
+    def rtimeout
       @opts['timeout']
     end
   end

@@ -91,7 +91,8 @@ module Ruote::Exp
   #
   # But it's OK for participant classes registered in the engine to provide
   # their own timeout value. The participant instance simply has to reply to
-  # the #timeout method and provide a meaningful timeout value.
+  # the #rtimeout method and provide a meaningful timeout value (like a
+  # number of seconds, or a string like "2d" or "1M2w".
   #
   # Note however, that the process definition timeout (if any) will take
   # precedence over the participant specified one.
@@ -242,12 +243,9 @@ module Ruote::Exp
 
       unless timeout
 
-        pa = @context.plist.instantiate(p_info, :if_respond_to? => :timeout)
+        pa = @context.plist.instantiate(p_info, :if_respond_to? => :rtimeout)
 
-        timeout = pa.timeout if pa && pa.method(:timeout).arity == 0
-          #
-          # the arity check is for jruby which seems to have a timeout
-          # method here and there
+        timeout = pa.rtimeout if pa
       end
 
       do_schedule_timeout(timeout)

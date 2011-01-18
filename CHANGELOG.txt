@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- Participant #rtimeout instead of #timeout
 - StorageParticipant making @options available
 - Engine#register, allowing block participants (Thanks Hery)
 - fixed Engine#launch_single relaunch issue (Thanks Gonzalo)
