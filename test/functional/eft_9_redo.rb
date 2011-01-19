@@ -94,9 +94,10 @@ class EftRedoTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 2
+    while @engine.storage_participant.size < 2
+      sleep 0.350
+    end
 
-    assert @engine.storage_participant.size > 1
     assert_not_nil @engine.process(wfid)
     assert_equal [], @engine.errors
   end
