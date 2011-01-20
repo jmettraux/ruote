@@ -617,12 +617,14 @@ digraph "process wfid {
       end
     end
 
-    @engine.launch(pdef)
+    #noisy
 
-    #sleep 0.500
+    wfid = @engine.launch(pdef)
+
     @engine.wait_for(4)
 
-    assert_equal 1, @engine.processes.size
+    #assert_equal 1, @engine.processes.size
+    assert_equal [ wfid ], @engine.processes.collect { |ps| ps.wfid }
   end
 
   def test_ps
