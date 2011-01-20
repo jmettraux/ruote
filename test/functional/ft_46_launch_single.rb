@@ -28,19 +28,21 @@ class FtLaunchSingleTest < Test::Unit::TestCase
       echo 'over.'
     end
 
+    #noisy
+
     wfid = @engine.launch_single(pdef)
 
     assert_equal(
       wfid,
       @engine.storage.get('variables', 'singles')['h']['unique_process'].first)
 
-    sleep 0.500
+    @engine.wait_for(2)
 
     assert_not_nil @engine.process(wfid)
 
     wfid1 = @engine.launch_single(pdef)
 
-    sleep 0.500
+    sleep 1
 
     assert_equal wfid, wfid1
     assert_equal 1, @engine.processes.size
