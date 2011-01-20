@@ -744,30 +744,6 @@ module Ruote
           'workitem' => 'replace' })
     end
 
-    # A convenience methods for advanced users (like Oleg).
-    #
-    # Given a fei (flow expression id), fetches the workitem as stored in
-    # the expression with that fei.
-    # This is the "applied workitem", if the workitem is currently handed to
-    # a participant, this method will return the workitem as applied, not
-    # the workitem as saved by the participant/user in whatever worklist it
-    # uses. If you need that workitem, do the vanilla thing and ask it to
-    # the [storage] participant or its worklist.
-    #
-    # The fei might be a string fei (result of fei.to_storage_id), a
-    # FlowExpressionId instance or a hash.
-    #
-    # on_terminate processes are not triggered for on_error processes.
-    # on_error processes are triggered for on_terminate processes as well.
-    #
-    def workitem (fei)
-
-      fexp = Ruote::Exp::FlowExpression.fetch(
-        @context, Ruote::FlowExpressionId.extract_h(fei))
-
-      Ruote::Workitem.new(fexp.h.applied_workitem)
-    end
-
     # A debug helper :
     #
     #   engine.noisy = true

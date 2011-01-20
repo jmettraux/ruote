@@ -173,5 +173,35 @@ class FtReceiverTest < Test::Unit::TestCase
 
     assert_nil ps
   end
+
+  def test_receiver_fexp_and_wi
+
+    #@engine.register do
+    #  catchall Ruote::StorageParticipant
+    #end
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    #noisy
+
+    wfid = @engine.launch(Ruote.define do
+      alpha
+    end)
+
+    @engine.wait_for(:alpha)
+    @engine.wait_for(1)
+
+    wi = @engine.storage_participant.first
+
+    assert_equal wfid, wi.fei.wfid
+
+    assert_equal wfid, @engine.fexp(wi).fei.wfid
+    assert_equal wfid, @engine.fexp(wi.fei).fei.wfid
+    assert_equal wfid, @engine.fexp(wi.fei.sid).fei.wfid
+    assert_equal wfid, @engine.fexp(wi.fei.sid).h.applied_workitem['fei']['wfid']
+
+    assert_equal wfid, @engine.workitem(wi).wfid
+    assert_equal wfid, @engine.workitem(wi.fei).wfid
+    assert_equal wfid, @engine.workitem(wi.fei.sid).wfid
+  end
 end
 
