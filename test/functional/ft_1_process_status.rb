@@ -351,6 +351,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     @engine.cancel_process(wfid)
 
     wait_for(:alpha)
+    wait_for(1)
 
     assert_match wfid, alpha.first.fei.wfid
     assert_not_nil alpha.first.fei.subid
