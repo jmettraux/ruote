@@ -63,6 +63,9 @@ class EftWaitTest < Test::Unit::TestCase
 
   def test_wait_until
 
+    ts = []
+    @engine.register_participant(:alpha) { ts << Time.now }
+
     pdef = Ruote.process_definition do
       sequence do
         alpha
@@ -73,9 +76,6 @@ class EftWaitTest < Test::Unit::TestCase
     end
 
     #noisy
-
-    ts = []
-    @engine.register_participant(:alpha) { ts << Time.now }
 
     assert_trace 'done.', pdef
 
