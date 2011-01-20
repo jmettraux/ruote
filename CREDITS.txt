@@ -47,6 +47,7 @@ Richard Jennings
 Feedback
 --------
 
+Sean Johnson - https://github.com/belucid
 Hery - Engine#register and block participants
 Gonzalo Suarez - many many help
 Rebo - 'set' issue with Sinatra
