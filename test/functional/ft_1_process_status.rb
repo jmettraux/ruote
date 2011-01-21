@@ -489,8 +489,10 @@ digraph "process wfid {
     # #position leverages #workitems
 
     assert_equal(
-      [ 'alpha' ],
-      @engine.process(wfid).workitems.collect { |wi| wi.participant_name })
+      [ [ wfid, 'alpha' ] ],
+      @engine.process(wfid).workitems.collect { |wi|
+        [ wi.fei.wfid, wi.participant_name ]
+      })
   end
 
   def test_position_when_error
