@@ -685,7 +685,8 @@ module Ruote::Exp
     #
     def do_schedule_timeout (timeout)
 
-      return unless timeout
+      timeout = timeout.to_s
+
       return if timeout.strip == ''
 
       h.timeout_schedule_id = @context.storage.put_schedule(

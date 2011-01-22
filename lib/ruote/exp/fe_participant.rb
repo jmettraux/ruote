@@ -245,7 +245,10 @@ module Ruote::Exp
 
         pa = @context.plist.instantiate(p_info, :if_respond_to? => :rtimeout)
 
-        timeout = pa.rtimeout if pa
+        timeout = (pa.method(:rtimeout).arity == 0 ?
+          pa.rtimeout :
+          pa.rtimeout(Ruote::Workitem.new(h.applied_workitem))
+        ) if pa
       end
 
       do_schedule_timeout(timeout)

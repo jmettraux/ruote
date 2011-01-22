@@ -26,7 +26,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
     bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
 
     class << alpha
-      def rtimeout
+      def rtimeout (workitem)
         '1s'
       end
     end
@@ -113,7 +113,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
     def cancel (fei, flavour)
       # do nothing
     end
-    def rtimeout
+    def rtimeout (workitem)
       @opts['timeout']
     end
   end
@@ -137,6 +137,43 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
 
     assert_equal 0, @engine.storage.get_many('schedules').size
       # no timeout for participant :bravo
+  end
+
+  class YetAnotherParticipant
+    include Ruote::LocalParticipant
+    def initialize (opts)
+      @opts = opts
+    end
+    def consume (workitem)
+      # do nothing
+    end
+    def cancel (fei, flavour)
+      # do nothing
+    end
+    def rtimeout (workitem)
+      workitem.fields['timeout'] * 2
+    end
+  end
+
+  def test_participant_rtimeout_workitem
+
+    pdef = Ruote.process_definition do
+      alpha
+    end
+
+    @engine.register_participant :alpha, YetAnotherParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef, 'timeout' => 60)
+
+    @engine.wait_for(:alpha)
+    @engine.wait_for(1)
+
+    schedules = @engine.storage.get_many('schedules')
+
+    assert_equal 1, schedules.size
+    assert_equal '120', schedules.first['original']
   end
 end
 
