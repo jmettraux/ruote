@@ -277,6 +277,8 @@
     "${customer} in { 'x' => 1 }"
 [o] rename 'parser' to 'reader'
 [o] ft_42 : maybe require storage to output ids already sorted
+[o] Participant#rtimeout(workitem=nil)
+[o] alias concurrent-iterator to citerator
 
 [ ] exp : exp (restricted form of eval ?) (is it apply ?)
 [ ] exp : filter
@@ -453,8 +455,4 @@
     for the HashStorage one...
     like WaitLogger only remembers 147 msgs...
 [ ] StorageHistory : add a method to list all wfids (for by_wfid)
-
-[ ] alias concurrent-iterator to citerator
-
-[ ] Participant#rtimeout(workitem=nil)
 

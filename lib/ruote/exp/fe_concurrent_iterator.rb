@@ -112,11 +112,22 @@ module Ruote::Exp
   #
   # Read more at the 'add_branches' expression description.
   #
+  #
+  # == 'citerator'
+  #
+  # 'citerator' is an alias for 'concurrent_iterator'.
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     citerator :on_val => 'alice, bob, charly', :to_var => 'v' do
+  #       participant '${v:v}'
+  #     end
+  #   end
+  #
   class ConcurrentIteratorExpression < ConcurrenceExpression
 
     include IteratorMixin
 
-    names :concurrent_iterator
+    names :concurrent_iterator, :citerator
 
     ADD_BRANCHES_FIELD = '__add_branches__'
 

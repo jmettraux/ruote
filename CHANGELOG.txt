@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- 'citerator' alias to 'concurrent_iterator'
 - Participant#rtimeout(workitem) (optional)
 - moved Engine#workitem(fei) to ReceiverMixin
 - storage#delete_schedule ignoring nil schedule_id

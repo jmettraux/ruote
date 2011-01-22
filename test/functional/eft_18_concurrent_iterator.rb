@@ -33,7 +33,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     pdef = Ruote.process_definition :name => 'test' do
       sequence do
-        concurrent_iterator :on_val => '', :to_var => 'v' do
+        citerator :on_val => '', :to_var => 'v' do
           echo 'x'
         end
         echo 'done.'
