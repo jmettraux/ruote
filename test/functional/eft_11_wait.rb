@@ -35,10 +35,9 @@ class EftWaitTest < Test::Unit::TestCase
     deltas = [ 2, 3 ]
     deltas << 4 if @engine.storage.class.name.match(/^Ruote::Couch::/)
 
-    assert_includes deltas, d
-    #assert(
-    #  deltas.include?(d),
-    #  "delta is #{d}, which isn't in #{delta.inspect}")
+    assert(
+      deltas.include?(d),
+      "delta is #{d}, which isn't in #{deltas.inspect}")
   end
 
   def test_cancel_wait
