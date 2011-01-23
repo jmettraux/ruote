@@ -151,7 +151,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
       # do nothing
     end
     def rtimeout (workitem)
-      workitem.fields['timeout'] * 2
+      "#{workitem.fields['timeout'] * 2}s"
     end
   end
 
@@ -173,7 +173,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
     schedules = @engine.storage.get_many('schedules')
 
     assert_equal 1, schedules.size
-    assert_equal '120', schedules.first['original']
+    assert_equal '120s', schedules.first['original']
   end
 end
 
