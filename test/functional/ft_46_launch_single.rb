@@ -58,6 +58,8 @@ class FtLaunchSingleTest < Test::Unit::TestCase
       echo 'over.'
     end
 
+    #noisy
+
     wfid0 = @engine.launch_single(pdef)
 
     sleep 0.700
@@ -65,13 +67,14 @@ class FtLaunchSingleTest < Test::Unit::TestCase
 
     @engine.cancel(wfid0)
 
-    sleep 0.700
+    @engine.wait_for(6)
     assert_nil @engine.process(wfid0)
 
-    sleep 1.400
+    sleep 0.700
     wfid1 = @engine.launch_single(pdef)
 
-    sleep 0.700
+    @engine.wait_for(2)
+
     assert_not_equal wfid0, wfid1
     assert_nil @engine.process(wfid0)
     assert_not_nil @engine.process(wfid1)
