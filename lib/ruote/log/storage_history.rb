@@ -50,6 +50,21 @@ module Ruote
       end
     end
 
+    # Returns all the wfids for which there are history items (msgs) stored.
+    #
+    def wfids
+
+      wfids = @context.storage.ids('history').collect { |id|
+        id.split('!').last
+      }.uniq.sort
+
+      wfids.delete('no_wfid')
+
+      wfids
+    end
+
+    # Returns all the msgs for a given wfid (process instance id).
+    #
     def by_process (wfid)
 
       @context.storage.get_many('history', wfid)

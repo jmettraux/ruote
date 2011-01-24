@@ -87,5 +87,28 @@ class FtStorageHistoryTest < Test::Unit::TestCase
         Time.parse('2010-01-08 00:00:00 UTC') ],
       @engine.context.history.range)
   end
+
+  def test_engine_dot_history
+
+    @engine.add_service(
+      'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
+
+    assert_equal Ruote::StorageHistory, @engine.history.class
+  end
+
+  def test_wfids
+
+    @engine.add_service(
+      'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
+
+    @engine.register_participant 'alpha', Ruote::NullParticipant
+
+    3.times do
+      @engine.launch(Ruote.define { alpha })
+      @engine.wait_for(:alpha)
+    end
+
+    assert_equal 3, @engine.history.wfids.size
+  end
 end
 

@@ -454,5 +454,6 @@
     the default history would be storage based but with LRU turned on
     for the HashStorage one...
     like WaitLogger only remembers 147 msgs...
-[ ] StorageHistory : add a method to list all wfids (for by_wfid)
+[o] StorageHistory : add a method to list all wfids (for by_wfid)
+[ ] DefaultHistory : add a method to list all wfids (for by_wfid)
 
