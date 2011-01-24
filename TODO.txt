@@ -279,6 +279,13 @@
 [o] ft_42 : maybe require storage to output ids already sorted
 [o] Participant#rtimeout(workitem=nil)
 [o] alias concurrent-iterator to citerator
+[o] like we have a default WaitLogger, why not have a default HistoryLogger ?
+    so that context.history always returns something...
+    the default history would be storage based but with LRU turned on
+    for the HashStorage one...
+    like WaitLogger only remembers 147 msgs...
+[o] StorageHistory : add a method to list all wfids (for by_wfid)
+[o] DefaultHistory : add a method to list all wfids (for by_wfid)
 
 [ ] exp : exp (restricted form of eval ?) (is it apply ?)
 [ ] exp : filter
@@ -448,12 +455,4 @@
 
 [ ] ruote cheatsheet
 [ ] ruote slides
-
-[o] like we have a default WaitLogger, why not have a default HistoryLogger ?
-    so that context.history always returns something...
-    the default history would be storage based but with LRU turned on
-    for the HashStorage one...
-    like WaitLogger only remembers 147 msgs...
-[o] StorageHistory : add a method to list all wfids (for by_wfid)
-[ ] DefaultHistory : add a method to list all wfids (for by_wfid)
 

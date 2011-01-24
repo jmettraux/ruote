@@ -27,39 +27,39 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
       alpha
     end
 
-    #noisy
-
     wfids = 2.times.collect { @engine.launch(pdef) }
 
     @engine.wait_for(:alpha)
     @engine.wait_for(:alpha)
+    sleep 0.700
 
     wfids
   end
 
   def test_all
 
+    #noisy
+
     wfids = launch_processes
 
-    assert_equal 7, @engine.history.all.size
-      # 1 + 3 + 3 (participant registration counts for 1)
+    assert_equal 9, @engine.history.all.size
   end
 
   def test_by_wfid
 
     wfids = launch_processes
 
-    assert_equal 3, @engine.history.by_wfid(wfids[0]).size
+    assert_equal 4, @engine.history.by_wfid(wfids[0]).size
     assert_not_nil @engine.history.by_wfid(wfids[0]).first['seen_at']
 
-    assert_equal 3, @engine.history.by_wfid(wfids[1]).size
+    assert_equal 4, @engine.history.by_wfid(wfids[1]).size
   end
 
   def test_clear!
 
     launch_processes
 
-    assert_equal 7, @engine.history.all.size
+    assert_equal 9, @engine.history.all.size
 
     @engine.history.clear!
 
@@ -94,9 +94,16 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
     launch_processes(false)
 
-    assert_equal 16, @engine.history.all.size
+    assert_equal 18, @engine.history.all.size
 
     assert_equal 9, @engine.history.by_date(Time.now).size
+  end
+
+  def test_wfids
+
+    wfids = launch_processes
+
+    assert_equal wfids.sort, @engine.history.wfids
   end
 end
 

@@ -51,13 +51,22 @@ module Ruote
       @history
     end
 
+    # Returns all the wfids for which some piece of history is kept.
+    #
+    def wfids
+
+      @history.collect { |msg|
+        msg['wfid'] || (msg['fei']['wfid'] rescue nil)
+      }.compact.uniq.sort
+    end
+
     # Returns all the msgs (events) for a given wfid. (Well, all the msgs
     # that are kept.
     #
     def by_process (wfid)
 
       @history.select { |msg|
-        msg['wfid'] == wfid or (msg['fei']['wfid'] rescue nil) == wfid
+        (msg['wfid'] || (msg['fei']['wfid'] rescue nil)) == wfid
       }
     end
     alias by_wfid by_process
