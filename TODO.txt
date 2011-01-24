@@ -363,8 +363,6 @@
 [ ] engine.on_cancel = 'participant_name' // 'subprocess_name'
     bof
 
-[ ] issue with ruote-kit and inpa participants...
-
 [ ] participant :ref => '${f:nada}', :or => 'xyz'
     (look at OpenWFE manual, this feature already existed in there)
     http://www.openwfe.org/manual/ch06s02.html#expression_participant
@@ -432,6 +430,7 @@
 [ ] console for InformatiQ / console or dashboard or tool ?
 [ ] pooltool.ru : there are already storage copy methods
 
+[ ] issue with ruote-kit and inpa participants...
 [ ] BlockParticipant : proc.to_source thanks to sourcify
 
 [ ] doc : enhance doc on conditional (and, empty, null, ...)
@@ -455,4 +454,10 @@
 
 [ ] ruote cheatsheet
 [ ] ruote slides
+
+[ ] process supervise other process, listen...
+    launch a process with a designed 'supervisor' ?
+
+[ ] ci : ruote-amqp
+[ ] ci : jruby
 
