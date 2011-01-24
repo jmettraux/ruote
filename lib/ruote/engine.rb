@@ -97,6 +97,13 @@ module Ruote
       @context.worker
     end
 
+    # A shortcut for engine.context.history
+    #
+    def history
+
+      @context.history
+    end
+
     # Quick note : the implementation of launch is found in the module
     # Ruote::ReceiverMixin that the engine includes.
     #

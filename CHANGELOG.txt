@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- Engine#history -> DefaultHistory (keeping the last 1000 msgs)
 - 'citerator' alias to 'concurrent_iterator'
 - Participant#rtimeout(workitem) (optional)
 - moved Engine#workitem(fei) to ReceiverMixin

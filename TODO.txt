@@ -449,7 +449,7 @@
 [ ] ruote cheatsheet
 [ ] ruote slides
 
-[ ] like we have a default WaitLogger, why not have a default HistoryLogger ?
+[o] like we have a default WaitLogger, why not have a default HistoryLogger ?
     so that context.history always returns something...
     the default history would be storage based but with LRU turned on
     for the HashStorage one...

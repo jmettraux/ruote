@@ -185,7 +185,9 @@ module Ruote
         's_error_handler' => [
           'ruote/svc/error_handler', 'Ruote::ErrorHandler' ],
         's_logger' => [
-          'ruote/log/wait_logger', 'Ruote::WaitLogger' ] }
+          'ruote/log/wait_logger', 'Ruote::WaitLogger' ],
+        's_history' => [
+          'ruote/log/default_history', 'Ruote::DefaultHistory' ] }
     end
   end
 end

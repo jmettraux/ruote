@@ -26,77 +26,68 @@
 module Ruote
 
   #
-  # Logs the ruote engine history to the storage underlying the worker.
+  # A default history implementation, only keeps the most recent stuff.
   #
-  # Warning : don't use this history implementation when the storage is
-  # HashStorage. It will fill up your memory... Keeping history for a
-  # transient ruote is a bit overkill (IMHO).
-  #
-  class StorageHistory
+  class DefaultHistory
 
     DATE_REGEX = /!(\d{4}-\d{2}-\d{2})!/
+    DEFAULT_MAX_SIZE = 1000
 
     def initialize (context, options={})
 
       @context = context
       @options = options
 
-      if @context.worker
+      @history = []
 
+      @context.worker.subscribe(:all, self) if @context.worker
         # only care about logging if there is a worker present
-
-        @context.storage.add_type('history')
-        @context.worker.subscribe(:all, self)
-      end
     end
 
+    # Returns all the msgs (events), most recent one is last.
+    #
+    def all
+
+      @history
+    end
+
+    # Returns all the msgs (events) for a given wfid. (Well, all the msgs
+    # that are kept.
+    #
     def by_process (wfid)
 
-      @context.storage.get_many('history', wfid)
+      @history.select { |msg|
+        msg['wfid'] == wfid or (msg['fei']['wfid'] rescue nil) == wfid
+      }
     end
-    alias :by_wfid :by_process
+    alias by_wfid by_process
 
     # Returns an array [ most recent date, oldest date ] (Time instances).
     #
     def range
 
-      ids = @context.storage.ids('history')
+      now = Time.now
 
-      #p ids.sort == ids
-
-      fm = DATE_REGEX.match(ids.first)[1]
-      lm = DATE_REGEX.match(ids.last)[1]
-
-      first = Time.parse("#{fm} 00:00:00 UTC")
-      last = Time.parse("#{lm} 00:00:00 UTC") + 24 * 3600
-
-      [ first, last ]
+      [ (Time.parse(@history.first['seen_at']) rescue now),
+        (Time.parse(@history.last['seen_at']) rescue now) ]
     end
 
-    # Returns all the history events for a given day.
-    #
-    # Takes as argument whatever is a datetime when turned to a string and
-    # parsed.
-    #
     def by_date (date)
 
-      date = Time.parse(date.to_s).strftime('%Y-%m-%d')
+      d = Time.parse(date.to_s).strftime('%Y-%m-%d')
 
-      @context.storage.get_many('history', /!#{date}!/)
+      @history.select { |m| Time.parse(m['seen_at']).strftime('%Y-%m-%d') == d }
     end
 
     #def history_to_tree (wfid)
     #  # (NOTE why not ?)
     #end
 
-    # The history system doesn't implement purge! so that when purge! is called
-    # on the engine, the history is not cleared.
-    #
-    # Call this *dangerous* clear! method to clean out any history file.
+    # Forgets all the stored msgs.
     #
     def clear!
 
-      @context.storage.purge_type!('history')
+      @history.clear
     end
 
     # This is the method called by the workqueue. Incoming engine events
@@ -104,25 +95,14 @@ module Ruote
     #
     def notify (msg)
 
-      msg = msg.dup
-        # a shallow copy is sufficient
+      msg = Ruote.fulldup(msg)
+      msg['seen_at'] = Ruote.now_to_utc_s
 
-      si = if fei = msg['fei']
-        Ruote::FlowExpressionId.to_storage_id(fei)
-      else
-        msg['wfid'] || 'no_wfid'
+      @history << msg
+
+      while (@history.size > (@options[:max_size] || DEFAULT_MAX_SIZE)) do
+        @history.shift
       end
-
-      _id = msg['_id']
-      msg['original_id'] = _id
-      msg['_id'] = "#{_id}!#{si}"
-
-      msg['type'] = 'history'
-      msg['original_put_at'] = msg['put_at']
-
-      msg.delete('_rev')
-
-      @context.storage.put(msg)
     end
   end
 end
