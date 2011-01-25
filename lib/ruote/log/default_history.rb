@@ -83,7 +83,7 @@ module Ruote
 
     def by_date (date)
 
-      d = Time.parse(date.to_s).strftime('%Y-%m-%d')
+      d = Time.parse(date.to_s).utc.strftime('%Y-%m-%d')
 
       @history.select { |m| Time.parse(m['seen_at']).strftime('%Y-%m-%d') == d }
     end
