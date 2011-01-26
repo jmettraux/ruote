@@ -13,22 +13,36 @@ require 'ruote/storage/composite_storage'
 
 class UtCompositeStorageTest < Test::Unit::TestCase
 
+  def setup
+
+    @msgs = Ruote::HashStorage.new({})
+    @default = Ruote::HashStorage.new({})
+    @cs = Ruote::CompositeStorage.new(@default, 'msgs' => @msgs)
+  end
+
   def test_initial
 
-    msgs = Ruote::HashStorage.new({})
-    default = Ruote::HashStorage.new({})
+    @cs.put('action' => 'terminate', 'type' => 'msgs', '_id' => 'xxx')
+    @cs.put_msg('terminate', 'type' => 'msgs')
+    @cs.put_schedule('at', {}, Time.now + 10, 'action' => 'reply')
 
-    cs = Ruote::CompositeStorage.new(default, 'msgs' => msgs)
+    assert_equal 0, @default.h['msgs'].size
+    assert_equal 1, @default.h['schedules'].size
+    assert_equal 2, @cs.get_msgs.size
+    assert_equal 2, @msgs.get_msgs.size
+    assert_equal 0, @msgs.h['schedules'].size
+  end
 
-    cs.put('action' => 'terminate', 'type' => 'msgs', '_id' => 'xxx')
-    cs.put_msg('terminate', 'type' => 'msgs')
-    cs.put_schedule('at', {}, Time.now + 10, 'action' => 'reply')
+  def test_delete
 
-    assert_equal 0, default.h['msgs'].size
-    assert_equal 1, default.h['schedules'].size
-    assert_equal 2, cs.get_msgs.size
-    assert_equal 2, msgs.get_msgs.size
-    assert_equal 0, msgs.h['schedules'].size
+    @cs.put('action' => 'terminate', 'type' => 'msgs', '_id' => 'xxx')
+
+    msg = @cs.get_many('msgs').first
+
+    r = @cs.delete(msg)
+
+    assert_nil r
+    assert_equal 0, @default.h['msgs'].size
   end
 end
 

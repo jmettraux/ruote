@@ -67,7 +67,7 @@ module Ruote
 
     def delete (doc)
 
-      storage(type).delete(doc)
+      storage(doc['type']).delete(doc)
     end
 
     def get_many (type, key=nil, opts={})

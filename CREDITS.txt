@@ -53,7 +53,7 @@ Hery - Engine#register and block participants
 Gonzalo Suarez - many many help
 Rebo - 'set' issue with Sinatra
 Copper Hill - test coverage enhancements
-Claudio Petasecca Donati - 'lose' expression and attribute reminder
+Claudio Petasecca Donati - many help
 Daniel Neighman "hassox" - :on_timeout => "error" and many issue reports
 Eric Platon - engine.launch_single idea
 Marc Lee - storage.clear consistency
