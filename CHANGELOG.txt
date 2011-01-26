@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- ParticipantList#register bug fix. Thanks 'sandbox'
 - StorageHistory#wfids and DefaultHistory#wfids
 - Engine#history -> DefaultHistory (keeping the last 1000 msgs)
 - 'citerator' alias to 'concurrent_iterator'

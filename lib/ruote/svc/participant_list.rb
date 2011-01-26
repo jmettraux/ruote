@@ -82,7 +82,7 @@ module Ruote
         # if put returns something it means the put failed, have to redo the
         # work...
         #
-        return register(name, participant, options, block, r)
+        return register(name, participant, options, block)
       end
 
       if entry.last.is_a?(String)
