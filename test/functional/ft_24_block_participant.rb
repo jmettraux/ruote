@@ -107,5 +107,15 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     FileUtils.rm(fn) rescue nil
   end
+
+  def test_raise_security_error_upon_registering_rogue_block_participant
+
+    assert_raise Rufus::SecurityError do
+
+      @engine.register 'rogue' do |workitem|
+        workitem.content = File.read('test/nada.txt')
+      end
+    end
+  end
 end
 

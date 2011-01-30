@@ -47,15 +47,19 @@ module Ruote
     #
     def register (name, participant, options, block)
 
+      klass = (participant || Ruote::BlockParticipant).to_s
+
       options = options.inject({}) { |h, (k, v)|
         h[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
         h
       }
-      options['block'] = block.to_source if block
+
+      if block
+        options['block'] = block.to_source
+        @context.treechecker.block_check(options['block'])
+      end
 
       key = (name.is_a?(Regexp) ? name : Regexp.new("^#{name}$")).source
-
-      klass = (participant || Ruote::BlockParticipant).to_s
 
       entry = [ key, [ klass, options ] ]
 
