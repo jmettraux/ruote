@@ -410,5 +410,15 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       %w[ Ruote::StorageParticipant ],
       @engine.participant_list.collect { |pe| pe.classname })
   end
+
+  def test_argument_error_on_instantiated_participant
+
+    assert_raise ArgumentError do
+      @engine.register 'alpha', Ruote::StorageParticipant.new
+    end
+    assert_raise ArgumentError do
+      @engine.register 'alpha', Ruote::StorageParticipant.new, 'hello' => 'kitty'
+    end
+  end
 end
 

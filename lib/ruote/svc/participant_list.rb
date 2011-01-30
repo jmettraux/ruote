@@ -47,6 +47,11 @@ module Ruote
     #
     def register (name, participant, options, block)
 
+      raise(
+        ArgumentError.new(
+          "can only accept strings (classnames) or classes as participant arg")
+      ) unless [ String, Class, NilClass ].include?(participant.class)
+
       klass = (participant || Ruote::BlockParticipant).to_s
 
       options = options.inject({}) { |h, (k, v)|
