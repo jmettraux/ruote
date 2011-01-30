@@ -181,6 +181,8 @@ class FtErrorsTest < Test::Unit::TestCase
       raise "something went wrong" if stash[:count] == 1
     end
 
+    #noisy
+
     wfid = @engine.launch(pdef)
 
     wait_for(wfid)

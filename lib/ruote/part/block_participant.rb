@@ -82,13 +82,13 @@ module Ruote
 
       block = @opts['block']
 
+      @context.treechecker.block_check(block)
+        # raises in case of 'security' violation
+
       #block = eval(block, @context.send(:binding))
         # doesn't work with ruby 1.9.2-p136
-
       block = eval(block, @context.instance_eval { binding })
         # works OK with ruby 1.8.7-249 and 1.9.2-p136
-
-      # TODO : security !!
 
       r = if block.arity == 1
 

@@ -39,7 +39,7 @@ module Ruote
 
       (context['use_ruby_treechecker'] == false) and return
 
-      @checker = Rufus::TreeChecker.new do
+      checker = Rufus::TreeChecker.new do
 
         exclude_fvccall :abort, :exit, :exit!
         exclude_fvccall :system, :fork, :syscall, :trap, :require, :load
@@ -48,13 +48,14 @@ module Ruote
         #exclude_call_to :class
         exclude_fvcall :private, :public, :protected
 
-        #exclude_def               # no method definition
+        #exclude_raise             # no raise or throw
+
+        exclude_def               # no method definition
         exclude_eval              # no eval, module_eval or instance_eval
         exclude_backquotes        # no `rm -fR the/kitchen/sink`
         exclude_alias             # no alias or aliast_method
         exclude_global_vars       # $vars are off limits
         exclude_module_tinkering  # no module opening
-        exclude_raise             # no raise or throw
 
         exclude_rebinding Kernel # no 'k = Kernel'
 
@@ -69,24 +70,59 @@ module Ruote
         exclude_call_to :instance_variable_get, :instance_variable_set
       end
 
-      @cchecker = @checker.clone # and not dup
-      @cchecker.add_rules do
-        at_root do
-          exclude_head [ :block ] # preventing 'a < b; do_sthing_evil()'
-          exclude_head [ :lasgn ] # preventing 'a = 3'
-        end
-      end
+      # the checker used when reading process definitions
 
-      @checker.freeze
-      @cchecker.freeze
-      freeze
+      @def_checker = checker.clone # and not dup
+      @def_checker.add_rules do
+        exclude_raise # no raise or throw
+      end
+      @def_checker.freeze
+
+      # the checker used when dealing with BlockParticipant code
+
+      @blo_checker = checker.clone # and not dup
+      @blo_checker.freeze
+
+      ## the checker used when dealing with conditionals
+      #
+      #@con_checker = checker.clone # and not dup
+      #@con_checker.add_rules do
+      #  exclude_raise # no raise or throw
+      #  at_root do
+      #    exclude_head [ :block ] # preventing 'a < b; do_sthing_evil()'
+      #    exclude_head [ :lasgn ] # preventing 'a = 3'
+      #  end
+      #end
+      #@con_checker.freeze
         #
+        # lib/ruote/exp/condition.rb doesn't use this treechecker
+        # kept (commented out) for 'documentation'
+
+      # the checker used when dealing with code in $(ruby:xxx}
+
+      @dol_checker = checker.clone # and not dup
+      @dol_checker.add_rules do
+        exclude_raise # no raise or throw
+      end
+      @dol_checker.freeze
+
+      freeze
         # preventing further modifications
     end
 
-    def check (ruby_code)
+    def definition_check (ruby_code)
 
-      @checker.check(ruby_code) if @checker
+      @def_checker.check(ruby_code) if @def_checker
+    end
+
+    def block_check (ruby_code)
+
+      @blo_checker.check(ruby_code) if @blo_checker
+    end
+
+    def dollar_check (ruby_code)
+
+      @dol_checker.check(ruby_code) if @dol_checker
     end
   end
 end

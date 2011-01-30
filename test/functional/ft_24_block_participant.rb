@@ -84,5 +84,28 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     assert_match match, @tracer.to_s
   end
+
+  def test_raise_security_error_before_evaluating_rogue_code
+
+    fn = "test/bad.#{Time.now.to_f}.txt"
+
+    @engine.participant_list = [
+      #[ 'alpha', [ 'Ruote::BlockParticipant', { 'block' => 'exit(3)' } ] ]
+      [ 'alpha', [ 'Ruote::BlockParticipant', { 'block' => "proc { File.open(\"#{fn}\", \"wb\") { |f| f.puts(\"bad\") } }" } ] ]
+    ]
+
+    #noisy
+
+    wfid = @engine.launch(Ruote.define { alpha })
+
+    @engine.wait_for(wfid)
+
+    assert_equal false, File.exist?(fn), 'security check not enforced'
+
+    assert_equal 1, @engine.errors(wfid).size
+    assert_match /SecurityError/, @engine.errors(wfid).first.message
+
+    FileUtils.rm(fn) rescue nil
+  end
 end
 

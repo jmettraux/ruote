@@ -13,17 +13,7 @@ require 'ruote/svc/expression_map'
 
 class ConditionTest < Test::Unit::TestCase
 
-  class Conditional
-
-    def treechecker
-      return @tc if @tc
-      @tc = Ruote::TreeChecker.new
-      @tc.context = {}
-      @tc
-    end
-  end
-
-  class FakeExpression < Conditional
+  class FakeExpression
 
     def initialize (h)
       @h = h

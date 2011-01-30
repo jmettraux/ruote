@@ -191,7 +191,7 @@ module Ruote
           "< (http://ruote.rubyforge.org/dollar.html)"
         ) if @fexp.context['ruby_eval_allowed'] != true
 
-        @fexp.context.treechecker.check(ruby_code)
+        @fexp.context.treechecker.dollar_check(ruby_code)
 
         RubyContext.new(self).instance_eval(ruby_code)
       end

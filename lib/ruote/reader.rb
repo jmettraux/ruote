@@ -167,7 +167,7 @@ module Ruote
     #
     def ruby_eval (s)
 
-      @context.treechecker.check(s)
+      @context.treechecker.definition_check(s)
       eval(s)
 
     rescue Exception => e

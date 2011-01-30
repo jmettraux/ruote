@@ -155,6 +155,10 @@ class UtRubyReaderTest < Test::Unit::TestCase
     assert_raise ArgumentError do
       Ruote::Reader.read %{ Ruote.define { at_exit { } } }
     end
+
+    assert_raise ArgumentError do
+      Ruote::Reader.read %{ Ruote.define { def nada; end } }
+    end
   end
 
   def test_attribute_text_regexp
