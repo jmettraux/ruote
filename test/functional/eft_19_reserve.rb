@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class EftReserveTest < Test::Unit::TestCase
@@ -28,7 +28,7 @@ class EftReserveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
 
@@ -74,7 +74,7 @@ class EftReserveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
 
@@ -112,7 +112,7 @@ class EftReserveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
 

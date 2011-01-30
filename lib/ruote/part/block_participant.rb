@@ -67,28 +67,39 @@ module Ruote
     include LocalParticipant
 
     attr_accessor :context
-    attr_accessor :do_not_thread
 
-    def initialize (block, opts)
+    def initialize (opts)
 
       @opts = opts
-      @block = block
-      @do_not_thread = false
+    end
+
+    def do_not_thread
+
+      @opts['do_not_thread']
     end
 
     def consume (workitem)
 
-      r = if @block.arity == 1
+      block = @opts['block']
 
-        @block.call(workitem)
+      #block = eval(block, @context.send(:binding))
+        # doesn't work with ruby 1.9.2-p136
+
+      block = eval(block, @context.instance_eval { binding })
+        # works OK with ruby 1.8.7-249 and 1.9.2-p136
+
+      # TODO : security !!
+
+      r = if block.arity == 1
+
+        block.call(workitem)
       else
 
-        @block.call(
+        block.call(
           workitem, Ruote::Exp::FlowExpression.fetch(@context, workitem.h.fei))
       end
 
       if r != nil && r != workitem
-        #workitem.result = r
         workitem.result = (Rufus::Json.dup(r) rescue nil)
       end
 

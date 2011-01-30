@@ -7,9 +7,6 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
-require 'ruote/part/null_participant'
-
 
 class EftConcurrentIteratorTest < Test::Unit::TestCase
   include FunctionalBase
@@ -146,33 +143,36 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    p1 = @engine.register_participant :participant_1, Ruote::HashParticipant.new
-    p2 = @engine.register_participant :participant_2, Ruote::HashParticipant.new
-    p3 = @engine.register_participant :participant_3, Ruote::HashParticipant.new
+    sto = @engine.register_participant '.+', Ruote::StorageParticipant
+
+    assert_equal 0, sto.size # just to be sure
 
     #noisy
 
     wfid = @engine.launch(pdef)
 
     wait_for(:participant_1)
+    wait_for(:participant_1)
 
-    assert_equal 0, p2.size
-    assert_equal 0, p3.size
+    assert_equal(
+      { 'participant_1' => 2 },
+      sto.per_participant_count)
 
-    p1.reply(p1.first)
+    sto.reply(sto.first)
 
     wait_for(:participant_2)
+    wait_for(1)
 
-    assert_equal 1, p2.size
-    assert_equal 0, p3.size
+    assert_equal(
+      { 'participant_1' => 1, 'participant_2' => 1 },
+      sto.per_participant_count)
 
-    p2.reply(p2.first)
+    sto.reply(sto.per_participant['participant_2'].first)
 
     wait_for(3)
 
-    assert_equal 0, p3.size
-    assert_equal 1, p1.size
-    assert_equal 0, p2.size
+    assert_equal 1, sto.size
+    assert_equal 'participant_1', sto.first.participant_name
   end
 
   def test_passing_non_array_as_thing_to_iterate
@@ -269,10 +269,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       bravo
     end
 
-    mf = nil
-
     @engine.register_participant :bravo do |workitem|
-      mf = workitem.fields
+      stash[:mf] = workitem.fields
       nil
     end
 
@@ -280,7 +278,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     assert_trace(%w[ . . . ], pdef)
 
-    mf = ('0'..'2').to_a.map { |k| mf[k]['f'] }.sort
+    mf = ('0'..'2').to_a.map { |k| @engine.context.stash[:mf][k]['f'] }.sort
     assert_equal %w[ a b c ], mf
   end
 
@@ -293,10 +291,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       bravo
     end
 
-    mf = nil
-
     @engine.register_participant :bravo do |workitem|
-      mf = workitem.fields
+      stash[:mf] = workitem.fields
       nil
     end
 
@@ -306,10 +302,10 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     assert_equal(
       [["a"], ["b"]],
-      mf['stack'].collect { |f| f.values }.sort)
+      @engine.context.stash[:mf]['stack'].collect { |f| f.values }.sort)
     assert_equal(
       {"on"=>"a, b", "to_f"=>"f", "merge_type"=>"stack"},
-      mf['stack_attributes'])
+      @engine.context.stash[:mf]['stack_attributes'])
   end
 
   def test_cancel
@@ -326,8 +322,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    a_count = 0
-    @engine.register_participant(:alpha) { |wi| a_count += 1 }
+    @engine.context.stash[:a_count] = 0
+    @engine.register_participant(:alpha) { |wi| stash[:a_count] += 1 }
     @engine.register_participant(:bravo, Ruote::NullParticipant)
 
     #noisy
@@ -337,7 +333,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     wait_for(2 + n * 5)
     #p "=" * 80
 
-    assert_equal n, a_count
+    assert_equal n, @engine.context.stash[:a_count]
 
     @engine.cancel_process(wfid)
     wait_for(wfid)
@@ -356,12 +352,11 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant 'alpha' do |workitem|
+    @engine.register_participant 'alpha' do |wi|
 
       @tracer << "#{workitem.fields['f']}\n"
 
-      workitem.fields['__add_branches__'] = %w[ a b ] \
-        if workitem.fields['f'] == 2
+      wi.fields['__add_branches__'] = %w[ a b ] if wi.fields['f'] == 2
     end
 
     #noisy
@@ -377,6 +372,10 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
   def register_catchall_participant
 
     @subs = []
+    subs = @subs
+    @engine.context.instance_eval do
+      @subs = subs
+    end
 
     @engine.register_participant '.*' do |workitem|
 

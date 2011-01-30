@@ -18,9 +18,9 @@ class FtPartTemplateTest < Test::Unit::TestCase
     include Ruote::LocalParticipant
     include Ruote::TemplateMixin
 
-    def initialize (opts={}, &block)
+    def initialize (opts)
 
-      @template = opts[:template]
+      @template = opts['template']
     end
 
     def consume (workitem)
@@ -51,7 +51,8 @@ class FtPartTemplateTest < Test::Unit::TestCase
 
     @engine.register_participant(
       :alpha,
-      MyParticipant.new(:template => "0:${v:var0}\n1:${f:field0}"))
+      MyParticipant,
+      :template => "0:${v:var0}\n1:${f:field0}")
 
     assert_trace %w[ 0:v_value 1:f_value done. ], pdef
   end

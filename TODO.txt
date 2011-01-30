@@ -459,5 +459,12 @@
     launch a process with a designed 'supervisor' ?
 
 [ ] ci : ruote-amqp
+[ ] ci : ruote-mongodb
 [ ] ci : jruby
+
+[ ] StorageParticipant#reply : raise if workitem not found ?
+[ ] StorageParticipant#reply : accept fei ?
+
+[ ] eft_18 weak with jruby-1.5.1
+
 

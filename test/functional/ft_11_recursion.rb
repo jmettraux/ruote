@@ -16,16 +16,10 @@ class FtRecursionTest < Test::Unit::TestCase
   class CountingParticipant
     include Ruote::LocalParticipant
 
-    attr_reader :wfids
-
-    def initialize
-
-      @wfids = []
-    end
-
     def consume (workitem)
 
-      @wfids << "#{workitem.fei.wfid}|#{workitem.fei.subid}"
+      @context.stash[:wfids] ||= []
+      @context.stash[:wfids] << "#{workitem.fei.wfid}|#{workitem.fei.subid}"
 
       workitem.fields['count'] ||= 0
       workitem.fields['count'] = workitem.fields['count'] + 1
@@ -45,6 +39,8 @@ class FtRecursionTest < Test::Unit::TestCase
 
   def test_main_recursion
 
+    @engine.context.stash[:wfids] = []
+
     pdef = Ruote.process_definition :name => 'def0' do
       sequence do
         alpha
@@ -52,18 +48,18 @@ class FtRecursionTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, CountingParticipant.new
+    alpha = @engine.register_participant :alpha, CountingParticipant
 
     #noisy
 
     assert_trace(%w[ 1 2 3 4 5 6 ], pdef)
 
-    #p alpha.wfids.uniq
-
-    assert_equal 6, alpha.wfids.uniq.size
+    assert_equal 6, @engine.context.stash[:wfids].uniq.size
   end
 
   def test_sub_recursion
+
+    @engine.context.stash[:wfids] = []
 
     pdef = Ruote.process_definition do
       define 'sub0' do
@@ -75,7 +71,7 @@ class FtRecursionTest < Test::Unit::TestCase
       sub0
     end
 
-    alpha = @engine.register_participant :alpha, CountingParticipant.new
+    alpha = @engine.register_participant :alpha, CountingParticipant
 
     #noisy
 
@@ -83,7 +79,7 @@ class FtRecursionTest < Test::Unit::TestCase
 
     #p alpha.wfids.uniq
 
-    assert_equal 6, alpha.wfids.uniq.size
+    assert_equal 6, @engine.context.stash[:wfids].uniq.size
   end
 
   def test_forgotten_main_recursion
@@ -97,7 +93,7 @@ class FtRecursionTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, CountingParticipant.new
+    alpha = @engine.register_participant :alpha, CountingParticipant
 
     #noisy
 

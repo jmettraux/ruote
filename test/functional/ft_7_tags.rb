@@ -21,7 +21,7 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -60,7 +60,7 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 

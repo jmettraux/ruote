@@ -9,7 +9,7 @@ require File.join(File.dirname(__FILE__), 'base')
 require File.join(File.dirname(__FILE__), 'restart_base')
 
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class RtListenTest < Test::Unit::TestCase
@@ -32,7 +32,7 @@ class RtListenTest < Test::Unit::TestCase
 
     #puts; noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
 

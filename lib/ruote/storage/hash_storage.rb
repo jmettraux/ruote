@@ -111,16 +111,11 @@ module Ruote
 
         doc['_rev'] ||= 0
 
-        if prev['_rev'] == drev
+        return prev if prev['_rev'] != drev
 
-          @h[doc['type']].delete(doc['_id'])
+        @h[doc['type']].delete(doc['_id'])
 
-          nil
-
-        else
-
-          prev
-        end
+        nil # success
       end
     end
 

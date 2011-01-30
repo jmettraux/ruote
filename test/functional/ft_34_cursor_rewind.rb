@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 #
 # testing forced rewinding
@@ -25,9 +25,9 @@ class FtCursorRewindTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
-    charly = @engine.register_participant :charly, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    bravo = @engine.register_participant :bravo, Ruote::StorageParticipant
+    charly = @engine.register_participant :charly, Ruote::StorageParticipant
 
     #noisy
 
@@ -64,9 +64,9 @@ class FtCursorRewindTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
-    charly = @engine.register_participant :charly, Ruote::HashParticipant.new
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @engine.register_participant :bravo, Ruote::StorageParticipant
+    sto = @engine.register_participant :charly, Ruote::StorageParticipant
 
     #noisy
 
@@ -76,13 +76,13 @@ class FtCursorRewindTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
-    alpha.reply(alpha.first)
+    sto.reply(sto.first)
     wait_for(:bravo)
 
     #
     # rewinding...
 
-    wi = bravo.first
+    wi = sto.first
 
     exp = @engine.process(wfid).expressions.find { |e| e.name == 'cursor' }
     wi.h['fei'] = exp.h.fei

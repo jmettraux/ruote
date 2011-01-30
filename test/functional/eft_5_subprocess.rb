@@ -96,17 +96,15 @@ class EftSubprocessTest < Test::Unit::TestCase
       end
     end
 
-    tree = nil
-
     @engine.register_participant :alpha do |workitem, fexp|
-      tree = fexp.lookup_variable('tree')
+      stash[:tree] = fexp.lookup_variable('tree')
     end
 
     #noisy
 
     assert_trace '', pdef
 
-    assert_equal ["noop", {}, []], tree
+    assert_equal ["noop", {}, []], stash[:tree]
   end
 
   def test_subprocess_uri

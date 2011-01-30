@@ -169,16 +169,14 @@ class EftCursorTest < Test::Unit::TestCase
       end
     end
 
-    count = 0
-      # closures ftw
-
     @engine.register_participant :author do |workitem|
       @tracer << "a\n"
-      count = count + 1
+      stash[:count] ||= 0
+      stash[:count] += 1
     end
     @engine.register_participant :reviewer do |workitem|
       @tracer << "r\n"
-      workitem.fields['not_ok'] = (count < 3)
+      workitem.fields['not_ok'] = (stash[:count] < 3)
     end
     @engine.register_participant :publisher do |workitem|
       @tracer << "p\n"
@@ -228,7 +226,7 @@ class EftCursorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::NoOpParticipant.new
+    @engine.register_participant :alpha, Ruote::NoOpParticipant
 
     #noisy
 

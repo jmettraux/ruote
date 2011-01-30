@@ -171,12 +171,12 @@ class EftListenTest < Test::Unit::TestCase
 
     #noisy
 
-    count = 0
+    stash[:count] = 0
 
     @engine.register_participant :alpha do |wi|
       @tracer << "alpha\n"
-      wi.fields['who'] = 'toto' if count > 0
-      count = count + 1
+      wi.fields['who'] = 'toto' if stash[:count] > 0
+      stash[:count] += 1
     end
 
     wfid = @engine.launch(pdef)

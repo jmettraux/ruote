@@ -34,8 +34,9 @@ class EftLoopTest < Test::Unit::TestCase
       @tracer << "b\n"
       workitem.fields['count'] += 1
 
-      workitem.fields['__command__'] = [ 'break', nil ] \
-        if workitem.fields['count'] > 5
+      if workitem.fields['count'] > 5
+        workitem.fields['__command__'] = [ 'break', nil ]
+      end
     end
 
     assert_trace(%w[ a b a b a b ], pdef)
@@ -57,8 +58,9 @@ class EftLoopTest < Test::Unit::TestCase
       (workitem.fields['count'] ||= 0)
       workitem.fields['count'] += 1
 
-      workitem.fields['__command__'] = [ 'break', nil ] \
-        if workitem.fields['count'] > 5
+      if workitem.fields['count'] > 5
+        workitem.fields['__command__'] = [ 'break', nil ]
+      end
     end
 
     assert_trace(%w[ a a a a a a ], pdef)

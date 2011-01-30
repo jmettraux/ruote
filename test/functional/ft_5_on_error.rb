@@ -42,10 +42,10 @@ class FtOnErrorTest < Test::Unit::TestCase
       participant :mark_finished
     end
 
-    @marks = []
+    @engine.context.stash[:marks] = []
 
     @engine.register_participant 'mark\_.+' do |workitem|
-      @marks << workitem.participant_name
+      stash[:marks] << workitem.participant_name
     end
 
     #noisy
@@ -54,7 +54,9 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    assert_equal %w[ mark_started mark_failed mark_finished ], @marks
+    assert_equal(
+      %w[ mark_started mark_failed mark_finished ],
+      @engine.context.stash[:marks])
   end
 
   def test_on_error_unknown_participant_name_2
@@ -65,10 +67,10 @@ class FtOnErrorTest < Test::Unit::TestCase
       participant :mark_finished
     end
 
-    @marks = []
+    @engine.context.stash[:marks] = []
 
     @engine.register_participant 'mark\_.+' do |workitem|
-      @marks << workitem.participant_name
+      stash[:marks] << workitem.participant_name
     end
 
     #noisy
@@ -77,7 +79,9 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    assert_equal %w[ mark_started mark_failed mark_finished ], @marks
+    assert_equal(
+      %w[ mark_started mark_failed mark_finished ],
+      @engine.context.stash[:marks])
   end
 
   def test_on_error_neutralization
@@ -250,16 +254,17 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    a_count = 0
-    e_count = 0
-    @engine.register_participant(:alpha) { |wi| a_count += 1 }
-    @engine.register_participant(:emil) { |wi| e_count += 1 }
+    @engine.context.stash[:a_count] = 0
+    @engine.context.stash[:e_count] = 0
+
+    @engine.register_participant(:alpha) { |wi| stash[:a_count] += 1 }
+    @engine.register_participant(:emil) { |wi| stash[:e_count] += 1 }
 
     #noisy
 
     assert_trace 'done.', pdef
-    assert_equal 1, a_count
-    assert_equal 1, e_count
+    assert_equal 1, @engine.context.stash[:a_count]
+    assert_equal 1, @engine.context.stash[:e_count]
   end
 
   def test_participant_on_error
@@ -271,14 +276,12 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    workitem = nil
-
     @engine.register_participant :troublemaker do |wi|
       wi.fields['seen'] = true
       raise 'Beijing, we have a problem !'
     end
     @engine.register_participant :troublespotter do |wi|
-      workitem = wi
+      stash[:workitem] = wi
       @tracer << 'err...'
     end
 
@@ -291,12 +294,14 @@ class FtOnErrorTest < Test::Unit::TestCase
     #puts er.message
     #puts er.trace
 
+    wi = @engine.context.stash[:workitem]
+
     assert_equal 'err...', @tracer.to_s
-    assert_equal 5, workitem.error.size
-    assert_equal 'RuntimeError', workitem.error['class']
-    assert_equal 'Beijing, we have a problem !', workitem.error['message']
-    assert_equal Array, workitem.error['trace'].class
-    assert_equal true, workitem.fields['seen']
+    assert_equal 5, wi.error.size
+    assert_equal 'RuntimeError', wi.error['class']
+    assert_equal 'Beijing, we have a problem !', wi.error['message']
+    assert_equal Array, wi.error['trace'].class
+    assert_equal true, wi.fields['seen']
   end
 
   class Murphy

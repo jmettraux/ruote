@@ -33,7 +33,13 @@ module FunctionalBase
 
     @tracer = Tracer.new
 
+    tracer = @tracer
+    @engine.context.instance_eval do
+      @tracer = tracer
+    end
+
     @engine.add_service('tracer', @tracer)
+    @engine.add_service('stash', {})
 
     noisy if ARGV.include?('-N')
 
@@ -45,6 +51,11 @@ module FunctionalBase
     @engine.shutdown
     @engine.context.storage.purge!
     @engine.context.storage.close if @engine.context.storage.respond_to?(:close)
+  end
+
+  def stash
+
+    @engine.context.stash
   end
 
   def assert_log_count (count, &block)

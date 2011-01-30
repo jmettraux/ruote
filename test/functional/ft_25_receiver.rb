@@ -24,17 +24,15 @@ class FtReceiverTest < Test::Unit::TestCase
       end
     end
 
-    @alpha = @engine.register_participant 'alpha', MyParticipant.new
+    @engine.register_participant 'alpha', MyParticipant
   end
 
   class MyParticipant
     include Ruote::LocalParticipant
 
-    attr_accessor :wi
-
     def consume (workitem)
 
-      @wi = workitem
+      @context.stash[:wi] = workitem
 
       # no reply to the engine
     end
@@ -87,13 +85,13 @@ class FtReceiverTest < Test::Unit::TestCase
     wfid = @engine.launch(@pdef)
 
     wait_for(:alpha)
-    while @alpha.wi.nil? do
+    while @engine.context.stash[:wi].nil? do
       Thread.pass
     end
 
     assert_equal 3, @engine.process(wfid).expressions.size
 
-    receiver.receive(@alpha.wi)
+    receiver.receive(@engine.context.stash[:wi])
 
     wait_for(wfid)
 
@@ -109,7 +107,7 @@ class FtReceiverTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    @engine.receive(@alpha.wi)
+    @engine.receive(@engine.context.stash[:wi])
 
     wait_for(wfid)
 
@@ -120,11 +118,9 @@ class FtReceiverTest < Test::Unit::TestCase
   end
 
   class MyOtherParticipant
-    def initialize (receiver)
-      @receiver = receiver
-    end
+    include Ruote::LocalParticipant
     def consume (workitem)
-      @receiver.pass(workitem.to_h)
+      @context.receiver.pass(workitem.to_h)
     end
   end
   class MyOtherReceiver < Ruote::Receiver
@@ -145,9 +141,13 @@ class FtReceiverTest < Test::Unit::TestCase
 
   def test_receiver_triggered_dispatch_error
 
-    receiver = MyOtherReceiver.new(@engine)
+    class << @engine.context
+      def receiver
+        @rcv ||= MyOtherReceiver.new(engine)
+      end
+    end
 
-    @engine.register_participant :alpha, MyOtherParticipant.new(receiver)
+    @engine.register_participant :alpha, MyOtherParticipant
 
     pdef = Ruote.process_definition do
       alpha

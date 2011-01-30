@@ -167,8 +167,7 @@ module Ruote::Exp
         'fei' => h.fei,
         'participant_name' => h.participant_name,
         'participant' => h.participant,
-        'workitem' => h.applied_workitem,
-        'for_engine_worker?' => (participant_info.class != Array))
+        'workitem' => h.applied_workitem)
     end
 
     def cancel (flavour)

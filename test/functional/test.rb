@@ -9,11 +9,9 @@ def l (t)
 
   if ARGV.include?('--split')
 
-    _v = ARGV.include?('-v') ? ' -v' : ' '
-
     puts
     puts "=== #{t} :"
-    puts `ruby#{_v} #{t} #{ARGV.join(' ')}`
+    puts `ruby -I. #{t} #{ARGV.join(' ')}`
 
     es = $?.exitstatus
     es = es.nil? ? 66 : es.to_s.to_i

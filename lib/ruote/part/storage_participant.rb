@@ -119,6 +119,9 @@ module Ruote
 
     # Removes the workitem from the in-memory hash and replies to the engine.
     #
+    # TODO : should it raise if the workitem can't be found ?
+    # TODO : should it accept just the fei ?
+    #
     def reply (workitem)
 
       # TODO: change method name (receiver mess cleanup)
@@ -285,6 +288,23 @@ module Ruote
       end
 
       true
+    end
+
+    # Mostly a test method. Returns a Hash were keys are participant names
+    # and values are lists of workitems.
+    #
+    def per_participant
+
+      inject({}) { |h, wi| (h[wi.participant_name] ||= []) << wi; h }
+    end
+
+    # Mostly a test method. Returns a Hash were keys are participant names
+    # and values are integers, the count of workitems for a given participant
+    # name.
+    #
+    def per_participant_count
+
+      per_participant.inject({}) { |h, (k, v)| h[k] = v.size; h }
     end
 
     protected

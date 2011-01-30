@@ -7,10 +7,7 @@
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
-require 'ruote/engine'
-require 'ruote/worker'
-require 'ruote/storage/hash_storage'
-require 'ruote/part/hash_participant'
+require 'ruote'
 
 
 class UtWaitLoggerTest < Test::Unit::TestCase
@@ -28,7 +25,7 @@ class UtWaitLoggerTest < Test::Unit::TestCase
 
     #engine.context.logger.noisy = true
 
-    alpha = engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = engine.register_participant :alpha, Ruote::StorageParticipant
 
     engine.launch(pdef)
     msg = engine.wait_for(:alpha)

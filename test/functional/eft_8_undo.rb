@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class EftUndoTest < Test::Unit::TestCase
@@ -23,7 +23,7 @@ class EftUndoTest < Test::Unit::TestCase
       echo 'over'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -47,7 +47,7 @@ class EftUndoTest < Test::Unit::TestCase
       echo 'over'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 

@@ -17,10 +17,8 @@ class FtLaunchitemTest < Test::Unit::TestCase
       alpha
     end
 
-    fields = nil
-
     @engine.register_participant :alpha do |workitem|
-      fields = workitem.fields
+      stash[:fields] = workitem.fields
       @tracer << 'a'
       nil
     end
@@ -32,8 +30,14 @@ class FtLaunchitemTest < Test::Unit::TestCase
 
     assert_equal('a', @tracer.to_s)
 
-    assert_not_nil(fields.delete('dispatched_at'))
-    assert_equal({"a"=>0, "b"=>1, "params"=>{"ref"=>"alpha"}}, fields)
+    @engine.context.stash[:fields].delete('__result__')
+
+    assert_not_nil(
+      @engine.context.stash[:fields].delete('dispatched_at'))
+
+    assert_equal(
+      {"a"=>0, "b"=>1, "params"=>{"ref"=>"alpha"}},
+      @engine.context.stash[:fields])
   end
 end
 

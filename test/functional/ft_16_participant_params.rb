@@ -7,8 +7,6 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
-
 
 class FtParticipantParamsTest < Test::Unit::TestCase
   include FunctionalBase
@@ -23,7 +21,7 @@ class FtParticipantParamsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 

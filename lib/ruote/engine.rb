@@ -521,14 +521,18 @@ module Ruote
     # containing the participant implementation. 'require' will load and eval
     # the ruby code only once, 'load' each time.
     #
-    def register_participant (regex, participant=nil, opts={}, &block)
+    def register_participant (regex, participant=nil, opts=nil, &block)
+
+      if participant.is_a?(Hash)
+        opts = participant
+        participant = nil
+      end
+
+      opts ||= {}
 
       pa = @context.plist.register(regex, participant, opts, block)
 
-      @context.storage.put_msg(
-        'participant_registered',
-        'regex' => regex.to_s,
-        'engine_worker_only' => (pa != nil))
+      @context.storage.put_msg('participant_registered', 'regex' => regex.to_s)
 
       pa
     end

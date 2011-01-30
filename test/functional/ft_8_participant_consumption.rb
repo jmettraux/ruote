@@ -74,20 +74,23 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
 
   def test_dispatch_time
 
-    wis = []
+    @engine.context.stash[:wis] = []
 
     pdef = Ruote.process_definition { alpha; alpha }
 
     @engine.register_participant 'alpha' do |workitem|
-      wis << workitem.to_h.dup
+      stash[:wis] << workitem.to_h.dup
     end
 
     assert_trace('', pdef)
 
     assert_equal(
-      String, wis.first['fields']['dispatched_at'].class)
+      String,
+      @engine.context.stash[:wis].first['fields']['dispatched_at'].class)
+
     assert_not_equal(
-      wis.first['fields']['dispathed_at'], wis.last['fields']['dispatched_at'])
+      @engine.context.stash[:wis].first['fields']['dispathed_at'],
+      @engine.context.stash[:wis].last['fields']['dispatched_at'])
   end
 end
 

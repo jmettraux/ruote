@@ -23,6 +23,7 @@
 #++
 
 
+require 'sourcify'
 require 'ruote/part/block_participant'
 
 
@@ -37,12 +38,9 @@ module Ruote
   #
   class ParticipantList
 
-    attr_reader :instantiated_participants
-
     def initialize (context)
 
       @context = context
-      @instantiated_participants = {}
     end
 
     # Registers a participant. Called by Engine#register_participant.
@@ -53,17 +51,13 @@ module Ruote
         h[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
         h
       }
-
-      entry = if participant.is_a?(Class) || participant.is_a?(String)
-        [ participant.to_s, options ]
-      else
-        "inpa_#{name.inspect}"
-          # INstantiated PArticipant
-      end
+      options['block'] = block.to_source if block
 
       key = (name.is_a?(Regexp) ? name : Regexp.new("^#{name}$")).source
 
-      entry = [ key, entry ]
+      klass = (participant || Ruote::BlockParticipant).to_s
+
+      entry = [ key, [ klass, options ] ]
 
       list = get_list
 
@@ -85,20 +79,9 @@ module Ruote
         return register(name, participant, options, block)
       end
 
-      if entry.last.is_a?(String)
-
-        participant = BlockParticipant.new(block, options) if block
-
-        participant.context = @context if participant.respond_to?(:context=)
-        @instantiated_participants[entry.last] = participant
-        #participant
-
+      if entry.last.first == 'Ruote::StorageParticipant'
+        Ruote::StorageParticipant.new(@context)
       else
-
-        if entry.last.first == 'Ruote::StorageParticipant'
-          return Ruote::StorageParticipant.new(@context)
-        end
-
         nil
       end
     end
@@ -114,31 +97,13 @@ module Ruote
       entry = nil
       list = get_list
 
-      if name_or_participant.is_a?(Symbol)
-        name_or_participant = name_or_participant.to_s
-      end
+      name_or_participant = name_or_participant.to_s
 
-      if name_or_participant.is_a?(String)
+      entry = list['list'].find { |re, pa| name_or_participant.match(re) }
 
-        entry = list['list'].find { |re, pa| name_or_participant.match(re) }
+      return nil unless entry
 
-        return nil unless entry
-
-        code = entry.last if entry.last.is_a?(String)
-
-      else # we've been given a participant instance
-
-        code = @instantiated_participants.find { |k, v|
-          v == name_or_participant
-        }
-
-        return nil unless code
-
-        code = code.first
-
-        entry = list['list'].find { |re, pa| pa == code }
-
-      end
+      code = entry.last if entry.last.is_a?(String)
 
       list['list'].delete(entry)
 
@@ -146,10 +111,8 @@ module Ruote
         #
         # put failed, have to redo it
         #
-        return unregister(name_or_participant, r)
+        return unregister(name_or_participant)
       end
-
-      @instantiated_participants.delete(code) if code
 
       entry.first
     end
@@ -161,13 +124,11 @@ module Ruote
     #
     def lookup (participant_name, workitem, opts={})
 
-      pinfo = participant_name
+      pinfo = participant_name.is_a?(String) ?
+        lookup_info(participant_name, workitem) : participant_name
 
-      if participant_name.is_a?(String) && participant_name[0, 5] != 'inpa_'
-        pinfo = lookup_info(participant_name, workitem)
-      end
-
-      pinfo ? instantiate(pinfo, opts) : nil
+      pinfo ?
+        instantiate(pinfo, opts) : nil
     end
 
     # Given a participant name, returns
@@ -197,16 +158,12 @@ module Ruote
     #
     def instantiate (pinfo, opts={})
 
-      irt = opts[:if_respond_to?]
-
-      pinfo = @instantiated_participants[pinfo] if pinfo.is_a?(String)
-
-      if pinfo.respond_to?(:consume)
-        return (pinfo.respond_to?(irt) ? pinfo : nil) if irt
-        return pinfo
-      end
-
-      return nil unless pinfo
+      #pinfo = @instantiated_participants[pinfo] if pinfo.is_a?(String)
+      #if pinfo.respond_to?(:consume)
+      #  return (pinfo.respond_to?(irt) ? pinfo : nil) if irt
+      #  return pinfo
+      #end
+      #return nil unless pinfo
 
       pa_class_name, options = pinfo
 
@@ -220,18 +177,26 @@ module Ruote
       pa_class = Ruote.constantize(pa_class_name)
       pa_m = pa_class.instance_methods
 
+      irt = opts[:if_respond_to?]
+
       if irt && ! (pa_m.include?(irt.to_s) || pa_m.include?(irt.to_sym))
         return nil
       end
 
-      pa = if pa_class.instance_method(:initialize).arity == 0
-        pa_class.new
-      else
-        pa_class.new(options)
-      end
-      pa.context = @context if pa.respond_to?(:context=)
+      initialize_participant(pa_class, options)
+    end
 
-      pa
+    def initialize_participant (klass, options)
+
+      participant = if klass.instance_method(:initialize).arity == 0
+        klass.new
+      else
+        klass.new(options)
+      end
+
+      participant.context = @context if participant.respond_to?(:context=)
+
+      participant
     end
 
     # Return a list of names (regex) for the registered participants
@@ -241,14 +206,18 @@ module Ruote
       get_list['list'].collect { |re, pa| re }
     end
 
-    # Shuts down the 'instantiated participants' (engine worker participants)
-    # if they respond to #shutdown.
+    # Calls #shutdown on any participant that sports this method.
     #
     def shutdown
 
-      @instantiated_participants.each { |re, pa|
-        pa.shutdown if pa.respond_to?(:shutdown)
-      }
+      get_list['list'].each do |re, (kl, op)|
+
+        kl = (Ruote.constantize(kl) rescue nil)
+
+        if (kl.instance_method(:shutdown) rescue false)
+          initialize_participant(kl, op).shutdown
+        end
+      end
     end
 
     # Used by Engine#participant_list
@@ -282,7 +251,7 @@ module Ruote
         #
         # put failed, have to redo it
         #
-        list= (pl)
+        list=(pl)
       end
     end
 
@@ -333,9 +302,7 @@ module Ruote
     end
 
     def to_a
-      @classname[0, 5] == 'inpa_' ?
-        [ @regex, @classname ] :
-        [ @regex, [ @classname, @options ] ]
+      [ @regex, [ @classname, @options ] ]
     end
 
     def to_s
@@ -373,8 +340,7 @@ module Ruote
 
         klass = elt['classname'] || elt['class']
 
-        return klass[0, 5] == 'inpa_' ?
-          [ regex, klass ] : [ regex, [ klass, options ] ]
+        return [ regex, [ klass, options ] ]
       end
 
       # else elt is a Array

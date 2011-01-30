@@ -110,8 +110,9 @@ class EftIteratorTest < Test::Unit::TestCase
 
       @tracer << "#{workitem.participant_name}\n"
 
-      workitem.fields['__command__'] = [ 'break', nil ] \
-        if workitem.participant_name == 'bob'
+      if workitem.participant_name == 'bob'
+        workitem.fields['__command__'] = [ 'break', nil ]
+      end
     end
 
     #noisy
@@ -121,14 +122,14 @@ class EftIteratorTest < Test::Unit::TestCase
 
   def test_rewind
 
-    rewound = false
+    stash[:rewound] = false
 
     @engine.register_participant '.*' do |workitem|
 
       @tracer << "#{workitem.participant_name}\n"
 
-      if (not rewound) and workitem.participant_name == 'bob'
-        rewound = true
+      if (not stash[:rewound]) and workitem.participant_name == 'bob'
+        stash[:rewound] = true
         workitem.fields['__command__'] = [ 'rewind', nil ]
       end
     end
@@ -144,8 +145,9 @@ class EftIteratorTest < Test::Unit::TestCase
 
       @tracer << "#{workitem.participant_name}\n"
 
-      workitem.fields['__command__'] = [ 'skip', 1 ] \
-        if workitem.participant_name == 'alice'
+      if workitem.participant_name == 'alice'
+        workitem.fields['__command__'] = [ 'skip', 1 ]
+      end
     end
 
     #noisy
@@ -159,8 +161,9 @@ class EftIteratorTest < Test::Unit::TestCase
 
       @tracer << "#{workitem.participant_name}\n"
 
-      workitem.fields['__command__'] = [ 'jump', -1 ] \
-        if workitem.participant_name == 'alice'
+      if workitem.participant_name == 'alice'
+        workitem.fields['__command__'] = [ 'jump', -1 ]
+      end
     end
 
     #noisy

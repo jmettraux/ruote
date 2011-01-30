@@ -15,7 +15,7 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
   def setup
     super
-    $seen = []
+    @engine.context.stash[:seen] = []
   end
 
   def test_no_on_error
@@ -39,7 +39,7 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
     end
     def consume (workitem)
       workitem.fields['flavour'] = @opts['flavour']
-      $seen << workitem
+      @context.stash[:seen] << workitem
       reply(workitem)
     end
   end
@@ -64,14 +64,14 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
       # unfortunately waiting for a participant triggers right
       # before the consume
 
-    assert_equal 1, $seen.size
-    assert_equal 'yellow', $seen.first.fields['colour']
-    assert_equal 'vanilla', $seen.first.fields['flavour']
-    assert_not_nil $seen.first.fei.subid
+    assert_equal 1, @engine.context.stash[:seen].size
+    assert_equal 'yellow', @engine.context.stash[:seen].first.fields['colour']
+    assert_equal 'vanilla', @engine.context.stash[:seen].first.fields['flavour']
+    assert_not_nil @engine.context.stash[:seen].first.fei.subid
 
     # TODO : look for error message and such
 
-    @engine.wait_for($seen.first.wfid)
+    @engine.wait_for(@engine.context.stash[:seen].first.wfid)
 
     assert_equal 1, @engine.processes.size
   end
@@ -154,7 +154,7 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
       # unfortunately waiting for a participant triggers right
       # before the consume
 
-    wi = $seen.first
+    wi = @engine.context.stash[:seen].first
 
     assert_not_nil wi.error
   end

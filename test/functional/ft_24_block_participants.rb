@@ -64,25 +64,25 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     return if Ruote::WIN
       # defective 'json' lib on windows renders this test useless
 
-    t = Time.now
-
     @engine.register_participant :alpha do |workitem|
-      t
+      Time.now
     end
 
     #noisy
 
-    #assert_trace TEST_BLOCK, Ruote.time_to_utc_s(t)
-
-    expected = if defined?(DataMapper)
-      DataMapper::VERSION >= '1.0.0' ? t.to_s : ''
+    match = if defined?(DataMapper) && DataMapper::VERSION < '1.0.0'
+      /^$/
     elsif Ruote::JAVA
-      ''
+      /^$/
     else
-      t.to_s
+      /\b#{Time.now.year}\b/
     end
 
-    assert_trace expected, TEST_BLOCK
+    wfid = @engine.launch(TEST_BLOCK)
+
+    @engine.wait_for(wfid)
+
+    assert_match match, @tracer.to_s
   end
 end
 

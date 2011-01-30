@@ -104,7 +104,7 @@ class FtVariablesTest < Test::Unit::TestCase
       end
     end
 
-    results = []
+    @engine.context.stash[:results] = []
 
     @engine.register_participant :alpha do |workitem, fexp|
 
@@ -112,20 +112,18 @@ class FtVariablesTest < Test::Unit::TestCase
         public :locate_var
       end
 
-      results << fexp.locate_var('//a')
-      results << fexp.locate_var('/a').first.fei.to_storage_id
-      results << fexp.locate_var('a').first.fei.to_storage_id
+      stash[:results] << fexp.locate_var('//a')
+      stash[:results] << fexp.locate_var('/a').first.fei.to_storage_id
+      stash[:results] << fexp.locate_var('a').first.fei.to_storage_id
     end
 
     #noisy
 
     assert_trace 'done.', pdef
 
-    #p results
-
-    assert_equal(nil, results[0])
-    assert_match(/^0||\d+_\d+$/, results[1])
-    assert_match(/^0\_0|\d+|\d+_\d+$/, results[2])
+    assert_equal(nil, @engine.context.stash[:results][0])
+    assert_match(/^0||\d+_\d+$/, @engine.context.stash[:results][1])
+    assert_match(/^0\_0|\d+|\d+_\d+$/, @engine.context.stash[:results][2])
   end
 
   def test_lookup_in_var

@@ -32,10 +32,12 @@ class FtPartBlockingTest < Test::Unit::TestCase
 
  def run_engine (options={})
 
-   first_time = options[:first_time] || 0.0
-   second_time = options[:second_time] || 0.0
+   @engine.context.stash[:first_time] = options[:first_time] || 0.0
+   @engine.context.stash[:second_time] = options[:second_time] || 0.0
 
-   second_time = first_time + 0.1 if first_time == second_time
+   if @engine.context.stash[:first_time] == @engine.context.stash[:second_time]
+     @engine.context.stash[:second_time] = @engine.context.stash[:first_time] + 0.1
+   end
 
    pdef = Ruote.process_definition :name => 'simple' do
      sequence do
@@ -48,12 +50,12 @@ class FtPartBlockingTest < Test::Unit::TestCase
    end
 
    @engine.register_participant :first do |wi|
-     sleep first_time
+     sleep stash[:first_time]
      wi.fields['result'] = 'first'
    end
 
    @engine.register_participant :second do |wi|
-     sleep second_time
+     sleep stash[:second_time]
      wi.fields['result'] = 'second'
    end
 

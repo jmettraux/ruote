@@ -21,7 +21,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
 
@@ -47,7 +47,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
     wfid = @engine.launch(pdef, :workitem => { 'kilroy' => 'was here' })
 
     wait_for(:alpha)
@@ -93,7 +93,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
     wfid = @engine.launch(pdef)
 
     wait_for(:alpha)
@@ -145,7 +145,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
     wfid = @engine.launch(pdef)
 
     wait_for(:alpha)
@@ -184,7 +184,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -214,7 +214,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -243,7 +243,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -264,7 +264,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid0 = @engine.launch(pdef)
     wfid1 = @engine.launch(pdef)
@@ -291,9 +291,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
       delta
     end
 
-    tree0 = nil
-    tree1 = nil
-
     @engine.register_participant :alpha do |wi, fexp|
 
       @tracer << "a\n"
@@ -309,11 +306,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
     end
     @engine.register_participant :charly do |wi, fexp|
       @tracer << "c\n"
-      tree0 = fexp.context.engine.process(fexp.fei.wfid).current_tree
+      stash[:tree0] = fexp.context.engine.process(fexp.fei.wfid).current_tree
     end
     @engine.register_participant :delta do |wi, fexp|
       @tracer << "d\n"
-      tree1 = fexp.context.engine.process(fexp.fei.wfid).current_tree
+      stash[:tree1] = fexp.context.engine.process(fexp.fei.wfid).current_tree
     end
 
     #noisy
@@ -322,11 +319,11 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal(
       ["define", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["participant", {"ref"=>"charly"}, []]]], ["delta", {}, []]]],
-      tree0)
+      @engine.context.stash[:tree0])
 
     assert_equal(
       ["define", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["charly", {}, []]]], ["participant", {"ref"=>"delta"}, []]]],
-      tree1)
+      @engine.context.stash[:tree1])
   end
 
   def test_when_on_cancel_subprocess
@@ -340,7 +337,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -382,7 +379,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
 
@@ -408,7 +405,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
 

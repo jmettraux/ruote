@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class EftProcessDefinitionTest < Test::Unit::TestCase
@@ -28,7 +28,7 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
       participant :ref => :alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 

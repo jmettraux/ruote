@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class FtErrorsTest < Test::Unit::TestCase
@@ -137,12 +137,12 @@ class FtErrorsTest < Test::Unit::TestCase
       end
     end
 
-    count = 0
+    @engine.context.stash[:count] = 0
 
     @engine.register_participant :alpha do
-      count += 1
+      stash[:count] += 1
       @tracer << "alpha\n"
-      raise "something went wrong" if count == 1
+      raise "something went wrong" if stash[:count] == 1
     end
 
     #noisy
@@ -173,14 +173,13 @@ class FtErrorsTest < Test::Unit::TestCase
       end
     end
 
-    count = 0
+    @engine.context.stash[:count] = 0
 
-    alpha = @engine.register_participant :alpha do
-      count += 1
+    alpha = @engine.register_participant :alpha, 'do_not_thread' => true do
+      stash[:count] += 1
       @tracer << "alpha\n"
-      raise "something went wrong" if count == 1
+      raise "something went wrong" if stash[:count] == 1
     end
-    alpha.do_not_thread = true
 
     wfid = @engine.launch(pdef)
 
@@ -256,14 +255,13 @@ class FtErrorsTest < Test::Unit::TestCase
       end
     end
 
-    count = 0
+    @engine.context.stash[:count] = 0
 
-    alpha = @engine.register_participant :alpha do
-      count += 1
+    alpha = @engine.register_participant :alpha, :do_not_thread => true do
+      stash[:count] += 1
       @tracer << "alpha\n"
-      raise "something went wrong" if count == 1
+      raise "something went wrong" if stash[:count] == 1
     end
-    alpha.do_not_thread = true
 
     #noisy
 

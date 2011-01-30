@@ -7,11 +7,17 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class FtParticipantTimeoutTest < Test::Unit::TestCase
   include FunctionalBase
+
+  class AlphaParticipant < Ruote::StorageParticipant
+    def rtimeout (workitem)
+      '1s'
+    end
+  end
 
   def test_participant_defined_timeout
 
@@ -22,28 +28,22 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
-
-    class << alpha
-      def rtimeout (workitem)
-        '1s'
-      end
-    end
+    @engine.register_participant :alpha, AlphaParticipant
+    sto = @engine.register_participant :bravo, Ruote::StorageParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
     wait_for(13)
 
-    assert_equal 0, alpha.size
-    assert_equal 1, bravo.size
+    assert_equal 1, sto.size
+    assert_equal 'bravo', sto.first.participant_name
 
     #logger.log.each { |l| p l }
     assert_equal 2, logger.log.select { |e| e['flavour'] == 'timeout' }.size
     assert_equal 0, @engine.storage.get_many('schedules').size
 
-    assert_not_nil bravo.first.fields['__timed_out__']
+    assert_not_nil sto.first.fields['__timed_out__']
   end
 
   class MyParticipant

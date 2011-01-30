@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class FtSubprocessesTest < Test::Unit::TestCase
@@ -26,7 +26,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
       end
     end
 
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
+    bravo = @engine.register_participant :bravo, Ruote::StorageParticipant
 
     #noisy
 
@@ -70,10 +70,10 @@ class FtSubprocessesTest < Test::Unit::TestCase
       end
     end
 
-    wfids = []
+    @engine.context.stash[:wfids] = []
 
     @engine.register_participant :alpha do |workitem|
-      wfids << workitem.fei.subid
+      stash[:wfids] << workitem.fei.subid
     end
 
     #noisy
@@ -84,8 +84,8 @@ class FtSubprocessesTest < Test::Unit::TestCase
     wait_for(:alpha)
     wait_for(3)
 
-    assert_equal 2, wfids.size
-    assert_equal 2, wfids.sort.uniq.size
+    assert_equal 2, @engine.context.stash[:wfids].size
+    assert_equal 2, @engine.context.stash[:wfids].sort.uniq.size
   end
 
   def test_cancel_and_subprocess
@@ -99,7 +99,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
 
@@ -126,7 +126,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 

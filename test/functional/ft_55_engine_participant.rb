@@ -11,8 +11,7 @@ require File.join(File.dirname(__FILE__), 'base')
 
 require 'ruote'
 require 'ruote/storage/fs_storage'
-require 'ruote/part/hash_participant'
-require 'ruote/part/engine_participant'
+require 'ruote/participant'
 
 
 class FtEngineParticipantTest < Test::Unit::TestCase
@@ -155,7 +154,7 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine1.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine1.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine0.launch(pdef)
 
@@ -236,7 +235,7 @@ class FtEngineParticipantTest < Test::Unit::TestCase
       end
     end
 
-    bravo = @engine1.register_participant :bravo, Ruote::HashParticipant.new
+    bravo = @engine1.register_participant :bravo, Ruote::StorageParticipant
 
     #noisy
 

@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
+require 'ruote/participant'
 
 
 class FtOnCancelTest < Test::Unit::TestCase
@@ -21,7 +21,7 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    nemo = @engine.register_participant :nemo, Ruote::HashParticipant
+    nemo = @engine.register_participant :nemo, Ruote::StorageParticipant
 
     @engine.register_participant :catcher do
       @tracer << "caught\n"
@@ -46,7 +46,7 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    nemo = @engine.register_participant :nemo, Ruote::HashParticipant
+    nemo = @engine.register_participant :nemo, Ruote::StorageParticipant
 
     #noisy
 
@@ -78,7 +78,7 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -108,8 +108,8 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    sto = @engine.register_participant :bravo, Ruote::StorageParticipant
 
     #noisy
 
@@ -125,7 +125,7 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     wait_for(:bravo)
 
-    assert_equal 1, bravo.size
+    assert_equal 1, sto.size
   end
 
   def test_on_cancel_subprocess
@@ -139,8 +139,8 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @engine.register_participant :bravo, Ruote::StorageParticipant
 
     #noisy
 

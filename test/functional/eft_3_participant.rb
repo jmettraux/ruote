@@ -68,7 +68,7 @@ class EftParticipantTest < Test::Unit::TestCase
       delta :tag => 'whatever'
     end
 
-    delta = @engine.register_participant :delta, Ruote::HashParticipant.new
+    delta = @engine.register_participant :delta, Ruote::StorageParticipant
 
     @engine.launch(pdef)
     wait_for(:delta)
@@ -88,7 +88,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
     %w[ eecho fox gamma ].each do |pname|
       @engine.register_participant pname do |workitem|
-        @tracer << "#{pname}\n"
+        @tracer << "#{workitem.participant_name}\n"
       end
     end
 
@@ -104,11 +104,9 @@ class EftParticipantTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    atts = nil
-
     @engine.register_participant :notify do |wi, fe|
       #p fe.attribute_text
-      atts = fe.attributes
+      stash[:atts] = fe.attributes
     end
 
     #noisy
@@ -117,7 +115,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
     assert_equal(
       { "commander of the left guard"=>nil, "if"=>"true", "ref"=>"notify" },
-      atts)
+      stash[:atts])
   end
 
   def test_dispatched

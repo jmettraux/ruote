@@ -204,8 +204,6 @@ module Ruote
 
     def process (msg)
 
-      return false if cannot_handle(msg)
-
       return false unless @storage.reserve(msg)
 
       begin
@@ -252,17 +250,6 @@ module Ruote
           subscriber.notify(msg)
         end
       end
-    end
-
-    # Should always return false. Except when the message is a 'dispatch'
-    # and it's for a participant only available to an 'engine_worker'
-    # (block participants, stateful participants)
-    #
-    def cannot_handle (msg)
-
-      return false if msg['action'] != 'dispatch'
-
-      @context.engine.nil? && msg['for_engine_worker?']
     end
 
     # Works for both the 'launch' and the 'apply' msgs.

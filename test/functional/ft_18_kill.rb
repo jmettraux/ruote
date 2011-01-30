@@ -7,8 +7,6 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/participant'
-
 
 class FtKillTest < Test::Unit::TestCase
   include FunctionalBase
@@ -19,7 +17,7 @@ class FtKillTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -46,8 +44,8 @@ class FtKillTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
-    catcher = @engine.register_participant :catcher, Ruote::HashParticipant.new
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    sto = @engine.register_participant :catcher, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
@@ -56,8 +54,7 @@ class FtKillTest < Test::Unit::TestCase
 
     wait_for(wfid)
 
-    assert_equal 0, alpha.size
-    assert_equal 0, catcher.size
+    assert_equal 0, sto.size
   end
 
   def test_kill_expression_does_not_trigger_on_cancel
@@ -68,18 +65,17 @@ class FtKillTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
-    catcher = @engine.register_participant :catcher, Ruote::HashParticipant.new
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    sto = @engine.register_participant :catcher, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
-    @engine.kill_expression(alpha.first.fei)
+    @engine.kill_expression(sto.first.fei)
 
     wait_for(wfid)
 
-    assert_equal 0, alpha.size
-    assert_equal 0, catcher.size
+    assert_equal 0, sto.size
   end
 
   def test_kill__expression

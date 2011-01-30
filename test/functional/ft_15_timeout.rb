@@ -7,8 +7,6 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
-
 
 class FtTimeoutTest < Test::Unit::TestCase
   include FunctionalBase
@@ -22,20 +20,21 @@ class FtTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    sto = @engine.register_participant :bravo, Ruote::StorageParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
     wait_for(:bravo)
 
-    assert_equal 0, alpha.size
-    assert_equal 1, bravo.size
+    assert_equal 1, sto.size
+    assert_equal 'bravo', sto.first.participant_name
+
     assert_equal 2, logger.log.select { |e| e['flavour'] == 'timeout' }.size
     assert_equal 0, @engine.storage.get_many('schedules').size
 
-    assert_not_nil bravo.first.fields['__timed_out__']
+    assert_not_nil sto.first.fields['__timed_out__']
   end
 
   def test_cancel_timeout
@@ -47,22 +46,23 @@ class FtTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
-    bravo = @engine.register_participant :bravo, Ruote::HashParticipant.new
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    sto = @engine.register_participant :bravo, Ruote::StorageParticipant
 
     #noisy
 
     wfid = @engine.launch(pdef)
     wait_for(6)
 
-    assert_equal 1, alpha.size
+    assert_equal 1, sto.size
+    assert_equal 'alpha', sto.first.participant_name
 
-    @engine.cancel_expression(alpha.first.fei)
+    @engine.cancel_expression(sto.first.fei)
 
     wait_for(:bravo)
 
-    assert_equal 0, alpha.size
-    assert_equal 1, bravo.size
+    assert_equal 1, sto.size
+    assert_equal 'bravo', sto.first.participant_name
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
 
@@ -82,7 +82,7 @@ class FtTimeoutTest < Test::Unit::TestCase
       alpha :timeout => '1.1', :on_timeout => 'redo'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -113,7 +113,7 @@ class FtTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -132,7 +132,7 @@ class FtTimeoutTest < Test::Unit::TestCase
       alpha :timeout => '1.1', :on_timeout => 'error'
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -161,7 +161,7 @@ class FtTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
     wait_for(wfid)
@@ -203,7 +203,7 @@ class FtTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 

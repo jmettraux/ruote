@@ -7,9 +7,6 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
-require 'ruote/part/hash_participant'
-require 'ruote/part/storage_participant'
-
 
 class FtReApplyTest < Test::Unit::TestCase
   include FunctionalBase
@@ -23,7 +20,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
   def test_re_apply
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -54,7 +51,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
   def test_cancel_and_re_apply
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -85,7 +82,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
   def test_update_expression_and_re_apply
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -129,7 +126,7 @@ class FtReApplyTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -167,7 +164,7 @@ class FtReApplyTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
@@ -198,7 +195,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
   def test_re_apply_with_new_tree
 
-    alpha = @engine.register_participant :alpha, Ruote::HashParticipant.new
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 

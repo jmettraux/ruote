@@ -24,13 +24,15 @@ class EftWaitTest < Test::Unit::TestCase
 
     #noisy
 
-    ts = []
-    @engine.register_participant(:alpha) { ts << Time.now }
+    @engine.context.stash[:ts] = []
+
+    @engine.register_participant(:alpha) { stash[:ts] << Time.now }
 
     assert_trace 'done.', pdef
 
-    #p [ ts[1].sec, ts[0].sec ]
-    d = (ts[1].sec - ts[0].sec) % 60
+    d = (
+      @engine.context.stash[:ts][1].sec - @engine.context.stash[:ts][0].sec
+    ) % 60
 
     deltas = [ 2, 3 ]
     deltas << 4 if @engine.storage.class.name.match(/^Ruote::Couch::/)
@@ -66,8 +68,9 @@ class EftWaitTest < Test::Unit::TestCase
 
   def test_wait_until
 
-    ts = []
-    @engine.register_participant(:alpha) { ts << Time.now }
+    @engine.context.stash[:ts] = []
+
+    @engine.register_participant(:alpha) { stash[:ts] << Time.now }
 
     pdef = Ruote.process_definition do
       sequence do
@@ -82,8 +85,10 @@ class EftWaitTest < Test::Unit::TestCase
 
     assert_trace 'done.', pdef
 
-    #p ts
-    assert ts[1] - ts[0] > 1.0, "#{ts[1] - ts[0]} should be > 1.0"
+    ts0 = @engine.context.stash[:ts][0]
+    ts1 = @engine.context.stash[:ts][1]
+
+    assert(ts1 - ts0 > 1.0, "#{ts1 - ts0} should be > 1.0")
   end
 
   def test_wait_until_now

@@ -28,11 +28,9 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal 'alpha', msg['regex']
 
     assert_equal(
-      [ 'inpa_:alpha' ],
-      @engine.context.plist.instantiated_participants.collect { |e| e.first })
-
-    assert_equal(
-      [ [ '^alpha$', 'inpa_:alpha' ] ],
+      [ [ "^alpha$",
+          [ "Ruote::BlockParticipant",
+            { "block" => "proc { |workitem| (@tracer << \"alpha\") }" } ] ] ],
       @engine.participant_list.collect { |pe| pe.to_a })
   end
 
@@ -73,12 +71,14 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal 1, @engine.context.plist.send(:get_list)['list'].size
   end
 
-  def test_register_and_return_participant
+  def test_register_and_return_something
 
     pa = @engine.register_participant :alpha do |workitem|
     end
+    pb = @engine.register_participant :bravo, Ruote::StorageParticipant
 
-    assert_kind_of Ruote::BlockParticipant, pa
+    assert_nil pa
+    assert_equal Ruote::StorageParticipant, pb.class
   end
 
   def test_participant_unregister_by_name
@@ -88,7 +88,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     @engine.register_participant :alpha do |workitem|
     end
 
-    @engine.unregister_participant :alpha
+    @engine.unregister_participant(:alpha)
 
     wait_for(2)
     Thread.pass
@@ -96,16 +96,14 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     msg = logger.log.last
     assert_equal 'participant_unregistered', msg['action']
     assert_equal '^alpha$', msg['regex']
-
-    assert_equal 0, @engine.context.plist.instantiated_participants.size
   end
 
   def test_participant_unregister
 
-    pa = @engine.register_participant :alpha do |workitem|
+    @engine.register_participant :alpha do |workitem|
     end
 
-    @engine.unregister_participant pa
+    @engine.unregister_participant('alpha')
 
     wait_for(2)
 
@@ -113,26 +111,28 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal 'participant_unregistered', msg['action']
     assert_equal '^alpha$', msg['regex']
 
-    assert_equal 0, @engine.context.plist.instantiated_participants.size
+    assert_equal 0, @engine.context.plist.list.size
   end
 
   class MyParticipant
-    attr_reader :down
+    @@down = false
+    def self.down
+      @@down
+    end
     def initialize
-      @down = false
     end
     def shutdown
-      @down = true
+      @@down = true
     end
   end
 
   def test_participant_shutdown
 
-    alpha = @engine.register :alpha, MyParticipant.new
+    alpha = @engine.register :alpha, MyParticipant
 
     @engine.context.plist.shutdown
 
-    assert_equal true, alpha.down
+    assert_equal true, MyParticipant.down
   end
 
   def test_participant_list_of_names
@@ -389,7 +389,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       %w[ Participants::Alpha
           Participants::Bravo
           Participants::Charlie
-          inpa_"david"
+          Ruote::BlockParticipant
           Participants::Zebda ],
       @engine.participant_list.collect { |pe| pe.classname })
 
