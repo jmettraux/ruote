@@ -47,7 +47,7 @@ Richard Jennings
 Feedback
 --------
 
-sandbox - https://github.com/sandbox
+John Le - https://github.com/sandbox
 Sean Johnson - https://github.com/belucid
 Hery - Engine#register and block participants
 Gonzalo Suarez - many many help
@@ -87,4 +87,10 @@ Tomek "Tomash" Stachewicz - scheduler feedback
 Jon "Compensator" - first report of the "yamlextras" issue
 
 (see the mailing list at : http://groups.google.com/group/openwferu-users )
+
+
+Last but not least
+------------------
+
+Many thanks to the authors, the contributors and the community of the Ruby language, the various json gems, the builder, mailtrap, sourcify, parsetree gems, and many more.
 
