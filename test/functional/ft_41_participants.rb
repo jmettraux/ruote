@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), 'base')
 require 'ruote/part/local_participant'
 
 
-class FtMiscParticipantTest < Test::Unit::TestCase
+class FtParticipantsTest < Test::Unit::TestCase
   include FunctionalBase
 
   class MyParticipant
@@ -60,6 +60,32 @@ class FtMiscParticipantTest < Test::Unit::TestCase
     r = wait_for(wfid)
 
     assert_equal 'hi', r['workitem']['fields']['message']
+  end
+
+  class MyOtherParticipant
+    include Ruote::LocalParticipant
+    def consume (wi)
+      wi.fields['hello'] = 'kitty'
+      reply_to_engine(wi)
+    end
+    def on_reply (wi)
+      @context.tracer << wi.fields['hello'] + "\n"
+      @context.tracer << applied_workitem(wi.fei).fields['hello'] + "\n"
+      @context.tracer << workitem(wi.fei).fields['hello']
+    end
+  end
+
+  def test_workitem_method
+
+    @engine.register 'alpha', MyOtherParticipant
+
+    #noisy
+
+    wfid = @engine.launch(Ruote.define { alpha }, 'hello' => 'world')
+
+    @engine.wait_for(wfid)
+
+    assert_equal %w[ kitty world world ], @tracer.to_a
   end
 end
 

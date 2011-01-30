@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- LocalParticipant / Receiver #applied_workitem(fei)
 - using Sourcify to store block participant's code as a string
 - CompositeStorage#delete bug fix (Thanks Claudio)
 - ParticipantList#register bug fix (Thanks 'sandbox')

@@ -140,10 +140,11 @@ module Ruote
     # on_terminate processes are not triggered for on_error processes.
     # on_error processes are triggered for on_terminate processes as well.
     #
-    def workitem (fei)
+    def applied_workitem (fei)
 
       Ruote::Workitem.new(fexp(fei).h.applied_workitem)
     end
+    alias workitem applied_workitem
 
     protected
 
