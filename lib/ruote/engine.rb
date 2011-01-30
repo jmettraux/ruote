@@ -601,9 +601,20 @@ module Ruote
       @context.plist.list
     end
 
-    # Accepts a list of Ruote::ParticipantEntry instances.
+    # Accepts a list of Ruote::ParticipantEntry instances or a list of
+    # [ regex, [ classname, opts ] ] arrays.
     #
     # See Engine#participant_list
+    #
+    # Some examples :
+    #
+    #   engine.participant_list = [
+    #     [ '^charly$', [ 'Ruote::StorageParticipant', {} ] ],
+    #     [ '.+', [ 'MyDefaultParticipant', { 'default' => true } ]
+    #   ]
+    #
+    # This method writes the participant list in one go, it might be easier to
+    # use than to register participant one by ones.
     #
     def participant_list= (pl)
 
