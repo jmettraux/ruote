@@ -28,6 +28,19 @@ require 'ruote/util/lookup'
 
 module Ruote
 
+  class ValidationError < StandardError
+
+    attr_accessor :field, :value, :rule
+
+    def initialize (field, value, rule)
+
+      @field = field
+      @value = value
+      @rule = rule
+      super("field '#{field}' doesn't follow rule #{rule.inspect}")
+    end
+  end
+
   def self.filter (filter, hash)
 
     #hash = Ruote.fulldup(hash)
@@ -40,16 +53,57 @@ module Ruote
       value = Ruote.lookup(hash, field)
 
       if rule['remove']
-
         Ruote.unset(hash, rule['field'])
 
       elsif d = rule['default'] and value.nil?
 
         Ruote.set(hash, rule['field'], Rufus::Json.dup(d))
+
+      elsif rule['type']
+
+        enforce_type(rule, field, value)
+
+      #elsif m = rule['match']
+      #elsif o = rule['or']
       end
     end
 
     hash
+  end
+
+  NUMBER_CLASSES = [ Fixnum, Float ]
+  BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
+
+  def self.enforce_type (rule, field, value)
+
+    types = rule['type']
+    types = types.is_a?(Array) ? types : types.split(',')
+
+    valid = false
+
+    types.each do |type|
+
+      valid = valid || case type.strip
+        when 'null', 'nil'
+          value == nil
+        when 'string'
+          value.class == String
+        when 'number'
+          NUMBER_CLASSES.include?(value.class)
+        when 'object', 'hash'
+          value.class == Hash
+        when 'array'
+          value.class == Array
+        when 'boolean', 'bool'
+          BOOLEAN_CLASSES.include?(value.class)
+        else
+          raise ArgumentError.new("unknown type '#{rule['type']}'")
+      end
+    end
+
+    # TODO : Array<x> and Object<y>
+
+    raise ValidationError.new(rule, field, value) unless valid
   end
 end
 

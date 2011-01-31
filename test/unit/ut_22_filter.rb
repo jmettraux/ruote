@@ -14,22 +14,34 @@ require 'ruote/util/filter'
 
 class UtFilterTest < Test::Unit::TestCase
 
+  def assert_valid (filter, hash)
+
+    Ruote.filter(filter, hash)
+    assert true
+  end
+
+  def assert_not_valid (filter, hash)
+
+    assert_raise Ruote::ValidationError do
+      Ruote.filter(filter, hash)
+    end
+  end
+
+  #
+  # the tests
+
   def test_remove
 
     assert_equal(
       {},
       Ruote.filter(
-        [
-          { 'field' => 'x', 'remove' => true }
-        ],
+        [ { 'field' => 'x', 'remove' => true } ],
         { 'x' => 'y' }))
 
     assert_equal(
       { 'x' => {} },
       Ruote.filter(
-        [
-          { 'field' => 'x.y', 'remove' => true }
-        ],
+        [ { 'field' => 'x.y', 'remove' => true } ],
         { 'x' => { 'y' => 'z' } }))
   end
 
@@ -38,43 +50,119 @@ class UtFilterTest < Test::Unit::TestCase
     assert_equal(
       { 'x' => 1 },
       Ruote.filter(
-        [
-          { 'field' => 'x', 'default' => 1 }
-        ],
+        [ { 'field' => 'x', 'default' => 1 } ],
         {}))
 
     assert_equal(
       { 'x' => 2 },
       Ruote.filter(
-        [
-          { 'field' => 'x', 'default' => 1 }
-        ],
+        [ { 'field' => 'x', 'default' => 1 } ],
         { 'x' => 2 }))
 
     assert_equal(
       { 'x' => { 'y' => 1 } },
       Ruote.filter(
-        [
-          { 'field' => 'x.y', 'default' => 1 }
-        ],
+        [ { 'field' => 'x.y', 'default' => 1 } ],
         { 'x' => {} }))
 
     assert_equal(
       { 'x' => { 'y' => 2 } },
       Ruote.filter(
-        [
-          { 'field' => 'x.y', 'default' => 1 }
-        ],
+        [ { 'field' => 'x.y', 'default' => 1 } ],
         { 'x' => { 'y' => 2 } }))
 
     assert_equal(
       { 'x' => { 'y' => 1 } },
       Ruote.filter(
-        [
-          { 'field' => 'x', 'default' => {} },
-          { 'field' => 'x.y', 'default' => 1 }
-        ],
+        [ { 'field' => 'x', 'default' => {} },
+          { 'field' => 'x.y', 'default' => 1 } ],
         {}))
+  end
+
+  def test_type
+
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'string' } ], { 'x' => 'deux' })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'number' } ], { 'x' => 1 })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'number' } ], { 'x' => 1.0 })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'object' } ], { 'x' => {} })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'hash' } ], { 'x' => {} })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'array' } ], { 'x' => [] })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'boolean' } ], { 'x' => true })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'boolean' } ], { 'x' => false })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'bool' } ], { 'x' => true })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'bool' } ], { 'x' => false })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'null' } ], { 'x' => nil })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'null' } ], {})
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'nil' } ], {})
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'string' } ], { 'x' => 2 })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'number' } ], { 'x' => 'one' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'number' } ], { 'x' => '1.0' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'object' } ], { 'x' => [] })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'hash' } ], { 'x' => [] })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'array' } ], { 'x' => {} })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'boolean' } ], { 'x' => 'true' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'boolean' } ], { 'x' => 'false' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'bool' } ], { 'x' => 'true' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'bool' } ], { 'x' => 'true' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'null' } ], { 'x' => false })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'null' } ], { 'x' => 1 })
+  end
+
+  def test_type_deep
+
+    assert_valid(
+      [ { 'field' => 'x.y', 'type' => 'string' } ], { 'x' => { 'y' => 'z' } })
+
+    assert_not_valid(
+      [ { 'field' => 'x.y', 'type' => 'string' } ], { 'x' => { 'y' => 1 } })
+  end
+
+  def test_type_union
+
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'string,number' } ], { 'x' => 'a' })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'string,number' } ], { 'x' => 1 })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => [ 'string', 'number' ] } ], { 'x' => 'a' })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => [ 'string', 'number' ] } ], { 'x' => 1 })
+  end
+
+  def test_type_and_null
+
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'string,null' } ], {})
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'string,null' } ], { 'x' => nil })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'string,null' } ], { 'x' => 'x' })
   end
 end
 
