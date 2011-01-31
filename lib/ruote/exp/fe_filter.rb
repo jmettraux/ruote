@@ -65,7 +65,9 @@ module Ruote::Exp
 
     def apply
 
-      filter = attribute(:in) || [ attributes.inject({}) { |h, (k, v)|
+      ain = attribute_text != '' ? nil : attribute(:in)
+
+      filter = ain || [ attributes.inject({}) { |h, (k, v)|
         if v.nil?
           h['field'] = k
         else

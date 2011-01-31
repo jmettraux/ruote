@@ -50,6 +50,21 @@ class EftFilterTest < Test::Unit::TestCase
     assert_equal 'crimea', r['workitem']['fields']['x']
   end
 
+  def test_filter_single_rule_in
+
+    pdef = Ruote.process_definition do
+      filter 'colour', :in => %w[ red green blue ]
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef, 'colour' => 'green')
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+  end
+
   PDEF1 = Ruote.process_definition do
     filter :in => [
       { :field => 'x', :type => 'string' },
