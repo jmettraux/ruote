@@ -372,5 +372,29 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'x', 'in' => "alpha, bravo" } ],
       { 'x' => 'charly' })
   end
+
+  def test_valid
+
+    # 'valid' can be used in conjunction with the dollar notation
+    #
+    # field => 'x', 'valid' => '${v:accept}'
+
+    assert_valid(
+      [ { 'field' => 'x', 'valid' => true } ],
+      {})
+    assert_valid(
+      [ { 'field' => 'x', 'valid' => 'true' } ],
+      {})
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'valid' => false } ],
+      {})
+    assert_not_valid(
+      [ { 'field' => 'x', 'valid' => 'false' } ],
+      {})
+    assert_not_valid(
+      [ { 'field' => 'x', 'valid' => 'nada' } ],
+      {})
+  end
 end
 

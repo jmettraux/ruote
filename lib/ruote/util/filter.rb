@@ -114,6 +114,10 @@ module Ruote
       elsif s = rule['smatch'] || rule['sm']
 
         valid = value.is_a?(String) ? value.match(s) != nil : false
+
+      elsif rule.has_key?('valid') || rule.has_key?('v')
+
+        valid = ((rule['valid'] || rule['v']).to_s == 'true')
       end
 
       # dealing with :and and :or...
