@@ -28,6 +28,9 @@ require 'ruote/util/lookup'
 
 module Ruote
 
+  #
+  # An error class for validation errors gathered during filtering.
+  #
   class ValidationError < StandardError
 
     attr_accessor :field, :value, :rule
@@ -41,6 +44,11 @@ module Ruote
     end
   end
 
+  # Given a filter (a list of rules) and a hash (probably workitem fields)
+  # performs the validations / transformations dictated by the rules.
+  #
+  # See the Ruote::Exp::FilterExpression for more information.
+  #
   def self.filter (filter, hash)
 
     #hash = Ruote.fulldup(hash)
@@ -49,14 +57,14 @@ module Ruote
 
     filter.each do |rule|
 
-      field = rule['field']
+      field = rule['field'] || rule['f']
       value = Ruote.lookup(hash, field)
 
       valid = nil
 
       # basis
 
-      if rule['remove']
+      if rule['remove'] || rule['rm']
 
         Ruote.unset(hash, field)
 
@@ -64,25 +72,25 @@ module Ruote
 
         Ruote.set(hash, field, Rufus::Json.dup(s))
 
-      elsif ct = rule['copy_to'] || rule['move_to']
+      elsif ct = find(rule, %w[ copy cp move mv ], 'to')
 
         Ruote.set(hash, ct, Rufus::Json.dup(value))
-        Ruote.unset(hash, field) if rule['move_to']
+        Ruote.unset(hash, field) if rule['move_to'] || rule['mv_to']
 
-      elsif cf = rule['copy_from'] || rule['move_from']
+      elsif cf = find(rule, %w[ copy cp move mv ], 'from')
 
         Ruote.set(hash, field, Rufus::Json.dup(Ruote.lookup(hash, cf)))
-        Ruote.unset(hash, cf) if rule['move_from']
+        Ruote.unset(hash, cf) if rule['move_from'] || rule['mv_from']
 
-      elsif t = rule['type']
+      elsif t = rule['type'] || rule['t']
 
         valid = enforce_type(t, field, value)
 
-      elsif m = rule['match']
+      elsif m = rule['match'] || rule['m']
 
         valid = value.nil? ? false : value.to_s.match(m) != nil
 
-      elsif s = rule['smatch']
+      elsif s = rule['smatch'] || rule['sm']
 
         valid = value.is_a?(String) ? value.match(s) != nil : false
       end
@@ -110,9 +118,16 @@ module Ruote
     hash
   end
 
+  # :nodoc:
   NUMBER_CLASSES = [ Fixnum, Float ]
+
+  # :nodoc:
   BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
 
+  # :nodoc:
+  #
+  # a helper method for .filter
+  #
   def self.enforce_type (type, field, value)
 
     types = type.is_a?(Array) ? type : type.split(',')
@@ -142,6 +157,21 @@ module Ruote
     # TODO : Array<x> and Object<y>
 
     valid
+  end
+
+  # :nodoc:
+  #
+  # a helper method for .filter
+  #
+  def self.find (rule, verbs, direction)
+
+    verbs.each do |verb|
+
+      value = rule["#{verb}_#{direction}"]
+      return value if value
+    end
+
+    nil
   end
 end
 
