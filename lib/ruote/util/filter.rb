@@ -94,6 +94,10 @@ module Ruote
           false
         end
 
+      elsif rule['empty']
+
+        valid = value.respond_to?(:empty?) ? value.empty? : false
+
       elsif t = rule['type'] || rule['t']
 
         valid = enforce_type(t, field, value)

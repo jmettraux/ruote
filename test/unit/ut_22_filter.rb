@@ -332,5 +332,28 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'x', 'size' => [ nil, 3 ] } ],
       { 'x' => %w[ a b c d ] })
   end
+
+  def test_empty
+
+    assert_valid(
+      [ { 'field' => 'x', 'empty' => true } ],
+      { 'x' => %w[] })
+    assert_valid(
+      [ { 'field' => 'x', 'empty' => true } ],
+      { 'x' => {} })
+    assert_valid(
+      [ { 'field' => 'x', 'empty' => true } ],
+      { 'x' => '' })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'empty' => true } ],
+      { 'x' => 'deux' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'empty' => true } ],
+      { 'x' => %w[ a b ] })
+    assert_not_valid(
+      [ { 'field' => 'x', 'empty' => true } ],
+      { 'x' => { 'a' =>  'b' } })
+  end
 end
 
