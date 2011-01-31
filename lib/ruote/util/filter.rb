@@ -82,6 +82,18 @@ module Ruote
         Ruote.set(hash, field, Rufus::Json.dup(Ruote.lookup(hash, cf)))
         Ruote.unset(hash, cf) if rule['move_from'] || rule['mv_from']
 
+      elsif sz = rule['size'] || rule['sz']
+
+        sz = sz.is_a?(String) ?
+          sz.split(',').collect { |i| i.to_i } : Array(sz)
+
+        valid = if value.respond_to?(:size)
+          (sz.first ? value.size >= sz.first : true) and
+          (sz.last ? value.size <= sz.last : true)
+        else
+          false
+        end
+
       elsif t = rule['type'] || rule['t']
 
         valid = enforce_type(t, field, value)

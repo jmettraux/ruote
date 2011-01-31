@@ -275,5 +275,62 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'z', 'move_from' => 'x' } ],
       { 'x' => 'y' })
   end
+
+  def test_size
+
+    assert_valid(
+      [ { 'field' => 'x', 'size' => 4 } ],
+      { 'x' => 'toto' })
+    assert_valid(
+      [ { 'field' => 'x', 'size' => '4' } ],
+      { 'x' => 'toto' })
+    assert_valid(
+      [ { 'field' => 'x', 'size' => 4 } ],
+      { 'x' => %w[ a b c d ] })
+    assert_valid(
+      [ { 'field' => 'x', 'size' => 2 } ],
+      { 'x' => { 'a' => 'b', 'c' => 'd' } })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'size' => 2 } ],
+      {})
+    assert_not_valid(
+      [ { 'field' => 'x', 'size' => 2 } ],
+      { 'x' => 3 })
+  end
+
+  def test_size_range
+
+    assert_valid(
+      [ { 'field' => 'x', 'size' => [ 2, 3 ] } ],
+      { 'x' => %w[ a b ] })
+    assert_valid(
+      [ { 'field' => 'x', 'size' => [ 2, 3 ] } ],
+      { 'x' => %w[ a b c ] })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'size' => [ 2, 3 ] } ],
+      { 'x' => %w[ a ] })
+    assert_not_valid(
+      [ { 'field' => 'x', 'size' => [ 2, 3 ] } ],
+      { 'x' => %w[ a b c d ] })
+  end
+
+  def test_size_open_range
+
+    assert_valid(
+      [ { 'field' => 'x', 'size' => [ 2, nil ] } ],
+      { 'x' => %w[ a b ] })
+    assert_valid(
+      [ { 'field' => 'x', 'size' => ",3" } ],
+      { 'x' => %w[ a b c ] })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'size' => "2," } ],
+      { 'x' => %w[ a ] })
+    assert_not_valid(
+      [ { 'field' => 'x', 'size' => [ nil, 3 ] } ],
+      { 'x' => %w[ a b c d ] })
+  end
 end
 
