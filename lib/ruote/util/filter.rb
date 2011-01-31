@@ -60,6 +60,10 @@ module Ruote
 
         Ruote.unset(hash, field)
 
+      elsif s = rule['set']
+
+        Ruote.set(hash, field, Rufus::Json.dup(s))
+
       elsif t = rule['type']
 
         valid = enforce_type(t, field, value)

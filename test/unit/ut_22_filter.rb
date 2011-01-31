@@ -205,5 +205,17 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'x', 'type' => 'string', 'and' => 'z' } ],
       { 'x' => 1 })
   end
+
+  def test_set
+
+    assert_filter(
+      { 'x' => 'z' },
+      [ { 'field' => 'x', 'set' => 'z' } ],
+      { 'x' => 'y' })
+    assert_filter(
+      { 'x' => 'z' },
+      [ { 'field' => 'x', 'set' => 'z' } ],
+      {})
+  end
 end
 
