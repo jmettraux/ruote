@@ -178,6 +178,22 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 2 })
   end
 
+  def test_nil_or
+
+    assert_filter(
+      { 'x' => 'y' },
+      [ { 'field' => 'x', 'or' => 'z' } ],
+      { 'x' => 'y' })
+    assert_filter(
+      { 'x' => 'z' },
+      [ { 'field' => 'x', 'or' => 'z' } ],
+      {})
+    assert_filter(
+      { 'x' => 'z' },
+      [ { 'field' => 'x', 'or' => 'z' } ],
+      { 'x' => nil })
+  end
+
   def test_and
 
     assert_filter(
