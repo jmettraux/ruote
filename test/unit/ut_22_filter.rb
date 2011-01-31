@@ -251,5 +251,29 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'x', 'smatch' => '1' } ],
       { 'x' => 2.0 })
   end
+
+  def test_copy
+
+    assert_filter(
+      { 'x' => 'y', 'z' => 'y' },
+      [ { 'field' => 'x', 'copy_to' => 'z' } ],
+      { 'x' => 'y' })
+    assert_filter(
+      { 'x' => 'y', 'z' => 'y' },
+      [ { 'field' => 'z', 'copy_from' => 'x' } ],
+      { 'x' => 'y' })
+  end
+
+  def test_move
+
+    assert_filter(
+      { 'z' => 'y' },
+      [ { 'field' => 'x', 'move_to' => 'z' } ],
+      { 'x' => 'y' })
+    assert_filter(
+      { 'z' => 'y' },
+      [ { 'field' => 'z', 'move_from' => 'x' } ],
+      { 'x' => 'y' })
+  end
 end
 

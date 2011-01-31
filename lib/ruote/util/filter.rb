@@ -64,6 +64,16 @@ module Ruote
 
         Ruote.set(hash, field, Rufus::Json.dup(s))
 
+      elsif ct = rule['copy_to'] || rule['move_to']
+
+        Ruote.set(hash, ct, Rufus::Json.dup(value))
+        Ruote.unset(hash, field) if rule['move_to']
+
+      elsif cf = rule['copy_from'] || rule['move_from']
+
+        Ruote.set(hash, field, Rufus::Json.dup(Ruote.lookup(hash, cf)))
+        Ruote.unset(hash, cf) if rule['move_from']
+
       elsif t = rule['type']
 
         valid = enforce_type(t, field, value)
