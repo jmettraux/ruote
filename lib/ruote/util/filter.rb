@@ -68,7 +68,13 @@ module Ruote
 
         valid = enforce_type(t, field, value)
 
-      #elsif m = rule['match']
+      elsif m = rule['match']
+
+        valid = value.nil? ? false : value.to_s.match(m) != nil
+
+      elsif s = rule['smatch']
+
+        valid = value.is_a?(String) ? value.match(s) != nil : false
       end
 
       # dealing with :and and :or...

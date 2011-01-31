@@ -19,19 +19,19 @@ class UtFilterTest < Test::Unit::TestCase
 
   def assert_filter (result, filter, hash)
 
-    assert_equal(result, Ruote.filter(filter, hash))
+    assert_equal(result, Ruote.filter(Rufus::Json.dup(filter), hash))
   end
 
   def assert_valid (filter, hash)
 
-    Ruote.filter(filter, hash)
+    Ruote.filter(Rufus::Json.dup(filter), hash)
     assert true
   end
 
   def assert_not_valid (filter, hash)
 
     assert_raise Ruote::ValidationError do
-      Ruote.filter(filter, hash)
+      Ruote.filter(Rufus::Json.dup(filter), hash)
     end
   end
 
@@ -216,6 +216,40 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'z' },
       [ { 'field' => 'x', 'set' => 'z' } ],
       {})
+  end
+
+  def test_match
+
+    assert_valid(
+      [ { 'field' => 'x', 'match' => 'to' } ],
+      { 'x' => 'toto' })
+    assert_valid(
+      [ { 'field' => 'x', 'match' => '1' } ],
+      { 'x' => 1.0 })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'match' => 'to' } ],
+      { 'x' => 'tutu' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'match' => '1' } ],
+      { 'x' => 2.0 })
+  end
+
+  def test_smatch
+
+    assert_valid(
+      [ { 'field' => 'x', 'smatch' => 'to' } ],
+      { 'x' => 'toto' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'smatch' => '1' } ],
+      { 'x' => 1.0 })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'smatch' => 'to' } ],
+      { 'x' => 'tutu' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'smatch' => '1' } ],
+      { 'x' => 2.0 })
   end
 end
 
