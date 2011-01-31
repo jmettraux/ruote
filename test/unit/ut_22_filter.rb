@@ -355,5 +355,22 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'x', 'empty' => true } ],
       { 'x' => { 'a' =>  'b' } })
   end
+
+  def test_in
+
+    assert_valid(
+      [ { 'field' => 'x', 'in' => %w[ alpha bravo ] } ],
+      { 'x' => 'alpha' })
+    assert_valid(
+      [ { 'field' => 'x', 'in' => "alpha, bravo" } ],
+      { 'x' => 'alpha' })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'in' => %w[ alpha bravo ] } ],
+      { 'x' => 'charly' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'in' => "alpha, bravo" } ],
+      { 'x' => 'charly' })
+  end
 end
 

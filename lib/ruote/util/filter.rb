@@ -94,9 +94,14 @@ module Ruote
           false
         end
 
-      elsif rule['empty']
+      elsif rule['empty'] || rule['e']
 
         valid = value.respond_to?(:empty?) ? value.empty? : false
+
+      elsif i = rule['in'] || rule['i']
+
+        i = i.is_a?(Array) ? i : i.to_s.split(',').map { |e| e.strip }
+        valid = i.include?(value)
 
       elsif t = rule['type'] || rule['t']
 
