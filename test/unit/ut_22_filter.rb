@@ -410,6 +410,19 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 'A', 'c' => 'C' } })
   end
 
+  def test_merge_dot
+
+    assert_filter(
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'a' => 1, 'b' => 2 },
+      [ { 'field' => 'x', 'merge_to' => '.' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 } })
+
+    assert_filter(
+      { 'x' => { 'a' => 1, 'b' => 2, 'x' => { 'a' => 1, 'b' => 2 } } },
+      [ { 'field' => 'x', 'merge_from' => '.' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 } })
+  end
+
   def test_migrate
 
     assert_filter(
@@ -421,6 +434,19 @@ class UtFilterTest < Test::Unit::TestCase
       { 'y' => { 'a' => 1, 'b' => 2, 'c' => 'C' } },
       [ { 'field' => 'x', 'migrate_to' => 'y' } ],
       { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 'A', 'c' => 'C' } })
+  end
+
+  def test_migrate_dot
+
+    assert_filter(
+      { 'a' => 1, 'b' => 2 },
+      [ { 'field' => 'x', 'mi_to' => '.' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 } })
+
+    assert_filter(
+      { 'x' => { 'a' => 1, 'b' => 2, 'x' => { 'a' => 1, 'b' => 2 } } },
+      [ { 'field' => 'x', 'mi_from' => '.' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 } })
   end
 end
 

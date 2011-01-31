@@ -31,6 +31,8 @@ module Ruote
   #
   def Ruote.lookup (collection, key, container_lookup=false)
 
+    return collection if key == '.'
+
     key, rest = pop_key(key)
     value = flookup(collection, key)
 

@@ -18,6 +18,13 @@ class LookupTest < Test::Unit::TestCase
     assert_equal('B', Ruote.lookup({ 'h' => %w[ A B C ] }, 'h.1'))
   end
 
+  def test_lookup_dot
+
+    h = { 'a' => 'b' }
+
+    assert_equal h, Ruote.lookup(h, '.')
+  end
+
   def test_container_lookup
 
     assert_equal(

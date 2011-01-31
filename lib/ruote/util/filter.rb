@@ -90,7 +90,9 @@ module Ruote
       elsif mf = find(rule, %w[ merge mg migrate mi ], 'from')
 
         value.merge!(Rufus::Json.dup(Ruote.lookup(hash, mf)))
-        Ruote.unset(hash, mf) if rule['migrate_from'] || rule['mi_from']
+        if mf != '.' and (rule['migrate_from'] or rule['mi_from'])
+          Ruote.unset(hash, mf)
+        end
 
       elsif sz = rule['size'] || rule['sz']
 
