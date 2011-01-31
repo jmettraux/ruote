@@ -396,5 +396,31 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'x', 'valid' => 'nada' } ],
       {})
   end
+
+  def test_merge
+
+    assert_filter(
+      { 'x' => { 'a' => 'A', 'b' => 2, 'c' => 'C' }, 'y' => { 'a' => 'A', 'c' => 'C' } },
+      [ { 'field' => 'x', 'merge_from' => 'y' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 'A', 'c' => 'C' } })
+
+    assert_filter(
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 1, 'b' => 2, 'c' => 'C' } },
+      [ { 'field' => 'x', 'merge_to' => 'y' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 'A', 'c' => 'C' } })
+  end
+
+  def test_migrate
+
+    assert_filter(
+      { 'x' => { 'a' => 'A', 'b' => 2, 'c' => 'C' } },
+      [ { 'field' => 'x', 'migrate_from' => 'y' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 'A', 'c' => 'C' } })
+
+    assert_filter(
+      { 'y' => { 'a' => 1, 'b' => 2, 'c' => 'C' } },
+      [ { 'field' => 'x', 'migrate_to' => 'y' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 'A', 'c' => 'C' } })
+  end
 end
 

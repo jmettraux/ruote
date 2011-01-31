@@ -82,6 +82,16 @@ module Ruote
         Ruote.set(hash, field, Rufus::Json.dup(Ruote.lookup(hash, cf)))
         Ruote.unset(hash, cf) if rule['move_from'] || rule['mv_from']
 
+      elsif mt = find(rule, %w[ merge mg migrate mi ], 'to')
+
+        Ruote.lookup(hash, mt).merge!(Rufus::Json.dup(value))
+        Ruote.unset(hash, field) if rule['migrate_to'] || rule['mi_to']
+
+      elsif mf = find(rule, %w[ merge mg migrate mi ], 'from')
+
+        value.merge!(Rufus::Json.dup(Ruote.lookup(hash, mf)))
+        Ruote.unset(hash, mf) if rule['migrate_from'] || rule['mi_from']
+
       elsif sz = rule['size'] || rule['sz']
 
         sz = sz.is_a?(String) ?
