@@ -52,7 +52,7 @@ module Ruote
       field = rule['field']
       value = Ruote.lookup(hash, field)
 
-      valid = true
+      valid = nil
 
       if rule['remove']
 
@@ -69,12 +69,17 @@ module Ruote
       #elsif m = rule['match']
       end
 
-      unless valid
+      if valid == false
+
         if o = rule['or']
           Ruote.set(hash, field, Rufus::Json.dup(o))
-        else
+        elsif rule['and'].nil?
           raise ValidationError.new(rule, field, value)
         end
+
+      elsif valid == true and a = rule['and']
+
+        Ruote.set(hash, field, Rufus::Json.dup(a))
       end
     end
 

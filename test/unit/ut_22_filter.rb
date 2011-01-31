@@ -14,6 +14,9 @@ require 'ruote/util/filter'
 
 class UtFilterTest < Test::Unit::TestCase
 
+  #
+  # some helpers
+
   def assert_filter (result, filter, hash)
 
     assert_equal(result, Ruote.filter(filter, hash))
@@ -173,6 +176,18 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'z' },
       [ { 'field' => 'x', 'type' => 'string', 'or' => 'z' } ],
       { 'x' => 2 })
+  end
+
+  def test_and
+
+    assert_filter(
+      { 'x' => 'z' },
+      [ { 'field' => 'x', 'type' => 'string', 'and' => 'z' } ],
+      { 'x' => 'y' })
+    assert_filter(
+      { 'x' => 1 },
+      [ { 'field' => 'x', 'type' => 'string', 'and' => 'z' } ],
+      { 'x' => 1 })
   end
 end
 
