@@ -14,6 +14,11 @@ require 'ruote/util/filter'
 
 class UtFilterTest < Test::Unit::TestCase
 
+  def assert_filter (result, filter, hash)
+
+    assert_equal(result, Ruote.filter(filter, hash))
+  end
+
   def assert_valid (filter, hash)
 
     Ruote.filter(filter, hash)
@@ -32,51 +37,44 @@ class UtFilterTest < Test::Unit::TestCase
 
   def test_remove
 
-    assert_equal(
+    assert_filter(
       {},
-      Ruote.filter(
-        [ { 'field' => 'x', 'remove' => true } ],
-        { 'x' => 'y' }))
+      [ { 'field' => 'x', 'remove' => true } ],
+      { 'x' => 'y' })
 
-    assert_equal(
+    assert_filter(
       { 'x' => {} },
-      Ruote.filter(
-        [ { 'field' => 'x.y', 'remove' => true } ],
-        { 'x' => { 'y' => 'z' } }))
+      [ { 'field' => 'x.y', 'remove' => true } ],
+      { 'x' => { 'y' => 'z' } })
   end
 
   def test_default
 
-    assert_equal(
+    assert_filter(
       { 'x' => 1 },
-      Ruote.filter(
-        [ { 'field' => 'x', 'default' => 1 } ],
-        {}))
+      [ { 'field' => 'x', 'default' => 1 } ],
+      {})
 
-    assert_equal(
+    assert_filter(
       { 'x' => 2 },
-      Ruote.filter(
-        [ { 'field' => 'x', 'default' => 1 } ],
-        { 'x' => 2 }))
+      [ { 'field' => 'x', 'default' => 1 } ],
+      { 'x' => 2 })
 
-    assert_equal(
+    assert_filter(
       { 'x' => { 'y' => 1 } },
-      Ruote.filter(
-        [ { 'field' => 'x.y', 'default' => 1 } ],
-        { 'x' => {} }))
+      [ { 'field' => 'x.y', 'default' => 1 } ],
+      { 'x' => {} })
 
-    assert_equal(
+    assert_filter(
       { 'x' => { 'y' => 2 } },
-      Ruote.filter(
-        [ { 'field' => 'x.y', 'default' => 1 } ],
-        { 'x' => { 'y' => 2 } }))
+      [ { 'field' => 'x.y', 'default' => 1 } ],
+      { 'x' => { 'y' => 2 } })
 
-    assert_equal(
+    assert_filter(
       { 'x' => { 'y' => 1 } },
-      Ruote.filter(
-        [ { 'field' => 'x', 'default' => {} },
-          { 'field' => 'x.y', 'default' => 1 } ],
-        {}))
+      [ { 'field' => 'x', 'default' => {} },
+        { 'field' => 'x.y', 'default' => 1 } ],
+      {})
   end
 
   def test_type
@@ -163,6 +161,18 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'x', 'type' => 'string,null' } ], { 'x' => nil })
     assert_valid(
       [ { 'field' => 'x', 'type' => 'string,null' } ], { 'x' => 'x' })
+  end
+
+  def test_or
+
+    assert_filter(
+      { 'x' => 'y' },
+      [ { 'field' => 'x', 'type' => 'string', 'or' => 'z' } ],
+      { 'x' => 'y' })
+    assert_filter(
+      { 'x' => 'z' },
+      [ { 'field' => 'x', 'type' => 'string', 'or' => 'z' } ],
+      { 'x' => 2 })
   end
 end
 

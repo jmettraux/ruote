@@ -32,11 +32,11 @@ module Ruote
 
     attr_accessor :field, :value, :rule
 
-    def initialize (field, value, rule)
+    def initialize (rule, field, value)
 
-      @field = field
-      @value = value
       @rule = rule
+      @value = value
+      @field = field
       super("field '#{field}' doesn't follow rule #{rule.inspect}")
     end
   end
@@ -52,19 +52,29 @@ module Ruote
       field = rule['field']
       value = Ruote.lookup(hash, field)
 
+      valid = true
+
       if rule['remove']
-        Ruote.unset(hash, rule['field'])
+
+        Ruote.unset(hash, field)
 
       elsif d = rule['default'] and value.nil?
 
-        Ruote.set(hash, rule['field'], Rufus::Json.dup(d))
+        Ruote.set(hash, field, Rufus::Json.dup(d))
 
-      elsif rule['type']
+      elsif t = rule['type']
 
-        enforce_type(rule, field, value)
+        valid = enforce_type(t, field, value)
 
       #elsif m = rule['match']
-      #elsif o = rule['or']
+      end
+
+      unless valid
+        if o = rule['or']
+          Ruote.set(hash, field, Rufus::Json.dup(o))
+        else
+          raise ValidationError.new(rule, field, value)
+        end
       end
     end
 
@@ -74,16 +84,15 @@ module Ruote
   NUMBER_CLASSES = [ Fixnum, Float ]
   BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
 
-  def self.enforce_type (rule, field, value)
+  def self.enforce_type (type, field, value)
 
-    types = rule['type']
-    types = types.is_a?(Array) ? types : types.split(',')
+    types = type.is_a?(Array) ? type : type.split(',')
 
     valid = false
 
-    types.each do |type|
+    types.each do |t|
 
-      valid = valid || case type.strip
+      valid = valid || case t.strip
         when 'null', 'nil'
           value == nil
         when 'string'
@@ -97,13 +106,13 @@ module Ruote
         when 'boolean', 'bool'
           BOOLEAN_CLASSES.include?(value.class)
         else
-          raise ArgumentError.new("unknown type '#{rule['type']}'")
+          raise ArgumentError.new("unknown type '#{t}'")
       end
     end
 
     # TODO : Array<x> and Object<y>
 
-    raise ValidationError.new(rule, field, value) unless valid
+    valid
   end
 end
 
