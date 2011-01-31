@@ -408,6 +408,11 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 1, 'b' => 2, 'c' => 'C' } },
       [ { 'field' => 'x', 'merge_to' => 'y' } ],
       { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 'A', 'c' => 'C' } })
+
+    assert_filter(
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => 2 },
+      [ { 'field' => 'x', 'mg_to' => 'y' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => 2 })
   end
 
   def test_merge_dot
@@ -434,6 +439,11 @@ class UtFilterTest < Test::Unit::TestCase
       { 'y' => { 'a' => 1, 'b' => 2, 'c' => 'C' } },
       [ { 'field' => 'x', 'migrate_to' => 'y' } ],
       { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 'A', 'c' => 'C' } })
+
+    assert_filter(
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => 2 },
+      [ { 'field' => 'x', 'migrate_to' => 'y' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => 2 })
   end
 
   def test_migrate_dot
@@ -447,6 +457,16 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => { 'a' => 1, 'b' => 2, 'x' => { 'a' => 1, 'b' => 2 } } },
       [ { 'field' => 'x', 'mi_from' => '.' } ],
       { 'x' => { 'a' => 1, 'b' => 2 } })
+  end
+
+  def test_caret
+
+    assert_filter(
+      { 'x' => 'a', 'y' => 'a' },
+      [ { 'field' => 'x', 'set' => 'b' },
+        { 'field' => 'x', 'copy_from' => '^.x' },
+        { 'field' => 'y', 'copy_from' => '^.x' } ],
+      { 'x' => 'a' })
   end
 end
 

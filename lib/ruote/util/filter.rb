@@ -51,9 +51,8 @@ module Ruote
   #
   def self.filter (filter, hash)
 
-    #hash = Ruote.fulldup(hash)
     hash = Rufus::Json.dup(hash)
-      # since Yajl is faster than Marshal...
+    hash['^'] = Rufus::Json.dup(hash) # the 'original'
 
     filter.each do |rule|
 
@@ -84,14 +83,22 @@ module Ruote
 
       elsif mt = find(rule, %w[ merge mg migrate mi ], 'to')
 
-        Ruote.lookup(hash, mt).merge!(Rufus::Json.dup(value))
-        Ruote.unset(hash, field) if rule['migrate_to'] || rule['mi_to']
+        target = Ruote.lookup(hash, mt)
+
+        if target.respond_to?(:merge!)
+          target.merge!(Rufus::Json.dup(value))
+          target.delete('^')
+          Ruote.unset(hash, field) if rule['migrate_to'] || rule['mi_to']
+        end
 
       elsif mf = find(rule, %w[ merge mg migrate mi ], 'from')
 
-        value.merge!(Rufus::Json.dup(Ruote.lookup(hash, mf)))
-        if mf != '.' and (rule['migrate_from'] or rule['mi_from'])
-          Ruote.unset(hash, mf)
+        if value.respond_to?(:merge!)
+          value.merge!(Rufus::Json.dup(Ruote.lookup(hash, mf)))
+          value.delete('^')
+          if mf != '.' and (rule['migrate_from'] or rule['mi_from'])
+            Ruote.unset(hash, mf)
+          end
         end
 
       elsif sz = rule['size'] || rule['sz']
@@ -151,6 +158,9 @@ module Ruote
         Ruote.set(hash, field, Rufus::Json.dup(o))
       end
     end
+
+    hash.delete('^')
+      # remove the 'original'
 
     hash
   end
