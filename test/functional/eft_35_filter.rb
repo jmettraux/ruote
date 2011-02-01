@@ -11,27 +11,43 @@ require File.join(File.dirname(__FILE__), 'base')
 class EftFilterTest < Test::Unit::TestCase
   include FunctionalBase
 
-  PDEF0 = Ruote.process_definition do
-    filter 'x', :type => 'string'
-  end
+  def assert_terminates (pdef, fields, result=nil)
 
-  def test_filter_single_rule_validation
-
-    wfid = @engine.launch(PDEF0, 'x' => 'nada')
-
+    wfid = @engine.launch(pdef, fields)
     r = @engine.wait_for(wfid)
 
     assert_equal 'terminated', r['action']
+    assert_equal(result, r['workitem']['fields']) if result
   end
 
-  def test_filter_single_rule_validation_failure
+  def assert_does_not_validate (pdef, fields={})
 
-    wfid = @engine.launch(PDEF0, 'x' => 2)
-
+    wfid = @engine.launch(pdef, fields)
     r = @engine.wait_for(wfid)
 
     assert_equal 'error_intercepted', r['action']
     assert_match /ValidationError/, @engine.errors.first.message
+  end
+
+  #
+  # the tests
+
+  def test_filter_single_rule_validation
+
+    pdef = Ruote.process_definition do
+      filter 'x', :type => 'string'
+    end
+
+    assert_terminates(pdef, 'x' => 'nada')
+  end
+
+  def test_filter_single_rule_validation_failure
+
+    pdef = Ruote.process_definition do
+      filter 'x', :type => 'string'
+    end
+
+    assert_does_not_validate(pdef, 'x' => 2)
   end
 
   def test_filter_single_rule_transformation
@@ -40,14 +56,7 @@ class EftFilterTest < Test::Unit::TestCase
       filter 'x', :or => 'crimea'
     end
 
-    #noisy
-
-    wfid = @engine.launch(pdef)
-
-    r = @engine.wait_for(wfid)
-
-    assert_equal 'terminated', r['action']
-    assert_equal 'crimea', r['workitem']['fields']['x']
+    assert_terminates(pdef, {}, { 'x' => 'crimea' })
   end
 
   def test_filter_single_rule_in
@@ -56,13 +65,7 @@ class EftFilterTest < Test::Unit::TestCase
       filter 'colour', :in => %w[ red green blue ]
     end
 
-    #noisy
-
-    wfid = @engine.launch(pdef, 'colour' => 'green')
-
-    r = @engine.wait_for(wfid)
-
-    assert_equal 'terminated', r['action']
+    assert_terminates(pdef, 'colour' => 'green')
   end
 
   PDEF1 = Ruote.process_definition do
@@ -74,21 +77,12 @@ class EftFilterTest < Test::Unit::TestCase
 
   def test_filter_multiple_rules_validation
 
-    wfid = @engine.launch(PDEF1, 'x' => 's', 'y' => 2)
-
-    r = @engine.wait_for(wfid)
-
-    assert_equal 'terminated', r['action']
+    assert_terminates(PDEF1, 'x' => 's', 'y' => 2)
   end
 
   def test_filter_multiple_rules_validation_failure
 
-    wfid = @engine.launch(PDEF1, 'x' => 's', 'y' => 's')
-
-    r = @engine.wait_for(wfid)
-
-    assert_equal 'error_intercepted', r['action']
-    assert_match /ValidationError/, @engine.errors.first.message
+    assert_does_not_validate(PDEF1, 'x' => 's', 'y' => 's')
   end
 
   def test_filter_multiple_rules_transformation
@@ -100,14 +94,63 @@ class EftFilterTest < Test::Unit::TestCase
       ]
     end
 
-    #noisy
+    assert_terminates(pdef, {}, { 'x' => 'alpha', 'y' => 'bravo' })
+  end
 
-    wfid = @engine.launch(pdef)
+  def test_filter_in_variable
 
-    r = @engine.wait_for(wfid)
+    pdef = Ruote.process_definition do
+      set 'v:toto' => [
+        { :field => 'a', :set => 'A' },
+        { :field => 'b', :or => 'B' },
+      ]
+      filter 'v:toto'
+    end
 
-    assert_equal 'terminated', r['action']
-    assert_equal({ 'x' => 'alpha', 'y' => 'bravo' }, r['workitem']['fields'])
+    assert_terminates(pdef, {}, { 'a' => 'A', 'b' => 'B' })
+  end
+
+  def test_in_filter_in_variable
+
+    # compatibility with the :filter attribute
+
+    pdef = Ruote.process_definition do
+      set 'v:toto' => { :in => [
+        { :field => 'a', :set => 'A' },
+        { :field => 'b', :or => 'B' },
+      ] }
+      filter 'v:toto'
+    end
+
+    assert_terminates(pdef, {}, { 'a' => 'A', 'b' => 'B' })
+  end
+
+  def test_filter_in_field
+
+    pdef = Ruote.process_definition do
+      set 'f:toto' => [
+        { :field => 'a', :set => 'A' },
+        { :field => 'b', :or => 'B' },
+      ]
+      filter 'f:toto'
+      unset 'f:toto'
+    end
+
+    assert_terminates(pdef, {}, { 'a' => 'A', 'b' => 'B' })
+  end
+
+  def test_in_filter_in_field
+
+    pdef = Ruote.process_definition do
+      set 'f:toto' => { :in => [
+        { :field => 'a', :set => 'A' },
+        { :field => 'b', :or => 'B' },
+      ] }
+      filter 'f:toto'
+      unset 'f:toto'
+    end
+
+    assert_terminates(pdef, {}, { 'a' => 'A', 'b' => 'B' })
   end
 end
 

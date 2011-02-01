@@ -65,16 +65,7 @@ module Ruote::Exp
 
     def apply
 
-      ain = attribute_text != '' ? nil : attribute(:in)
-
-      filter = ain || [ attributes.inject({}) { |h, (k, v)|
-        if v.nil?
-          h['field'] = k
-        else
-          h[k] = v
-        end
-        h
-      } ]
+      filter = referenced_filter || complete_filter || one_line_filter
 
       fields = Ruote.filter(filter, h.applied_workitem['fields'])
 
@@ -84,6 +75,43 @@ module Ruote::Exp
     def reply (workitem)
 
       # never called
+    end
+
+    protected
+
+    def referenced_filter
+
+      prefix, key = attribute_text.split(':')
+
+      return nil unless %w[ v var variable f field ].include?(prefix)
+
+      filter = prefix.match(/^v/) ?
+        lookup_variable(key) : Ruote.lookup(h.applied_workitem['fields'], key)
+
+      if filter.is_a?(Hash) and i = filter['in']
+        return i
+      end
+
+      filter
+    end
+
+    def complete_filter
+
+      return nil if attribute_text != ''
+
+      attribute(:in)
+    end
+
+    def one_line_filter
+
+      [ attributes.inject({}) { |h, (k, v)|
+        if v.nil?
+          h['field'] = k
+        else
+          h[k] = v
+        end
+        h
+      } ]
     end
   end
 end
