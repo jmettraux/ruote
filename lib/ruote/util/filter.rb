@@ -58,121 +58,7 @@ module Ruote
       # the 'originals'
 
     filter.each do |rule|
-
-      field = rule['field'] || rule['f']
-      value = Ruote.lookup(hash, field)
-
-      valid = nil
-
-      # basis
-
-      if rule['remove'] || rule['rm']
-
-        Ruote.unset(hash, field)
-
-      elsif s = rule['set']
-
-        Ruote.set(hash, field, Rufus::Json.dup(s))
-
-      elsif ct = find(rule, %w[ copy cp move mv ], 'to')
-
-        Ruote.set(hash, ct, Rufus::Json.dup(value))
-        Ruote.unset(hash, field) if rule['move_to'] || rule['mv_to']
-
-      elsif cf = find(rule, %w[ copy cp move mv ], 'from')
-
-        Ruote.set(hash, field, Rufus::Json.dup(Ruote.lookup(hash, cf)))
-        Ruote.unset(hash, cf) if rule['move_from'] || rule['mv_from']
-
-      elsif mt = find(rule, %w[ merge mg migrate mi ], 'to')
-
-        target = Ruote.lookup(hash, mt)
-
-        if target.respond_to?(:merge!)
-          target.merge!(Rufus::Json.dup(value))
-          target.delete('^')
-          target.delete('^^')
-          Ruote.unset(hash, field) if rule['migrate_to'] || rule['mi_to']
-        end
-
-      elsif mf = find(rule, %w[ merge mg migrate mi ], 'from')
-
-        if value.respond_to?(:merge!)
-          value.merge!(Rufus::Json.dup(Ruote.lookup(hash, mf)))
-          value.delete('^')
-          value.delete('^^')
-          if mf != '.' and (rule['migrate_from'] or rule['mi_from'])
-            Ruote.unset(hash, mf)
-          end
-        end
-
-      elsif sz = rule['size'] || rule['sz']
-
-        sz = sz.is_a?(String) ?
-          sz.split(',').collect { |i| i.to_i } : Array(sz)
-
-        valid = if value.respond_to?(:size)
-          (sz.first ? value.size >= sz.first : true) and
-          (sz.last ? value.size <= sz.last : true)
-        else
-          false
-        end
-
-      elsif rule['empty'] || rule['e']
-
-        valid = value.respond_to?(:empty?) ? value.empty? : false
-
-      elsif i = rule['in'] || rule['i']
-
-        i = i.is_a?(Array) ? i : i.to_s.split(',').map { |e| e.strip }
-        valid = i.include?(value)
-
-      elsif h = rule['has'] || rule['h']
-
-        h = h.is_a?(Array) ? h : h.to_s.split(',').map { |e| e.strip }
-        valid = if value.is_a?(Hash)
-          (value.keys & h) == h
-        elsif value.is_a?(Array)
-          (value & h) == h
-        else
-          false
-        end
-
-      elsif t = rule['type'] || rule['t']
-
-        valid = enforce_type(t, field, value)
-
-      elsif m = rule['match'] || rule['m']
-
-        valid = value.nil? ? false : value.to_s.match(m) != nil
-
-      elsif s = rule['smatch'] || rule['sm']
-
-        valid = value.is_a?(String) ? value.match(s) != nil : false
-
-      elsif rule.has_key?('valid') || rule.has_key?('v')
-
-        valid = ((rule['valid'] || rule['v']).to_s == 'true')
-      end
-
-      # dealing with :and and :or...
-
-      if valid == false
-
-        if o = rule['or']
-          Ruote.set(hash, field, Rufus::Json.dup(o))
-        elsif rule['and'].nil?
-          raise ValidationError.new(rule, field, value)
-        end
-
-      elsif valid == true and a = rule['and']
-
-        Ruote.set(hash, field, Rufus::Json.dup(a))
-
-      elsif valid == nil and value.nil? and o = (rule['or'] || rule['default'])
-
-        Ruote.set(hash, field, Rufus::Json.dup(o))
-      end
+      RuleSession.new(hash, rule).run
     end
 
     hash.delete('^')
@@ -183,59 +69,215 @@ module Ruote
   end
 
   # :nodoc:
-  NUMBER_CLASSES = [ Fixnum, Float ]
-
-  # :nodoc:
-  BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
-
-  # :nodoc:
   #
-  # a helper method for .filter
+  # The class used to run a rule (a line of a filter).
   #
-  def self.enforce_type (type, field, value)
+  class RuleSession
 
-    types = type.is_a?(Array) ? type : type.split(',')
+    SKIP = %w[ and or field ]
+    NUMBER_CLASSES = [ Fixnum, Float ]
+    BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
 
-    valid = false
+    def initialize (hash, rule)
 
-    types.each do |t|
+      @hash = hash
+      @rule = rule
+      @field = rule['field'] || rule['f']
+      @value = Ruote.lookup(hash, @field)
+      @valid = nil
+    end
 
-      valid = valid || case t.strip
-        when 'null', 'nil'
-          value == nil
-        when 'string'
-          value.class == String
-        when 'number'
-          NUMBER_CLASSES.include?(value.class)
-        when 'object', 'hash'
-          value.class == Hash
-        when 'array'
-          value.class == Array
-        when 'boolean', 'bool'
-          BOOLEAN_CLASSES.include?(value.class)
-        else
-          raise ArgumentError.new("unknown type '#{t}'")
+    def run
+
+      @rule.each do |k, v|
+
+        next if SKIP.include?(k)
+
+        m = "_#{k}"
+        next unless self.respond_to?(m)
+
+        self.send(m, k, v)
+      end
+
+      raise_or
+    end
+
+    protected
+
+    def _remove (m, v)
+
+      Ruote.unset(@hash, @field)
+    end
+    alias _rm _remove
+
+    def _set (m, v)
+
+      Ruote.set(@hash, @field, Rufus::Json.dup(v))
+    end
+    alias _s _set
+
+    def _copy_to (m, v)
+
+      Ruote.set(@hash, v, Rufus::Json.dup(@value))
+      Ruote.unset(@hash, @field) if m == 'move_to' or m == 'mv_to'
+    end
+    alias _cp_to _copy_to
+    alias _move_to _copy_to
+    alias _mv_to _copy_to
+
+
+    def _copy_from (m, v)
+
+      Ruote.set(@hash, @field, Rufus::Json.dup(Ruote.lookup(@hash, v)))
+      Ruote.unset(@hash, v) if m == 'move_from' or m == 'mv_from'
+    end
+    alias _cp_from _copy_from
+    alias _move_from _copy_from
+    alias _mv_from _copy_from
+
+    def _merge_to (m, v)
+
+      target = Ruote.lookup(@hash, v)
+
+      return unless target.respond_to?(:merge!)
+
+      target.merge!(Rufus::Json.dup(@value))
+      target.delete('^')
+      target.delete('^^')
+      Ruote.unset(@hash, @field) if m == 'migrate_to' or m == 'mi_to'
+    end
+    alias _mg_to _merge_to
+    alias _migrate_to _merge_to
+    alias _mi_to _merge_to
+
+    def _merge_from (m, v)
+
+      return unless @value.respond_to?(:merge!)
+
+      @value.merge!(Rufus::Json.dup(Ruote.lookup(@hash, v)))
+      @value.delete('^')
+      @value.delete('^^')
+
+      if v != '.' and (m == 'migrate_from' or m == 'mi_from')
+        Ruote.unset(@hash, v)
       end
     end
+    alias _mg_from _merge_from
+    alias _migrate_from _merge_from
+    alias _mi_from _merge_from
 
-    # TODO : Array<x> and Object<y>
+    def _size (m, v)
 
-    valid
-  end
+      v = v.is_a?(String) ? v.split(',').collect { |i| i.to_i } : Array(v)
 
-  # :nodoc:
-  #
-  # a helper method for .filter
-  #
-  def self.find (rule, verbs, direction)
+      validate(if @value.respond_to?(:size)
+        (v.first ? @value.size >= v.first : true) and
+        (v.last ? @value.size <= v.last : true)
+      else
+        false
+      end)
+    end
+    alias _sz _size
 
-    verbs.each do |verb|
+    def _empty (m, v)
 
-      value = rule["#{verb}_#{direction}"]
-      return value if value
+      validate(@value.respond_to?(:empty?) ? @value.empty? : false)
+    end
+    alias _e _empty
+
+    def _in (m, v)
+
+      v = v.is_a?(Array) ? v : v.to_s.split(',').collect { |e| e.strip }
+      validate(v.include?(@value))
+    end
+    alias _i _in
+
+    def _has (m, v)
+
+      v = v.is_a?(Array) ? v : v.to_s.split(',').collect { |e| e.strip }
+
+      validate(if @value.is_a?(Hash)
+        (@value.keys & v) == v
+      elsif @value.is_a?(Array)
+        (@value & v) == v
+      else
+        false
+      end)
+    end
+    alias _h _has
+
+    def _type (m, v)
+
+      # TODO : Array<x> and Object<y>
+
+      types = v.is_a?(Array) ? v : v.to_s.split(',')
+
+      validate(types.inject(false) do |valid, t|
+
+        valid || case t.strip
+          when 'null', 'nil'
+            @value == nil
+          when 'string'
+            @value.class == String
+          when 'number'
+            NUMBER_CLASSES.include?(@value.class)
+          when 'object', 'hash'
+            @value.class == Hash
+          when 'array'
+            @value.class == Array
+          when 'boolean', 'bool'
+            BOOLEAN_CLASSES.include?(@value.class)
+          else
+            raise ArgumentError.new("unknown type '#{t}'")
+        end
+      end)
+    end
+    alias _t _type
+
+    def _match (m, v)
+
+      validate(@value.nil? ? false : @value.to_s.match(v) != nil)
+    end
+    alias _m _match
+
+    def _smatch (m, v)
+
+      validate(@value.is_a?(String) ? @value.match(v) != nil : false)
+    end
+    alias _sm _smatch
+
+    def _valid (m, v)
+
+      validate(v.to_s == 'true')
+    end
+    alias _v _valid
+
+    def validate (valid)
+
+      @valid = @valid.nil? ? valid : @valid && valid
     end
 
-    nil
+    def raise_or
+
+      # dealing with :and and :or...
+
+      if @valid == false
+
+        if o = @rule['or']
+          Ruote.set(@hash, @field, Rufus::Json.dup(o))
+        elsif @rule['and'].nil?
+          raise ValidationError.new(@rule, @field, @value)
+        end
+
+      elsif @valid == true and a = @rule['and']
+
+        Ruote.set(@hash, @field, Rufus::Json.dup(a))
+
+      elsif @valid.nil? and @value.nil? and o = (@rule['or'] || @rule['default'])
+
+        Ruote.set(@hash, @field, Rufus::Json.dup(o))
+      end
+    end
   end
 end
 
