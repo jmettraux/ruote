@@ -520,5 +520,24 @@ class UtFilterTest < Test::Unit::TestCase
         { 'field' => 'y', 'copy_from' => '^.x' } ],
       { 'x' => 'a' })
   end
+
+  def test_cumulation
+
+    assert_valid(
+      [ { 'field' => 'x', 't' => 'array', 'has' => 'a' } ],
+      { 'x' => %w[ a b c ] })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 't' => 'hash', 'has' => 'a' } ],
+      { 'x' => %w[ a b c ] })
+  end
+
+  def test_cumulation_or
+
+    assert_filter(
+      { 'x' => { 'a' => 2 } },
+      [ { 'field' => 'x', 't' => 'hash', 'has' => 'a', 'or' => { 'a' => 2 } } ],
+      { 'x' => %w[ a b c ] })
+  end
 end
 
