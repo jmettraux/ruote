@@ -373,6 +373,58 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'charly' })
   end
 
+  def test_has__keys
+
+    assert_valid(
+      [ { 'field' => '.', 'has' => 'x' } ],
+      { 'x' => 'alpha' })
+    assert_valid(
+      [ { 'field' => 'x', 'has' => 'a' } ],
+      { 'x' => { 'a' => 1 } })
+    assert_valid(
+      [ { 'field' => 'x', 'has' => 'a, b' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 } })
+    assert_valid(
+      [ { 'field' => 'x', 'has' => %w[ a b ] } ],
+      { 'x' => { 'a' => 1, 'b' => 2 } })
+
+    assert_not_valid(
+      [ { 'field' => '.', 'has' => 'x' } ],
+      {})
+    assert_not_valid(
+      [ { 'field' => 'x', 'has' => 'b' } ],
+      { 'x' => { 'a' => 1 } })
+    assert_not_valid(
+      [ { 'field' => 'x', 'has' => 'a, c' } ],
+      { 'x' => { 'a' => 1, 'b' => 2 } })
+    assert_not_valid(
+      [ { 'field' => 'x', 'has' => %w[ a c ] } ],
+      { 'x' => { 'a' => 1, 'b' => 2 } })
+  end
+
+  def test_has__elts
+
+    assert_valid(
+      [ { 'field' => 'x', 'has' => 'a' } ],
+      { 'x' => %w[ a b c ] })
+    assert_valid(
+      [ { 'field' => 'x', 'has' => 'a, b' } ],
+      { 'x' => %w[ a b c ] })
+    assert_valid(
+      [ { 'field' => 'x', 'has' => %w[ a b ] } ],
+      { 'x' => %w[ a b c ] })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'has' => 'd' } ],
+      { 'x' => %w[ a b c ] })
+    assert_not_valid(
+      [ { 'field' => 'x', 'has' => 'a, d' } ],
+      { 'x' => %w[ a b c ] })
+    assert_not_valid(
+      [ { 'field' => 'x', 'has' => %w[ a d ] } ],
+      { 'x' => %w[ a b c ] })
+  end
+
   def test_valid
 
     # 'valid' can be used in conjunction with the dollar notation

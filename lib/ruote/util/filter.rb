@@ -127,6 +127,17 @@ module Ruote
         i = i.is_a?(Array) ? i : i.to_s.split(',').map { |e| e.strip }
         valid = i.include?(value)
 
+      elsif h = rule['has'] || rule['h']
+
+        h = h.is_a?(Array) ? h : h.to_s.split(',').map { |e| e.strip }
+        valid = if value.is_a?(Hash)
+          (value.keys & h) == h
+        elsif value.is_a?(Array)
+          (value & h) == h
+        else
+          false
+        end
+
       elsif t = rule['type'] || rule['t']
 
         valid = enforce_type(t, field, value)
