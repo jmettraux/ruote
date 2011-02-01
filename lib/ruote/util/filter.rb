@@ -208,31 +208,67 @@ module Ruote
 
     def _type (m, v)
 
-      # TODO : Array<x> and Object<y>
-
-      types = v.is_a?(Array) ? v : v.to_s.split(',')
-
-      validate(types.inject(false) do |valid, t|
-
-        valid || case t.strip
-          when 'null', 'nil'
-            @value == nil
-          when 'string'
-            @value.class == String
-          when 'number'
-            NUMBER_CLASSES.include?(@value.class)
-          when 'object', 'hash'
-            @value.class == Hash
-          when 'array'
-            @value.class == Array
-          when 'boolean', 'bool'
-            BOOLEAN_CLASSES.include?(@value.class)
-          else
-            raise ArgumentError.new("unknown type '#{t}'")
-        end
-      end)
+      validate(of_type?(@value, v))
     end
     alias _t _type
+
+    TYPE_SPLITTER = /^(?: *, *)?([^,<]+(?:<.+>)?)(.*)$/
+
+    def split_type (type)
+
+      result = []
+
+      loop do
+        m = TYPE_SPLITTER.match(type)
+        break unless m
+        result << m[1]
+        type = m[2]
+      end
+
+      result
+    end
+
+    def of_type? (value, types)
+
+      types = types.is_a?(Array) ? types : split_type(types)
+
+      valid = false
+
+      types.each do |type|
+
+        valid ||= case type
+          when 'null', 'nil'
+            value == nil
+          when 'string'
+            value.class == String
+          when 'number'
+            NUMBER_CLASSES.include?(value.class)
+          when /^(array|object|hash)<(.*)>$/
+            children_of_type?(value, $~[2])
+          when 'object', 'hash'
+            value.class == Hash
+          when 'array'
+            value.class == Array
+          when 'boolean', 'bool'
+            BOOLEAN_CLASSES.include?(value.class)
+          else
+            raise ArgumentError.new("unknown type '#{type}'")
+        end
+      end
+
+      valid
+    end
+
+    def children_of_type? (values, types)
+
+      return false unless values.is_a?(Array) or values.is_a?(Hash)
+
+      values = values.is_a?(Array) ? values : values.values
+
+      values.each { |v| of_type?(v, types) or return(false) }
+
+      true
+    end
 
     def _match (m, v)
 

@@ -166,6 +166,51 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'x', 'type' => 'string,null' } ], { 'x' => 'x' })
   end
 
+  def test_type_array
+
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'array<string>' } ],
+      { 'x' => %w[ a b c ] })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'array<string,number>' } ],
+      { 'x' => [ 'a', 1 ] })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'array<string>' } ],
+      { 'x' => [ 'a', 1 ] })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'array<string,number>' } ],
+      { 'x' => [ 'a', true ] })
+  end
+
+  def test_type_array_deep
+
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'array<array<string>>' } ],
+      { 'x' => [ %w[ a b ], %w[ c d ] ] })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'array<array<string>>' } ],
+      { 'x' => [ %w[ a b ], [ 2, 3 ] ] })
+  end
+
+  def test_type_hash
+
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'hash<string>' } ],
+      { 'x' => { 'a' => 'b', 'c' => 'd' } })
+    assert_valid(
+      [ { 'field' => 'x', 'type' => 'hash<string,number>' } ],
+      { 'x' => { 'a' => 'b', 'c' => 0 } })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'hash<string>' } ],
+      { 'x' => { 'a' => 'b', 'c' => 0 } })
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'hash<string,number>' } ],
+      { 'x' => { 'a' => 'b', 'c' => true } })
+  end
+
   def test_or
 
     assert_filter(
