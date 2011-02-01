@@ -49,10 +49,13 @@ module Ruote
   #
   # See the Ruote::Exp::FilterExpression for more information.
   #
-  def self.filter (filter, hash)
+  def self.filter (filter, hash, double_caret=nil)
 
     hash = Rufus::Json.dup(hash)
-    hash['^'] = Rufus::Json.dup(hash) # the 'original'
+
+    hash['^'] = Rufus::Json.dup(hash)
+    hash['^^'] = double_caret ? Rufus::Json.dup(double_caret) : hash['^']
+      # the 'originals'
 
     filter.each do |rule|
 
@@ -88,6 +91,7 @@ module Ruote
         if target.respond_to?(:merge!)
           target.merge!(Rufus::Json.dup(value))
           target.delete('^')
+          target.delete('^^')
           Ruote.unset(hash, field) if rule['migrate_to'] || rule['mi_to']
         end
 
@@ -96,6 +100,7 @@ module Ruote
         if value.respond_to?(:merge!)
           value.merge!(Rufus::Json.dup(Ruote.lookup(hash, mf)))
           value.delete('^')
+          value.delete('^^')
           if mf != '.' and (rule['migrate_from'] or rule['mi_from'])
             Ruote.unset(hash, mf)
           end
@@ -160,7 +165,8 @@ module Ruote
     end
 
     hash.delete('^')
-      # remove the 'original'
+    hash.delete('^^')
+      # remove the 'originals'
 
     hash
   end

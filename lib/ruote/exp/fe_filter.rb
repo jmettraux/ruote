@@ -67,7 +67,13 @@ module Ruote::Exp
 
       filter = referenced_filter || complete_filter || one_line_filter
 
-      fields = Ruote.filter(filter, h.applied_workitem['fields'])
+      parent_fields = parent_id ?
+        (parent.h.applied_workitem['fields'] rescue nil) : nil
+          #
+          # parent_fields are placed in the ^^ available to the filter
+
+      fields = Ruote.filter(
+        filter, h.applied_workitem['fields'], parent_fields)
 
       reply_to_parent(h.applied_workitem.merge('fields' => fields))
     end

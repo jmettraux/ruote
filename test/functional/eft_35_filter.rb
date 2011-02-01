@@ -152,5 +152,31 @@ class EftFilterTest < Test::Unit::TestCase
 
     assert_terminates(pdef, {}, { 'a' => 'A', 'b' => 'B' })
   end
+
+  def test_caret
+
+    # the ^ points to the hash as it was right before the filtering began
+
+    pdef = Ruote.process_definition do
+      filter :in => [
+        { :field => 'x', :set => 'X' },
+        { :field => 'x', :copy_from => '^.x' },
+      ]
+    end
+
+    assert_terminates(pdef, { 'x' => 1 }, { 'x' => 1 })
+  end
+
+  def test_double_caret
+
+    # the ^^ points to the workitem fields as they are in the parent expression
+
+    pdef = Ruote.process_definition do
+      filter 'x', :set => 'X'
+      filter 'x', :copy_from => '^^.x'
+    end
+
+    assert_terminates(pdef, { 'x' => 1 }, { 'x' => 1 })
+  end
 end
 
