@@ -32,30 +32,32 @@ require 'ruote/util/hashdot'
 
 module Ruote
 
+  # Gets the storage id representation of given +fei+.
+  #
+  # fei - The FlowExpressionId instance.
+  #
   # A shortcut for
   #
   #   Ruote::FlowExpressionId.to_storage_id(fei)
   #
+  # Returns a String representing the FlowExpressionId storage id.
   def self.to_storage_id(fei)
-
     Ruote::FlowExpressionId.to_storage_id(fei)
   end
 
-  # A shorter shortcut for
-  #
-  #   Ruote::FlowExpressionId.to_storage_id(fei)
-  #
-  def self.sid(fei)
-
-    Ruote::FlowExpressionId.to_storage_id(fei)
+  class << self
+    alias :sid :to_storage_id
   end
 
+  # Validates given +o+ as a FlowExpressionId.
+  #
+  # fei - The object to validate.
+  #
   # A shortcut for
   #
   #   Ruote::FlowExpressionId.is_a_fei?(o)
   #
   def self.is_a_fei?(o)
-
     Ruote::FlowExpressionId.is_a_fei?(o)
   end
 
@@ -117,10 +119,14 @@ module Ruote
 
     alias sub_wfid subid
 
+    # Gets the storage id representation of this object.
+    #
+    # Returns a String representing the FlowExpressionId storage id.
     def to_storage_id
       "#{@h['expid']}!#{@h['subid']}!#{@h['wfid']}"
     end
-    alias sid to_storage_id
+
+    alias :sid :to_storage_id
 
     def self.to_storage_id(hfei)
 
