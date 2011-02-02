@@ -32,7 +32,7 @@ module Ruote
   # This method is used by the 'subprocess' expression and by the
   # EngineParticipant.
   #
-  def self.lookup_subprocess (fexp, ref)
+  def self.lookup_subprocess(fexp, ref)
 
     val = fexp.lookup_variable(ref)
 
@@ -59,7 +59,7 @@ module Ruote
   # Returns true if the argument is a process definition tree (whose root
   # is 'define', 'process_definition' or 'workflow_definition'.
   #
-  def self.is_definition_tree? (arg)
+  def self.is_definition_tree?(arg)
 
     Ruote::Exp::DefineExpression.is_definition?(arg) && is_tree?(arg)
   end
@@ -67,7 +67,7 @@ module Ruote
   # Returns true if the given argument is a process definition tree
   # (its root doesn't need to be 'define' or 'process_definition' though).
   #
-  def self.is_tree? (arg)
+  def self.is_tree?(arg)
 
     arg.is_a?(Array) && arg.size == 3 &&
     arg[0].is_a?(String) && arg[1].is_a?(Hash) && arg[2].is_a?(Array) &&
@@ -77,7 +77,7 @@ module Ruote
   # Mainly used by Ruote.lookup_subprocess, returns true if the argument is
   # is an array [ position, tree ].
   #
-  def self.is_pos_tree? (arg)
+  def self.is_pos_tree?(arg)
 
     arg.is_a?(Array) &&
     arg.size == 2 &&

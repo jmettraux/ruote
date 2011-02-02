@@ -30,7 +30,7 @@ class FtPartBlockingTest < Test::Unit::TestCase
 
  protected
 
- def run_engine (options={})
+ def run_engine(options={})
 
    @engine.context.stash[:first_time] = options[:first_time] || 0.0
    @engine.context.stash[:second_time] = options[:second_time] || 0.0

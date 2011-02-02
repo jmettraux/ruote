@@ -58,7 +58,7 @@ module FunctionalBase
     @engine.context.stash
   end
 
-  def assert_log_count (count, &block)
+  def assert_log_count(count, &block)
 
     c = @engine.context.logger.log.select(&block).size
 
@@ -70,7 +70,7 @@ module FunctionalBase
   #   assert_trace(*expected_traces, pdef)
   #   assert_trace(*expected_traces, fields, pdef)
   #
-  def assert_trace (*args)
+  def assert_trace(*args)
 
     if args.last == :clear
       args.pop
@@ -108,24 +108,24 @@ module FunctionalBase
 
   protected
 
-  def noisy (on=true)
+  def noisy(on=true)
 
     puts "\nnoisy " + caller[0] if on
     @engine.context.logger.noisy = true
   end
 
-  def wait_for (*wfid_or_part)
+  def wait_for(*wfid_or_part)
 
     @engine.wait_for(*wfid_or_part)
   end
 
-  def assert_engine_clean (wfid)
+  def assert_engine_clean(wfid)
 
     assert_no_errors(wfid)
     assert_no_remaining_expressions(wfid)
   end
 
-  def assert_no_errors (wfid)
+  def assert_no_errors(wfid)
 
     errors = @engine.storage.get_many('errors', /#{wfid}$/)
 
@@ -146,7 +146,7 @@ module FunctionalBase
     flunk 'remaining process error(s)'
   end
 
-  def assert_no_remaining_expressions (wfid)
+  def assert_no_remaining_expressions(wfid)
 
     expcount = @engine.storage.get_many('expressions').size
     return if expcount == 0
@@ -210,7 +210,7 @@ class Tracer
   def clear
     @s = ''
   end
-  def puts (s)
+  def puts(s)
     @s << "#{s}\n"
   end
 end

@@ -37,7 +37,7 @@ module Ruote::Exp
 
     # TODO : :ignore_workitem / :disallow => 'workitem' thing ?
 
-    def get_command (workitem)
+    def get_command(workitem)
 
       command, step = workitem['fields'].delete(F_COMMAND)
       command, step = lookup_attribute_command(workitem) unless command
@@ -57,17 +57,17 @@ module Ruote::Exp
       [ command, step ]
     end
 
-    def set_command (workitem, command, step=nil)
+    def set_command(workitem, command, step=nil)
 
       workitem['fields'][F_COMMAND] = [ command, step ]
     end
 
-    def lookup_attribute_command (workitem)
+    def lookup_attribute_command(workitem)
 
       lookup_att_com('if', workitem) || lookup_att_com('unless', workitem)
     end
 
-    def lookup_att_com (dir, workitem)
+    def lookup_att_com(dir, workitem)
 
       ATT_COMMANDS.each do |com|
 

@@ -109,7 +109,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
   class TroubleMaker
     include Ruote::LocalParticipant
-    def consume (workitem)
+    def consume(workitem)
       hits = (workitem.fields['hits'] || 0) + 1
       workitem.fields['hits'] = hits
       workitem.trace << "#{hits.to_s}\n"
@@ -117,7 +117,7 @@ class FtOnErrorTest < Test::Unit::TestCase
       workitem.trace << 'done.'
       reply(workitem)
     end
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
       # nothing to do
     end
   end
@@ -307,10 +307,10 @@ class FtOnErrorTest < Test::Unit::TestCase
   class Murphy
     include Ruote::LocalParticipant
 
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
       # nothing to do
     end
-    def consume (workitem)
+    def consume(workitem)
       raise "something got wrong"
     end
   end

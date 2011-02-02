@@ -15,7 +15,7 @@ class FtAddServiceTest < Test::Unit::TestCase
 
     attr_reader :context, :options
 
-    def initialize (context, options={})
+    def initialize(context, options={})
 
       @context = context
       @options = options

@@ -58,7 +58,7 @@ module Ruote
     # If the second options is set to { :join => true }, the worker wil
     # be started and run in the current thread.
     #
-    def initialize (worker_or_storage, opts=true)
+    def initialize(worker_or_storage, opts=true)
 
       @context = worker_or_storage.context
       @context.engine = self
@@ -117,7 +117,7 @@ module Ruote
     #
     # Returns the wfid (workflow instance id) of the running single.
     #
-    def launch_single (process_definition, fields={}, variables={})
+    def launch_single(process_definition, fields={}, variables={})
 
       tree = @context.reader.read(process_definition)
       name = tree[1]['name'] || (tree[1].find { |k, v| v.nil? } || []).first
@@ -161,7 +161,7 @@ module Ruote
 
     # Given a process identifier (wfid), cancels this process.
     #
-    def cancel_process (wfid)
+    def cancel_process(wfid)
 
       @context.storage.put_msg('cancel_process', 'wfid' => wfid)
     end
@@ -170,7 +170,7 @@ module Ruote
     # equivalent to cancelling, but when killing, :on_cancel attributes
     # are not triggered.
     #
-    def kill_process (wfid)
+    def kill_process(wfid)
 
       @context.storage.put_msg('kill_process', 'wfid' => wfid)
     end
@@ -179,7 +179,7 @@ module Ruote
     # processes instances, cancelling an expression, will cancel the expression
     # and all its children (the segment of process).
     #
-    def cancel_expression (fei)
+    def cancel_expression(fei)
 
       fei = fei.to_h if fei.respond_to?(:to_h)
       @context.storage.put_msg('cancel', 'fei' => fei)
@@ -188,7 +188,7 @@ module Ruote
     # Like #cancel_expression, but :on_cancel attributes (of the expressions)
     # are not triggered.
     #
-    def kill_expression (fei)
+    def kill_expression(fei)
 
       fei = fei.to_h if fei.respond_to?(:to_h)
       @context.storage.put_msg('cancel', 'fei' => fei, 'flavour' => 'kill')
@@ -197,7 +197,7 @@ module Ruote
     # Given a workitem or a fei, will do a cancel_expression,
     # else it's a wfid and it does a cancel_process.
     #
-    def cancel (wi_or_fei_or_wfid)
+    def cancel(wi_or_fei_or_wfid)
 
       target = Ruote.extract_id(wi_or_fei_or_wfid)
 
@@ -211,7 +211,7 @@ module Ruote
     # Given a workitem or a fei, will do a kill_expression,
     # else it's a wfid and it does a kill_process.
     #
-    def kill (wi_or_fei_or_wfid)
+    def kill(wi_or_fei_or_wfid)
 
       target = Ruote.extract_id(wi_or_fei_or_wfid)
 
@@ -225,7 +225,7 @@ module Ruote
     # Replays at a given error (hopefully you fixed the cause of the error
     # before replaying...)
     #
-    def replay_at_error (err)
+    def replay_at_error(err)
 
       msg = err.msg.dup
       action = msg.delete('action')
@@ -266,7 +266,7 @@ module Ruote
     #
     #   engine.re_apply(fei, :merge_in_fields => { 'customer' => 'bob' })
     #
-    def re_apply (fei, opts={})
+    def re_apply(fei, opts={})
 
       @context.storage.put_msg('cancel', 'fei' => fei.to_h, 're_apply' => opts)
     end
@@ -274,7 +274,7 @@ module Ruote
     # Returns a ProcessStatus instance describing the current status of
     # a process instance.
     #
-    def process (wfid)
+    def process(wfid)
 
       list_processes([ wfid ], {}).first
     end
@@ -290,7 +290,7 @@ module Ruote
     # To simply list the wfids of the currently running, Engine#process_wfids
     # is way cheaper to call.
     #
-    def processes (opts={})
+    def processes(opts={})
 
       wfids = nil
 
@@ -307,7 +307,7 @@ module Ruote
     # Returns a list of processes or the process status of a given process
     # instance.
     #
-    def ps (wfid=nil)
+    def ps(wfid=nil)
 
       wfid == nil ? processes : process(wfid)
     end
@@ -322,7 +322,7 @@ module Ruote
     #
     #   engine.errors(:skip => 100, :limit => 100)
     #
-    def errors (wfid=nil)
+    def errors(wfid=nil)
 
       wfid, options = wfid.is_a?(Hash) ? [ nil, wfid ] : [ wfid, {} ]
 
@@ -348,7 +348,7 @@ module Ruote
     #
     #   engine.schedules(:skip => 100, :limit => 100)
     #
-    def schedules (wfid=nil)
+    def schedules(wfid=nil)
 
       wfid, options = wfid.is_a?(Hash) ? [ nil, wfid ] : [ wfid, {} ]
 
@@ -412,7 +412,7 @@ module Ruote
     #
     #   engine.wait_for('20100612-bezerijozo', '20100612-yakisoba')
     #
-    def wait_for (*items)
+    def wait_for(*items)
 
       logger = @context['s_logger']
 
@@ -433,7 +433,7 @@ module Ruote
 
     # Loads (and turns into a tree) the process definition at the given path.
     #
-    def load_definition (path)
+    def load_definition(path)
 
       @context.reader.read(path)
     end
@@ -454,14 +454,14 @@ module Ruote
     #   end
     #
     #   class MyParticipant
-    #     def initialize (name)
+    #     def initialize(name)
     #       @name = name
     #     end
-    #     def consume (workitem)
+    #     def consume(workitem)
     #       workitem.fields['rocket_name'] = @name
     #       send_to_the_moon(workitem)
     #     end
-    #     def cancel (fei, flavour)
+    #     def cancel(fei, flavour)
     #       # do nothing
     #     end
     #   end
@@ -488,14 +488,14 @@ module Ruote
     # Here is a 'stateless' participant example :
     #
     #   class MyStatelessParticipant
-    #     def initialize (opts)
+    #     def initialize(opts)
     #       @opts = opts
     #     end
-    #     def consume (workitem)
+    #     def consume(workitem)
     #       workitem.fields['rocket_name'] = @opts['name']
     #       send_to_the_moon(workitem)
     #     end
-    #     def cancel (fei, flavour)
+    #     def cancel(fei, flavour)
     #       # do nothing
     #     end
     #   end
@@ -521,7 +521,7 @@ module Ruote
     # containing the participant implementation. 'require' will load and eval
     # the ruby code only once, 'load' each time.
     #
-    def register_participant (regex, participant=nil, opts={}, &block)
+    def register_participant(regex, participant=nil, opts={}, &block)
 
       if participant.is_a?(Hash)
         opts = participant
@@ -549,7 +549,7 @@ module Ruote
     #
     # Originally implemented in ruote-kit by Torsten Schoenebaum.
     #
-    def register (*args, &block)
+    def register(*args, &block)
 
       if args.size > 0
         register_participant(*args, &block)
@@ -561,7 +561,7 @@ module Ruote
 
     # Removes/unregisters a participant from the engine.
     #
-    def unregister_participant (name_or_participant)
+    def unregister_participant(name_or_participant)
 
       re = @context.plist.unregister(name_or_participant)
 
@@ -614,7 +614,7 @@ module Ruote
     # This method writes the participant list in one go, it might be easier to
     # use than to register participant one by ones.
     #
-    def participant_list= (pl)
+    def participant_list=(pl)
 
       @context.plist.list = pl
     end
@@ -643,7 +643,7 @@ module Ruote
     #
     # This method returns the service instance it just bound.
     #
-    def add_service (name, path_or_instance, classname=nil, opts=nil)
+    def add_service(name, path_or_instance, classname=nil, opts=nil)
 
       @context.add_service(name, path_or_instance, classname, opts)
     end
@@ -657,7 +657,7 @@ module Ruote
     #   # allow ruby_eval
     #   @engine.configure('ruby_eval_allowed', true)
     #
-    def configure (config_key, value)
+    def configure(config_key, value)
 
       @context[config_key] = value
     end
@@ -669,7 +669,7 @@ module Ruote
     #   p engine.configuration('ruby_eval_allowed')
     #     # => true
     #
-    def configuration (config_key)
+    def configuration(config_key)
 
       @context[config_key]
     end
@@ -718,7 +718,7 @@ module Ruote
     # Note that this 'on_error' doesn't trigger if an on_error is defined
     # in the process itself.
     #
-    def on_error= (target)
+    def on_error=(target)
 
       @context.tracker.add_tracker(
         nil, # do not track a specific wfid
@@ -751,7 +751,7 @@ module Ruote
     # on_terminate processes are not triggered for on_error processes.
     # on_error processes are triggered for on_terminate processes as well.
     #
-    def on_terminate= (target)
+    def on_terminate=(target)
 
       @context.tracker.add_tracker(
         nil, # do not track a specific wfid
@@ -771,7 +771,7 @@ module Ruote
     # will let the engine (in fact the worker) pour all the details of the
     # executing process instances to STDOUT.
     #
-    def noisy= (b)
+    def noisy=(b)
 
       @context.logger.noisy = b
     end
@@ -780,7 +780,7 @@ module Ruote
 
     # Used by #process and #processes
     #
-    def list_processes (wfids, opts)
+    def list_processes(wfids, opts)
 
       swfids = wfids ? wfids.collect { |wfid| /!#{wfid}-\d+$/ } : nil
 
@@ -832,17 +832,17 @@ module Ruote
   #
   class EngineVariables
 
-    def initialize (storage)
+    def initialize(storage)
 
       @storage = storage
     end
 
-    def [] (k)
+    def [](k)
 
       @storage.get_engine_variable(k)
     end
 
-    def []= (k, v)
+    def []=(k, v)
 
       @storage.put_engine_variable(k, v)
     end
@@ -855,17 +855,17 @@ module Ruote
   #
   class ParticipantRegistrationProxy
 
-    def initialize (engine)
+    def initialize(engine)
 
       @engine = engine
     end
 
-    def participant (name, klass=nil, options={}, &block)
+    def participant(name, klass=nil, options={}, &block)
 
       @engine.register_participant(name, klass, options, &block)
     end
 
-    def catchall (*args)
+    def catchall(*args)
 
       klass = args.empty? ? Ruote::StorageParticipant : args.first
       options = args[1] || {}
@@ -875,7 +875,7 @@ module Ruote
 
     # Maybe a bit audacious...
     #
-    def method_missing (method_name, *args)
+    def method_missing(method_name, *args)
 
       participant(method_name, *args)
     end
@@ -884,7 +884,7 @@ module Ruote
   # Refines a schedule as found in the ruote storage into something a bit
   # easier to present.
   #
-  def self.schedule_to_h (sched)
+  def self.schedule_to_h(sched)
 
     h = sched.dup
 

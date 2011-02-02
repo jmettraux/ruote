@@ -36,7 +36,7 @@ module Ruote
 
     attr_accessor :noisy
 
-    def initialize (context)
+    def initialize(context)
 
       @context = context
 
@@ -61,7 +61,7 @@ module Ruote
       @noisy = false
     end
 
-    def notify (msg)
+    def notify(msg)
 
       puts(pretty_print(msg)) if @noisy
 
@@ -84,7 +84,7 @@ module Ruote
     # while the first thread is waiting, the first thread's
     # interests are lost and the first thread will never wake up.
     #
-    def wait_for (interests)
+    def wait_for(interests)
 
       @waiting << [ Thread.current, interests ]
 
@@ -104,12 +104,12 @@ module Ruote
       @seen.collect { |msg| pretty_print(msg) }.join("\n")
     end
 
-    def color= (c)
+    def color=(c)
 
       @color = c
     end
 
-    def self.pp (msg)
+    def self.pp(msg)
 
       @logger ||= TestLogger.new(nil)
       puts @logger.send(:pretty_print, msg)
@@ -126,7 +126,7 @@ module Ruote
       end
     end
 
-    def check_msg (msg)
+    def check_msg(msg)
 
       wakeup = []
 
@@ -158,7 +158,7 @@ module Ruote
     # Returns true if all interests being waited for have been satisfied,
     # false otherwise.
     #
-    def matches (interests, msg)
+    def matches(interests, msg)
 
       action = msg['action']
 

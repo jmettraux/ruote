@@ -58,7 +58,7 @@ module Ruote::Exp
       @context.storage.put_msg('cancel_process', 'wfid' => h.fei['wfid'])
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       # never called
     end

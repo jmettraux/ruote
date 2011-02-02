@@ -37,17 +37,17 @@ module Ruote
 
     include LocalParticipant
 
-    def initialize (opts=nil)
+    def initialize(opts=nil)
     end
 
     # Does nothing, discards the workitem it receives.
     #
-    def consume (workitem)
+    def consume(workitem)
     end
 
     # Does nothing.
     #
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
     end
   end
 end

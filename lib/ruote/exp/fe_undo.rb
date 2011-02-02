@@ -58,7 +58,7 @@ module Ruote::Exp
       reply_to_parent(h.applied_workitem)
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       # never called
     end

@@ -96,7 +96,7 @@ module Ruote::Exp
       keys.collect { |k| grab_value(k) }
     end
 
-    def grab_value (k)
+    def grab_value(k)
 
       attval = attribute(k)
 

@@ -40,7 +40,7 @@ module Ruote
   #
   class Reader
 
-    def initialize (context)
+    def initialize(context)
 
       @context = context
     end
@@ -48,7 +48,7 @@ module Ruote
     # Turns the input into a ruote syntax tree (raw process definition).
     # This method is used by engine.launch(x) for example.
     #
-    def read (definition)
+    def read(definition)
 
       return definition if Ruote.is_tree?(definition)
 
@@ -73,7 +73,7 @@ module Ruote
     # Class method for parsing process definition (XML, Ruby, from file or
     # from a string, ...) to syntax trees. Used by ruote-fluo for example.
     #
-    def self.read (d)
+    def self.read(d)
 
       unless @reader
 
@@ -92,7 +92,7 @@ module Ruote
     #
     # Mainly used by ruote-fluo.
     #
-    def self.to_xml (tree, options={})
+    def self.to_xml(tree, options={})
 
       require 'builder'
 
@@ -126,7 +126,7 @@ module Ruote
     #
     # Mainly used by ruote-fluo.
     #
-    def self.to_ruby (tree, level=0)
+    def self.to_ruby(tree, level=0)
 
       expname = tree[0]
 
@@ -145,14 +145,14 @@ module Ruote
 
     # Turns the process definition tree (ruote syntax tree) to a JSON String.
     #
-    def self.to_json (tree)
+    def self.to_json(tree)
 
       tree.to_json
     end
 
     # Returns true if the defintion is a remote URI
     #
-    def self.remote? (definition)
+    def self.remote?(definition)
 
       u = URI.parse(definition)
 
@@ -165,7 +165,7 @@ module Ruote
     # treechecker, makes sure it doesn't code malicious ruby code (at least
     # tries very hard).
     #
-    def ruby_eval (s)
+    def ruby_eval(s)
 
       @context.treechecker.definition_check(s)
       eval(s)
@@ -181,7 +181,7 @@ module Ruote
 
     # A convenience method when building XML
     #
-    def self.builder (options={}, &block)
+    def self.builder(options={}, &block)
 
       if b = options[:builder]
         block.call(b)
@@ -196,7 +196,7 @@ module Ruote
 
     # As used by to_ruby.
     #
-    def self.atts_to_ruby (atts)
+    def self.atts_to_ruby(atts)
 
       return '' if atts.empty?
 

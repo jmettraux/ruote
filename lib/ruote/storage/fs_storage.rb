@@ -57,7 +57,7 @@ module Ruote
     # The options are classical engine configuration, but the 'cloche_nolock'
     # option is read by the storage and followed.
     #
-    def initialize (dir, options={})
+    def initialize(dir, options={})
 
       FileUtils.mkdir_p(dir)
 
@@ -69,22 +69,22 @@ module Ruote
       @cloche.put(@options.merge('type' => 'configurations', '_id' => 'engine'))
     end
 
-    def put (doc, opts={})
+    def put(doc, opts={})
 
       @cloche.put(doc.merge!('put_at' => Ruote.now_to_utc_s), opts)
     end
 
-    def get (type, key)
+    def get(type, key)
 
       @cloche.get(type, key)
     end
 
-    def delete (doc)
+    def delete(doc)
 
       @cloche.delete(doc)
     end
 
-    def get_many (type, key=nil, opts={})
+    def get_many(type, key=nil, opts={})
 
       if key
         key = Array(key)
@@ -95,7 +95,7 @@ module Ruote
       @cloche.get_many(type, key, opts)
     end
 
-    def ids (type)
+    def ids(type)
 
       @cloche.ids(type)
     end
@@ -109,15 +109,15 @@ module Ruote
 
     # No need for that here (FsStorage adds type on the fly).
     #
-    def add_type (type)
+    def add_type(type)
     end
 
-    def purge_type! (type)
+    def purge_type!(type)
 
       @cloche.purge_type!(type)
     end
 
-    def dump (type)
+    def dump(type)
 
       s = "=== #{type} ===\n"
 

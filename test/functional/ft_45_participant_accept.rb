@@ -16,15 +16,15 @@ class FtParticipantAcceptTest < Test::Unit::TestCase
   class MyParticipant
     include Ruote::LocalParticipant
 
-    def initialize (opts)
+    def initialize(opts)
       @opts = opts
     end
 
-    def accept? (workitem)
+    def accept?(workitem)
       workitem.participant_name.match(@opts['filter'] || '.?')
     end
 
-    def consume (workitem)
+    def consume(workitem)
       @context.tracer << 'filtered:'
       @context.tracer << workitem.participant_name
       @context.tracer << "\n"
@@ -35,7 +35,7 @@ class FtParticipantAcceptTest < Test::Unit::TestCase
   class MyOtherParticipant
     include Ruote::LocalParticipant
 
-    def consume (workitem)
+    def consume(workitem)
       @context.tracer << workitem.participant_name
       @context.tracer << "\n"
       reply(workitem)

@@ -151,14 +151,14 @@ module Ruote::Exp
       reply_to_parent(h.applied_workitem)
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       # never called
     end
 
     protected
 
-    def new_value (type, key)
+    def new_value(type, key)
 
       dec = name.match(/^dec/)
 

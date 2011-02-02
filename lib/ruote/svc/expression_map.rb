@@ -63,7 +63,7 @@ module Ruote
     # Will load any expression in the Ruote::Exp:: namespace and map
     # its names to its class.
     #
-    def initialize (worker)
+    def initialize(worker)
 
       @map = {}
 
@@ -81,14 +81,14 @@ module Ruote
 
     # Returns the expression class for the given expression name
     #
-    def expression_class (exp_name)
+    def expression_class(exp_name)
 
       @map[exp_name]
     end
 
     protected
 
-    def add (exp_class)
+    def add(exp_class)
 
       exp_class.expression_names.each { |n| @map[n] = exp_class }
     end

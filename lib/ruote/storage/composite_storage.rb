@@ -47,7 +47,7 @@ module Ruote
 
     include StorageBase
 
-    def initialize (default_storage, storages)
+    def initialize(default_storage, storages)
 
       @default_storage = default_storage
       @storages = storages
@@ -55,27 +55,27 @@ module Ruote
       prepare_base_methods
     end
 
-    def put (doc, opts={})
+    def put(doc, opts={})
 
       storage(doc['type']).put(doc, opts)
     end
 
-    def get (type, key)
+    def get(type, key)
 
       storage(type).get(type, key)
     end
 
-    def delete (doc)
+    def delete(doc)
 
       storage(doc['type']).delete(doc)
     end
 
-    def get_many (type, key=nil, opts={})
+    def get_many(type, key=nil, opts={})
 
       storage(type).get_many(type, key, opts)
     end
 
-    def ids (type)
+    def ids(type)
 
       storage(type).ids(type)
     end
@@ -85,7 +85,7 @@ module Ruote
       TYPES.collect { |t| storage(t) }.uniq.each { |s| s.purge! }
     end
 
-    def purge_type! (type)
+    def purge_type!(type)
 
       storage(type).purge_type!(type)
     end
@@ -125,7 +125,7 @@ module Ruote
       end
     end
 
-    def storage (type)
+    def storage(type)
 
       @storages[type] || @default_storage
     end

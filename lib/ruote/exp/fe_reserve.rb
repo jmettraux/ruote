@@ -59,14 +59,14 @@ module Ruote::Exp
       set_mutex
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       release_mutex
 
       reply_to_parent(workitem)
     end
 
-    def cancel (flavour)
+    def cancel(flavour)
 
       super
 

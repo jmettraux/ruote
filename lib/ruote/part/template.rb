@@ -41,7 +41,7 @@ module Ruote
 
     # Do the rendering.
     #
-    def render_template (template, flow_expression, workitem)
+    def render_template(template, flow_expression, workitem)
 
       template = (File.read(template) rescue nil) if is_a_file?(template)
 
@@ -55,7 +55,7 @@ module Ruote
 
     # Simply returns a pretty-printed view of the workitem
     #
-    def render_default_template (workitem)
+    def render_default_template(workitem)
 
       workitem = workitem.to_h if workitem.respond_to?(:to_h)
 
@@ -72,7 +72,7 @@ module Ruote
 
     protected
 
-    def is_a_file? (s)
+    def is_a_file?(s)
 
       return false unless s
       return false if s.index("\n")

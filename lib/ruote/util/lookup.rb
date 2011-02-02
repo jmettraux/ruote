@@ -29,7 +29,7 @@ module Ruote
   #
   #   p Ruote.lookup(h, 'a.b.1') # => 3
   #
-  def Ruote.lookup (collection, key, container_lookup=false)
+  def Ruote.lookup(collection, key, container_lookup=false)
 
     return collection if key == '.'
 
@@ -50,7 +50,7 @@ module Ruote
   #
   #   h #=> { 'customer' => { 'name' => 'bravo' } }
   #
-  def Ruote.set (collection, key, value)
+  def Ruote.set(collection, key, value)
 
     k, c = lookup(collection, key, true)
 
@@ -68,7 +68,7 @@ module Ruote
   #   h # => { 'customer' => { 'name' => 'alpha' } }
   #   r # => '1st'
   #
-  def Ruote.unset (collection, key)
+  def Ruote.unset(collection, key)
 
     k, c = lookup(collection, key, true)
 
@@ -83,14 +83,14 @@ module Ruote
 
   protected # well...
 
-  def Ruote.pop_key (key)
+  def Ruote.pop_key(key)
 
     ks = key.is_a?(String) ? key.split('.') : key
 
     [ narrow_key(ks.first), ks[1..-1] ]
   end
 
-  def Ruote.narrow_key (key)
+  def Ruote.narrow_key(key)
 
     return 0 if key == '0'
 
@@ -100,7 +100,7 @@ module Ruote
     key
   end
 
-  def Ruote.flookup (collection, key)
+  def Ruote.flookup(collection, key)
 
     value = (collection[key] rescue nil)
 

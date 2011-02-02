@@ -182,7 +182,7 @@ module Ruote::Exp
       apply_children
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       if h.cmerge == 'first' || h.cmerge == 'last'
         h.workitems << workitem
@@ -230,7 +230,7 @@ module Ruote::Exp
       msgs.each { |m| @context.storage.put_msg('apply', m) }
     end
 
-    def over? (workitem)
+    def over?(workitem)
 
       over_if = attribute(:over_if, workitem)
       over_unless = attribute(:over_unless, workitem)
@@ -253,7 +253,7 @@ module Ruote::Exp
       h.ccount ? [ h.ccount, tree_children.size ].min : tree_children.size
     end
 
-    def reply_to_parent (_workitem)
+    def reply_to_parent(_workitem)
 
       workitem = merge_all_workitems
 

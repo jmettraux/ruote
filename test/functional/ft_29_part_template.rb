@@ -18,12 +18,12 @@ class FtPartTemplateTest < Test::Unit::TestCase
     include Ruote::LocalParticipant
     include Ruote::TemplateMixin
 
-    def initialize (opts)
+    def initialize(opts)
 
       @template = opts['template']
     end
 
-    def consume (workitem)
+    def consume(workitem)
 
       @context['s_tracer'] << render_template(
         @template,
@@ -34,7 +34,7 @@ class FtPartTemplateTest < Test::Unit::TestCase
       reply_to_engine(workitem)
     end
 
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
     end
   end
 

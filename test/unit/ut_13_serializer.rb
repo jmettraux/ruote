@@ -14,7 +14,7 @@ class UtSerializerTest < Test::Unit::TestCase
 
   class Vehicle
     attr_accessor :type
-    def initialize (t)
+    def initialize(t)
       @type = t
     end
   end

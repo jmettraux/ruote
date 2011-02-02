@@ -121,7 +121,7 @@ module Ruote::Exp
 
     protected
 
-    def do_p (pers)
+    def do_p(pers)
 
       case r = self.send("try_#{pers}")
         when true

@@ -45,7 +45,7 @@ module Ruote
   #
   # like "2009/11/23 11:11:50.947109 UTC"
   #
-  def self.time_to_utc_s (t)
+  def self.time_to_utc_s(t)
 
     "#{t.utc.strftime('%Y-%m-%d %H:%M:%S')}.#{sprintf('%06d', t.usec)} UTC"
   end
@@ -63,7 +63,7 @@ module Ruote
   #
   # (my prose is weak)
   #
-  def self.s_to_at (s)
+  def self.s_to_at(s)
 
     at = if s.index(' ')
       #
@@ -87,7 +87,7 @@ module Ruote
 
   # Waiting for a better implementation of it in rufus-scheduler 2.0.4
   #
-  def self.is_cron_string (s)
+  def self.is_cron_string(s)
 
     ss = s.split(' ')
 

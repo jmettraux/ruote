@@ -56,7 +56,7 @@ module Ruote::Exp
       split_list(lookup_val_prefix('on'))
     end
 
-    def split_list (list)
+    def split_list(list)
 
       if list.is_a?(String)
 

@@ -64,7 +64,7 @@ module Ruote
     # 47 White
     #++
 
-    def color (mod, s, clear=false)
+    def color(mod, s, clear=false)
 
       return s if Ruote::WIN
       return s unless STDOUT.tty?
@@ -72,7 +72,7 @@ module Ruote
       "[#{mod}m#{s}[0m#{clear ? '' : "[#{@color}m"}"
     end
 
-    def pretty_print (msg)
+    def pretty_print(msg)
 
       @count += 1
       @count = 0 if @count > 9

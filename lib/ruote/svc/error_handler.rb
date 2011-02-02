@@ -35,14 +35,14 @@ module Ruote
   #
   class ErrorHandler
 
-    def initialize (context)
+    def initialize(context)
 
       @context = context
     end
 
     # As used by the dispatch pool and the worker.
     #
-    def msg_handle (msg, exception)
+    def msg_handle(msg, exception)
 
       fexp = Ruote::Exp::FlowExpression.fetch(
         @context, msg['fei'] || msg['workitem']['fei']
@@ -53,7 +53,7 @@ module Ruote
 
     # As used by some receivers (see ruote-beanstalk's receiver).
     #
-    def action_handle (action, fei, exception)
+    def action_handle(action, fei, exception)
 
       fexp = Ruote::Exp::FlowExpression.fetch(@context, fei)
 
@@ -70,7 +70,7 @@ module Ruote
 
     # As used by the worker.
     #
-    def handle (msg, fexp, exception)
+    def handle(msg, fexp, exception)
 
       wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
       fei = msg['fei'] || (fexp.h.fei rescue nil)

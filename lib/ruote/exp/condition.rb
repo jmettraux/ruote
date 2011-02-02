@@ -36,7 +36,7 @@ module Ruote::Exp
     #
     class ConditionError < RuntimeError
 
-      def initialize (code)
+      def initialize(code)
         super(
           "couldn't interpret >#{code}<, " +
           "if it comes from a ${xx} construct, please use ${\"xx} or ${'yy}")
@@ -50,7 +50,7 @@ module Ruote::Exp
       'evl_in' => /^(.+?)( +is)?( +not)?( +in +)(\[.*\]|\{.*\})$/
     }
 
-    def self.apply? (sif, sunless)
+    def self.apply?(sif, sunless)
 
       return (true?(sif)) if sif
       return ( ! true?(sunless)) if sunless
@@ -60,7 +60,7 @@ module Ruote::Exp
 
     # Returns true if the given conditional string evaluates to true.
     #
-    def self.true? (conditional)
+    def self.true?(conditional)
 
       conditional = unescape(conditional.to_s)
 
@@ -82,7 +82,7 @@ module Ruote::Exp
     #
     # Note : this is not a full Ruby evaluation !
     #
-    def self.eval (code)
+    def self.eval(code)
 
       evl(code)
 
@@ -93,7 +93,7 @@ module Ruote::Exp
 
     protected
 
-    def self.parse (conditional)
+    def self.parse(conditional)
 
       Rufus::TreeChecker.parse(conditional)
 
@@ -108,14 +108,14 @@ module Ruote::Exp
       [ :false ]
     end
 
-    def self.unescape (s)
+    def self.unescape(s)
 
       s.gsub('&amp;', '&').gsub('&gt;', '>').gsub('&lt;', '<')
     end
 
     COMPARATORS = %w[ == > < != >= <= ].collect { |c| c.to_sym }
 
-    def self.evl (tree)
+    def self.evl(tree)
 
       return evl(parse(tree)) if tree.is_a?(String)
 
@@ -159,12 +159,12 @@ module Ruote::Exp
 
     KEYWORDS = %w[ call const arglist ].collect { |w| w.to_sym }
 
-    def self.flatten (tree)
+    def self.flatten(tree)
 
       (tree.flatten - KEYWORDS).collect { |e| e.nil? ? ' ' : e.to_s }.join.strip
     end
 
-    def self.evl_set (match)
+    def self.evl_set(match)
 
       set = evl(match[1])
       set = set != nil && set != ''
@@ -173,7 +173,7 @@ module Ruote::Exp
       match[3].nil? ? set : ( ! set)
     end
 
-    def self.evl_empty (match)
+    def self.evl_empty(match)
 
       object = evl(match[1])
 
@@ -188,12 +188,12 @@ module Ruote::Exp
       ( ! match[3].nil? ^ empty)
     end
 
-    def self.evl_null (match)
+    def self.evl_null(match)
 
       ( ! match[3].nil? ^ evl(match[1]).nil?)
     end
 
-    def self.evl_in (match)
+    def self.evl_in(match)
 
       ( ! match[3].nil? ^ evl(match[5]).include?(evl(match[1]))) rescue false
     end

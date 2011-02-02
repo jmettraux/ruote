@@ -94,7 +94,7 @@ module Ruote::Exp
       apply_child(0, h.applied_workitem)
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       # never gets called
     end

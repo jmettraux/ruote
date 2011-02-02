@@ -43,7 +43,7 @@ module Ruote::Exp
       reply(h.applied_workitem)
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       position = workitem['fei'] == h.fei ?
         0 : Ruote::FlowExpressionId.new(workitem['fei']).child_id + 1

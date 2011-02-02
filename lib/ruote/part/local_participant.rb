@@ -51,7 +51,7 @@ module Ruote
     #
     # Without one of those options, the method is a "reject".
     #
-    def re_dispatch (workitem, opts={})
+    def re_dispatch(workitem, opts={})
 
       msg = {
         'action' => 'dispatch',
@@ -82,11 +82,11 @@ module Ruote
     #   class RetryParticipant
     #     include Ruote::LocalParticipant
     #
-    #     def initialize (opts)
+    #     def initialize(opts)
     #       @opts = opts
     #     end
     #
-    #     def consume (workitem)
+    #     def consume(workitem)
     #       begin
     #         do_the_job
     #         reply(workitem)
@@ -95,7 +95,7 @@ module Ruote
     #       end
     #     end
     #
-    #     def cancel (fei, flavour)
+    #     def cancel(fei, flavour)
     #       unschedule_re_dispatch(fei)
     #     end
     #   end
@@ -103,7 +103,7 @@ module Ruote
     # Note how unschedule_re_dispatch is used in the cancel method. Warning,
     # this example could loop forever...
     #
-    def unschedule_re_dispatch (fei)
+    def unschedule_re_dispatch(fei)
 
       fexp = Ruote::Exp::FlowExpression.fetch(
         @context, Ruote::FlowExpressionId.extract_h(fei))

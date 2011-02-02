@@ -39,7 +39,7 @@ module Ruote
   #
   #   engine.launch(pdef)
   #
-  def self.define (*attributes, &block)
+  def self.define(*attributes, &block)
 
     RubyDsl.create_branch('define', attributes, &block)
   end
@@ -55,7 +55,7 @@ module Ruote
   #
   #   engine.launch(pdef)
   #
-  def self.process_definition (*attributes, &block)
+  def self.process_definition(*attributes, &block)
 
     define(*attributes, &block)
   end
@@ -87,7 +87,7 @@ module Ruote
   #       # cancels the segment of process at fei and replaces it with
   #       # a simple alfred-bob sequence.
   #
-  def self.to_tree (&block)
+  def self.to_tree(&block)
 
     RubyDsl.create_branch('x', {}, &block).last.first
   end
@@ -98,14 +98,14 @@ module Ruote
 
     class BranchContext < Ruote::BlankSlate
 
-      def initialize (name, attributes)
+      def initialize(name, attributes)
 
         @name = name
         @attributes = attributes
         @children = []
       end
 
-      def method_missing (m, *args, &block)
+      def method_missing(m, *args, &block)
 
         @children.push(
           Ruote::RubyDsl.create_branch(m.to_s, args, &block))
@@ -117,7 +117,7 @@ module Ruote
       end
     end
 
-    def self.create_branch (name, attributes, &block)
+    def self.create_branch(name, attributes, &block)
 
       name = name[1..-1] while name[0, 1] == '_'
 

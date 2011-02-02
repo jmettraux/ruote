@@ -36,7 +36,7 @@ module Ruote::Exp
 
     include CommandMixin
 
-    def reply (workitem)
+    def reply(workitem)
 
       workitem = h.command_workitem || workitem
       h.command_workitem = nil

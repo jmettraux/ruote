@@ -39,7 +39,7 @@ class UtMiscTest < Test::Unit::TestCase
   end
 
   class Klass
-    def initialize (s)
+    def initialize(s)
       @s = s
     end
   end

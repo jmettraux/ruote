@@ -19,12 +19,12 @@ class UtEngineTest < Test::Unit::TestCase
     def initialize
       @count = -1
     end
-    def put (doc)
+    def put(doc)
       @count = @count + 1
       return true if @count == 0
       nil
     end
-    def get_configuration (whatever)
+    def get_configuration(whatever)
       { 'list' => [] }
     end
   end

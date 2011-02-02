@@ -35,7 +35,7 @@ module Ruote
   #
   class TreeChecker
 
-    def initialize (context)
+    def initialize(context)
 
       (context['use_ruby_treechecker'] == false) and return
 
@@ -110,17 +110,17 @@ module Ruote
         # preventing further modifications
     end
 
-    def definition_check (ruby_code)
+    def definition_check(ruby_code)
 
       @def_checker.check(ruby_code) if @def_checker
     end
 
-    def block_check (ruby_code)
+    def block_check(ruby_code)
 
       @blo_checker.check(ruby_code) if @blo_checker
     end
 
-    def dollar_check (ruby_code)
+    def dollar_check(ruby_code)
 
       @dol_checker.check(ruby_code) if @dol_checker
     end

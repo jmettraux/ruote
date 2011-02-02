@@ -47,7 +47,7 @@ module Ruote
     attr_reader :run_thread
     attr_reader :running
 
-    def initialize (storage)
+    def initialize(storage)
 
       @subscribers = []
         # must be ready before the storage is created
@@ -93,7 +93,7 @@ module Ruote
       @run_thread.join if @run_thread
     end
 
-    def subscribe (actions, subscriber)
+    def subscribe(actions, subscriber)
 
       @subscribers << [ actions, subscriber ]
     end
@@ -191,7 +191,7 @@ module Ruote
       end
     end
 
-    def trigger (schedule)
+    def trigger(schedule)
 
       msg = Ruote.fulldup(schedule['msg'])
 
@@ -202,7 +202,7 @@ module Ruote
       true
     end
 
-    def process (msg)
+    def process(msg)
 
       return false unless @storage.reserve(msg)
 
@@ -242,7 +242,7 @@ module Ruote
       true
     end
 
-    def notify (msg)
+    def notify(msg)
 
       @subscribers.each do |actions, subscriber|
 
@@ -254,7 +254,7 @@ module Ruote
 
     # Works for both the 'launch' and the 'apply' msgs.
     #
-    def launch (msg)
+    def launch(msg)
 
       tree = msg['tree']
       variables = msg['variables']
@@ -294,14 +294,14 @@ module Ruote
       exp.do_apply
     end
 
-    def is_launch? (msg, exp_class)
+    def is_launch?(msg, exp_class)
 
       return false if exp_class != Ruote::Exp::DefineExpression
       return true if msg['action'] == 'launch'
       (msg['trigger'] == 'on_re_apply')
     end
 
-    def cancel_process (msg)
+    def cancel_process(msg)
 
       root = @storage.find_root_expression(msg['wfid'])
 

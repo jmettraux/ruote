@@ -30,7 +30,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
   class TraceParticipant
     include Ruote::LocalParticipant
-    def consume (wi)
+    def consume(wi)
       context.tracer << "#{wi.participant_name}/#{wi.fei.expid}\n"
       reply(wi)
     end

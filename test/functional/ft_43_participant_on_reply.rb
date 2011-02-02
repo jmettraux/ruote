@@ -15,12 +15,12 @@ class FtParticipantOnReplyTest < Test::Unit::TestCase
 
   class MyParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
     end
-    def consume (workitem)
+    def consume(workitem)
       reply(workitem)
     end
-    def on_reply (workitem)
+    def on_reply(workitem)
       workitem.fields['message'] = 'hello'
     end
   end
@@ -43,12 +43,12 @@ class FtParticipantOnReplyTest < Test::Unit::TestCase
 
   class AwkwardParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
     end
-    def consume (workitem)
+    def consume(workitem)
       reply(workitem)
     end
-    def on_reply (workitem)
+    def on_reply(workitem)
       return if workitem.fields['pass']
       raise "something went wrong"
     end

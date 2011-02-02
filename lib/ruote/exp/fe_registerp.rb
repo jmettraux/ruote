@@ -86,7 +86,7 @@ module Ruote::Exp
       reply_to_parent(h.applied_workitem)
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       # never called
     end
@@ -101,7 +101,7 @@ module Ruote::Exp
       ) if context['registerp_allowed'] != true
     end
 
-    def register_participant (info)
+    def register_participant(info)
 
       name, (klass, opts) = Ruote::ParticipantEntry.read(info)
 

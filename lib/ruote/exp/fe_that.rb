@@ -57,7 +57,7 @@ module Ruote::Exp
 
     names :that, :of
 
-    def reply (workitem)
+    def reply(workitem)
 
       if workitem['fei'] == h.fei # apply --> reply
 
@@ -82,7 +82,7 @@ module Ruote::Exp
       end
     end
 
-    def reply_to_parent (workitem)
+    def reply_to_parent(workitem)
 
       workitem['fields']['__result__'] = h.result
       super

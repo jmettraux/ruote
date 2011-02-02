@@ -36,7 +36,7 @@ module Ruote
 
     DATE_REGEX = /!(\d{4}-\d{2}-\d{2})!/
 
-    def initialize (context, options={})
+    def initialize(context, options={})
 
       @context = context
       @options = options
@@ -65,7 +65,7 @@ module Ruote
 
     # Returns all the msgs for a given wfid (process instance id).
     #
-    def by_process (wfid)
+    def by_process(wfid)
 
       @context.storage.get_many('history', wfid)
     end
@@ -93,7 +93,7 @@ module Ruote
     # Takes as argument whatever is a datetime when turned to a string and
     # parsed.
     #
-    def by_date (date)
+    def by_date(date)
 
       date = Time.parse(date.to_s).strftime('%Y-%m-%d')
 
@@ -117,7 +117,7 @@ module Ruote
     # This is the method called by the workqueue. Incoming engine events
     # are 'processed' here.
     #
-    def notify (msg)
+    def notify(msg)
 
       msg = msg.dup
         # a shallow copy is sufficient

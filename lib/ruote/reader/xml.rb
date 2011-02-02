@@ -40,7 +40,7 @@ module Ruote
 
       attr_reader :parent, :attributes, :children
 
-      def initialize (parent, name, attributes)
+      def initialize(parent, name, attributes)
 
         @parent = parent
         @name = name
@@ -62,7 +62,7 @@ module Ruote
     #
     # Parses the XML string into a process definition tree (array of arrays).
     #
-    def self.read (s)
+    def self.read(s)
 
       parser = REXML::Parsers::SAX2Parser.new(s)
 

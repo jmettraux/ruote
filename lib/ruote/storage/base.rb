@@ -37,7 +37,7 @@ module Ruote
       @context ||= Ruote::Context.new(self)
     end
 
-    def context= (c)
+    def context=(c)
 
       @context = c
     end
@@ -45,7 +45,7 @@ module Ruote
     # Attempts to delete a document, returns true if the deletion
     # succeeded. This is used with msgs to reserve work on them.
     #
-    def reserve (doc)
+    def reserve(doc)
 
       delete(doc).nil?
     end
@@ -54,7 +54,7 @@ module Ruote
     # configurations
     #++
 
-    def get_configuration (key)
+    def get_configuration(key)
 
       get('configurations', key)
     end
@@ -63,7 +63,7 @@ module Ruote
     # messages
     #++
 
-    def put_msg (action, options)
+    def put_msg(action, options)
 
       msg = prepare_msg_doc(action, options)
 
@@ -93,7 +93,7 @@ module Ruote
       }
     end
 
-    def empty? (type)
+    def empty?(type)
 
       (get_many(type, nil, :count => true) == 0)
     end
@@ -102,7 +102,7 @@ module Ruote
     # expressions
     #++
 
-    def find_root_expression (wfid)
+    def find_root_expression(wfid)
 
       get_many('expressions', wfid).sort_by { |fexp|
         fexp['fei']['expid']
@@ -120,7 +120,7 @@ module Ruote
     # come up with different implementations (think CouchDB,  which could
     # provide a view for it).
     #
-    def expression_wfids (opts)
+    def expression_wfids(opts)
 
       wfids = ids('expressions').collect { |fei| fei.split('!').last }.uniq.sort
 
@@ -146,7 +146,7 @@ module Ruote
     # ats and crons
     #++
 
-    def get_schedules (delta, now)
+    def get_schedules(delta, now)
 
       # TODO : bring that 'optimization' back in,
       #        maybe every minute, if min != last_min ...
@@ -169,7 +169,7 @@ module Ruote
     # Places schedule in storage. Returns the id of the 'schedule' document.
     # If the schedule got triggered immediately, nil is returned.
     #
-    def put_schedule (flavour, owner_fei, s, msg)
+    def put_schedule(flavour, owner_fei, s, msg)
 
       doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
 
@@ -182,7 +182,7 @@ module Ruote
       doc['_id']
     end
 
-    def delete_schedule (schedule_id)
+    def delete_schedule(schedule_id)
 
       return if schedule_id.nil?
 
@@ -194,12 +194,12 @@ module Ruote
     # engine variables
     #++
 
-    def get_engine_variable (k)
+    def get_engine_variable(k)
 
       get_engine_variables['variables'][k]
     end
 
-    def put_engine_variable (k, v)
+    def put_engine_variable(k, v)
 
       vars = get_engine_variables
       vars['variables'][k] = v
@@ -215,7 +215,7 @@ module Ruote
     #
     # Of course, the target storage may be a different implementation.
     #
-    def copy_to (target, opts={})
+    def copy_to(target, opts={})
 
       counter = 0
 
@@ -254,7 +254,7 @@ module Ruote
 
     # Used by put_msg
     #
-    def prepare_msg_doc (action, options)
+    def prepare_msg_doc(action, options)
 
       # merge! is way faster than merge (no object creation probably)
 
@@ -277,7 +277,7 @@ module Ruote
 
     # Used by put_schedule
     #
-    def prepare_schedule_doc (flavour, owner_fei, s, msg)
+    def prepare_schedule_doc(flavour, owner_fei, s, msg)
 
       at = if s.is_a?(Time) # at or every
         s
@@ -315,7 +315,7 @@ module Ruote
 
     # Returns all the ats whose due date arrived (now or earlier)
     #
-    def filter_schedules (schedules, now)
+    def filter_schedules(schedules, now)
 
       now = Ruote.time_to_utc_s(now)
 
@@ -335,7 +335,7 @@ module Ruote
     # It's a class method meant to be used by the various storage
     # implementations.
     #
-    def self.key_match? (keys, doc)
+    def self.key_match?(keys, doc)
 
       _id = doc.is_a?(Hash) ? doc['_id'] : doc
 

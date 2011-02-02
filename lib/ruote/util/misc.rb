@@ -35,7 +35,7 @@ module Ruote
 
   # Prints the current call stack to stdout
   #
-  def self.p_caller (*msg)
+  def self.p_caller(*msg)
 
     puts
     puts "  == #{msg.inspect} =="
@@ -45,7 +45,7 @@ module Ruote
 
   # Deep object duplication
   #
-  def self.fulldup (object)
+  def self.fulldup(object)
 
     return object.fulldup if object.respond_to?(:fulldup)
       # trusting client objects providing a fulldup() implementation
@@ -94,21 +94,21 @@ module Ruote
   #
   # TODO : wouldn't it be better to simply use URI.parse() ?
   #
-  def self.is_uri? (s)
+  def self.is_uri?(s)
 
     s && (s.index('/') || s.match(/\.[^ ]+$/))
   end
 
   # Returns a neutralized version of s, suitable as a filename.
   #
-  def self.neutralize (s)
+  def self.neutralize(s)
 
     s.to_s.strip.gsub(/[ \/:;\*\\\+\?]/, '_')
   end
 
   # Tries to return an Integer or a Float from the given input. Returns
   #
-  def self.narrow_to_number (o)
+  def self.narrow_to_number(o)
 
     return o if [ Fixnum, Bignum, Float ].include?(o.class)
 
@@ -119,7 +119,7 @@ module Ruote
 
   # (simpler than the one from active_support)
   #
-  def self.constantize (s)
+  def self.constantize(s)
 
     s.split('::').inject(Object) { |c, n| n == '' ? c : c.const_get(n) }
   end
@@ -132,7 +132,7 @@ module Ruote
 #  #
 #  #   /nada/
 #  #
-#  def self.regex_from_s (s)
+#  def self.regex_from_s(s)
 #
 #    if s.is_a?(String) && m = s.match(/^\(\?-mix:(.+)\)$/)
 #      Regexp.new(m[1])
@@ -147,7 +147,7 @@ module Ruote
   #   regex_or_s("nada") #==> "nada"
   #   regex_or_s(/nada/) #==> /nada/
   #
-  def self.regex_or_s (s)
+  def self.regex_or_s(s)
 
     if s.is_a?(String) && m = SREGEX.match(s)
       Regexp.new(m[1])

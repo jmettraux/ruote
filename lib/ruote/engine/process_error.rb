@@ -30,7 +30,7 @@ module Ruote
   #
   class ProcessError
 
-    def initialize (h)
+    def initialize(h)
       @h = h
     end
 
@@ -65,7 +65,7 @@ module Ruote
     # A shortcut for modifying the tree of an expression when it has had
     # an error upon being applied.
     #
-    def tree= (t)
+    def tree=(t)
       @h['msg']['tree'] = t
     end
 
@@ -94,7 +94,7 @@ module Ruote
 
     protected
 
-    def to_dot (opts)
+    def to_dot(opts)
 
       i = fei.to_storage_id
       label = "error : #{message.gsub(/"/, "'")}"

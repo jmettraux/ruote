@@ -170,7 +170,7 @@ module Ruote::Exp
         'workitem' => h.applied_workitem)
     end
 
-    def cancel (flavour)
+    def cancel(flavour)
 
       return reply_to_parent(h.applied_workitem) unless h.participant_name
         # no participant, reply immediately
@@ -189,7 +189,7 @@ module Ruote::Exp
         'workitem' => h.applied_workitem)
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       pinfo =
         h.participant ||
@@ -202,7 +202,7 @@ module Ruote::Exp
       super(workitem)
     end
 
-    def reply_to_parent (workitem)
+    def reply_to_parent(workitem)
 
       workitem['fields'].delete('params')
       workitem['fields'].delete('dispatched_at')
@@ -218,7 +218,7 @@ module Ruote::Exp
     # See http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
     # for the motivation.
     #
-    def do_dispatched (msg)
+    def do_dispatched(msg)
 
       h.dispatched = true
       do_persist
@@ -236,7 +236,7 @@ module Ruote::Exp
     # Note that process definition timeout has priority over participant
     # specified timeout.
     #
-    def schedule_timeout (p_info)
+    def schedule_timeout(p_info)
 
       timeout = attribute(:timeout)
 

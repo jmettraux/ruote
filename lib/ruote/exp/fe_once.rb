@@ -154,7 +154,7 @@ module Ruote::Exp
       reply(h.applied_workitem)
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       return reply_to_parent(workitem) if h.triggered
 
@@ -184,7 +184,7 @@ module Ruote::Exp
       end
     end
 
-    def cancel (flavour)
+    def cancel(flavour)
 
       @context.storage.delete_schedule(h.job_id)
       super

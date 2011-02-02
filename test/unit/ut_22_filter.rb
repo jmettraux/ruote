@@ -17,18 +17,18 @@ class UtFilterTest < Test::Unit::TestCase
   #
   # some helpers
 
-  def assert_filter (result, filter, hash)
+  def assert_filter(result, filter, hash)
 
     assert_equal(result, Ruote.filter(Rufus::Json.dup(filter), hash))
   end
 
-  def assert_valid (filter, hash)
+  def assert_valid(filter, hash)
 
     Ruote.filter(Rufus::Json.dup(filter), hash)
     assert true
   end
 
-  def assert_not_valid (filter, hash)
+  def assert_not_valid(filter, hash)
 
     assert_raise Ruote::ValidationError do
       Ruote.filter(Rufus::Json.dup(filter), hash)

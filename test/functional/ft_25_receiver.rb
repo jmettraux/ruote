@@ -30,7 +30,7 @@ class FtReceiverTest < Test::Unit::TestCase
   class MyParticipant
     include Ruote::LocalParticipant
 
-    def consume (workitem)
+    def consume(workitem)
 
       @context.stash[:wi] = workitem
 
@@ -119,16 +119,16 @@ class FtReceiverTest < Test::Unit::TestCase
 
   class MyOtherParticipant
     include Ruote::LocalParticipant
-    def consume (workitem)
+    def consume(workitem)
       @context.receiver.pass(workitem.to_h)
     end
   end
   class MyOtherReceiver < Ruote::Receiver
-    def initialize (context, opts={})
+    def initialize(context, opts={})
       super(context, opts)
       @count = 0
     end
-    def pass (workitem)
+    def pass(workitem)
       if @count < 1
         @context.error_handler.action_handle(
           'dispatch', workitem['fei'], RuntimeError.new('something went wrong'))

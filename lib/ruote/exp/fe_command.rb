@@ -143,7 +143,7 @@ module Ruote::Exp
     # (CommandExpression includes CommandMixin, but since it doesn't have
     # children, no need to 'evince' it)
     #
-    def fetch_command_target (exp=parent)
+    def fetch_command_target(exp=parent)
 
       case exp
         when nil then nil

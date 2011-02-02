@@ -37,7 +37,7 @@ module Ruote
     # This method pipes back a workitem into the engine, letting it resume
     # in its flow, hopefully.
     #
-    def receive (workitem)
+    def receive(workitem)
 
       workitem = workitem.to_h if workitem.respond_to?(:to_h)
 
@@ -63,7 +63,7 @@ module Ruote
     #
     # variables contain engine variables.
     #
-    def launch (process_definition, fields={}, variables={})
+    def launch(process_definition, fields={}, variables={})
 
       wfid = @context.wfidgen.generate
 
@@ -82,7 +82,7 @@ module Ruote
     # Not aliasing so that if someone changes the receive implementation,
     # reply is affected as well.
     #
-    def reply (workitem)
+    def reply(workitem)
 
       receive(workitem)
     end
@@ -92,7 +92,7 @@ module Ruote
     # Not aliasing so that if someone changes the receive implementation,
     # reply_to_engine is affected as well.
     #
-    def reply_to_engine (workitem)
+    def reply_to_engine(workitem)
 
       receive(workitem)
     end
@@ -109,7 +109,7 @@ module Ruote
     # Convenience method, given a workitem or a fei, returns the
     # corresponding flow expession.
     #
-    def fetch_flow_expression (workitem_or_fei)
+    def fetch_flow_expression(workitem_or_fei)
 
       Ruote::Exp::FlowExpression.fetch(
         @context,
@@ -140,7 +140,7 @@ module Ruote
     # on_terminate processes are not triggered for on_error processes.
     # on_error processes are triggered for on_terminate processes as well.
     #
-    def applied_workitem (fei)
+    def applied_workitem(fei)
 
       Ruote::Workitem.new(fexp(fei).h.applied_workitem)
     end
@@ -161,7 +161,7 @@ module Ruote
     # http://groups.google.com/group/openwferu-users/t/2e6a95708c10847b for the
     # justification.
     #
-    def put (fei, hash)
+    def put(fei, hash)
 
       fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
 
@@ -183,7 +183,7 @@ module Ruote
     # put & get are useful for a participant that needs to communicate
     # between its consume and its cancel.
     #
-    def get (fei, key=nil)
+    def get(fei, key=nil)
 
       fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
 
@@ -202,7 +202,7 @@ module Ruote
 
     # Accepts context, worker, engine or storage as first argument.
     #
-    def initialize (cwes, options={})
+    def initialize(cwes, options={})
 
       @context = cwes.context
       @options = options

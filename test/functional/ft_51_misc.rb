@@ -35,7 +35,7 @@ class FtMiscTest < Test::Unit::TestCase
   end
 
   class NoCancel
-    def consume (workitem)
+    def consume(workitem)
       # do nothing
     end
     # no cancel method implementation

@@ -36,7 +36,7 @@ module Ruote
   #
   #   Ruote::FlowExpressionId.to_storage_id(fei)
   #
-  def self.to_storage_id (fei)
+  def self.to_storage_id(fei)
 
     Ruote::FlowExpressionId.to_storage_id(fei)
   end
@@ -45,7 +45,7 @@ module Ruote
   #
   #   Ruote::FlowExpressionId.to_storage_id(fei)
   #
-  def self.sid (fei)
+  def self.sid(fei)
 
     Ruote::FlowExpressionId.to_storage_id(fei)
   end
@@ -54,7 +54,7 @@ module Ruote
   #
   #   Ruote::FlowExpressionId.is_a_fei?(o)
   #
-  def self.is_a_fei? (o)
+  def self.is_a_fei?(o)
 
     Ruote::FlowExpressionId.is_a_fei?(o)
   end
@@ -62,7 +62,7 @@ module Ruote
   # Will do its best to return a wfid (String) or a fei (Hash instance)
   # extract from the given o argument.
   #
-  def self.extract_id (o)
+  def self.extract_id(o)
 
     return o if o.is_a?(String) and o.index('!').nil? # wfid
 
@@ -76,7 +76,7 @@ module Ruote
   # The salt's object_id is used when composing the string that gets
   # digested. One should not pass always the same object as salt.
   #
-  def self.generate_subid (salt)
+  def self.generate_subid(salt)
 
     Digest::MD5.hexdigest(
       "#{salt.object_id}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
@@ -104,7 +104,7 @@ module Ruote
 
     attr_reader :h
 
-    def initialize (h)
+    def initialize(h)
 
       @h = h
       class << h; include Ruote::HashDot; end
@@ -125,7 +125,7 @@ module Ruote
     end
     alias sid to_storage_id
 
-    def self.to_storage_id (hfei)
+    def self.to_storage_id(hfei)
 
       hfei.respond_to?(:to_storage_id) ?
         hfei.to_storage_id :
@@ -136,7 +136,7 @@ module Ruote
 
     # Turns the result of to_storage_id back to a FlowExpressionId instance.
     #
-    def self.from_id (s, engine_id='engine')
+    def self.from_id(s, engine_id='engine')
 
       extract("#{engine_id}!#{s}")
     end
@@ -157,7 +157,7 @@ module Ruote
     # Returns true if the other is a FlowExpressionId instance and it
     # points to the same expression as this one.
     #
-    def == (other)
+    def ==(other)
 
       return false unless other.is_a?(Ruote::FlowExpressionId)
 
@@ -171,14 +171,14 @@ module Ruote
 
     # Returns true if the h is a representation of a FlowExpressionId instance.
     #
-    def self.is_a_fei? (h)
+    def self.is_a_fei?(h)
 
       h.respond_to?(:keys) && (h.keys - SUBS).sort == IDS
     end
 
     # Returns child_id... For an expid of '0_1_4', this will be 4.
     #
-    def self.child_id (h)
+    def self.child_id(h)
 
       h['expid'].split(CHILD_SEP).last.to_i
     end
@@ -191,7 +191,7 @@ module Ruote
     # Returns true if other_fei is the fei of a child expression of
     # parent_fei.
     #
-    def self.direct_child? (parent_fei, other_fei)
+    def self.direct_child?(parent_fei, other_fei)
 
       %w[ wfid engine_id ].each do |k|
         return false if parent_fei[k] != other_fei[k]
@@ -207,7 +207,7 @@ module Ruote
     #
     # Uses .extract_h
     #
-    def self.extract (arg)
+    def self.extract(arg)
 
       FlowExpressionId.new(extract_h(arg))
     end
@@ -215,7 +215,7 @@ module Ruote
     # Attempts at extracting a FlowExpressionId (as a Hash instance) from the
     # given argument (workitem, string, ...)
     #
-    def self.extract_h (arg)
+    def self.extract_h(arg)
 
       if arg.is_a?(Hash)
         return arg if arg['expid']

@@ -39,7 +39,7 @@ module Ruote
 
     attr_reader :h
 
-    def initialize (h)
+    def initialize(h)
 
       @h = h
       class << @h; include Ruote::HashDot; end
@@ -47,10 +47,10 @@ module Ruote
       #class << @h['fields']
       #  alias_method :__get, :[]
       #  alias_method :__set, :[]=
-      #  def [] (key)
+      #  def [](key)
       #    __get(key.to_s)
       #  end
-      #  def []= (key, value)
+      #  def []=(key, value)
       #    __set(key.to_s, value)
       #  end
       #end
@@ -118,7 +118,7 @@ module Ruote
     #
     # Remember : the fields must be a JSONifiable hash.
     #
-    def fields= (fields)
+    def fields=(fields)
 
       @h['fields'] = fields
     end
@@ -137,7 +137,7 @@ module Ruote
     #
     # See #result
     #
-    def result= (r)
+    def result=(r)
 
       fields['__result__'] = r
     end
@@ -151,7 +151,7 @@ module Ruote
 
     # Warning : equality is based on fei and not on payload !
     #
-    def == (other)
+    def ==(other)
 
       return false if other.class != self.class
       self.h['fei'] == other.h['fei']
@@ -182,7 +182,7 @@ module Ruote
     #
     #   workitem.fields['toto']['address']
     #
-    def lookup (key, container_lookup=false)
+    def lookup(key, container_lookup=false)
 
       Ruote.lookup(@h['fields'], key, container_lookup)
     end
@@ -200,7 +200,7 @@ module Ruote
     # or are not hashes, set_field will simply create a "customer.address.city"
     # field and set its value to "Pleasantville".
     #
-    def set_field (key, value)
+    def set_field(key, value)
 
       Ruote.set(@h['fields'], key, value)
     end
@@ -254,7 +254,7 @@ module Ruote
     # __command__ is read by the 'cursor' and the 'iterator' expressions
     # when a workitem reaches it (apply and reply).
     #
-    def command= (com)
+    def command=(com)
 
       com = com.is_a?(Array) ? com : com.split(' ')
       com = [ com.first, com.last ]
@@ -272,14 +272,14 @@ module Ruote
 
     # Used by FlowExpression when entering a tag.
     #
-    def self.add_tag (hworkitem, tag)
+    def self.add_tag(hworkitem, tag)
 
       (hworkitem['fields']['__tags__'] ||= []) << tag
     end
 
     # Used by FlowExpression when leaving a tag.
     #
-    def self.remove_tag (hworkitem, tag)
+    def self.remove_tag(hworkitem, tag)
 
       # it's a bit convoluted... trying to cope with potential inconsistencies
       #
@@ -296,7 +296,7 @@ module Ruote
     # Encodes this workitem as JSON. If pretty is set to true, will output
     # prettified JSON.
     #
-    def as_json (pretty=false)
+    def as_json(pretty=false)
 
       pretty ? Rufus::Json.pretty_encode(@h) : Rufus::Json.encode(@h)
     end
@@ -304,7 +304,7 @@ module Ruote
     # Given a JSON String, decodes and returns a Ruote::Workitem instance.3
     # If the decode thing is not an object/hash, will raise an ArgumentError.
     #
-    def self.from_json (json)
+    def self.from_json(json)
 
       h = Rufus::Json.decode(json)
 

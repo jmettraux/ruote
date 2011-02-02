@@ -27,7 +27,7 @@ module Ruote
 
   module HashDot
 
-    def method_missing (m, *args)
+    def method_missing(m, *args)
 
       m = m.to_s
 
@@ -62,9 +62,9 @@ module Ruote
 
   module WithH
 
-    def self.included (target)
+    def self.included(target)
 
-      def target.h_reader (*names)
+      def target.h_reader(*names)
         names.each do |name|
           define_method(name) do
             @h[name.to_s]

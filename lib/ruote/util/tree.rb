@@ -47,7 +47,7 @@ module Ruote
   #     #        0_0_0  alpha {}
   #     #        0_0_1  bravo {}
   #
-  def Ruote.tree_to_s (tree, expid='0')
+  def Ruote.tree_to_s(tree, expid='0')
 
     d = expid.split('_').size - 1
     s = "#{' ' * d * 2}#{expid}  #{tree[0]} #{tree[1].inspect}\n"

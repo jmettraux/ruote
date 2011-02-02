@@ -35,7 +35,7 @@ module Ruote
 
     attr_accessor :field, :value, :rule
 
-    def initialize (rule, field, value)
+    def initialize(rule, field, value)
 
       @rule = rule
       @value = value
@@ -49,7 +49,7 @@ module Ruote
   #
   # See the Ruote::Exp::FilterExpression for more information.
   #
-  def self.filter (filter, hash, double_caret=nil)
+  def self.filter(filter, hash, double_caret=nil)
 
     hash = Rufus::Json.dup(hash)
 
@@ -78,7 +78,7 @@ module Ruote
     NUMBER_CLASSES = [ Fixnum, Float ]
     BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
 
-    def initialize (hash, rule)
+    def initialize(hash, rule)
 
       @hash = hash
       @rule = rule
@@ -104,19 +104,19 @@ module Ruote
 
     protected
 
-    def _remove (m, v)
+    def _remove(m, v)
 
       Ruote.unset(@hash, @field)
     end
     alias _rm _remove
 
-    def _set (m, v)
+    def _set(m, v)
 
       Ruote.set(@hash, @field, Rufus::Json.dup(v))
     end
     alias _s _set
 
-    def _copy_to (m, v)
+    def _copy_to(m, v)
 
       Ruote.set(@hash, v, Rufus::Json.dup(@value))
       Ruote.unset(@hash, @field) if m == 'move_to' or m == 'mv_to'
@@ -126,7 +126,7 @@ module Ruote
     alias _mv_to _copy_to
 
 
-    def _copy_from (m, v)
+    def _copy_from(m, v)
 
       Ruote.set(@hash, @field, Rufus::Json.dup(Ruote.lookup(@hash, v)))
       Ruote.unset(@hash, v) if m == 'move_from' or m == 'mv_from'
@@ -135,7 +135,7 @@ module Ruote
     alias _move_from _copy_from
     alias _mv_from _copy_from
 
-    def _merge_to (m, v)
+    def _merge_to(m, v)
 
       target = Ruote.lookup(@hash, v)
 
@@ -150,7 +150,7 @@ module Ruote
     alias _migrate_to _merge_to
     alias _mi_to _merge_to
 
-    def _merge_from (m, v)
+    def _merge_from(m, v)
 
       return unless @value.respond_to?(:merge!)
 
@@ -166,7 +166,7 @@ module Ruote
     alias _migrate_from _merge_from
     alias _mi_from _merge_from
 
-    def _size (m, v)
+    def _size(m, v)
 
       v = v.is_a?(String) ? v.split(',').collect { |i| i.to_i } : Array(v)
 
@@ -179,20 +179,20 @@ module Ruote
     end
     alias _sz _size
 
-    def _empty (m, v)
+    def _empty(m, v)
 
       validate(@value.respond_to?(:empty?) ? @value.empty? : false)
     end
     alias _e _empty
 
-    def _in (m, v)
+    def _in(m, v)
 
       v = v.is_a?(Array) ? v : v.to_s.split(',').collect { |e| e.strip }
       validate(v.include?(@value))
     end
     alias _i _in
 
-    def _has (m, v)
+    def _has(m, v)
 
       v = v.is_a?(Array) ? v : v.to_s.split(',').collect { |e| e.strip }
 
@@ -206,7 +206,7 @@ module Ruote
     end
     alias _h _has
 
-    def _type (m, v)
+    def _type(m, v)
 
       validate(of_type?(@value, v))
     end
@@ -214,7 +214,7 @@ module Ruote
 
     TYPE_SPLITTER = /^(?: *, *)?([^,<]+(?:<.+>)?)(.*)$/
 
-    def split_type (type)
+    def split_type(type)
 
       result = []
 
@@ -228,7 +228,7 @@ module Ruote
       result
     end
 
-    def of_type? (value, types)
+    def of_type?(value, types)
 
       types = types.is_a?(Array) ? types : split_type(types)
 
@@ -259,7 +259,7 @@ module Ruote
       valid
     end
 
-    def children_of_type? (values, types)
+    def children_of_type?(values, types)
 
       return false unless values.is_a?(Array) or values.is_a?(Hash)
 
@@ -270,25 +270,25 @@ module Ruote
       true
     end
 
-    def _match (m, v)
+    def _match(m, v)
 
       validate(@value.nil? ? false : @value.to_s.match(v) != nil)
     end
     alias _m _match
 
-    def _smatch (m, v)
+    def _smatch(m, v)
 
       validate(@value.is_a?(String) ? @value.match(v) != nil : false)
     end
     alias _sm _smatch
 
-    def _valid (m, v)
+    def _valid(m, v)
 
       validate(v.to_s == 'true')
     end
     alias _v _valid
 
-    def validate (valid)
+    def validate(valid)
 
       @valid = @valid.nil? ? valid : @valid && valid
     end

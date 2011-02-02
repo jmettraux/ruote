@@ -34,7 +34,7 @@ module Ruote::Exp
     # Given a list of attribute names, returns the first attribute name for
     # which there is a value.
     #
-    def has_attribute (*args)
+    def has_attribute(*args)
 
       args.each { |a| a = a.to_s; return a if attributes[a] != nil }
 
@@ -45,7 +45,7 @@ module Ruote::Exp
 
     # Looks up the value for attribute n.
     #
-    def attribute (n, workitem=h.applied_workitem, options={})
+    def attribute(n, workitem=h.applied_workitem, options={})
 
       n = n.to_s
 
@@ -72,7 +72,7 @@ module Ruote::Exp
     # in the array list 'values'. If not, the default value is returned.
     # By default, the default value is the first element of 'values'.
     #
-    def att (key, values, opts={})
+    def att(key, values, opts={})
 
       default = opts[:default] || values.first
 
@@ -92,7 +92,7 @@ module Ruote::Exp
     # prefix = 'on' => will lookup on, on_val, on_value, on_v, on_var,
     # on_variable, on_f, on_fld, on_field...
     #
-    def lookup_val_prefix (prefix, att_options={})
+    def lookup_val_prefix(prefix, att_options={})
 
       lval(
         [ prefix ] + [ 'val', 'value' ].map { |s| "#{prefix}_#{s}" },
@@ -101,7 +101,7 @@ module Ruote::Exp
         att_options)
     end
 
-    def lookup_val (att_options={})
+    def lookup_val(att_options={})
 
       lval(
         VV,
@@ -113,7 +113,7 @@ module Ruote::Exp
     # Returns a Hash containing all attributes set for an expression with
     # their values resolved.
     #
-    def compile_atts (opts={})
+    def compile_atts(opts={})
 
       attributes.keys.inject({}) { |r, k|
         r[k] = attribute(k, h.applied_workitem, opts)
@@ -127,7 +127,7 @@ module Ruote::Exp
     #
     #   set "f:${v:field_name}" => "${v:that_variable}"
     #
-    def expand_atts (opts={})
+    def expand_atts(opts={})
 
       attributes.keys.inject({}) { |r, k|
         kk = @context.dollar_sub.s(k, self, h.applied_workitem)
@@ -150,7 +150,7 @@ module Ruote::Exp
     #
     # Note : an empty text returns '', not the nil value.
     #
-    def attribute_text (workitem=h.applied_workitem)
+    def attribute_text(workitem=h.applied_workitem)
 
       text = attributes.keys.find { |k| attributes[k] == nil }
 
@@ -169,12 +169,12 @@ module Ruote::Exp
     #
     VV = %w[ val value ]
 
-    def s_cartesian (a0, a1)
+    def s_cartesian(a0, a1)
 
       a0.inject([]) { |a, e0| a + a1.collect { |e1| "#{e0}_#{e1}" } }
     end
 
-    def lval (vals, vars, flds, att_options)
+    def lval(vals, vars, flds, att_options)
 
       if k = has_att(*vals)
 

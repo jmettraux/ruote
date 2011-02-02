@@ -39,7 +39,7 @@ module Ruote
 
     attr_reader :h
 
-    def initialize (options={})
+    def initialize(options={})
 
       super()
         # since were including MonitorMixin, this super() is necessary
@@ -51,7 +51,7 @@ module Ruote
       put(options.merge('type' => 'configurations', '_id' => 'engine'))
     end
 
-    def put (doc, opts={})
+    def put(doc, opts={})
 
       i = @h.size
 
@@ -90,14 +90,14 @@ module Ruote
       raise e
     end
 
-    def get (type, key)
+    def get(type, key)
 
       synchronize do
         Ruote.fulldup(@h[type][key])
       end
     end
 
-    def delete (doc)
+    def delete(doc)
 
       drev = doc['_rev']
 
@@ -119,7 +119,7 @@ module Ruote
       end
     end
 
-    def get_many (type, key=nil, opts={})
+    def get_many(type, key=nil, opts={})
 
       # NOTE : no dup here for now
 
@@ -149,7 +149,7 @@ module Ruote
 
     # Returns a sorted list of all the ids for a given type.
     #
-    def ids (type)
+    def ids(type)
 
       @h[type].keys.sort
     end
@@ -177,17 +177,17 @@ module Ruote
       @h['configurations']['engine'] = @options
     end
 
-    def add_type (type)
+    def add_type(type)
 
       @h[type] = {}
     end
 
-    def purge_type! (type)
+    def purge_type!(type)
 
       @h[type] = {}
     end
 
-    def dump (type)
+    def dump(type)
 
       s = "=== #{type} ===\n"
 

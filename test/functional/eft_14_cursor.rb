@@ -290,15 +290,15 @@ class EftCursorTest < Test::Unit::TestCase
 
   class Alpha
     include Ruote::LocalParticipant
-    def consume (workitem)
+    def consume(workitem)
       workitem.command = 'break'
       reply_to_engine(workitem)
     end
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
     end
   end
   class Bravo < Alpha
-    def consume (workitem)
+    def consume(workitem)
       workitem.command = 'skip 1'
       reply_to_engine(workitem)
     end
@@ -349,11 +349,11 @@ class EftCursorTest < Test::Unit::TestCase
     def initialize(opts)
       @opts = opts
     end
-    def consume (workitem)
+    def consume(workitem)
       workitem.command = @opts['command']
       reply_to_engine(workitem)
     end
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
     end
   end
 

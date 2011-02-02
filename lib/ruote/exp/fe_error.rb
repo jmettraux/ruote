@@ -64,7 +64,7 @@ module Ruote::Exp
         'workitem' => h.applied_workitem)
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       return reply_to_parent(workitem) if h.triggered
 

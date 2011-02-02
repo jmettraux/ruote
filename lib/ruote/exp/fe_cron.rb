@@ -99,7 +99,7 @@ module Ruote::Exp
       reschedule
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       launch_sub(
         "#{h.fei['expid']}_0",
@@ -110,7 +110,7 @@ module Ruote::Exp
       reschedule
     end
 
-    def cancel (flavour)
+    def cancel(flavour)
 
       @context.storage.delete_schedule(h.job_id)
       reply_to_parent(h.applied_workitem)

@@ -73,7 +73,7 @@ module Ruote::Exp
       end
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       # never called
     end

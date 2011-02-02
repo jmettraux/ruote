@@ -17,7 +17,7 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
     assert_not_nil @engine.history
   end
 
-  def launch_processes (clear=true)
+  def launch_processes(clear=true)
 
     @engine.history.clear! if clear
 

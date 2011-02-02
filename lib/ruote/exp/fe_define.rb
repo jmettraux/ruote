@@ -92,7 +92,7 @@ module Ruote::Exp
     # Returns true if the tree's root expression is a definition
     # (define, process_definition, ...)
     #
-    def self.is_definition? (tree)
+    def self.is_definition?(tree)
 
       self.expression_names.include?(tree.first)
     end
@@ -100,7 +100,7 @@ module Ruote::Exp
     # Used by instances of this class and also the expression pool,
     # when launching a new process instance.
     #
-    def self.reorganize (tree)
+    def self.reorganize(tree)
 
       definitions, bodies = tree[2].partition { |b| is_definition?(b) }
       name = tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil }

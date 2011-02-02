@@ -34,9 +34,9 @@ class FtWaitForTest < Test::Unit::TestCase
 
   class MyParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
     end
-    def consume (workitem)
+    def consume(workitem)
       sleep rand * 2
       reply_to_engine(workitem)
     end

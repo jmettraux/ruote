@@ -15,15 +15,15 @@ class ConditionTest < Test::Unit::TestCase
 
   class FakeExpression
 
-    def initialize (h)
+    def initialize(h)
       @h = h
     end
-    def attribute (k)
+    def attribute(k)
       @h[k]
     end
   end
 
-  def assert_not_skip (result, h)
+  def assert_not_skip(result, h)
 
     fe = FakeExpression.new(h)
 
@@ -33,7 +33,7 @@ class ConditionTest < Test::Unit::TestCase
     assert_equal result, Ruote::Exp::Condition.apply?(sif, sunless)
   end
 
-  def assert_b (b, conditional=nil)
+  def assert_b(b, conditional=nil)
 
     if conditional == nil
       conditional = b
@@ -171,7 +171,7 @@ class ConditionTest < Test::Unit::TestCase
     assert_b false, " ! true"
   end
 
-  def assert_e (target, code)
+  def assert_e(target, code)
 
     assert_equal(
       target,

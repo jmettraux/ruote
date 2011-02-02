@@ -127,7 +127,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
   # helper
   #
-  def run_concurrence (concurrence_attributes, noise)
+  def run_concurrence(concurrence_attributes, noise)
 
     pdef = Ruote.process_definition do
       sequence do
@@ -208,7 +208,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
   # helper
   #
-  def run_test_count (remaining, noise)
+  def run_test_count(remaining, noise)
 
     pdef = Ruote.process_definition do
       concurrence :count => 1, :remaining => remaining do

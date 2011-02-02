@@ -57,7 +57,7 @@ module Ruote
 
     attr_accessor :context
 
-    def initialize (engine_or_options={}, options=nil)
+    def initialize(engine_or_options={}, options=nil)
 
       if engine_or_options.respond_to?(:context)
         @context = engine_or_options.context
@@ -76,7 +76,7 @@ module Ruote
     #
     def do_not_thread; true; end
 
-    def consume (workitem)
+    def consume(workitem)
 
       doc = workitem.to_h
 
@@ -94,7 +94,7 @@ module Ruote
 
     # Removes the document/workitem from the storage
     #
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
 
       doc = fetch(fei)
 
@@ -103,14 +103,14 @@ module Ruote
       cancel(fei, flavour) if r != nil
     end
 
-    def [] (fei)
+    def [](fei)
 
       doc = fetch(fei)
 
       doc ? Ruote::Workitem.new(doc) : nil
     end
 
-    def fetch (fei)
+    def fetch(fei)
 
       hfei = Ruote::FlowExpressionId.extract_h(fei)
 
@@ -122,7 +122,7 @@ module Ruote
     # TODO : should it raise if the workitem can't be found ?
     # TODO : should it accept just the fei ?
     #
-    def reply (workitem)
+    def reply(workitem)
 
       # TODO: change method name (receiver mess cleanup)
 
@@ -146,14 +146,14 @@ module Ruote
 
     # Iterates over the workitems stored in here.
     #
-    def each (&block)
+    def each(&block)
 
       all.each { |wi| block.call(wi) }
     end
 
     # Returns all the workitems stored in here.
     #
-    def all (opts={})
+    def all(opts={})
 
       fetch_all(opts).map { |hwi| Ruote::Workitem.new(hwi) }
     end
@@ -170,7 +170,7 @@ module Ruote
 
     # Return all workitems for the specified wfid
     #
-    def by_wfid (wfid)
+    def by_wfid(wfid)
 
       @context.storage.get_many('workitems', wfid).collect { |hwi|
         Ruote::Workitem.new(hwi)
@@ -179,7 +179,7 @@ module Ruote
 
     # Returns all workitems for the specified participant name
     #
-    def by_participant (participant_name, opts={})
+    def by_participant(participant_name, opts={})
 
       hwis = if @context.storage.respond_to?(:by_participant)
 
@@ -204,7 +204,7 @@ module Ruote
     # CouchStorage), the others will load all the workitems and then filter
     # them.
     #
-    def by_field (field, value=nil)
+    def by_field(field, value=nil)
 
       hwis = if @context.storage.respond_to?(:by_field)
 
@@ -240,7 +240,7 @@ module Ruote
     # Note : the criteria is AND only, you'll have to do ORs (aggregation)
     # by yourself.
     #
-    def query (criteria)
+    def query(criteria)
 
       cr = criteria.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
 
@@ -277,7 +277,7 @@ module Ruote
 
     # Used by #query when filtering workitems.
     #
-    def self.matches? (hwi, pname, criteria)
+    def self.matches?(hwi, pname, criteria)
 
       return false if pname && hwi['participant_name'] != pname
 
@@ -312,7 +312,7 @@ module Ruote
     # Fetches all the workitems. If there is a @store_name, will only fetch
     # the workitems in that store.
     #
-    def fetch_all (opts={})
+    def fetch_all(opts={})
 
       @context.storage.get_many(
         'workitems',
@@ -322,7 +322,7 @@ module Ruote
 
     # Computes the id for the document representing the document in the storage.
     #
-    def to_id (fei)
+    def to_id(fei)
 
       a = [ Ruote.to_storage_id(fei) ]
 

@@ -15,7 +15,7 @@ class FtParticipantsTest < Test::Unit::TestCase
 
   class MyParticipant
     include Ruote::LocalParticipant
-    def consume (workitem)
+    def consume(workitem)
       workitem.fields['seen'] = true
       reply_to_engine(workitem)
     end
@@ -23,10 +23,10 @@ class FtParticipantsTest < Test::Unit::TestCase
 
   class MyMessageParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
       @opts = opts
     end
-    def consume (workitem)
+    def consume(workitem)
       workitem.fields['message'] = @opts['message']
       reply_to_engine(workitem)
     end
@@ -64,11 +64,11 @@ class FtParticipantsTest < Test::Unit::TestCase
 
   class MyOtherParticipant
     include Ruote::LocalParticipant
-    def consume (wi)
+    def consume(wi)
       wi.fields['hello'] = 'kitty'
       reply_to_engine(wi)
     end
-    def on_reply (wi)
+    def on_reply(wi)
       @context.tracer << wi.fields['hello'] + "\n"
       @context.tracer << applied_workitem(wi.fei).fields['hello'] + "\n"
       @context.tracer << workitem(wi.fei).fields['hello']

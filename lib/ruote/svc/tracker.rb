@@ -34,7 +34,7 @@ module Ruote
   #
   class Tracker
 
-    def initialize (context)
+    def initialize(context)
 
       @context = context
 
@@ -54,7 +54,7 @@ module Ruote
     # The worker passes all the messages it has to process to the tracker via
     # this method.
     #
-    def notify (msg)
+    def notify(msg)
 
       m_error = msg['error']
       m_wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
@@ -110,7 +110,7 @@ module Ruote
 
     # Adds a tracker (usually when a 'listen' expression gets applied).
     #
-    def add_tracker (wfid, action, id, conditions, msg)
+    def add_tracker(wfid, action, id, conditions, msg)
 
       doc = @context.storage.get_trackers
 
@@ -130,7 +130,7 @@ module Ruote
     # Removes a tracker (usually when a 'listen' expression replies to its
     # parent expression or is cancelled).
     #
-    def remove_tracker (fei, doc=nil)
+    def remove_tracker(fei, doc=nil)
 
       doc ||= @context.storage.get_trackers
 
@@ -144,7 +144,7 @@ module Ruote
 
     protected
 
-    def does_match? (msg, conditions)
+    def does_match?(msg, conditions)
 
       return true unless conditions
 

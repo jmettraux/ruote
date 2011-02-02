@@ -34,10 +34,10 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
   class Supervisor
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
       @opts = opts
     end
-    def consume (workitem)
+    def consume(workitem)
       workitem.fields['flavour'] = @opts['flavour']
       @context.stash[:seen] << workitem
       reply(workitem)

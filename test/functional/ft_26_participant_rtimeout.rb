@@ -14,7 +14,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
   include FunctionalBase
 
   class AlphaParticipant < Ruote::StorageParticipant
-    def rtimeout (workitem)
+    def rtimeout(workitem)
       '1s'
     end
   end
@@ -48,10 +48,10 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
 
   class MyParticipant
     include Ruote::LocalParticipant
-    def consume (workitem)
+    def consume(workitem)
       # do nothing
     end
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
       # do nothing
     end
     def rtimeout
@@ -104,16 +104,16 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
 
   class MyOtherParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
       @opts = opts
     end
-    def consume (workitem)
+    def consume(workitem)
       # do nothing
     end
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
       # do nothing
     end
-    def rtimeout (workitem)
+    def rtimeout(workitem)
       @opts['timeout']
     end
   end
@@ -141,16 +141,16 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
 
   class YetAnotherParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
       @opts = opts
     end
-    def consume (workitem)
+    def consume(workitem)
       # do nothing
     end
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
       # do nothing
     end
-    def rtimeout (workitem)
+    def rtimeout(workitem)
       "#{workitem.fields['timeout'] * 2}s"
     end
   end

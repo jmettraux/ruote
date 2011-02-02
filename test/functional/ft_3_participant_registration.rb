@@ -153,10 +153,10 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       f.write(%{
         class RequiredParticipant
           include Ruote::LocalParticipant
-          def initialize (opts)
+          def initialize(opts)
             @opts = opts
           end
-          def consume (workitem)
+          def consume(workitem)
             workitem.fields['message'] = @opts['message']
             reply(workitem)
           end
@@ -189,10 +189,10 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       f.write(%{
         class RequiredParticipant
           include Ruote::LocalParticipant
-          def initialize (opts)
+          def initialize(opts)
             @opts = opts
           end
-          def consume (workitem)
+          def consume(workitem)
             workitem.fields['message'] = 'second run'
             reply(workitem)
           end
@@ -219,10 +219,10 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       f.write(%{
         class LoadedParticipant
           include Ruote::LocalParticipant
-          def initialize (opts)
+          def initialize(opts)
             @opts = opts
           end
-          def consume (workitem)
+          def consume(workitem)
             workitem.fields['message'] = @opts['message']
             reply(workitem)
           end
@@ -255,10 +255,10 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       f.write(%{
         class LoadedParticipant
           include Ruote::LocalParticipant
-          def initialize (opts)
+          def initialize(opts)
             @opts = opts
           end
-          def consume (workitem)
+          def consume(workitem)
             workitem.fields['message'] = 'second run'
             reply(workitem)
           end

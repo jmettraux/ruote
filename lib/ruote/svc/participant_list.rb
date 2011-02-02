@@ -38,14 +38,14 @@ module Ruote
   #
   class ParticipantList
 
-    def initialize (context)
+    def initialize(context)
 
       @context = context
     end
 
     # Registers a participant. Called by Engine#register_participant.
     #
-    def register (name, participant, options, block)
+    def register(name, participant, options, block)
 
       raise(
         ArgumentError.new(
@@ -100,7 +100,7 @@ module Ruote
     #
     # Called usually by Engine#unregister_participant.
     #
-    def unregister (name_or_participant)
+    def unregister(name_or_participant)
 
       code = nil
       entry = nil
@@ -131,7 +131,7 @@ module Ruote
     #
     # Mostly a combination of #lookup_info and #instantiate.
     #
-    def lookup (participant_name, workitem, opts={})
+    def lookup(participant_name, workitem, opts={})
 
       pinfo = participant_name.is_a?(String) ?
         lookup_info(participant_name, workitem) : participant_name
@@ -145,7 +145,7 @@ module Ruote
     # Returns nil if there is no participant registered that covers the given
     # participant name.
     #
-    def lookup_info (pname, workitem)
+    def lookup_info(pname, workitem)
 
       get_list['list'].each do |regex, pinfo|
 
@@ -165,7 +165,7 @@ module Ruote
 
     # Returns an instance of a participant
     #
-    def instantiate (pinfo, opts={})
+    def instantiate(pinfo, opts={})
 
       #pinfo = @instantiated_participants[pinfo] if pinfo.is_a?(String)
       #if pinfo.respond_to?(:consume)
@@ -195,7 +195,7 @@ module Ruote
       initialize_participant(pa_class, options)
     end
 
-    def initialize_participant (klass, options)
+    def initialize_participant(klass, options)
 
       participant = if klass.instance_method(:initialize).arity == 0
         klass.new
@@ -246,7 +246,7 @@ module Ruote
     #
     # See ParticipantList#list
     #
-    def list= (pl)
+    def list=(pl)
 
       list = get_list
       list['list'] = pl.collect { |e|
@@ -299,7 +299,7 @@ module Ruote
 
     attr_accessor :regex, :classname, :options
 
-    def initialize (a)
+    def initialize(a)
       @regex = a.first
       if a.last.is_a?(Array)
         @classname = a.last.first
@@ -322,7 +322,7 @@ module Ruote
     #
     #   [ regex, [ klass, opts ] ]
     #
-    def self.read (elt)
+    def self.read(elt)
 
       return elt.to_a if elt.is_a?(ParticipantEntry)
 

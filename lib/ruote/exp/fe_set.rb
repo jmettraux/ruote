@@ -126,14 +126,14 @@ module Ruote::Exp
       reply_to_parent(h.applied_workitem)
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       # never called
     end
 
     protected
 
-    def set_v (key, value)
+    def set_v(key, value)
 
       if name == 'unset'
         unset_variable(key)
@@ -142,7 +142,7 @@ module Ruote::Exp
       end
     end
 
-    def set_f (key, value)
+    def set_f(key, value)
 
       if name == 'unset'
         h.applied_workitem['fields'].delete(key)
@@ -153,7 +153,7 @@ module Ruote::Exp
 
     PREFIX_REGEX = /^([^:]+):(.+)$/ #unless defined?(PREFIX_REGEX)
 
-    def set_vf (key, value)
+    def set_vf(key, value)
 
       field = true
 

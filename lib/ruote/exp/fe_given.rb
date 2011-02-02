@@ -130,7 +130,7 @@ module Ruote::Exp
 
     names :given
 
-    def reply (workitem)
+    def reply(workitem)
 
       if given = attribute(:t) || attribute_text
         workitem['fields']['__given__'] = given

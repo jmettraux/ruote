@@ -11,7 +11,7 @@ require File.join(File.dirname(__FILE__), 'base')
 class EftFilterTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def assert_terminates (pdef, fields, result=nil)
+  def assert_terminates(pdef, fields, result=nil)
 
     wfid = @engine.launch(pdef, fields)
     r = @engine.wait_for(wfid)
@@ -20,7 +20,7 @@ class EftFilterTest < Test::Unit::TestCase
     assert_equal(result, r['workitem']['fields']) if result
   end
 
-  def assert_does_not_validate (pdef, fields={})
+  def assert_does_not_validate(pdef, fields={})
 
     wfid = @engine.launch(pdef, fields)
     r = @engine.wait_for(wfid)

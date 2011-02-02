@@ -40,7 +40,7 @@ module Ruote
   #
   class DollarSubstitution
 
-    def initialize (context)
+    def initialize(context)
 
       @context = context
     end
@@ -50,7 +50,7 @@ module Ruote
     #
     # With help from Nick Petrella (2008/03/20)
     #
-    def s (text, flow_expression, workitem)
+    def s(text, flow_expression, workitem)
 
       if text.is_a?(String)
 
@@ -100,13 +100,13 @@ module Ruote
       attr_reader :fexp
       attr_reader :workitem
 
-      def initialize (flowexpression, workitem)
+      def initialize(flowexpression, workitem)
 
         @fexp = flowexpression
         @workitem = workitem
       end
 
-      def [] (key)
+      def [](key)
 
         return @fexp.fei.to_storage_id if key == 'fei'
         return @fexp.fei.wfid if key == 'wfid'
@@ -130,7 +130,7 @@ module Ruote
         lookup(pr[1, 1], k)
       end
 
-      def []= (key, value)
+      def []=(key, value)
 
         pr, k = extract_prefix(key)
         pr = pr[0, 1]
@@ -145,7 +145,7 @@ module Ruote
         end
       end
 
-      def has_key? (key)
+      def has_key?(key)
 
         pr, k = extract_prefix(key)
 
@@ -156,7 +156,7 @@ module Ruote
 
       protected
 
-      def lookup (pr, key)
+      def lookup(pr, key)
 
         case pr
           when 'v' then @fexp.lookup_variable(key)
@@ -166,7 +166,7 @@ module Ruote
         end
       end
 
-      def extract_prefix (key)
+      def extract_prefix(key)
 
         i = key.index(':')
 
@@ -183,7 +183,7 @@ module Ruote
 
       # TODO : rdoc me
       #
-      def ruby_eval (ruby_code)
+      def ruby_eval(ruby_code)
 
         raise ArgumentError.new(
           "'ruby_eval_allowed' is set to false, cannot evaluate >" +
@@ -204,7 +204,7 @@ module Ruote
 
       attr_reader :workitem
 
-      def initialize (dict)
+      def initialize(dict)
 
         @dict = dict
         @workitem = Ruote::Workitem.new(@dict.workitem)
@@ -244,7 +244,7 @@ module Ruote
       #
       # will yield "person".
       #
-      def d (s)
+      def d(s)
 
         Rufus.dsub("${#{s}}", @dict)
       end
@@ -257,7 +257,7 @@ module Ruote
       #
       # Else the regular NoMethodError will be raised.
       #
-      def method_missing (m, *args)
+      def method_missing(m, *args)
 
         if args.length < 1 && v = @workitem.fields[m.to_s]
           return v

@@ -27,7 +27,7 @@ module Ruote
 
   class WfidGenerator
 
-    def initialize (context)
+    def initialize(context)
 
       @context = context
 

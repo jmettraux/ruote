@@ -20,11 +20,11 @@ class Ruote::Engine
     @msgs.shift
   end
 
-  def do_process (msg)
+  def do_process(msg)
     @context.worker.process(msg)
   end
 
-  def step (count)
+  def step(count)
     return if count == 0
     loop do
       m = next_msg

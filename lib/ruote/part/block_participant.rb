@@ -68,7 +68,7 @@ module Ruote
 
     attr_accessor :context
 
-    def initialize (opts)
+    def initialize(opts)
 
       @opts = opts
     end
@@ -78,7 +78,7 @@ module Ruote
       @opts['do_not_thread']
     end
 
-    def consume (workitem)
+    def consume(workitem)
 
       block = @opts['block']
 
@@ -106,7 +106,7 @@ module Ruote
       reply_to_engine(workitem)
     end
 
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
 
       # do nothing
     end

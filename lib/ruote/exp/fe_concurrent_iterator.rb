@@ -134,12 +134,12 @@ module Ruote::Exp
     # Overrides FlowExpression#register_child to make sure that persist is
     # not called.
     #
-    def register_child (fei)
+    def register_child(fei)
 
       h.children << fei
     end
 
-    def add_branches (list)
+    def add_branches(list)
 
       if h.times_iterator && list.size == 1
 
@@ -170,7 +170,7 @@ module Ruote::Exp
       end
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       if ab = workitem['fields'].delete(ADD_BRANCHES_FIELD)
 

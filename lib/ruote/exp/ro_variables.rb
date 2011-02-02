@@ -52,7 +52,7 @@ module Ruote::Exp
     # Looks up the value of a variable in expression tree
     # (seen from a leaf, it looks more like a stack than a tree)
     #
-    def lookup_variable (var, prefix=nil)
+    def lookup_variable(var, prefix=nil)
 
       var, prefix = split_prefix(var, prefix)
 
@@ -91,7 +91,7 @@ module Ruote::Exp
     # Sets a variable to a given value.
     # (will set at the appropriate level).
     #
-    def set_variable (var, val)
+    def set_variable(var, val)
 
       fexp, v = locate_var(var)
 
@@ -100,7 +100,7 @@ module Ruote::Exp
 
     # Unbinds a variables.
     #
-    def unset_variable (var)
+    def unset_variable(var)
 
       fexp, v = locate_var(var)
 
@@ -112,7 +112,7 @@ module Ruote::Exp
     # This method is mostly used by the worker when looking up
     # a process name or participant name bound under a variable.
     #
-    def iterative_var_lookup (k)
+    def iterative_var_lookup(k)
 
       v = lookup_variable(k)
 
@@ -127,7 +127,7 @@ module Ruote::Exp
     #
     # val should be nil in case of 'unset'.
     #
-    def un_set_variable (op, var, val, should_persist)
+    def un_set_variable(op, var, val, should_persist)
 
       if op == :set
         Ruote.set(h.variables, var, val)
@@ -151,7 +151,7 @@ module Ruote::Exp
     # Used by lookup_variable and set_variable to extract the
     # prefix in a variable name
     #
-    def split_prefix (var, prefix)
+    def split_prefix(var, prefix)
 
       if prefix.nil?
         var = var.to_s
@@ -166,7 +166,7 @@ module Ruote::Exp
     # Returns the flow expression that owns a variable (or the one
     # that should own it) and the var without its potential / prefixes.
     #
-    def locate_var (var, prefix=nil)
+    def locate_var(var, prefix=nil)
 
       var, prefix = split_prefix(var, prefix)
 

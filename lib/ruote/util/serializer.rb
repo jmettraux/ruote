@@ -82,19 +82,19 @@ module Ruote
       :marshal => MARSHAL, :marshal64 => MARSHAL64, :yaml => YAML
     }
 
-    def initialize (flavour)
+    def initialize(flavour)
 
       @flavour = FLAVOURS[flavour] || MARSHAL64
 
       @flavour[0].call # initializes the flavour
     end
 
-    def encode (o)
+    def encode(o)
 
       @flavour[1].call(o)
     end
 
-    def decode (s)
+    def decode(s)
 
       @flavour[2].call(s)
     end

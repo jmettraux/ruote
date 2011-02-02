@@ -80,12 +80,12 @@ module Ruote
     include LocalParticipant
     include TemplateMixin
 
-    def initialize (opts)
+    def initialize(opts)
 
       @opts = opts.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
     end
 
-    def consume (workitem)
+    def consume(workitem)
 
       to = workitem.fields['email_target'] || @opts['to']
       to = Array(to)
@@ -105,7 +105,7 @@ module Ruote
       reply_to_engine(workitem) if @opts['notification']
     end
 
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
 
       # does nothing
       #

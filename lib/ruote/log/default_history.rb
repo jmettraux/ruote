@@ -33,7 +33,7 @@ module Ruote
     DATE_REGEX = /!(\d{4}-\d{2}-\d{2})!/
     DEFAULT_MAX_SIZE = 1000
 
-    def initialize (context, options={})
+    def initialize(context, options={})
 
       @context = context
       @options = options
@@ -63,7 +63,7 @@ module Ruote
     # Returns all the msgs (events) for a given wfid. (Well, all the msgs
     # that are kept.
     #
-    def by_process (wfid)
+    def by_process(wfid)
 
       @history.select { |msg|
         (msg['wfid'] || (msg['fei']['wfid'] rescue nil)) == wfid
@@ -81,7 +81,7 @@ module Ruote
         (Time.parse(@history.last['seen_at']) rescue now) ]
     end
 
-    def by_date (date)
+    def by_date(date)
 
       d = Time.parse(date.to_s).utc.strftime('%Y-%m-%d')
 
@@ -102,7 +102,7 @@ module Ruote
     # This is the method called by the workqueue. Incoming engine events
     # are 'processed' here.
     #
-    def notify (msg)
+    def notify(msg)
 
       msg = Ruote.fulldup(msg)
       msg['seen_at'] = Ruote.now_to_utc_s

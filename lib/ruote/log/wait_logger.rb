@@ -36,7 +36,7 @@ module Ruote
 
     attr_accessor :noisy
 
-    def initialize (context)
+    def initialize(context)
 
       @context = context
       @color = 33
@@ -50,7 +50,7 @@ module Ruote
       @waiting = []
     end
 
-    def notify (msg)
+    def notify(msg)
 
       puts(pretty_print(msg)) if @noisy
 

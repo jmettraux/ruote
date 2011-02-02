@@ -16,7 +16,7 @@ class FtRecursionTest < Test::Unit::TestCase
   class CountingParticipant
     include Ruote::LocalParticipant
 
-    def consume (workitem)
+    def consume(workitem)
 
       @context.stash[:wfids] ||= []
       @context.stash[:wfids] << "#{workitem.fei.wfid}|#{workitem.fei.subid}"
@@ -33,7 +33,7 @@ class FtRecursionTest < Test::Unit::TestCase
       end
     end
 
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
     end
   end
 

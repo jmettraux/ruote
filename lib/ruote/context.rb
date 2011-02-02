@@ -40,7 +40,7 @@ module Ruote
     attr_accessor :worker
     attr_accessor :engine
 
-    def initialize (storage, worker=nil)
+    def initialize(storage, worker=nil)
 
       @storage = storage
       @storage.context = self
@@ -80,14 +80,14 @@ module Ruote
     #     # ...
     #   end
     #
-    def [] (key)
+    def [](key)
 
       SERVICE_PREFIX.match(key) ? @services[key] : get_conf[key]
     end
 
     # Mostly used by engine#configure
     #
-    def []= (key, value)
+    def []=(key, value)
 
       raise(
         ArgumentError.new('use context#add_service to register services')
@@ -105,7 +105,7 @@ module Ruote
       get_conf.keys
     end
 
-    def add_service (key, *args)
+    def add_service(key, *args)
 
       path, klass, opts = args
 

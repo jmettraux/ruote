@@ -86,7 +86,7 @@ module Ruote::Exp
 
     # called by 'else', 'then' or perhaps 'equals'
     #
-    def reply (workitem)
+    def reply(workitem)
 
       if workitem['fei'] == h.fei # apply --> reply
 
@@ -114,7 +114,7 @@ module Ruote::Exp
 
     protected
 
-    def apply_child (index, workitem)
+    def apply_child(index, workitem)
 
       if tree_children[index]
         super

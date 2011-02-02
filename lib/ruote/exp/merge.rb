@@ -41,7 +41,7 @@ module Ruote::Exp
     # in the target workitem. The name of this field is the child_id of the
     # source workitem (a string from '0' to '99999' and beyond)
     #
-    def merge_workitems (index, target, source, type)
+    def merge_workitems(index, target, source, type)
 
       return source if type == 'override'
 

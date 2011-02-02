@@ -205,7 +205,7 @@ module Ruote::Exp
           'flavour' => 'listen' })
     end
 
-    def reply (workitem)
+    def reply(workitem)
 
       #
       # :where guard
@@ -237,7 +237,7 @@ module Ruote::Exp
 
     protected
 
-    def reply_to_parent (workitem)
+    def reply_to_parent(workitem)
 
       @context.tracker.remove_tracker(h.fei)
 

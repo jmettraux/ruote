@@ -105,7 +105,7 @@ module Ruote
 
     include LocalParticipant
 
-    def initialize (opts)
+    def initialize(opts)
 
       if pa = opts['storage_path']
         require pa
@@ -118,7 +118,7 @@ module Ruote
       @storage = Ruote.constantize(kl).new(opts['storage_args'])
     end
 
-    def consume (workitem)
+    def consume(workitem)
 
       wi = workitem.to_h
       fexp = Ruote::Exp::FlowExpression.fetch(@context, wi['fei'])
@@ -141,7 +141,7 @@ module Ruote
         # is unpersisted immediately
     end
 
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
 
       exps = @storage.get_many('expressions', /^0![^!]+!#{fei.wfid}$/)
 
@@ -157,7 +157,7 @@ module Ruote
         # participant expression will NOT reply to its parent
     end
 
-    def reply (fei, workitem)
+    def reply(fei, workitem)
 
       @storage.put_msg(
         'reply',
@@ -167,7 +167,7 @@ module Ruote
 
     protected
 
-    def determine_tree (fexp, params)
+    def determine_tree(fexp, params)
 
       pdef = params['def'] || params['pdef'] || params['tree']
 

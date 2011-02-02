@@ -201,15 +201,15 @@ class FtErrorsTest < Test::Unit::TestCase
   class WeakCancelParticipant
     include Ruote::LocalParticipant
 
-    def initialize (opts)
+    def initialize(opts)
     end
-    def consume (workitem)
+    def consume(workitem)
       # losing it
     end
     def do_not_thread
       true
     end
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
       raise "failure in #cancel"
     end
   end

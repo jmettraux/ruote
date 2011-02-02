@@ -29,7 +29,7 @@ module Ruote
   #
   # http://www.graphviz.org
   #
-  def self.tree_to_dot (tree, name='ruote process definition')
+  def self.tree_to_dot(tree, name='ruote process definition')
 
     s = "digraph \"#{name}\" {\n"
     s << branch_to_dot('0', tree).join("\n")
@@ -38,7 +38,7 @@ module Ruote
 
   protected
 
-  def self.branch_to_dot (expid, exp)
+  def self.branch_to_dot(expid, exp)
 
     [
       "  \"#{expid}\" "+
@@ -47,7 +47,7 @@ module Ruote
     children_to_dot(expid, exp)
   end
 
-  def self.children_to_dot (expid, exp)
+  def self.children_to_dot(expid, exp)
 
     exp_name = exp[0]
     child_count = exp[2].size

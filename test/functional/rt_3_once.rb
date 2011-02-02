@@ -25,7 +25,7 @@ class RtWhenTest < Test::Unit::TestCase
 
   protected
 
-  def do_test (freq)
+  def do_test(freq)
 
     start_new_engine
 

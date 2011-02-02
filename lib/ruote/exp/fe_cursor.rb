@@ -178,7 +178,7 @@ module Ruote::Exp
   #   class Reviewer
   #     include Ruote::LocalParticipant
   #
-  #     def consume (workitem)
+  #     def consume(workitem)
   #       # somehow review the book
   #       if review == 'bad'
   #         #workitem.fields['__command__'] = [ 'rewind' ] # old style
@@ -189,7 +189,7 @@ module Ruote::Exp
   #       reply_to_engine(workitem)
   #     end
   #
-  #     def cancel (fei, flavour)
+  #     def cancel(fei, flavour)
   #       # cancel if review is still going on...
   #     end
   #   end
@@ -250,7 +250,7 @@ module Ruote::Exp
 
     # Determines which child expression of the cursor is to be applied next.
     #
-    def move_on (workitem=h.applied_workitem)
+    def move_on(workitem=h.applied_workitem)
 
       position = workitem['fei'] == h.fei ?
         -1 : Ruote::FlowExpressionId.child_id(workitem['fei'])
@@ -286,7 +286,7 @@ module Ruote::Exp
     # Jumps to an integer position, or the name of an expression
     # or a tag name of a ref name.
     #
-    def jump_to (workitem, position, arg)
+    def jump_to(workitem, position, arg)
 
       pos = Integer(arg) rescue nil
 

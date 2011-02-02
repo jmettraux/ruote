@@ -55,7 +55,7 @@ module Ruote
     #
     attr_reader :schedules
 
-    def initialize (context, expressions, stored_workitems, errors, schedules)
+    def initialize(context, expressions, stored_workitems, errors, schedules)
 
       @expressions = expressions.collect { |e|
         Ruote::Exp::FlowExpression.from_h(context, e) }
@@ -93,7 +93,7 @@ module Ruote
     # Given an expression id, returns the root (top ancestor) for its
     # expression.
     #
-    def root_expression_for (fei)
+    def root_expression_for(fei)
 
       sfei = Ruote.sid(fei)
 
@@ -302,7 +302,7 @@ module Ruote
     # Returns a 'dot' representation of the process. A graph describing
     # the tree of flow expressions that compose the process.
     #
-    def to_dot (opts={})
+    def to_dot(opts={})
 
       s = [ "digraph \"process wfid #{wfid}\" {" ]
       @expressions.each { |e| s.push(*e.send(:to_dot, opts)) }
@@ -363,7 +363,7 @@ module Ruote
 
     protected
 
-    def original_tree_from_parent (e)
+    def original_tree_from_parent(e)
 
       parent = @expressions.find { |exp| exp.fei == e.parent_id }
 
@@ -371,14 +371,14 @@ module Ruote
     end
   end
 
-  def self.decompose_tree (t, pos='0', h={})
+  def self.decompose_tree(t, pos='0', h={})
 
     h[pos] = t[0, 2]
     t[2].each_with_index { |c, i| decompose_tree(c, "#{pos}_#{i}", h) }
     h
   end
 
-  def self.recompose_tree (h, pos='0')
+  def self.recompose_tree(h, pos='0')
 
     t = h[pos]
 

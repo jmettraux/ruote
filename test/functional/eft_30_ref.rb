@@ -16,7 +16,7 @@ class EftRefTest < Test::Unit::TestCase
   class AlphaParticipant
     include Ruote::LocalParticipant
 
-    def consume (workitem)
+    def consume(workitem)
       @context.tracer << workitem.fei.expid
       @context.tracer << "\n"
       reply(workitem)

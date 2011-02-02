@@ -79,7 +79,7 @@ module Ruote::Exp
     h_reader :on_cancel
     h_reader :on_timeout
 
-    def initialize (context, h)
+    def initialize(context, h)
 
       @context = context
 
@@ -99,7 +99,7 @@ module Ruote::Exp
       h.on_timeout ||= attribute(:on_timeout)
     end
 
-    def h= (hash)
+    def h=(hash)
       @h = hash
       class << h
         include Ruote::HashDot
@@ -128,7 +128,7 @@ module Ruote::Exp
 
     # Instantiates expression back from hash.
     #
-    def self.from_h (context, h)
+    def self.from_h(context, h)
 
       exp_class = context.expmap.expression_class(h['name'])
 
@@ -137,7 +137,7 @@ module Ruote::Exp
 
     # Fetches an expression from the storage and readies it for service.
     #
-    def self.fetch (context, fei)
+    def self.fetch(context, fei)
 
       return nil if fei.nil?
 
@@ -152,7 +152,7 @@ module Ruote::Exp
 
     # Keeping track of names and aliases for the expression
     #
-    def self.names (*exp_names)
+    def self.names(*exp_names)
 
       exp_names = exp_names.collect { |n| n.to_s }
       meta_def(:expression_names) { exp_names }
@@ -162,7 +162,7 @@ module Ruote::Exp
     # apply/reply
     #++
 
-    def self.do_action (context, msg)
+    def self.do_action(context, msg)
 
       fei = msg['fei']
       action = msg['action']
@@ -228,7 +228,7 @@ module Ruote::Exp
       apply
     end
 
-    def reply_to_parent (workitem, delete=true)
+    def reply_to_parent(workitem, delete=true)
 
       if h.tagname
 
@@ -291,7 +291,7 @@ module Ruote::Exp
       end
     end
 
-    def do_reply (msg)
+    def do_reply(msg)
 
       @msg = Ruote.fulldup(msg)
         # keeping the message, for 'retry' in collision cases
@@ -328,7 +328,7 @@ module Ruote::Exp
 
     # A default implementation for all the expressions.
     #
-    def reply (workitem)
+    def reply(workitem)
 
       reply_to_parent(workitem)
     end
@@ -336,7 +336,7 @@ module Ruote::Exp
     # The raw handling of messages passed to expressions (the fine handling
     # is done in the #cancel method).
     #
-    def do_cancel (msg)
+    def do_cancel(msg)
 
       flavour = msg['flavour']
 
@@ -385,7 +385,7 @@ module Ruote::Exp
     # This default implementation cancels all the [registered] children
     # of this expression.
     #
-    def cancel (flavour)
+    def cancel(flavour)
 
       return reply_to_parent(h.applied_workitem) if h.children.empty?
         #
@@ -430,7 +430,7 @@ module Ruote::Exp
       #end
     end
 
-    def do_fail (msg)
+    def do_fail(msg)
 
       @h['state'] = 'failing'
       @h['applied_workitem'] = msg['workitem']
@@ -447,7 +447,7 @@ module Ruote::Exp
     # misc
     #++
 
-    def launch_sub (pos, subtree, opts={})
+    def launch_sub(pos, subtree, opts={})
 
       i = h.fei.merge(
         'subid' => Ruote.generate_subid(subtree),
@@ -478,7 +478,7 @@ module Ruote::Exp
     # Returns true if the given fei points to an expression in the parent
     # chain of this expression.
     #
-    def ancestor? (fei)
+    def ancestor?(fei)
 
       return false unless h.parent_id
       return true if h.parent_id == fei
@@ -519,7 +519,7 @@ module Ruote::Exp
 
     # Looks up parent with on_error attribute and triggers it
     #
-    def handle_on_error (msg, error)
+    def handle_on_error(msg, error)
 
       return false if h.state == 'failing'
 
@@ -578,7 +578,7 @@ module Ruote::Exp
     #   seq.updated_tree[2] << [ 'participant', { 'ref' => 'bob' }, [] ]
     #   seq.do_persist
     #
-    def update_tree (t=nil)
+    def update_tree(t=nil)
       h.updated_tree = t || Ruote.fulldup(h.original_tree)
     end
 
@@ -596,7 +596,7 @@ module Ruote::Exp
 
     protected
 
-    def to_dot (opts)
+    def to_dot(opts)
 
       i = fei()
 
@@ -621,7 +621,7 @@ module Ruote::Exp
       a
     end
 
-    def pre_apply_child (child_index, workitem, forget)
+    def pre_apply_child(child_index, workitem, forget)
 
       child_fei = h.fei.merge(
         'expid' => "#{h.fei['expid']}_#{child_index}",
@@ -641,7 +641,7 @@ module Ruote::Exp
       msg
     end
 
-    def apply_child (child_index, workitem, forget=false)
+    def apply_child(child_index, workitem, forget=false)
 
       msg = pre_apply_child(child_index, workitem, forget)
 
@@ -651,7 +651,7 @@ module Ruote::Exp
       @context.storage.put_msg('apply', msg)
     end
 
-    def register_child (fei)
+    def register_child(fei)
 
       h.children << fei
       persist_or_raise
@@ -683,7 +683,7 @@ module Ruote::Exp
     # Called by consider_timeout (FlowExpression) and schedule_timeout
     # (ParticipantExpression).
     #
-    def do_schedule_timeout (timeout)
+    def do_schedule_timeout(timeout)
 
       timeout = timeout.to_s
 
@@ -700,7 +700,7 @@ module Ruote::Exp
 
     # (Called by trigger_on_cancel & co)
     #
-    def supplant_with (tree, opts)
+    def supplant_with(tree, opts)
 
       # at first, nuke self
 
@@ -729,7 +729,7 @@ module Ruote::Exp
 
     # 'on_{error|timeout|cancel|re_apply}' triggering
     #
-    def trigger (on, workitem)
+    def trigger(on, workitem)
 
       hon = h[on]
 

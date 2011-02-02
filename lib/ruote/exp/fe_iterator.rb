@@ -126,11 +126,11 @@ module Ruote::Exp
   #
   #   class Adjust
   #     include Ruote::LocalParticipant
-  #     def consume (workitem)
+  #     def consume(workitem)
   #       workitem.command = 'break' if workitem.fields['amount'] > 10_000
   #       reply_to_engine(workitem)
   #     end
-  #     def cancel (fei, flavour)
+  #     def cancel(fei, flavour)
   #     end
   #   end
   #
@@ -197,7 +197,7 @@ module Ruote::Exp
 
     protected
 
-    def move_on (workitem=h.applied_workitem)
+    def move_on(workitem=h.applied_workitem)
 
       h.position += 1
 

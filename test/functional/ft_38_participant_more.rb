@@ -17,9 +17,9 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
   class DifficultParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
     end
-    def consume (workitem)
+    def consume(workitem)
       context.tracer << "diff\n"
       if workitem.fields['rejected'].nil?
         workitem.fields['rejected'] = true
@@ -47,9 +47,9 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
   class FightingParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
     end
-    def consume (workitem)
+    def consume(workitem)
       try = workitem.fields['try'] || 0
       context.tracer << "try#{try}\n"
       workitem.fields['try'] = try + 1
@@ -78,10 +78,10 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
   class RetryParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
       @opts = opts
     end
-    def consume (workitem)
+    def consume(workitem)
       try = workitem.fields['try'] || 0
       context.tracer << "#{Time.now.to_f}\n"
       workitem.fields['try'] = try + 1
@@ -91,7 +91,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
         reply(workitem)
       end
     end
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
       unschedule_re_dispatch(fei)
     end
   end
@@ -147,12 +147,12 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
   class StashingParticipant
     include Ruote::LocalParticipant
-    def initialize (opts)
+    def initialize(opts)
     end
-    def consume (workitem)
+    def consume(workitem)
       put(workitem.fei, 'token' => workitem.params['token'])
     end
-    def cancel (fei, flavour)
+    def cancel(fei, flavour)
       BLACKBOARD['token'] = get(fei, 'token')
       BLACKBOARD['all'] = get(fei)
     end

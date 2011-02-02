@@ -34,12 +34,12 @@ module Ruote
   #
   class DispatchPool
 
-    def initialize (context)
+    def initialize(context)
 
       @context = context
     end
 
-    def handle (msg)
+    def handle(msg)
 
       case msg['action']
         when 'dispatch'
@@ -53,7 +53,7 @@ module Ruote
 
     protected
 
-    def dispatch_cancel (msg)
+    def dispatch_cancel(msg)
 
       flavour = msg['flavour']
 
@@ -71,7 +71,7 @@ module Ruote
         'workitem' => msg['workitem'])
     end
 
-    def dispatch (msg)
+    def dispatch(msg)
 
       participant = @context.plist.lookup(
         msg['participant'] || msg['participant_name'], msg['workitem'])
@@ -83,7 +83,7 @@ module Ruote
       end
     end
 
-    def do_dispatch (participant, msg)
+    def do_dispatch(participant, msg)
 
       workitem = Ruote::Workitem.new(msg['workitem'])
 
@@ -96,7 +96,7 @@ module Ruote
         # participant expression as 'dispatched'
     end
 
-    def do_threaded_dispatch (participant, msg)
+    def do_threaded_dispatch(participant, msg)
 
       # Maybe at some point a limit on the number of dispatch threads
       # would be OK.

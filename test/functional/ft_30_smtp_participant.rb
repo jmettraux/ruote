@@ -18,7 +18,7 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
     require 'mailtrap' # sudo gem install mailtrap
 
     class Trap < ::Mailtrap
-      def puts (s)
+      def puts(s)
         # silent night...
       end
     end
