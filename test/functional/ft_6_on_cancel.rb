@@ -164,7 +164,7 @@ class FtOnCancelTest < Test::Unit::TestCase
       @engine.process(wfid).current_tree)
   end
 
-  def test_on_cancel_resume
+  def test_on_cancel_participant_resume
 
     pdef = Ruote.define do
       sequence do
@@ -185,6 +185,32 @@ class FtOnCancelTest < Test::Unit::TestCase
     @engine.wait_for(:alpha)
 
     @engine.cancel(@engine.storage_participant.first)
+
+    @engine.wait_for(wfid)
+
+    assert_equal "bailed\ndone.", @tracer.to_s
+  end
+
+  def test_on_cancel_wait_resume
+
+    pdef = Ruote.define do
+      sequence do
+        #alpha :on_cancel => 'bail_out'
+        wait '1d', :on_cancel => 'bail_out'
+        echo 'done.'
+      end
+      define 'bail_out' do
+        echo 'bailed'
+      end
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(5)
+
+    @engine.cancel(@engine.process(wfid).expressions.last)
 
     @engine.wait_for(wfid)
 
