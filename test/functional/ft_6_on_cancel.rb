@@ -208,7 +208,7 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    @engine.wait_for(5)
+    @engine.wait_for(6)
 
     @engine.cancel(@engine.process(wfid).expressions.last)
 
