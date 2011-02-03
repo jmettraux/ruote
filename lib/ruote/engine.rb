@@ -159,41 +159,6 @@ module Ruote
       wfid
     end
 
-    # Given a process identifier (wfid), cancels this process.
-    #
-    def cancel_process(wfid)
-
-      @context.storage.put_msg('cancel_process', 'wfid' => wfid)
-    end
-
-    # Given a process identifier (wfid), kills this process. Killing is
-    # equivalent to cancelling, but when killing, :on_cancel attributes
-    # are not triggered.
-    #
-    def kill_process(wfid)
-
-      @context.storage.put_msg('kill_process', 'wfid' => wfid)
-    end
-
-    # Cancels a segment of process instance. Since expressions are nodes in
-    # processes instances, cancelling an expression, will cancel the expression
-    # and all its children (the segment of process).
-    #
-    def cancel_expression(fei)
-
-      fei = fei.to_h if fei.respond_to?(:to_h)
-      @context.storage.put_msg('cancel', 'fei' => fei)
-    end
-
-    # Like #cancel_expression, but :on_cancel attributes (of the expressions)
-    # are not triggered.
-    #
-    def kill_expression(fei)
-
-      fei = fei.to_h if fei.respond_to?(:to_h)
-      @context.storage.put_msg('cancel', 'fei' => fei, 'flavour' => 'kill')
-    end
-
     # Given a workitem or a fei, will do a cancel_expression,
     # else it's a wfid and it does a cancel_process.
     #
@@ -202,11 +167,14 @@ module Ruote
       target = Ruote.extract_id(wi_or_fei_or_wfid)
 
       if target.is_a?(String)
-        cancel_process(target)
+        @context.storage.put_msg('cancel_process', 'wfid' => target)
       else
-        cancel_expression(target)
+        @context.storage.put_msg('cancel', 'fei' => target)
       end
     end
+
+    alias cancel_process cancel
+    alias cancel_expression cancel
 
     # Given a workitem or a fei, will do a kill_expression,
     # else it's a wfid and it does a kill_process.
@@ -216,11 +184,14 @@ module Ruote
       target = Ruote.extract_id(wi_or_fei_or_wfid)
 
       if target.is_a?(String)
-        kill_process(target)
+        @context.storage.put_msg('kill_process', 'wfid' => target)
       else
-        kill_expression(target)
+        @context.storage.put_msg('cancel', 'fei' => target, 'flavour' => 'kill')
       end
     end
+
+    alias kill_process kill
+    alias kill_expression kill
 
     # Replays at a given error (hopefully you fixed the cause of the error
     # before replaying...)
