@@ -364,6 +364,9 @@ class UtFilterTest < Test::Unit::TestCase
   def test_size_open_range
 
     assert_valid(
+      [ { 'field' => 'x', 'size' => [ 2 ] } ],
+      { 'x' => %w[ a b ] })
+    assert_valid(
       [ { 'field' => 'x', 'size' => [ 2, nil ] } ],
       { 'x' => %w[ a b ] })
     assert_valid(
