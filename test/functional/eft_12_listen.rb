@@ -68,10 +68,9 @@ class EftListenTest < Test::Unit::TestCase
 
     wait_for(:bravo)
     wait_for(:bravo)
-    wait_for(2)
+    wait_for(3)
 
-    sleep 0.001
-
+    #sleep 0.001
     #p @tracer.to_s
 
     a = @tracer.to_a
@@ -185,7 +184,9 @@ class EftListenTest < Test::Unit::TestCase
 
     assert_equal %w[ alpha alpha toto ].join("\n"), @tracer.to_s
     assert_equal 3, @engine.process(wfid).expressions.size
-    assert_equal 'ceased', @engine.context.logger.log.last['action']
+
+    assert_not_nil(
+      @engine.context.logger.log.find { |l| l['action'] == 'ceased' })
   end
 
   def test_listen_cancel
