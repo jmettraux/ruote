@@ -329,7 +329,7 @@ module Ruote
 
       return scheds if options[:count]
 
-      scheds.collect { |sched| Ruote.schedule_to_h(sched) }
+      scheds.collect { |s| Ruote.schedule_to_h(s) }.sort_by { |s| s['wfid'] }
     end
 
     # Returns a [sorted] list of wfids of the process instances currently
