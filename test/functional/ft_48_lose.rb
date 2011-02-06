@@ -62,9 +62,7 @@ class FtLoseTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    @engine.wait_for(7)
-
-    sleep 0.500
+    @engine.wait_for(12)
 
     assert_equal "alpha\nbravo", @tracer.to_s
 
