@@ -204,6 +204,14 @@ module Ruote::Exp
   #
   # TODO
   #
+  # === access to 'previous versions' with ^ and ^^
+  #
+  # TODO
+  #
+  # == short forms
+  #
+  # TODO
+  #
   class FilterExpression < FlowExpression
 
     names :filter
