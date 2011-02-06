@@ -198,7 +198,31 @@ module Ruote::Exp
   #
   # === validation errors
   #
-  # TODO
+  # By defaults a validation error will result in a process error (ie the
+  # process instance will have to be manually fixed and resumed, or there
+  # is a :on_error somewhere dealing automatically with errors).
+  #
+  # It's possible to prevent raising an error and simply record the validation
+  # errors.
+  #
+  #   filter 'x', :type => 'bool,number', :record => true
+  #
+  # will enumerate validation errors in the '__validation_errors__' workitem
+  # field.
+  #
+  #   filter 'y', :type => 'bool,number', :record => 'verrors'
+  #
+  # will enumerate validation errors in teh 'verrors' workitem field.
+  #
+  # To flush the recording field, use :flush => true
+  #
+  #   sequence do
+  #     filter 'x', :type => 'string', :record => true
+  #     filter 'y', :type => 'number', :record => true, :flush => true
+  #     participant 'after'
+  #   end
+  #
+  # the participant 'after' will only see the result of the second filter.
   #
   # == transformations
   #
@@ -220,15 +244,39 @@ module Ruote::Exp
 
       filter = referenced_filter || complete_filter || one_line_filter
 
-      parent_fields = parent_id ?
-        (parent.h.applied_workitem['fields'] rescue nil) : nil
-          #
-          # parent_fields are placed in the ^^ available to the filter
+      record = filter.first.delete('record') rescue nil
+      flush = filter.first.delete('flush') rescue nil
 
-      fields = Ruote.filter(
-        filter, h.applied_workitem['fields'], :double_caret => parent_fields)
+      record = '__validation_errors__' if record == true
 
-      reply_to_parent(h.applied_workitem.merge('fields' => fields))
+      opts = {
+        :double_caret => parent_id ?
+          (parent.h.applied_workitem['fields'] rescue nil) : nil,
+        :no_raise => record
+      }
+        #
+        # parent_fields are placed in the ^^ available to the filter
+
+      fields = Ruote.filter(filter, h.applied_workitem['fields'], opts)
+
+      if record and fields.is_a?(Array)
+        #
+        # validation failed, :record requested, list deviations in
+        # the given field name
+
+        (flush ?
+          h.applied_workitem['fields'][record] = [] :
+          h.applied_workitem['fields'][record] ||= []
+        ).concat(fields)
+
+        reply_to_parent(h.applied_workitem)
+
+      else
+        #
+        # filtering successful
+
+        reply_to_parent(h.applied_workitem.merge('fields' => fields))
+      end
     end
 
     def reply(workitem)

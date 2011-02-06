@@ -178,5 +178,72 @@ class EftFilterTest < Test::Unit::TestCase
 
     assert_terminates(pdef, { 'x' => 1 }, { 'x' => 1 })
   end
+
+  def test_record
+
+    pdef = Ruote.process_definition do
+      filter 'x', :type => 'string', :record => true
+    end
+
+    assert_terminates(
+      pdef,
+      { 'x' => 1 },
+      { '__validation_errors__' => [
+          [ { 'type' => 'string', 'field' => 'x' }, 'x', 1 ]
+        ],
+        'x' => 1
+      })
+  end
+
+  def test_record_in_designated_field
+
+    pdef = Ruote.process_definition do
+      filter 'x', :type => 'string', :record => 'verrors'
+    end
+
+    assert_terminates(
+      pdef,
+      { 'x' => 1 },
+      { 'verrors' => [
+          [ { 'type' => 'string', 'field' => 'x' }, 'x', 1 ]
+        ],
+        'x' => 1
+      })
+  end
+
+  def test_record_accumulates
+
+    pdef = Ruote.process_definition do
+      filter 'x', :type => 'string', :record => true
+      filter 'y', :type => 'number', :record => true
+    end
+
+    assert_terminates(
+      pdef,
+      { 'x' => 1 },
+      { '__validation_errors__' => [
+          [ { 'type' => 'string', 'field' => 'x' }, 'x', 1 ],
+          [ { 'type' => 'number', 'field' => 'y' }, 'y', nil ]
+        ],
+        'x' => 1
+      })
+  end
+
+  def test_record_flushes_and_accumulates
+
+    pdef = Ruote.process_definition do
+      filter 'x', :type => 'string', :record => true
+      filter 'y', :type => 'number', :record => true, :flush => true
+    end
+
+    assert_terminates(
+      pdef,
+      { 'x' => 1 },
+      { '__validation_errors__' => [
+          [ { 'type' => 'number', 'field' => 'y' }, 'y', nil ]
+        ],
+        'x' => 1
+      })
+  end
 end
 
