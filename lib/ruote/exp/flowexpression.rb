@@ -737,7 +737,7 @@ module Ruote::Exp
 
       if on == 'on_error'
 
-        if hon == 'redo' or hon =='retry'
+        if hon == 'redo' or hon == 'retry'
 
           t = tree
 
