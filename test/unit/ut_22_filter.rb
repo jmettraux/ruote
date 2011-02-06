@@ -617,5 +617,19 @@ class UtFilterTest < Test::Unit::TestCase
     ], @deviations
       # not super happy with this @breaks thing
   end
+
+  # when :no_raise => true and the validation fails, an array is returned
+  # listing the 'deviations'
+  #
+  def test_no_raise
+
+    r = Ruote.filter(
+      [ { 'field' => 'x', 't' => 'hash', 'has' => 'a' } ],
+      { 'x' => %w[ a b c ] },
+      :no_raise => true)
+
+    assert_equal(
+      [ [ { "has" => "a", "field" => "x", "t" => "hash"}, "x", [ "a", "b", "c" ] ] ], r)
+  end
 end
 

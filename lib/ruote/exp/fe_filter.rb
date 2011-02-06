@@ -226,7 +226,7 @@ module Ruote::Exp
           # parent_fields are placed in the ^^ available to the filter
 
       fields = Ruote.filter(
-        filter, h.applied_workitem['fields'], parent_fields)
+        filter, h.applied_workitem['fields'], :double_caret => parent_fields)
 
       reply_to_parent(h.applied_workitem.merge('fields' => fields))
     end

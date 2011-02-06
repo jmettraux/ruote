@@ -46,12 +46,12 @@ module Ruote
   #
   # See the Ruote::Exp::FilterExpression for more information.
   #
-  def self.filter(filter, hash, double_caret=nil)
+  def self.filter(filter, hash, options={})
 
     hash = Rufus::Json.dup(hash)
 
     hash['^'] = Rufus::Json.dup(hash)
-    hash['^^'] = double_caret ? Rufus::Json.dup(double_caret) : hash['^']
+    hash['^^'] = Rufus::Json.dup(options[:double_caret] || hash)
       # the 'originals'
 
     deviations = filter.collect { |rule|
@@ -62,9 +62,13 @@ module Ruote
     hash.delete('^^')
       # remove the 'originals'
 
-    raise ValidationError.new(deviations) unless deviations.empty?
-
-    hash
+    if deviations.empty?
+      hash
+    elsif options[:no_raise]
+      deviations
+    else
+      raise ValidationError.new(deviations)
+    end
   end
 
   # :nodoc:
