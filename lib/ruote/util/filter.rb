@@ -33,14 +33,11 @@ module Ruote
   #
   class ValidationError < StandardError
 
-    attr_accessor :field, :value, :rule
+    attr_reader :deviations
 
-    def initialize(rule, field, value)
-
-      @rule = rule
-      @value = value
-      @field = field
-      super("field '#{field}' doesn't follow rule #{rule.inspect}")
+    def initialize(deviations)
+      @deviations = deviations
+      super("validation failed with #{@deviations.size} deviation(s)")
     end
   end
 
@@ -57,13 +54,15 @@ module Ruote
     hash['^^'] = double_caret ? Rufus::Json.dup(double_caret) : hash['^']
       # the 'originals'
 
-    filter.each do |rule|
+    deviations = filter.collect { |rule|
       RuleSession.new(hash, rule).run
-    end
+    }.compact
 
     hash.delete('^')
     hash.delete('^^')
       # remove the 'originals'
+
+    raise ValidationError.new(deviations) unless deviations.empty?
 
     hash
   end
@@ -302,7 +301,7 @@ module Ruote
         if o = @rule['or']
           Ruote.set(@hash, @field, Rufus::Json.dup(o))
         elsif @rule['and'].nil?
-          raise ValidationError.new(@rule, @field, @value)
+          return [ @rule, @field, @value ] # validation break
         end
 
       elsif @valid == true and a = @rule['and']
@@ -313,6 +312,8 @@ module Ruote
 
         Ruote.set(@hash, @field, Rufus::Json.dup(o))
       end
+
+      nil
     end
   end
 end

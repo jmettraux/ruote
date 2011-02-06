@@ -229,11 +229,21 @@ class UtFilterTest < Test::Unit::TestCase
     assert true
   end
 
-  def assert_not_valid(filter, hash)
+  def assert_not_valid(filter, hash, deviations=1)
 
-    assert_raise Ruote::ValidationError do
+    error = nil
+
+    begin
       Ruote.filter(Rufus::Json.dup(filter), hash)
+    rescue => error
     end
+
+    assert_not_nil(
+      error, "ValidationError was not raised")
+    assert_equal(
+      deviations, error.deviations.size, "deviation count doesn't match")
+
+    @deviations = error.deviations
   end
 
   def test_type
@@ -586,6 +596,26 @@ class UtFilterTest < Test::Unit::TestCase
     assert_not_valid(
       [ { 'field' => 'x', 't' => 'hash', 'has' => 'a' } ],
       { 'x' => %w[ a b c ] })
+  end
+
+  def test_multiple_validations
+
+    assert_not_valid(
+      [
+        { 'field' => 'x', 't' => 'array', 'has' => 1 },
+        { 'field' => 'y', 't' => 'string' }
+      ],
+      {
+        'x' => %w[ a b c ],
+        'y' => true
+      },
+      2)
+
+    assert_equal [
+      [ { "has" => 1, "field" => "x", "t" => "array"}, "x", [ "a", "b", "c" ] ],
+      [ { "field" => "y", "t" => "string" }, "y", true ]
+    ], @deviations
+      # not super happy with this @breaks thing
   end
 end
 
