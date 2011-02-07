@@ -47,7 +47,7 @@ module Ruote
         when 'dispatch_cancel'
           dispatch_cancel(msg)
         else
-          # simply discard message
+          # simply discard the message
       end
     end
 
@@ -76,13 +76,15 @@ module Ruote
       participant = @context.plist.lookup(
         msg['participant'] || msg['participant_name'], msg['workitem'])
 
-      if participant.respond_to?(:do_not_thread) && participant.do_not_thread
+      if do_not_thread(participant, msg)
         do_dispatch(participant, msg)
       else
         do_threaded_dispatch(participant, msg)
       end
     end
 
+    # The actual dispatching (call to Participant#consume).
+    #
     def do_dispatch(participant, msg)
 
       workitem = Ruote::Workitem.new(msg['workitem'])
@@ -110,6 +112,20 @@ module Ruote
         rescue Exception => exception
           @context.error_handler.msg_handle(msg, exception)
         end
+      end
+    end
+
+    # Returns true if the participant doesn't want the #consume to happen
+    # in a new Thread.
+    #
+    def do_not_thread(participant, msg)
+
+      return false unless participant.respond_to?(:do_not_thread)
+
+      if participant.method(:do_not_thread).arity == 0
+        participant.do_not_thread
+      else
+        participant.do_not_thread(Ruote::Workitem.new(msg['workitem']))
       end
     end
   end

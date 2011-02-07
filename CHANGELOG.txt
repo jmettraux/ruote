@@ -4,6 +4,7 @@
 
 == ruote - 2.1.12    not yet released
 
+- Participant#do_not_thread : optional workitem parameter
 - filter expression
 - LocalParticipant / Receiver #applied_workitem(fei)
 - using Sourcify to store block participant's code as a string

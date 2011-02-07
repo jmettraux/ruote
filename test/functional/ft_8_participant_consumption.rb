@@ -92,5 +92,33 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
       @engine.context.stash[:wis].first['fields']['dispathed_at'],
       @engine.context.stash[:wis].last['fields']['dispatched_at'])
   end
+
+  class MyParticipant
+    include Ruote::LocalParticipant
+
+    def consume(workitem)
+      reply_to_engine(workitem)
+    end
+
+    def do_not_thread(workitem)
+      @context.tracer << workitem.fields['msg']
+      true
+    end
+  end
+
+  def test_do_not_thread_and_workitem
+
+    pdef = Ruote.define do
+      alpha
+    end
+
+    @engine.register_participant :alpha, MyParticipant
+
+    wfid = @engine.launch(pdef, 'msg' => 'kilroy')
+
+    @engine.wait_for(wfid)
+
+    assert_equal 'kilroy', @tracer.to_s
+  end
 end
 
