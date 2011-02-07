@@ -141,7 +141,7 @@ module Ruote
 #    end
 #  end
 
-  SREGEX = /^\s*\/(.*)\/\s*$/
+  REGEX_IN_STRING = /^\s*\/(.*)\/\s*$/
 
   #   regex_or_s("/nada/") #==> /nada/
   #   regex_or_s("nada") #==> "nada"
@@ -149,7 +149,7 @@ module Ruote
   #
   def self.regex_or_s(s)
 
-    if s.is_a?(String) && m = SREGEX.match(s)
+    if s.is_a?(String) && m = REGEX_IN_STRING.match(s)
       Regexp.new(m[1])
     else
       s

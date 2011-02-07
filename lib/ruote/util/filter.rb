@@ -56,7 +56,7 @@ module Ruote
 
     deviations = filter.collect { |rule|
       RuleSession.new(hash, rule).run
-    }.compact
+    }.flatten(1)
 
     hash.delete('^')
     hash.delete('^^')
@@ -77,141 +77,197 @@ module Ruote
   #
   class RuleSession
 
-    SKIP = %w[ and or field ]
+    SKIP = %w[ and or fields field f ]
     NUMBER_CLASSES = [ Fixnum, Float ]
     BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
+    CARET = /^\^/
 
     def initialize(hash, rule)
 
       @hash = hash
       @rule = rule
-      @field = rule['field'] || rule['f']
-      @value = Ruote.lookup(hash, @field)
-      @valid = nil
+
+      fl = @rule['fields'] || @rule['field'] || @rule['f']
+
+      raise ArgumentError.new(
+        "filter is missing a 'fields', 'field' or 'f' arg at #{@rule.inspect}"
+      ) unless fl
+
+      if fl.is_a?(String)
+        fl = fl.gsub(/!/, '\.') if REGEX_IN_STRING.match(fl)
+        fl = Ruote.regex_or_s(fl)
+      end
+
+      @fields = if fl.is_a?(Regexp)
+
+        keys = Ruote.flatten_keys(@hash).reject { |k| CARET.match(k) }
+        keys.inject([]) { |a, k|
+          if m = fl.match(k)
+            a << [ k, Ruote.lookup(@hash, k), m[1..-1] ]
+          end
+          a
+        }
+
+      else
+
+        (fl.is_a?(Array) ? fl : fl.to_s.split(',')).collect { |field|
+          field = field.strip
+          [ field,  Ruote.lookup(@hash, field), nil ]
+        }
+      end
     end
 
     def run
 
-      @rule.each do |k, v|
+      @fields.collect { |field, value, matches|
 
-        next if SKIP.include?(k)
+        valid = nil
 
-        m = "_#{k}"
-        next unless self.respond_to?(m)
+        @rule.each do |k, v|
 
-        self.send(m, k, v)
-      end
+          next if SKIP.include?(k)
 
-      raise_or
+          m = "_#{k}"
+          next unless self.respond_to?(m)
+
+          r = self.send(m, field, value, matches, k, v)
+
+          valid = false if r == false
+        end
+
+        raise_or_and(valid, field, value)
+
+      }.compact
     end
 
     protected
 
-    def _remove(m, v)
+    def _remove(field, value, matches, m, v)
 
-      Ruote.unset(@hash, @field)
+      Ruote.unset(@hash, field)
+
+      nil
     end
     alias _rm _remove
 
-    def _set(m, v)
+    def _set(field, value, matches, m, v)
 
-      Ruote.set(@hash, @field, Rufus::Json.dup(v))
+      Ruote.set(@hash, field, Rufus::Json.dup(v))
+
+      nil
     end
     alias _s _set
 
-    def _copy_to(m, v)
+    def adjust_target(target, matches)
 
-      Ruote.set(@hash, v, Rufus::Json.dup(@value))
-      Ruote.unset(@hash, @field) if m == 'move_to' or m == 'mv_to'
+      target.gsub(/\\\d+/) { |digit| matches[digit.to_i - 1] rescue '' }
+    end
+
+    def _copy_to(field, value, matches, m, v)
+
+      v = adjust_target(v, matches)
+
+      Ruote.set(@hash, v, Rufus::Json.dup(value))
+      Ruote.unset(@hash, field) if m == 'move_to' or m == 'mv_to'
+
+      nil
     end
     alias _cp_to _copy_to
     alias _move_to _copy_to
     alias _mv_to _copy_to
 
 
-    def _copy_from(m, v)
+    def _copy_from(field, value, matches, m, v)
 
-      Ruote.set(@hash, @field, Rufus::Json.dup(Ruote.lookup(@hash, v)))
+      Ruote.set(@hash, field, Rufus::Json.dup(Ruote.lookup(@hash, v)))
       Ruote.unset(@hash, v) if m == 'move_from' or m == 'mv_from'
+
+      nil
     end
     alias _cp_from _copy_from
     alias _move_from _copy_from
     alias _mv_from _copy_from
 
-    def _merge_to(m, v)
+    def _merge_to(field, value, matches, m, v)
 
       target = Ruote.lookup(@hash, v)
 
       return unless target.respond_to?(:merge!)
 
-      target.merge!(Rufus::Json.dup(@value))
+      target.merge!(Rufus::Json.dup(value))
       target.delete('^')
       target.delete('^^')
-      Ruote.unset(@hash, @field) if m == 'migrate_to' or m == 'mi_to'
+      Ruote.unset(@hash, field) if m == 'migrate_to' or m == 'mi_to'
+
+      nil
     end
     alias _mg_to _merge_to
     alias _migrate_to _merge_to
     alias _mi_to _merge_to
 
-    def _merge_from(m, v)
+    def _merge_from(field, value, matches, m, v)
 
-      return unless @value.respond_to?(:merge!)
+      return unless value.respond_to?(:merge!)
 
-      @value.merge!(Rufus::Json.dup(Ruote.lookup(@hash, v)))
-      @value.delete('^')
-      @value.delete('^^')
+      value.merge!(Rufus::Json.dup(Ruote.lookup(@hash, v)))
+      value.delete('^')
+      value.delete('^^')
 
       if v != '.' and (m == 'migrate_from' or m == 'mi_from')
         Ruote.unset(@hash, v)
       end
+
+      nil
     end
     alias _mg_from _merge_from
     alias _migrate_from _merge_from
     alias _mi_from _merge_from
 
-    def _size(m, v)
+    def _size(field, value, matches, m, v)
 
       v = v.is_a?(String) ? v.split(',').collect { |i| i.to_i } : Array(v)
 
-      validate(if @value.respond_to?(:size)
-        (v.first ? @value.size >= v.first : true) and
-        (v.last ? @value.size <= v.last : true)
+      if value.respond_to?(:size)
+        (v.first ? value.size >= v.first : true) and
+        (v.last ? value.size <= v.last : true)
       else
         false
-      end)
+      end
     end
     alias _sz _size
 
-    def _empty(m, v)
+    def _empty(field, value, matches, m, v)
 
-      validate(@value.respond_to?(:empty?) ? @value.empty? : false)
+      value.respond_to?(:empty?) ? value.empty? : false
     end
     alias _e _empty
 
-    def _in(m, v)
+    def _in(field, value, matches, m, v)
 
-      v = v.is_a?(Array) ? v : v.to_s.split(',').collect { |e| e.strip }
-      validate(v.include?(@value))
+      (v.is_a?(Array) ?
+        v :
+        v.to_s.split(',').collect { |e| e.strip }
+      ).include?(value)
     end
     alias _i _in
 
-    def _has(m, v)
+    def _has(field, value, matches, m, v)
 
       v = v.is_a?(Array) ? v : v.to_s.split(',').collect { |e| e.strip }
 
-      validate(if @value.is_a?(Hash)
-        (@value.keys & v) == v
-      elsif @value.is_a?(Array)
-        (@value & v) == v
+      if value.is_a?(Hash)
+        (value.keys & v) == v
+      elsif value.is_a?(Array)
+        (value & v) == v
       else
         false
-      end)
+      end
     end
     alias _h _has
 
-    def _type(m, v)
+    def _type(field, value, matches, m, v)
 
-      validate(of_type?(@value, v))
+      of_type?(value, v)
     end
     alias _t _type
 
@@ -235,9 +291,7 @@ module Ruote
 
       types = types.is_a?(Array) ? types : split_type(types)
 
-      valid = false
-
-      types.each do |type|
+      types.inject(false) do |valid, type|
 
         valid ||= case type
           when 'null', 'nil'
@@ -257,9 +311,9 @@ module Ruote
           else
             raise ArgumentError.new("unknown type '#{type}'")
         end
-      end
 
-      valid
+        valid
+      end
     end
 
     def children_of_type?(values, types)
@@ -273,52 +327,73 @@ module Ruote
       true
     end
 
-    def _match(m, v)
+    def _match(field, value, matches, m, v)
 
-      validate(@value.nil? ? false : @value.to_s.match(v) != nil)
+      value.nil? ? false : value.to_s.match(v) != nil
     end
     alias _m _match
 
-    def _smatch(m, v)
+    def _smatch(field, value, matches, m, v)
 
-      validate(@value.is_a?(String) ? @value.match(v) != nil : false)
+      value.is_a?(String) ? value.match(v) != nil : false
     end
     alias _sm _smatch
 
-    def _valid(m, v)
+    def _valid(field, value, matches, m, v)
 
-      validate(v.to_s == 'true')
+      v.to_s == 'true'
     end
     alias _v _valid
 
-    def validate(valid)
-
-      @valid = @valid.nil? ? valid : @valid && valid
-    end
-
-    def raise_or
+    def raise_or_and(valid, field, value)
 
       # dealing with :and and :or...
 
-      if @valid == false
+      if valid == false
 
         if o = @rule['or']
-          Ruote.set(@hash, @field, Rufus::Json.dup(o))
+          Ruote.set(@hash, field, Rufus::Json.dup(o))
         elsif @rule['and'].nil?
-          return [ @rule, @field, @value ] # validation break
+          return [ @rule, field, value ] # validation break
         end
 
-      elsif @valid == true and a = @rule['and']
+      elsif a = @rule['and']
 
-        Ruote.set(@hash, @field, Rufus::Json.dup(a))
+        Ruote.set(@hash, field, Rufus::Json.dup(a))
 
-      elsif @valid.nil? and @value.nil? and o = (@rule['or'] || @rule['default'])
+      elsif value.nil? and o = (@rule['or'] || @rule['default'])
 
-        Ruote.set(@hash, @field, Rufus::Json.dup(o))
+        Ruote.set(@hash, field, Rufus::Json.dup(o))
       end
 
       nil
     end
+  end
+
+  #   Ruote.flatten_keys({ 'a' => 'b', 'c' => [ 1, 2, 3 ] })
+  #     # =>
+  #   [ 'a', 'c', 'c.0', 'c.1', 'c.2' ]
+  #
+  def self.flatten_keys(o, prefix='', accu=[])
+
+    if o.is_a?(Array)
+
+      o.each_with_index do |elt, i|
+        pre = "#{prefix}#{i}"
+        accu << pre
+        flatten_keys(elt, pre + '.', accu)
+      end
+
+    elsif o.is_a?(Hash)
+
+      o.keys.sort.each do |key|
+        pre = "#{prefix}#{key}"
+        accu << pre
+        flatten_keys(o[key], pre + '.', accu)
+      end
+    end
+
+    accu
   end
 end
 

@@ -68,6 +68,19 @@ module Ruote::Exp
   #
   # (Note the dollar notation is also OK with such dotted identifiers)
   #
+  # It's possible to target multiple fields by passing a list of field names
+  # or a regular expression.
+  #
+  #   filter 'city, region, country', :type => 'string'
+  #     # will make sure that those 3 fields hold a string value
+  #
+  #   filter '/^address\.x_/', :type => number
+  #   filter '/^address!x_/', :type => number
+  #     # fields whosename start with x_ in the address hash should be numbers
+  #
+  # Note the "!" used as a shortcut for "\." in the second line.
+  #
+  #
   # == validations
   #
   # === 'type'
@@ -224,6 +237,7 @@ module Ruote::Exp
   #
   # the participant 'after' will only see the result of the second filter.
   #
+  #
   # == transformations
   #
   # TODO
@@ -231,6 +245,7 @@ module Ruote::Exp
   # === access to 'previous versions' with ^ and ^^
   #
   # TODO
+  #
   #
   # == short forms
   #

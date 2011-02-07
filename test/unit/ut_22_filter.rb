@@ -14,6 +14,13 @@ require 'ruote/util/filter'
 
 class UtFilterTest < Test::Unit::TestCase
 
+  def test_missing_field
+
+    assert_raise ArgumentError do
+      Ruote.filter([ { 'type' => 'string' } ], {})
+    end
+  end
+
   #
   # transformations
 
@@ -28,6 +35,10 @@ class UtFilterTest < Test::Unit::TestCase
       {},
       [ { 'field' => 'x', 'remove' => true } ],
       { 'x' => 'y' })
+    assert_filter(
+      {},
+      [ { 'field' => '/.+/', 'remove' => true } ],
+      { 'x' => 'y', 'z' => 'a' })
 
     assert_filter(
       { 'x' => {} },
@@ -40,6 +51,11 @@ class UtFilterTest < Test::Unit::TestCase
     assert_filter(
       { 'x' => 1 },
       [ { 'field' => 'x', 'default' => 1 } ],
+      {})
+
+    assert_filter(
+      {},
+      [ { 'field' => '/.+/', 'default' => 1 } ],
       {})
 
     assert_filter(
@@ -74,6 +90,11 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'z' },
       [ { 'field' => 'x', 'type' => 'string', 'or' => 'z' } ],
       { 'x' => 2 })
+
+    assert_filter(
+      { 'x' => 'z' },
+      [ { 'field' => '/.+/', 'type' => 'string', 'or' => 'z' } ],
+      { 'x' => 2 })
   end
 
   def test_nil_or
@@ -90,6 +111,15 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'z' },
       [ { 'field' => 'x', 'or' => 'z' } ],
       { 'x' => nil })
+
+    assert_filter(
+      {},
+      [ { 'field' => '/.+/', 'or' => 'z' } ],
+      {})
+    assert_filter(
+      { 'x' => 'z' },
+      [ { 'field' => '/.+/', 'or' => 'z' } ],
+      { 'x' => nil })
   end
 
   def test_and
@@ -102,6 +132,15 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 1 },
       [ { 'field' => 'x', 'type' => 'string', 'and' => 'z' } ],
       { 'x' => 1 })
+
+    assert_filter(
+      { 'x' => 1, 'z' => 1 },
+      [ { 'field' => '/.+/', 'type' => 'string', 'and' => 1 } ],
+      { 'x' => 'y', 'z' => 'a' })
+    assert_filter(
+      { 'x' => 1, 'z' => 2 },
+      [ { 'field' => '/.+/', 'type' => 'string', 'and' => 1 } ],
+      { 'x' => 'y', 'z' => 2 })
   end
 
   def test_set
@@ -113,6 +152,27 @@ class UtFilterTest < Test::Unit::TestCase
     assert_filter(
       { 'x' => 'z' },
       [ { 'field' => 'x', 'set' => 'z' } ],
+      {})
+
+    assert_filter(
+      { 'x' => 'z' },
+      [ { 'field' => '/.+/', 'set' => 'z' } ],
+      { 'x' => 'y' })
+    assert_filter(
+      {},
+      [ { 'field' => '/.+/', 'set' => 'z' } ],
+      {})
+  end
+
+  def test_set_multiple_fields
+
+    assert_filter(
+      { 'x' => 'A', 'y' => 'A', 'z' => 'A' },
+      [ { 'field' => 'x,y,z', 'set' => 'A' } ],
+      {})
+    assert_filter(
+      { 'x' => 'A', 'y' => 'A', 'z' => 'A' },
+      [ { 'fields' => %w[ x y z ], 'set' => 'A' } ],
       {})
   end
 
@@ -128,6 +188,23 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'y' })
   end
 
+  def test_copy_and_regex
+
+    assert_filter(
+      { 'a' => %w[ x y ], 'b0' => 'x', 'b1' => 'y' },
+      [ { 'field' => '/a\.(.+)/', 'copy_to' => 'b\1' } ],
+      { 'a' => %w[ x y ]})
+    assert_filter(
+      { 'a' => %w[ x y ], 'b0' => 'x', 'b1' => 'y' },
+      [ { 'field' => '/a!(.+)/', 'copy_to' => 'b\1' } ],
+      { 'a' => %w[ x y ]})
+
+    assert_filter(
+      { 'a' => 7, 'c' => 7, 'source' => [ 7 ] },
+      [ { 'field' => '/^.$/', 'copy_from' => 'source.0' } ],
+      { 'a' => 'b', 'c' => 'd', 'source' => [ 7 ] })
+  end
+
   def test_move
 
     assert_filter(
@@ -140,12 +217,32 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'y' })
   end
 
-  def test_merge
+  def test_move_and_regex
+
+    assert_filter(
+      { 'Z' => 'a' },
+      [ { 'field' => '/.+/', 'move_to' => 'Z' } ],
+      { 'x' => 'y', 'z' => 'a' })
+    assert_filter(
+      { 'prefix_x' => 'y', 'prefix_z' => 'a' },
+      [ { 'field' => '/(.+)/', 'move_to' => 'prefix_\1' } ],
+      { 'x' => 'y', 'z' => 'a' })
+
+    assert_filter(
+      { 'h0' => {}, 'h1' => { 'a' => 'b', 'c' => 'd' } },
+      [ { 'field' => '/^h0!(.+)/', 'move_to' => 'h1.\1' } ],
+      { 'h0' => { 'a' => 'b', 'c' => 'd' }, 'h1' => {} })
+  end
+
+  def test_merge_from
 
     assert_filter(
       { 'x' => { 'a' => 'A', 'b' => 2, 'c' => 'C' }, 'y' => { 'a' => 'A', 'c' => 'C' } },
       [ { 'field' => 'x', 'merge_from' => 'y' } ],
       { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 'A', 'c' => 'C' } })
+  end
+
+  def test_merge_to
 
     assert_filter(
       { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => { 'a' => 1, 'b' => 2, 'c' => 'C' } },
@@ -375,6 +472,22 @@ class UtFilterTest < Test::Unit::TestCase
     assert_not_valid(
       [ { 'field' => 'x', 'type' => 'hash<string,number>' } ],
       { 'x' => { 'a' => 'b', 'c' => true } })
+  end
+
+  def test_type_and_regex
+
+    assert_valid(
+      [ { 'field' => '/./', 'type' => 'string' } ],
+      { 'x' => 'y', 'z' => 'a' })
+
+    assert_not_valid(
+      [ { 'field' => '/./', 'type' => 'string' } ],
+      { 'x' => 'y', 'z' => 1 })
+
+    assert_not_valid(
+      [ { 'field' => '/./', 'type' => 'string' } ],
+      { 'x' => 1, 'z' => 1 },
+      2)
   end
 
   def test_match
@@ -630,6 +743,50 @@ class UtFilterTest < Test::Unit::TestCase
 
     assert_equal(
       [ [ { "has" => "a", "field" => "x", "t" => "hash"}, "x", [ "a", "b", "c" ] ] ], r)
+  end
+
+  #
+  # flatten_keys tests
+
+  def test_flatten_keys
+
+    assert_equal(
+      [
+        'a',
+        'c',
+        'c.d',
+        'c.f',
+        'c.f.l',
+        'c.f.n',
+        'c.f.n.0',
+        'c.f.n.1',
+        'c.f.n.2',
+        'c.g',
+        'c.g.0',
+        'c.g.0.i',
+        'c.g.1',
+        'h',
+        'h.0',
+        'h.1',
+        'h.2'
+      ],
+      Ruote.flatten_keys({
+        'a' => 'b',
+        'c' => {
+          'd' => 'e',
+          'f' => {
+            'l' => 'm',
+            'n' => [ 1, 2, 3 ]
+          },
+          'g' => [
+            { 'i' => 'j' },
+            'k'
+          ]
+        },
+        'h' => [
+          1, 2, 3
+        ]
+      }))
   end
 end
 
