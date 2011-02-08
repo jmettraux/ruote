@@ -94,7 +94,7 @@ module Ruote
     #
     def literal_sub(s, fexp, wi)
 
-      case s
+      result = case s
         when /^\$(?:field|fld|f):([^{}]+)$/#; p [ :f, $~ ]
           Ruote.lookup(wi['fields'], $~[1])
         when /^\$(?:variable|var|v):([^{}]+)$/#; p [ :v, $~ ]
@@ -102,6 +102,8 @@ module Ruote
         else
           s
       end
+
+      result.nil? ? s : result
     end
   end
 
