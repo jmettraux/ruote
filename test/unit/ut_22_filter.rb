@@ -21,6 +21,13 @@ class UtFilterTest < Test::Unit::TestCase
     end
   end
 
+  def test_not_a_filter
+
+    assert_raise ArgumentError do
+      Ruote.filter('nada', {})
+    end
+  end
+
   #
   # transformations
 

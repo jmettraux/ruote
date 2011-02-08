@@ -48,6 +48,10 @@ module Ruote
   #
   def self.filter(filter, hash, options={})
 
+    raise ArgumentError.new(
+      "not a filter : #{filter}"
+    ) unless filter.is_a?(Array)
+
     hash = Rufus::Json.dup(hash)
 
     hash['~'] = Rufus::Json.dup(hash)
