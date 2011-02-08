@@ -190,5 +190,18 @@ class UtRubyReaderTest < Test::Unit::TestCase
       ["define", {}, [["subprocess", {"alpha"=>nil, "match"=>"/^nada$/"}, []]]],
       tree)
   end
+
+  def test_attribute_value_regexp_deep
+
+    tree = Ruote.define do
+      alpha :filter => { :in => [ { :field => /^private_/ } ] }
+    end
+
+    assert_equal(
+      [ "define", {}, [
+        [ "alpha", { "filter" => { "in" => [ { "field" => '/^private_/' } ] } }, [] ]
+      ] ],
+      tree)
+  end
 end
 

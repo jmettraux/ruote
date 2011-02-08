@@ -107,8 +107,7 @@ module Ruote
 
       def method_missing(m, *args, &block)
 
-        @children.push(
-          Ruote::RubyDsl.create_branch(m.to_s, args, &block))
+        @children.push(Ruote::RubyDsl.create_branch(m.to_s, args, &block))
       end
 
       def to_a
@@ -130,19 +129,26 @@ module Ruote
       }.inject({}) { |h1, (k, v)|
 
         k = k.is_a?(Regexp) ? k.inspect : k.to_s
-        v = case v
-          when Symbol; v.to_s
-          when Regexp; v.inspect
-          else v
-        end
-        h1[k] = v
+        h1[k] = to_json(v)
 
         h1
       }
 
       c = BranchContext.new(name, h)
       c.instance_eval(&block) if block
+
       c.to_a
+    end
+
+    def self.to_json(v)
+
+      case v
+        when Symbol; v.to_s
+        when Regexp; v.inspect
+        when Array; v.collect { |e| to_json(e) }
+        when Hash; v.inject({}) { |h, (k, v)| h[k.to_s] = to_json(v); h }
+        else v
+      end
     end
   end
 end
