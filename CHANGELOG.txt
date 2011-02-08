@@ -2,7 +2,7 @@
 = ruote - CHANGELOG.txt
 
 
-== ruote - 2.1.12    not yet released
+== ruote - 2.2.0    not yet released
 
 - Participant#do_not_thread : optional workitem parameter
 - filter expression
