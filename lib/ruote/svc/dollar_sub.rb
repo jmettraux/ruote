@@ -54,7 +54,10 @@ module Ruote
 
       if text.is_a?(String)
 
-        Rufus.dsub(text, dict_class.new(flow_expression, workitem))
+        literal_sub(
+          Rufus.dsub(text, dict_class.new(flow_expression, workitem)),
+          flow_expression,
+          workitem)
 
       elsif text.is_a?(Array)
 
@@ -81,6 +84,24 @@ module Ruote
     def dict_class
 
       ::Ruote::Dollar::Dict
+    end
+
+    protected
+
+    # If the final text is of the form "$f:x" or "$v:y" will lookup the
+    # x field or the y variable. If the lookup is successful (not nil) will
+    # return the, not the text.
+    #
+    def literal_sub(s, fexp, wi)
+
+      case s
+        when /^\$(?:field|fld|f):([^{}]+)$/#; p [ :f, $~ ]
+          Ruote.lookup(wi['fields'], $~[1])
+        when /^\$(?:variable|var|v):([^{}]+)$/#; p [ :v, $~ ]
+          fexp.lookup_variable($~[1])
+        else
+          s
+      end
     end
   end
 

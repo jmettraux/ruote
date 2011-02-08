@@ -205,5 +205,54 @@ class FtDollarTest < Test::Unit::TestCase
 
     assert_trace %w[ "alpha" "alpha" ok ], pdef
   end
+
+  def test_literally
+
+    pdef = Ruote.define do
+      set 'f:a' => %w[ A B C ]
+      set 'f:b' => 'a'
+      set 'v:c' => %w[ venture capitalist ]
+      set 'f:A' => '$f:a'
+      set 'f:C' => '$v:c'
+      set 'f:B' => '$f:${b}'
+      filter :f => /^[a-c]$/, :del => true
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal(
+      {
+        'A' => %w[ A B C ],
+        'B' => %w[ A B C ],
+        'C' => %w[ venture capitalist ]
+      },
+      r['workitem']['fields'])
+  end
+
+  def test_literally_and_participant_params
+
+    pdef = Ruote.define do
+      set 'f:a' => %w[ A B C ]
+      alpha :b => '$f:a'
+    end
+
+    @engine.register_participant :alpha do |wi|
+      wi.fields['parameters'] = wi.fields['params']
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal(
+      { 'b' => %w[ A B C ], 'ref' => 'alpha' },
+      r['workitem']['fields']['parameters'])
+  end
 end
 
