@@ -222,6 +222,8 @@ module Ruote::Exp
         h.lost = true
       end
 
+      filter
+
       consider_tag
       consider_timeout
 
@@ -229,6 +231,8 @@ module Ruote::Exp
     end
 
     def reply_to_parent(workitem, delete=true)
+
+      filter(workitem)
 
       if h.tagname
 
@@ -655,6 +659,32 @@ module Ruote::Exp
 
       h.children << fei
       persist_or_raise
+    end
+
+    # The :filter attribute work is done here, at apply (in) and at reply (out).
+    #
+    def filter(workitem=nil)
+
+      f = attribute(:filter)
+
+      return unless f
+
+      unless workitem # in
+
+        filter = lookup_variable(f)['in']
+
+        h.pre_filter =
+          Rufus::Json.dup(h.applied_workitem['fields'])
+        h.applied_workitem['fields'] =
+          Ruote.filter(filter, h.applied_workitem['fields'], {})
+
+      else # out
+
+        filter = lookup_variable(f)['out']
+
+        workitem['fields'] =
+          Ruote.filter(filter, h.pre_filter, {})
+      end
     end
 
     def consider_tag
