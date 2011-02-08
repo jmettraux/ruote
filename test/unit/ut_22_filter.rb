@@ -255,6 +255,22 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => { 'a' => 1, 'b' => 2 }, 'y' => 2 })
   end
 
+  def test_merge_to__non_hash
+
+    assert_filter(
+      { 'x' => { 'a' => 1, 'y' => 2 }, 'y' => 2 },
+      [ { 'field' => 'y', 'mg_to' => 'x' } ],
+      { 'x' => { 'a' => 1, }, 'y' => 2 })
+  end
+
+  def test_merge_from__non_hash
+
+    assert_filter(
+      { 'x' => { 'a' => 1, 'y' => 2 }, 'y' => 2 },
+      [ { 'field' => 'x', 'merge_from' => 'y' } ],
+      { 'x' => { 'a' => 1 }, 'y' => 2 })
+  end
+
   def test_merge_dot
 
     assert_filter(

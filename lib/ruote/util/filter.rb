@@ -196,7 +196,14 @@ module Ruote
 
       return unless target.respond_to?(:merge!)
 
-      target.merge!(Rufus::Json.dup(value))
+      vv = Rufus::Json.dup(value)
+
+      if vv.is_a?(Hash)
+        target.merge!(vv)
+      else # deal with non Hash
+        target[field.split('.').last] = vv
+      end
+
       target.delete('^')
       target.delete('^^')
       Ruote.unset(@hash, field) if m == 'migrate_to' or m == 'mi_to'
@@ -211,7 +218,14 @@ module Ruote
 
       return unless value.respond_to?(:merge!)
 
-      value.merge!(Rufus::Json.dup(Ruote.lookup(@hash, v)))
+      vv = Rufus::Json.dup(Ruote.lookup(@hash, v))
+
+      if vv.is_a?(Hash)
+        value.merge!(vv)
+      else # deal with non Hash
+        value[v.split('.').last] = vv
+      end
+
       value.delete('^')
       value.delete('^^')
 
