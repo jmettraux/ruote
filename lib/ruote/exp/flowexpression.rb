@@ -669,9 +669,15 @@ module Ruote::Exp
 
       return unless f
 
+      filter = lookup_variable(f)
+
+      raise ArgumentError.new(
+        "found no filter corresponding to '#{f}'"
+      ) unless filter
+
       unless workitem # in
 
-        filter = lookup_variable(f)['in']
+        filter = filter['in'] || filter['apply']
 
         h.pre_filter =
           Rufus::Json.dup(h.applied_workitem['fields'])
@@ -680,7 +686,7 @@ module Ruote::Exp
 
       else # out
 
-        filter = lookup_variable(f)['out']
+        filter = filter['out'] || filter['reply']
 
         workitem['fields'] =
           Ruote.filter(filter, h.pre_filter, {})

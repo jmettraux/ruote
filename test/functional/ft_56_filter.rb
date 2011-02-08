@@ -51,7 +51,42 @@ class FtFilterAttributeTest < Test::Unit::TestCase
 
   def test_broken_filter_apply
 
-    flunk
+    pdef = Ruote.define do
+      alpha :filter => 'f'
+    end
+
+    @engine.register :alpha, Ruote::NoOpParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_not_nil r['error']
+    assert_equal 'ArgumentError', r['error']['class']
+  end
+
+  def test_broken_filter_reply
+
+    pdef = Ruote.define do
+      set 'v:f' => {
+        :in => [],
+        :out => 'nada'
+      }
+      alpha :filter => 'f'
+    end
+
+    @engine.register :alpha, AlphaParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_not_nil r['error']
+    assert_equal 'ArgumentError', r['error']['class']
   end
 end
 
