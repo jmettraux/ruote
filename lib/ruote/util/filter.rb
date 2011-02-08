@@ -149,6 +149,8 @@ module Ruote
       nil
     end
     alias _rm _remove
+    alias _delete _remove
+    alias _del _remove
 
     def _set(field, value, matches, m, v)
 
@@ -222,6 +224,17 @@ module Ruote
     alias _mg_from _merge_from
     alias _migrate_from _merge_from
     alias _mi_from _merge_from
+
+    def _restore(field, value, matches, m, v)
+
+      prefix = v == true ? '^^' : v.to_s
+
+      Ruote.set(@hash, field, Ruote.lookup(@hash, "#{prefix}.#{field}"))
+
+      nil
+    end
+    alias _restore_from _restore
+    alias _rs _restore
 
     def _size(field, value, matches, m, v)
 

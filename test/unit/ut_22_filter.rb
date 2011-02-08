@@ -309,6 +309,29 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'a' })
   end
 
+  def test_restore
+
+    assert_filter(
+      { 'x' => 'a', 'y' => 'a' },
+      [ { 'field' => 'x', 'set' => 'X' },
+        { 'field' => 'y', 'set' => 'Y' },
+        { 'field' => '/^.$/', 'restore' => true } ],
+      { 'x' => 'a', 'y' => 'a' })
+  end
+
+  def test_restore_with_a_given_prefix
+
+    assert_filter(
+      { 'x' => 'a', 'y' => 'a' },
+      [ { 'field' => 'A', 'set' => {} },
+        { 'field' => '.', 'merge_to' => 'A' },
+        { 'field' => 'x', 'set' => 'X' },
+        { 'field' => 'y', 'set' => 'Y' },
+        { 'field' => '/^[a-z]$/', 'restore_from' => 'A' },
+        { 'field' => 'A', 'delete' => true } ],
+      { 'x' => 'a', 'y' => 'a' })
+  end
+
   def test_cumulation_or
 
     assert_filter(
