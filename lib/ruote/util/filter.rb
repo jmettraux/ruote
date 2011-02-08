@@ -50,16 +50,16 @@ module Ruote
 
     hash = Rufus::Json.dup(hash)
 
-    hash['^'] = Rufus::Json.dup(hash)
-    hash['^^'] = Rufus::Json.dup(options[:double_caret] || hash)
+    hash['~'] = Rufus::Json.dup(hash)
+    hash['~~'] = Rufus::Json.dup(options[:double_tilde] || hash)
       # the 'originals'
 
     deviations = filter.collect { |rule|
       RuleSession.new(hash, rule).run
     }.flatten(1)
 
-    hash.delete('^')
-    hash.delete('^^')
+    hash.delete('~')
+    hash.delete('~~')
       # remove the 'originals'
 
     if deviations.empty?
@@ -80,7 +80,7 @@ module Ruote
     SKIP = %w[ and or fields field f ]
     NUMBER_CLASSES = [ Fixnum, Float ]
     BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
-    CARET = /^\^/
+    TILDE = /^~/
 
     def initialize(hash, rule)
 
@@ -100,7 +100,7 @@ module Ruote
 
       @fields = if fl.is_a?(Regexp)
 
-        keys = Ruote.flatten_keys(@hash).reject { |k| CARET.match(k) }
+        keys = Ruote.flatten_keys(@hash).reject { |k| TILDE.match(k) }
         keys.inject([]) { |a, k|
           if m = fl.match(k)
             a << [ k, Ruote.lookup(@hash, k), m[1..-1] ]
@@ -204,8 +204,8 @@ module Ruote
         target[field.split('.').last] = vv
       end
 
-      target.delete('^')
-      target.delete('^^')
+      target.delete('~')
+      target.delete('~~')
       Ruote.unset(@hash, field) if m == 'migrate_to' or m == 'mi_to'
 
       nil
@@ -226,8 +226,8 @@ module Ruote
         value[v.split('.').last] = vv
       end
 
-      value.delete('^')
-      value.delete('^^')
+      value.delete('~')
+      value.delete('~~')
 
       if v != '.' and (m == 'migrate_from' or m == 'mi_from')
         Ruote.unset(@hash, v)
@@ -241,7 +241,7 @@ module Ruote
 
     def _restore(field, value, matches, m, v)
 
-      prefix = v == true ? '^^' : v.to_s
+      prefix = v == true ? '~~' : v.to_s
 
       Ruote.set(@hash, field, Ruote.lookup(@hash, "#{prefix}.#{field}"))
 

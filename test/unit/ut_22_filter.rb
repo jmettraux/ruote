@@ -315,13 +315,13 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => { 'a' => 1, 'b' => 2 } })
   end
 
-  def test_caret
+  def test_tilde
 
     assert_filter(
       { 'x' => 'a', 'y' => 'a' },
       [ { 'field' => 'x', 'set' => 'b' },
-        { 'field' => 'x', 'copy_from' => '^.x' },
-        { 'field' => 'y', 'copy_from' => '^.x' } ],
+        { 'field' => 'x', 'copy_from' => '~.x' },
+        { 'field' => 'y', 'copy_from' => '~.x' } ],
       { 'x' => 'a' })
   end
 

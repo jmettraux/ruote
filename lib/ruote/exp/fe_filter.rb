@@ -242,7 +242,7 @@ module Ruote::Exp
   #
   # TODO
   #
-  # === access to 'previous versions' with ^ and ^^
+  # === access to 'previous versions' with ~ and ~~
   #
   # TODO
   #
@@ -265,7 +265,7 @@ module Ruote::Exp
       record = '__validation_errors__' if record == true
 
       opts = {
-        :double_caret => parent_id ?
+        :double_tilde => parent_id ?
           (parent.h.applied_workitem['fields'] rescue nil) : nil,
         :no_raise => record
       }
