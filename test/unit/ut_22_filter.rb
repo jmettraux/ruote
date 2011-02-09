@@ -332,6 +332,15 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'a' })
   end
 
+  def test_tilde_restoring
+
+    assert_filter(
+      { 'private_x' => 'a' },
+      [ { 'field' => '/^private_/', 'del' => true },
+        { 'field' => '/^~~.private_/', 'merge_to' => '.' } ],
+      { 'private_x' => 'a' })
+  end
+
   def test_restore
 
     assert_filter(

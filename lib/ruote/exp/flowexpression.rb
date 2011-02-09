@@ -679,7 +679,7 @@ module Ruote::Exp
 
         filter = filter['in'] || filter['apply']
 
-        h.pre_filter =
+        h.fields_pre_filter =
           Rufus::Json.dup(h.applied_workitem['fields'])
         h.applied_workitem['fields'] =
           Ruote.filter(filter, h.applied_workitem['fields'], {})
@@ -689,7 +689,8 @@ module Ruote::Exp
         filter = filter['out'] || filter['reply']
 
         workitem['fields'] =
-          Ruote.filter(filter, h.pre_filter, {})
+          Ruote.filter(
+            filter, workitem['fields'], :double_tilde => h.fields_pre_filter)
       end
     end
 

@@ -85,6 +85,7 @@ module Ruote
     NUMBER_CLASSES = [ Fixnum, Float ]
     BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
     TILDE = /^~/
+    RTILDE = /^\^~/
 
     def initialize(hash, rule)
 
@@ -106,9 +107,8 @@ module Ruote
 
         # when restoring, you look at the old keys, not the current ones
 
-        keys = Ruote.flatten_keys(
-          @rule['restore'] ? @hash['~~'] : @hash
-        ).reject { |k| TILDE.match(k) }
+        keys = Ruote.flatten_keys(@rule['restore'] ? @hash['~~'] : @hash)
+        keys = keys.reject { |k| TILDE.match(k) } unless RTILDE.match(fl.source)
 
         # now only keep the keys that match our regexp
 
