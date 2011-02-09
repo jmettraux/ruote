@@ -293,7 +293,7 @@ class UtStorage < Test::Unit::TestCase
       threads << Thread.new do
         loop do
           @s.get_msgs.each do |msg|
-            sleep(rand * 0.1)
+            sleep(rand * 0.02)
             reserved << msg['_id'] if @s.reserve(msg)
           end
         end
