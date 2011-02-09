@@ -355,6 +355,17 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 'a', 'y' => 'a' })
   end
 
+  def test_really_restore
+
+    assert_filter(
+      { 'x' => 'a', 'y' => 'a', 'z' => 'good' },
+      [ { 'field' => '/./', 'del' => true },
+        { 'field' => 'y', 'set' => 'bad' },
+        { 'field' => 'z', 'set' => 'good' },
+        { 'field' => '/./', 'restore' => true } ],
+      { 'x' => 'a', 'y' => 'a' })
+  end
+
   def test_cumulation_or
 
     assert_filter(

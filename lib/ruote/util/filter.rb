@@ -104,7 +104,14 @@ module Ruote
 
       @fields = if fl.is_a?(Regexp)
 
-        keys = Ruote.flatten_keys(@hash).reject { |k| TILDE.match(k) }
+        # when restoring, you look at the old keys, not the current ones
+
+        keys = Ruote.flatten_keys(
+          @rule['restore'] ? @hash['~~'] : @hash
+        ).reject { |k| TILDE.match(k) }
+
+        # now only keep the keys that match our regexp
+
         keys.inject([]) { |a, k|
           if m = fl.match(k)
             a << [ k, Ruote.lookup(@hash, k), m[1..-1] ]
