@@ -32,10 +32,15 @@ class UtStorage < Test::Unit::TestCase
       'type' => 'errors',
       'message' => 'testing')
   end
+
   def teardown
 
-    @s.get_many('errors').each do |d|
-      @s.delete(d)
+    %w[ error msgs ].each do |type|
+      begin
+        @s.get_many('errors').each { |d| @s.delete(d) }
+      rescue
+        # ignore
+      end
     end
   end
 
@@ -272,6 +277,37 @@ class UtStorage < Test::Unit::TestCase
     load_30_errors
 
     assert_equal @s.ids('errors').sort, @s.ids('errors')
+  end
+
+  def test_reserve
+
+    reserved = []
+    threads = []
+
+    threads << Thread.new do
+      loop do
+        @s.put_msg('launch', 'tree' => 'nada')
+      end
+    end
+    2.times do
+      threads << Thread.new do
+        loop do
+          msgs = @s.get_msgs
+          reserved << msg['_id'] if @s.reserve(msg)
+        end
+      end
+    end
+
+    sleep 7
+
+    threads.each do |t|
+      t.kill
+    end
+
+    assert_equal(
+      reserved.size,
+      reserved.uniq.size,
+      "double reservations happened, not multi-worker safe")
   end
 
   protected
