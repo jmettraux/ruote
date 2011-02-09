@@ -292,8 +292,10 @@ class UtStorage < Test::Unit::TestCase
     2.times do
       threads << Thread.new do
         loop do
-          msgs = @s.get_msgs
-          reserved << msg['_id'] if @s.reserve(msg)
+          @s.get_msgs.each do |msg|
+            sleep(rand * 0.1)
+            reserved << msg['_id'] if @s.reserve(msg)
+          end
         end
       end
     end
@@ -304,9 +306,11 @@ class UtStorage < Test::Unit::TestCase
       t.kill
     end
 
+    assert reserved.size > 0
+
     assert_equal(
-      reserved.size,
       reserved.uniq.size,
+      reserved.size,
       "double reservations happened, not multi-worker safe")
   end
 
