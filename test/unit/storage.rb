@@ -27,6 +27,9 @@ class UtStorage < Test::Unit::TestCase
 
     #@s.add_type('errors')
 
+    @s.purge_type!('errors')
+    @s.purge_type!('msgs')
+
     @s.put(
       '_id' => 'toto',
       'type' => 'errors',
@@ -35,13 +38,17 @@ class UtStorage < Test::Unit::TestCase
 
   def teardown
 
-    %w[ error msgs ].each do |type|
-      begin
-        @s.get_many('errors').each { |d| @s.delete(d) }
-      rescue
-        # ignore
-      end
-    end
+    #%w[ errors msgs ].each do |type|
+    #  begin
+    #    @s.get_many(type).each { |d| @s.delete(d) }
+    #  rescue => e
+    #    p [ type, e ]
+    #  end
+    #end
+    @s.purge_type!('errors')
+    @s.purge_type!('msgs')
+
+    @s.shutdown
   end
 
   def test_get_configuration
@@ -281,20 +288,34 @@ class UtStorage < Test::Unit::TestCase
 
   def test_reserve
 
+    taoe = Thread.abort_on_exception
+    Thread.abort_on_exception = true
+
     reserved = []
     threads = []
 
     threads << Thread.new do
+      i = 0
       loop do
-        @s.put_msg('launch', 'tree' => 'nada')
+        @s.put_msg('launch', 'tree' => i)
+        i = i + 1
       end
     end
+
     2.times do
+
       threads << Thread.new do
         loop do
-          @s.get_msgs.each do |msg|
-            sleep(rand * 0.02)
-            reserved << msg['_id'] if @s.reserve(msg)
+          msgs = @s.get_msgs
+          msgs[0, 100].each do |msg|
+            next if msg['tree'].nil?
+            next unless @s.reserve(msg)
+            if reserved.include?(msg['tree'])
+              puts "=" * 80
+              p [ :dbl, :r, msg['_rev'], :t, msg['tree'] ]
+            end
+            reserved << msg['tree']
+            sleep(rand * 0.01)
           end
         end
       end
@@ -302,16 +323,12 @@ class UtStorage < Test::Unit::TestCase
 
     sleep 7
 
-    threads.each do |t|
-      t.kill
-    end
+    threads.each { |t| t.terminate }
 
-    assert reserved.size > 0
+    Thread.abort_on_exception = taoe
 
-    assert_equal(
-      reserved.uniq.size,
-      reserved.size,
-      "double reservations happened, not multi-worker safe")
+    assert_equal false, reserved.empty?
+    assert_equal reserved.size, reserved.uniq.size
   end
 
   protected

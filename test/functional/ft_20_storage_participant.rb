@@ -189,7 +189,6 @@ class FtStorageParticipantTest < Test::Unit::TestCase
       @part.query('place' => 'heiankyou', :offset => 2, :limit => 2).collect { |wi|
         "#{wi.fei.wfid}-#{wi.participant_name}" }
 
-    #p page0, page1
     assert_equal 4, (page0 + page1).sort.uniq.size
 
     assert_equal(
