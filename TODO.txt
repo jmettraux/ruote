@@ -469,3 +469,7 @@
 
 [ ] participant : consume/cancel/accept?/on_reply without params
 
+[ ] worker identification/registration
+    http://groups.google.com/group/openwferu-users/browse_thread/thread/c51b94fb8bb685da
+[ ] worker shutdown initiated by engine (same thread)
+
