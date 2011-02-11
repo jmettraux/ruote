@@ -277,7 +277,10 @@ module Ruote
       s = [ "== #{self.class} ==" ]
       s << "   expressions : #{@expressions.size}"
       @expressions.each do |e|
-        s << "     #{e.fei.to_storage_id} : #{e.name} #{e.attributes.inspect}"
+        s << "     #{e.fei.to_storage_id}"
+        s << "       | #{e.name}"
+        s << "       | #{e.attributes.inspect}"
+        s << "       `-parent--> #{e.h.parent_id.inspect}"
       end
       s << "   schedules : #{@schedules.size}"
       s << "   stored workitems : #{@stored_workitems.size}"

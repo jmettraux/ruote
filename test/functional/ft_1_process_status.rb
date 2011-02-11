@@ -13,7 +13,7 @@ require 'ruote/participant'
 class FtProcessStatusTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_ps
+  def test_process
 
     pdef = Ruote.process_definition :name => 'my process' do
       participant :ref => 'alpha'
