@@ -128,6 +128,13 @@ module Ruote
         end
       end
     end
+
+    # Shuts this storage down.
+    #
+    def shutdown
+
+      # nothing to do
+    end
   end
 end
 
