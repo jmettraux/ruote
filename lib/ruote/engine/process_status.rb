@@ -38,6 +38,10 @@ module Ruote
     #
     attr_reader :expressions
 
+    # Returns the expression at the root of the process instance.
+    #
+    attr_reader :root_expression
+
     # An array of the workitems currently in the storage participant for this
     # process instance.
     #
@@ -67,13 +71,8 @@ module Ruote
 
       @errors = errors.sort! { |a, b| a.fei.expid <=> b.fei.expid }
       @schedules = schedules.sort! { |a, b| a['owner'].sid <=> b['owner'].sid }
-    end
 
-    # Returns the expression at the root of the process instance.
-    #
-    def root_expression
-
-      root_expressions.first
+      @root_expression = root_expressions.first
     end
 
     # Returns a list of all the expressions that have no parent expression.
@@ -109,7 +108,7 @@ module Ruote
     #
     def variables
 
-      root_expression.variables
+      @root_expression && @root_expression.variables
     end
 
     # Returns a hash fei => variable_hash containing all the variable bindings
@@ -160,7 +159,8 @@ module Ruote
     #
     def definition_name
 
-      root_expression.attribute('name') || root_expression.attribute_text
+      @root_expression && (
+        @root_expression.attribute('name') || @root_expression.attribute_text)
     end
 
     # For a process
@@ -174,7 +174,7 @@ module Ruote
     #
     def definition_revision
 
-      root_expression.attribute('revision')
+      @root_expression && @root_expression.attribute('revision')
     end
 
     # Returns the 'position' of the process.
@@ -249,14 +249,14 @@ module Ruote
     #
     def original_tree
 
-      root_expression.original_tree
+      @root_expression && @root_expression.original_tree
     end
 
     # Returns a Time instance indicating when the process instance was launched.
     #
     def launched_time
 
-      root_expression.created_time
+      @root_expression && @root_expression.created_time
     end
 
     def to_s

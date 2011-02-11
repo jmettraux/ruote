@@ -640,5 +640,28 @@ digraph "process wfid {
     assert_equal 2, @engine.ps.size
     assert_equal wfid, @engine.ps(wfid).wfid
   end
+
+  def test_definition_name
+
+    pdef = Ruote.process_definition :name => 'invictus' do
+      alpha
+    end
+
+    #noisy
+
+    alpha = @engine.register_participant :alpha, Ruote::NullParticipant
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+
+    assert_equal 'invictus', @engine.process(wfid).definition_name
+
+    exp = @engine.process(wfid).expressions.first
+    @engine.storage.delete(exp.h)
+
+    assert_nil @engine.process(wfid).definition_name
+    assert_nil @engine.process(wfid).definition_revision
+  end
 end
 
