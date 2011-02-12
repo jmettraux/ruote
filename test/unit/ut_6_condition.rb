@@ -106,7 +106,7 @@ class ConditionTest < Test::Unit::TestCase
     assert_b true, 'alpha =~ al'
   end
 
-  def test_number_comparision
+  def test_number_comparison
 
     assert_b true, 'b > a'
     assert_b false, 'a > b'
