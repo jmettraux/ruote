@@ -4,6 +4,7 @@
 
 == ruote - 2.2.0    not yet released
 
+- Engine#leftovers (Thanks Iuri)
 - $f:x and $v:y vs ${f:x} and ${v:y} (literally)
 - :filter common attribute
 - Participant#do_not_thread : optional workitem parameter

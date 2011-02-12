@@ -299,6 +299,28 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal n - 1, @engine.processes.size
     assert_equal n,  @engine.storage_participant.size
       # orphan workitem left in storage
+
+    assert_equal 1, @engine.leftovers.size
+  end
+
+  def test_left_overs
+
+    [
+      { '_id' => '0!f!x', 'type' => 'workitems', 'fei' => { 'wfid' => 'x' } },
+      { '_id' => '0!f!y', 'type' => 'errors', 'fei' => { 'wfid' => 'y' } },
+      { '_id' => '0!f!a', 'type' => 'workitems', 'fei' => { 'wfid' => 'a' } },
+      { '_id' => '0!f!a', 'type' => 'expressions', 'fei' => { 'wfid' => 'a' } },
+      { '_id' => '0!f!z', 'type' => 'schedules', 'fei' => { 'wfid' => 'z' } }
+    ].each do |doc|
+      @engine.storage.put(doc)
+    end
+
+    assert_equal(
+      3,
+      @engine.leftovers.size)
+    assert_equal(
+      %w[ workitems errors schedules ],
+      @engine.leftovers.collect { |lo| lo['type'] })
   end
 
   def test_tree_rewrite

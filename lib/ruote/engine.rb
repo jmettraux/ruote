@@ -338,6 +338,32 @@ module Ruote
 
     alias process_wfids process_ids
 
+    # Warning : expensive operation.
+    #
+    # Leftovers are workitems, errors and schedules belonging to process
+    # instances for which there are no more expressions left.
+    #
+    # Better delete them or investigate why they are left here.
+    #
+    # The result is a list of documents (hashes) as found in the storage. Each
+    # of them might represent a workitem, an error or a schedule.
+    #
+    # If you want to delete one of them you can do
+    #
+    #   engine.storage.delete(doc)
+    #
+    def leftovers
+
+      wfids = @context.storage.expression_wfids({})
+
+      wis = @context.storage.get_many('workitems').compact
+      ers = @context.storage.get_many('errors').compact
+      scs = @context.storage.get_many('schedules').compact
+        # some slow storages need the compaction... [c]ouch...
+
+      (wis + ers + scs).reject { |doc| wfids.include?(doc['fei']['wfid']) }
+    end
+
     # Shuts down the engine, mostly passes the shutdown message to the other
     # services and hope they'll shut down properly.
     #
