@@ -106,15 +106,26 @@ module Ruote::Exp
       end
     end
 
+    # Returns the Ruote::FlowExpressionId for this expression.
+    #
     def fei
+
       Ruote::FlowExpressionId.new(h.fei)
     end
 
+    # Returns the Ruote::FlowExpressionIf of the parent expression, or nil
+    # if there is no parent expression.
+    #
     def parent_id
+
       h.parent_id ? Ruote::FlowExpressionId.new(h.parent_id) : nil
     end
 
+    # Fetches the parent expression, or returns nil if there is no parent
+    # expression.
+    #
     def parent
+
       Ruote::Exp::FlowExpression.fetch(@context, h.parent_id)
     end
 
@@ -162,6 +173,8 @@ module Ruote::Exp
     # apply/reply
     #++
 
+    # Called by the worker when it has something to do for a FlowExpression.
+    #
     def self.do_action(context, msg)
 
       fei = msg['fei']
@@ -199,6 +212,9 @@ module Ruote::Exp
       fexp.send("do_#{action}", msg) if fexp
     end
 
+    # Called by the worker when it has just created this FlowExpression and
+    # wants to apply it.
+    #
     def do_apply
 
       if not Condition.apply?(attribute(:if), attribute(:unless))
@@ -230,6 +246,10 @@ module Ruote::Exp
       apply
     end
 
+    # FlowExpression call this method when they're done and they want their
+    # parent expression to take over (it will end up calling the #reply of
+    # the parent expression).
+    #
     def reply_to_parent(workitem, delete=true)
 
       filter(workitem)
@@ -295,6 +315,8 @@ module Ruote::Exp
       end
     end
 
+    # Wraps #reply (does the administrative part of the reply work).
+    #
     def do_reply(msg)
 
       @msg = Ruote.fulldup(msg)
@@ -434,6 +456,10 @@ module Ruote::Exp
       #end
     end
 
+    # Called when handling an on_error, will place itself in a 'failing' state
+    # and cancel the children (when the reply from the children comes back,
+    # the on_reply will get triggered).
+    #
     def do_fail(msg)
 
       @h['state'] = 'failing'
@@ -451,6 +477,9 @@ module Ruote::Exp
     # misc
     #++
 
+    # Launches a subprocesses (usually called from the #apply of certain
+    # expression implementations.
+    #
     def launch_sub(pos, subtree, opts={})
 
       i = h.fei.merge(
@@ -586,20 +615,34 @@ module Ruote::Exp
       h.updated_tree = t || Ruote.fulldup(h.original_tree)
     end
 
+    # Returns the name of this expression, like 'sequence', 'participant',
+    # 'cursor', etc...
+    #
     def name
+
       tree[0]
     end
 
+    # Returns the attributes of this expression (like { 'ref' => 'toto' } or
+    # { 'timeout' => '2d' }.
+    #
     def attributes
+
       tree[1]
     end
 
+    # Returns the "AST" view on the children of this expression...
+    #
     def tree_children
+
       tree[2]
     end
 
     protected
 
+    # Returns a Graphviz dot string representing this expression (and its
+    # children).
+    #
     def to_dot(opts)
 
       i = fei()
@@ -625,6 +668,9 @@ module Ruote::Exp
       a
     end
 
+    # Used locally but also by ConcurrenceExpression, when preparing children
+    # before they get applied.
+    #
     def pre_apply_child(child_index, workitem, forget)
 
       child_fei = h.fei.merge(
@@ -645,6 +691,8 @@ module Ruote::Exp
       msg
     end
 
+    # Used by expressions when, well, applying a child expression of theirs.
+    #
     def apply_child(child_index, workitem, forget=false)
 
       msg = pre_apply_child(child_index, workitem, forget)
@@ -655,6 +703,9 @@ module Ruote::Exp
       @context.storage.put_msg('apply', msg)
     end
 
+    # Some expressions have to keep track of their (instantiated) children,
+    # this method does the registration (of the child's fei).
+    #
     def register_child(fei)
 
       h.children << fei
@@ -694,6 +745,9 @@ module Ruote::Exp
       end
     end
 
+    # Called to check if the expression has a :tag attribute. If yes,
+    # will register the tag in a variable (and in the workitem).
+    #
     def consider_tag
 
       if h.tagname = attribute(:tag)
