@@ -402,13 +402,9 @@ module Ruote
       @context.reader.read(path)
     end
 
-    # Registers a participant in the engine. Returns the participant instance.
+    # Registers a participant in the engine.
     #
     # Some examples :
-    #
-    #   require 'ruote/part/hash_participant'
-    #   alice = engine.register_participant 'alice', Ruote::HashParticipant
-    #     # register an in-memory (hash) store for Alice's workitems
     #
     #   engine.register_participant 'compute_sum' do |wi|
     #     wi.fields['sum'] = wi.fields['articles'].inject(0) do |s, (c, v)|
@@ -418,8 +414,8 @@ module Ruote
     #   end
     #
     #   class MyParticipant
-    #     def initialize(name)
-    #       @name = name
+    #     def initialize(opts)
+    #       @name = opts['name']
     #     end
     #     def consume(workitem)
     #       workitem.fields['rocket_name'] = @name
@@ -429,47 +425,26 @@ module Ruote
     #       # do nothing
     #     end
     #   end
-    #   engine.register_participant /^moon-.+/, MyParticipant.new('Saturn-V')
-    #
-    #
-    # == 'stateless' participants are preferred over 'stateful' ones
-    #
-    # Ruote 2.1 is OK with 1 storage and 1+ workers. The workers may be
-    # in other ruby runtimes. This implies that if you have registered a
-    # participant instance (instead of passing its classname and options),
-    # that participant will only run in the worker 'embedded' in the engine
-    # where it was registered... Let me rephrase it, participants instantiated
-    # at registration time (and that includes block participants) only runs
-    # in one worker, always the same.
-    #
-    # 'stateless' participants, instantiated at each dispatch, are preferred.
-    # Any worker can handle them.
-    #
-    # Block participants are still fine for demos (where the worker is included
-    # in the engine (see all the quickstarts). And small engines with 1 worker
-    # are not that bad, not everybody is building huge systems).
-    #
-    # Here is a 'stateless' participant example :
-    #
-    #   class MyStatelessParticipant
-    #     def initialize(opts)
-    #       @opts = opts
-    #     end
-    #     def consume(workitem)
-    #       workitem.fields['rocket_name'] = @opts['name']
-    #       send_to_the_moon(workitem)
-    #     end
-    #     def cancel(fei, flavour)
-    #       # do nothing
-    #     end
-    #   end
     #
     #   engine.register_participant(
-    #     'moon', MyStatelessParticipant, 'name' => 'saturn5')
+    #     /^moon-.+/, MyParticipant, 'name' => 'Saturn-V')
+    #
+    #   # computing the total for a invoice being passed in the workitem.
+    #   #
+    #   class TotalParticipant
+    #     include Ruote::LocalParticipant
+    #
+    #     def consume(workitem)
+    #       workitem['total'] = workitem.fields['items'].inject(0.0) { |t, item|
+    #         t + item['count'] * PricingService.lookup(item['id'])
+    #       }
+    #       reply_to_engine(workitem)
+    #     end
+    #   end
+    #   engine.register_participant 'total', TotalParticipant
     #
     # Remember that the options (the hash that follows the class name), must be
     # serialisable via JSON.
-    #
     #
     # == require_path and load_path
     #
