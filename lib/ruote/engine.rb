@@ -469,7 +469,9 @@ module Ruote
 
       pa = @context.plist.register(regex, participant, opts, block)
 
-      @context.storage.put_msg('participant_registered', 'regex' => regex.to_s)
+      @context.storage.put_msg(
+        'participant_registered',
+        'regex' => regex.is_a?(Regexp) ? regex.inspect : regex.to_s)
 
       pa
     end

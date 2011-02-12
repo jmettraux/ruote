@@ -20,17 +20,25 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     @engine.register_participant :alpha do |workitem|
       @tracer << 'alpha'
     end
+    @engine.register_participant /^user_/, Ruote::NullParticipant
 
-    wait_for(1)
+    wait_for(2)
 
-    msg = logger.log.last
-    assert_equal 'participant_registered', msg['action']
-    assert_equal 'alpha', msg['regex']
+    assert_equal(
+      'participant_registered',
+      logger.log[0]['action'])
+
+    assert_equal(
+      %w[ alpha /^user_/ ],
+      logger.log.collect { |msg| msg['regex'] })
 
     assert_equal(
       [ [ "^alpha$",
           [ "Ruote::BlockParticipant",
-            { "block" => "proc { |workitem| (@tracer << \"alpha\") }" } ] ] ],
+            { "block" => "proc { |workitem| (@tracer << \"alpha\") }" } ] ],
+        [ "^user_",
+          [ "Ruote::NullParticipant",
+            {} ] ] ],
       @engine.participant_list.collect { |pe| pe.to_a })
   end
 
