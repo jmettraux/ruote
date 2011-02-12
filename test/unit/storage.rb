@@ -272,7 +272,7 @@ class UtStorage < Test::Unit::TestCase
     assert @s.dump('errors').length > 0
   end
 
-  def test_ids
+  def test_ids_and_errors
 
     load_30_errors
 

@@ -85,3 +85,16 @@ task :upload_rdoc => [ :clean, :rdoc ] do
   sh "rsync -azv -e ssh rdoc #{account}:#{webdir}/"
 end
 
+
+desc %{
+  attempt at detecting test methods with the same name
+}
+task :doublons do
+
+  lines = `grep -r " def test_" test/ | sort`.split("\n")
+  lines.inject(nil) do |previous, line|
+    p line if line == previous
+    line
+  end
+end
+

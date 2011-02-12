@@ -566,7 +566,7 @@ digraph "process wfid {
     assert_equal 1, @engine.schedules(:count => true)
   end
 
-  def test_ps_and_schedules
+  def test_processes_and_schedules
 
     @engine.register_participant '.+', Ruote::NullParticipant
 
@@ -578,7 +578,7 @@ digraph "process wfid {
     ps = @engine.process(wfid)
 
     assert_equal 1, ps.schedules.size
-    assert_equal "0_0!!#{wfid}", ps.schedules.first['target'].sid
+    assert_match /^0_0![a-f0-9]+!#{wfid}$/, ps.schedules.first['target'].sid
   end
 
   def test_ps_pagination
