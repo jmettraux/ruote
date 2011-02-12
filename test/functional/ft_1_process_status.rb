@@ -280,6 +280,27 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal 2, alpha.size
   end
 
+  def test_processes_and_orphans
+
+    n = 3
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    wfids = n.times.collect { @engine.launch(Ruote.define { alpha }) }
+
+    n.times { @engine.wait_for(:alpha) }
+    @engine.wait_for(1)
+
+    @engine.processes.first.expressions.each do |exp|
+      @engine.storage.delete(exp.h)
+    end
+      # nuking all the expressions of a process instance
+
+    assert_equal n - 1, @engine.processes.size
+    assert_equal n,  @engine.storage_participant.size
+      # orphan workitem left in storage
+  end
+
   def test_tree_rewrite
 
     pdef = Ruote.process_definition :name => 'test' do
@@ -577,6 +598,12 @@ digraph "process wfid {
     assert_equal(
       wfids,
       @engine.processes.collect { |ps| ps.wfid })
+
+    assert_equal(
+      wfids,
+      @engine.processes(:test => :garbage).collect { |ps| ps.wfid })
+        # prompted by
+        # http://groups.google.com/group/openwferu-users/browse_thread/thread/ee493bdf8d8cdb37
 
     assert_equal(
       wfids[0, 3],

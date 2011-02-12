@@ -247,7 +247,7 @@ module Ruote
     #
     def process(wfid)
 
-      list_processes([ wfid ], {}).first
+      statuses([ wfid ], {}).first
     end
 
     # Returns an array of ProcessStatus instances.
@@ -263,16 +263,9 @@ module Ruote
     #
     def processes(opts={})
 
-      wfids = nil
+      wfids = @context.storage.expression_wfids(opts)
 
-      if opts.size > 0
-
-        wfids = @context.storage.expression_wfids(opts)
-
-        return wfids.size if opts[:count]
-      end
-
-      list_processes(wfids, opts)
+      opts[:count] ? wfids.size : statuses(wfids, opts)
     end
 
     # Returns a list of processes or the process status of a given process
@@ -340,10 +333,10 @@ module Ruote
     #
     def process_wfids
 
-      @context.storage.ids('expressions').collect { |sfei|
-        sfei.split('!').last
-      }.uniq.sort
+      @context.storage.expression_wfids({})
     end
+
+    alias process_ids process_wfids
 
     # Shuts down the engine, mostly passes the shutdown message to the other
     # services and hope they'll shut down properly.
@@ -751,15 +744,15 @@ module Ruote
 
     # Used by #process and #processes
     #
-    def list_processes(wfids, opts)
+    def statuses(wfids, opts)
 
-      swfids = wfids ? wfids.collect { |wfid| /!#{wfid}-\d+$/ } : nil
+      swfids = wfids.collect { |wfid| /!#{wfid}-\d+$/ }
 
       exps = @context.storage.get_many('expressions', wfids).compact
       swis = @context.storage.get_many('workitems', wfids).compact
       errs = @context.storage.get_many('errors', wfids).compact
       schs = @context.storage.get_many('schedules', swfids).compact
-        # some slow storages needs the compaction... couch...
+        # some slow storages need the compaction... couch...
 
       errs = errs.collect { |err| ProcessError.new(err) }
       schs = schs.collect { |sch| Ruote.schedule_to_h(sch) }
@@ -779,13 +772,9 @@ module Ruote
         (by_wfid[sch['wfid']] ||= [ [], [], [], [] ])[3] << sch
       end
 
-      wfids = if wfids
-        wfids
-      else
-        wfids = by_wfid.keys.sort
-        wfids = wfids.reverse if opts[:descending]
-        wfids
-      end
+      wfids = by_wfid.keys.sort
+      wfids = wfids.reverse if opts[:descending]
+        # re-adjust list of wfids, only take what was found
 
       wfids.inject([]) { |a, wfid|
         info = by_wfid[wfid]
