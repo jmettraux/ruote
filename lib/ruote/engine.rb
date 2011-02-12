@@ -331,12 +331,12 @@ module Ruote
     # This operation is substantially less costly than Engine#processes (though
     # the 'how substantially' depends on the storage chosen).
     #
-    def process_wfids
+    def process_ids
 
       @context.storage.expression_wfids({})
     end
 
-    alias process_ids process_wfids
+    alias process_wfids process_ids
 
     # Shuts down the engine, mostly passes the shutdown message to the other
     # services and hope they'll shut down properly.
