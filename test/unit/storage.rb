@@ -28,6 +28,7 @@ class UtStorage < Test::Unit::TestCase
     #@s.add_type('errors')
 
     @s.purge_type!('errors')
+    @s.purge_type!('expressions')
     @s.purge_type!('msgs')
 
     @s.put(
@@ -38,14 +39,8 @@ class UtStorage < Test::Unit::TestCase
 
   def teardown
 
-    #%w[ errors msgs ].each do |type|
-    #  begin
-    #    @s.get_many(type).each { |d| @s.delete(d) }
-    #  rescue => e
-    #    p [ type, e ]
-    #  end
-    #end
     @s.purge_type!('errors')
+    @s.purge_type!('expressions')
     @s.purge_type!('msgs')
 
     @s.shutdown
@@ -330,6 +325,32 @@ class UtStorage < Test::Unit::TestCase
     assert_equal false, reserved.empty?
     assert_equal reserved.size, reserved.uniq.size
   end
+
+#  def test_put_stress
+#
+#    taoe = Thread.abort_on_exception
+#    Thread.abort_on_exception = true
+#
+#    id = '0_0!0a9f!20110212-nadanada'
+#
+#    @s.put('type' => 'expressions', '_id' => id)
+#
+#    threads = 2.times.collect {
+#      Thread.new do
+#        loop do
+#          doc = @s.get('expressions', id)
+#          sleep(rand * 0.01)
+#          p @s.put(doc)
+#        end
+#      end
+#    }
+#
+#    sleep 5
+#
+#    threads.each { |t| t.terminate }
+#
+#    Thread.abort_on_exception = taoe
+#  end
 
   protected
 
