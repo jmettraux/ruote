@@ -125,13 +125,13 @@ module Ruote::Exp
 
       case r = self.send("try_#{pers}")
         when true
-          false # don't go on
+          false # do not go on
         when Hash
           self.h = r
           self.send("do_#{@msg['action']}", @msg)
-          false # don't go on
+          false # do not go on
         else
-          true # success, please go on
+          true # success, do go on
       end
     end
   end
