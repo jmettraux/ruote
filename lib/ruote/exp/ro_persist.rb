@@ -42,13 +42,7 @@ module Ruote::Exp
 
       r = @context.storage.put(@h, :update_rev => true)
 
-      raise(
-        "initial_persist failed for " +
-        #"#{Ruote.to_storage_id(h.fei)} #{tree.first} // #{r.inspect}"
-        "#{Ruote.to_storage_id(h.fei)} #{tree[0]} #{tree[1].inspect}"
-      ) if r != nil
-
-      nil
+      raise_or_return('initial_persist failed', r)
     end
 
     def try_persist
@@ -56,7 +50,8 @@ module Ruote::Exp
       r = @context.storage.put(@h)
 
       #t = Thread.current.object_id.to_s[-3..-1]
-      #puts "+ per #{h.fei['expid']} #{tree.first} #{h._rev} #{t} -> #{r.class}"
+      #puts "+ per #{h.fei['expid']} #{tree.first} #{h._rev} t#{t} -> #{r.class}"
+
       #Ruote.p_caller('+ per') #if r != nil || h.fei['expid'] == '0_0'
 
       r
@@ -67,7 +62,8 @@ module Ruote::Exp
       r = @context.storage.delete(@h)
 
       #t = Thread.current.object_id.to_s[-3..-1]
-      #puts "- unp #{h.fei['expid']} #{tree.first} #{h._rev} #{t} -> #{r.class}"
+      #puts "- unp #{h.fei['expid']} #{tree.first} #{h._rev} t#{t} -> #{r.class}"
+
       #Ruote.p_caller('- unp') #if r != nil || h.fei['expid'] == '0_0'
 
       return r if r
@@ -82,48 +78,65 @@ module Ruote::Exp
       nil
     end
 
-    #--
-    # duplication ahead
-    #++
-
     def persist_or_raise
 
-      r = try_persist
-
-      raise(
-        "persist failed for " +
-        "#{Ruote.to_storage_id(h.fei)} #{tree.first} #{r.class}"
-      ) if r
+      p_or_raise(true)
     end
 
     def unpersist_or_raise
 
-      r = try_unpersist
-
-      raise(
-        "unpersist failed for " +
-        "#{Ruote.to_storage_id(h.fei)} #{tree.first} #{r.class}"
-      ) if r
+      p_or_raise(false)
     end
 
-    alias :persist :persist_or_raise
-    alias :unpersist :unpersist_or_raise
+    alias persist persist_or_raise
+    alias unpersist unpersist_or_raise
 
     def do_persist
 
-      do_p(:persist)
+      do_p(true)
     end
 
     def do_unpersist
 
-      do_p(:unpersist)
+      do_p(false)
     end
 
     protected
 
+    def raise_or_return(msg, r)
+
+      msg = msg.is_a?(String) ?
+        msg : (msg ? 'persist' : 'unpersist') + ' failed'
+
+      raise(
+        "#{msg} for " +
+        "#{Ruote.to_storage_id(h.fei)} #{tree[0]} #{tree[1].inspect} " +
+        'r(' + (r == true ? 'gone' : "rev : #{r['_rev']}") + ')'
+      ) if r
+
+      r
+    end
+
+    # Does persist or unpersist, returns nothing in particular.
+    #
+    # Will raise a runtime error if it fails (ie if it happens, there
+    # is something wrong with the storage implementation or the engine).
+    #
+    def p_or_raise(pers)
+
+      r = pers ? try_persist : try_unpersist
+
+      raise_or_return(pers, r)
+    end
+
+    # Does persist or unpersist, if successful then return true. If the
+    # expression is gone, return false.
+    # If there is a 'fresher' version of the expression, re-attempt and return
+    # false.
+    #
     def do_p(pers)
 
-      case r = self.send("try_#{pers}")
+      case r = pers ? try_persist : try_unpersist
         when true
           false # do not go on
         when Hash
