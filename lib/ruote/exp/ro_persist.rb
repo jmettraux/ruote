@@ -50,9 +50,8 @@ module Ruote::Exp
       r = @context.storage.put(@h)
 
       #t = Thread.current.object_id.to_s[-3..-1]
-      #puts "+ per #{h.fei['expid']} #{tree.first} #{h._rev} t#{t} -> #{r.class}"
-
-      #Ruote.p_caller('+ per') #if r != nil || h.fei['expid'] == '0_0'
+      #puts "+ per #{h.fei['expid']} #{tree[0]} #{h._rev} t#{t} -> #{r.class}"
+      #Ruote.p_caller('+ per')
 
       r
     end
@@ -62,9 +61,8 @@ module Ruote::Exp
       r = @context.storage.delete(@h)
 
       #t = Thread.current.object_id.to_s[-3..-1]
-      #puts "- unp #{h.fei['expid']} #{tree.first} #{h._rev} t#{t} -> #{r.class}"
-
-      #Ruote.p_caller('- unp') #if r != nil || h.fei['expid'] == '0_0'
+      #puts "- unp #{h.fei['expid']} #{tree[0]} #{h._rev} t#{t} -> #{r.class}"
+      #Ruote.p_caller('- unp')
 
       return r if r
 

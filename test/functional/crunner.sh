@@ -14,6 +14,7 @@ while [ $? == 0 ]
 do
   echo " *** $COUNT"
   ((COUNT=$COUNT + 1))
+  echo "time ruby -I. $TEST $*"
   time ruby -I. $TEST $*
 done
 

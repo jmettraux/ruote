@@ -28,7 +28,7 @@ class CtCancelTest < Test::Unit::TestCase
       # let reply immediately
     end
 
-    #noisy
+    noisy if ARGV.include?('-N')
 
     wfid = @engine0.launch(pdef)
 

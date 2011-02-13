@@ -29,7 +29,7 @@ class CtIteratorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
+    noisy if ARGV.include?('-N')
 
     wfid = @engine0.launch(pdef)
 
