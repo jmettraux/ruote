@@ -17,6 +17,8 @@ module FunctionalBase
 
   def setup
 
+    p self.class if ARGV.include?('-T') or ARGV.include?('-N')
+
     #require 'ruote/util/look'
     #Ruote::Look.dump_lsof
     #Ruote::Look.dump_lsof_count

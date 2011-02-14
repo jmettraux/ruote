@@ -289,7 +289,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     wfids = n.times.collect { @engine.launch(Ruote.define { alpha }) }
 
     n.times { @engine.wait_for(:alpha) }
-    @engine.wait_for(1)
+    #@engine.wait_for(1)
 
     @engine.processes.first.expressions.each do |exp|
       @engine.storage.delete(exp.h)
