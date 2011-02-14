@@ -217,6 +217,9 @@ class FtDollarTest < Test::Unit::TestCase
       set 'f:C' => '$v:c'
       set 'f:D' => '$f:nada'
       set 'f:E' => '$v:nada'
+      set 'f:F' => '$a'
+      set 'f:G' => '$nada'
+      set 'f:H' => '$a '
       filter :f => /^[a-c]$/, :del => true
     end
 
@@ -232,7 +235,10 @@ class FtDollarTest < Test::Unit::TestCase
         'B' => %w[ A B C ],
         'C' => %w[ venture capitalist ],
         'D' => '$f:nada',
-        'E' => '$v:nada'
+        'E' => '$v:nada',
+        'F' => %w[ A B C ],
+        'G' => '$nada',
+        'H' => '$a '
       },
       r['workitem']['fields'])
   end
