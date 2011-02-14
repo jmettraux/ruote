@@ -64,7 +64,8 @@ class FtLoseTest < Test::Unit::TestCase
 
     @engine.wait_for(12)
 
-    assert_equal "alpha\nbravo", @tracer.to_s
+    assert_match /alpha/, @tracer.to_s
+    assert_match /bravo/, @tracer.to_s
 
     ps = @engine.process(wfid)
 

@@ -93,9 +93,12 @@ module Ruote
 
       participant.consume(workitem)
 
-      @context.storage.put_msg('dispatched', 'fei' => msg['fei'])
-        # once the consume is done, asynchronously flag the
-        # participant expression as 'dispatched'
+      @context.storage.put_msg(
+        'dispatched',
+        'fei' => msg['fei'],
+        'participant_name' => workitem.participant_name)
+          # once the consume is done, asynchronously flag the
+          # participant expression as 'dispatched'
     end
 
     def do_threaded_dispatch(participant, msg)

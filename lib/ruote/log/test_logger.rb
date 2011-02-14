@@ -164,32 +164,34 @@ module Ruote
 
       interests.each do |interest|
 
-        satisfied = if interest == :inactive
+        satisfied = case interest
 
-          (FINAL_ACTIONS.include?(action) && @context.worker.inactive?)
+          when :inactive
 
-        elsif interest == :empty
+            (FINAL_ACTIONS.include?(action) && @context.worker.inactive?)
 
-          (action == 'terminated' && @context.storage.empty?('expressions'))
+          when :empty
 
-        elsif interest.is_a?(Symbol) # participant
+            (action == 'terminated' && @context.storage.empty?('expressions'))
 
-          (action == 'dispatch' && msg['participant_name'] == interest.to_s)
+          when Symbol
 
-        elsif interest.is_a?(Fixnum)
+            (action == 'dispatch' && msg['participant_name'] == interest.to_s)
 
-          interests.delete(interest)
+          when Fixnum
 
-          if (interest > 1)
-            interests << (interest - 1)
-            false
-          else
-            true
-          end
+            interests.delete(interest)
 
-        else # wfid
+            if (interest > 1)
+              interests << (interest - 1)
+              false
+            else
+              true
+            end
 
-          (FINAL_ACTIONS.include?(action) && msg['wfid'] == interest)
+          else # wfid
+
+            (FINAL_ACTIONS.include?(action) && msg['wfid'] == interest)
         end
 
         interests.delete(interest) if satisfied

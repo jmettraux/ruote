@@ -473,3 +473,5 @@
     http://groups.google.com/group/openwferu-users/browse_thread/thread/c51b94fb8bb685da
 [ ] worker shutdown initiated by engine (same thread)
 
+[ ] wait_for(:participant) what about 'dispatched' instead of 'dispatch' ?
+

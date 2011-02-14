@@ -32,7 +32,7 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
       # as well
 
     assert_equal(
-      2, logger.log.select { |e| e['participant_name'] == 'alpha' }.size)
+      3, logger.log.select { |e| e['participant_name'] == 'alpha' }.size)
   end
 
   def test_missing_participant_name

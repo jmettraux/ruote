@@ -83,7 +83,7 @@ module Ruote
     # Exposes the workitem fields directly.
     #
     def fields
-      @h['msg']['workitem']['fields']
+      @h['msg']['workitem'] && @h['msg']['workitem']['fields']
     end
 
     # Returns an instance of Ruote::Workitem
