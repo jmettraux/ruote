@@ -110,12 +110,13 @@ class FtWaitForTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
 
     seen = []
+    threads = []
 
-    Thread.new do
+    threads << Thread.new do
       @engine.wait_for(wfid)
       seen << 'this'
     end
-    Thread.new do
+    threads << Thread.new do
       @engine.wait_for(wfid)
       seen << 'that'
     end
@@ -124,9 +125,9 @@ class FtWaitForTest < Test::Unit::TestCase
 
     sp.reply(sp.first)
 
-    @engine.wait_for(wfid)
-
-    sleep 0.100
+    threads.each do |t|
+      t.join
+    end
 
     assert_equal %w[ that this ], seen.sort
     assert_equal [], @engine.context.logger.instance_variable_get(:@waiting)
