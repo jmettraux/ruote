@@ -98,11 +98,12 @@ module Ruote
       @subscribers << [ actions, subscriber ]
     end
 
+    # Shuts down this worker (makes sure it won't fetch further messages
+    # and schedules).
+    #
     def shutdown
 
       @running = false
-
-      return unless @run_thread
 
       begin
         @run_thread.join
