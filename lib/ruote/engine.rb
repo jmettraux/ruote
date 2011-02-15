@@ -430,7 +430,34 @@ module Ruote
 
     # Registers a participant in the engine.
     #
-    # Some examples :
+    # Takes the form
+    #
+    #   engine.register_participant name_or_regex, klass, opts={}
+    #
+    # With the form
+    #
+    #   engine.register_participant name_or_regex do |workitem|
+    #     # ...
+    #   end
+    #
+    # A BlockParticipant is automatically created.
+    #
+    #
+    # == name or regex
+    #
+    # When registering participants, strings or regexes are accepted. Behind
+    # the scenes, a regex is kept.
+    #
+    # Passing a string like "alain" will get ruote to automatically turn it
+    # into the following regex : /^alain$/.
+    #
+    # For finer control over this, pass a regex directly
+    #
+    #   engine.register_participant /^user-/, MyParticipant
+    #     # will match all workitems whose participant name starts with "user-"
+    #
+    #
+    # == some examples
     #
     #   engine.register_participant 'compute_sum' do |wi|
     #     wi.fields['sum'] = wi.fields['articles'].inject(0) do |s, (c, v)|
@@ -470,7 +497,8 @@ module Ruote
     #   engine.register_participant 'total', TotalParticipant
     #
     # Remember that the options (the hash that follows the class name), must be
-    # serialisable via JSON.
+    # serializable via JSON.
+    #
     #
     # == require_path and load_path
     #
