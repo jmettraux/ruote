@@ -47,6 +47,8 @@ module Ruote
     attr_reader :run_thread
     attr_reader :running
 
+    # Given a storage, creates a new instance of a Worker.
+    #
     def initialize(storage)
 
       @subscribers = []
@@ -93,6 +95,9 @@ module Ruote
       @run_thread.join if @run_thread
     end
 
+    # Loggers and trackers call this method when subscribing for events /
+    # actions in this worker.
+    #
     def subscribe(actions, subscriber)
 
       @subscribers << [ actions, subscriber ]
@@ -139,6 +144,9 @@ module Ruote
 
     protected
 
+    # One worker step, fetches schedules and triggers those whose time has
+    # came, then fetches msgs and processes them.
+    #
     def step
 
       now = Time.now.utc
@@ -192,6 +200,13 @@ module Ruote
       end
     end
 
+    # Given a schedule, attempts to trigger it.
+    #
+    # It first tries to
+    # reserve the schedule. If the reservation fails (another worker
+    # was successful probably), false is returned. The schedule is
+    # triggered if the reservation was successful, true is returned.
+    #
     def trigger(schedule)
 
       msg = Ruote.fulldup(schedule['msg'])
@@ -203,6 +218,16 @@ module Ruote
       true
     end
 
+    # Processes one msg.
+    #
+    # Will return false immediately if the msg reservation failed (another
+    # worker grabbed the message.
+    #
+    # Else will execute the action ordered in the msg, and return true.
+    #
+    # Exceptions in execution are intercepted here and passed to the
+    # engine's (context's) error_handler.
+    #
     def process(msg)
 
       return false unless @storage.reserve(msg)
@@ -243,6 +268,9 @@ module Ruote
       true
     end
 
+    # Given a successfully executed msg, now notifies all the subscribers
+    # interested in the kind of action the msg ordered.
+    #
     def notify(msg)
 
       @subscribers.each do |actions, subscriber|
@@ -254,6 +282,9 @@ module Ruote
     end
 
     # Works for both the 'launch' and the 'apply' msgs.
+    #
+    # Creates a new expression, gives and applies it with the
+    # workitem contained in the msg.
     #
     def launch(msg)
 
@@ -295,6 +326,8 @@ module Ruote
       exp.do_apply
     end
 
+    # Returns true if the msg is a "launch" (ie not a simply "apply").
+    #
     def is_launch?(msg, exp_class)
 
       return false if exp_class != Ruote::Exp::DefineExpression
@@ -302,6 +335,11 @@ module Ruote
       (msg['trigger'] == 'on_re_apply')
     end
 
+    # Handles a 'cancel_process' msg (translates it into a "cancel root
+    # expression of that process" msg).
+    #
+    # Also works for 'kill_process' msgs.
+    #
     def cancel_process(msg)
 
       root = @storage.find_root_expression(msg['wfid'])
@@ -317,7 +355,7 @@ module Ruote
         'flavour' => flavour)
     end
 
-    alias :kill_process :cancel_process
+    alias kill_process cancel_process
   end
 end
 
