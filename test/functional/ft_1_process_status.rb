@@ -288,9 +288,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     wfids = n.times.collect { @engine.launch(Ruote.define { alpha }) }
 
-    (n - 1).times { @engine.wait_for(:alpha) }
+    dispatched_wfid = nil
+    (n - 1).times { dispatched_wfid = @engine.wait_for(:alpha)['fei']['wfid'] }
 
-    @engine.processes.first.expressions.each do |exp|
+    @engine.ps(dispatched_wfid).expressions.each do |exp|
       @engine.storage.delete(exp.h)
     end
       # nuking all the expressions of a process instance
