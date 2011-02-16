@@ -286,12 +286,12 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     @engine.register_participant :alpha, Ruote::StorageParticipant
 
-    wfids = n.times.collect { @engine.launch(Ruote.define { alpha }) }
+    n.times.collect { @engine.launch(Ruote.define { alpha }) }
 
-    dispatched_wfid = nil
-    (n - 1).times { dispatched_wfid = @engine.wait_for(:alpha)['fei']['wfid'] }
+    while @engine.storage_participant.size < n; sleep 0.100; end
+    sleep 0.100
 
-    @engine.ps(dispatched_wfid).expressions.each do |exp|
+    @engine.ps(@engine.storage_participant.first.wfid).expressions.each do |exp|
       @engine.storage.delete(exp.h)
     end
       # nuking all the expressions of a process instance
