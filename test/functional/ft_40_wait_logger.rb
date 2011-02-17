@@ -48,7 +48,8 @@ class FtWaitLoggerTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    sleep 1.400 # worst case is ruote-couch
+    sleep 0.500
+    sleep 2.000 if @engine.storage.class.name.match(/Couch/)
 
     assert_equal 2, @engine.context.logger.instance_variable_get(:@seen).size
 
