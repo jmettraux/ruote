@@ -130,6 +130,8 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
+    #noisy
+
     @engine.register_participant :troublemaker, TroubleMaker
 
     assert_trace(%w[ 1 2 done. ], pdef)

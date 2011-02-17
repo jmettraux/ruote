@@ -101,7 +101,15 @@ module Ruote
           # participant expression as 'dispatched'
     end
 
+    # Wraps the call to do_dispatch in a thread.
+    #
     def do_threaded_dispatch(participant, msg)
+
+      msg = Rufus::Json.dup(msg)
+        #
+        # the thread gets its own copy of the message
+        # (especially important if the main thread does something with
+        # the message 'during' the dispatch)
 
       # Maybe at some point a limit on the number of dispatch threads
       # would be OK.
