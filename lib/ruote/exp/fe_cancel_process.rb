@@ -51,7 +51,7 @@ module Ruote::Exp
   #
   class CancelProcessExpression < FlowExpression
 
-    names :cancel_process
+    names :cancel_process, :terminate
 
     def apply
 

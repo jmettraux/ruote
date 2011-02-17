@@ -33,7 +33,7 @@ class EftCancelProcessTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       sequence do
         echo 'a'
-        cancel_process :unless => 'true == true'
+        terminate :unless => 'true == true'
         echo 'b'
       end
     end

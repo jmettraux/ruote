@@ -4,6 +4,7 @@
 
 == ruote - 2.2.0    not yet released
 
+- aliased 'cancel_process' to 'terminate'
 - Engine#leftovers (Thanks Iuri)
 - $x, $f:x and $v:y vs ${x}, ${f:x} and ${v:y} (literally)
 - :filter common attribute
