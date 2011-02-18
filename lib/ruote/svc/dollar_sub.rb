@@ -236,8 +236,10 @@ module Ruote
       # The FlowExpression for which the rendering/substitution is occurring.
       #
       def flow_expression
+
         @dict.fexp
       end
+
       alias fe flow_expression
       alias fexp flow_expression
 
@@ -245,6 +247,7 @@ module Ruote
       # rendering/substitution is occurring.
       #
       def fei
+
         @dict.fexp.fei
       end
 
@@ -253,6 +256,7 @@ module Ruote
       # The engine_id, if any.
       #
       def engine_id
+
         @dict.fexp.context.engine_id
       end
 
