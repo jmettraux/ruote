@@ -286,10 +286,11 @@
     like WaitLogger only remembers 147 msgs...
 [o] StorageHistory : add a method to list all wfids (for by_wfid)
 [o] DefaultHistory : add a method to list all wfids (for by_wfid)
+[x] issue with ruote-kit and inpa participants...
 
 [ ] exp : exp (restricted form of eval ?) (is it apply ?)
-[ ] exp : filter
-[ ] exp : filter-definition
+[x] exp : filter
+[x] exp : filter-definition
 [x] exp : parameter
 [ ] exp : log : or could it be a participant ?
 
@@ -430,7 +431,6 @@
 [ ] console for InformatiQ / console or dashboard or tool ?
 [ ] pooltool.ru : there are already storage copy methods
 
-[ ] issue with ruote-kit and inpa participants...
 [ ] BlockParticipant : proc.to_source thanks to sourcify
 
 [ ] doc : enhance doc on conditional (and, empty, null, ...)
