@@ -12,6 +12,7 @@ require_json
 require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
 
 require 'ruote/fei'
+require 'ruote/participant'
 
 
 #
