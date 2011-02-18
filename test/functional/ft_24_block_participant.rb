@@ -72,8 +72,6 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     match = if defined?(DataMapper) && DataMapper::VERSION < '1.0.0'
       /^$/
-    elsif Ruote::JAVA
-      /^$/
     else
       /\b#{Time.now.year}\b/
     end
