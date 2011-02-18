@@ -30,6 +30,7 @@ class UtStorage < Test::Unit::TestCase
     @s.purge_type!('errors')
     @s.purge_type!('expressions')
     @s.purge_type!('msgs')
+    @s.purge_type!('workitems')
 
     @s.put(
       '_id' => 'toto',
@@ -42,6 +43,7 @@ class UtStorage < Test::Unit::TestCase
     @s.purge_type!('errors')
     @s.purge_type!('expressions')
     @s.purge_type!('msgs')
+    @s.purge_type!('workitems')
 
     @s.shutdown
   end
@@ -326,31 +328,40 @@ class UtStorage < Test::Unit::TestCase
     assert_equal reserved.size, reserved.uniq.size
   end
 
-#  def test_put_stress
-#
-#    taoe = Thread.abort_on_exception
-#    Thread.abort_on_exception = true
-#
-#    id = '0_0!0a9f!20110212-nadanada'
-#
-#    @s.put('type' => 'expressions', '_id' => id)
-#
-#    threads = 2.times.collect {
-#      Thread.new do
-#        loop do
-#          doc = @s.get('expressions', id)
-#          sleep(rand * 0.01)
-#          p @s.put(doc)
-#        end
-#      end
-#    }
-#
-#    sleep 5
-#
-#    threads.each { |t| t.terminate }
-#
-#    Thread.abort_on_exception = taoe
-#  end
+  def test_by_field
+
+    return unless @s.respond_to?(:by_field)
+
+    load_workitems
+
+    assert_equal 3, @s.by_field('workitems', 'place', 'kyouto').size
+    assert_equal 1, @s.by_field('workitems', 'place', 'sendai').size
+    assert_equal Hash, @s.by_field('workitems', 'place', 'sendai').first.class
+  end
+
+  def test_by_participant
+
+    return unless @s.respond_to?(:by_participant)
+
+    load_workitems
+
+    assert_equal 2, @s.by_participant('workitems', 'fujiwara', {}).size
+    assert_equal 1, @s.by_participant('workitems', 'shingen', {}).size
+    assert_equal Hash, @s.by_participant('workitems', 'shingen', {}).first.class
+  end
+
+  def test_query_workitems
+
+    return unless @s.respond_to?(:query_workitems)
+
+    load_workitems
+
+    assert_equal 3, @s.query_workitems('place' => 'kyouto').size
+    assert_equal 1, @s.query_workitems('place' => 'kyouto', 'at' => 'kamo').size
+
+    assert_equal(
+      Ruote::Workitem, @s.query_workitems('place' => 'kyouto').first.class)
+  end
 
   protected
 
@@ -362,6 +373,30 @@ class UtStorage < Test::Unit::TestCase
         'type' => 'errors',
         'msg' => "whatever #{i}")
     end
+  end
+
+  def put_workitem(wfid, participant_name, fields)
+
+    @s.put(
+      'type' => 'workitems',
+      '_id' => "wi!0_0!12ff!#{wfid}",
+      'participant_name' => participant_name,
+      'wfid' => wfid,
+      'fields' => fields)
+  end
+
+  def load_workitems
+
+    put_workitem(
+      '20110218-nadanada', 'fujiwara', 'place' => 'kyouto')
+    put_workitem(
+      '20110218-nedenada', 'fujiwara', 'place' => 'kyouto', 'at' => 'kamo')
+    put_workitem(
+      '20110218-nadanodo', 'taira', 'place' => 'kyouto')
+    put_workitem(
+      '20110218-nodonada', 'date', 'place' => 'sendai')
+    put_workitem(
+      '20110218-nadanudu', 'shingen', 'place' => 'nagoya')
   end
 end
 
