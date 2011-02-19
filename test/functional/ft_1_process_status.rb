@@ -310,7 +310,8 @@ class FtProcessStatusTest < Test::Unit::TestCase
       { '_id' => '0!f!y', 'type' => 'errors', 'fei' => { 'wfid' => 'y' } },
       { '_id' => '0!f!a', 'type' => 'workitems', 'fei' => { 'wfid' => 'a' } },
       { '_id' => '0!f!a', 'type' => 'expressions', 'fei' => { 'wfid' => 'a' } },
-      { '_id' => '0!f!z', 'type' => 'schedules', 'fei' => { 'wfid' => 'z' } }
+      { '_id' => '0!f!z', 'type' => 'schedules', 'fei' => { 'wfid' => 'z' },
+        'at' => Ruote.time_to_utc_s(Time.now + 24 * 3600) }
     ].each do |doc|
       @engine.storage.put(doc)
     end
