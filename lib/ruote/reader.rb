@@ -171,11 +171,15 @@ module Ruote
       eval(s)
 
     rescue Exception => e
+      #
+      # have to catch everything (SyntaxError included)
+
       #puts '=' * 80
       #p s
       #puts '-' * 80
       #puts e
       #e.backtrace.each { |l| puts l }
+
       raise ArgumentError.new('probably not ruby')
     end
 

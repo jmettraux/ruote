@@ -260,7 +260,7 @@ module Ruote
 
         notify(msg)
 
-      rescue Exception => exception
+      rescue => exception
 
         @context.error_handler.msg_handle(msg, exception)
       end

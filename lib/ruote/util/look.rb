@@ -79,11 +79,7 @@ module Ruote
         next if uninteresting.include?(o.class)
 
         stats = h[o.class.to_s] ||= [ 0, 0, 0 ]
-        size = begin
-          Marshal.dump(o).size
-        rescue Exception => e
-          1
-        end
+        size = (Marshal.dump(o).size rescue 1)
 
         stats[0] += 1
         stats[1] = size if size > stats[1]

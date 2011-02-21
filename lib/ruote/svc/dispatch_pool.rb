@@ -61,7 +61,7 @@ module Ruote
 
       begin
         participant.cancel(Ruote::FlowExpressionId.new(msg['fei']), flavour)
-      rescue Exception => e
+      rescue => e
         raise(e) if flavour != 'kill'
       end
 
@@ -120,7 +120,7 @@ module Ruote
 
           do_dispatch(participant, msg)
 
-        rescue Exception => exception
+        rescue => exception
           @context.error_handler.msg_handle(msg, exception)
         end
       end

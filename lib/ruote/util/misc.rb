@@ -82,7 +82,7 @@ module Ruote
       value = fulldup(value)
       begin
         o.instance_variable_set(v, value)
-      rescue Exception => e
+      rescue => e
         # ignore, must be readonly
       end
     end
