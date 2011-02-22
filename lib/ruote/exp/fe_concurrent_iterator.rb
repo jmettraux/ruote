@@ -153,6 +153,7 @@ module Ruote::Exp
         h.list_size += 1
 
         workitem = Ruote.fulldup(h.applied_workitem)
+        #workitem = Rufus::Json.dup(h.applied_workitem)
 
         variables = { 'ii' => h.list_size - 1 }
 

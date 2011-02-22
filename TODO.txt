@@ -458,7 +458,7 @@
 [ ] process supervise other process, listen...
     launch a process with a designed 'supervisor' ?
 
-[ ] ci : ruote-amqp
+[x] ci : ruote-amqp
 [ ] ci : ruote-mongodb
 [ ] ci : jruby
 
