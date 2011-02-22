@@ -84,6 +84,7 @@ module Ruote::Exp
       @context = context
 
       @msg = nil
+        # contains generally the msg the expression got instantiated for
 
       self.h = h
 
@@ -215,7 +216,9 @@ module Ruote::Exp
     # Called by the worker when it has just created this FlowExpression and
     # wants to apply it.
     #
-    def do_apply
+    def do_apply(msg)
+
+      @msg = Ruote.fulldup(msg)
 
       if not Condition.apply?(attribute(:if), attribute(:unless))
 
@@ -364,6 +367,8 @@ module Ruote::Exp
     #
     def do_cancel(msg)
 
+      @msg = Ruote.fulldup(msg)
+
       flavour = msg['flavour']
 
       return if h.state == 'cancelling' && flavour != 'kill'
@@ -461,6 +466,8 @@ module Ruote::Exp
     # the on_reply will get triggered).
     #
     def do_fail(msg)
+
+      @msg = Ruote.fulldup(msg)
 
       @h['state'] = 'failing'
       @h['applied_workitem'] = msg['workitem']

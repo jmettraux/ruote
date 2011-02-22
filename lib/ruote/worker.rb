@@ -323,7 +323,7 @@ module Ruote
       exp = exp_class.new(@context, exp_hash.merge!('original_tree' => tree))
 
       exp.initial_persist
-      exp.do_apply
+      exp.do_apply(msg)
     end
 
     # Returns true if the msg is a "launch" (ie not a simply "apply").
