@@ -490,7 +490,7 @@ module Ruote::Exp
     def launch_sub(pos, subtree, opts={})
 
       i = h.fei.merge(
-        'subid' => Ruote.generate_subid(subtree),
+        'subid' => Ruote.generate_subid(h.fei.inspect),
         'expid' => pos)
 
       #p '=== launch_sub ==='
@@ -682,7 +682,7 @@ module Ruote::Exp
 
       child_fei = h.fei.merge(
         'expid' => "#{h.fei['expid']}_#{child_index}",
-        'subid' => Ruote.generate_subid(self))
+        'subid' => Ruote.generate_subid(h.fei.inspect))
 
       h.children << child_fei unless forget
 

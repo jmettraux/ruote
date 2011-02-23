@@ -300,7 +300,7 @@ module Ruote
         'fei' => msg['fei'] || {
           'engine_id' => @context.engine_id,
           'wfid' => msg['wfid'],
-          'subid' => Ruote.generate_subid(msg),
+          'subid' => Ruote.generate_subid(msg.inspect),
           'expid' => '0' },
         'parent_id' => msg['parent_id'],
         'original_tree' => tree,

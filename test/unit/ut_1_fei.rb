@@ -151,5 +151,15 @@ class UtFeiTest < Test::Unit::TestCase
     assert_equal 'd7ca677379e2a1f4933402b9196cf2a1', fei.h['subid']
     assert_nil fei.h['sub_wfid']
   end
+
+  def test_generate_subid
+
+    n = 21_000
+    h = '0_0'
+
+    ids = n.times.collect { Ruote.generate_subid(h) }
+
+    assert_equal n, ids.uniq.size, "subid generation seems weak"
+  end
 end
 

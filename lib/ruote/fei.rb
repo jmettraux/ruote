@@ -73,13 +73,10 @@ module Ruote
   # expression receives such an id (it's useful for cursors, loops and
   # forgotten branches).
   #
-  # The salt's object_id is used when composing the string that gets
-  # digested. One should not pass always the same object as salt.
-  #
   def self.generate_subid(salt)
 
     Digest::MD5.hexdigest(
-      "#{salt.object_id}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
+      "#{rand}-#{salt}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
   end
 
   #
