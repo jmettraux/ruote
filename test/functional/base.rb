@@ -13,6 +13,16 @@ require File.join(File.dirname(__FILE__), 'storage_helper.rb')
 require 'ruote'
 
 
+trap 'USR2' do
+
+  IRB.setup(nil)
+  ws = IRB::WorkSpace.new(binding)
+  irb = IRB::Irb.new(ws)
+  IRB::conf[:MAIN_CONTEXT] = irb.context
+  irb.eval_input
+end
+
+
 module FunctionalBase
 
   def setup
@@ -31,14 +41,16 @@ module FunctionalBase
           determine_storage(
             's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
 
-    #p @engine.storage.class
+    $_test = self
+    $_engine = @engine
+      #
+      # handy when hijacking (https://github.com/ileitch/hijack)
+      # or flinging USR2 at the test process
 
     @tracer = Tracer.new
 
     tracer = @tracer
-    @engine.context.instance_eval do
-      @tracer = tracer
-    end
+    @engine.context.instance_eval { @tracer = tracer }
 
     @engine.add_service('tracer', @tracer)
     @engine.add_service('stash', {})
