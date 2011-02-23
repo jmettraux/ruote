@@ -15,12 +15,17 @@ require 'ruote'
 
 trap 'USR2' do
 
+  require 'irb'
+  require 'irb/completion'
+
   IRB.setup(nil)
   ws = IRB::WorkSpace.new(binding)
   irb = IRB::Irb.new(ws)
   IRB::conf[:MAIN_CONTEXT] = irb.context
   irb.eval_input
 end
+
+puts "pid #{$$}"
 
 
 module FunctionalBase
