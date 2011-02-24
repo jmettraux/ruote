@@ -280,7 +280,7 @@ module Ruote
         s << "     #{e.fei.to_storage_id}"
         s << "       | #{e.name}"
         s << "       | #{e.attributes.inspect}"
-        s << "       `-parent--> #{e.h.parent_id.inspect}"
+        s << "       `-parent--> #{e.h.parent_id ? e.parent_id.to_storage_id : 'nil'}"
       end
       s << "   schedules : #{@schedules.size}"
       s << "   stored workitems : #{@stored_workitems.size}"
