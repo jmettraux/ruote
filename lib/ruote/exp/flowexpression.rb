@@ -181,6 +181,8 @@ module Ruote::Exp
       fei = msg['fei']
       action = msg['action']
 
+      p msg unless fei
+
       if action == 'reply' && fei['engine_id'] != context.engine_id
         #
         # the reply has to go to another engine, let's locate the
@@ -227,14 +229,15 @@ module Ruote::Exp
 
       if attribute(:forget).to_s == 'true'
 
-        i = h.parent_id
+        pi = h.parent_id
         wi = Ruote.fulldup(h.applied_workitem)
 
         h.variables = compile_variables
         h.parent_id = nil
         h.forgotten = true
 
-        @context.storage.put_msg('reply', 'fei' => i, 'workitem' => wi)
+        @context.storage.put_msg('reply', 'fei' => pi, 'workitem' => wi) if pi
+          # reply to parent immediately (if there is a parent)
 
       elsif attribute(:lose).to_s == 'true'
 

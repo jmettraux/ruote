@@ -117,5 +117,37 @@ class FtForgetTest < Test::Unit::TestCase
 
     assert_not_nil @engine.process(wfid)
   end
+
+  # As reported by Nando Sola
+  #
+  # http://groups.google.com/group/openwferu-users/browse_thread/thread/50308e9dce8359e6
+  #
+  def test_forget_on_forget
+
+    pdef = Ruote.define do
+      concurrence do
+        listen :to => 'bravo', :upon =>'reply', :wfid => true do
+          sequence :forget => true do
+            alpha
+          end
+        end
+        bravo
+      end
+    end
+
+    @engine.register do
+      catchall Ruote::NoOpParticipant
+    end
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(wfid)
+
+    assert_equal(
+      [],
+      @engine.history.all.select { |e| e['action'] == 'error_intercepted' })
+  end
 end
 
