@@ -240,16 +240,175 @@ module Ruote::Exp
   #
   # == transformations
   #
-  # TODO
+  # So far, only the validation aspect of filter was shown. They can also be
+  # used to transform the workitem.
+  #
+  #   filter 'x', :type => 'string', :or => 'missing'
+  #     # will replace the value of x by 'missing' if it's not a string
+  #
+  #   filter 'z', :remove => true
+  #     # will remove the workitem field z
+  #
+  #   filter 'a,b,c', 'set' => '---'
+  #     # sets the field a, b and c to '---'
+  #
+  # === 'remove'
+  #
+  # Removes a field (or a subfield).
+  #
+  #   filter 'z', :remove => true
+  #
+  # === 'default'
+  #
+  # If there is no value for a field, sets it
+  #
+  #   filter 'x', 'default' => 0
+  #     # will set x to 0, if it's not set or its value is nil
+  #
+  #   filter '/^user-.+/', 'default' => 'nemo'
+  #     # will set any 'user-...' field to 'nemo' if its value is nil
+  #
+  # === 'or'
+  #
+  # 'or' combines with a condition. The 'or' value is set if the condition
+  # evaluates to false.
+  #
+  # Using 'or' without a condition makes it equivalent to a 'default'.
+  #
+  #   filter 'x', 'or' => 0
+  #     # will set x to 0, if it's not set or its value is nil
+  #
+  #   filter 'x', 'type' => 'number', 'or' => 0
+  #     # if x is not set or is not a number, will set it to 0
+  #
+  # Multiple conditions are OK
+  #
+  #   filter 'x', 't' => 'array', 'has' => 'cat', 'or' => []
+  #     # if x is an array and has the 'cat' element, nothing will happen.
+  #     # Else x will be set to [].
+  #
+  # === 'and'
+  #
+  # 'and' is much like 'or', but it triggers if the condition evaluates to true.
+  #
+  #   filter 'x', 'type' => number, 'and' => '*removed*'
+  #     # if x is a number, it will replace it with '*removed*'
+  #
+  # === 'set'
+  #
+  # Like 'remove' removes unconditionally, 'set' sets a field unconditionally.
+  #
+  #   filter 'x', 'set' => 'blue'
+  #     # sets the field x to 'blue'
+  #
+  # === copy, merge, migrate / to, from
+  #
+  #   # in :   { 'x' => 'y' }
+  #   filter 'x', 'copy_to' => 'z'
+  #   # out :  { 'x' => 'y', 'z' => 'y' }
+  #
+  #   # in :   { 'x' => 'y' }
+  #   filter 'z', 'copy_from' => 'x'
+  #   # out :  { 'x' => 'y', 'z' => 'y' }
+  #
+  #   # in :   { 'x' => 'y' }
+  #   filter 'z', 'copy_from' => 'x'
+  #   # out :  { 'x' => 'y', 'z' => 'y' }
+  #
+  #   # in :   { 'a' => %w[ x y ]})
+  #   filter '/a\.(.+)/', 'copy_to' => 'b\1'
+  #   # out :  { 'a' => %w[ x y ], 'b0' => 'x', 'b1' => 'y' },
+  #
+  #   # in :   { 'a' => %w[ x y ]})
+  #   filter '/a!(.+)/', 'copy_to' => 'b\1'
+  #   # out :  { 'a' => %w[ x y ], 'b0' => 'x', 'b1' => 'y' },
+  #     #
+  #     # '!' is used as a replacement for '\.' in regexes
+  #
+  #   # in :   { 'a' => 'b', 'c' => 'd', 'source' => [ 7 ] })
+  #   filter '/^.$/', 'copy_from' => 'source.0'
+  #   # out :  { 'a' => 7, 'c' => 7, 'source' => [ 7 ] },
+  #
+  # ...
+  #
+  # 'copy_to' and 'copy_from' copy whole fields. 'move_to' and 'move_from'
+  # move fields.
+  #
+  # 'merge_to' and 'merge_from' merge hashes (or add values to
+  # arrays), 'push_to' and 'push_from' are aliases for 'merge_to' and
+  # 'merge_from' respectively.
+  #
+  # 'migrate_to' and 'migrate_from' act like 'merge_to' and 'merge_from' but
+  # delete the merge source afterwards (like 'move').
+  #
+  # All those hash/array filter operations understand the '.' field, meaning
+  # the hash being filtered itself.
+  #
+  #   # in :   { 'x' => { 'a' => 1, 'b' => 2 } })
+  #   filter 'x', 'merge_to' => '.'
+  #   # out :  { 'x' => { 'a' => 1, 'b' => 2 }, 'a' => 1, 'b' => 2 },
   #
   # === access to 'previous versions' with ~ and ~~
   #
-  # TODO
+  # Before a filter is applied, a copy of the hash to filter is placed under
+  # the '~' key in the hash itself.
+  #
+  # this filter will at first set the field x to 0, and then reset it to its
+  # original value :
+  #
+  #   filter :in => [
+  #     { :field => 'x', :set => 0 },
+  #     { :field => 'x', :copy_from => '~.x' }
+  #   ]
+  #
+  # For the 'filter' expression, '~~' contains the same thing as '~', but
+  # for the :filter attribute, it contains the hash (workitem fields) as
+  # it was when the expression with the :filter attribute got reached (applied).
+  #
+  # === 'restore' and 'restore_from'
+  #
+  # Since these two filter operations leverage '~~', they're not very useful
+  # for the 'filter' expression. But they make lots of sense for the :filter
+  # attribute.
+  #
+  #   # in :   { 'x' => 'a', 'y' => 'a' },
+  #   filter :in => [
+  #     { 'field' => 'x', 'set' => 'X' },
+  #     { 'field' => 'y', 'set' => 'Y' },
+  #     { 'field' => '/^.$/', 'restore' => true } ]
+  #   # out :   { 'x' => 'a', 'y' => 'a' },
+  #
+  #   # in :   { 'x' => 'a', 'y' => 'a' },
+  #   filter :in => [
+  #     { 'field' => 'A', 'set' => {} },
+  #     { 'field' => '.', 'merge_to' => 'A' },
+  #     { 'field' => 'x', 'set' => 'X' },
+  #     { 'field' => 'y', 'set' => 'Y' },
+  #     { 'field' => '/^[a-z]$/', 'restore_from' => 'A' },
+  #     { 'field' => 'A', 'delete' => true } ]
+  #   # out :  { 'x' => 'a', 'y' => 'a' })
   #
   #
   # == short forms
   #
-  # TODO
+  # Could help make filters a bit more compact.
+  #
+  # * 'size', 'sz'
+  # * 'empty', 'e'
+  # * 'in', 'i'
+  # * 'has', 'h'
+  # * 'type', 't'
+  # * 'match', 'm'
+  # * 'smatch', 'sm'
+  # * 'valid', 'v'
+  #
+  # * 'remove', 'rm', 'delete', 'del'
+  # * 'set', 's'
+  # * 'copy_to', 'cp_to'
+  # * 'move_to', 'mv_to'
+  # * 'merge_to', 'mg_to'
+  # * 'migrate_to', 'mi_to'
+  # * 'restore', 'restore_from', 'rs'
   #
   class FilterExpression < FlowExpression
 
