@@ -201,52 +201,55 @@ module Ruote
     alias _move_from _copy_from
     alias _mv_from _copy_from
 
-    def _merge_to(field, value, matches, m, v)
+    # Used by both _merge_to and _merge_from
+    #
+    def do_merge(field, target, value)
 
-      target = Ruote.lookup(@hash, v)
+      value = Rufus::Json.dup(value)
 
-      return unless target.respond_to?(:merge!)
-
-      vv = Rufus::Json.dup(value)
-
-      if vv.is_a?(Hash)
-        target.merge!(vv)
+      if target.is_a?(Array)
+        target.push(value)
+      elsif value.is_a?(Hash)
+        target.merge!(value)
       else # deal with non Hash
-        target[field.split('.').last] = vv
+        target[field.split('.').last] = value
       end
 
       target.delete('~')
       target.delete('~~')
+    end
+
+    def _merge_to(field, value, matches, m, v)
+
+      target = Ruote.lookup(@hash, v)
+
+      return unless target.respond_to?(:merge!) or target.is_a?(Array)
+
+      do_merge(field, target, value)
+
       Ruote.unset(@hash, field) if m == 'migrate_to' or m == 'mi_to'
 
       nil
     end
     alias _mg_to _merge_to
+    alias _push_to _merge_to
+    alias _pu_to _merge_to
     alias _migrate_to _merge_to
     alias _mi_to _merge_to
 
     def _merge_from(field, value, matches, m, v)
 
-      return unless value.respond_to?(:merge!)
+      return unless value.respond_to?(:merge!) or value.is_a?(Array)
 
-      vv = Rufus::Json.dup(Ruote.lookup(@hash, v))
+      do_merge(v, value, Ruote.lookup(@hash, v))
 
-      if vv.is_a?(Hash)
-        value.merge!(vv)
-      else # deal with non Hash
-        value[v.split('.').last] = vv
-      end
-
-      value.delete('~')
-      value.delete('~~')
-
-      if v != '.' and (m == 'migrate_from' or m == 'mi_from')
-        Ruote.unset(@hash, v)
-      end
+      Ruote.unset(@hash, v) if v != '.' and m.match(/^mi(grate)?_from$/)
 
       nil
     end
     alias _mg_from _merge_from
+    alias _push_from _merge_from
+    alias _pu_from _merge_from
     alias _migrate_from _merge_from
     alias _mi_from _merge_from
 

@@ -59,11 +59,19 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 1 },
       [ { 'field' => 'x', 'default' => 1 } ],
       {})
+    assert_filter(
+      { 'x' => 1 },
+      [ { 'field' => 'x', 'default' => 1 } ],
+      { 'x' => nil })
 
     assert_filter(
       {},
       [ { 'field' => '/.+/', 'default' => 1 } ],
       {})
+    assert_filter(
+      { 'x' => 1 },
+      [ { 'field' => '/.+/', 'default' => 1 } ],
+      { 'x' => nil })
 
     assert_filter(
       { 'x' => 2 },
@@ -267,7 +275,28 @@ class UtFilterTest < Test::Unit::TestCase
     assert_filter(
       { 'x' => { 'a' => 1, 'y' => 2 }, 'y' => 2 },
       [ { 'field' => 'y', 'mg_to' => 'x' } ],
-      { 'x' => { 'a' => 1, }, 'y' => 2 })
+      { 'x' => { 'a' => 1 }, 'y' => 2 })
+
+    assert_filter(
+      { 'x' => { 'a' => 1 }, 'y' => 2 },
+      [ { 'field' => 'x', 'mg_to' => 'y' } ],
+      { 'x' => { 'a' => 1 }, 'y' => 2 })
+  end
+
+  def test_merge_to__array # push too
+
+    assert_filter(
+      { 'x' => [ 'a', 'b', 2 ], 'y' => 2 },
+      [ { 'field' => 'y', 'mg_to' => 'x' } ],
+      { 'x' => [ 'a', 'b' ], 'y' => 2 })
+    assert_filter(
+      { 'x' => [ 'a', 'b', 2 ], 'y' => 2 },
+      [ { 'field' => 'y', 'push_to' => 'x' } ],
+      { 'x' => [ 'a', 'b' ], 'y' => 2 })
+    assert_filter(
+      { 'x' => [ 'a', 'b', 2 ], 'y' => 2 },
+      [ { 'field' => 'y', 'pu_to' => 'x' } ],
+      { 'x' => [ 'a', 'b' ], 'y' => 2 })
   end
 
   def test_merge_from__non_hash
@@ -276,6 +305,22 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => { 'a' => 1, 'y' => 2 }, 'y' => 2 },
       [ { 'field' => 'x', 'merge_from' => 'y' } ],
       { 'x' => { 'a' => 1 }, 'y' => 2 })
+  end
+
+  def test_merge_from__array
+
+    assert_filter(
+      { 'x' => [ 'a', 'b', 2 ], 'y' => 2 },
+      [ { 'field' => 'x', 'merge_from' => 'y' } ],
+      { 'x' => [ 'a', 'b' ], 'y' => 2 })
+    assert_filter(
+      { 'x' => [ 'a', 'b', 2 ], 'y' => 2 },
+      [ { 'field' => 'x', 'push_from' => 'y' } ],
+      { 'x' => [ 'a', 'b' ], 'y' => 2 })
+    assert_filter(
+      { 'x' => [ 'a', 'b', 2 ], 'y' => 2 },
+      [ { 'field' => 'x', 'pu_from' => 'y' } ],
+      { 'x' => [ 'a', 'b' ], 'y' => 2 })
   end
 
   def test_merge_dot
