@@ -287,6 +287,7 @@
 [o] StorageHistory : add a method to list all wfids (for by_wfid)
 [o] DefaultHistory : add a method to list all wfids (for by_wfid)
 [x] issue with ruote-kit and inpa participants...
+[x] .nil? .empty? .set? for "${x}.nil?"
 
 [ ] exp : exp (restricted form of eval ?) (is it apply ?)
 [x] exp : filter
@@ -438,15 +439,13 @@
 [ ] doc : document on_error = retry and on_error = pass
 [ ] doc : add piece of doc about running workers on their own
 
-[ ] .nil? .empty? .set? for "${x}.nil?"
-
 [ ] listen to errors {in|out}
     well... there is already on_error...
 [o] listen to tags {entering|leaving}
 [x] listen to launch/terminate, listen :process => :x, :upon => 'launching'
     you can now set :tag on a subprocess' define
 [ ] listen to [un]set variable (the events are already in there)
-    not really necessary...
+    not really necessary... there is already 'once' (when)
 [o] listen condition ? :when => '${x} == y', :constraint, :only, ...
     it's :where and it's not documented :-( but it's tested :-)
 [o] engine#on_terminate, similar to on_error
