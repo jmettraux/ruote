@@ -195,6 +195,26 @@ class EftFilterTest < Test::Unit::TestCase
       })
   end
 
+  def test_record__complex
+
+    pdef = Ruote.process_definition do
+      filter :in => [
+        { :field => 'x', :type => 'string', :record => true },
+        { :field => 'y', :type => 'number' }
+      ]
+    end
+
+    assert_terminates(
+      pdef,
+      { 'x' => 1 },
+      { '__validation_errors__' => [
+          [ { 'type' => 'string', 'field' => 'x' }, 'x', 1 ],
+          [ { 'type' => 'number', 'field' => 'y' }, 'y', nil ]
+        ],
+        'x' => 1
+      })
+  end
+
   def test_record_in_designated_field
 
     pdef = Ruote.process_definition do

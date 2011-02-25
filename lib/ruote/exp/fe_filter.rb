@@ -237,6 +237,16 @@ module Ruote::Exp
   #
   # the participant 'after' will only see the result of the second filter.
   #
+  # For complex filters, if the first rule has :record => true, the
+  # 'recording' will happen for the whole filter.
+  #
+  #   sequence do
+  #     filter :in => [
+  #       { :field => 'x', :type => 'string', :record => true },
+  #       { :field => 'y', :type => 'number' } ]
+  #     participant 'after'
+  #   end
+  #
   #
   # == transformations
   #
@@ -419,7 +429,6 @@ module Ruote::Exp
   #
   # The 'restore' operation makes lots of sense for the :filter attribute
   # though.
-  #
   #
   class FilterExpression < FlowExpression
 
