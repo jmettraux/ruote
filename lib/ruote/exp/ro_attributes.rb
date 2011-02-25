@@ -26,7 +26,7 @@
 module Ruote::Exp
 
   #
-  # Those methods are mixed in FlowExpression. They were put here to offload
+  # Those methods are added in FlowExpression. They were put here to offload
   # FlowExpression and especially, to gather them around their attribute topic.
   #
   class FlowExpression

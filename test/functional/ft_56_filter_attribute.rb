@@ -199,5 +199,32 @@ class FtFilterAttributeTest < Test::Unit::TestCase
     assert_equal 1, @engine.ps(wfid).errors.size
     assert_equal '', @tracer.to_s
   end
+
+  class DdFilterParticipant
+    def consume(workitem)
+      workitem.fields[workitem.participant_name] =
+        workitem.fields['__filter_direction__']
+    end
+  end
+
+  def test_filter_participant__in_and_out
+
+    pdef = Ruote.define do
+      alpha :filter => { :in => 'f0', :out => 'f1' }
+    end
+
+    @engine.register :alpha, AlphaParticipant
+    @engine.register :f0, DdFilterParticipant
+    @engine.register :f1, DdFilterParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal({ 'f0' => 'in', 'f1' => 'out' }, r['workitem']['fields'])
+    assert_equal('fields: dispatched_at f0 params', @tracer.to_s)
+  end
 end
 

@@ -60,6 +60,7 @@ module Ruote::Exp
     require 'ruote/exp/ro_persist'
     require 'ruote/exp/ro_attributes'
     require 'ruote/exp/ro_variables'
+    require 'ruote/exp/ro_filters'
 
     COMMON_ATT_KEYS = %w[
       if unless forget timeout on_error on_cancel on_timeout ]
@@ -720,65 +721,6 @@ module Ruote::Exp
 
       h.children << fei
       persist_or_raise
-    end
-
-    # The :filter attribute work is done here, at apply (in) and at reply (out).
-    #
-    def filter(workitem=nil)
-
-      f = attribute(:filter)
-
-      return unless f
-
-      filter =
-        lookup_variable(f) ||
-        @context.plist.lookup(f, workitem || h.applied_workitem)
-
-      raise ArgumentError.new(
-        "found no filter corresponding to '#{f}'"
-      ) unless filter
-
-      unless filter.is_a?(Hash)
-        #
-        # filter is a participant
-
-        def filter.receive(wi); end
-          # making sure the participant never replies to the engine
-
-        hwi = workitem || h.applied_workitem
-
-        if filter.respond_to?(:filter)
-          hwi['fields'] = filter.filter(hwi['fields'], workitem ? 'out' : 'in')
-        else
-          hwi['fields']['__filter_direction__'] = workitem ? 'out' : 'in'
-          filter.consume(Ruote::Workitem.new(hwi))
-        end
-
-        hwi['fields'].delete('__filter_direction__')
-
-        return
-      end
-
-      #
-      # filter is a not a participnat
-
-      unless workitem # in
-
-        filter = filter['in'] || filter['apply']
-
-        h.fields_pre_filter =
-          Rufus::Json.dup(h.applied_workitem['fields'])
-        h.applied_workitem['fields'] =
-          Ruote.filter(filter, h.applied_workitem['fields'], {})
-
-      else # out
-
-        filter = filter['out'] || filter['reply']
-
-        workitem['fields'] =
-          Ruote.filter(
-            filter, workitem['fields'], :double_tilde => h.fields_pre_filter)
-      end
     end
 
     # Called to check if the expression has a :tag attribute. If yes,
