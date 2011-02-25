@@ -410,6 +410,17 @@ module Ruote::Exp
   # * 'migrate_to', 'mi_to'
   # * 'restore', 'restore_from', 'rs'
   #
+  #
+  # == compared to the :filter attribute
+  #
+  # The :filter attribute accepts participant names, but for this filter
+  # expression, it makes no sense accepting partipants... Simply invoke
+  # the participant as usual.
+  #
+  # The 'restore' operation makes lots of sense for the :filter attribute
+  # though.
+  #
+  #
   class FilterExpression < FlowExpression
 
     names :filter
