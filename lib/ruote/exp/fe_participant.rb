@@ -115,9 +115,6 @@ module Ruote::Exp
   #
   class ParticipantExpression < FlowExpression
 
-    #include FilterMixin
-      # TODO
-
     names :participant
 
     # Should return true when the dispatch was successful.

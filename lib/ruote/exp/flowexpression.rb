@@ -730,11 +730,37 @@ module Ruote::Exp
 
       return unless f
 
-      filter = lookup_variable(f)
+      filter =
+        lookup_variable(f) ||
+        @context.plist.lookup(f, workitem || h.applied_workitem)
 
       raise ArgumentError.new(
         "found no filter corresponding to '#{f}'"
       ) unless filter
+
+      unless filter.is_a?(Hash)
+        #
+        # filter is a participant
+
+        def filter.receive(wi); end
+          # making sure the participant never replies to the engine
+
+        hwi = workitem || h.applied_workitem
+
+        if filter.respond_to?(:filter)
+          hwi['fields'] = filter.filter(hwi['fields'], workitem ? 'out' : 'in')
+        else
+          hwi['fields']['__filter_direction__'] = workitem ? 'out' : 'in'
+          filter.consume(Ruote::Workitem.new(hwi))
+        end
+
+        hwi['fields'].delete('__filter_direction__')
+
+        return
+      end
+
+      #
+      # filter is a not a participnat
 
       unless workitem # in
 

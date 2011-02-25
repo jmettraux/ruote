@@ -122,5 +122,82 @@ class FtFilterAttributeTest < Test::Unit::TestCase
     assert_not_nil r['error']
     assert_equal 'ArgumentError', r['error']['class']
   end
+
+  class AaFilterParticipant
+    def consume(wi)
+      (wi.fields['seen'] ||= []) << wi.fields['__filter_direction__']
+    end
+  end
+
+  def test_filter_participant__consume
+
+    pdef = Ruote.define do
+      alpha :filter => 'filter_a'
+    end
+
+    @engine.register :alpha, AlphaParticipant
+    @engine.register :filter_a, AaFilterParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_nil r['workitem']['fields']['__filter_direction__']
+    assert_equal %w[ in out ], r['workitem']['fields']['seen']
+    assert_equal 'fields: dispatched_at params seen', @tracer.to_s
+  end
+
+  class BbFilterParticipant
+    def filter(fields, direction)
+      (fields['seen'] ||= []) << direction
+      fields
+    end
+  end
+
+  def test_filter_participant__filter
+
+    pdef = Ruote.define do
+      alpha :filter => 'filter_b'
+    end
+
+    @engine.register :alpha, AlphaParticipant
+    @engine.register :filter_b, BbFilterParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal %w[ in out ], r['workitem']['fields']['seen']
+    assert_equal 'fields: dispatched_at params seen', @tracer.to_s
+  end
+
+  class CcFilterParticipant
+    def consume(wi)
+      raise 'something goes horribly wrong'
+    end
+  end
+
+  def test_filter_participant_with_error
+
+    pdef = Ruote.define do
+      alpha :filter => 'filter_c'
+    end
+
+    @engine.register :alpha, AlphaParticipant
+    @engine.register :filter_c, CcFilterParticipant
+
+    #noisy
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(wfid)
+
+    assert_equal 1, @engine.ps(wfid).errors.size
+    assert_equal '', @tracer.to_s
+  end
 end
 

@@ -4,6 +4,7 @@
 
 == ruote - 2.2.0    not yet released
 
+- :filter => 'participant_name' (consume(wi) / filter(fields))
 - listen block and forget issue fixed (Thanks Nando Sola)
 - @msg always set in FlowExpression
 - aliased 'cancel_process' to 'terminate'
