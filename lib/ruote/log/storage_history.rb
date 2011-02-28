@@ -32,6 +32,18 @@ module Ruote
   # HashStorage. It will fill up your memory... Keeping history for a
   # transient ruote is a bit overkill (IMHO).
   #
+  # == using the StorageHistory
+  #
+  #   engine.add_service(
+  #     'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
+  #
+  #   # ...
+  #
+  #   process_history = engine.history.by_wfid(wfid0)
+  #
+  # Note that, by default, the history is an in-memory history (and it is
+  # useless when there are multiple workers).
+  #
   class StorageHistory
 
     DATE_REGEX = /!(\d{4}-\d{2}-\d{2})!/

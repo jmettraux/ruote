@@ -26,7 +26,11 @@
 module Ruote
 
   #
-  # A default history implementation, only keeps the most recent stuff.
+  # A default history implementation, only keeps the most recent stuff
+  # in memory.
+  #
+  # NOTE : this default history is useless when there are multiple workers.
+  # It only keeps track of the 'local' worker if there is one present.
   #
   class DefaultHistory
 
