@@ -176,8 +176,26 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
     assert_equal 2, @engine.process(wfid).errors.size
   end
 
-  #def test_on_error_class
-  #  flunk
-  #end
+  def test_doesnt_trigger_for_checked_error
+
+    pdef = Ruote.define do
+      nemo :on_error => 'pass'
+    end
+
+    @engine.on_error = Ruote.define do
+      echo 'seen'
+    end
+
+    wfid = @engine.launch(pdef)
+
+    #noisy
+
+    @engine.wait_for(wfid)
+
+    sleep 0.700
+      # give it a bit of time, to make sure no supplementary errors crop up
+
+    assert_equal '', @tracer.to_s
+  end
 end
 
