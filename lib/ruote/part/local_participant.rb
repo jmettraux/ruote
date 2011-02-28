@@ -113,12 +113,6 @@ module Ruote
       end
     end
 
-    # WARNING : this method is only for 'stateless' participants, ie
-    # participants that are registered in the engine by passing their class
-    # and a set of options, like in
-    #
-    #   engine.register_participant 'alpha', MyParticipant, 'info' => 'none'
-    #
     # This reject method replaces the workitem in the [internal] message queue
     # of the ruote engine (since it's a local participant, it has access to
     # the storage and it's thus easy).
