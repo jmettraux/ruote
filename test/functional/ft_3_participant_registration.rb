@@ -428,5 +428,35 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       @engine.register 'alpha', Ruote::StorageParticipant.new, 'hello' => 'kitty'
     end
   end
+
+  class AaParticipant
+    include Ruote::LocalParticipant
+    attr_reader :opts
+    def initialize(opts)
+      @opts = opts
+    end
+  end
+  class BbParticipant < AaParticipant
+    def accept?(workitem)
+      false
+    end
+  end
+
+  def test_engine_participant
+
+    @engine.register do
+      alpha AaParticipant
+      bravo BbParticipant
+      catchall AaParticipant, :catch_all => 'oh yeah'
+    end
+
+    assert_equal AaParticipant, @engine.participant('alpha').class
+    assert_equal BbParticipant, @engine.participant('bravo').class
+
+    assert_equal AaParticipant, @engine.participant('charly').class
+    assert_equal 'oh yeah', @engine.participant('charly').opts['catch_all']
+
+    assert_equal Ruote::Context, @engine.participant('alpha').context.class
+  end
 end
 

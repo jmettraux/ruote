@@ -627,6 +627,14 @@ module Ruote
       @storage_participant ||= Ruote::StorageParticipant.new(self)
     end
 
+    # Returns an instance of the participant registered under the given name.
+    # Returns nil if there is no participant registered for that name.
+    #
+    def participant(name)
+
+      @context.plist.lookup(name, nil)
+    end
+
     # Adds a service locally (will not get propagated to other workers).
     #
     #   tracer = Tracer.new

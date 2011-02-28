@@ -151,9 +151,11 @@ module Ruote
 
         next unless pname.match(regex)
 
+        return pinfo if workitem.nil?
+
         pa = instantiate(pinfo, :if_respond_to? => :accept?)
 
-        return pinfo unless pa
+        return pinfo if pa.nil?
 
         return pinfo if pa.accept?(
           Ruote::Workitem.new(workitem.merge('participant_name' => pname))
@@ -311,10 +313,12 @@ module Ruote
     end
 
     def to_a
+
       [ @regex, [ @classname, @options ] ]
     end
 
     def to_s
+
       "/#{@regex}/ ==> #{@classname} #{@options.inspect}"
     end
 
