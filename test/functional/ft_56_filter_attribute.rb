@@ -226,5 +226,34 @@ class FtFilterAttributeTest < Test::Unit::TestCase
     assert_equal({ 'f0' => 'in', 'f1' => 'out' }, r['workitem']['fields'])
     assert_equal('fields: dispatched_at f0 params', @tracer.to_s)
   end
+
+#  def test_filter_record
+#
+#    pdef = Ruote.define do
+#      set 'v:f' => {
+#        :in => [ { :fields => 'x', :type => 'number' } ],
+#        :out => []
+#      }
+#      alpha :filter => 'f'
+#    end
+#
+#    @engine.register :alpha, AlphaParticipant
+#
+#    #noisy
+#
+#    wfid = @engine.launch(
+#      pdef,
+#      'x' => 'not a number')
+#
+#    @engine.wait_for(wfid)
+#
+#    assert_equal(
+#      "fields: a dispatched_at params\n" +
+#      "fields: a dispatched_at params private_a",
+#      @tracer.to_s)
+#  end
+  #
+  # in the fridge for now
+
 end
 

@@ -79,7 +79,6 @@
 [o] pdef.to_dot (a beginning)
 [o] @in_cancel, @in_error --> @state (active|cancelling|killing)
 [o] wait
-[o] listen
 [o] Jason Allen's check about concurrence
 [x] on_cancel => 'error' NO
 [o] event on [un]setting variable
@@ -434,13 +433,14 @@
 
 [ ] BlockParticipant : proc.to_source thanks to sourcify
 
-[ ] doc : enhance doc on conditional (and, empty, null, ...)
-[ ] doc : document engine.on_{error|terminate}
-[ ] doc : document on_error = retry and on_error = pass
+[o] doc : enhance doc on conditional (and, empty, null, ...)
+[o] doc : document engine.on_{error|terminate}
+[o] doc : document on_error = retry and on_error = pass
 [ ] doc : add piece of doc about running workers on their own
 
 [ ] listen to errors {in|out}
     well... there is already on_error...
+    but on_error is for nested stuff...
 [o] listen to tags {entering|leaving}
 [x] listen to launch/terminate, listen :process => :x, :upon => 'launching'
     you can now set :tag on a subprocess' define
@@ -463,6 +463,7 @@
 
 [ ] StorageParticipant#reply : raise if workitem not found ?
 [ ] StorageParticipant#reply : accept fei ?
+[ ] Engine#reply(wi), should remove from storage...
 
 [ ] eft_18 weak with jruby-1.5.1 and 1.5.6
 
@@ -473,4 +474,6 @@
 [ ] worker shutdown initiated by engine (same thread)
 
 [ ] wait_for(:participant) what about 'dispatched' instead of 'dispatch' ?
+
+[ ] expression :concurrent => true idea (reply immediately, cancellable)
 
