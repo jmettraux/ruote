@@ -59,6 +59,13 @@ module Ruote::Exp
   #
   # This expression can be useful for fire-and-forget parallelism in processes.
   #
+  # == forget vs lose
+  #
+  # forget : replies to parent expression immediately, is not cancellable
+  # (not reachable).
+  #
+  # lose : never replies to parent expression, is cancellable.
+  #
   class ForgetExpression < FlowExpression
 
     names :forget

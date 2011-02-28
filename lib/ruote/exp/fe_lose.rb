@@ -85,6 +85,13 @@ module Ruote::Exp
   # Probably produces definitions more compact than when using the 'lose'
   # expression.
   #
+  # == forget vs lose
+  #
+  # forget : replies to parent expression immediately, is not cancellable
+  # (not reachable).
+  #
+  # lose : never replies to parent expression, is cancellable.
+  #
   class LoseExpression < FlowExpression
 
     names :lose
