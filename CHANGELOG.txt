@@ -2,7 +2,7 @@
 = ruote - CHANGELOG.txt
 
 
-== ruote - 2.2.0    not yet released
+== ruote - 2.2.0    released 2011/03/01
 
 - Engine#participant(name) returns an instance of any participant
 - :filter => 'participant_name' (consume(wi) / filter(fields))
