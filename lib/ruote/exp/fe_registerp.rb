@@ -26,8 +26,6 @@
 module Ruote::Exp
 
   #
-  # (Since ruote 2.1.12)
-  #
   # This expressions lets one register participants directly from a process
   # definition.
   #

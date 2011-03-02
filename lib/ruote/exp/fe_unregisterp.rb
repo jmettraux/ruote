@@ -28,8 +28,6 @@ require 'ruote/exp/fe_registerp'
 module Ruote::Exp
 
   #
-  # (Since ruote 2.1.12)
-  #
   # Unregisters a participant.
   #
   #   Ruote.process_definition do
