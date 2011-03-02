@@ -80,6 +80,8 @@ class FtConditionalTest < Test::Unit::TestCase
 
       set 'f:t' => true
       set 'f:f' => false
+      set 'f:name' => 'n'
+      set 'f:city' => 'c'
 
       sequence do
 
@@ -90,10 +92,11 @@ class FtConditionalTest < Test::Unit::TestCase
         echo 'c', :if => '${f:t} and ${f:f}'
         echo 'd', :if => '${f:t} and (${f:t} or ${f:f})'
         echo 'e', :if => '${f:t} and (${f:t} and ${f:f})'
+        echo 'f', :if => '${name} == n and ${city} == c'
       end
     end
 
-    assert_trace(%w[ true/false a b d ], pdef)
+    assert_trace(%w[ true/false a b d f ], pdef)
   end
 end
 
