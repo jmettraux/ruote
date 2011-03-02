@@ -49,6 +49,17 @@ module Ruote::Exp
   # If the goal is to cancel only a segment of a process instance, the
   # expression 'undo' (Ruote::Exp::UndoExpression) is better suited.
   #
+  # == 'terminate'
+  #
+  # Sometimes 'terminate' reads better than 'cancel_process'
+  #
+  #   Ruote.process_definition do
+  #     alice :task => 'do this'
+  #     terminate :if => '${no_need_for_bob}'
+  #     bob :task => 'do that'
+  #     charly :task => 'just do it'
+  #   end
+  #
   class CancelProcessExpression < FlowExpression
 
     names :cancel_process, :terminate
