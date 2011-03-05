@@ -103,18 +103,14 @@ module Ruote
       cancel(fei, flavour) if r != nil
     end
 
+    # Given a fei (or its string version, a sid), returns the corresponding
+    # workitem (or nil).
+    #
     def [](fei)
 
       doc = fetch(fei)
 
       doc ? Ruote::Workitem.new(doc) : nil
-    end
-
-    def fetch(fei)
-
-      hfei = Ruote::FlowExpressionId.extract_h(fei)
-
-      @context.storage.get('workitems', to_id(hfei))
     end
 
     # Removes the workitem from the in-memory hash and replies to the engine.
@@ -308,6 +304,15 @@ module Ruote
     end
 
     protected
+
+    # Fetches a workitem in its raw form (Hash).
+    #
+    def fetch(fei)
+
+      hfei = Ruote::FlowExpressionId.extract_h(fei)
+
+      @context.storage.get('workitems', to_id(hfei))
+    end
 
     # Fetches all the workitems. If there is a @store_name, will only fetch
     # the workitems in that store.
