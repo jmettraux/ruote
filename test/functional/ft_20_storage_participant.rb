@@ -311,6 +311,23 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal wi, sp[wi.fei.to_storage_id]
   end
 
+  def test_by_fei
+
+    sp = @engine.register_participant 'alpha', Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.process_definition { alpha })
+
+    wait_for(:alpha)
+
+    wi = sp.first
+
+    assert_equal wi, sp.by_fei(wi)
+    assert_equal wi, sp.by_fei(wi.fei)
+    assert_equal wi, sp.by_fei(wi.to_h)
+    assert_equal wi, sp.by_fei(wi.fei.to_h)
+    assert_equal wi, sp.by_fei(wi.fei.to_storage_id)
+  end
+
   def test_engine_storage_participant
 
     @engine.register_participant 'step_.*', Ruote::StorageParticipant
