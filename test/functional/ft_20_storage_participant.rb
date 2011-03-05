@@ -195,6 +195,29 @@ class FtStorageParticipantTest < Test::Unit::TestCase
       2, @part.query('place' => 'heiankyou', :participant => 'alpha').size)
   end
 
+  # Issue reported in
+  # http://groups.google.com/group/openwferu-users/browse_thread/thread/d0557c58f8636c9
+  #
+  def test_query_and_limit
+
+    n = 7
+
+    n.times do |i|
+      @engine.storage.put(
+        'type' => 'workitems',
+        '_id' => "0_#{i}!ffffff!20101219-yamamba",
+        'participant_name' => 'alpha',
+        'wfid' => '20101219-yamamba',
+        'fields' => {})
+    end
+
+    sp = @engine.storage_participant
+
+    assert_equal n, sp.query({}).size
+    assert_equal n, sp.query(:offset => 0, :limit => 100).size
+    assert_equal n, sp.query(:skip => 0, :limit => 100).size
+  end
+
   def test_initialize_engine_then_opts
 
     @engine.register_participant :alpha, Ruote::StorageParticipant
