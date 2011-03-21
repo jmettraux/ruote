@@ -115,7 +115,7 @@ module Ruote
 
     alias by_fei []
 
-    # Removes the workitem from the in-memory hash and replies to the engine.
+    # Removes the workitem from the storage and replies to the engine.
     #
     # TODO : should it raise if the workitem can't be found ?
     # TODO : should it accept just the fei ?
