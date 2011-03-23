@@ -39,7 +39,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     wi = alpha[alpha.first.fei]
     assert_equal Ruote::Workitem, wi.class
 
-    alpha.reply(wi)
+    alpha.proceed(wi)
 
     wait_for(wfid)
 
@@ -307,7 +307,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 1, items.size
     assert_equal 'step_one', items.first.participant_name
 
-    participant.reply(items.first)
+    participant.proceed(items.first)
 
     wait_for(:step_two)
 
@@ -317,7 +317,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 1, items.size
     assert_equal 'step_two', items.first.participant_name
 
-    participant.reply(items.first)
+    participant.proceed(items.first)
 
     wait_for(wfid)
 

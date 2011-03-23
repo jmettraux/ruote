@@ -503,7 +503,7 @@ digraph "process wfid {
     t0 = Time.parse(@engine.process(wfid).last_active)
 
     sp = @engine.storage_participant
-    sp.reply(sp.first)
+    sp.proceed(sp.first)
 
     @engine.wait_for(:bravo)
 

@@ -47,14 +47,14 @@ class EftReserveTest < Test::Unit::TestCase
       [ '0_0_0', '0_0_1' ],
       ps.variables['a'].last.collect { |e| e['expid'] })
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(:alpha)
 
     assert_equal 1, alpha.size
     assert_equal '0_0_1_0', alpha.first.fei.expid
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(wfid)
   end
@@ -92,7 +92,7 @@ class EftReserveTest < Test::Unit::TestCase
     assert_equal 1, alpha.size
     assert_equal '0_0_1_0', alpha.first.fei.expid
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(wfid)
   end
@@ -127,7 +127,7 @@ class EftReserveTest < Test::Unit::TestCase
       assert_equal 2, ps.variables.size
       assert_not_nil ps.variables['reserve']
 
-      alpha.reply(alpha.first)
+      alpha.proceed(alpha.first)
     end
 
     wait_for(wfid)

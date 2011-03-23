@@ -83,7 +83,7 @@ class FtPatternsTest < Test::Unit::TestCase
 
     assert_equal({}, @engine.ps(wfid).tags)
 
-    @engine.storage_participant.reply(@engine.storage_participant.first)
+    @engine.storage_participant.proceed(@engine.storage_participant.first)
 
     @engine.wait_for(:d)
 
@@ -91,7 +91,7 @@ class FtPatternsTest < Test::Unit::TestCase
     assert_equal %w[ b d ], @engine.ps(wfid).position.collect { |pos| pos[1] }
 
     wi = @engine.storage_participant.by_participant('b').first
-    @engine.storage_participant.reply(wi)
+    @engine.storage_participant.proceed(wi)
 
     @engine.wait_for(:c)
 

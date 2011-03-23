@@ -123,7 +123,7 @@ class FtWaitForTest < Test::Unit::TestCase
 
     @engine.wait_for(:alpha)
 
-    sp.reply(sp.first)
+    sp.proceed(sp.first)
 
     threads.each do |t|
       t.join

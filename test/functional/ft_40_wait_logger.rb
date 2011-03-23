@@ -31,7 +31,7 @@ class FtWaitLoggerTest < Test::Unit::TestCase
     r = @engine.wait_for(:alpha)
     assert_equal 'dispatch', r['action']
 
-    sp.reply(sp.first)
+    sp.proceed(sp.first)
 
     r = @engine.wait_for(wfid)
 

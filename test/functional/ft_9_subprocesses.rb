@@ -41,7 +41,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
         ['define', {'sub0'=>nil}, [['bravo', {}, []], ['echo', {'result : ${v:nada}'=>nil}, []]]] ],
       fexp.lookup_variable('sub0'))
 
-    bravo.reply(bravo.first)
+    bravo.proceed(bravo.first)
     wait_for(:bravo)
 
     fexp = Ruote::Exp::FlowExpression.fetch(

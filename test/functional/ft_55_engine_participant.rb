@@ -246,7 +246,7 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     @engine1.wait_for(:bravo)
 
-    bravo.reply(bravo.first)
+    bravo.proceed(bravo.first)
 
     @engine1.wait_for(wfid) # ceased
 

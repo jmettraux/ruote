@@ -120,19 +120,31 @@ module Ruote
     # TODO : should it raise if the workitem can't be found ?
     # TODO : should it accept just the fei ?
     #
-    def reply(workitem)
-
-      # TODO: change method name (receiver mess cleanup)
+    def proceed(workitem)
 
       doc = fetch(Ruote::FlowExpressionId.extract_h(workitem))
 
       r = @context.storage.delete(doc)
 
-      return reply(workitem) if r != nil
+      raise ArgumentError.new('cannot proceed, workitem is gone') if r == true
+      return proceed(workitem) if r != nil
 
       workitem.h.delete('_rev')
 
       reply_to_engine(workitem)
+    end
+
+    # (soon to be removed)
+    #
+    def reply(workitem)
+
+      puts '-' * 80
+      puts '*** WARNING : please use the Ruote::StorageParticipant#proceed(wi)'
+      puts '              instead of #reply(wi) which is deprecated'
+      #caller.each { |l| puts l }
+      puts '-' * 80
+
+      proceed(workitem)
     end
 
     # Returns the count of workitems stored in this participant.

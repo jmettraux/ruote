@@ -29,15 +29,15 @@ class FtParticipantParamsTest < Test::Unit::TestCase
 
     wait_for(:alpha)
     assert_equal({ 'ref' => 'alpha' }, alpha.first.fields['params'])
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(:alpha)
     assert_equal('buy groceries', alpha.first.fields['params']['activity'])
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(:alpha)
     assert_equal({ 'ref' => 'alpha' }, alpha.first.fields['params'])
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(wfid)
   end

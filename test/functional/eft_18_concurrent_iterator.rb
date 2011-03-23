@@ -158,7 +158,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       { 'participant_1' => 2 },
       sto.per_participant_count)
 
-    sto.reply(sto.first)
+    sto.proceed(sto.first)
 
     wait_for(:participant_2)
     wait_for(1)
@@ -167,7 +167,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       { 'participant_1' => 1, 'participant_2' => 1 },
       sto.per_participant_count)
 
-    sto.reply(sto.per_participant['participant_2'].first)
+    sto.proceed(sto.per_participant['participant_2'].first)
 
     wait_for(3)
 

@@ -151,7 +151,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     2.times do
       wi = alpha.first
       wi.fields['seen'] = wi.fei.expid
-      alpha.reply(wi)
+      alpha.proceed(wi)
     end
 
     wait_for(:alpha)
@@ -225,7 +225,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    @engine.storage_participant.reply(@engine.storage_participant.first)
+    @engine.storage_participant.proceed(@engine.storage_participant.first)
 
     wait_for(wfid)
 
@@ -264,7 +264,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal 2, @engine.context.storage.get_many('expressions').size
     assert_not_nil @engine.process(wfid)
 
-    @engine.storage_participant.reply(@engine.storage_participant.first)
+    @engine.storage_participant.proceed(@engine.storage_participant.first)
 
     wait_for(wfid)
 

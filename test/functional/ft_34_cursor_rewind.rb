@@ -37,7 +37,7 @@ class FtCursorRewindTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
     wait_for(:bravo)
 
     #
@@ -76,7 +76,7 @@ class FtCursorRewindTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
-    sto.reply(sto.first)
+    sto.proceed(sto.first)
     wait_for(:bravo)
 
     #

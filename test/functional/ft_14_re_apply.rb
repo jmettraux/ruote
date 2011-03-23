@@ -42,7 +42,7 @@ class FtReApplyTest < Test::Unit::TestCase
     assert_equal 1, alpha.size
     assert_not_equal id0, alpha.first.object_id
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(wfid)
 
@@ -73,7 +73,7 @@ class FtReApplyTest < Test::Unit::TestCase
     assert_equal 1, alpha.size
     assert_not_equal id0, alpha.first.object_id
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(wfid)
 
@@ -110,7 +110,7 @@ class FtReApplyTest < Test::Unit::TestCase
 
     assert_equal 'mow lawn', alpha.first.fields['params']['activity']
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(wfid)
 
@@ -148,7 +148,7 @@ class FtReApplyTest < Test::Unit::TestCase
     assert_equal 1, alpha.size
     assert_not_equal id0, alpha.first.object_id
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(wfid)
 
@@ -186,7 +186,7 @@ class FtReApplyTest < Test::Unit::TestCase
     assert_equal 1, alpha.size
     assert_not_equal id0, alpha.first.object_id
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(wfid)
 

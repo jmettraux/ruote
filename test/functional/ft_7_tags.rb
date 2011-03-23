@@ -38,7 +38,7 @@ class FtTagsTest < Test::Unit::TestCase
     #logger.log.each { |e| puts e['action'] }
     assert_equal 2, logger.log.select { |e| e['action'] == 'entered_tag' }.size
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
     wait_for(wfid)
 
     assert_equal 2, logger.log.select { |e| e['action'] == 'left_tag' }.size
@@ -80,7 +80,7 @@ class FtTagsTest < Test::Unit::TestCase
 
     assert_equal 0, @engine.process(wfid).tags.size
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
 
     wait_for(:alpha)
 
@@ -132,19 +132,19 @@ class FtTagsTest < Test::Unit::TestCase
 
     assert_equal %w[ first-stage ], wi.tags
 
-    @engine.storage_participant.reply(wi)
+    @engine.storage_participant.proceed(wi)
     @engine.wait_for(:bravo)
     wi = @engine.storage_participant.first
 
     assert_equal %w[ second-stage ], wi.tags
 
-    @engine.storage_participant.reply(wi)
+    @engine.storage_participant.proceed(wi)
     @engine.wait_for(:charly)
     wi = @engine.storage_participant.first
 
     assert_equal %w[ second-stage third-stage ], wi.tags
 
-    @engine.storage_participant.reply(wi)
+    @engine.storage_participant.proceed(wi)
     @engine.wait_for(:david)
     wi = @engine.storage_participant.first
 
@@ -167,7 +167,7 @@ class FtTagsTest < Test::Unit::TestCase
     assert_equal 1, logger.log.select { |e| e['action'] == 'entered_tag' }.size
 
     wi = @engine.storage_participant.first
-    @engine.storage_participant.reply(wi)
+    @engine.storage_participant.proceed(wi)
 
     @engine.wait_for(wfid)
 

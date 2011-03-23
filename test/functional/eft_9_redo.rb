@@ -29,10 +29,10 @@ class EftRedoTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
     wait_for(:alpha)
 
-    alpha.reply(alpha.first)
+    alpha.proceed(alpha.first)
     wait_for(:alpha)
 
     ps = @engine.process(wfid)
