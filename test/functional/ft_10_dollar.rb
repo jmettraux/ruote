@@ -264,5 +264,25 @@ class FtDollarTest < Test::Unit::TestCase
       { 'b' => %w[ A B C ], 'ref' => 'alpha' },
       r['workitem']['fields']['parameters'])
   end
+
+  # Issue pointed out by John Le.
+  #
+  def test_not_a_number
+
+    pdef = Ruote.define do
+      echo 'a0', :if => '${a}'
+      echo 'a1', :if => '${a} is set'
+      echo 'b', :if => '${b}'
+      echo 'c'
+    end
+
+    wfid = @engine.launch(
+      pdef,
+      'a' => '0a')
+
+    @engine.wait_for(wfid)
+
+    assert_equal "a0\na1\nc", @tracer.to_s
+  end
 end
 

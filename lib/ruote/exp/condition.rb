@@ -103,7 +103,11 @@ module Ruote::Exp
         "/!\\ please upgrade your rufus-treechecker gem /!\\"
       )
 
-    rescue => e
+    rescue SyntaxError => se
+
+      [ :str, conditional ]
+
+    rescue Exception => e
 
       [ :false ]
     end

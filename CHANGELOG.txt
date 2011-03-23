@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- fix for :if => '${a}' when a like '456ab' (Thanks John Le)
 - StorageParticipant :count => true uniformization (Thanks Jan Topiński)
 - StorageParticipant#by_fei (alias for #[])
 
