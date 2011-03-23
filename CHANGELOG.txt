@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- StorageParticipant :count => true uniformization (Thanks Jan Topiński)
 - StorageParticipant#by_fei (alias for #[])
 
 

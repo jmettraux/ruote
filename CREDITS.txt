@@ -47,6 +47,7 @@ Richard Jennings
 Feedback
 --------
 
+Jan Topiński - https://github.com/simcha
 Nando Sola - many help
 Iuri Gagnidze - ProcessStatus#definition_name issues, Engine#leftovers
 John Le - https://github.com/sandbox

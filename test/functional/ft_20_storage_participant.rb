@@ -72,7 +72,33 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert alpha.first.nil?
   end
 
-  def test_find_by_wfid
+  def test_all
+
+    n = 3
+
+    pdef = Ruote.process_definition :name => 'def0' do
+      alpha
+    end
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    wfids = []
+
+    n.times { wfids << @engine.launch(pdef) }
+
+    while @engine.storage_participant.size < n
+      sleep 0.400
+    end
+
+    assert_equal(
+      [ Ruote::Workitem ] * 3,
+      @engine.storage_participant.all.collect { |wi| wi.class })
+
+    assert_equal 3, @engine.storage_participant.size
+    assert_equal 3, @engine.storage_participant.all(:count => true)
+  end
+
+  def test_by_wfid
 
     pdef = Ruote.process_definition :name => 'def0' do
       concurrence do
@@ -94,6 +120,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal 2, alpha.size
     assert_equal 2, alpha.by_wfid(wfid).size
+    assert_equal 2, alpha.by_wfid(wfid, :count => true)
   end
 
   CON_AL_BRAVO = Ruote.process_definition :name => 'con_al_bravo' do
@@ -133,6 +160,9 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal Ruote::Workitem, @part.by_participant('alpha').first.class
     assert_equal 1, @part.by_participant('alpha').size
     assert_equal 1, @part.by_participant('bravo').size
+
+    assert_equal 1, @part.by_participant('alpha', :count => true)
+    assert_equal 1, @part.by_participant('bravo', :count => true)
   end
 
   def test_by_field
@@ -144,6 +174,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 2, @part.by_field('place').size
     assert_equal 2, @part.by_field('character').size
     assert_equal 1, @part.by_field('adversary').size
+    assert_equal 2, @part.by_field('character', :count => true)
   end
 
   def test_by_field_and_value
@@ -154,6 +185,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 0, @part.by_field('place', 'nara').size
     assert_equal 2, @part.by_field('place', 'heiankyou').size
     assert_equal 1, @part.by_field('character', 'minamoto no hirosama').size
+    assert_equal 2, @part.by_field('place', 'heiankyou', :count => true)
   end
 
   def test_query
@@ -193,6 +225,9 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal(
       2, @part.query('place' => 'heiankyou', :participant => 'alpha').size)
+
+    assert_equal 2, @part.query(:participant => 'alpha').size
+    assert_equal 2, @part.query(:participant => 'alpha', :count => true)
   end
 
   # Issue reported in

@@ -153,7 +153,9 @@ module Ruote
     #
     def all(opts={})
 
-      fetch_all(opts).map { |hwi| Ruote::Workitem.new(hwi) }
+      res = fetch_all(opts)
+
+      res.is_a?(Array) ? res.map { |hwi| Ruote::Workitem.new(hwi) } : res
     end
 
     # A convenience method (especially when testing), returns the first
@@ -161,18 +163,20 @@ module Ruote
     #
     def first
 
-      hwi = fetch_all.first
-
-      hwi ? Ruote::Workitem.new(hwi) : nil
+      wi(fetch_all.first)
     end
 
     # Return all workitems for the specified wfid
     #
-    def by_wfid(wfid)
+    def by_wfid(wfid, opts={})
 
-      @context.storage.get_many('workitems', wfid).collect { |hwi|
-        Ruote::Workitem.new(hwi)
-      }
+      hwis = if @context.storage.respond_to?(:by_wfid)
+        @context.storage.by_wfid('workitems', wfid, opts)
+      else
+        @context.storage.get_many('workitems', wfid, opts)
+      end
+
+      wis(hwis)
     end
 
     # Returns all workitems for the specified participant name
@@ -185,12 +189,16 @@ module Ruote
 
       else
 
-        fetch_all(opts).select { |wi|
+        count = opts.delete(:count)
+
+        res = fetch_all(opts).select { |wi|
           wi['participant_name'] == participant_name
         }
+
+        count ? res.size : res
       end
 
-      hwis.collect { |hwi| Ruote::Workitem.new(hwi) }
+      wis(hwis)
     end
 
     # field : returns all the workitems with the given field name present.
@@ -202,21 +210,27 @@ module Ruote
     # CouchStorage), the others will load all the workitems and then filter
     # them.
     #
-    def by_field(field, value=nil)
+    def by_field(field, value=nil, opts={})
+
+      (value, opts = nil, value) if value.is_a?(Hash)
 
       hwis = if @context.storage.respond_to?(:by_field)
 
-        @context.storage.by_field('workitems', field, value)
+        @context.storage.by_field('workitems', field, value, opts)
 
       else
 
-        fetch_all.select { |hwi|
+        count = opts.delete(:count)
+
+        res = fetch_all(opts).select { |hwi|
           hwi['fields'].keys.include?(field) &&
           (value.nil? || hwi['fields'][field] == value)
         }
+
+        count ? res.size : res
       end
 
-      hwis.collect { |hwi| Ruote::Workitem.new(hwi) }
+      wis(hwis)
     end
 
     # Queries the store participant for workitems.
@@ -252,18 +266,22 @@ module Ruote
       opts[:count] = cr.delete('count')
 
       wfid = cr.delete('wfid')
+
+      count = opts[:count]
+
       pname = cr.delete('participant_name') || cr.delete('participant')
+      opts.delete(:count) if pname
 
       hwis = wfid ?
         @context.storage.get_many('workitems', wfid, opts) : fetch_all(opts)
 
-      return hwis if opts[:count]
+      return hwis unless hwis.is_a?(Array)
 
-      hwis.select { |hwi|
+      hwis = hwis.select { |hwi|
         Ruote::StorageParticipant.matches?(hwi, pname, cr)
-      }.collect { |hwi|
-        Ruote::Workitem.new(hwi)
       }
+
+      count ? hwis.size : wis(hwis)
     end
 
     # Cleans this participant out completely
@@ -338,6 +356,18 @@ module Ruote
       a.unshift('wi')
 
       a.join('!')
+    end
+
+    def wi(hwi)
+
+      hwi ? Ruote::Workitem.new(hwi) : nil
+    end
+
+    def wis(workitems_or_count)
+
+      workitems_or_count.is_a?(Array) ?
+        workitems_or_count.collect { |wi| Ruote::Workitem.new(wi) } :
+        workitems_or_count
     end
   end
 end
