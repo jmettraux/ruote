@@ -165,6 +165,11 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 1, @part.by_participant('bravo', :count => true)
   end
 
+  def test_by_participant_and_limit
+
+    flunk
+  end
+
   def test_by_field
 
     prepare_al_bravo
@@ -241,16 +246,40 @@ class FtStorageParticipantTest < Test::Unit::TestCase
       @engine.storage.put(
         'type' => 'workitems',
         '_id' => "0_#{i}!ffffff!20101219-yamamba",
-        'participant_name' => 'alpha',
+        'participant_name' => 'al',
+        'wfid' => '20101219-yamamba',
+        'fields' => {})
+    end
+    n.times do |i|
+      @engine.storage.put(
+        'type' => 'workitems',
+        '_id' => "1_#{i}!ffffff!20101219-yamamba",
+        'participant_name' => 'bob',
         'wfid' => '20101219-yamamba',
         'fields' => {})
     end
 
     sp = @engine.storage_participant
 
-    assert_equal n, sp.query({}).size
-    assert_equal n, sp.query(:offset => 0, :limit => 100).size
-    assert_equal n, sp.query(:skip => 0, :limit => 100).size
+    assert_equal n * 2, sp.query({}).size
+    assert_equal n * 2, sp.query(:offset => 0, :limit => 100).size
+    assert_equal n * 2, sp.query(:skip => 0, :limit => 100).size
+
+    assert_equal n / 2, sp.query(:offset => 0, :limit => n / 2).size
+    assert_equal n / 2, sp.query(:skip => 0, :limit => n / 2).size
+
+    assert_equal(
+      n / 2,
+      sp.query(:participant_name => 'al', :offset => 0, :limit => n / 2).size)
+    assert_equal(
+      n / 2,
+      sp.query(:participant_name => 'al', :skip => 0, :limit => n / 2).size)
+
+    assert_equal(
+      [ 'al' ] * (n / 2),
+      sp.query(
+        :participant_name => 'al', :skip => 0, :limit => n / 2
+      ).collect { |wi| wi.participant_name })
   end
 
   def test_initialize_engine_then_opts
