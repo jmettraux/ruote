@@ -195,6 +195,8 @@ module Ruote
     #
     def by_participant(participant_name, opts={})
 
+      # TODO : align on #query (return directly by_participant)
+
       hwis = if @context.storage.respond_to?(:by_participant)
 
         @context.storage.by_participant('workitems', participant_name, opts)

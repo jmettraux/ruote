@@ -178,7 +178,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     3.times do |i|
       @engine.storage.put(
         'type' => 'workitems',
-        '_id' => "1_#{i}!ffffff!20101219-yamamba",
+        '_id' => "1_#{i}!eeeeee!20101219-yamamba",
         'participant_name' => 'bob',
         'wfid' => '20101220-yamamba',
         'fields' => {})
@@ -186,10 +186,15 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     sp = @engine.storage_participant
 
+    assert_equal 6, sp.size
+
     assert_equal 0, sp.by_participant('nada', :limit => 2).size
     assert_equal 2, sp.by_participant('al', :limit => 2).size
     assert_equal 2, sp.by_participant('al', :skip => 0, :limit => 2).size
     assert_equal 2, sp.by_participant('al', :skip => 1, :limit => 2).size
+
+    assert_equal 2, sp.by_participant('bob', :skip => 0, :limit => 2).size
+    assert_equal 1, sp.by_participant('bob', :skip => 2, :limit => 2).size
   end
 
   def test_by_field
