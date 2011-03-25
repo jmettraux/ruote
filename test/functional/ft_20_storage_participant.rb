@@ -167,7 +167,29 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
   def test_by_participant_and_limit
 
-    flunk
+    3.times do |i|
+      @engine.storage.put(
+        'type' => 'workitems',
+        '_id' => "0_#{i}!ffffff!20101219-yamamba",
+        'participant_name' => 'al',
+        'wfid' => '20101220-yamamba',
+        'fields' => {})
+    end
+    3.times do |i|
+      @engine.storage.put(
+        'type' => 'workitems',
+        '_id' => "1_#{i}!ffffff!20101219-yamamba",
+        'participant_name' => 'bob',
+        'wfid' => '20101220-yamamba',
+        'fields' => {})
+    end
+
+    sp = @engine.storage_participant
+
+    assert_equal 0, sp.by_participant('nada', :limit => 2).size
+    assert_equal 2, sp.by_participant('al', :limit => 2).size
+    assert_equal 2, sp.by_participant('al', :skip => 0, :limit => 2).size
+    assert_equal 2, sp.by_participant('al', :skip => 1, :limit => 2).size
   end
 
   def test_by_field
