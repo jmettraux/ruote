@@ -175,44 +175,31 @@ module Ruote
     #
     def first
 
-      wi(fetch_all.first)
+      wi(fetch_all({}).first)
     end
 
     # Return all workitems for the specified wfid
     #
     def by_wfid(wfid, opts={})
 
-      hwis = if @context.storage.respond_to?(:by_wfid)
-        @context.storage.by_wfid('workitems', wfid, opts)
-      else
-        @context.storage.get_many('workitems', wfid, opts)
+      if @context.storage.respond_to?(:by_wfid)
+        return @context.storage.by_wfid('workitems', wfid, opts)
       end
 
-      wis(hwis)
+      wis(@context.storage.get_many('workitems', wfid, opts))
     end
 
     # Returns all workitems for the specified participant name
     #
     def by_participant(participant_name, opts={})
 
-      # TODO : align on #query (return directly by_participant)
+      return @context.storage.by_participant(
+        'workitems', participant_name, opts
+      ) if @context.storage.respond_to?(:by_participant)
 
-      hwis = if @context.storage.respond_to?(:by_participant)
-
-        @context.storage.by_participant('workitems', participant_name, opts)
-
-      else
-
-        count = opts.delete(:count)
-
-        res = fetch_all(opts).select { |wi|
-          wi['participant_name'] == participant_name
-        }
-
-        count ? res.size : res
+      select(opts) do |hwi|
+        hwi['participant_name'] == participant_name
       end
-
-      wis(hwis)
     end
 
     # field : returns all the workitems with the given field name present.
@@ -228,23 +215,14 @@ module Ruote
 
       (value, opts = nil, value) if value.is_a?(Hash)
 
-      hwis = if @context.storage.respond_to?(:by_field)
-
-        @context.storage.by_field('workitems', field, value, opts)
-
-      else
-
-        count = opts.delete(:count)
-
-        res = fetch_all(opts).select { |hwi|
-          hwi['fields'].keys.include?(field) &&
-          (value.nil? || hwi['fields'][field] == value)
-        }
-
-        count ? res.size : res
+      if @context.storage.respond_to?(:by_field)
+        return @context.storage.by_field('workitems', field, value, opts)
       end
 
-      wis(hwis)
+      select(opts) do |hwi|
+        hwi['fields'].keys.include?(field) &&
+        (value.nil? || hwi['fields'][field] == value)
+      end
     end
 
     # Queries the store participant for workitems.
@@ -302,7 +280,7 @@ module Ruote
     #
     def purge!
 
-      fetch_all.each { |hwi| @context.storage.delete(hwi) }
+      fetch_all({}).each { |hwi| @context.storage.delete(hwi) }
     end
 
     # Used by #query when filtering workitems.
@@ -351,12 +329,32 @@ module Ruote
     # Fetches all the workitems. If there is a @store_name, will only fetch
     # the workitems in that store.
     #
-    def fetch_all(opts={})
+    def fetch_all(opts)
 
       @context.storage.get_many(
         'workitems',
         @store_name ? /^wi!#{@store_name}::/ : nil,
         opts)
+    end
+
+    # Given a few options and a block, returns all the workitems that match
+    # the block
+    #
+    def select(opts, &block)
+
+      skip = opts[:offset] || opts[:skip]
+      limit = opts[:limit]
+      count = opts[:count]
+
+      hwis = fetch_all({})
+      hwis = hwis.select(&block)
+
+      hwis = hwis[skip..-1] if skip
+      hwis = hwis[0, limit] if limit
+
+      return hwis.size if count
+
+      hwis.collect { |hwi| Ruote::Workitem.new(hwi) }
     end
 
     # Computes the id for the document representing the document in the storage.

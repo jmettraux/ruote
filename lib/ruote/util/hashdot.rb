@@ -37,13 +37,9 @@ module Ruote
         self[m[0..-2]] = val
 
         return val
-
-      else
-
-        return self[m] #if self.has_key?(m)
       end
 
-      #super
+      self[m]
     end
 
     def dump
@@ -55,9 +51,15 @@ module Ruote
         s << "\n"
       end
       s << "~~ . ~~"
-
-      s
     end
+
+    #--
+    # Useful when debugging some 'stack too deep' issue
+    #
+    #def self.included(target)
+    #  raise target.to_s unless target.to_s.match(/\bHash\b/)
+    #end
+    #++
   end
 
   module WithH

@@ -209,6 +209,17 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 2, @part.by_field('character', :count => true)
   end
 
+  def test_by_field_and_limit
+
+    prepare_al_bravo
+
+    assert_equal(
+      %w[ bravo ],
+      @part.by_field(
+        'character', :skip => 1, :limit => 2
+      ).collect { |wi| wi.participant_name })
+  end
+
   def test_by_field_and_value
 
     prepare_al_bravo

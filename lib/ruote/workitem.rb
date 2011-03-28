@@ -88,7 +88,7 @@ module Ruote
     #
     def fei
 
-      FlowExpressionId.new(h.fei)
+      FlowExpressionId.new(@h['fei'])
     end
 
     # Returns a complete copy of this workitem.

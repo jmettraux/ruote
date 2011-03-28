@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- StorageParticipant :skip and :limit issues (Thanks Jan Topiński)
 - StorageParticipant #proceed deprecates #reply
 - fix for :if => '${a}' when a like '456ab' (Thanks John Le)
 - StorageParticipant :count => true uniformization (Thanks Jan Topiński)
