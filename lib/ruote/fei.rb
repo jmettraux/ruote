@@ -32,56 +32,63 @@ require 'ruote/util/hashdot'
 
 module Ruote
 
-  # Gets the storage id representation of given +fei+.
-  #
-  # fei - The FlowExpressionId instance.
-  #
-  # A shortcut for
-  #
-  #   Ruote::FlowExpressionId.to_storage_id(fei)
-  #
-  # Returns a String representing the FlowExpressionId storage id.
-  def self.to_storage_id(fei)
-    Ruote::FlowExpressionId.to_storage_id(fei)
-  end
-
   class << self
+
+    # Gets the storage id representation of given +fei+.
+    #
+    # fei - The FlowExpressionId instance.
+    #
+    # A shortcut for
+    #
+    #   Ruote::FlowExpressionId.to_storage_id(fei)
+    #
+    # Returns a String representing the FlowExpressionId storage id.
+    def to_storage_id(fei)
+      Ruote::FlowExpressionId.to_storage_id(fei)
+    end
+
     alias :sid :to_storage_id
+
+    # Validates given +o+ as a FlowExpressionId.
+    #
+    # fei - The object to validate.
+    #
+    # A shortcut for
+    #
+    #   Ruote::FlowExpressionId.is_a_fei?(o)
+    #
+    # Returns a Boolean.
+    def is_a_fei?(o)
+      Ruote::FlowExpressionId.is_a_fei?(o)
+    end
+
+    # Will do its best to return a wfid (String) or a fei (Hash instance)
+    # extract from the given o argument.
+    #
+    # Returns a String wfid or a Hash fei.
+    def extract_id(o)
+
+      return o if o.is_a?(String) and o.index('!').nil? # wfid
+
+      Ruote::FlowExpressionId.extract_h(o)
+    end
+
+    # This function is used to generate the subids. Each flow
+    # expression receives such an id.
+    #
+    # It's useful for cursors, loops and forgotten branches.
+    #
+    # salt - The String salt to embed in the MD5 result.
+    #
+    # Returns a String MD5 digest.
+    def generate_subid(salt)
+
+      Digest::MD5.hexdigest(
+        "#{rand}-#{salt}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
+    end
   end
 
-  # Validates given +o+ as a FlowExpressionId.
-  #
-  # fei - The object to validate.
-  #
-  # A shortcut for
-  #
-  #   Ruote::FlowExpressionId.is_a_fei?(o)
-  #
-  def self.is_a_fei?(o)
-    Ruote::FlowExpressionId.is_a_fei?(o)
-  end
 
-  # Will do its best to return a wfid (String) or a fei (Hash instance)
-  # extract from the given o argument.
-  #
-  def self.extract_id(o)
-
-    return o if o.is_a?(String) and o.index('!').nil? # wfid
-
-    Ruote::FlowExpressionId.extract_h(o)
-  end
-
-  # This function is used to generate the subids. Each flow
-  # expression receives such an id (it's useful for cursors, loops and
-  # forgotten branches).
-  #
-  def self.generate_subid(salt)
-
-    Digest::MD5.hexdigest(
-      "#{rand}-#{salt}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
-  end
-
-  #
   # The FlowExpressionId (fei for short) is an process expression identifier.
   # Each expression when instantiated gets a unique fei.
   #
