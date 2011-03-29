@@ -151,12 +151,14 @@ module Ruote
       extract("#{engine_id}!#{s}")
     end
 
-    # Returns the last number in the expid. For instance, if the expid is
-    # '0_5_7', the child_id will be '7'.
+    # Extract and returns the child_id for the current instance.
+    # For example, for an expid of '0_1_4' this method returns 4.
     #
+    # hash - The hash FlowExpressionId representation.
+    #
+    # Returns an Integer representing the child_id.
     def child_id
-
-      h.expid.split(CHILD_SEP).last.to_i
+      self.class.child_id(h)
     end
 
     def hash
@@ -189,11 +191,13 @@ module Ruote
     end
 
     # Extract and returns the child_id from given +hash+.
+    # The child_id is the last number in the +expid+.
+    #
     # For example, for an expid of '0_1_4' this method returns 4.
     #
     # hash - The hash FlowExpressionId representation.
     #
-    # Returns an Integer representing
+    # Returns an Integer representing the child_id.
     def self.child_id(hash)
       hash['expid'].split(CHILD_SEP).last.to_i
     end
