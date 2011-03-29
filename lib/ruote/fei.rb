@@ -179,18 +179,23 @@ module Ruote
     SUBS = %w[ subid sub_wfid ]
     IDS = %w[ engine_id expid wfid ]
 
-    # Returns true if the h is a representation of a FlowExpressionId instance.
+    # Check whether +hash+ is a representation of a FlowExpressionId instance.
     #
-    def self.is_a_fei?(h)
-
-      h.respond_to?(:keys) && (h.keys - SUBS).sort == IDS
+    # hash - The hash FlowExpressionId representation to check.
+    #
+    # Returns a Boolean.
+    def self.is_a_fei?(hash)
+      hash.respond_to?(:keys) && (hash.keys - SUBS).sort == IDS
     end
 
-    # Returns child_id... For an expid of '0_1_4', this will be 4.
+    # Extract and returns the child_id from given +hash+.
+    # For example, for an expid of '0_1_4' this method returns 4.
     #
-    def self.child_id(h)
-
-      h['expid'].split(CHILD_SEP).last.to_i
+    # hash - The hash FlowExpressionId representation.
+    #
+    # Returns an Integer representing
+    def self.child_id(hash)
+      hash['expid'].split(CHILD_SEP).last.to_i
     end
 
     def to_h
