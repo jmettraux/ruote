@@ -82,20 +82,11 @@ module Ruote
     # Not aliasing so that if someone changes the receive implementation,
     # reply is affected as well.
     #
-    def reply(workitem)
-
-      receive(workitem)
-    end
-
-    # Wraps a call to receive(workitem)
-    #
-    # Not aliasing so that if someone changes the receive implementation,
-    # reply_to_engine is affected as well.
-    #
     def reply_to_engine(workitem)
-
       receive(workitem)
     end
+
+    alias :reply :reply_to_engine
 
     # A receiver signs a workitem when it comes back.
     #
