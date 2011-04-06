@@ -419,6 +419,17 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       @engine.participant_list.collect { |pe| pe.classname })
   end
 
+  def test_register_block_catch_all
+
+    @engine.register do
+      catch_all
+    end
+
+    assert_equal(
+      %w[ Ruote::StorageParticipant ],
+      @engine.participant_list.collect { |pe| pe.classname })
+  end
+
   def test_argument_error_on_instantiated_participant
 
     assert_raise ArgumentError do

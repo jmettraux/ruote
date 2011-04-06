@@ -872,6 +872,8 @@ module Ruote
       participant('.+', klass, options)
     end
 
+    alias catch_all catchall
+
     # Maybe a bit audacious...
     #
     def method_missing(method_name, *args)

@@ -4,6 +4,8 @@
 
 == ruote - 2.2.1    not yet released
 
+- register block : catchall and catch_all
+- Workitem #wf_name and #wf_revision
 - StorageParticipant :skip and :limit issues (Thanks Jan Topiński)
 - StorageParticipant #proceed deprecates #reply
 - fix for :if => '${a}' when a like '456ab' (Thanks John Le)
