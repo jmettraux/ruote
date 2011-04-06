@@ -107,6 +107,25 @@ module Ruote
       @h['participant_name']
     end
 
+    # Returns the name of the workflow to which this workitem belongs, or nil.
+    #
+    def wf_name
+
+      @h['wf_name']
+    end
+
+    alias definition_name wf_name
+
+    # Returns the revision of the workflow to which this workitem belongs,
+    # or nil.
+    #
+    def wf_revision
+
+      @h['wf_revision']
+    end
+
+    alias definition_revision wf_revision
+
     # Returns the payload, ie the fields hash.
     #
     def fields

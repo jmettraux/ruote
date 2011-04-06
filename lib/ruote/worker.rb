@@ -290,11 +290,18 @@ module Ruote
 
       tree = msg['tree']
       variables = msg['variables']
+      wi = msg['workitem']
 
       exp_class = @context.expmap.expression_class(tree.first)
 
       # msg['wfid'] only : it's a launch
       # msg['fei'] : it's a sub launch (a supplant ?)
+
+      wi['wf_name'] ||= (
+        tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil })
+
+      wi['wf_revision'] ||= (
+        tree[1]['revision'] || tree[1]['rev'])
 
       exp_hash = {
         'fei' => msg['fei'] || {
@@ -305,7 +312,7 @@ module Ruote
         'parent_id' => msg['parent_id'],
         'original_tree' => tree,
         'variables' => variables,
-        'applied_workitem' => msg['workitem'],
+        'applied_workitem' => wi,
         'forgotten' => msg['forgotten']
       }
 

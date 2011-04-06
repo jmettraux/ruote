@@ -160,7 +160,8 @@ module Ruote
     def definition_name
 
       @root_expression && (
-        @root_expression.attribute('name') || @root_expression.attribute_text)
+        @root_expression.attribute('name') ||
+        @root_expression.attribute_text)
     end
 
     # For a process
@@ -174,7 +175,9 @@ module Ruote
     #
     def definition_revision
 
-      @root_expression && @root_expression.attribute('revision')
+      @root_expression && (
+        @root_expression.attribute('revision') ||
+        @root_expression.attribute('rev'))
     end
 
     # Returns the 'position' of the process.
