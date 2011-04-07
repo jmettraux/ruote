@@ -151,9 +151,16 @@ module Ruote::Exp
         return evl(tree[1]).send(tree[2], evl(tree.last.last))
       end
 
-      return flatten(tree) if tree[0] == :call
+      if (c = flatten_and_compare(tree)) != nil
+        return c
+      end
+
+      if tree[0] == :call
+        return flatten(tree)
+      end
 
       raise ArgumentError
+        # TODO : consider returning false
 
       #require 'ruby2ruby'
       #Ruby2Ruby.new.process(Sexp.from_array(tree))
@@ -161,7 +168,21 @@ module Ruote::Exp
         # it's nice but "Loan/Grant" becomes "(Loan / Grant)"
     end
 
-    KEYWORDS = %w[ call const arglist ].collect { |w| w.to_sym }
+    def self.flatten_and_compare(tree)
+
+      ftree = tree.flatten
+      comparator = (ftree & COMPARATORS).first
+
+      return nil unless comparator
+
+      icomparator = ftree.index(comparator)
+      left = ftree[0..icomparator - 1]
+      right = ftree[icomparator + 1..-1]
+
+      evl("#{flatten(left).inspect} #{comparator} #{flatten(right).inspect}")
+    end
+
+    KEYWORDS = %w[ call const arglist str ].collect { |w| w.to_sym }
 
     def self.flatten(tree)
 

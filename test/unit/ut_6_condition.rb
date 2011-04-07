@@ -145,6 +145,9 @@ class ConditionTest < Test::Unit::TestCase
     assert_b true, "'some dude' == 'some dude'"
     assert_b true, "some dude == \"some dude\""
     assert_b true, "some dude == 'some dude'"
+
+    assert_b false, "'some other dude' == 'some dude'"
+    assert_b false, "some other dude == 'some dude'"
   end
 
   def test_and_or
