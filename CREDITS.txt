@@ -1,21 +1,19 @@
 
-CREDITS
-=======
+= CREDITS
 
 Ruote is an open source Ruby workflow engine.
 
 
-The main project team
----------------------
+== The main project team
 
 John Mettraux - http://jmettraux.wordpress.com
 Torsten Schoenebaum - http://github.com/tosch
 Kenneth Kalmer - http://www.opensourcery.co.za
 
 
-Contributors
-------------
+== Contributors
 
+Nando Sola - many help
 Neil Pennell - http://github.com/npennel
 Patrick Gannon - fix for compatibility with ruote-mongodb
 Fix Peña - 'jump to' bug patch
@@ -44,11 +42,9 @@ Frederic Piccand
 Richard Jennings
 
 
-Feedback
---------
+== Feedback
 
 Jan Topiński - https://github.com/simcha
-Nando Sola - many help
 Iuri Gagnidze - ProcessStatus#definition_name issues, Engine#leftovers
 John Le - https://github.com/sandbox
 Sean Johnson - https://github.com/belucid
@@ -92,8 +88,7 @@ Jon "Compensator" - first report of the "yamlextras" issue
 (see the mailing list at : http://groups.google.com/group/openwferu-users )
 
 
-Last but not least
-------------------
+= Last but not least
 
 Many thanks to the authors, the contributors and the community of the Ruby language, the various json gems, the builder, mailtrap, sourcify, parsetree gems, and many more.
 
