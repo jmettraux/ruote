@@ -34,14 +34,14 @@ module Ruote
     return collection if key == '.'
 
     key, rest = pop_key(key)
-    value = flookup(collection, key)
+    value = fetch(collection, key)
 
     return [ key, collection ] if container_lookup && rest.size == 0
     return [ rest.first, value ] if container_lookup && rest.size == 1
     return value if rest.size == 0
     return nil if value == nil
 
-    lookup(value, rest)
+    lookup(value, rest, container_lookup)
   end
 
   #   h = { 'customer' => { 'name' => 'alpha' } }
@@ -72,17 +72,26 @@ module Ruote
 
     k, c = lookup(collection, key, true)
 
-    return collection.delete(key) unless c
-
-    if c.is_a?(Array)
+    if c.nil?
+      collection.delete(key)
+    elsif c.is_a?(Array)
       c.delete_at(Integer(k)) rescue nil
-    else
+    elsif c.is_a?(Hash)
       c.delete(k)
+    else
+      nil
     end
   end
 
   protected # well...
 
+  # Pops the first key in a path key.
+  #
+  #   Ruote.pop_key('a.b.c') # => 'a'
+  #   Ruote.pop_key('1.2.3') # => 1
+  #
+  # (note the narrowing to an int that happens)
+  #
   def Ruote.pop_key(key)
 
     ks = key.is_a?(String) ? key.split('.') : key
@@ -90,25 +99,29 @@ module Ruote
     [ narrow_key(ks.first), ks[1..-1] ]
   end
 
+  # Attempts at turning a key into an integer, if it fails returns the
+  # original key.
+  #
   def Ruote.narrow_key(key)
 
-    return 0 if key == '0'
-
-    i = key.to_i
-    return i if i != 0
-
-    key
+    Integer(key) rescue key
   end
 
-  def Ruote.flookup(collection, key)
+  # Given a collection and a key returns the corresponding value
+  #
+  #   Ruote.fetch([ 12, 13, 24 ], 1) # => 13
+  #   Ruote.fetch({ '1' => 13 }, 1) # => 13
+  #   Ruote.fetch({ 1 => 13 }, 1) # => 13
+  #
+  def Ruote.fetch(collection, key)
 
     value = (collection[key] rescue nil)
 
     if value == nil and key.is_a?(Fixnum)
-      value = (collection[key.to_s] rescue nil)
+      (collection[key.to_s] rescue nil)
+    else
+      value
     end
-
-    value
   end
 end
 

@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- fixed issue with deep set and unset (Thanks Nando Sola)
 - improved conditional evaluation for dollar notation
 - register block : catchall and catch_all
 - Workitem #wf_name and #wf_revision

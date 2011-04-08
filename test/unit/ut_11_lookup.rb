@@ -28,8 +28,23 @@ class LookupTest < Test::Unit::TestCase
   def test_container_lookup
 
     assert_equal(
+      %w[ A B C ],
+      Ruote.lookup({ 'h' => { 'hh' => %w[ A B C ]} }, 'h.hh', false))
+    assert_equal(
       [ 'hh', { 'hh' => %w[ A B C ] } ],
       Ruote.lookup({ 'h' => { 'hh' => %w[ A B C ]} }, 'h.hh', true))
+  end
+
+  def test_deep_container_lookup
+
+    h = { 'foo' => { 'bar' => { 'baz' => { 'fruit' => 'pineapple' } } } }
+
+    assert_equal(
+      "pineapple",
+      Ruote.lookup(h, 'foo.bar.baz.fruit', false))
+    assert_equal(
+      [ 'fruit', { 'fruit' => 'pineapple' } ],
+      Ruote.lookup(h, 'foo.bar.baz.fruit', true))
   end
 
   def test_missing_container_lookup
@@ -45,6 +60,19 @@ class LookupTest < Test::Unit::TestCase
     Ruote.set(h, 'customer.name', 'bravo')
 
     assert_equal({"customer"=>{"name"=>"bravo"}}, h)
+  end
+
+  # courtesy of Nando Sola
+  #
+  def test_deep_set
+
+    h = { 'foo' => { 'bar' => { 'baz' => { 'fruit' => 'pineapple' } } } }
+
+    Ruote.set(h, 'foo.bar.baz.fruit', 'orange')
+
+    assert_equal(
+      { "foo" => { "bar" => { "baz" => { "fruit" => "orange" } } } },
+      h)
   end
 
   def test_set_missing
