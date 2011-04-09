@@ -71,6 +71,7 @@ module Ruote
       list = get_list
 
       list['list'].delete_if { |e| e.first == key }
+        # enforces only one instance of a participant per key/regex
 
       position = options['position'] || 'last'
       case position
