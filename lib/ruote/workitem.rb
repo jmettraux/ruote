@@ -251,7 +251,7 @@ module Ruote
     #
     def params
 
-      @h['fields']['params']
+      @h['fields']['params'] || {}
     end
 
     # (advanced)

@@ -147,15 +147,12 @@ module Ruote::Exp
       ) if participant_info.nil?
 
       #
-      # participant found, consider timeout
-
-      schedule_timeout(participant_info)
-
-      #
       # dispatch to participant
 
       h.applied_workitem['participant_name'] = h.participant_name
       h.applied_workitem['fields']['params'] = compile_atts
+
+      schedule_timeout(participant_info)
 
       persist_or_raise
 

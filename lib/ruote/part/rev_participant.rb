@@ -31,11 +31,13 @@ require 'ruote/part/local_participant'
 module Ruote
 
   #
-  # TODO
+  # This participant was born out of a suggestion from Jan Topiński in XXX
   #
   class RevParticipant
 
     include LocalParticipant
+
+    # TODO : how to deal with >= and ~> ?
 
     def initialize(opts=nil)
 
@@ -46,14 +48,48 @@ module Ruote
       ) unless @dir
     end
 
+    def consume(workitem)
+
+      lookup_code(workitem).consume(workitem)
+    end
+
+    def cancel(fei, flavour)
+
+      lookup_code(fei).cancel(fei, flavour)
+    end
+
+    #--
+    #def accept?(workitem)
+    #  part = lookup_code(workitem)
+    #  part.respond_to?(:accept?) ? part.accept?(workitem) : true
+    #end
     #
-    # No operation : simply replies immediately to the engine.
+    # Can't do this at this level, since it isn't the rev_participant's
+    # own accept?, it has to go in lookup_code
+    #++
+
+    def on_reply(workitem)
+
+      part = lookup_code(workitem)
+      part.on_reply(workitem) if part.respond_to?(:on_reply)
+    end
+
+    def rtimeout(workitem)
+
+      part = lookup_code(workitem)
+
+      part.respond_to?(:rtimeout) ? part.rtimeout(workitem) : nil
+    end
+
+    protected
+
+    # Maybe "lookup_real_participant_code" would be a better name...
     #
-    def consume(wi)
+    def lookup_code(wi_or_fei)
+
+      wi = wi_or_fei.is_a?(Ruote::Workitem) ?  wi_or_fei : workitem(wi_or_fei)
 
       rev = wi.params['revision'] || wi.params['rev']
-
-      consumed = false
 
       [
         [ wi.wf_name, wi.wf_revision, wi.participant_name, rev ],
@@ -72,20 +108,15 @@ module Ruote
         part = cpart.new
         part.context = @context
 
-        part.consume(wi)
-        consumed = true
-        break
+        next if part.respond_to?(:accept?) and (not part.accept?(wi))
+
+        return part
       end
 
       raise ArgumentError.new(
         "couldn't find code for participant #{wi.participant_name} " +
         "in dir #{@dir}"
-      ) unless consumed
-    end
-
-    def cancel(fei, flavour)
-
-      # TODO
+      )
     end
   end
 end
