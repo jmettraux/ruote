@@ -70,7 +70,9 @@ module Ruote
 
       list = get_list
 
-      list['list'].delete_if { |e| e.first == key }
+      override = (options.delete('override') != false)
+
+      list['list'].delete_if { |e| e.first == key } if override
         # enforces only one instance of a participant per key/regex
 
       position = options['position'] || 'last'
@@ -252,6 +254,7 @@ module Ruote
     def list=(pl)
 
       list = get_list
+
       list['list'] = pl.collect { |e|
         ParticipantEntry.read(e)
       }.collect { |e|
@@ -263,8 +266,17 @@ module Ruote
         #
         # put failed, have to redo it
         #
-        list=(pl)
+        self.list=(pl)
       end
+    end
+
+    # Clears this participant list.
+    #
+    # Used by Engine#register(&block)
+    #
+    def clear
+
+      self.list=([])
     end
 
     protected

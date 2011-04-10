@@ -544,11 +544,27 @@ module Ruote
     #
     # Originally implemented in ruote-kit by Torsten Schoenebaum.
     #
+    # == registration in block and :clear
+    #
+    # By default, when registering multiple participants in block, ruote
+    # considers you're wiping the participant list and re-adding them all.
+    #
+    # You can prevent the clearing by stating :clear => false like in :
+    #
+    #   engine.register :clear => false do
+    #     alpha 'Participants::Alpha', 'flavour' => 'vanilla'
+    #     participant 'bravo', 'Participants::Bravo', :flavour => 'peach'
+    #     catchall ParticipantCharlie, 'flavour' => 'coconut'
+    #   end
+    #
     def register(*args, &block)
+
+      clear = args.first.is_a?(Hash) ? args.pop[:clear] : true
 
       if args.size > 0
         register_participant(*args, &block)
       else
+        @context.plist.clear if clear
         proxy = ParticipantRegistrationProxy.new(self)
         block.arity < 1 ? proxy.instance_eval(&block) : block.call(proxy)
       end
@@ -860,6 +876,8 @@ module Ruote
     end
 
     def participant(name, klass=nil, options={}, &block)
+
+      options.merge!(:override => false)
 
       @engine.register_participant(name, klass, options, &block)
     end

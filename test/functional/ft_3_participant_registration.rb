@@ -430,6 +430,42 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       @engine.participant_list.collect { |pe| pe.classname })
   end
 
+  def test_register_block_override_false
+
+    @engine.register do
+      alpha 'KlassA'
+      alpha 'KlassB'
+    end
+
+    plist = @engine.participant_list
+
+    assert_equal(%w[ ^alpha$ ^alpha$ ], plist.collect { |pe| pe.regex })
+    assert_equal(%w[ KlassA KlassB ], plist.collect { |pe| pe.classname })
+    assert_equal({}, plist.first.options)
+  end
+
+  def test_register_block_clears
+
+    @engine.register 'alpha', 'AlphaParticipant'
+
+    @engine.register do
+      bravo 'BravoParticipant'
+    end
+
+    assert_equal 1, @engine.participant_list.size
+  end
+
+  def test_register_block_clear_option
+
+    @engine.register 'alpha', 'AlphaParticipant'
+
+    @engine.register :clear => false do
+      bravo 'BravoParticipant'
+    end
+
+    assert_equal 2, @engine.participant_list.size
+  end
+
   def test_argument_error_on_instantiated_participant
 
     assert_raise ArgumentError do

@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- register block : now clearing by default
 - fixed issue with deep set and unset (Thanks Nando Sola)
 - improved conditional evaluation for dollar notation
 - register block : catchall and catch_all
