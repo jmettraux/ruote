@@ -457,6 +457,22 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       })
   end
 
+  def test_register_block_and_block
+
+    @engine.register do
+      alpha do |workitem|
+        a
+      end
+      participant 'bravo' do |workitem|
+        b
+      end
+    end
+
+    assert_equal(
+      [ [ 'block' ], [ 'block' ] ],
+      @engine.participant_list.collect { |pe| pe.options.keys })
+  end
+
   def test_register_block_catchall_default
 
     @engine.register do

@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- register block : fixed issue with lonely pname and block
 - register_participant : after/before/over
 - register block : now clearing by default
 - fixed issue with deep set and unset (Thanks Nando Sola)

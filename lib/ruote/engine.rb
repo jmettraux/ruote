@@ -932,9 +932,9 @@ module Ruote
 
     # Maybe a bit audacious...
     #
-    def method_missing(method_name, *args)
+    def method_missing(method_name, *args, &block)
 
-      participant(method_name, *args)
+      participant(method_name, *args, &block)
     end
   end
 
