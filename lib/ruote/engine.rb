@@ -514,6 +514,44 @@ module Ruote
     # containing the participant implementation. 'require' will load and eval
     # the ruby code only once, 'load' each time.
     #
+    #
+    # == :override => false
+    #
+    # By default, when registering a participant, if this results in a regex
+    # that is already used, the previously registered participant gets
+    # unregistered.
+    #
+    #   engine.register_participant 'alpha', AaParticipant
+    #   engine.register_participant 'alpha', BbParticipant, :override => false
+    #
+    # This can be useful when the #accept? method of participants are in use.
+    #
+    # Note that using the #register(&block) method, :override => false is
+    # automatically enforced.
+    #
+    #   engine.register do
+    #     alpha AaParticipant
+    #     alpha BbParticipant
+    #   end
+    #
+    #
+    # == :position / :pos => 'last' / 'first' / 'before' / 'after' / 'over'
+    #
+    # One can specify the position where the participant should be inserted
+    # in the participant list.
+    #
+    #   engine.register_participant 'auditor', AuditParticipant, :pos => 'last'
+    #
+    # * last : it's the default, places the participant at the end of the list
+    # * first : top of the list
+    # * before : implies :override => false, places before the existing
+    #   participant with the same regex
+    # * after : implies :override => false, places after the last existing
+    #   participant with the same regex
+    # * over : overrides in the same position (while the regular, default
+    #   overide removes and then places the new participant at the end of
+    #   the list)
+    #
     def register_participant(regex, participant=nil, opts={}, &block)
 
       if participant.is_a?(Hash)

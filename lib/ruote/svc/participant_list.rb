@@ -65,17 +65,31 @@ module Ruote
       end
 
       key = (name.is_a?(Regexp) ? name : Regexp.new("^#{name}$")).source
-
       entry = [ key, [ klass, options ] ]
 
       list = get_list
 
-      override = (options.delete('override') != false)
+      position = options['position'] || options['pos'] || 'last'
 
-      list['list'].delete_if { |e| e.first == key } if override
-        # enforces only one instance of a participant per key/regex
+      if position == 'before'
 
-      position = options['position'] || 'last'
+        position = list['list'].index { |e| e.first == key } || -1
+
+      elsif position == 'after'
+
+        position = (list['list'].rindex { |e| e.first == key } || -2) + 1
+
+      elsif position == 'over'
+
+        position = list['list'].index { |e| e.first == key } || -1
+        list['list'].delete_at(position) unless position == -1
+
+      elsif options.delete('override') != false
+
+        list['list'].delete_if { |e| e.first == key }
+          # enforces only one instance of a participant per key/regex
+      end
+
       case position
         when 'last' then list['list'] << entry
         when 'first' then list['list'].unshift(entry)

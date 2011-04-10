@@ -67,6 +67,55 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       @engine.participant_list.collect { |pe| pe.regex.to_s })
   end
 
+  def test_participant_register_before
+
+    @engine.register_participant :alpha, 'AlphaParticipant'
+    @engine.register_participant :bravo, 'BravoParticipant'
+    @engine.register_participant :alpha, 'AlphaPrimeParticipant', :pos => :after
+
+    assert_equal(
+      [ %w[ ^alpha$ AlphaParticipant ],
+        %w[ ^alpha$ AlphaPrimeParticipant ],
+        %w[ ^bravo$ BravoParticipant ] ],
+      @engine.participant_list.collect { |e| [ e.regex, e.classname ] })
+  end
+
+  def test_participant_register_after
+
+    @engine.register_participant :alpha, 'AlphaParticipant'
+    @engine.register_participant :alpha, 'AlphaPrimeParticipant', :pos => :before
+
+    assert_equal(
+      [ %w[ ^alpha$ AlphaPrimeParticipant ],
+        %w[ ^alpha$ AlphaParticipant ] ],
+      @engine.participant_list.collect { |e| [ e.regex, e.classname ] })
+  end
+
+  def test_participant_register_before_after_corner_cases
+
+    @engine.register_participant :alpha, 'KlassA', :pos => :before
+    @engine.register_participant :bravo, 'KlassB', :pos => :after
+
+    assert_equal(
+      [ %w[ ^alpha$ KlassA ],
+        %w[ ^bravo$ KlassB ] ],
+      @engine.participant_list.collect { |e| [ e.regex, e.classname ] })
+  end
+
+  def test_participant_register_over
+
+    @engine.register_participant :alpha, 'KlassA'
+    @engine.register_participant :bravo, 'KlassB'
+    @engine.register_participant :alpha, 'KlassAa', :pos => :over
+    @engine.register_participant :charly, 'KlassC', :pos => :over
+
+    assert_equal(
+      [ %w[ ^alpha$ KlassAa ],
+        %w[ ^bravo$ KlassB ],
+        %w[ ^charly$ KlassC ] ],
+      @engine.participant_list.collect { |e| [ e.regex, e.classname ] })
+  end
+
   def test_double_registration
 
     @engine.register_participant :alpha do |workitem|
