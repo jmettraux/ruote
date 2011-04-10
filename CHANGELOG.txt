@@ -4,6 +4,8 @@
 
 == ruote - 2.2.1    not yet released
 
+- participant list, multiple participants with same regex now ok, allowing
+  for cascading participants (at consume and at on_error)
 - register block : fixed issue with lonely pname and block
 - register_participant : after/before/over
 - register block : now clearing by default

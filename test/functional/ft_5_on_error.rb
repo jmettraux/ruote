@@ -339,5 +339,46 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     @engine.wait_for(:catcher)
   end
+
+  class RescuerOne
+    include Ruote::LocalParticipant
+    def consume(workitem)
+      @context.tracer << 'one'
+      reply_to_engine(workitem)
+    end
+    def accept?(workitem)
+      false
+    end
+  end
+  class RescuerTwo
+    include Ruote::LocalParticipant
+    def consume(workitem)
+      @context.tracer << 'two'
+      reply_to_engine(workitem)
+    end
+    #def accept?(workitem)
+    #  true
+    #end
+  end
+
+  def test_participants_and_accept
+
+    pdef = Ruote.process_definition do
+      sequence :on_error => 'rescuer' do
+        nada
+      end
+    end
+
+    @engine.register do
+      rescuer RescuerOne
+      rescuer RescuerTwo
+    end
+
+    #@engine.noisy = true
+
+    assert_trace('two', pdef)
+
+    assert_equal 1, logger.log.select { |e| e['action'] == 'fail' }.size
+  end
 end
 
