@@ -1,9 +1,12 @@
 # encoding: utf-8
 
+load 'lib/ruote/version.rb'
+
+
 Gem::Specification.new do |s|
 
   s.name = 'ruote'
-  s.version = File.read('lib/ruote/version.rb').match(/VERSION = '([^']+)'/)[1]
+  s.version = Ruote::VERSION
   s.platform = Gem::Platform::RUBY
   s.authors = [ 'John Mettraux', 'Kenneth Kalmer', 'Torsten Schoenebaum' ]
   s.email = [ 'jmettraux@gmail.com' ]
