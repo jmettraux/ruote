@@ -34,11 +34,11 @@ module Ruote
   #
   class Worker
 
-    EXP_ACTIONS = %w[ reply cancel fail receive dispatched ]
+    EXP_ACTIONS = %w[ reply cancel fail receive dispatched pause resume ]
       # 'apply' is comprised in 'launch'
       # 'receive' is a ParticipantExpression alias for 'reply'
 
-    PROC_ACTIONS = %w[ cancel_process kill_process ]
+    PROC_ACTIONS = %w[ cancel kill pause resume ].collect { |a| a + '_process' }
     DISP_ACTIONS = %w[ dispatch dispatch_cancel ]
 
     attr_reader :storage
@@ -353,16 +353,30 @@ module Ruote
 
       return unless root
 
-      flavour = (msg['action'] == 'kill_process') ? 'kill' : nil
-
       @storage.put_msg(
         'cancel',
         'fei' => root['fei'],
         'wfid' => msg['wfid'], # indicates this was triggered by cancel_process
-        'flavour' => flavour)
+        'flavour' => msg['action'] == 'kill_process' ? 'kill' : nil)
     end
 
     alias kill_process cancel_process
+
+    # Handles 'pause_process' and 'resume_process'.
+    #
+    def pause_process(msg)
+
+      root = @storage.find_root_expression(msg['wfid'])
+
+      return unless root
+
+      @storage.put_msg(
+        msg['action'] == 'pause_process' ? 'pause' : 'resume',
+        'fei' => root['fei'],
+        'wfid' => msg['wfid']) # it was triggered by {pause|resume}_process
+    end
+
+    alias resume_process pause_process
   end
 end
 

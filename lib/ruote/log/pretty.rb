@@ -118,6 +118,8 @@ module Ruote
         when 'receive' then 'rc'
         when 'dispatched' then 'dd'
         when 'dispatch_cancel' then 'dc'
+        when 'pause', 'pause_process' then 'pz'
+        when 'resume', 'resume_process' then 'rz'
         else action
       end
       action = case action
@@ -129,6 +131,8 @@ module Ruote
         when 'di' then color('4;33', action)
         when 'dd' then color('4;33', action)
         when 'dc' then color('4;31', action)
+        when 'pz' then color('4;31', action)
+        when 'rz' then color('4;32', action)
         else action
       end
 

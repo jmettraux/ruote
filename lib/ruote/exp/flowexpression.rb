@@ -341,7 +341,13 @@ module Ruote::Exp
       h.children.delete(fei)
         # accept without any check ?
 
-      if h.state != nil # failing or timing out ...
+      if h.state == 'paused'
+
+        (h['paused_replies'] ||= []) << msg
+
+        do_persist
+
+      elsif h.state != nil # failing or timing out ...
 
         if h.children.size < 1
           reply_to_parent(workitem)
@@ -482,6 +488,42 @@ module Ruote::Exp
         persist_or_raise
         h.children.each { |i| @context.storage.put_msg('cancel', 'fei' => i) }
       end
+    end
+
+    # Expression received a "pause" message. Will put the expression in the
+    # "paused" state and then pass the message to the children.
+    #
+    # If the expression is in a non-nil state (failed, timed_out, ...), the
+    # message will be ignored.
+    #
+    def do_pause(msg)
+
+      return if h.state != nil
+
+      h['state'] = 'paused'
+
+      do_persist || return
+
+      h.children.each { |i| @context.storage.put_msg('pause', 'fei' => i) }
+    end
+
+    # Will "unpause" the expression (if it was paused), and trigger any
+    # 'paused_replies' (replies that came while the expression was paused).
+    #
+    def do_resume(msg)
+
+      return if h.state != 'paused'
+
+      h['state'] = nil
+      replies = h.delete('paused_replies') || []
+
+      do_persist || return
+
+      h.children.each { |i| @context.storage.put_msg('resume', 'fei' => i) }
+        # resume children
+
+      replies.each { |m| @context.storage.put_msg(m.delete('action'), m) }
+        # trigger replies
     end
 
     #--

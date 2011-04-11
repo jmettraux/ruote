@@ -164,13 +164,7 @@ module Ruote
     #
     def cancel(wi_or_fei_or_wfid)
 
-      target = Ruote.extract_id(wi_or_fei_or_wfid)
-
-      if target.is_a?(String)
-        @context.storage.put_msg('cancel_process', 'wfid' => target)
-      else
-        @context.storage.put_msg('cancel', 'fei' => target)
-      end
+      do_misc('cancel', wi_or_fei_or_wfid)
     end
 
     alias cancel_process cancel
@@ -181,17 +175,29 @@ module Ruote
     #
     def kill(wi_or_fei_or_wfid)
 
-      target = Ruote.extract_id(wi_or_fei_or_wfid)
-
-      if target.is_a?(String)
-        @context.storage.put_msg('kill_process', 'wfid' => target)
-      else
-        @context.storage.put_msg('cancel', 'fei' => target, 'flavour' => 'kill')
-      end
+      do_misc('kill', wi_or_fei_or_wfid)
     end
 
     alias kill_process kill
     alias kill_expression kill
+
+    # Given a wfid, will [attempt to] pause the corresponding process instance.
+    # Given an expression id (fei) will [attempt to] pause the expression
+    # and its children.
+    #
+    def pause(wi_or_fei_or_wfid)
+
+      do_misc('pause', wi_or_fei_or_wfid)
+    end
+
+    # Given a wfid will [attempt to] resume the process instance.
+    # Given an expression id (fei) will [attempt to] to resume the expression
+    # and its children.
+    #
+    def resume(wi_or_fei_or_wfid)
+
+      do_misc('resume', wi_or_fei_or_wfid)
+    end
 
     # Replays at a given error (hopefully you fixed the cause of the error
     # before replaying...)
@@ -834,6 +840,21 @@ module Ruote
     end
 
     protected
+
+    # Used by #pause and #resume.
+    #
+    def do_misc(action, wi_or_fei_or_wfid)
+
+      target = Ruote.extract_id(wi_or_fei_or_wfid)
+
+      if target.is_a?(String)
+        @context.storage.put_msg("#{action}_process", 'wfid' => target)
+      elsif action == 'kill'
+        @context.storage.put_msg('cancel', 'fei' => target, 'flavour' => 'kill')
+      else
+        @context.storage.put_msg(action, 'fei' => target)
+      end
+    end
 
     # Used by #process and #processes
     #
