@@ -42,7 +42,10 @@ class FtWorkerTest < Test::Unit::TestCase
 
     Thread.pass
 
-    assert_equal 1, @engine.storage.get_many('msgs').size
+    #assert_equal 1, @engine.storage.get_many('msgs').size
+      # won't work with the latest ruote-redis implementations
+
+    assert_equal 1, @engine.storage.get_msgs.size
   end
 
   def test_remaining_messages
