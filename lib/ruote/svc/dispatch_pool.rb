@@ -42,34 +42,14 @@ module Ruote
     def handle(msg)
 
       case msg['action']
-        when 'dispatch'
-          dispatch(msg)
-        when 'dispatch_cancel'
-          dispatch_cancel(msg)
-        else
-          # simply discard the message
+        when 'dispatch' then dispatch(msg)
+        when 'dispatch_cancel' then dispatch_cancel(msg)
+        when 'dispatch_pause', 'dispatch_resume' then dispatch_pause(msg)
+        else # simply discard the message
       end
     end
 
     protected
-
-    def dispatch_cancel(msg)
-
-      flavour = msg['flavour']
-
-      participant = @context.plist.instantiate(msg['participant'])
-
-      begin
-        participant.cancel(Ruote::FlowExpressionId.new(msg['fei']), flavour)
-      rescue => e
-        raise(e) if flavour != 'kill'
-      end
-
-      @context.storage.put_msg(
-        'reply',
-        'fei' => msg['fei'],
-        'workitem' => msg['workitem'])
-    end
 
     def dispatch(msg)
 
@@ -138,6 +118,40 @@ module Ruote
       else
         participant.do_not_thread(Ruote::Workitem.new(msg['workitem']))
       end
+    end
+
+    # Instantiates the participant and calls its cancel method.
+    #
+    def dispatch_cancel(msg)
+
+      flavour = msg['flavour']
+
+      participant = @context.plist.instantiate(msg['participant'])
+
+      begin
+        participant.cancel(Ruote::FlowExpressionId.new(msg['fei']), flavour)
+      rescue => e
+        raise(e) if flavour != 'kill'
+      end
+
+      @context.storage.put_msg(
+        'reply',
+        'fei' => msg['fei'],
+        'workitem' => msg['workitem'])
+    end
+
+    # Instantiates the participant and calls its on_pause (or on_resume) method.
+    #
+    def dispatch_pause(msg)
+
+      action = (msg['action'] == 'dispatch_resume' ? :on_resume : :on_pause)
+
+      participant = @context.plist.instantiate(
+        msg['participant'], :if_respond_to? => action)
+
+      return unless participant
+
+      participant.send(action, Ruote::FlowExpressionId.new(msg['fei']))
     end
   end
 end

@@ -39,7 +39,7 @@ module Ruote
       # 'receive' is a ParticipantExpression alias for 'reply'
 
     PROC_ACTIONS = %w[ cancel kill pause resume ].collect { |a| a + '_process' }
-    DISP_ACTIONS = %w[ dispatch dispatch_cancel ]
+    DISP_ACTIONS = %w[ dispatch dispatch_cancel dispatch_pause dispatch_resume ]
 
     attr_reader :storage
     attr_reader :context

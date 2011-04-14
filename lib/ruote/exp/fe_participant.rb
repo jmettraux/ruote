@@ -246,6 +246,42 @@ module Ruote::Exp
 
       do_schedule_timeout(timeout)
     end
+
+    def do_pause(msg)
+
+      return if h.state != nil
+
+      h['state'] = 'paused'
+
+      do_persist || return
+
+      @context.storage.put_msg(
+        'dispatch_pause',
+        'fei' => h.fei,
+        'participant_name' => h.participant_name,
+        'participant' => h.participant)
+    end
+
+    def do_resume(msg)
+
+      return if h.state != 'paused'
+
+      h['state'] = nil
+      replies = h.delete('paused_replies') || []
+
+      do_persist || return
+
+      if replies.empty?
+        @context.storage.put_msg(
+          'dispatch_resume',
+          'fei' => h.fei,
+          'participant_name' => h.participant_name,
+          'participant' => h.participant)
+      else
+        replies.each { |m| @context.storage.put_msg(m.delete('action'), m) }
+          # trigger replies
+      end
+    end
   end
 end
 

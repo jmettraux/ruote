@@ -137,7 +137,53 @@ class FtPauseTest < Test::Unit::TestCase
       })
   end
 
+  class AlphaParticipant
+    include Ruote::LocalParticipant
+    def consume(workitem)
+      @context.tracer << "dispatched:#{workitem.fei.wfid}\n"
+    end
+    def on_pause(fei)
+      @context.tracer << "pause:#{fei.wfid}\n"
+    end
+    def on_resume(fei)
+      @context.tracer << "resume:#{fei.wfid}\n"
+    end
+  end
+
   def test_propagation_to_participant
+
+    pdef = Ruote.define do
+      alpha
+    end
+
+    @engine.register do
+      alpha AlphaParticipant
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+
+    @engine.pause(wfid)
+
+    sleep 1.4 # give time to the pause propagation to reach the participant
+
+    assert_equal(
+      [ "dispatched:#{wfid}", "pause:#{wfid}" ],
+      @tracer.to_a)
+
+    @engine.resume(wfid)
+
+    sleep 1.4 # give time to the resume propagation to reach the participant
+
+    assert_equal(
+      [ "dispatched:#{wfid}", "pause:#{wfid}", "resume:#{wfid}" ],
+      @tracer.to_a)
+  end
+
+  def test_propagation_to_participant_when_participant_has_already_replied
 
     flunk
   end
