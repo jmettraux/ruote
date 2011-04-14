@@ -31,7 +31,53 @@ require 'ruote/part/local_participant'
 module Ruote
 
   #
-  # This participant was born out of a suggestion from Jan Topiński in XXX
+  # This participant was born out of a suggestion from Jan Topiński in
+  # http://groups.google.com/group/openwferu-users/browse_thread/thread/be20a5d861556fd8
+  #
+  # This participant is a gateway to code placed in a directory.
+  #
+  #   engine.register do
+  #     toto, Ruote::RevParticipant, :dir => 'participants/toto/'
+  #   end
+  #
+  # Then in the participants/toto/ dir :
+  #
+  #     /my_workflow__0.1__toto_0.6.rb
+  #       # participant toto, workflow 'my_workflow' with revision '0.1'
+  #     /my_workflow__toto.rb
+  #       # participant toto, workflow 'my_workflow' any revision
+  #     /toto_0.6.rb
+  #       # participant toto with rev '0.6', any workflow
+  #     /toto.rb
+  #       # participant toto, any rev, any workflow
+  #       # ...
+  #
+  # The scheme goes like :
+  #
+  #    /wf-name__wf-revision__participant-name__p-revision.rb
+  #
+  # The files themselves look like :
+  #
+  #   def consume(workitem)
+  #     workitem.fields['kilroy'] = 'was here'
+  #     reply_to_engine(workitem)
+  #   end
+  #
+  # The file directly contains the classical participant methods defined at the
+  # top level. #cancel, #accept?, #on_reply and of course #consume are OK.
+  #
+  #
+  # Maybe, look at the tests for more clues :
+  #
+  #   https://github.com/jmettraux/ruote/blob/master/test/functional/ft_57_rev_participant.rb
+  #
+  # *Note* : It's probably not the best participant in a distributed context, it
+  # grabs the code to execute from a directory. If you use it in a distributed
+  # context, you'll have to make sure to synchronize the directory to each host
+  # running a worker.
+  #
+  # *Warning* : this participant trusts the code it deals with, there is no
+  # security check.
   #
   class RevParticipant
 
