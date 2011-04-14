@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- pause(fei/wfid), resume(fei/wfid)
 - participant list, multiple participants with same regex now ok, allowing
   for cascading participants (at consume and at on_error)
 - register block : fixed issue with lonely pname and block
