@@ -168,7 +168,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.pause(wfid)
 
-    sleep 1.4 # give time to the pause propagation to reach the participant
+    sleep 0.7 # give time to the pause propagation to reach the participant
 
     assert_equal(
       [ "dispatched:#{wfid}", "pause:#{wfid}" ],
@@ -176,7 +176,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.resume(wfid)
 
-    sleep 1.4 # give time to the resume propagation to reach the participant
+    sleep 0.7 # give time to the resume propagation to reach the participant
 
     assert_equal(
       [ "dispatched:#{wfid}", "pause:#{wfid}", "resume:#{wfid}" ],
@@ -185,7 +185,45 @@ class FtPauseTest < Test::Unit::TestCase
 
   def test_propagation_to_participant_when_participant_has_already_replied
 
-    flunk
+    pdef = Ruote.define do
+      alpha
+    end
+
+    @engine.register do
+      alpha AlphaParticipant
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+
+    @engine.pause(wfid)
+
+    sleep 0.7 # give time to the pause propagation to reach the participant
+
+    wi = @engine.ps(wfid).expressions.last.h.applied_workitem
+
+    part = @engine.participant(:alpha.to_s)
+
+    part.instance_eval { reply_to_engine(Ruote::Workitem.new(wi)) }
+
+    @engine.wait_for(1)
+
+    assert_equal(
+      [ "dispatched:#{wfid}", "pause:#{wfid}" ],
+      @tracer.to_a)
+
+    @engine.resume(wfid)
+
+    sleep 0.7 # give time to the resume propagation to reach the participant
+
+    assert_equal(
+      [ "dispatched:#{wfid}", "pause:#{wfid}" ],
+      @tracer.to_a)
+        #
+        # no 'resume:xxx'
   end
 end
 

@@ -692,7 +692,7 @@ module Ruote
     #
     def participant(name)
 
-      @context.plist.lookup(name, nil)
+      @context.plist.lookup(name.to_s, nil)
     end
 
     # Adds a service locally (will not get propagated to other workers).
