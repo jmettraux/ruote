@@ -287,6 +287,10 @@
 [o] DefaultHistory : add a method to list all wfids (for by_wfid)
 [x] issue with ruote-kit and inpa participants...
 [x] .nil? .empty? .set? for "${x}.nil?"
+[o] BlockParticipant : proc.to_source thanks to sourcify
+[o] register :overwrite { ... } ? (wipes all the participants)
+[o] pause engine
+[o] pause process instance
 
 [ ] exp : exp (restricted form of eval ?) (is it apply ?)
 [x] exp : filter
@@ -309,12 +313,6 @@
 [ ] recursion : should cope with modified trees 'main' => :tree ??
 
 [ ] set :var => 'y' { '2342342' }
-
-[ ] pause engine
-[ ] pause process instance
-    |
-    would it mean something like placing a paused list in the storage
-    and fetching it all the time ?
 
 [ ] file/fs_listener [example] ?
 
@@ -350,7 +348,7 @@
 [ ] double-check on_cancel rewrite (ft_1_process_status)
 
 [ ] verify get_last/get_raw logic, no + 0.0001...
-[ ] spare 1 get_msg by caching msg (but keep 'deleting')
+[x] spare 1 get_msg by caching msg (but keep 'deleting')
 [ ] [un]set_var : via message ? should be ok like that... Not much traffic there
 
 [ ] empty iterator or concurrent-iterator, log ? crash ? empty while...
@@ -406,8 +404,6 @@
 
 [x] cursor : previous_command field ? not really necessary with :break_if => x
 
-[ ] register :overwrite { ... } ? (wipes all the participants)
-
 [ ] storage_participant.by_participant([ a, b, c, d ], opts)
     storage_participant.by_participant(a, b, c, d, opts) too
       leverage things like
@@ -430,8 +426,6 @@
 
 [ ] console for InformatiQ / console or dashboard or tool ?
 [ ] pooltool.ru : there are already storage copy methods
-
-[ ] BlockParticipant : proc.to_source thanks to sourcify
 
 [o] doc : enhance doc on conditional (and, empty, null, ...)
 [o] doc : document engine.on_{error|terminate}
@@ -461,8 +455,8 @@
 [ ] ci : ruote-mongodb
 [ ] ci : jruby
 
-[ ] StorageParticipant#reply : raise if workitem not found ?
-[ ] StorageParticipant#reply : accept fei ?
+[ ] StorageParticipant#proceed : raise if workitem not found ?
+[ ] StorageParticipant#proceed : accept fei ?
 [ ] Engine#reply(wi), should remove from storage...
 
 [ ] eft_18 weak with jruby-1.5.1 and 1.5.6
