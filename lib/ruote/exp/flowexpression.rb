@@ -61,6 +61,7 @@ module Ruote::Exp
     require 'ruote/exp/ro_attributes'
     require 'ruote/exp/ro_variables'
     require 'ruote/exp/ro_filters'
+    require 'ruote/exp/ro_vf'
 
     COMMON_ATT_KEYS = %w[
       if unless forget timeout on_error on_cancel on_timeout ]

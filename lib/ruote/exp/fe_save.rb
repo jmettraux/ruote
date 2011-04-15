@@ -65,7 +65,7 @@ module Ruote::Exp
         prefix, key = [ 'f', key ] unless prefix
 
         if prefix == 'f'
-          set_f(key)
+          set_f(key, Ruote.fulldup(h.applied_workitem['fields']))
         else
           set_variable(key, h.applied_workitem['fields'])
         end
@@ -76,7 +76,7 @@ module Ruote::Exp
 
       elsif tk.match(/^to_f/)
 
-        set_f(key)
+        set_f(key, Ruote.fulldup(h.applied_workitem['fields']))
 
       #else # do nothing
       end
@@ -87,16 +87,6 @@ module Ruote::Exp
     def reply(workitem)
 
       # empty, never called
-    end
-
-    protected
-
-    def set_f(key)
-
-      Ruote.set(
-        h.applied_workitem['fields'],
-        key,
-        Ruote.fulldup(h.applied_workitem['fields']))
     end
   end
 end

@@ -62,6 +62,7 @@ class FtEngineParticipantTest < Test::Unit::TestCase
     @engine0.shutdown
     @engine1.shutdown
 
+  ensure
     FileUtils.rm_rf(@dir0)
     FileUtils.rm_rf(@dir1)
   end

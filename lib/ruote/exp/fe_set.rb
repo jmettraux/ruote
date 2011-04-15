@@ -107,13 +107,15 @@ module Ruote::Exp
 
       if var_key = has_attribute(:v, :var, :variable)
 
-        set_v(attribute(var_key), value)
+        set_v(attribute(var_key), value, name == 'unset')
 
       elsif field_key = has_attribute(:f, :fld, :field)
 
         set_f(attribute(field_key), value)
 
       elsif value == nil && kv = expand_atts(opts).find { |k, v| k != 'escape' }
+
+        kv << (name == 'unset')
 
         set_vf(*kv)
 
@@ -129,40 +131,6 @@ module Ruote::Exp
     def reply(workitem)
 
       # never called
-    end
-
-    protected
-
-    def set_v(key, value)
-
-      if name == 'unset'
-        unset_variable(key)
-      else
-        set_variable(key, value)
-      end
-    end
-
-    def set_f(key, value)
-
-      if name == 'unset'
-        h.applied_workitem['fields'].delete(key)
-      else
-        Ruote.set(h.applied_workitem['fields'], key, value)
-      end
-    end
-
-    PREFIX_REGEX = /^([^:]+):(.+)$/ #unless defined?(PREFIX_REGEX)
-
-    def set_vf(key, value)
-
-      field = true
-
-      if m = PREFIX_REGEX.match(key)
-        field = m[1][0, 1] == 'f'
-        key = m[2]
-      end
-
-      field ? set_f(key, value) : set_v(key, value)
     end
   end
 end

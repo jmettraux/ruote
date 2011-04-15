@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- read 'http://'|'file', :to => 'f:a' / :to => 'v:b'
 - save :to => 'f:a' / :to => 'v:b'
 - pause(fei/wfid), resume(fei/wfid)
 - participant list, multiple participants with same regex now ok, allowing
