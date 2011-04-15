@@ -72,5 +72,45 @@ class EftSaveTest < Test::Unit::TestCase
     #p alpha.first.fields
     assert_equal 'surf', alpha.first.fields['h']['wi_as_before']['nada']
   end
+
+  # sfo -> fra
+
+  def test_save_to_f # and deep f
+
+    pdef = Ruote.process_definition do
+      set 'f:x' => 'val0'
+      set 'f:h' => {}
+      save :to => 'f:h.deep'
+      save :to => 'f:a'
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    fields = @engine.wait_for(wfid)['workitem']['fields']
+
+    assert_equal(
+      { 'deep' => { 'x' => 'val0', 'h' => {} } },
+      fields['h'])
+    assert_equal(
+      { 'x' => 'val0', 'h' => { 'deep' => { 'x' => 'val0', 'h' => { }  } } },
+      fields['a'])
+  end
+
+  def test_save_to_v
+
+    pdef = Ruote.process_definition do
+      set 'f:x' => 'val0'
+      save :to => 'v:a'
+      set 'f:y' => '$v:a'
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    fields = @engine.wait_for(wfid)['workitem']['fields']
+
+    assert_equal({ 'x' => 'val0' }, fields['y'])
+  end
 end
 
