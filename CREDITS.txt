@@ -44,6 +44,7 @@ Richard Jennings
 
 == Feedback
 
+Greg Lazarev - composite storage issues
 Jan Topiński - https://github.com/simcha
 Iuri Gagnidze - ProcessStatus#definition_name issues, Engine#leftovers
 John Le - https://github.com/sandbox

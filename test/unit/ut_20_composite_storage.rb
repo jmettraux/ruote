@@ -44,5 +44,31 @@ class UtCompositeStorageTest < Test::Unit::TestCase
     assert_nil r
     assert_equal 0, @default.h['msgs'].size
   end
+
+  class TracingStorage
+    attr_reader :trace
+    def initialize
+      @trace = []
+    end
+    def method_missing(m, *args)
+      @trace << [ m, *args ]
+    end
+  end
+
+  def test_special_methods
+
+    default = TracingStorage.new
+
+    cs = Ruote::CompositeStorage.new(default, {})
+
+    cs.delete_schedule('x') # schedule id
+    cs.reserve('type' => 'schedules', '_id' => 'nada')
+
+    assert_equal([
+      [ :delete_schedule, 'x' ],
+      [ :reserve, { 'type' => 'schedules', '_id' => 'nada' } ]
+    ],
+    default.trace)
+  end
 end
 

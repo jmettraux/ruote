@@ -51,57 +51,54 @@ module Ruote
 
       @default_storage = default_storage
       @storages = storages
-
-      prepare_base_methods
     end
 
-    def put(doc, opts={})
+    # A class method 'delegate', to tell this storage how to deal with
+    # each method composing a storage.
+    #
+    # Followed by a list of 'delegations'.
+    #
+    def self.delegate(method_name, type=nil)
 
-      storage(doc['type']).put(doc, opts)
+      if type == nil
+        define_method(method_name) do |*args|
+          storage(args.first['type']).send(method_name, *args)
+        end
+      elsif type.is_a?(Fixnum)
+        define_method(method_name) do |*args|
+          storage(args[type]).send(method_name, *args)
+        end
+      else
+        type = type.to_s
+        define_method(method_name) do |*args|
+          storage(type).send(method_name, *args)
+        end
+      end
     end
 
-    def get(type, key)
+    delegate :put
+    delegate :get, 0
+    delegate :get_many, 0
+    delegate :delete
 
-      storage(type).get(type, key)
-    end
+    delegate :reserve
+    delegate :ids, 0
+    delegate :purge_type!, 0
+    delegate :empty?, 0
 
-    def delete(doc)
-
-      storage(doc['type']).delete(doc)
-    end
-
-    def get_many(type, key=nil, opts={})
-
-      storage(type).get_many(type, key, opts)
-    end
-
-    def ids(type)
-
-      storage(type).ids(type)
-    end
-
-    def purge!
-
-      TYPES.collect { |t| storage(t) }.uniq.each { |s| s.purge! }
-    end
-
-    def purge_type!(type)
-
-      storage(type).purge_type!(type)
-    end
+    delegate :put_msg, :msgs
+    delegate :get_msgs, :msgs
+    delegate :put_schedule, :schedules
+    delegate :get_schedules, :schedules
+    delegate :delete_schedule, :schedules
+    delegate :find_root_expression, :expressions
+    delegate :expression_wfids, :expressions
+    delegate :get_trackers, :variables
+    delegate :get_engine_variable, :variables
+    delegate :put_engine_variable, :variables
 
     #def add_type (type)
     #end
-
-    protected
-
-    STORAGE_BASE_METHODS = {
-      'put_msg' => 'msgs',
-      'get_msgs' => 'msgs',
-      'find_root_expression' => 'expressions',
-      'get_schedules' => 'schedules',
-      'put_schedule' => 'schedules'
-    }
 
     TYPES = %w[
       variables
@@ -113,17 +110,7 @@ module Ruote
       workitems
     ]
 
-    def prepare_base_methods
-
-      singleton = class << self; self; end
-
-      STORAGE_BASE_METHODS.each do |method, type|
-
-        singleton.send(:define_method, method) do |*args|
-          storage(type).send(method, *args)
-        end
-      end
-    end
+    protected
 
     def storage(type)
 
