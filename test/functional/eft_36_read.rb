@@ -59,7 +59,7 @@ class EftReadTest < Test::Unit::TestCase
       set 'f:z' => '$v:z'
     end
 
-    @engine.noisy = true
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
 
