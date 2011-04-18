@@ -252,6 +252,7 @@ module Ruote::Exp
       return if h.state != nil
 
       h['state'] = 'paused'
+      h['breakpoint'] = true if msg['breakpoint']
 
       do_persist || return
 
@@ -259,7 +260,8 @@ module Ruote::Exp
         'dispatch_pause',
         'fei' => h.fei,
         'participant_name' => h.participant_name,
-        'participant' => h.participant)
+        'participant' => h.participant
+      ) unless msg['breakpoint']
     end
 
     def do_resume(msg)
@@ -276,7 +278,8 @@ module Ruote::Exp
           'dispatch_resume',
           'fei' => h.fei,
           'participant_name' => h.participant_name,
-          'participant' => h.participant)
+          'participant' => h.participant
+        ) unless h['breakpoint']
       else
         replies.each { |m| @context.storage.put_msg(m.delete('action'), m) }
           # trigger replies

@@ -505,7 +505,9 @@ module Ruote::Exp
 
       do_persist || return
 
-      h.children.each { |i| @context.storage.put_msg('pause', 'fei' => i) }
+      h.children.each { |i|
+        @context.storage.put_msg('pause', 'fei' => i)
+      } unless msg['breakpoint']
     end
 
     # Will "unpause" the expression (if it was paused), and trigger any

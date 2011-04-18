@@ -225,5 +225,67 @@ class FtPauseTest < Test::Unit::TestCase
         #
         # no 'resume:xxx'
   end
+
+  def test_breakpoint
+
+    pdef = Ruote.define do
+      sequence do
+        alpha
+      end
+    end
+
+    @engine.register do
+      catchall
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+
+    sequence = @engine.ps(wfid).expressions[1]
+
+    @engine.pause(sequence.fei, :breakpoint => true)
+
+    @engine.storage_participant.proceed(@engine.storage_participant.first)
+
+    sleep 0.7
+
+    assert_equal(
+      [ nil, 'paused' ],
+      @engine.ps(wfid).expressions.collect { |fexp| fexp.state })
+  end
+
+  def test_no_propagation_to_participant_when_breakpoint
+
+    pdef = Ruote.define do
+      alpha
+    end
+
+    @engine.register do
+      alpha AlphaParticipant
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+
+    alpha = @engine.ps(wfid).expressions.last
+
+    @engine.pause(alpha.fei, :breakpoint => true)
+
+    sleep 0.7 # give time to the pause propagation to reach the participant
+
+    assert_equal([ "dispatched:#{wfid}" ], @tracer.to_a)
+
+    @engine.resume(alpha.fei)
+
+    sleep 0.7 # give time to the resume propagation to reach the participant
+
+    assert_equal([ "dispatched:#{wfid}" ], @tracer.to_a)
+  end
 end
 

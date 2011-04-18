@@ -164,7 +164,7 @@ module Ruote
     #
     def cancel(wi_or_fei_or_wfid)
 
-      do_misc('cancel', wi_or_fei_or_wfid)
+      do_misc('cancel', wi_or_fei_or_wfid, {})
     end
 
     alias cancel_process cancel
@@ -175,7 +175,7 @@ module Ruote
     #
     def kill(wi_or_fei_or_wfid)
 
-      do_misc('kill', wi_or_fei_or_wfid)
+      do_misc('kill', wi_or_fei_or_wfid, {})
     end
 
     alias kill_process kill
@@ -185,9 +185,16 @@ module Ruote
     # Given an expression id (fei) will [attempt to] pause the expression
     # and its children.
     #
-    def pause(wi_or_fei_or_wfid)
+    # The only known option for now is :breakpoint => true, which lets
+    # the engine only pause the targetted expression.
+    #
+    def pause(wi_or_fei_or_wfid, opts={})
 
-      do_misc('pause', wi_or_fei_or_wfid)
+      raise ArgumentError.new(
+        ':breakpoint option only valid when passing a workitem or a fei'
+      ) if opts[:breakpoint] and wi_or_fei_or_wfid.is_a?(String)
+
+      do_misc('pause', wi_or_fei_or_wfid, opts)
     end
 
     # Given a wfid will [attempt to] resume the process instance.
@@ -196,7 +203,7 @@ module Ruote
     #
     def resume(wi_or_fei_or_wfid)
 
-      do_misc('resume', wi_or_fei_or_wfid)
+      do_misc('resume', wi_or_fei_or_wfid, {})
     end
 
     # Replays at a given error (hopefully you fixed the cause of the error
@@ -843,16 +850,24 @@ module Ruote
 
     # Used by #pause and #resume.
     #
-    def do_misc(action, wi_or_fei_or_wfid)
+    def do_misc(action, wi_or_fei_or_wfid, opts)
 
       target = Ruote.extract_id(wi_or_fei_or_wfid)
 
       if target.is_a?(String)
-        @context.storage.put_msg("#{action}_process", 'wfid' => target)
+
+        @context.storage.put_msg(
+          "#{action}_process", opts.merge('wfid' => target))
+
       elsif action == 'kill'
-        @context.storage.put_msg('cancel', 'fei' => target, 'flavour' => 'kill')
+
+        @context.storage.put_msg(
+          'cancel', opts.merge('fei' => target, 'flavour' => 'kill'))
+
       else
-        @context.storage.put_msg(action, 'fei' => target)
+
+        @context.storage.put_msg(
+          action, opts.merge('fei' => target))
       end
     end
 
