@@ -292,7 +292,8 @@
 [o] pause engine
 [o] pause process instance
 
-[ ] exp : exp (restricted form of eval ?) (is it apply ?)
+[ ] exp : at expression ? comparable to cron
+[x] exp : exp (restricted form of eval ?) (is it apply ?)
 [x] exp : filter
 [x] exp : filter-definition
 [x] exp : parameter
@@ -339,6 +340,7 @@
 [ ] :on_timeout => :rewind (break, jump to x)...
 [ ] :on_error => :rewind (break, jump to x)...
 
+[ ] cursor : 'reset' command ?
 [ ] repeat : have a counter in a variable (:to => x maybe) (subprocessid ?)
 
 [ ] engine.cancel_forgotten_children(wfid) ?
@@ -417,12 +419,11 @@
 [ ] engine.force_reply_to_parent(fei) ?
     but, this is a cancel_expression(fei)
 
-[ ] at expression ? :names :wait, :at
-
 [ ] concurrence : add_child ?
     How would that impact concurrent_iterator's add_branches ?
 [ ] detach / attach segments of processes
-[ ] clone process ? (could be used by {de|at}tach)
+[x] clone process ? (could be used by {de|at}tach)
+    what about participants ?
 
 [ ] console for InformatiQ / console or dashboard or tool ?
 [ ] pooltool.ru : there are already storage copy methods
@@ -444,12 +445,12 @@
     it's :where and it's not documented :-( but it's tested :-)
 [o] engine#on_terminate, similar to on_error
 [o] let engine#on_error use svc/tracker.rb instead of 'notifications'
+[ ] process supervise other process, listen...
+    launch a process with a designed 'supervisor' ?
+    listen to termination, listen to error, for a given process ?
 
 [ ] ruote cheatsheet
 [ ] ruote slides
-
-[ ] process supervise other process, listen...
-    launch a process with a designed 'supervisor' ?
 
 [x] ci : ruote-amqp
 [ ] ci : ruote-mongodb
