@@ -188,6 +188,18 @@ module Ruote
     # The only known option for now is :breakpoint => true, which lets
     # the engine only pause the targetted expression.
     #
+    #
+    # == fei and :breakpoint => true
+    #
+    # By default, pausing an expression will pause that expression and
+    # all its children.
+    #
+    #   engine.pause(fei, :breakpoint => true)
+    #
+    # will only flag as paused the given fei. When the children of that
+    # expression will reply to it, the execution for this branch of the
+    # process will stop, much like a break point.
+    #
     def pause(wi_or_fei_or_wfid, opts={})
 
       raise ArgumentError.new(
@@ -200,6 +212,18 @@ module Ruote
     # Given a wfid will [attempt to] resume the process instance.
     # Given an expression id (fei) will [attempt to] to resume the expression
     # and its children.
+    #
+    #
+    # == resume(wfid, :anyway => true)
+    #
+    # Resuming a process instance is equivalent to calling resume on its
+    # root expression. If the root is not paused itself, this will have no
+    # effect.
+    #
+    #   engine.resume(wfid, :anyway => true)
+    #
+    # will make sure to call resume on each of the paused branch within the
+    # process instance (tree), effectively resuming the whole process.
     #
     def resume(wi_or_fei_or_wfid, opts={})
 
