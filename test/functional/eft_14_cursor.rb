@@ -402,5 +402,55 @@ class EftCursorTest < Test::Unit::TestCase
 
     assert_trace "top\nbottom", JUMP_DEF
   end
+
+  def test_reset
+
+    pdef = Ruote.define do
+      cursor do
+        alpha
+        set 'f:toto' => 'oops'
+        reset
+      end
+    end
+
+    @engine.register { catchall }
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(:alpha)
+
+    assert_nil @engine.storage_participant.first.fields['toto']
+
+    @engine.storage_participant.proceed(@engine.storage_participant.first)
+    @engine.wait_for(:alpha)
+
+    assert_nil @engine.storage_participant.first.fields['toto']
+  end
+
+  def test_reset_if
+
+    pdef = Ruote.define do
+      cursor :reset_if => '${f:reset} == true' do
+        alpha
+        set 'f:toto' => 'oops'
+        set 'f:reset' => true
+      end
+    end
+
+    @engine.register { catchall }
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(:alpha)
+
+    assert_nil @engine.storage_participant.first.fields['toto']
+
+    @engine.storage_participant.proceed(@engine.storage_participant.first)
+    @engine.wait_for(:alpha)
+
+    assert_nil @engine.storage_participant.first.fields['toto']
+  end
 end
 

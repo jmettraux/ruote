@@ -66,6 +66,12 @@ module Ruote::Exp
   #     publisher
   #   end
   #
+  # === reset
+  #
+  # Whereas 'rewind' places the cursor back to the initial step with the current
+  # workitem, 'reset' will rewind it and start again but with the workitem
+  # as it was when it reached the cursor/repeat.
+  #
   # === stop, over & break
   #
   # Exits the cursor.
@@ -262,7 +268,7 @@ module Ruote::Exp
       return reply_to_parent(workitem) if com == 'break'
 
       case com
-        when 'rewind', 'continue' then position = 0
+        when 'rewind', 'continue', 'reset' then position = 0
         when 'skip' then position += arg
         when 'jump' then position = jump_to(workitem, position, arg)
       end
@@ -270,8 +276,12 @@ module Ruote::Exp
       position = 0 if position >= tree_children.size && is_loop?
 
       if position < tree_children.size
+
+        workitem = h.applied_workitem if com == 'reset'
         apply_child(position, workitem)
+
       else
+
         reply_to_parent(workitem)
       end
     end

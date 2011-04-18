@@ -29,8 +29,8 @@ require 'ruote/exp/command'
 module Ruote::Exp
 
   #
-  # This class gathers the 'skip', 'back', 'jump', 'rewind', 'continue' and
-  # 'break' expressions which are used inside of the 'cursor' and 'repeat'
+  # This class gathers the 'skip', 'back', 'jump', 'rewind', 'continue', 'reset'
+  # and 'break' expressions which are used inside of the 'cursor' and 'repeat'
   # (loop) expressions.
   #
   # Look at the 'cursor' expression Ruote::Exp::Cursor for a discussion of
@@ -87,7 +87,7 @@ module Ruote::Exp
 
     include CommandMixin
 
-    names :skip, :back, :jump, :rewind, :continue, :break, :stop, :over
+    names :skip, :back, :jump, :rewind, :continue, :break, :stop, :over, :reset
 
     def apply
 

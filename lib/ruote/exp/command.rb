@@ -31,7 +31,7 @@ module Ruote::Exp
   module CommandMixin
 
     F_COMMAND = '__command__'
-    ATT_COMMANDS = %w[ break rewind over stop ]
+    ATT_COMMANDS = %w[ break rewind reset over stop ]
 
     protected
 

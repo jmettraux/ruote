@@ -340,7 +340,8 @@
 [ ] :on_timeout => :rewind (break, jump to x)...
 [ ] :on_error => :rewind (break, jump to x)...
 
-[ ] cursor : 'reset' command ?
+[o] cursor : 'reset' command ?
+[ ] cursor : 'restart' alias for 'reset' ?
 [ ] repeat : have a counter in a variable (:to => x maybe) (subprocessid ?)
 
 [ ] engine.cancel_forgotten_children(wfid) ?
