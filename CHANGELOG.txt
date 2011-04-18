@@ -4,7 +4,9 @@
 
 == ruote - 2.2.1    not yet released
 
-- engine#pause(fei, :breakpoint => true) pauses only one expression (and not
+- Engine#resume(wfid, :anyway => true) resumes any paused expression in a
+  given process
+- Engine#pause(fei, :breakpoint => true) pauses only one expression (and not
   its children)
 - CompositeStorage#delete_schedule fix (Thanks Greg)
 - read 'http://'|'file', :to => 'f:a' / :to => 'v:b'

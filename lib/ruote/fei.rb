@@ -118,9 +118,15 @@ module Ruote
     alias sub_wfid subid
 
     def to_storage_id
+
       "#{@h['expid']}!#{@h['subid']}!#{@h['wfid']}"
     end
     alias sid to_storage_id
+
+    def to_sortable_id
+
+      "#{@h['wfid']}!!#{@h['expid']}"
+    end
 
     def self.to_storage_id(hfei)
 
@@ -149,6 +155,11 @@ module Ruote
     def hash
 
       to_storage_id.hash
+    end
+
+    def <=>(other)
+
+      self.to_sortable_id <=> other.to_sortable_id
     end
 
     # Returns true if the other is a FlowExpressionId instance and it

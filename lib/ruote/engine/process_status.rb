@@ -282,6 +282,7 @@ module Ruote
       @expressions.each do |e|
         s << "     #{e.fei.to_storage_id}"
         s << "       | #{e.name}"
+        s << "       | * #{e.state} *" if e.state
         s << "       | #{e.attributes.inspect}"
         s << "       `-parent--> #{e.h.parent_id ? e.parent_id.to_storage_id : 'nil'}"
       end

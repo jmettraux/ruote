@@ -201,9 +201,9 @@ module Ruote
     # Given an expression id (fei) will [attempt to] to resume the expression
     # and its children.
     #
-    def resume(wi_or_fei_or_wfid)
+    def resume(wi_or_fei_or_wfid, opts={})
 
-      do_misc('resume', wi_or_fei_or_wfid, {})
+      do_misc('resume', wi_or_fei_or_wfid, opts)
     end
 
     # Replays at a given error (hopefully you fixed the cause of the error
@@ -854,7 +854,24 @@ module Ruote
 
       target = Ruote.extract_id(wi_or_fei_or_wfid)
 
-      if target.is_a?(String)
+      if action == 'resume' && opts[:anyway]
+        #
+        # determines the roots of the branches that are paused
+        # sends the resume message to them.
+
+        exps = ps(target).expressions.select { |fexp| fexp.state == 'paused' }
+        feis = exps.collect { |fexp| fexp.fei }
+
+        roots = exps.inject([]) { |a, fexp|
+          a << fexp.fei.h unless feis.include?(fexp.parent_id)
+          a
+        }
+
+        roots.each { |fei| @context.storage.put_msg('resume', 'fei' => fei) }
+
+      elsif target.is_a?(String)
+        #
+        # action targets a process instance (a string wfid)
 
         @context.storage.put_msg(
           "#{action}_process", opts.merge('wfid' => target))

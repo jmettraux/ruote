@@ -287,5 +287,57 @@ class FtPauseTest < Test::Unit::TestCase
 
     assert_equal([ "dispatched:#{wfid}" ], @tracer.to_a)
   end
+
+  def test_resume_anyway
+
+    pdef = Ruote.define do
+      concurrence do
+        alpha
+        sequence do
+          bravo
+        end
+      end
+    end
+
+    @engine.register do
+      catchall
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+    @engine.wait_for(:bravo)
+
+    exps = @engine.ps(wfid).expressions.select { |fexp|
+      fexp.fei.expid.match(/^0_0_[01]$/)
+    }
+
+    exps.each { |fexp| @engine.pause(fexp.fei) }
+
+    sleep 0.7
+
+    assert_equal(
+      [ nil, nil, 'paused', 'paused', 'paused' ],
+      @engine.ps(wfid).expressions.collect { |fexp| fexp.state })
+
+    @engine.resume(wfid)
+      # won't resume the process, since the root is not paused
+
+    sleep 0.4
+
+    assert_equal(
+      [ nil, nil, 'paused', 'paused', 'paused' ],
+      @engine.ps(wfid).expressions.collect { |fexp| fexp.state })
+
+    @engine.resume(wfid, :anyway => true)
+
+    sleep 0.7
+
+    assert_equal(
+      [ nil, nil, nil, nil, nil ],
+      @engine.ps(wfid).expressions.collect { |fexp| fexp.state })
+  end
 end
 
