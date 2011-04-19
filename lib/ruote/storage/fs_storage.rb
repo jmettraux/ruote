@@ -22,12 +22,6 @@
 # Made in Japan.
 #++
 
-begin
-  require 'yajl'
-rescue LoadError
-  require 'json'
-end
-  # gem install yajl-ruby OR json OR json_pure OR json-jruby
 
 require 'rufus/json'
 Rufus::Json.detect_backend
