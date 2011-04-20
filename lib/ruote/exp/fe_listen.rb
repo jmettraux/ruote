@@ -165,6 +165,24 @@ module Ruote::Exp
   # The documentation about the dollar notation and the one about common
   # attributes :if and :unless applies for the :where attribute.
   #
+  #
+  # == listen :to => :errors
+  #
+  # The listen expression can be made to listen to errors.
+  #
+  #   listen :to => errors do
+  #     participant 'supervisor_sms', :task => 'verify system'
+  #   end
+  #
+  # Whenever an error happens in the process with this listen stance,
+  # the listen will trigger.
+  #
+  # "listen :to => :errors" only works with errors in the same process instance
+  # (same wfid).
+  #
+  # "listen :to => :errors" doesn't trigger when the error is caught (via
+  # :on_error).
+  #
   class ListenExpression < FlowExpression
 
     names :listen, :receive, :intercept
@@ -179,6 +197,7 @@ module Ruote::Exp
       h.to = attribute(:to) || attribute(:on)
 
       h.upon = UPONS[attribute(:upon) || 'apply']
+      h.upon = 'error_intercepted' if h.to == 'errors'
 
       h.lmerge = attribute(:merge).to_s
       h.lmerge = 'true' if h.lmerge == ''
@@ -186,9 +205,14 @@ module Ruote::Exp
       h.lwfid = attribute(:wfid).to_s
       h.lwfid = %w[ same current true ].include?(h.lwfid)
 
+      h.lwfid = true if h.to == 'errors'
+        # can only listen to errors in the same process instance
+
       persist_or_raise
 
-      condition = if h.upon == 'dispatch' || h.upon == 'receive'
+      condition = if h.upon == 'error_intercepted'
+        nil
+      elsif h.upon == 'dispatch' || h.upon == 'receive'
         { 'participant_name' => h.to }
       else
         { 'tag' => h.to }

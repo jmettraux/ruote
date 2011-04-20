@@ -334,5 +334,83 @@ class EftListenTest < Test::Unit::TestCase
 
     assert_equal %w[ milestone stone ], @tracer.to_a
   end
+
+  # somewhere between Haneda and Changi (Thu Apr 21 00:56:19 JST 2011)
+
+  def test_listen_to_errors
+
+    @engine.context['ruby_eval_allowed'] = true
+
+    pdef = Ruote.define do
+      concurrence :count => 1 do
+        listen :to => :errors do
+          echo 'error:${f:__error__.message}'
+        end
+        sequence do
+          nemo
+        end
+      end
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(wfid)
+
+    @engine.wait_for(3)
+      # give it some time (steps) to launch the listen block
+
+    assert_equal "error:unknown participant or subprocess 'nemo'", @tracer.to_s
+  end
+
+  def test_listen_and_caught_errors
+
+    pdef = Ruote.define do
+      concurrence :count => 1 do
+        listen :to => :errors do
+          echo 'error intercepted'
+        end
+        sequence :on_error => :pass do
+          nemo
+        end
+      end
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal '', @tracer.to_s
+  end
+
+  def test_listen_does_not_work_for_errors_in_other_processes
+
+    #@engine.noisy = true
+
+    wfid0 = @engine.launch(Ruote.define do
+      listen :to => :errors do
+        echo 'error intercepted'
+      end
+    end)
+
+    sleep 0.700
+
+    wfid1 = @engine.launch(Ruote.define do
+      nemo
+    end)
+
+    @engine.wait_for(wfid1)
+
+    sleep 0.350
+      # just to be sure the 'listen' doesn't trigger
+
+    assert_equal '', @tracer.to_s
+  end
+
+  #def test_error_conditions
+  #  flunk
+  #end
 end
 

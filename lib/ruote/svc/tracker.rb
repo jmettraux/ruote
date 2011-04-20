@@ -93,7 +93,9 @@ module Ruote
 
         m['workitem'] = msg['workitem'] if m['workitem'] == 'replace'
 
-        if tracker_id == 'on_error' && m_action == 'error_intercepted'
+        if t_action == 'error_intercepted'
+          m['workitem']['fields']['__error__'] = m_error
+        elsif tracker_id == 'on_error' && m_action == 'error_intercepted'
           m['workitem']['fields']['__error__'] = m_error
         elsif tracker_id == 'on_terminate' && m_action == 'terminated'
           m['workitem']['fields']['__terminate__'] = { 'wfid' => m_wfid }

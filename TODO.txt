@@ -434,7 +434,7 @@
 [o] doc : document on_error = retry and on_error = pass
 [ ] doc : add piece of doc about running workers on their own
 
-[ ] listen to errors {in|out}
+[o] listen to errors {in|out}
     well... there is already on_error...
     but on_error is for nested stuff...
 [o] listen to tags {entering|leaving}
