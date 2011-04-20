@@ -76,6 +76,9 @@ module Ruote
     #
     def do_not_thread; true; end
 
+    # This is the method called by ruote when passing a workitem to
+    # this participant.
+    #
     def consume(workitem)
 
       doc = workitem.to_h
@@ -90,7 +93,12 @@ module Ruote
 
       @context.storage.put(doc)
     end
-    alias :update :consume
+
+    # Though #update is an alias to #consume, it is meant to be used by
+    # client code when "saving" a workitem (fields may have changed). Calling
+    # update won't proceed the workitem.
+    #
+    alias update consume
 
     # Removes the document/workitem from the storage
     #

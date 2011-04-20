@@ -464,5 +464,39 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal 1, @engine.storage_participant.size
     assert_equal 'step_one', @engine.storage_participant.first.participant_name
   end
+
+  class MyParticipant < Ruote::StorageParticipant
+    def consume(wi)
+      @context.tracer << "consume\n"
+      super
+    end
+    #def update(wi)
+    #  @context.tracer << "update\n"
+    #  super
+    #end
+  end
+
+  def test_override_update
+
+    pdef = Ruote.define do
+      alpha
+    end
+
+    @engine.register do
+      alpha MyParticipant
+    end
+
+    @engine.launch(pdef)
+    @engine.wait_for(:alpha)
+
+    part = @engine.participant(:alpha)
+
+    initial_rev = part.first.h['_rev']
+
+    part.update(part.first)
+
+    assert_not_equal initial_rev, part.first.h['_rev']
+    assert_equal %w[ consume ], @tracer.to_a
+  end
 end
 
