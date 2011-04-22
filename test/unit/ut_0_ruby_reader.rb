@@ -203,5 +203,17 @@ class UtRubyReaderTest < Test::Unit::TestCase
       ] ],
       tree)
   end
+
+  def test_proc
+
+    tree = Ruote.define do
+      set 'v:code' => 'lambda { |wi| p wi }'
+    end
+
+    assert_equal(
+      [ 'define', {}, [
+        [ 'set', { 'v:code' => 'lambda { |wi| p wi }' }, [] ] ] ],
+      tree)
+  end
 end
 
