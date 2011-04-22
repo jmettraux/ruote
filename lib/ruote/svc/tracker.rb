@@ -54,11 +54,13 @@ module Ruote
     # The worker passes all the messages it has to process to the tracker via
     # this method.
     #
-    def notify(msg)
+    def notify(message)
 
-      m_error = msg['error']
-      m_wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
-      m_action = msg['action']
+      m_error = message['error']
+      m_wfid = message['wfid'] || (message['fei']['wfid'] rescue nil)
+      m_action = message['action']
+
+      msg = m_action == 'error_intercepted' ? message['msg'] : message
 
       @context.storage.get_trackers['trackers'].each do |tracker_id, tracker|
 
@@ -70,9 +72,7 @@ module Ruote
         next if t_wfid && t_wfid != m_wfid
         next if t_action && t_action != m_action
 
-        next unless does_match?(msg, tracker['conditions'])
-
-        msg = msg['msg'] if m_action == 'error_intercepted'
+        next unless does_match?(message, tracker['conditions'])
 
         if tracker_id == 'on_error' || tracker_id == 'on_terminate'
 
@@ -152,14 +152,17 @@ module Ruote
 
       conditions.each do |k, v|
 
-        val = msg[k]
+        if k == 'class'
+          return false unless msg['error']['class'] == v
+          next
+        end
+
         v = Ruote.regex_or_s(v)
 
-        if v.is_a?(String)
-          return false unless val && v == val
-        else
-          return false unless val && v.match(val)
-        end
+        val = msg[k]
+        val = msg['error']['message'] if k == 'message'
+
+        return false unless val && v.is_a?(String) ? (v == val) : v.match(val)
       end
 
       true

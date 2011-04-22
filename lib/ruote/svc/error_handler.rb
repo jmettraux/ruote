@@ -85,16 +85,16 @@ module Ruote
         puts
         p exception
         puts backtrace[0, 20].join("\n")
-        puts "..."
+        puts '...'
         puts
-        puts "-- msg --"
+        puts '-- msg --'
         key_length = msg.keys.collect { |k| k.length }.max + 1
         msg.keys.sort.each { |k|
           v = msg[k]
           v = (Ruote.sid(v) rescue nil) if k == 'fei' || k == 'parent_id'
           printf("%*s : %s\n", key_length, k, v.inspect)
         }
-        puts "-- . --"
+        puts '-- . --'
         puts
       end
 
@@ -113,8 +113,7 @@ module Ruote
           'at' => Ruote.now_to_utc_s,
           'class' => exception.class.name,
           'message' => exception.message,
-          'trace' => backtrace
-        },
+          'trace' => backtrace },
         'wfid' => wfid,
         'fei' => fei,
         'msg' => msg)

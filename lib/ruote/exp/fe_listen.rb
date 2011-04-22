@@ -183,6 +183,17 @@ module Ruote::Exp
   # "listen :to => :errors" doesn't trigger when the error is caught (via
   # :on_error).
   #
+  # === listen :to => :errors, :class => 'ArgumentError'
+  #
+  # One can restrict the listen to certain classes of errors.
+  # Passing a list of error classes separated by a comma is OK.
+  #
+  # === listen :to => :errors, :message => /x/
+  #
+  # One can restrict the error listening to errors matching a certain regex
+  # or equal to a certain string. The attribute is :message or :msg. The
+  # value is a String (strict equality) or a Regex (matching).
+  #
   class ListenExpression < FlowExpression
 
     names :listen, :receive, :intercept
@@ -193,6 +204,8 @@ module Ruote::Exp
     }
 
     def apply
+
+      # gathering info
 
       h.to = attribute(:to) || attribute(:on)
 
@@ -210,19 +223,13 @@ module Ruote::Exp
 
       persist_or_raise
 
-      condition = if h.upon == 'error_intercepted'
-        nil
-      elsif h.upon == 'dispatch' || h.upon == 'receive'
-        { 'participant_name' => h.to }
-      else
-        { 'tag' => h.to }
-      end
+      # adding a new tracker
 
       @context.tracker.add_tracker(
         h.lwfid ? h.fei['wfid'] : nil,
         h.upon,
         Ruote.to_storage_id(h.fei),
-        condition,
+        determine_condition,
         { 'action' => 'reply',
           'fei' => h.fei,
           'workitem' => 'replace',
@@ -261,11 +268,36 @@ module Ruote::Exp
 
     protected
 
+    # Overriding the parent's #reply_to_parent to make sure the tracker is
+    # removed before (expression terminating, no need for it to track anything
+    # anymore).
+    #
     def reply_to_parent(workitem)
 
       @context.tracker.remove_tracker(h.fei)
 
       super(workitem)
+    end
+
+    def determine_condition
+
+      if h.upon == 'dispatch' || h.upon == 'receive'
+
+        { 'participant_name' => h.to }
+
+      elsif h.upon == 'error_intercepted'
+
+        {
+          'class' => attribute(:class),
+          'message' => attribute(:message) || attribute(:msg)
+        }.delete_if { |k, v|
+          v == nil
+        }
+
+      else
+
+        { 'tag' => h.to }
+      end
     end
   end
 end

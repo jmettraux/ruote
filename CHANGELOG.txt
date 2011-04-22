@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- listen :to => :errors, :class => string / :message/:msg => string / regex
 - listen :to => :errors
 - dropped require 'json' and co from fs_storage (Thanks Torsten)
 - cursor : 'reset' command and :reset_if attribute

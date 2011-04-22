@@ -409,8 +409,66 @@ class EftListenTest < Test::Unit::TestCase
     assert_equal '', @tracer.to_s
   end
 
-  #def test_error_conditions
-  #  flunk
-  #end
+  def test_listen_error_class
+
+    pdef = Ruote.define do
+      concurrence do
+        listen :to => :errors, :class => 'RuntimeError' do
+          echo 'runtime error'
+        end
+        listen :to => :errors, :class => 'ArgumentError' do
+          echo 'argument error'
+        end
+        sequence do
+          nemo
+        end
+        sequence do
+          echo '${r:nada}'
+        end
+      end
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    #sleep 1.000
+    4.times { @engine.wait_for(wfid) } # error, error, ceased, ceased
+
+    assert_equal(
+      true,
+      [ "runtime error\nargument error",
+        "argument error\nruntime error" ].include?(@tracer.to_s))
+  end
+
+  def test_listen_error_message
+
+    @engine.context['ruby_eval_allowed'] = true
+
+    pdef = Ruote.define do
+      concurrence do
+        listen :to => :errors, :msg => /nemo/ do
+          echo 'nemo error ${__error__.fei.expid}'
+        end
+        listen :to => :errors, :msg => 'nada' do
+          echo 'nada error ${__error__.fei.expid}'
+        end
+        sequence do
+          nemo
+        end
+        sequence do
+          error 'nada'
+        end
+      end
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    4.times { @engine.wait_for(wfid) } # error, error, ceased, ceased
+
+    assert_equal "nemo error 0_0_2_0\nnada error 0_0_3_0", @tracer.to_s
+  end
 end
 
