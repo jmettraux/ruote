@@ -288,10 +288,10 @@ module Ruote::Exp
       elsif h.upon == 'error_intercepted'
 
         {
-          'class' => attribute(:class),
+          'class' => (attribute(:class) || '').split(/, */),
           'message' => attribute(:message) || attribute(:msg)
         }.delete_if { |k, v|
-          v == nil
+          v == nil or v == []
         }
 
       else

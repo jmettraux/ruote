@@ -470,5 +470,31 @@ class EftListenTest < Test::Unit::TestCase
 
     assert_equal "nemo error 0_0_2_0\nnada error 0_0_3_0", @tracer.to_s
   end
+
+  def test_listen_error_classes
+
+    pdef = Ruote.define do
+      concurrence do
+        listen :to => :errors, :class => 'RuntimeError, ArgumentError' do
+          echo 'that error ${__error__.fei.expid}'
+        end
+        sequence do
+          nemo
+        end
+        sequence do
+          echo '${r:nada}'
+        end
+      end
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    #sleep 1.000
+    4.times { @engine.wait_for(wfid) } # error, error, ceased, ceased
+
+    assert_equal "that error 0_0_1_0\nthat error 0_0_2_0", @tracer.to_s
+  end
 end
 

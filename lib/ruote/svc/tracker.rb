@@ -153,7 +153,7 @@ module Ruote
       conditions.each do |k, v|
 
         if k == 'class'
-          return false unless msg['error']['class'] == v
+          return false unless v.include?(msg['error']['class'])
           next
         end
 
