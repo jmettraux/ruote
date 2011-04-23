@@ -25,6 +25,17 @@ trap 'USR2' do
   irb.eval_input
 end
 
+trap 'INT' do
+  #
+  # why do I have to do that ?
+  #
+  puts
+  puts '-' * 80
+  caller.each { |l| p l }
+  puts '-' * 80
+  exit 1
+end if RUBY_VERSION.match(/^1.9./)
+
 puts "pid #{$$}"
 
 
