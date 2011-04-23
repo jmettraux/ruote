@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- Engine#register :on_workitem / :on_reply / ...
 - set 'v:participant' => lambda { |wi| wi.fields['x'] = 'y' }
 - listen :to => :errors, :class => string / :message/:msg => string / regex
 - listen :to => :errors

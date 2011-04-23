@@ -13,6 +13,8 @@ require File.join(File.dirname(__FILE__), 'base')
 class FtParticipantCodeTest < Test::Unit::TestCase
   include FunctionalBase
 
+  # ~~~ this is ruby-centric !!!
+
   def test_participant_code_in_var
 
     pdef = Ruote.process_definition :name => 'def0' do
@@ -26,6 +28,12 @@ class FtParticipantCodeTest < Test::Unit::TestCase
       set 'v:charly' => lambda { |wi|
         wi.fields['z'] = 2
       }
+      #set 'v:delta' => %{
+      #  def consume(wi)
+      #  end
+      #  def cancel(fei, flavour)
+      #  end
+      #}
 
       alpha
       bravo

@@ -55,13 +55,19 @@ module Ruote
       klass = (participant || Ruote::BlockParticipant).to_s
 
       options = options.inject({}) { |h, (k, v)|
-        h[k.to_s] = v.is_a?(Symbol) ? v.to_s : v
+
+        h[k.to_s] = case v
+          when Symbol then v.to_s
+          when Proc then v.to_source
+          else v
+        end
+
         h
       }
 
       if block
-        options['block'] = block.to_source
-        @context.treechecker.block_check(options['block'])
+        options['on_workitem'] = block.to_source
+        @context.treechecker.block_check(options['on_workitem'])
       end
 
       key = (name.is_a?(Regexp) ? name : Regexp.new("^#{name}$")).source

@@ -33,11 +33,11 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       logger.log.collect { |msg| msg['regex'] })
 
     assert_equal(
-      [ [ "^alpha$",
-          [ "Ruote::BlockParticipant",
-            { "block" => "proc { |workitem| (@tracer << \"alpha\") }" } ] ],
-        [ "^user_",
-          [ "Ruote::NullParticipant",
+      [ [ '^alpha$',
+          [ 'Ruote::BlockParticipant',
+            { 'on_workitem' => 'proc { |workitem| (@tracer << "alpha") }' } ] ],
+        [ '^user_',
+          [ 'Ruote::NullParticipant',
             {} ] ] ],
       @engine.participant_list.collect { |pe| pe.to_a })
   end
@@ -469,7 +469,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     end
 
     assert_equal(
-      [ [ 'block' ], [ 'block' ] ],
+      [ [ 'on_workitem' ], [ 'on_workitem' ] ],
       @engine.participant_list.collect { |pe| pe.options.keys })
   end
 

@@ -354,7 +354,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     @engine.register_participant 'alpha' do |wi|
 
-      @tracer << "#{workitem.fields['f']}\n"
+      @tracer << "#{wi.fields['f']}\n"
 
       wi.fields['__add_branches__'] = %w[ a b ] if wi.fields['f'] == 2
     end

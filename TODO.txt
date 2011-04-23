@@ -473,3 +473,10 @@
 
 [ ] expression :concurrent => true idea (reply immediately, cancellable)
 
+[x] @engine.context['block_check_disabled'] = true
+[ ] @engine.context['trust_code_in_vars'] = true
+[ ] @engine.register(x, :trusted => true, &block)
+
+[o] register :toto, :accept? => lambda { |workitem| ... }
+[ ] register :toto, :do_not_thread => lambda { |workitem| ... }
+

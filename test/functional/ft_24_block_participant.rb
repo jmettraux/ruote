@@ -115,5 +115,95 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       end
     end
   end
+
+  def test_on_cancel_registration
+
+    @engine.register 'nemo',
+      :on_workitem => lambda { |wi|
+        p wi
+      },
+      :on_cancel => lambda { |fei, flavour|
+        p fei, flavour
+      }
+
+    assert_equal(
+      { 'on_cancel' => 'proc { |fei, flavour| p(fei, flavour) }',
+        'on_workitem' => 'proc { |wi| p(wi) }' },
+      @engine.participant_list.first.options)
+  end
+
+  def test_on_cancel
+
+    @engine.register 'sleeper',
+      :on_workitem => lambda { |workitem|
+        context.tracer << "consumed\n"
+        sleep 60 # preventing the implicit reply_to_engine(workitem)
+      },
+      :on_cancel => lambda { |fei, flavour|
+        context.tracer << "cancelled\n"
+      }
+
+    pdef = Ruote.define do
+      sleeper
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:sleeper)
+
+    assert_equal 'consumed', @tracer.to_s
+
+    @engine.cancel(wfid)
+
+    @engine.wait_for(wfid)
+
+    assert_equal "consumed\ncancelled", @tracer.to_s
+  end
+
+  def test_on_reply
+
+    @engine.register 'consumer',
+      :on_workitem => lambda { |workitem|
+        context.tracer << "consumed\n"
+      },
+      :on_reply => lambda { |workitem|
+        context.tracer << "replied\n"
+      }
+
+    pdef = Ruote.define do
+      consumer
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal "consumed\nreplied", @tracer.to_s
+  end
+
+  def test_accept
+
+    @engine.register 'consumer',
+      :on_workitem => lambda { |workitem|
+        raise 'fail miserably'
+      },
+      :accept? => lambda { |workitem|
+        false
+      }
+
+    pdef = Ruote.define do
+      consumer
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_match /unknown participant/, @engine.ps(wfid).errors.first.message
+  end
 end
 
