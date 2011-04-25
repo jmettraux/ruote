@@ -30,22 +30,20 @@ class FtParticipantCodeTest < Test::Unit::TestCase
       set 'v:charly' => lambda { |wi|
         wi.fields['z'] = 2
       }
-      #set 'v:delta' => %{
-      #  def consume(wi)
-      #  end
-      #  def cancel(fei, flavour)
-      #  end
-      #}
-      #define 'v:delta' do
-      #  def consume(workitem)
-      #  end
-      #end
+      set 'v:delta' => {
+        'on_workitem' => lambda { |wi|
+          wi.fields['a'] = 3
+        }
+      }
+
       #participant 'delta' do
       #end
+        # is it possible ?
 
       alpha
       bravo
       charly
+      delta
     end
 
     #@engine.noisy = true
@@ -55,7 +53,7 @@ class FtParticipantCodeTest < Test::Unit::TestCase
     r = @engine.wait_for(wfid)
 
     assert_equal(
-      { 'x' => 0, 'y' => 1, 'z' => 2, '__result__' => 2 },
+      { 'x' => 0, 'y' => 1, 'z' => 2, 'a' => 3, '__result__' => 3 },
       r['workitem']['fields'])
   end
 end

@@ -204,13 +204,6 @@ module Ruote
     #
     def instantiate(pinfo, opts={})
 
-      #pinfo = @instantiated_participants[pinfo] if pinfo.is_a?(String)
-      #if pinfo.respond_to?(:consume)
-      #  return (pinfo.respond_to?(irt) ? pinfo : nil) if irt
-      #  return pinfo
-      #end
-      #return nil unless pinfo
-
       pa_class_name, options = pinfo
 
       if rp = options['require_path']

@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'sourcify'
 require 'ruote/util/ometa'
 
 

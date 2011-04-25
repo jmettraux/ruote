@@ -65,7 +65,7 @@ module Ruote::Exp
 
       unless value
         #
-        # seems like it's participant
+        # seems like it's a participant
 
         @h['participant'] =
           @context.plist.lookup_info(tree[1]['ref'], h.applied_workitem)
@@ -73,9 +73,15 @@ module Ruote::Exp
         value = key2 if ( ! @h['participant']) && (key2 != key)
       end
 
-      if value.is_a?(Array) && value.size == 2 && value.last.is_a?(Hash)
+      if value.is_a?(Hash) && value['on_workitem']
         #
         # participant 'defined' in var
+
+        @h['participant'] = [ 'Ruote::BlockParticipant', value ]
+
+      elsif value.is_a?(Array) && value.size == 2 && value.last.is_a?(Hash)
+        #
+        # participant 'registered' in var
 
         @h['participant'] = value
       end
