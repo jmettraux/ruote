@@ -125,7 +125,7 @@ module Ruote
 
       r = @context.storage.put(doc)
 
-      add_tracker(wfid, action, id, msg) if r
+      add_tracker(wfid, action, id, conditions, msg) if r
         # the put failed, have to redo the work
     end
 

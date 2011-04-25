@@ -44,6 +44,7 @@ Richard Jennings
 
 == Feedback
 
+Pedro Texeira - add_tracker issue
 Greg Lazarev - composite storage issues
 Jan Topiński - https://github.com/simcha
 Iuri Gagnidze - ProcessStatus#definition_name issues, Engine#leftovers

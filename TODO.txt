@@ -480,3 +480,5 @@
 [o] register :toto, :accept? => lambda { |workitem| ... }
 [ ] register :toto, :do_not_thread => lambda { |workitem| ... }
 
+[ ] investigate 1.9's json
+
