@@ -134,17 +134,13 @@ module Ruote::Exp
         "no participant name specified"
       ) if h.participant_name == ''
 
-      participant_info =
+      h.participant =
         h.participant ||
         @context.plist.lookup_info(h.participant_name, h.applied_workitem)
 
-      unless participant_info.respond_to?(:consume)
-        h.participant = participant_info
-      end
-
       raise(ArgumentError.new(
         "no participant named #{h.participant_name.inspect}")
-      ) if participant_info.nil?
+      ) if h.participant.nil?
 
       #
       # dispatch to participant
@@ -152,7 +148,7 @@ module Ruote::Exp
       h.applied_workitem['participant_name'] = h.participant_name
       h.applied_workitem['fields']['params'] = compile_atts
 
-      schedule_timeout(participant_info)
+      schedule_timeout(h.participant)
 
       persist_or_raise
 

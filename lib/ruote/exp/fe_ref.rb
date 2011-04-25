@@ -96,23 +96,16 @@ module Ruote::Exp
         raise("unknown participant or subprocess '#{tree[1]['ref']}'")
       end
 
-      new_exp = if @h['participant']
+      new_exp_name, new_exp_class = @h['participant'] ?
+        [ 'participant', Ruote::Exp::ParticipantExpression ] :
+        [ 'subprocess', Ruote::Exp::SubprocessExpression ]
 
-        @h['participant'] = nil if @h['participant'].respond_to?(:consume)
-          # instantiated participant
+      tree[0] = new_exp_name
+      @h['name'] = new_exp_name
 
-        tree[0] = 'participant'
-        @h['name'] = 'participant'
-        Ruote::Exp::ParticipantExpression.new(@context, @h)
+      new_exp = new_exp_class.new(@context, @h)
 
-      else
-
-        tree[0] = 'subprocess'
-        @h['name'] = 'subprocess'
-        Ruote::Exp::SubprocessExpression.new(@context, @h)
-      end
-
-      do_schedule_timeout(attribute(:timeout)) if tree[0] == 'subprocess'
+      do_schedule_timeout(attribute(:timeout)) if new_exp_name == 'subprocess'
         #
         # since ref neutralizes consider_timeout because participant expressions
         # handle timeout by themselves, we have to force timeout consideration

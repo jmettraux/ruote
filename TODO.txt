@@ -482,6 +482,3 @@
 
 [ ] investigate 1.9's json
 
-[ ] lib/ruote/exp/fe_ref.rb : l101, drop "if instantiated participant"
-[ ] lib/ruote/exp/fe_participant.rb : l141, idem
-
