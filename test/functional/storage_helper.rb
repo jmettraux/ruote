@@ -44,11 +44,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   if ps.include?('--fs')
 
-    begin
-      require 'yajl'
-    rescue LoadError
-      require 'json'
-    end
+    require_json
     Rufus::Json.detect_backend
 
     Ruote::FsStorage.new('work', opts)
@@ -84,11 +80,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   elsif persistent
 
-    begin
-      require 'yajl'
-    rescue LoadError
-      require 'json'
-    end
+    require_json
     Rufus::Json.detect_backend
 
     Ruote::FsStorage.new('work', opts)

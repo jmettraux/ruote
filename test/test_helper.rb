@@ -12,10 +12,17 @@ require 'rubygems'
 
 
 def require_json
+
+  return if $json_lib_loaded
+
   begin
     require 'yajl'
+    require 'yajl/version'
+    puts "using yajl #{Yajl::VERSION}"
   rescue LoadError
     require 'json'
+    puts "using json #{JSON::VERSION}"
   end
+  $json_lib_loaded = true
 end
 
