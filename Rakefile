@@ -93,7 +93,15 @@ task :doublons do
 
   lines = `grep -r " def test_" test/ | sort`.split("\n")
   lines.inject(nil) do |previous, line|
-    p line if line == previous
+    puts line if line == previous
+    line
+  end
+
+  lines = `grep -r "TestCase" test/`.split("\n")
+  lines = lines.collect { |line| [ line, line.split(/\.rb:/).last ] }
+  lines = lines.sort_by { |line, klass| klass }
+  lines.inject(nil) do |previous, (line, klass)|
+    puts klass if line == previous
     line
   end
 end
