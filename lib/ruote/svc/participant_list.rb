@@ -170,16 +170,6 @@ module Ruote
     #
     def lookup_info(pname, workitem)
 
-      # is the participant name actually code ?
-
-      return [
-        'Ruote::BlockParticipant',
-        { 'on_workitem' => pname.strip.match(/^lambda\b|^proc\b/) ?
-          pname : "lambda { |workitem|\n#{pname}\n}" }
-      ] if pname.index("\n") && (Rufus::TreeChecker.parse(pname) rescue false)
-
-      # classical lookup
-
       get_list['list'].each do |regex, pinfo|
 
         next unless pname.match(regex)
