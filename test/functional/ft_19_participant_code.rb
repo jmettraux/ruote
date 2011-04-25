@@ -15,6 +15,8 @@ class FtParticipantCodeTest < Test::Unit::TestCase
 
   # ~~~ this is ruby-centric !!!
 
+  # if there is 'on_workitem', then it's a participant
+
   def test_participant_code_in_var
 
     pdef = Ruote.process_definition :name => 'def0' do
@@ -34,6 +36,12 @@ class FtParticipantCodeTest < Test::Unit::TestCase
       #  def cancel(fei, flavour)
       #  end
       #}
+      #define 'v:delta' do
+      #  def consume(workitem)
+      #  end
+      #end
+      #participant 'delta' do
+      #end
 
       alpha
       bravo

@@ -174,7 +174,7 @@ module Ruote
 
       return [
         'Ruote::BlockParticipant',
-        { 'block' => pname.strip.match(/^lambda\b|^proc\b/) ?
+        { 'on_workitem' => pname.strip.match(/^lambda\b|^proc\b/) ?
           pname : "lambda { |workitem|\n#{pname}\n}" }
       ] if pname.index("\n") && (Rufus::TreeChecker.parse(pname) rescue false)
 
