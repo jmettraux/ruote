@@ -205,5 +205,28 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     assert_match /unknown participant/, @engine.ps(wfid).errors.first.message
   end
+
+  def test_do_not_thread
+
+    @engine.register 'consumer',
+      :on_workitem => lambda { |workitem|
+        context.tracer << "in\n"
+      },
+      :do_not_thread => lambda { |workitem|
+        context.tracer << "dnt\n"
+        false
+      }
+
+    pdef = Ruote.define do
+      consumer
+    end
+
+    @engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(:consumer)
+
+    assert_equal "dnt\nin", @tracer.to_s
+  end
 end
 

@@ -61,11 +61,6 @@ module Ruote
       @opts = opts
     end
 
-    def do_not_thread
-
-      @opts['do_not_thread']
-    end
-
     def consume(workitem)
 
       block = get_block('on_workitem', 'block')
@@ -107,6 +102,17 @@ module Ruote
       else
         true
       end
+    end
+
+    def do_not_thread(workitem)
+
+      dnt = @opts['do_not_thread']
+
+      return dnt unless dnt.is_a?(String)
+
+      block = get_block('do_not_thread')
+
+      block.call(workitem)
     end
 
     protected
