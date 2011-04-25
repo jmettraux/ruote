@@ -104,6 +104,7 @@ module Ruote::Exp
         tree[0] = 'participant'
         @h['name'] = 'participant'
         Ruote::Exp::ParticipantExpression.new(@context, @h)
+
       else
 
         tree[0] = 'subprocess'

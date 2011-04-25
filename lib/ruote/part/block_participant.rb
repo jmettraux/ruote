@@ -22,8 +22,6 @@
 # Made in Japan.
 #++
 
-require 'ruote/part/local_participant'
-
 
 module Ruote
 

@@ -24,7 +24,9 @@
 
 
 require 'sourcify'
+require 'ruote/part/local_participant'
 require 'ruote/part/block_participant'
+require 'ruote/part/code_participant'
 
 
 module Ruote
@@ -169,6 +171,10 @@ module Ruote
     # participant name.
     #
     def lookup_info(pname, workitem)
+
+      return [
+        Ruote::CodeParticipant.to_s, { 'code' => pname }
+      ] if pname.index("\n") and (Rufus::TreeChecker.parse(pname) rescue false)
 
       get_list['list'].each do |regex, pinfo|
 

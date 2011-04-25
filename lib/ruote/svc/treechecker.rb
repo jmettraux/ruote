@@ -37,7 +37,7 @@ module Ruote
 
     def initialize(context)
 
-      (context['use_ruby_treechecker'] == false) and return
+      return if context['use_ruby_treechecker'] == false
 
       checker = Rufus::TreeChecker.new do
 
@@ -50,7 +50,6 @@ module Ruote
 
         #exclude_raise             # no raise or throw
 
-        exclude_def               # no method definition
         exclude_eval              # no eval, module_eval or instance_eval
         exclude_backquotes        # no `rm -fR the/kitchen/sink`
         exclude_alias             # no alias or aliast_method
@@ -70,18 +69,16 @@ module Ruote
         exclude_call_to :instance_variable_get, :instance_variable_set
       end
 
+      stricter_checker = checker.clone
+      stricter_checker.add_rules do
+        exclude_def    # no method definition
+        exclude_raise  # no raise or throw
+      end
+
       # the checker used when reading process definitions
 
-      @def_checker = checker.clone # and not dup
-      @def_checker.add_rules do
-        exclude_raise # no raise or throw
-      end
+      @def_checker = stricter_checker.clone # and not dup
       @def_checker.freeze
-
-      # the checker used when dealing with BlockParticipant code
-
-      @blo_checker = checker.clone # and not dup
-      @blo_checker.freeze
 
       ## the checker used when dealing with conditionals
       #
@@ -100,11 +97,21 @@ module Ruote
 
       # the checker used when dealing with code in $(ruby:xxx}
 
-      @dol_checker = checker.clone # and not dup
-      @dol_checker.add_rules do
-        exclude_raise # no raise or throw
-      end
+      @dol_checker = stricter_checker.clone # and not dup
       @dol_checker.freeze
+
+      # the checker used when dealing with BlockParticipant code
+
+      @blo_checker = checker.clone # and not dup
+      @blo_checker.add_rules do
+        exclude_def    # no method definition
+      end
+      @blo_checker.freeze
+
+      # the checker used for CodeParticipant
+
+      @cod_checker = checker.clone # and not dup
+      @cod_checker.freeze
 
       freeze
         # preventing further modifications
@@ -123,6 +130,11 @@ module Ruote
     def dollar_check(ruby_code)
 
       @dol_checker.check(ruby_code) if @dol_checker
+    end
+
+    def code_check(ruby_code)
+
+      @cod_checker.check(ruby_code) if @cod_checker
     end
   end
 end

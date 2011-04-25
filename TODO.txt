@@ -473,12 +473,15 @@
 
 [ ] expression :concurrent => true idea (reply immediately, cancellable)
 
-[x] @engine.context['block_check_disabled'] = true
-[ ] @engine.context['trust_code_in_vars'] = true
+[ ] @engine.context['trust_block_participants'] = true
+[ ] @engine.context['trust_code_participants'] = true
 [ ] @engine.register(x, :trusted => true, &block)
 
 [o] register :toto, :accept? => lambda { |workitem| ... }
 [o] register :toto, :do_not_thread => lambda { |workitem| ... }
 
 [ ] investigate 1.9's json
+
+[ ] lib/ruote/exp/fe_ref.rb : l101, drop "if instantiated participant"
+[ ] lib/ruote/exp/fe_participant.rb : l141, idem
 

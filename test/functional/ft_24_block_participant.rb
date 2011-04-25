@@ -221,7 +221,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       consumer
     end
 
-    @engine.noisy = true
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
     @engine.wait_for(:consumer)
