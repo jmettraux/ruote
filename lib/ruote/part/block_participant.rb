@@ -66,6 +66,7 @@ module Ruote
       r = if block.arity == 1
 
         block.call(workitem)
+
       else
 
         block.call(

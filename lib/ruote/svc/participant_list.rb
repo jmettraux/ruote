@@ -172,10 +172,6 @@ module Ruote
     #
     def lookup_info(pname, workitem)
 
-      return [
-        Ruote::CodeParticipant.to_s, { 'code' => pname }
-      ] if pname.index("\n") and (Rufus::TreeChecker.parse(pname) rescue false)
-
       get_list['list'].each do |regex, pinfo|
 
         next unless pname.match(regex)

@@ -117,7 +117,7 @@ module Ruote::Exp
 
     names :participant
 
-    # Should return true when the dispatch was successful.
+    # Should yield true when the dispatch was successful.
     #
     h_reader :dispatched
 
@@ -134,8 +134,7 @@ module Ruote::Exp
         "no participant name specified"
       ) if h.participant_name == ''
 
-      h.participant =
-        h.participant ||
+      h.participant ||=
         @context.plist.lookup_info(h.participant_name, h.applied_workitem)
 
       raise(ArgumentError.new(

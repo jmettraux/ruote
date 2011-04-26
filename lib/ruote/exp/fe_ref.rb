@@ -73,7 +73,14 @@ module Ruote::Exp
         value = key2 if ( ! @h['participant']) && (key2 != key)
       end
 
-      if value.is_a?(Hash) && value['on_workitem']
+      if value.is_a?(String) && value.index("def consume(") && (Rufus::TreeChecker.parse(value) rescue false)
+        #
+        # participant code passed
+
+        @h['participant'] = [ 'Ruote::CodeParticipant', { 'code' => value } ]
+        tree[1]['ref'] = key
+
+      elsif value.is_a?(Hash) && value['on_workitem']
         #
         # participant 'defined' in var
 
