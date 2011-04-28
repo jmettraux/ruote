@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require 'lib/ruote/version'
+require File.join(File.dirname(__FILE__), 'lib/ruote/version')
 
 
 Gem::Specification.new do |s|
