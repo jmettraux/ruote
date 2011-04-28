@@ -284,5 +284,21 @@ class FtDollarTest < Test::Unit::TestCase
 
     assert_equal "a0\na1\nc", @tracer.to_s
   end
+
+  def test_literal
+
+    pdef = Ruote.define do
+      set 'f:a' => true
+      _if '$a' do
+        echo 'a0'
+      end
+      echo 'a1', :if => '$a'
+    end
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal "a0\na1", @tracer.to_s
+  end
 end
 

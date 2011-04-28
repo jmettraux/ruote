@@ -46,6 +46,14 @@ class ConditionTest < Test::Unit::TestCase
       ">#{conditional}< was expected to be #{b}")
   end
 
+  def test_blank
+
+    assert_b(false, '')
+    assert_b(false, ' ')
+    assert_b(true, true)
+    assert_b(false, false)
+  end
+
   def test_if
 
     assert_not_skip false, :if => 'true == false'
