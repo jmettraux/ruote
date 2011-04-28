@@ -706,6 +706,9 @@ class UtFilterTest < Test::Unit::TestCase
     assert_valid(
       [ { 'field' => 'x', 'empty' => true } ],
       { 'x' => '' })
+    assert_valid(
+      [ { 'field' => 'x', 'empty' => false } ],
+      { 'x' => [ 1 ] })
 
     assert_not_valid(
       [ { 'field' => 'x', 'empty' => true } ],
@@ -716,6 +719,9 @@ class UtFilterTest < Test::Unit::TestCase
     assert_not_valid(
       [ { 'field' => 'x', 'empty' => true } ],
       { 'x' => { 'a' =>  'b' } })
+    assert_not_valid(
+      [ { 'field' => 'x', 'empty' => false } ],
+      { 'x' => {} })
   end
 
   def test_string_and_empty
@@ -723,6 +729,9 @@ class UtFilterTest < Test::Unit::TestCase
     assert_valid(
       [ { 'field' => 'x', 'empty' => true, 'type' => 'string' } ],
       { 'x' => '' })
+    assert_valid(
+      [ { 'field' => 'x', 'empty' => false, 'type' => 'string' } ],
+      { 'x' => 'yyy' })
 
     assert_not_valid(
       [ { 'field' => 'x', 'empty' => true, 'type' => 'string' } ],

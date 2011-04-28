@@ -279,7 +279,9 @@ module Ruote
 
     def _empty(field, value, matches, m, v)
 
-      value.respond_to?(:empty?) ? value.empty? : false
+      # 'empty' => '30%' could be fun ;-)
+
+      (value.respond_to?(:empty?) ? value.empty? : false) == v
     end
     alias _e _empty
 
