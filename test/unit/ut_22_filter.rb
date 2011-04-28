@@ -853,7 +853,22 @@ class UtFilterTest < Test::Unit::TestCase
       :no_raise => true)
 
     assert_equal(
-      [ [ { "has" => "a", "field" => "x", "t" => "hash"}, "x", [ "a", "b", "c" ] ] ], r)
+      [ [ { "has" => "a", "field" => "x", "t" => "hash"}, "x", [ "a", "b", "c" ] ] ],
+      r)
+  end
+
+  # Data passes through the filter untouched.
+  #
+  def test_no_raise_empty_result
+
+    r = Ruote.filter(
+      [ { 'field' => 'x', 't' => 'array', 'has' => 'a' } ],
+      { 'x' => %w[ a b c ] },
+      :no_raise => true)
+
+    assert_equal(
+      { 'x' => %w[ a b c ] },
+      r)
   end
 
   #
