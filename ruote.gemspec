@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require File.join(File.dirname(__FILE__), 'lib/ruote/version')
+  # bundler wants absolute path
 
 
 Gem::Specification.new do |s|
