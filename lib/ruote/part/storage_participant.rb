@@ -55,8 +55,6 @@ module Ruote
     include LocalParticipant
     include Enumerable
 
-    attr_accessor :context
-
     def initialize(engine_or_options={}, options=nil)
 
       if engine_or_options.respond_to?(:context)
