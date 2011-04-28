@@ -718,6 +718,17 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => { 'a' =>  'b' } })
   end
 
+  def test_string_and_empty
+
+    assert_valid(
+      [ { 'field' => 'x', 'empty' => true, 'type' => 'string' } ],
+      { 'x' => '' })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'empty' => true, 'type' => 'string' } ],
+      { 'x' => {} })
+  end
+
   def test_in
 
     assert_valid(

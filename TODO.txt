@@ -291,6 +291,7 @@
 [o] register :overwrite { ... } ? (wipes all the participants)
 [o] pause engine
 [o] pause process instance
+[o] filter : blank? equivalent (maybe it already exists)
 
 [ ] exp : at expression ? comparable to cron
 [x] exp : exp (restricted form of eval ?) (is it apply ?)
@@ -481,6 +482,4 @@
 [o] register :toto, :do_not_thread => lambda { |workitem| ... }
 
 [ ] investigate 1.9's json
-
-[ ] filter : blank? equivalent (maybe it already exists)
 
