@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-load 'lib/ruote/version.rb'
+require 'lib/ruote/version'
 
 
 Gem::Specification.new do |s|
