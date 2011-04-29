@@ -213,6 +213,8 @@ module Ruote
     # Given an expression id (fei) will [attempt to] to resume the expression
     # and its children.
     #
+    # Note : this is supposed to be called on paused expressions / instances,
+    # this is NOT meant to be called to unstuck / unhang a process.
     #
     # == resume(wfid, :anyway => true)
     #
