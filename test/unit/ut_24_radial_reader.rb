@@ -1,3 +1,4 @@
+# encoding: UTF-8
 
 #
 # testing ruote
@@ -166,6 +167,20 @@ process_definition name: "nada"
         [ 'echo', { "\n          nada\n        " => nil, 'ol' => 'korrect' }, [] ],
         [ 'echo', { "\n          #nada\n        " => nil }, [] ],
         [ 'echo', { "\n          'hola'\n        " => nil }, [] ]
+      ]],
+      tree)
+  end
+
+  def test_unicode
+
+    tree = Ruote::RadialReader.read(%{
+      process_definition "nada"
+        echo "très bon"
+    })
+
+    assert_equal(
+      [ 'process_definition', { 'nada' => nil }, [
+        [ 'echo', { 'très bon' => nil }, [] ]
       ]],
       tree)
   end
