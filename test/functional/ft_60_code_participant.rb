@@ -27,7 +27,7 @@ class FtCodeParticipantTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.noisy = true
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
 
