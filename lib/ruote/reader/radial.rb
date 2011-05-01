@@ -22,6 +22,9 @@
 # Made in Japan.
 #++
 
+require 'rufus/json'
+require 'rufus/treechecker'
+
 
 module Ruote
 
@@ -67,12 +70,12 @@ module Ruote
 
         loop do
 
-          key, (transition, s) = find_json_value(s)
+          key, (transition, s) = find_value(s)
           return result if key == nil
           #p [ :key, key, transition, s ]
 
           value, (transition, s) = if transition == ':'
-            find_json_value(s)
+            find_value(s)
           else
             [ nil, [ nil, s ] ]
           end
@@ -86,14 +89,14 @@ module Ruote
 
       # Aggressively (recursively) look for the leftmost JSON string.
       #
-      def find_json_value(original, length=nil)
+      def find_value(original, length=nil)
 
         if length == nil
           #
           # first call (not a recursive call) setup length
 
           return nil if original == nil or original.length < 1
-          return nil if original.match(/^#/)
+          return nil if original.match(/^ *#/)
 
           length = original.length
         end
@@ -118,14 +121,46 @@ module Ruote
           #
           #
         val = Rufus::Json.decode(s) rescue nil
-        if val != nil or s == 'nil'
+        if val != nil or s == 'null'
           return [ val, lchomp(original[length..-1]) ]
         end
           #
           # counter-weight to annoying issue with yajl-ruby 0.8.2
           # https://github.com/brianmario/yajl-ruby/issues/58
 
-        find_json_value(original, length - 1)
+        val = decode_ruby(s) rescue nil
+        if val != nil or s == 'nil'
+          return [ val, lchomp(original[length..-1]) ]
+        end
+
+        find_value(original, length - 1)
+      end
+
+      def decode_ruby(s)
+
+        decode_ruby_tree(begin
+          Rufus::TreeChecker.parse(s)
+        rescue Exception => e
+          nil
+        end)
+      end
+
+      def decode_ruby_tree(t)
+
+        return nil unless t
+
+        case t.first
+          when :str, :lit
+            v = t.last
+            v.is_a?(Symbol) ? v.to_s : v
+          when :hash
+            Hash[*t[1..-1].collect { |e| decode_ruby_tree(e) }]
+          when :array
+            t[1..-1].collect { |e| decode_ruby_tree(e) }
+          else
+            #p t
+            raise ArgumentError.new('not readable')
+        end
       end
 
       # Split the first character if it's a colon or a comma. Return

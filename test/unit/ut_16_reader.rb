@@ -7,6 +7,7 @@
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
+require_json
 require 'ruote/reader'
 
 
@@ -156,6 +157,25 @@ end
         [ 'freeze', {}, [] ], [ 'clone', {}, [] ], [ 'untrust', {}, [] ]
       ] ],
       t)
+  end
+
+  def test_radial
+
+    tree = Ruote::Reader.read(%{
+      define name: 'nada'
+        sequence
+          alpha
+          participant bravo, timeout: '2d', on-board: true
+    })
+
+    assert_equal(
+      [ 'define', { 'name' => 'nada' }, [
+        [ 'sequence', {}, [
+          [ 'alpha', {}, [] ],
+          [ 'participant', { 'bravo' => nil, 'timeout' => '2d', 'on_board' => true }, [] ]
+        ] ]
+      ] ],
+      tree)
   end
 end
 

@@ -28,6 +28,7 @@ require 'open-uri'
 require 'rufus/json'
 require 'ruote/reader/ruby_dsl' # just making sure it's loaded
 require 'ruote/reader/xml'
+require 'ruote/reader/radial'
 require 'ruote/util/subprocess'
 
 
@@ -55,6 +56,7 @@ module Ruote
       (return XmlReader.read(definition)) rescue nil
       (return Rufus::Json.decode(definition)) rescue nil
       (return ruby_eval(definition)) rescue nil
+      (return RadialReader.read(definition)) rescue nil
 
       if definition.index("\n").nil? && definition.index(' ').nil?
 

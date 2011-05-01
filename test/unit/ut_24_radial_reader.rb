@@ -9,7 +9,6 @@
 require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 require_json
-require 'rufus/json'
 require 'ruote/reader/radial'
 
 
@@ -92,6 +91,36 @@ class RadialReaderTest < Test::Unit::TestCase
   assert_read(
     [ 'define', { 'india' => nil, 'mount' => 'batten' }, [] ],
     'define "india", mount: batten # whatever')
+
+  # JSON arrays and objects
+
+  assert_read(
+    [ 'echo', { 'lima' => nil, 'a' => [ 1, 2, 3 ] }, [] ],
+    'echo "lima", a: [ 1, 2, 3 ] # whatever')
+  assert_read(
+    [ 'echo', { 'oscar' => nil, 'a' => nil }, [] ],
+    'echo "oscar", a: null')
+
+  # Ruby misc
+
+  assert_read(
+    [ 'define', { 'name' => 'juliet' }, [] ],
+    "define name: 'juliet'")
+  assert_read(
+    [ 'define', { 'name' => 'kilo', 'a' => 'b' }, [] ],
+    "define name: 'kilo', a: b")
+  assert_read(
+    [ 'echo', { 'name' => 'mike', 'a' => { 'b' => 'c', 'd' => 'e' } }, [] ],
+    "echo name: 'mike', a: { :b => :c, 'd' => \"e\" }")
+  assert_read(
+    [ 'echo', { 'november' => nil, 'a' => [ 'b', 'c' ], 'd' => [ 1, 2, true ] }, [] ],
+    "echo 'november', a: [ :b, :c ], d: [ 1, 2, true ]")
+  assert_read(
+    [ 'echo', { 'papa' => nil, 'a' => nil }, [] ],
+    'echo "papa", a: nil # whatever')
+  assert_read(
+    [ 'echo', { 'quebec' => nil, 'b' => [ 'A', 'B' ] }, [] ],
+    'echo "quebec", b: %w[ A B ] # whatever')
 
   #
   # more complete tests
@@ -182,6 +211,25 @@ process_definition name: "nada"
       [ 'process_definition', { 'nada' => nil }, [
         [ 'echo', { 'très bon' => nil }, [] ]
       ]],
+      tree)
+  end
+
+  def test_again
+
+    tree = Ruote::RadialReader.read(%{
+      define name: 'nada'
+        sequence
+          alpha
+          participant bravo, timeout: '2d', on-board: true
+    })
+
+    assert_equal(
+      [ 'define', { 'name' => 'nada' }, [
+        [ 'sequence', {}, [
+          [ 'alpha', {}, [] ],
+          [ 'participant', { 'bravo' => nil, 'timeout' => '2d', 'on_board' => true }, [] ]
+        ] ]
+      ] ],
       tree)
   end
 end
