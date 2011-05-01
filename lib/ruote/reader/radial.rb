@@ -58,18 +58,25 @@ module Ruote
 
       protected
 
+      # Split the line (except for the expression name which has already
+      # been extracted) into expression attributes.
+      #
       def parse_attributes(s)
 
         result = {}
 
         loop do
 
-          key, s = find_json_value(s)
+          key, (transition, s) = find_json_value(s)
           return result if key == nil
-          #p [ :key, key, s ]
+          #p [ :key, key, transition, s ]
 
-          value, s = find_json_value(s)
-          #p [ :value, value, s ]
+          value, (transition, s) = if transition == ':'
+            find_json_value(s)
+          else
+            [ nil, [ nil, s ] ]
+          end
+          #p [ :value, value, transition, s ]
 
           key = key.gsub(/-/, '_') if value != nil
 
@@ -77,9 +84,13 @@ module Ruote
         end
       end
 
+      # Aggressively (recursively) look for the leftmost JSON string.
+      #
       def find_json_value(original, length=nil)
 
         if length == nil
+          #
+          # first call (not a recursive call) setup length
 
           return nil if original == nil or original.length < 1
           return nil if original.match(/^#/)
@@ -88,6 +99,9 @@ module Ruote
         end
 
         if length < 1
+          #
+          # We shrinked the string to "", we thus don't have a JSON string.
+          # Let's try to return the string up to the first comman or colon.
 
           if m = original.match(/^([^"',:#]+)([,:#].+)?$/)
             return [ m[1].strip, lchomp(m[2]) ]
@@ -109,17 +123,21 @@ module Ruote
         end
           #
           # counter-weight to annoying issue with yajl-ruby 0.8.2
-          # I can't seem to reproduce it cold...
+          # https://github.com/brianmario/yajl-ruby/issues/58
 
         find_json_value(original, length - 1)
       end
 
+      # Split the first character if it's a colon or a comma. Return
+      # an array composed of the transition (nil, ',' or ':') and the
+      # remainder of the string (or nil).
+      #
       def lchomp(s)
 
-        if s and m = s.match(/^[,:] *(.+)$/)
-          m[1]
+        if s and m = s.match(/^([,:]) *(.+)\z/)
+          [ m[1], m[2] ]
         else
-          s
+          [ nil, s ]
         end
       end
     end
@@ -149,21 +167,19 @@ module Ruote
       end
     end
 
+    # The entry point : takes a radial string and returns, if possible,
+    # a ruote tree.
+    #
     def self.read(s)
 
       root = PreRoot.new(s.strip.split("\n").first)
       current = root
 
-      s.each_line do |line|
+      lines = split(s)
 
-        line = line.rstrip
+      lines.each do |line|
 
-        # discard empty lines and comments
-
-        next if line.length < 1
-        next if line.match(/^ *#/)
-
-        # OK, we found a node, determine its parent
+        # determine parent
 
         ind = indentation(line)
 
@@ -196,6 +212,46 @@ module Ruote
       end
 
       i
+    end
+
+    # Splits the given string in lines, taking care of multiline strings.
+    #
+    # Also removes comment lines.
+    #
+    def self.split(s)
+
+      lines = s.split("\n")
+      result = []
+      current_multiline = nil
+
+      lines.each do |line|
+
+        if current_multiline == nil
+
+          next if line.strip.length < 1
+          next if line.match(/^ *#/)
+
+          if line.match(/"""|'''/)
+            current_multiline = line.gsub(/"""/, '"').gsub(/'''/, "'")
+          else
+            result << line
+          end
+
+        else
+
+          current_multiline << "\\n"
+
+          if line.match(/"""|'''/)
+            current_multiline << line.gsub(/"""/, '"').gsub(/'''/, "'")
+            result << current_multiline
+            current_multiline = nil
+          else
+            current_multiline << line
+          end
+        end
+      end
+
+      result
     end
   end
 end

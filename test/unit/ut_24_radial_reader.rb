@@ -88,6 +88,9 @@ class RadialReaderTest < Test::Unit::TestCase
   assert_read(
     [ 'define', { 'work_flow' => 'hotel' }, [] ],
     'define "work-flow": "hotel"')
+  assert_read(
+    [ 'define', { 'india' => nil, 'mount' => 'batten' }, [] ],
+    'define "india", mount: batten # whatever')
 
   #
   # more complete tests
@@ -139,6 +142,31 @@ process_definition name: "nada"
     assert_equal(
       [ 'process_definition', { 'name' => 'nada' }, [
         [ 'concurrent_iterator', { 'on_field' => 'toti', 'to_field' => 'toto' }, [] ] ] ],
+      tree)
+  end
+
+  def test_multiline_strings
+
+    tree = Ruote::RadialReader.read(%{
+      process_definition "zama"
+        echo """
+          nada
+        """, ol: korrect
+        echo """
+          #nada
+        """
+        # just a comment
+        echo """
+          'hola'
+        """
+    })
+
+    assert_equal(
+      [ 'process_definition', { 'zama' => nil }, [
+        [ 'echo', { "\n          nada\n        " => nil, 'ol' => 'korrect' }, [] ],
+        [ 'echo', { "\n          #nada\n        " => nil }, [] ],
+        [ 'echo', { "\n          'hola'\n        " => nil }, [] ]
+      ]],
       tree)
   end
 end
