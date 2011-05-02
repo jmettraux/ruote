@@ -95,6 +95,13 @@ class RadialReaderTest < Test::Unit::TestCase
     [ 'romeo', { 'timeout' => '2d'}, [] ],
     'romeo timeout: 2d # whatever')
 
+  assert_read(
+    [ 'sierra', {}, [] ],
+    'sierra # whatever')
+  assert_read(
+    [ 'tango', {}, [] ],
+    'tango ')
+
   # JSON arrays and objects
 
   assert_read(
@@ -217,13 +224,13 @@ process_definition name: "nada"
       tree)
   end
 
-  def test_again
+  def test_2d
 
     tree = Ruote::RadialReader.read(%{
       define name: 'nada'
         sequence
           alpha
-          participant bravo, timeout: '2d', on-board: true
+          participant bravo, timeout: 2d, on-board: true
     })
 
     assert_equal(
@@ -232,6 +239,32 @@ process_definition name: "nada"
           [ 'alpha', {}, [] ],
           [ 'participant', { 'bravo' => nil, 'timeout' => '2d', 'on_board' => true }, [] ]
         ] ]
+      ] ],
+      tree)
+  end
+
+  def test_back
+
+    tree = Ruote::RadialReader.read(%{
+      process-definition nada
+        concurrence
+          sequence
+            alpha
+            bravo
+          charly
+        delta
+    })
+
+    assert_equal(
+      [ 'process_definition', { 'nada' => nil }, [
+        [ 'concurrence', {}, [
+          [ 'sequence', {}, [
+            [ 'alpha', {}, [] ],
+            [ 'bravo', {}, [] ]
+          ] ],
+          [ 'charly', {}, [] ]
+        ] ],
+        [ 'delta', {}, [] ]
       ] ],
       tree)
   end

@@ -46,7 +46,7 @@ module Ruote
         @indentation = indentation
         @children = []
 
-        m = line.match(/^([a-z0-9_-]+)(?: +(.+))?$/)
+        m = line.match(/^([a-z0-9_-]+)(?: +(.+))?(?: *)$/)
 
         @name = m[1].gsub(/-/, '_')
         @attributes = parse_attributes(m[2])
@@ -230,7 +230,7 @@ module Ruote
           parent = current.parent
         else # ind < current.indentation
           parent = current
-          while ind < current.indentation
+          while ind <= parent.indentation
             parent = parent.parent
           end
         end
