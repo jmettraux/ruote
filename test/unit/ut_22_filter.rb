@@ -454,6 +454,19 @@ class UtFilterTest < Test::Unit::TestCase
     @deviations = error.deviations
   end
 
+  def test_presence
+
+    assert_valid(
+      [ { 'field' => 'x' } ], { 'x' => 'deux' })
+    assert_not_valid(
+      [ { 'field' => 'x' } ], { 'y' => 'trois' })
+
+    assert_valid(
+      [ { 'field' => '/x|y/' } ], { 'x' => 'deux' })
+    assert_not_valid(
+      [ { 'field' => '/x|y/' } ], { 'z' => 'quatre' })
+  end
+
   def test_type
 
     assert_valid(

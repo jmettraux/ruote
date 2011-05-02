@@ -130,20 +130,35 @@ module Ruote
 
     def run
 
+      keys = @rule.keys - SKIP
+      validation = (@rule.keys & %w[ and or ]).empty?
+
+      if validation and @fields.empty? and keys.empty?
+        fl = @rule['fields'] || @rule['field'] || @rule['f']
+        return [ [ @rule, fl, nil ] ] # validation break
+      end
+
       @fields.collect { |field, value, matches|
 
         valid = nil
 
-        @rule.each do |k, v|
+        if keys.empty?
 
-          next if SKIP.include?(k)
+          valid = (value != nil)
 
-          m = "_#{k}"
-          next unless self.respond_to?(m)
+        else
 
-          r = self.send(m, field, value, matches, k, v)
+          keys.each do |k|
 
-          valid = false if r == false
+            v = @rule[k]
+
+            m = "_#{k}"
+            next unless self.respond_to?(m)
+
+            r = self.send(m, field, value, matches, k, v)
+
+            valid = false if r == false
+          end
         end
 
         raise_or_and(valid, field, value)
