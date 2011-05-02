@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- 'radial' process definitions
 - fixed Tracker#add_tracker (2nd try) issue (Thanks Pedro Texeira)
 - Engine#register :on_workitem / :on_reply / ...
 - set 'v:participant' => lambda { |wi| wi.fields['x'] = 'y' }

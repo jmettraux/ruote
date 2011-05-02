@@ -165,7 +165,7 @@ end
       define name: 'nada'
         sequence
           alpha
-          participant bravo, timeout: '2d', on-board: true
+          participant bravo, timeout: 2d, on-board: true
     })
 
     assert_equal(

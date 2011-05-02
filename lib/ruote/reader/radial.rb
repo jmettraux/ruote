@@ -114,23 +114,29 @@ module Ruote
         end
 
         s = original[0, length]
+        rest = original[length..-1]
 
-        #(return [
-        #  Rufus::Json.decode(s), lchomp(original[length..-1])
-        #]) rescue nil
+        if rest == '' or rest.match(/^[:,]/) or rest.match(/^ *#/)
           #
-          #
-        val = Rufus::Json.decode(s) rescue nil
-        if val != nil or s == 'null'
-          return [ val, lchomp(original[length..-1]) ]
-        end
-          #
-          # counter-weight to annoying issue with yajl-ruby 0.8.2
-          # https://github.com/brianmario/yajl-ruby/issues/58
+          # we potentially have a JSON value or something Ruby-ish
 
-        val = decode_ruby(s) rescue nil
-        if val != nil or s == 'nil'
-          return [ val, lchomp(original[length..-1]) ]
+          #(return [
+          #  Rufus::Json.decode(s), lchomp(original[length..-1])
+          #]) rescue nil
+            #
+            #
+          val = Rufus::Json.decode(s) rescue nil
+          if val != nil or s == 'null'
+            return [ val, lchomp(original[length..-1]) ]
+          end
+            #
+            # counter-weight to annoying issue with yajl-ruby 0.8.2
+            # https://github.com/brianmario/yajl-ruby/issues/58
+
+          val = decode_ruby(s) rescue nil
+          if val != nil or s == 'nil'
+            return [ val, lchomp(original[length..-1]) ]
+          end
         end
 
         find_value(original, length - 1)
@@ -172,7 +178,7 @@ module Ruote
         if s and m = s.match(/^([,:]) *(.+)\z/)
           [ m[1], m[2] ]
         else
-          [ nil, s ]
+          nil
         end
       end
     end

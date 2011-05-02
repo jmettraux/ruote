@@ -91,6 +91,9 @@ class RadialReaderTest < Test::Unit::TestCase
   assert_read(
     [ 'define', { 'india' => nil, 'mount' => 'batten' }, [] ],
     'define "india", mount: batten # whatever')
+  assert_read(
+    [ 'romeo', { 'timeout' => '2d'}, [] ],
+    'romeo timeout: 2d # whatever')
 
   # JSON arrays and objects
 
