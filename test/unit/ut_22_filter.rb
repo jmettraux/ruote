@@ -989,5 +989,13 @@ class UtFilterTest < Test::Unit::TestCase
     assert_valid(filter, { 'x' => -9, 'z' => false })
     assert_valid(filter, { 'x' => 'ah', 'y' => 2 })
   end
+
+  def test_misc_neutralization
+
+    assert_valid(
+      [ { :field => 'x', :type => :string } ], { 'x' => 'deux' })
+    assert_valid(
+      [ { :field => 'x', 'smatch' => /de/ } ], { 'x' => 'deux' })
+  end
 end
 
