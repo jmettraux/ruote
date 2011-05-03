@@ -433,11 +433,25 @@ class UtFilterTest < Test::Unit::TestCase
 
   def assert_valid(filter, hash)
 
-    Ruote.filter(Rufus::Json.dup(filter), hash)
-    assert true
+    begin
+      Ruote.filter(Rufus::Json.dup(filter), hash)
+      assert true
+    rescue Ruote::ValidationError => ve
+      puts
+      puts
+      p ve
+      p ve.deviations
+      puts
+      puts 'hash:'
+      p hash
+      puts 'filter:'
+      filter.each { |l| p l }
+      puts
+      assert false
+    end
   end
 
-  def assert_not_valid(filter, hash, deviations=1)
+  def assert_not_valid(filter, hash, opts={ :deviations => 1 })
 
     error = nil
 
@@ -446,10 +460,12 @@ class UtFilterTest < Test::Unit::TestCase
     rescue => error
     end
 
+    p error.deviations if opts[:verbose]
+
     assert_not_nil(
       error, "ValidationError was not raised")
     assert_equal(
-      deviations, error.deviations.size, "deviation count doesn't match")
+      opts[:deviations], error.deviations.size, "deviation count doesn't match")
 
     @deviations = error.deviations
   end
@@ -474,11 +490,12 @@ class UtFilterTest < Test::Unit::TestCase
     assert_valid(
       [ { 'field' => 'x|y', 'type' => 'string' } ], { 'y' => 'trois' })
 
-    assert_valid(
-      [ { 'field' => 'x|y', 'type' => 'string' } ], { 'z' => 'quatre' })
 
     assert_valid(
       [ { 'field' => 'x|y'} ], { 'x' => 'deux' })
+
+    assert_not_valid(
+      [ { 'field' => 'x|y', 'type' => 'string' } ], { 'z' => 'quatre' })
     assert_not_valid(
       [ { 'field' => 'x|y' } ], { 'z' => 'quatre' })
   end
@@ -536,6 +553,9 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => 'x', 'type' => 'null' } ], { 'x' => false })
     assert_not_valid(
       [ { 'field' => 'x', 'type' => 'null' } ], { 'x' => 1 })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'type' => 'string' } ], {})
   end
 
   def test_type_deep
@@ -627,7 +647,7 @@ class UtFilterTest < Test::Unit::TestCase
     assert_not_valid(
       [ { 'field' => '/./', 'type' => 'string' } ],
       { 'x' => 1, 'z' => 1 },
-      2)
+      :deviations => 2)
   end
 
   def test_match
@@ -882,7 +902,7 @@ class UtFilterTest < Test::Unit::TestCase
         'x' => %w[ a b c ],
         'y' => true
       },
-      2)
+      :deviations => 2)
 
     assert_equal [
       [ { "has" => 1, "field" => "x", "t" => "array"}, "x", [ "a", "b", "c" ] ],
@@ -978,6 +998,10 @@ class UtFilterTest < Test::Unit::TestCase
     assert_valid(filter, { 'x' => -9, 'z' => false })
     assert_valid(filter, { 'x' => 'ah', 'y' => 2 })
 
+    assert_not_valid(filter, { 'x' => 'whatever', 'y' => 'notanumber' })
+    assert_not_valid(filter, { 'z' => 'notabool' })
+    assert_not_valid(filter, { 'x' => 'x', 'z' => 'nada' })
+
     filter = [
       [ { 'field' => 'x', 'type' => 'string' },
         { 'field' => 'y', 'type' => 'number' } ],
@@ -988,6 +1012,24 @@ class UtFilterTest < Test::Unit::TestCase
     assert_valid(filter, { 'z' => true })
     assert_valid(filter, { 'x' => -9, 'z' => false })
     assert_valid(filter, { 'x' => 'ah', 'y' => 2 })
+  end
+
+  def test_top_level_or_and_pipe_field
+
+    filter = [
+      { 'field' => 'x|params.x', 'type' => 'string' },
+      'or',
+      { 'field' => 'y|params.y', 'type' => 'bool' }
+    ]
+
+    assert_valid(filter, { 'x' => 'out' })
+    assert_valid(filter, { 'params' => { 'x' => 'in' } })
+    assert_valid(filter, { 'y' => true })
+    assert_valid(filter, { 'params' => { 'y' => false } })
+
+    assert_not_valid(filter, { 'y' => 'out' })
+    assert_not_valid(filter, { 'params' => { 'y' => 'in' } })
+    assert_not_valid(filter, {})
   end
 
   def test_misc_neutralization

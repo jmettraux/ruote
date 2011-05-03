@@ -131,6 +131,8 @@ module Ruote
     BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
     TILDE = /^~/
     RTILDE = /^\^~/
+    COMMA_SPLIT = / *, */
+    PIPE_SPLIT = / *\| */
 
     def initialize(hash, rule)
 
@@ -148,13 +150,11 @@ module Ruote
         fl = Ruote.regex_or_s(fl)
       end
 
-      keys = Ruote.flatten_keys(@rule['restore'] ? @hash['~~'] : @hash)
-        # used when fl is a regex or a | compound
-
       @fields = if fl.is_a?(Regexp)
 
         # when restoring, you look at the old keys, not the current ones
 
+        keys = Ruote.flatten_keys(@rule['restore'] ? @hash['~~'] : @hash)
         keys = keys.reject { |k| TILDE.match(k) } unless RTILDE.match(fl.source)
 
         # now only keep the keys that match our regexp
@@ -166,19 +166,19 @@ module Ruote
           a
         }
 
-      elsif fl.is_a?(String) and fl.match(/\|/)
+      elsif fl.is_a?(String) and PIPE_SPLIT.match(fl)
 
-        keys = keys.reject { |k| TILDE.match(k) }
+        fields = fl.split(PIPE_SPLIT).collect { |field|
+          val = Ruote.lookup(@hash, field)
+          val.nil? ? nil : [ field, val, nil ]
+        }.compact
 
-        fls = fl.split(/\|/)
-        keys.inject([]) { |a, k|
-          a << [ k, Ruote.lookup(@hash, k), k ] if fls.include?(k)
-          a
-        }
+        fields.empty? ? [ [ fl, nil, nil ] ] : fields
+          # if no fields where found, place fake fl field to force failure
 
       else
 
-        (fl.is_a?(Array) ? fl : fl.to_s.split(/ *, */)).collect { |field|
+        (fl.is_a?(Array) ? fl : fl.to_s.split(COMMA_SPLIT)).collect { |field|
           [ field,  Ruote.lookup(@hash, field), nil ]
         }
       end
