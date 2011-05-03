@@ -158,7 +158,11 @@ module Ruote
         case t.first
           when :str, :lit
             v = t.last
-            v.is_a?(Symbol) ? v.to_s : v
+            case v
+              when Symbol then v.to_s
+              when Regexp then v.inspect
+              else v
+            end
           when :hash
             Hash[*t[1..-1].collect { |e| decode_ruby_tree(e) }]
           when :array

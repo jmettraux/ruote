@@ -268,5 +268,19 @@ process_definition name: "nada"
       ] ],
       tree)
   end
+
+  def test_regexes
+
+    tree = Ruote::RadialReader.read(%{
+      process_definition "nada"
+        participant nada, fix: /nada/
+    })
+
+    assert_equal(
+      [ 'process_definition', { 'nada' => nil }, [
+        [ 'participant', { 'nada' => nil, 'fix' => '/nada/' }, [] ]
+      ]],
+      tree)
+  end
 end
 
