@@ -82,6 +82,7 @@ module Ruote
   class RuleSession
 
     SKIP = %w[ and or fields field f ]
+    BOOLEANS = %w[ and or ]
     NUMBER_CLASSES = [ Fixnum, Float ]
     BOOLEAN_CLASSES = [ TrueClass, FalseClass ]
     TILDE = /^~/
@@ -103,11 +104,13 @@ module Ruote
         fl = Ruote.regex_or_s(fl)
       end
 
+      keys = Ruote.flatten_keys(@rule['restore'] ? @hash['~~'] : @hash)
+        # used when fl is a regex or a | compound
+
       @fields = if fl.is_a?(Regexp)
 
         # when restoring, you look at the old keys, not the current ones
 
-        keys = Ruote.flatten_keys(@rule['restore'] ? @hash['~~'] : @hash)
         keys = keys.reject { |k| TILDE.match(k) } unless RTILDE.match(fl.source)
 
         # now only keep the keys that match our regexp
@@ -119,10 +122,19 @@ module Ruote
           a
         }
 
+      elsif fl.is_a?(String) and fl.match(/\|/)
+
+        keys = keys.reject { |k| TILDE.match(k) }
+
+        fls = fl.split(/\|/)
+        keys.inject([]) { |a, k|
+          a << [ k, Ruote.lookup(@hash, k), k ] if fls.include?(k)
+          a
+        }
+
       else
 
-        (fl.is_a?(Array) ? fl : fl.to_s.split(',')).collect { |field|
-          field = field.strip
+        (fl.is_a?(Array) ? fl : fl.to_s.split(/ *, */)).collect { |field|
           [ field,  Ruote.lookup(@hash, field), nil ]
         }
       end
@@ -131,7 +143,7 @@ module Ruote
     def run
 
       keys = @rule.keys - SKIP
-      validation = (@rule.keys & %w[ and or ]).empty?
+      validation = (@rule.keys & BOOLEANS).empty?
 
       if validation and @fields.empty? and keys.empty?
         fl = @rule['fields'] || @rule['field'] || @rule['f']

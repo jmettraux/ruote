@@ -80,6 +80,12 @@ module Ruote::Exp
   #
   # Note the "!" used as a shortcut for "\." in the second line.
   #
+  # Passing a | separated list of field also works :
+  #
+  #   filter 'city|region|country', :type => 'string'
+  #     # will make sure that at least of one those field is present
+  #     # any of the three that is present must hold a string
+  #
   #
   # == validations
   #

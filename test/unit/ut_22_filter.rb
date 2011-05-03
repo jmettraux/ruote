@@ -467,6 +467,22 @@ class UtFilterTest < Test::Unit::TestCase
       [ { 'field' => '/x|y/' } ], { 'z' => 'quatre' })
   end
 
+  def test_this_or_that_field
+
+    assert_valid(
+      [ { 'field' => 'x|y', 'type' => 'string' } ], { 'x' => 'deux' })
+    assert_valid(
+      [ { 'field' => 'x|y', 'type' => 'string' } ], { 'y' => 'trois' })
+
+    assert_valid(
+      [ { 'field' => 'x|y', 'type' => 'string' } ], { 'z' => 'quatre' })
+
+    assert_valid(
+      [ { 'field' => 'x|y'} ], { 'x' => 'deux' })
+    assert_not_valid(
+      [ { 'field' => 'x|y' } ], { 'z' => 'quatre' })
+  end
+
   def test_type
 
     assert_valid(
