@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Raphael Simon - error handling + filters design
 Nando Sola - many help
 Neil Pennell - http://github.com/npennel
 Patrick Gannon - fix for compatibility with ruote-mongodb
@@ -29,7 +30,6 @@ Nicholas Faiz - http://github.com/biv
 Chris Beer - http://github.com/cbeer
 Enrico Bianco - http://github.com/enricob
 Andrew Timberlake - timeout 'at'
-Raphael Simon - error handling mechanism design and QA
 Maarten Oelering - bug reports and test cases
 Nick Petrella - socket listener issues and Python interactivity, dollar patch
 Sakaguchi Masa - japanese website and articles in Japanese magazines
