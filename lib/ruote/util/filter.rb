@@ -48,6 +48,50 @@ module Ruote
   #
   def self.filter(filter, hash, options={})
 
+    filters = or_split(filter)
+
+    result = nil
+
+    filters.each do |fl|
+
+      result = begin
+        do_filter(fl, hash, options)
+      rescue ValidationError => err
+        err
+      end
+
+      return result if result.is_a?(Hash)
+        # success
+    end
+
+    raise(result) if result.is_a?(ValidationError)
+
+    result
+  end
+
+  # Used by Ruote.filter
+  #
+  def self.or_split(filter)
+
+    return filter if filter.first.is_a?(Array)
+    return [ filter ] if filter.empty? or ( ! filter.include?('or'))
+
+    # [ {}, 'or', {}, {}, 'or', {} ]
+
+    filter.inject([ [] ]) do |result, fl|
+      if fl.is_a?(Hash)
+        result.last << fl
+      else
+        result << []
+      end
+      result
+    end
+  end
+
+  # Used by Ruote.filter
+  #
+  def self.do_filter(filter, hash, options)
+
     raise ArgumentError.new(
       "not a filter : #{filter}"
     ) unless filter.is_a?(Array)
@@ -381,8 +425,6 @@ module Ruote
           else
             raise ArgumentError.new("unknown type '#{type}'")
         end
-
-        valid
       end
     end
 

@@ -427,6 +427,23 @@ module Ruote::Exp
   # * 'restore', 'restore_from', 'rs'
   #
   #
+  # == top-level 'or'
+  #
+  # Filters may be used to transform hashes or to validate them. In both cases
+  # the filters seen until now were like chained by a big AND.
+  #
+  # It's OK to write
+  #
+  #   filter :in => [
+  #     { 'field' => 'server_href', 'smatch' => '^https?:\/\/' },
+  #     'or',
+  #     { 'field' => 'nickname', 'type' => 'string' } ]
+  #
+  # Granted, this is mostly for validation purposes, but it also works
+  # with transformations (as soon as an 'or' child succeeds it's returned
+  # and the other children are not evaluated).
+  #
+  #
   # == compared to the :filter attribute
   #
   # The :filter attribute accepts participant names, but for this filter

@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- filter top-level 'or'
 - filter field => 'x|y' (or on field names)
 - 'radial' process definitions
 - fixed Tracker#add_tracker (2nd try) issue (Thanks Pedro Texeira)

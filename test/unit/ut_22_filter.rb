@@ -963,5 +963,31 @@ class UtFilterTest < Test::Unit::TestCase
         ]
       }))
   end
+
+  def test_top_level_or
+
+    filter = [
+      { 'field' => 'x', 'type' => 'string' },
+      { 'field' => 'y', 'type' => 'number' },
+      'or',
+      { 'field' => 'z', 'type' => 'bool' }
+    ]
+
+    assert_valid(filter, { 'x' => 'whatever', 'y' => 1 })
+    assert_valid(filter, { 'z' => true })
+    assert_valid(filter, { 'x' => -9, 'z' => false })
+    assert_valid(filter, { 'x' => 'ah', 'y' => 2 })
+
+    filter = [
+      [ { 'field' => 'x', 'type' => 'string' },
+        { 'field' => 'y', 'type' => 'number' } ],
+      [ { 'field' => 'z', 'type' => 'bool' } ]
+    ]
+
+    assert_valid(filter, { 'x' => 'whatever', 'y' => 1 })
+    assert_valid(filter, { 'z' => true })
+    assert_valid(filter, { 'x' => -9, 'z' => false })
+    assert_valid(filter, { 'x' => 'ah', 'y' => 2 })
+  end
 end
 
