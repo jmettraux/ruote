@@ -254,6 +254,27 @@ module Ruote
       @h['fields']['params'] || {}
     end
 
+    # When a participant is invoked like in
+    #
+    #    accounting 'do_invoice', :customer => 'acme corp'
+    #
+    # then
+    #
+    #    p workitem.params
+    #      # => { 'ref' => 'accounting', 'do_invoice' => nil, 'customer' => 'acme corp' }
+    #
+    # and
+    #
+    #    p workitem.param_text
+    #      # => 'do_invoice'
+    #
+    # It returns nil when there is no text passed directly.
+    #
+    def param_text
+
+      (params.find { |k, v| v.nil? } || []).first
+    end
+
     # (advanced)
     #
     # Shortcut for wi.fields['__command__']

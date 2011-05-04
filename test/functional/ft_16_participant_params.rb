@@ -45,21 +45,31 @@ class FtParticipantParamsTest < Test::Unit::TestCase
   def test_attribute_text_param
 
     pdef = Ruote.process_definition do
-      sequence do
-        alpha 'nemo', :action => 'nada'
-      end
+      alpha 'nemo', :action => 'nada'
+      bravo
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    @engine.register { catchall }
 
     #@engine.noisy = true
 
-    wfid = @engine.launch(pdef)
+    @engine.launch(pdef)
+
     @engine.wait_for(:alpha)
+    workitem = @engine.storage_participant.first
 
     assert_equal(
-      { 'nemo' => nil, 'action' => 'nada', 'ref' => 'alpha' },
-      @engine.storage_participant.first.params)
+      { 'nemo' => nil, 'action' => 'nada', 'ref' => 'alpha' }, workitem.params)
+    assert_equal(
+      'nemo', workitem.param_text)
+
+    @engine.storage_participant.proceed(workitem)
+
+    @engine.wait_for(:bravo)
+    workitem = @engine.storage_participant.first
+
+    assert_equal(
+      nil, workitem.param_text)
   end
 end
 
