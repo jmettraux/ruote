@@ -41,5 +41,25 @@ class FtParticipantParamsTest < Test::Unit::TestCase
 
     wait_for(wfid)
   end
+
+  def test_attribute_text_param
+
+    pdef = Ruote.process_definition do
+      sequence do
+        alpha 'nemo', :action => 'nada'
+      end
+    end
+
+    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(:alpha)
+
+    assert_equal(
+      { 'nemo' => nil, 'action' => 'nada', 'ref' => 'alpha' },
+      @engine.storage_participant.first.params)
+  end
 end
 
