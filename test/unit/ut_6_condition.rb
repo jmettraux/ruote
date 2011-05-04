@@ -209,6 +209,12 @@ class ConditionTest < Test::Unit::TestCase
     assert_e 'Loan/Grant', 'Loan / Grant'
   end
 
+  def test_something_or_not
+
+    assert_b "something"
+    assert_b false, ""
+  end
+
   def test_is_empty
 
     assert_b "'' empty"
