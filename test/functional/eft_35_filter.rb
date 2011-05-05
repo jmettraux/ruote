@@ -25,8 +25,11 @@ class EftFilterTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef, fields)
     r = @engine.wait_for(wfid)
 
+    err = @engine.errors.first
+
     assert_equal 'error_intercepted', r['action']
-    assert_match /ValidationError/, @engine.errors.first.message
+    assert_match /ValidationError/, err.message
+    assert_equal Array, err.deviations.class
   end
 
   #

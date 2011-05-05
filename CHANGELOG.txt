@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- ProcessError#deviations (cf filter and Ruote::ValidationError)
 - reworked (process definition) Reader
 - Workitem#param_text
 - filter top-level 'or'

@@ -92,6 +92,13 @@ module Ruote
       Ruote::Workitem.new(msg['workitem'])
     end
 
+    # Returns an array of deviations (see the 'filter' expression) if the
+    # error is a Ruote::ValidationError.
+    #
+    def deviations
+      @h['deviations']
+    end
+
     protected
 
     def to_dot(opts)

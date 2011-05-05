@@ -106,6 +106,8 @@ module Ruote
       #
       # (this message might get intercepted by a tracker)
 
+      dev = exception.respond_to?(:deviations) ? exception.deviations : nil
+
       @context.storage.put_msg(
         'error_intercepted',
         'error' => {
@@ -113,7 +115,8 @@ module Ruote
           'at' => Ruote.now_to_utc_s,
           'class' => exception.class.name,
           'message' => exception.message,
-          'trace' => backtrace },
+          'trace' => backtrace,
+          'deviations' => dev },
         'wfid' => wfid,
         'fei' => fei,
         'msg' => msg)
@@ -125,6 +128,7 @@ module Ruote
         '_id' => "err_#{Ruote.to_storage_id(fei)}",
         'message' => exception.inspect,
         'trace' => backtrace.join("\n"),
+        'deviations' => dev,
         'fei' => fei,
         'msg' => msg
       ) if fei
