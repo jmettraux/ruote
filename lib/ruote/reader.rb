@@ -196,7 +196,9 @@ module Ruote
     #
     def is_uri?(s)
 
-      s.index("\n").nil? && ( ! s.match(/"\s*:/))
+      return false if s.index("\n")
+
+      ((URI.parse(s); true) rescue false)
     end
 
     # A convenience method when building XML
