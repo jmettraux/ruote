@@ -71,5 +71,28 @@ class FtParticipantParamsTest < Test::Unit::TestCase
     assert_equal(
       nil, workitem.param_text)
   end
+
+  def test_param_or_field
+
+    pdef = Ruote.process_definition do
+      alpha
+      alpha :theme => :wagner
+    end
+
+    @engine.register :alpha do |workitem|
+      context.tracer << "pof_theme:#{workitem.param_or_field(:theme)}\n"
+      context.tracer << "fop_theme:#{workitem.field_or_param(:theme)}\n"
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef, 'theme' => 'mozart')
+    @engine.wait_for(wfid)
+
+    assert_equal %w[
+       pof_theme:mozart fop_theme:mozart
+       pof_theme:wagner fop_theme:mozart
+    ], @tracer.to_a
+  end
 end
 

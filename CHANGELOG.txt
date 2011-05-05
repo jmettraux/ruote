@@ -4,9 +4,10 @@
 
 == ruote - 2.2.1    not yet released
 
+- Workitem#param_or_field(key) and #field_or_param(key)
+- Workitem#param_text
 - ProcessError#deviations (cf filter and Ruote::ValidationError)
 - reworked (process definition) Reader
-- Workitem#param_text
 - filter top-level 'or'
 - filter field => 'x|y' (or on field names)
 - 'radial' process definitions

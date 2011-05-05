@@ -275,6 +275,33 @@ module Ruote
       (params.find { |k, v| v.nil? } || []).first
     end
 
+    # Sometimes a value is passed as a[n expression] parameter or as a
+    # workitem field, with priority to the parameter.
+    #
+    #   sequence do
+    #     set 'f:country' => 'uruguay'
+    #     participant 'toto'
+    #       # in toto, workitem.param_or_field(:country) will yield 'uruguay'
+    #     participant 'toto', :country => 'argentina'
+    #       # workitem.param_or_field(:country) will yield 'argentina'
+    #   end
+    #
+    def param_or_field(key)
+
+      key = key.to_s
+
+      (@h['fields']['params'] || {})[key] || @h['fields'][key]
+    end
+
+    # Like #param_or_field, but priority is given to the field.
+    #
+    def field_or_param(key)
+
+      key = key.to_s
+
+      @h['fields'][key] || (@h['fields']['params'] || {})[key]
+    end
+
     # (advanced)
     #
     # Shortcut for wi.fields['__command__']
