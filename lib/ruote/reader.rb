@@ -53,12 +53,11 @@ module Ruote
 
       return definition if Ruote.is_tree?(definition)
 
-      (return XmlReader.read(definition)) rescue nil
-      (return Rufus::Json.decode(definition)) rescue nil
-      (return ruby_eval(definition)) rescue nil
-      (return RadialReader.read(definition)) rescue nil
+      raise ArgumentError.new(
+        "cannot read process definitions of class #{definition.class}"
+      ) unless definition.is_a?(String)
 
-      if definition.index("\n").nil? && definition.index(' ').nil?
+      if is_uri?(definition)
 
         raise ArgumentError.new(
           "remote process definitions are not allowed"
@@ -67,9 +66,17 @@ module Ruote
         return read(open(definition).read)
       end
 
+      tree =
+        (ruby_eval(definition) rescue nil) ||
+        (RadialReader.read(definition) rescue nil) ||
+        (XmlReader.read(definition) rescue nil) ||
+        (Rufus::Json.decode(definition) rescue nil)
+
       raise ArgumentError.new(
-        "doesn't know how to read definition (#{definition.class}) " +
-        "or error in process definition")
+        "failed to read processs definition of class #{definition.class}"
+      ) unless Ruote.is_tree?(tree)
+
+      tree
     end
 
     # Class method for parsing process definition (XML, Ruby, from file or
@@ -183,6 +190,13 @@ module Ruote
       #e.backtrace.each { |l| puts l }
 
       raise ArgumentError.new('probably not ruby')
+    end
+
+    # Minimal test. Used by #read.
+    #
+    def is_uri?(s)
+
+      s.index("\n").nil? && ( ! s.match(/"\s*:/))
     end
 
     # A convenience method when building XML
