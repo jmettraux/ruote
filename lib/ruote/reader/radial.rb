@@ -22,8 +22,7 @@
 # Made in Japan.
 #++
 
-require 'rufus/json'
-require 'rufus/treechecker'
+require 'parslet'
 
 
 module Ruote
@@ -32,6 +31,98 @@ module Ruote
   # Turns a radial string into a ruote tree.
   #
   module RadialReader
+
+    class Parser < Parslet::Parser
+
+      #rule(:spaces) { match('\s').repeat(1) }
+      rule(:spaces) {
+        match('\s').repeat >>
+        (str('#') >> match('[^\n]').repeat >> str("\n").present?).maybe >>
+        match('\s').repeat
+      }
+      rule(:spaces?) { spaces.maybe }
+
+      rule(:comma) { spaces? >> str(',') >> spaces? }
+      rule(:digit) { match('[0-9]') }
+
+      rule(:text) { match('[^\s:,=\[\]\{\}#]').repeat(1).as(:text) }
+
+      rule(:number) {
+        (
+          str('-').maybe >> (
+            str('0') | (match('[1-9]') >> digit.repeat)
+          ) >> (
+            str('.') >> digit.repeat(1)
+          ).maybe >> (
+            match('[eE]') >> (str('+') | str('-')).maybe >> digit.repeat(1)
+          ).maybe
+        ).as(:number) >> match('[ \n,]').present?
+      }
+
+      rule(:string) {
+        str('"') >> (
+          str('\\') >> any | str('"').absent? >> any
+        ).repeat.as(:string) >> str('"') |
+        str("'") >> (
+          str('\\') >> any | str("'").absent? >> any
+        ).repeat.as(:string) >> str("'")
+      }
+
+      rule(:array) {
+        str('[') >> spaces? >>
+        (value >> (comma >> value).repeat).maybe.as(:array) >>
+        spaces? >> str(']')
+      }
+
+      rule(:object) {
+        str('{') >> spaces? >>
+        (entry >> (comma >> entry).repeat).maybe.as(:object) >>
+        spaces? >> str('}')
+      }
+
+      rule(:value) {
+        array | object |
+        string | number |
+        str('true').as(:true) | str('false').as(:false) |
+        str('null').as(:nil) | str('nil').as(:nil) |
+        text
+      }
+
+      rule(:entry) {
+        ((string | text).as(:k) >> spaces? >>
+         (str(':') | str('=>')) >> spaces? >>
+         value.as(:v)).as(:entry)
+      }
+
+      rule(:attribute) { (entry | value).as(:attribute) }
+
+      rule(:blanks) { match('[ \t]').repeat(1) }
+
+      rule(:blank_line) { blanks.maybe }
+      rule(:line) {
+        (
+          str(' ').repeat.as(:indentation) >>
+          match('[^ \n#"\']').repeat(1).as(:expname) >>
+          (blanks >> attribute >> (comma >> attribute).repeat).as(:attributes).maybe
+        ).as(:line)
+      }
+
+      rule(:comment) {
+        str(' ').repeat >>
+        (str('#') >> match('[^\n]').repeat).maybe >>
+        str("\n").present?
+      }
+
+      rule(:lines) {
+        (str("\n") >> (line | blank_line) >> comment.maybe).repeat
+      }
+
+      root(:lines)
+
+      def split(s)
+        parse(s).collect { |l| l[:line] }
+      end
+    end
 
     #
     # A helper class to store the temporary tree while it gets read.
@@ -46,12 +137,52 @@ module Ruote
         @indentation = indentation
         @children = []
 
-        m = line.match(/^([a-z0-9_-]+)(?: +(.+))?(?: *)$/)
+        @name = line[:expname].to_s.gsub(/-/, '_')
 
-        @name = m[1].gsub(/-/, '_')
-        @attributes = parse_attributes(m[2])
+        atts = line[:attributes] || []
+        atts = [ atts ] unless atts.is_a?(Array)
+
+        @attributes = atts.inject({}) { |h, att|
+          att = att[:attribute]
+          if att.keys.first == :entry
+            e = att[:entry]
+            h[e[:k].values.first.to_s.gsub(/-/, '_')] = from_parslet(e[:v])
+          else
+            h[att.values.first.to_s.gsub(/-/, '_')] = nil
+          end
+          h
+        }
 
         parent.children << self if parent
+      end
+
+      def from_parslet(elt)
+
+        val = elt.values.first
+
+        case elt.keys.first
+          when :object
+            (val.is_a?(Array) ? val : [ val ]).inject({}) { |h, e|
+              k, v = Array(e[:entry]).collect { |e| e.last }
+              h[from_parslet(k)] = from_parslet(v)
+              h
+            }
+          when :array
+            val.collect { |e| from_parslet(e) }
+          when :string, :text
+            val.to_s
+          when :false
+            false
+          when :true
+            true
+          when :nil
+            nil
+          when :number
+            sval = val.to_s
+            sval.match(/[eE\.]/) ? Float(sval) : Integer(sval)
+          else
+            elt
+        end
       end
 
       def to_a
@@ -60,131 +191,6 @@ module Ruote
       end
 
       protected
-
-      # Split the line (except for the expression name which has already
-      # been extracted) into expression attributes.
-      #
-      def parse_attributes(s)
-
-        result = {}
-
-        loop do
-
-          key, (transition, s) = find_value(s)
-          return result if key == nil
-          #p [ :key, key, transition, s ]
-
-          value, (transition, s) = if transition == ':'
-            find_value(s)
-          else
-            [ nil, [ nil, s ] ]
-          end
-          #p [ :value, value, transition, s ]
-
-          key = key.gsub(/-/, '_') if value != nil
-
-          result[key] = value
-        end
-      end
-
-      # Aggressively (recursively) look for the leftmost JSON string.
-      #
-      def find_value(original, length=nil)
-
-        if length == nil
-          #
-          # first call (not a recursive call) setup length
-
-          return nil if original == nil or original.length < 1
-          return nil if original.match(/^ *#/)
-
-          length = original.length
-        end
-
-        if length < 1
-          #
-          # We shrinked the string to "", we thus don't have a JSON string.
-          # Let's try to return the string up to the first comman or colon.
-
-          if m = original.match(/^([^"',:#]+)([,:#].+)?$/)
-            return [ m[1].strip, lchomp(m[2]) ]
-          end
-
-          raise ArgumentError.new("couldn't find a JSON value in >#{original}<")
-        end
-
-        s = original[0, length]
-        rest = original[length..-1]
-
-        if rest == '' or rest.match(/^[:,]/) or rest.match(/^ *#/)
-          #
-          # we potentially have a JSON value or something Ruby-ish
-
-          #(return [
-          #  Rufus::Json.decode(s), lchomp(original[length..-1])
-          #]) rescue nil
-            #
-            #
-          val = Rufus::Json.decode(s) rescue nil
-          if val != nil or s == 'null'
-            return [ val, lchomp(original[length..-1]) ]
-          end
-            #
-            # counter-weight to annoying issue with yajl-ruby 0.8.2
-            # https://github.com/brianmario/yajl-ruby/issues/58
-
-          val = decode_ruby(s) rescue nil
-          if val != nil or s == 'nil'
-            return [ val, lchomp(original[length..-1]) ]
-          end
-        end
-
-        find_value(original, length - 1)
-      end
-
-      def decode_ruby(s)
-
-        decode_ruby_tree(begin
-          Rufus::TreeChecker.parse(s)
-        rescue Exception => e
-          nil
-        end)
-      end
-
-      def decode_ruby_tree(t)
-
-        return nil unless t
-
-        case t.first
-          when :str, :lit
-            v = t.last
-            case v
-              when Symbol then v.to_s
-              when Regexp then v.inspect
-              else v
-            end
-          when :hash
-            Hash[*t[1..-1].collect { |e| decode_ruby_tree(e) }]
-          when :array
-            t[1..-1].collect { |e| decode_ruby_tree(e) }
-          else
-            #p t
-            raise ArgumentError.new('not readable')
-        end
-      end
-
-      # Split the first character if it's a colon or a comma. Return
-      # an array composed of the transition (nil, ',' or ':') and the
-      # remainder of the string (or nil).
-      #
-      def lchomp(s)
-
-        if s and m = s.match(/^([,:]) *(.+)\z/)
-          [ m[1], m[2] ]
-        else
-          nil
-        end
-      end
     end
 
     #
@@ -217,16 +223,18 @@ module Ruote
     #
     def self.read(s)
 
-      root = PreRoot.new(s.strip.split("\n").first)
-      current = root
+      parser = Parser.new
 
-      lines = split(s)
+      lines = parser.split("\n#{s}\n")
+
+      root = PreRoot.new(s.strip.split("\n").first + '...')
+      current = root
 
       lines.each do |line|
 
         # determine parent
 
-        ind = indentation(line)
+        ind = line[:indentation].to_s.length
 
         if ind > current.indentation
           parent = current
@@ -241,62 +249,15 @@ module Ruote
 
         # then create it
 
-        current = Node.new(parent, ind, line.lstrip)
+        current = Node.new(parent, ind, line)
       end
 
       root.to_a
-    end
 
-    # Returns the count of white spaces on the left of the given string.
-    #
-    def self.indentation(s)
-
-      i = 0
-      while m = s.match(/^ (.*)$/)
-        i, s = i + 1, m[1]
-      end
-
-      i
-    end
-
-    # Splits the given string in lines, taking care of multiline strings.
-    #
-    # Also removes comment lines.
-    #
-    def self.split(s)
-
-      lines = s.split("\n")
-      result = []
-      current_multiline = nil
-
-      lines.each do |line|
-
-        if current_multiline == nil
-
-          next if line.strip.length < 1
-          next if line.match(/^ *#/)
-
-          if line.match(/"""|'''/)
-            current_multiline = line.gsub(/"""/, '"').gsub(/'''/, "'")
-          else
-            result << line
-          end
-
-        else
-
-          current_multiline << "\\n"
-
-          if line.match(/"""|'''/)
-            current_multiline << line.gsub(/"""/, '"').gsub(/'''/, "'")
-            result << current_multiline
-            current_multiline = nil
-          else
-            current_multiline << line
-          end
-        end
-      end
-
-      result
+    rescue Parslet::ParseFailed => e
+      class << e; attr_accessor :error_tree; end
+      e.error_tree = parser.root.error_tree
+      raise e
     end
   end
 end
