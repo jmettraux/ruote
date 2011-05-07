@@ -203,30 +203,30 @@ process_definition name: "nada"
       tree)
   end
 
-#  def test_multiline_strings
-#
-#    tree = Ruote::RadialReader.read(%{
-#      process_definition "zama"
-#        echo """
-#          nada
-#        """, ol: korrect
-#        echo """
-#          #nada
-#        """
-#        # just a comment
-#        echo """
-#          'hola'
-#        """
-#    })
-#
-#    assert_equal(
-#      [ 'process_definition', { 'zama' => nil }, [
-#        [ 'echo', { "\n          nada\n        " => nil, 'ol' => 'korrect' }, [] ],
-#        [ 'echo', { "\n          #nada\n        " => nil }, [] ],
-#        [ 'echo', { "\n          'hola'\n        " => nil }, [] ]
-#      ]],
-#      tree)
-#  end
+  def test_multiline_strings
+
+    tree = Ruote::RadialReader.read(%{
+      process_definition "zama"
+        echo "
+          nada
+        ", ol: korrect
+        echo '
+          #nada
+        '
+        # just a comment
+        echo "
+          'hola'
+        "
+    })
+
+    assert_equal(
+      [ 'process_definition', { 'zama' => nil }, [
+        [ 'echo', { "\n          nada\n        " => nil, 'ol' => 'korrect' }, [] ],
+        [ 'echo', { "\n          #nada\n        " => nil }, [] ],
+        [ 'echo', { "\n          'hola'\n        " => nil }, [] ]
+      ]],
+      tree)
+  end
 
   def test_unicode
 
