@@ -481,5 +481,7 @@
 [o] register :toto, :accept? => lambda { |workitem| ... }
 [o] register :toto, :do_not_thread => lambda { |workitem| ... }
 
-[ ] investigate 1.9's json
+[x] investigate 1.9's json
+[ ] Parslet for conditions ?
+[ ] enhance radial/Parslet error messages (cf Raphael)
 

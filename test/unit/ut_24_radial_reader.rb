@@ -153,7 +153,7 @@ class RadialReaderTest < Test::Unit::TestCase
     #puts e.error_tree
   end
 
-  def _test_error_on_empty_string
+  def test_error_on_empty_string
 
     assert_raise ArgumentError do
       Ruote::RadialReader.read(%{

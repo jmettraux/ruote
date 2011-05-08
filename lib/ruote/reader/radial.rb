@@ -28,13 +28,15 @@ require 'parslet'
 module Ruote
 
   #
-  # Turns a radial string into a ruote tree.
+  # Turning radial strings into ruote trees.
   #
   module RadialReader
 
+    #
+    # Turns radial strings into intermediate trees.
+    #
     class Parser < Parslet::Parser
 
-      #rule(:spaces) { match('\s').repeat(1) }
       rule(:spaces) {
         match('\s').repeat >>
         (str('#') >> match('[^\n]').repeat >> str("\n").present?).maybe >>
@@ -89,21 +91,21 @@ module Ruote
       }
 
       rule(:entry) {
-        ((string | text).as(:k) >> spaces? >>
+        ((string | text).as(:key) >> spaces? >>
          (str(':') | str('=>')) >> spaces? >>
-         value.as(:v)).as(:entry)
+         value.as(:val)).as(:ent)
       }
 
-      rule(:attribute) { (entry | value).as(:attribute) }
+      rule(:attribute) { (entry | value).as(:att) }
 
       rule(:blanks) { match('[ \t]').repeat(1) }
 
       rule(:blank_line) { blanks.maybe }
       rule(:line) {
         (
-          str(' ').repeat.as(:indentation) >>
-          match('[^ \n#"\']').repeat(1).as(:expname) >>
-          (blanks >> attribute >> (comma >> attribute).repeat).as(:attributes).maybe
+          str(' ').repeat.as(:ind) >>
+          match('[^ \n#"\']').repeat(1).as(:exp) >>
+          (blanks >> attribute >> (comma >> attribute).repeat).as(:atts).maybe
         ).as(:line)
       }
 
@@ -118,10 +120,6 @@ module Ruote
       }
 
       root(:lines)
-
-      def split(s)
-        parse(s).collect { |l| l[:line] }
-      end
     end
 
     #
@@ -131,66 +129,85 @@ module Ruote
 
       attr_reader :parent, :indentation, :children
 
-      def initialize(parent, indentation, line)
+      def initialize(indentation, expname, attributes)
 
-        @parent = parent
+        @parent = nil
         @indentation = indentation
         @children = []
 
-        @name = line[:expname].to_s.gsub(/-/, '_')
-
-        atts = line[:attributes] || []
-        atts = [ atts ] unless atts.is_a?(Array)
-
-        @attributes = atts.inject({}) { |h, att|
-          att = att[:attribute]
-          if att.keys.first == :entry
-            e = att[:entry]
-            h[e[:k].values.first.to_s.gsub(/-/, '_')] = from_parslet(e[:v])
-          else
-            h[att.values.first.to_s.gsub(/-/, '_')] = nil
-          end
-          h
-        }
-
-        parent.children << self if parent
+        @expname = expname.gsub(/-/, '_')
+        @attributes = attributes
       end
 
-      def from_parslet(elt)
+      def parent=(node)
 
-        val = elt.values.first
-
-        case elt.keys.first
-          when :object
-            (val.is_a?(Array) ? val : [ val ]).inject({}) { |h, e|
-              k, v = Array(e[:entry]).collect { |e| e.last }
-              h[from_parslet(k)] = from_parslet(v)
-              h
-            }
-          when :array
-            val.collect { |e| from_parslet(e) }
-          when :string, :text
-            val.to_s
-          when :false
-            false
-          when :true
-            true
-          when :nil
-            nil
-          when :number
-            sval = val.to_s
-            sval.match(/[eE\.]/) ? Float(sval) : Integer(sval)
-          else
-            elt
-        end
+        @parent = node
+        @parent.children << self
       end
 
       def to_a
 
-        [ @name, @attributes, @children.collect { |c| c.to_a } ]
+        [ @expname, @attributes, @children.collect { |c| c.to_a } ]
+      end
+    end
+
+    #
+    # Turns intermediate trees into ruote trees.
+    #
+    class Transformer < Parslet::Transform
+
+      class Attribute
+        attr_reader :key, :val
+        def initialize(key, val)
+          @key = key.to_s.gsub(/-/, '_')
+          @val = val
+        end
+      end
+      class Value < Attribute
+        def initialize(key)
+          @key = key
+          @val = nil
+        end
       end
 
-      protected
+      rule(:line => subtree(:line)) { line }
+
+      rule(:ind => simple(:i), :exp => simple(:e), :atts => subtree(:as)) {
+        atts = Array(as).inject({}) { |h, att| h[att.key] = att.val; h }
+        Node.new(i.to_s.length, e.to_s, atts)
+      }
+      rule(:ind => simple(:i), :exp => simple(:e)) {
+        Node.new(i.to_s.length, e.to_s, {})
+      }
+      rule(:ind => sequence(:i), :exp => simple(:e), :atts => subtree(:as)) {
+        atts = Array(as).inject({}) { |h, att| h[att.key] = att.val; h }
+        Node.new(0, e.to_s, atts)
+      }
+      rule(:ind => sequence(:i), :exp => simple(:e)) {
+        Node.new(0, e.to_s, {})
+      }
+
+      rule(:att => { :ent => { :key => subtree(:k), :val => subtree(:v) } }) {
+        Attribute.new(k, v)
+      }
+      rule(:att => subtree(:t)) {
+        Value.new(t)
+      }
+
+      rule(:text => simple(:te)) { te.to_s }
+      rule(:string => simple(:st)) { st.to_s }
+      rule(:number => simple(:n)) { n.match(/[eE\.]/) ? Float(n) : Integer(n) }
+      rule(:false => simple(:b)) { false }
+      rule(:true => simple(:b)) { true }
+      rule(:nil => simple(:n)) { nil }
+
+      rule(:array => sequence(:es)) { es }
+
+      rule(:object => subtree(:es)) {
+        (es.is_a?(Array) ? es : [ es ]).inject({}) { |h, e|
+          e = e[:ent]; h[e[:key]] = e[:val]; h
+        }
+      }
     end
 
     #
@@ -224,32 +241,31 @@ module Ruote
     def self.read(s)
 
       parser = Parser.new
+      transformer = Transformer.new
 
-      lines = parser.split("\n#{s}\n")
+      lines = parser.parse("\n#{s}\n")
+      nodes = transformer.apply(lines)
 
-      root = PreRoot.new(s.strip.split("\n").first + '...')
+      root = PreRoot.new("#{s.strip.split("\n").first}...")
       current = root
 
-      lines.each do |line|
+      nodes = [] unless nodes.is_a?(Array)
+        # force ArgumentError via empty PreRoot
 
-        # determine parent
+      nodes.each do |node|
 
-        ind = line[:indentation].to_s.length
+        parent = current
 
-        if ind > current.indentation
-          parent = current
-        elsif ind == current.indentation
+        if node.indentation == current.indentation
           parent = current.parent
-        else # ind < current.indentation
-          parent = current
-          while ind <= parent.indentation
+        elsif node.indentation < current.indentation
+          while node.indentation <= parent.indentation
             parent = parent.parent
           end
         end
 
-        # then create it
-
-        current = Node.new(parent, ind, line)
+        node.parent = parent
+        current = node
       end
 
       root.to_a

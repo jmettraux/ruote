@@ -92,5 +92,5 @@ Jon "Compensator" - first report of the "yamlextras" issue
 
 = Last but not least
 
-Many thanks to the authors, the contributors and the community of the Ruby language, the various json gems, the builder, mailtrap, sourcify, parsetree gems, and many more.
+Many thanks to the authors, the contributors and the community of the Ruby language, the various json gems, the builder, mailtrap, sourcify, parsetree, parslet gems, and many more.
 
