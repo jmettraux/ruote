@@ -116,6 +116,18 @@ end
     assert_equal TREE1.to_json, Ruote::Reader.to_json(TREE1)
   end
 
+  def test_to_radial
+
+    assert_equal(
+      %{
+define name: "nada"
+  sequence
+    alpha
+    participant "bravo", timeout: "2d", on_board: true
+      }.strip,
+      Ruote::Reader.to_radial(TREE1).strip)
+  end
+
   DEF1 = %{
 Ruote.process_definition do
   sequence do

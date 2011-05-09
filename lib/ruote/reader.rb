@@ -138,16 +138,37 @@ module Ruote
     def self.to_ruby(tree, level=0)
 
       expname = tree[0]
-
       expname = 'Ruote.process_definition' if level == 0 && expname == 'define'
 
-      s = "#{'  ' * level}#{expname}#{atts_to_ruby(tree[1])}"
+      s =
+        '  ' * level +
+        expname +
+        atts_to_x(tree[1]) { |k, v|
+          ":#{k} => #{v.inspect}"
+        }
 
       return "#{s}\n" if tree[2].empty?
 
       s << " do\n"
       tree[2].each { |child| s << to_ruby(child, level + 1) }
       s << "#{'  ' * level}end\n"
+
+      s
+    end
+
+    def self.to_radial(tree, level=0)
+
+      s =
+        '  ' * level +
+        tree[0] +
+        atts_to_x(tree[1]) { |k, v|
+          "#{k}: #{v.inspect}"
+        }
+
+      return "#{s}\n" if tree[2].empty?
+
+      s << "\n"
+      tree[2].each { |child| s << to_radial(child, level + 1) }
 
       s
     end
@@ -216,11 +237,9 @@ module Ruote
       end
     end
 
-    # As used by to_ruby.
+    # As used by to_ruby and to_radial
     #
-    def self.atts_to_ruby(atts)
-
-      return '' if atts.empty?
+    def self.atts_to_x(atts, &block)
 
       s = []
 
@@ -228,7 +247,8 @@ module Ruote
       s << t.first.inspect if t
 
       s = atts.inject(s) { |a, (k, v)|
-        a << ":#{k} => #{v.inspect}" if t.nil? || k != t.first
+        #a << ":#{k} => #{v.inspect}" if t.nil? || k != t.first
+        a << block.call(k, v) if t.nil? || k != t.first
         a
       }.join(', ')
 

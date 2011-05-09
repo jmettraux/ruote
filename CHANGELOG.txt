@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- Reader.to_radial(tree)
 - Workitem#param_or_field(key) and #field_or_param(key)
 - Workitem#param_text
 - ProcessError#deviations (cf filter and Ruote::ValidationError)
