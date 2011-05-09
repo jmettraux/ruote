@@ -337,7 +337,9 @@ class UtStorage < Test::Unit::TestCase
 
     assert_equal 3, @s.by_field('workitems', 'place', 'kyouto').size
     assert_equal 1, @s.by_field('workitems', 'place', 'sendai').size
-    assert_equal Hash, @s.by_field('workitems', 'place', 'sendai').first.class
+
+    assert_equal(
+      Ruote::Workitem, @s.by_field('workitems', 'place', 'sendai').first.class)
   end
 
   def test_by_participant
@@ -348,7 +350,9 @@ class UtStorage < Test::Unit::TestCase
 
     assert_equal 2, @s.by_participant('workitems', 'fujiwara', {}).size
     assert_equal 1, @s.by_participant('workitems', 'shingen', {}).size
-    assert_equal Hash, @s.by_participant('workitems', 'shingen', {}).first.class
+
+    assert_equal(
+      Ruote::Workitem, @s.by_participant('workitems', 'shingen', {}).first.class)
   end
 
   def test_query_workitems

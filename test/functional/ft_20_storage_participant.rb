@@ -498,5 +498,24 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_not_equal initial_rev, part.first.h['_rev']
     assert_equal %w[ consume ], @tracer.to_a
   end
+
+  def test_fetch
+
+    @engine.register do
+      catchall
+    end
+
+    @engine.launch(Ruote.define do
+      alpha
+    end)
+
+    @engine.wait_for(:alpha)
+
+    fei = @engine.storage_participant.first.fei
+
+    wi = @engine.storage_participant.send(:fetch, fei)
+
+    assert_equal Hash, wi.class
+  end
 end
 
