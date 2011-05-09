@@ -7,7 +7,11 @@
 # over Canada, between SFO and FRA
 #
 
+
 require File.join(File.dirname(__FILE__), 'base')
+
+require_json
+Rufus::Json.detect_backend
 
 
 class EftReadTest < Test::Unit::TestCase
@@ -45,7 +49,7 @@ class EftReadTest < Test::Unit::TestCase
   def test_read_json_file
 
     dir = "t_rjf_#{$$}_#{self.object_id}_#{Time.now.to_f}"
-    fname = File.join(dir, 'message.txt')
+    fname = File.join(dir, 'message.json')
     FileUtils.mkdir(dir)
 
     File.open(fname, 'wb') do |f|
@@ -73,14 +77,19 @@ class EftReadTest < Test::Unit::TestCase
     FileUtils.rm_rf(dir)
   end
 
-  def test_read_text_http
+  def test_read_http
 
-    flunk
-  end
+    pdef = Ruote.process_definition do
+      read 'http://ruote.s3.amazonaws.com/eft_36_read.txt', :to => :x
+      read 'http://ruote.s3.amazonaws.com/eft_36_read.json', :to => :y
+    end
 
-  def test_read_json_http
+    wfid = @engine.launch(pdef)
 
-    flunk
+    fields = @engine.wait_for(wfid)['workitem']['fields']
+
+    assert_equal("kilroy was here\n", fields['x'])
+    assert_equal({ 'kilroy' => 'here' }, fields['y'])
   end
 end
 
