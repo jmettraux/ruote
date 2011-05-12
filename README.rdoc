@@ -66,7 +66,7 @@ Then
 
 == test suite
 
-see http://github.com/jmettraux/ruote/tree/ruote2.1/test
+see http://github.com/jmettraux/ruote/tree/master/test
 
 
 == license
