@@ -61,10 +61,18 @@ module Ruote::Exp
       if target == nil
 
         case merge_type
-          when 'isolate'
-            source['fields'] = { index.to_s => source['fields'] }
+
+          #when 'mix'
+             # do nothing
+
           when 'stack'
             source['fields'] = { 'stack' => [ source['fields'] ] }
+
+          when 'isolate'
+            source['fields'] = { index.to_s => source['fields'] }
+
+          #when 'union'
+             # do nothing
         end
 
         source
@@ -72,13 +80,34 @@ module Ruote::Exp
       else
 
         case merge_type
+
           when 'mix'
+
             target['fields'].merge!(source['fields'])
+
           when 'stack'
+
             target['fields']['stack'] << source['fields']
             target['fields']['stack_attributes'] = expand_atts
-          else # 'isolate'
+
+          when 'isolate'
+
             target['fields'][index.to_s] = source['fields']
+
+          when 'union'
+
+            source['fields'].each do |k, sv|
+
+              tv = target['fields'][k]
+
+              if sv.is_a?(Array) and tv.is_a?(Array)
+                tv.concat(sv)
+              elsif sv.is_a?(Hash) and tv.is_a?(Hash)
+                tv.merge!(sv)
+              else
+                target['fields'][k] = sv
+              end
+            end
         end
 
         target

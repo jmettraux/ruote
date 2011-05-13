@@ -367,6 +367,26 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal %w[ . 1 2 a b ], @tracer.to_a.sort
   end
 
+  def test_union_merge_type
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :on_value => (1..2).to_a, :merge_type => 'union' do
+        alpha
+      end
+    end
+
+    @engine.register_participant :alpha do |workitem|
+      workitem.fields['a'] = [ 'x' ]
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    r = @engine.wait_for(wfid)
+
+    assert_equal %w[ x x ], r['workitem']['fields']['a']
+  end
+
   protected
 
   def register_catchall_participant

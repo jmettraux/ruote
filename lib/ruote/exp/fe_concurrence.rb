@@ -141,6 +141,19 @@ module Ruote::Exp
   # This could prove useful for participant having to deal with multiple merge
   # strategy results.
   #
+  # ==== :union
+  #
+  # Will override atomic fields, concat arrays and merge hashes...
+  #
+  # The union of those two workitems
+  #
+  #   { 'a' => 0, 'b' => [ 'x' ], 'c' => { 'aa' => 'bb' }
+  #   { 'a' => 1, 'b' => [ 'y' ], 'c' => { 'cc' => 'dd' }
+  #
+  # will be
+  #
+  #   { 'a' => 1, 'b' => [ 'x', 'y' ], 'c' => { 'aa' => 'bb', 'cc' => 'dd' } }
+  #
   #
   # === :over_if (and :over_unless)
   #
@@ -172,7 +185,7 @@ module Ruote::Exp
       h.ccount = nil if h.ccount < 1
 
       h.cmerge = att(:merge, %w[ first last highest lowest ])
-      h.cmerge_type = att(:merge_type, %w[ override mix isolate stack ])
+      h.cmerge_type = att(:merge_type, %w[ override mix isolate stack union ])
       h.remaining = att(:remaining, %w[ cancel forget ])
 
       h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}

@@ -34,7 +34,7 @@ class MergeTest < Test::Unit::TestCase
     ]
   end
 
-  def test_merge_override
+  def test_override
 
     assert_equal(
       { 'fields' => { 'a' => 1 } },
@@ -44,7 +44,7 @@ class MergeTest < Test::Unit::TestCase
       Merger.new.merge_workitems(new_workitems.reverse, 'override'))
   end
 
-  def test_merge_mix
+  def test_mix
 
     assert_equal(
       { 'fields' => { 'a' => 1, 'b' => -1 } },
@@ -54,7 +54,7 @@ class MergeTest < Test::Unit::TestCase
       Merger.new.merge_workitems(new_workitems.reverse, 'mix'))
   end
 
-  def test_merge_isolate
+  def test_isolate
 
     assert_equal(
       { 'fields' => {
@@ -70,7 +70,7 @@ class MergeTest < Test::Unit::TestCase
       Merger.new.merge_workitems(new_workitems.reverse, 'isolate'))
   end
 
-  def test_merge_stack
+  def test_stack
 
     assert_equal(
       { 'fields' => {
@@ -84,6 +84,30 @@ class MergeTest < Test::Unit::TestCase
           'stack_attributes' => nil
       } },
       Merger.new.merge_workitems(new_workitems.reverse, 'stack'))
+  end
+
+  def test_unknown
+
+    assert_equal(
+      { 'fields' => { 'a' => 0, 'b' => -1 } },
+      Merger.new.merge_workitems(new_workitems, '???'))
+    assert_equal(
+      { 'fields' => { 'a' => 1 } },
+      Merger.new.merge_workitems(new_workitems.reverse, '???'))
+  end
+
+  def test_union
+
+    workitems = [
+      new_workitem('a' => 0, 'b' => [ 'x' ], 'c' => { 'aa' => 'bb' }),
+      new_workitem('a' => 1, 'b' => [ 'y' ], 'c' => { 'cc' => 'dd' })
+    ]
+
+    assert_equal(
+      { 'fields' => {
+        'a' => 1, 'b' => [ 'x', 'y' ], 'c' => { 'aa' => 'bb', 'cc' => 'dd' }
+      } },
+      Merger.new.merge_workitems(workitems, 'union'))
   end
 end
 
