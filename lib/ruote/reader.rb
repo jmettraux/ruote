@@ -73,7 +73,7 @@ module Ruote
         (Rufus::Json.decode(definition) rescue nil)
 
       raise ArgumentError.new(
-        "failed to read processs definition of class #{definition.class}"
+        "failed to read process definition of class #{definition.class}"
       ) unless Ruote.is_tree?(tree)
 
       tree
