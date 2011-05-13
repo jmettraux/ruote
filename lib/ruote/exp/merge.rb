@@ -30,7 +30,20 @@ module Ruote::Exp
   #
   module MergeMixin
 
+    # Given a list of workitems and a merge_type, will merge according to
+    # the merge type.
     #
+    # The return value is the merged workitem.
+    #
+    def merge_workitems(workitems, merge_type)
+
+      rworkitems = workitems.reverse
+
+      workitems.inject(nil) do |t, wi|
+        merge_workitem(workitems.index(wi), t, wi, merge_type)
+      end
+    end
+
     # Merge workitem 'source' into workitem 'target'.
     #
     # If type is 'override', the source will prevail and be returned.
@@ -41,32 +54,35 @@ module Ruote::Exp
     # in the target workitem. The name of this field is the child_id of the
     # source workitem (a string from '0' to '99999' and beyond)
     #
-    def merge_workitems(index, target, source, type)
+    def merge_workitem(index, target, source, merge_type)
 
-      return source if type == 'override'
+      return source if merge_type == 'override'
 
       if target == nil
-        case type
+
+        case merge_type
           when 'isolate'
             source['fields'] = { index.to_s => source['fields'] }
           when 'stack'
             source['fields'] = { 'stack' => [ source['fields'] ] }
         end
+
+        source
+
+      else
+
+        case merge_type
+          when 'mix'
+            target['fields'].merge!(source['fields'])
+          when 'stack'
+            target['fields']['stack'] << source['fields']
+            target['fields']['stack_attributes'] = expand_atts
+          else # 'isolate'
+            target['fields'][index.to_s] = source['fields']
+        end
+
+        target
       end
-
-      return source unless target
-
-      case type
-        when 'mix'
-          target['fields'].merge!(source['fields'])
-        when 'stack'
-          target['fields']['stack'] << source['fields']
-          target['fields']['stack_attributes'] = expand_atts
-        else # 'isolate'
-          target['fields'][index.to_s] = source['fields']
-      end
-
-      target
     end
   end
 end

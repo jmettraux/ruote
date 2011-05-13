@@ -56,6 +56,7 @@ module Ruote::Exp
   class RestoreExpression < FlowExpression
 
     include MergeMixin
+      # still have to implement something about merge...
 
     names :restore, :set_fields
 
