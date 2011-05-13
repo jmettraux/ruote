@@ -20,7 +20,7 @@ class FtCodeParticipantTest < Test::Unit::TestCase
         def consume(wi)
           context.tracer << "#{wi.participant_name}\n"
         end
-        def cancel(wi)
+        def cancel(fei, flavour)
           context.tracer << "cancelled\n"
         end
       '''
@@ -30,11 +30,14 @@ class FtCodeParticipantTest < Test::Unit::TestCase
     #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
+    @engine.wait_for(:alpha)
 
-    #@engine.wait_for(:alpha)
+    assert_equal 'alpha', @tracer.to_s
 
-    sleep 1
-    assert_not_equal '', @tracer.to_s
+    @engine.cancel(wfid)
+    @engine.wait_for(wfid)
+
+    assert_equal "alpha\ncancelled", @tracer.to_s
   end
 end
 
