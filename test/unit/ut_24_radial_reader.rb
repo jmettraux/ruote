@@ -300,5 +300,20 @@ process_definition name: "nada"
       ]],
       tree)
   end
+
+  def test_array
+
+    pdef = %{
+      filter in: [ { field: f, type: bool, empty: false } ]
+    }
+
+    assert_equal(
+      [
+        'filter',
+        { 'in' => [ { 'empty' => false, 'type' => 'bool', 'field' => 'f' } ] },
+        []
+      ],
+      Ruote::RadialReader.read(pdef))
+  end
 end
 

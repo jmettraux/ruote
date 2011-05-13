@@ -201,8 +201,9 @@ module Ruote
       rule(:true => simple(:b)) { true }
       rule(:nil => simple(:n)) { nil }
 
-      rule(:array => sequence(:es)) { es }
-
+      rule(:array => subtree(:ar)) {
+        ar.is_a?(Array) ? ar : [ ar ]
+      }
       rule(:object => subtree(:es)) {
         (es.is_a?(Array) ? es : [ es ]).inject({}) { |h, e|
           e = e[:ent]; h[e[:key]] = e[:val]; h
