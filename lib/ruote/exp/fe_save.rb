@@ -50,35 +50,14 @@ module Ruote::Exp
 
     def apply
 
-      tk =
-        has_attribute('to') ||
-        has_attribute(*%w[ v var variable ].map { |k| "to_#{k}" }) ||
-        has_attribute(*%w[ f fld field ].map { |k| "to_#{k}" })
+      to_v, to_f = determine_tos
 
-      return reply_to_parent(h.applied_workitem) unless tk
-
-      key = attribute(tk)
-
-      if tk == 'to'
-
-        prefix, key = key.split(':')
-        prefix, key = [ 'f', key ] unless prefix
-
-        if prefix == 'f'
-          set_f(key, Ruote.fulldup(h.applied_workitem['fields']))
-        else
-          set_variable(key, h.applied_workitem['fields'])
-        end
-
-      elsif tk.match(/^to_v/)
-
-        set_variable(key, h.applied_workitem['fields'])
-
-      elsif tk.match(/^to_f/)
-
-        set_f(key, Ruote.fulldup(h.applied_workitem['fields']))
-
-      #else # do nothing
+      if to_v
+        set_variable(to_v, h.applied_workitem['fields'])
+      elsif to_f
+        set_f(to_f, Ruote.fulldup(h.applied_workitem['fields']))
+      #else
+        # do nothing
       end
 
       reply_to_parent(h.applied_workitem)
