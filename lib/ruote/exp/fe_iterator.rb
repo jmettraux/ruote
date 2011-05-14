@@ -48,7 +48,8 @@ module Ruote::Exp
   # it should iterate.
   #
   # The 'to' attribute takes two forms, :to_v, :to_var, :to_variable or
-  # :to_f, :to_fld, :to_field.
+  # :to_f, :to_fld, :to_field. Finally, you can write :to => 'field_name',
+  # :to => 'f:field_name' or :to => 'v:variable_name'.
   #
   # The 'to' attribute instructs the iterator into which variable or field
   # it should place the current value (the value being iterated over).

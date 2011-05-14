@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- [concurrent-]iterator :to => 'v:x' / 'f:y' / 'y'
 - concurrence :merge_type => 'union'
 - Reader.to_radial(tree)
 - Workitem#param_or_field(key) and #field_or_param(key)

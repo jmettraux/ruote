@@ -161,8 +161,20 @@ module Ruote::Exp
 
     def determine_tos
 
-      [ attribute(:to_v) || attribute(:to_var) || attribute(:to_variable),
-        attribute(:to_f) || attribute(:to_fld) || attribute(:to_field) ]
+      to_v = attribute(:to_v) || attribute(:to_var) || attribute(:to_variable)
+      to_f = attribute(:to_f) || attribute(:to_fld) || attribute(:to_field)
+
+      if to = attribute(:to)
+        pre, key = to.split(':')
+        pre, key = [ 'f', pre ] if key == nil
+        if pre.match(/^f/)
+          to_f = key
+        else
+          to_v = key
+        end
+      end
+
+      [ to_v, to_f ]
     end
 
     # Val and Value (Sense and Sensibility ?)
