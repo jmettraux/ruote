@@ -67,9 +67,8 @@ module Ruote::Exp
         has_attribute(*%w[ f fld field ].map { |k| "from_#{k}" }) ||
         has_attribute(*%w[ val value ])
 
-      to =
-        has_attribute(*%w[ f fld field ].map { |k| "to_#{k}" }) ||
-        has_attribute('to')
+      _, to_f = determine_tos
+        # note : to_v is discarded (the underscore)
 
       from = 'from_var' if from == 'from_v'
 
@@ -83,8 +82,8 @@ module Ruote::Exp
         afrom
       end
 
-      if to
-        Ruote.set(h.applied_workitem['fields'], attribute(to), fields)
+      if to_f
+        Ruote.set(h.applied_workitem['fields'], to_f, fields)
       else
         h.applied_workitem['fields'] = fields
       end
