@@ -200,9 +200,7 @@ module Ruote::Exp
       elsif k = has_att(*flds)
 
         k = attribute(k, h.applied_workitem, att_options)
-        h.applied_workitem['fields'][k]
-
-        # TODO : what about leveraging workitem#lookup ?
+        Ruote.lookup(h.applied_workitem['fields'], k)
 
       else
 

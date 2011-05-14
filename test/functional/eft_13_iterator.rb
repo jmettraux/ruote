@@ -78,6 +78,21 @@ class EftIteratorTest < Test::Unit::TestCase
     assert_trace(%w[ alice/0_1_0 bob/0_1_0 charly/0_1_0 ], pdef)
   end
 
+  def test_on_nested_f
+
+    pdef = Ruote.process_definition :name => 'test' do
+      set 'f:data' => {}
+      set 'f:data.people' => %w[ alice bob charly ]
+      iterator :on_f => 'data.people', :to_var => 'v' do
+        participant '${v:v}'
+      end
+    end
+
+    @engine.register_participant '.*', TraceParticipant
+
+    assert_trace(%w[ alice/0_2_0 bob/0_2_0 charly/0_2_0 ], pdef)
+  end
+
   def test_to_f
 
     pdef = Ruote.process_definition :name => 'test' do
