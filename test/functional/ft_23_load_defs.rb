@@ -71,7 +71,7 @@ end
     FileUtils.mkdir_p(path)
     File.open(fn, 'w') { |f| f.write(pdef) }
 
-    assert_raise ArgumentError do
+    assert_raise Ruote::Reader::Error do
       @engine.load_definition(fn)
     end
   end

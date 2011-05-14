@@ -22,7 +22,6 @@ class PdefReaderTest < Test::Unit::TestCase
     end
   }
 
-
   TREE1 = Ruote::Reader.read(%{
     Ruote.define :name => 'nada' do
       sequence do
@@ -188,6 +187,39 @@ end
         ] ]
       ] ],
       tree)
+  end
+
+  def test_parse_error__ruby
+
+    err = nil
+
+    begin
+      Ruote::Reader.read(%{
+        Ruote.process_definition # missing "do"
+          alpha
+        end
+      })
+    rescue => err
+    end
+
+    assert_equal Ruote::Reader::Error, err.class
+    assert_equal Racc::ParseError, err.cause.class
+  end
+
+  def test_parse_error__radial
+
+    err = nil
+
+    begin
+      Ruote::Reader.read(%{
+        process_definition ${f:y}
+          alpha
+      })
+    rescue => err
+    end
+
+    assert_equal Ruote::Reader::Error, err.class
+    assert_equal Parslet::ParseFailed, err.cause.class
   end
 end
 

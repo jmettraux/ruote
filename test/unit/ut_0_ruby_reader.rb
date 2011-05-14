@@ -130,33 +130,33 @@ class UtRubyReaderTest < Test::Unit::TestCase
       Ruote::Reader.read %{ Ruote.define { alpha } }
     #end
 
-    assert_raise ArgumentError do
+    assert_raise Ruote::Reader::Error do
       Ruote::Reader.read %{ Ruote.define { abort } }
     end
-    assert_raise ArgumentError do
+    assert_raise Ruote::Reader::Error do
       Ruote::Reader.read %{ Ruote.define { exit } }
     end
-    assert_raise ArgumentError do
+    assert_raise Ruote::Reader::Error do
       Ruote::Reader.read %{ Ruote.define { exit! } }
     end
 
-    assert_raise ArgumentError do
+    assert_raise Ruote::Reader::Error do
       Ruote::Reader.read %{ Ruote.define { x = Kernel } }
     end
 
-    assert_raise ArgumentError do
+    assert_raise Ruote::Reader::Error do
       Ruote::Reader.read %{ Ruote.define { module Nada; end } }
     end
 
-    assert_raise ArgumentError do
+    assert_raise Ruote::Reader::Error do
       Ruote::Reader.read %{ Ruote.define { File.read('stuff') } }
     end
 
-    assert_raise ArgumentError do
+    assert_raise Ruote::Reader::Error do
       Ruote::Reader.read %{ Ruote.define { at_exit { } } }
     end
 
-    assert_raise ArgumentError do
+    assert_raise Ruote::Reader::Error do
       Ruote::Reader.read %{ Ruote.define { def nada; end } }
     end
   end

@@ -69,6 +69,8 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
 
     Rufus::Json.backend = prev
       # back to initial state
+  rescue => e
+    p e
   end
 
   def test_local_definition

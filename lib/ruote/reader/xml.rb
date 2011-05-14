@@ -33,6 +33,13 @@ module Ruote
   #
   module XmlReader
 
+    # Returns true if the string seems to be an XML string.
+    #
+    def self.understands?(s)
+
+      s.match(/<[a-z]+>/) != nil
+    end
+
     #
     # A helper class to store the temporary tree while it gets read.
     #
@@ -59,10 +66,9 @@ module Ruote
       end
     end
 
-    #
     # Parses the XML string into a process definition tree (array of arrays).
     #
-    def self.read(s)
+    def self.read(s, opt=nil)
 
       parser = REXML::Parsers::SAX2Parser.new(s)
 

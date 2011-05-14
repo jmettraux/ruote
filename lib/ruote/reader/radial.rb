@@ -236,10 +236,19 @@ module Ruote
       end
     end
 
+    # Returns tree if s seems to contain a radial process definition
+    #
+    def self.understands?(s)
+
+      return false if s.match(/\n *end\b/)
+      return false if s.match(/\bRuote\.(process_definition|workflow_definition|define)\b/)
+      true
+    end
+
     # The entry point : takes a radial string and returns, if possible,
     # a ruote tree.
     #
-    def self.read(s)
+    def self.read(s, opt=nil)
 
       parser = Parser.new
       transformer = Transformer.new
