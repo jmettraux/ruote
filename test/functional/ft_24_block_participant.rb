@@ -152,6 +152,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
 
     @engine.wait_for(:sleeper)
+    sleep 0.350
 
     assert_equal 'consumed', @tracer.to_s
 
