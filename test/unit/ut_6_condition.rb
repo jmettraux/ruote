@@ -293,9 +293,10 @@ class ConditionTest < Test::Unit::TestCase
     assert_b false, "1 in {x}"
   end
 
-  def test_comparators
+  def test_matching
 
     assert_b "alpha =~ /^a/"
+    assert_b "'alpha toto' =~ /^a/"
     assert_b false, "alpha =~ /^b/"
   end
 end
