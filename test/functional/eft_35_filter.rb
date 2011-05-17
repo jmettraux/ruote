@@ -44,6 +44,15 @@ class EftFilterTest < Test::Unit::TestCase
     assert_terminates(pdef, 'x' => 'nada')
   end
 
+  def test_filter_single_rule__drop_if
+
+    pdef = Ruote.process_definition do
+      filter 'x', :type => 'string', :if => true
+    end
+
+    assert_terminates(pdef, 'x' => 'nada')
+  end
+
   def test_filter_single_rule_validation_failure
 
     pdef = Ruote.process_definition do
@@ -267,6 +276,66 @@ class EftFilterTest < Test::Unit::TestCase
         ],
         'x' => 1
       })
+  end
+
+  def test_filter_and_block
+
+    pdef = Ruote.process_definition do
+      filter do
+        field 'x', :type => 'string'
+        field 'y', :type => 'number'
+      end
+    end
+
+    #@engine.noisy = true
+
+    assert_terminates(pdef, 'x' => 's', 'y' => 2)
+    assert_does_not_validate(pdef, 'x' => 's', 'y' => 's')
+  end
+
+  def test_filter_and_block__radial
+
+    pdef = %{
+      define
+        filter
+          f x, type: 'string'
+          f y, type: 'number'
+    }
+
+    #@engine.noisy = true
+
+    assert_terminates(pdef, 'x' => 's', 'y' => 2)
+    assert_does_not_validate(pdef, 'x' => 's', 'y' => 's')
+  end
+
+  def test_filter_and_block__field_name_is_expname
+
+    pdef = %{
+      define
+        filter
+          x type: 'string'
+          y type: 'number'
+    }
+
+    #@engine.noisy = true
+
+    assert_terminates(pdef, 'x' => 's', 'y' => 2)
+    assert_does_not_validate(pdef, 'x' => 's', 'y' => 's')
+  end
+
+  def test_filter_and_block__collision_with_if
+
+    pdef = %{
+      define
+        filter if: true
+          x type: 'string'
+          y type: 'number'
+    }
+
+    #@engine.noisy = true
+
+    assert_terminates(pdef, 'x' => 's', 'y' => 2)
+    assert_does_not_validate(pdef, 'x' => 's', 'y' => 's')
   end
 end
 

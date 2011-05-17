@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- filter expression and blocks
 - set 'v:display' => 'echo', aliasing of expressions
 - Reader.read(s) : better error raised when failed to 'parse'
 - :on_field => 'my.nested.field' now possible

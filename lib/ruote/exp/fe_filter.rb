@@ -453,13 +453,38 @@ module Ruote::Exp
   # The 'restore' operation makes lots of sense for the :filter attribute
   # though.
   #
+  #
+  # == filtering with rules in a block
+  #
+  # This filter
+  #
+  #   filter :in => [
+  #     { :field => 'x', :type => 'string' },
+  #     { :field => 'y', :type => 'number' }
+  #   ]
+  #
+  # can be rewritten as
+  #
+  #   filter do
+  #     field 'x', :type => 'string'
+  #     field 'y', :type => 'number'
+  #   end
+  #
+  # The field names can be passed directly as head of each rule :
+  #
+  #   filter do
+  #     x :type => 'string'
+  #     y :type => 'number'
+  #   end
+  #
   class FilterExpression < FlowExpression
 
     names :filter
 
     def apply
 
-      filter = referenced_filter || complete_filter || one_line_filter
+      filter =
+        referenced_filter || complete_filter || one_line_filter || block_filter
 
       record = filter.first.delete('record') rescue nil
       flush = filter.first.delete('flush') rescue nil
@@ -503,6 +528,39 @@ module Ruote::Exp
 
     protected
 
+    # Filter is passed in a block (which is not evaluted as a ruote branch
+    # but immediately translated into a filter.
+    #
+    #   pdef = Ruote.process_definition do
+    #     filter do
+    #       field 'x', :type => 'string'
+    #       field 'y', :type => 'number'
+    #     end
+    #   end
+    #
+    def block_filter
+
+      return nil if tree.last.empty?
+
+      tree.last.collect { |line|
+
+        rule = line[1].inject({}) { |h, (k, v)|
+          if v == nil
+            h['field'] = k
+          else
+            h[k] = v
+          end
+          h
+        }
+
+        rule['field'] ||= line.first
+
+        rule
+      }
+    end
+
+    # Filter is somewhere else (process variable or workitem field)
+    #
     def referenced_filter
 
       prefix, key = attribute_text.split(':')
@@ -519,6 +577,15 @@ module Ruote::Exp
       filter
     end
 
+    # Filter is passed with an :in attribute.
+    #
+    #   Ruote.process_definition do
+    #     filter :in => [
+    #       { :field => 'x', :type => 'string' },
+    #       { :field => 'y', :type => 'number' }
+    #     ]
+    #   end
+    #
     def complete_filter
 
       return nil if attribute_text != ''
@@ -526,7 +593,16 @@ module Ruote::Exp
       attribute(:in)
     end
 
+    # Filter thanks to the attributes of the expression.
+    #
+    #   pdef = Ruote.process_definition do
+    #     filter 'x', :type => 'string', :record => true
+    #     filter 'y', :type => 'number', :record => true
+    #   end
+    #
     def one_line_filter
+
+      return nil if (attributes.keys - COMMON_ATT_KEYS).empty?
 
       [ attributes.inject({}) { |h, (k, v)|
         if v.nil?
