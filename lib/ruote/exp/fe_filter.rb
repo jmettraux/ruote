@@ -602,7 +602,9 @@ module Ruote::Exp
     #
     def one_line_filter
 
-      return nil if (attributes.keys - COMMON_ATT_KEYS).empty?
+      if (attributes.keys - COMMON_ATT_KEYS - %w[ ref original_ref ]).empty?
+        return nil
+      end
 
       [ attributes.inject({}) { |h, (k, v)|
         if v.nil?
