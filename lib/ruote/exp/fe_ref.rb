@@ -73,12 +73,24 @@ module Ruote::Exp
         value = key2 if ( ! @h['participant']) && (key2 != key)
       end
 
-      if value.is_a?(String) && value.index("def consume(") && (Rufus::TreeChecker.parse(value) rescue false)
-        #
-        # participant code passed
+      new_exp_name, new_exp_class = nil
 
-        @h['participant'] = [ 'Ruote::CodeParticipant', { 'code' => value } ]
-        tree[1]['ref'] = key
+      if value.is_a?(String)
+
+        if value.index("def consume(") && (Rufus::TreeChecker.parse(value) rescue false)
+          #
+          # participant code passed
+
+          @h['participant'] = [ 'Ruote::CodeParticipant', { 'code' => value } ]
+          tree[1]['ref'] = key
+
+        elsif klass = @context.expmap.expression_class(tree[1]['ref'])
+          #
+          # aliased expression
+
+          new_exp_name = value
+          new_exp_class = klass
+        end
 
       elsif value.is_a?(Hash) && value['on_workitem']
         #
@@ -93,7 +105,7 @@ module Ruote::Exp
         @h['participant'] = value
       end
 
-      unless value || @h['participant']
+      if value == nil and @h['participant'] == nil
         #
         # unknown participant or subprocess
 
@@ -103,9 +115,13 @@ module Ruote::Exp
         raise("unknown participant or subprocess '#{tree[1]['ref']}'")
       end
 
-      new_exp_name, new_exp_class = @h['participant'] ?
-        [ 'participant', Ruote::Exp::ParticipantExpression ] :
+      new_exp_name, new_exp_class = if new_exp_name
+        [ new_exp_name, new_exp_class ]
+      elsif @h['participant']
+        [ 'participant', Ruote::Exp::ParticipantExpression ]
+      else
         [ 'subprocess', Ruote::Exp::SubprocessExpression ]
+      end
 
       tree[0] = new_exp_name
       @h['name'] = new_exp_name

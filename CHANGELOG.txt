@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- set 'v:display' => 'echo', aliasing of expressions
 - Reader.read(s) : better error raised when failed to 'parse'
 - :on_field => 'my.nested.field' now possible
 - [concurrent-]iterator :to => 'v:x' / 'f:y' / 'y'

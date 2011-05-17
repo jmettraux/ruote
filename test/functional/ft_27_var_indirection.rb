@@ -108,5 +108,21 @@ class FtVarIndirectionTest < Test::Unit::TestCase
 
     assert_trace %w[ a b ], pdef
   end
+
+  def test_engine_variable_for_expression_aliases
+
+    pdef = Ruote.define do
+      output "nada"
+    end
+
+    @engine.variables['output'] = 'echo'
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal 'nada', @tracer.to_s
+  end
 end
 
