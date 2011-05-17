@@ -26,7 +26,7 @@ ruote is an open source Ruby workflow engine
   ]
 
   s.add_runtime_dependency 'parslet', '1.2.0'
-  s.add_runtime_dependency 'sourcify', '0.4.2'
+  s.add_runtime_dependency 'sourcify', '0.5.0'
   s.add_runtime_dependency 'rufus-json', '>= 0.2.5'
   s.add_runtime_dependency 'rufus-cloche', '>= 0.1.21'
   s.add_runtime_dependency 'rufus-dollar', '>= 1.0.4'
