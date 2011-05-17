@@ -337,5 +337,39 @@ class EftFilterTest < Test::Unit::TestCase
     assert_terminates(pdef, 'x' => 's', 'y' => 2)
     assert_does_not_validate(pdef, 'x' => 's', 'y' => 's')
   end
+
+  def test_filter_block_and_or
+
+    pdef = Ruote.process_definition do
+      filter do
+        field 'x', :type => 'string'
+        _or
+        field 'x', :type => 'number'
+      end
+    end
+
+    #@engine.noisy = true
+
+    assert_terminates(pdef, 'x' => 's')
+    assert_terminates(pdef, 'x' => 5)
+    assert_does_not_validate(pdef, 'x' => true)
+  end
+
+  def test_filter_block_and_or__radial
+
+    pdef = %{
+      define
+        filter
+          x type: 'string'
+          or
+          x type: 'number'
+    }
+
+    #@engine.noisy = true
+
+    assert_terminates(pdef, 'x' => 's')
+    assert_terminates(pdef, 'x' => 5)
+    assert_does_not_validate(pdef, 'x' => true)
+  end
 end
 

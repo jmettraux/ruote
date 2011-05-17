@@ -538,11 +538,23 @@ module Ruote::Exp
     #     end
     #   end
     #
+    # Note : 'or' is OK
+    #
+    #   pdef = Ruote.process_definition do
+    #     filter do
+    #       field 'x', :type => 'string'
+    #       _or
+    #       field 'y', :type => 'number'
+    #     end
+    #   end
+    #
     def block_filter
 
       return nil if tree.last.empty?
 
       tree.last.collect { |line|
+
+        next 'or' if line.first == 'or'
 
         rule = line[1].inject({}) { |h, (k, v)|
           if v == nil
