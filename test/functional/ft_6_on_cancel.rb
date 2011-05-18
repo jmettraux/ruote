@@ -213,6 +213,7 @@ class FtOnCancelTest < Test::Unit::TestCase
     @engine.cancel(@engine.process(wfid).expressions.last)
 
     @engine.wait_for(wfid)
+    sleep 0.350
 
     assert_equal "bailed\ndone.", @tracer.to_s
   end
