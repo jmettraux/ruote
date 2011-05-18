@@ -156,16 +156,24 @@ module Ruote
     #
     class Transformer < Parslet::Transform
 
+      # Parslet 1.2.0 outputs everything as ASCII, let's force some UTF-8
+      # on Ruby 1.9.x...
+      #
+      def self.to_utf8(s)
+        return s unless s.respond_to?(:encoding)
+        s.force_encoding('UTF-8')
+      end
+
       class Attribute
         attr_reader :key, :val
         def initialize(key, val)
-          @key = key.to_s.gsub(/-/, '_')
+          @key = Transformer.to_utf8(key.to_s.gsub(/-/, '_'))
           @val = val
         end
       end
       class Value < Attribute
         def initialize(key)
-          @key = key
+          @key = Transformer.to_utf8(key)
           @val = nil
         end
       end
@@ -194,8 +202,8 @@ module Ruote
         Value.new(t)
       }
 
-      rule(:text => simple(:te)) { te.to_s }
-      rule(:string => simple(:st)) { st.to_s }
+      rule(:text => simple(:te)) { Transformer.to_utf8(te.to_s) }
+      rule(:string => simple(:st)) { Transformer.to_utf8(st.to_s) }
       rule(:number => simple(:n)) { n.match(/[eE\.]/) ? Float(n) : Integer(n) }
       rule(:false => simple(:b)) { false }
       rule(:true => simple(:b)) { true }
@@ -206,7 +214,7 @@ module Ruote
       }
       rule(:object => subtree(:es)) {
         (es.is_a?(Array) ? es : [ es ]).inject({}) { |h, e|
-          e = e[:ent]; h[e[:key]] = e[:val]; h
+          e = e[:ent]; h[Transformer.to_utf8(e[:key])] = e[:val]; h
         }
       }
     end
