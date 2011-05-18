@@ -127,8 +127,8 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       }
 
     assert_equal(
-      { 'on_cancel' => 'proc { |fei, flavour| p(fei, flavour) }',
-        'on_workitem' => 'proc { |wi| p(wi) }' },
+      { 'on_cancel' => "proc { |fei, flavour|\n        p fei, flavour\n      }",
+        'on_workitem' => "proc { |wi|\n        p wi\n      }" },
       @engine.participant_list.first.options)
   end
 

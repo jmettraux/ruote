@@ -215,8 +215,8 @@ class UtRubyReaderTest < Test::Unit::TestCase
     assert_equal(
       [ 'define', {}, [
         [ 'set', { 'v:v' => "lambda { |wi| p wi }\n" }, [] ],
-        [ 'set', { 'v:v' => "proc { |wi| p(wi) }\n" }, [] ],
-        [ 'set', { 'v:v' => { 'on_workitem' => "proc { |wi| p(wi) }\n" } }, [] ] ] ],
+        [ 'set', { 'v:v' => "proc { |wi| p wi }\n" }, [] ],
+        [ 'set', { 'v:v' => { 'on_workitem' => "proc { |wi| p wi }\n" } }, [] ] ] ],
       tree)
   end
 end

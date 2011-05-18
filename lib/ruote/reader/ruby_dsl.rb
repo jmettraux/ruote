@@ -148,7 +148,7 @@ module Ruote
         when Regexp; v.inspect
         when Array; v.collect { |e| to_json(e) }
         when Hash; v.inject({}) { |h, (k, v)| h[k.to_s] = to_json(v); h }
-        when Proc; v.to_source + "\n"
+        when Proc; v.to_raw_source + "\n"
         else v
       end
     end

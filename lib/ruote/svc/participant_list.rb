@@ -60,7 +60,7 @@ module Ruote
 
         h[k.to_s] = case v
           when Symbol then v.to_s
-          when Proc then v.to_source
+          when Proc then v.to_raw_source
           else v
         end
 
@@ -68,7 +68,7 @@ module Ruote
       }
 
       if block
-        options['on_workitem'] = block.to_source
+        options['on_workitem'] = block.to_raw_source
         @context.treechecker.block_check(options['on_workitem'])
       end
 
