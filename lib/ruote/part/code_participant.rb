@@ -46,6 +46,16 @@ module Ruote
       @context.treechecker.code_check(@opts['code'])
 
       instance_eval(@opts['code'])
+
+      #instance_eval do
+      #  alias code_consume consume
+      #  def consume(workitem)
+      #    code_consume(workitem)
+      #  rescue => e
+      #    raise e
+      #  end
+      #  # what about doing that with other methods
+      #end
     end
 
     protected

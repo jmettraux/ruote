@@ -227,6 +227,8 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     @engine.wait_for(:consumer)
 
+    sleep 0.350
+
     assert_equal "dnt\nin", @tracer.to_s
   end
 end
