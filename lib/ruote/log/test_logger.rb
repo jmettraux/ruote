@@ -65,8 +65,10 @@ module Ruote
 
       puts(pretty_print(msg)) if @noisy
 
-      @seen << msg
-      @log << msg
+      if msg['action'] != 'noop'
+        @seen << msg
+        @log << msg
+      end
 
       check_waiting
     end
@@ -88,7 +90,11 @@ module Ruote
 
       @waiting << [ Thread.current, interests ]
 
-      check_waiting
+      #check_waiting
+      @context.storage.put_msg('noop', {})
+        #
+        # forces the #check_waiting via #notify
+        # (ie let it happen in the worker)
 
       Thread.stop if @waiting.find { |w| w.first == Thread.current }
 
@@ -119,9 +125,7 @@ module Ruote
 
     def check_waiting
 
-      return if @waiting.size < 1
-
-      while msg = @seen.shift
+      while @waiting.any? and msg = @seen.shift
         check_msg(msg)
       end
     end

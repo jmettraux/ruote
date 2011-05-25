@@ -42,7 +42,7 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
     wfids = launch_processes
 
-    assert_equal 9, @engine.history.all.size
+    assert_equal 11, @engine.history.all.size
   end
 
   def test_by_wfid
@@ -59,7 +59,7 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
     launch_processes
 
-    assert_equal 9, @engine.history.all.size
+    assert_equal 11, @engine.history.all.size
 
     @engine.history.clear!
 
@@ -94,9 +94,9 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
     launch_processes(false)
 
-    assert_equal 18, @engine.history.all.size
+    assert_equal 22, @engine.history.all.size
 
-    assert_equal 9, @engine.history.by_date(Time.now).size
+    assert_equal 11, @engine.history.by_date(Time.now).size
   end
 
   def test_wfids
