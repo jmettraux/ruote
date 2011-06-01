@@ -41,8 +41,11 @@ module Ruote
   #
   #   process_history = engine.history.by_wfid(wfid0)
   #
-  # Note that, by default, the history is an in-memory history (and it is
-  # useless when there are multiple workers).
+  #
+  # == final note
+  #
+  # By default, the history is an in-memory history (see Ruote::DefaultHistory)
+  # (and it is worthless when there are multiple workers).
   #
   class StorageHistory
 
