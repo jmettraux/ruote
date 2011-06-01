@@ -397,7 +397,7 @@ module Ruote::Exp
       end
 
       h.applied_workitem['fields']['__timed_out__'] = [
-        h.fei, Ruote.now_to_utc_s
+        h.fei, Ruote.now_to_utc_s, tree.first, compile_atts
       ] if h.state == 'timing_out'
 
       if h.state == 'cancelling'
