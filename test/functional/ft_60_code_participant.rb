@@ -30,7 +30,9 @@ class FtCodeParticipantTest < Test::Unit::TestCase
     #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
+
     @engine.wait_for(:alpha)
+    @engine.wait_for(1)
 
     assert_equal 'alpha', @tracer.to_s
 
