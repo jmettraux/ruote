@@ -249,10 +249,12 @@ class EftSetTest < Test::Unit::TestCase
       set 'f:alpha' => 'alice'
       set 'f:bravo' => 'bob'
       set 'f:charly' => 'charles'
+      set 'f:__timed_out__' => %w[ seriously ]
 
       unset 'f:alpha'
       unset :f => 'bravo'
       unset :field => 'charly'
+      unset :field => '__timed_out__'
     end
 
     wfid = @engine.launch(pdef)
