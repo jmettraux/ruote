@@ -12,6 +12,36 @@ require 'ruote'
 
 class UtFeiTest < Test::Unit::TestCase
 
+  def test_ruote_to_storage_id
+    fei = Ruote::FlowExpressionId.new(
+      'expid' => '0_0',
+      'wfid' => '20101224-bababa',
+      'subid' => '5dbf4ce1553453baa17c2213d239e5fa',
+      'engine_id' => 'engine'
+    )
+
+    assert_equal '0_0!5dbf4ce1553453baa17c2213d239e5fa!20101224-bababa',
+                  Ruote.to_storage_id(fei)
+  end
+
+  def test_ruote_sid
+    fei = Ruote::FlowExpressionId.new(
+      'expid' => '0_0',
+      'wfid' => '20101224-bababa',
+      'subid' => '5dbf4ce1553453baa17c2213d239e5fa',
+      'engine_id' => 'engine'
+    )
+
+    assert_equal '0_0!5dbf4ce1553453baa17c2213d239e5fa!20101224-bababa',
+                  Ruote.sid(fei)
+  end
+
+  def test_ruote_is_a_fei
+    assert  Ruote::FlowExpressionId.is_a_fei?('expid' => '0', 'wfid' => '20101224-bababa', 'engine_id' => 'engine')
+    assert !Ruote::FlowExpressionId.is_a_fei?('nada' => '0', 'wfid' => '20101224-bababa', 'engine_id' => 'engine')
+  end
+
+
   def test_misc
 
     fei = Ruote::FlowExpressionId.new(

@@ -32,54 +32,63 @@ require 'ruote/util/hashdot'
 
 module Ruote
 
-  # A shortcut for
-  #
-  #   Ruote::FlowExpressionId.to_storage_id(fei)
-  #
-  def self.to_storage_id(fei)
+  class << self
 
-    Ruote::FlowExpressionId.to_storage_id(fei)
+    # Gets the storage id representation of given +fei+.
+    #
+    # fei - The FlowExpressionId instance.
+    #
+    # A shortcut for
+    #
+    #   Ruote::FlowExpressionId.to_storage_id(fei)
+    #
+    # Returns a String representing the FlowExpressionId storage id.
+    def to_storage_id(fei)
+      Ruote::FlowExpressionId.to_storage_id(fei)
+    end
+
+    alias :sid :to_storage_id
+
+    # Validates given +o+ as a FlowExpressionId.
+    #
+    # fei - The object to validate.
+    #
+    # A shortcut for
+    #
+    #   Ruote::FlowExpressionId.is_a_fei?(o)
+    #
+    # Returns a Boolean.
+    def is_a_fei?(o)
+      Ruote::FlowExpressionId.is_a_fei?(o)
+    end
+
+    # Will do its best to return a wfid (String) or a fei (Hash instance)
+    # extract from the given o argument.
+    #
+    # Returns a String wfid or a Hash fei.
+    def extract_id(o)
+
+      return o if o.is_a?(String) and o.index('!').nil? # wfid
+
+      Ruote::FlowExpressionId.extract_h(o)
+    end
+
+    # This function is used to generate the subids. Each flow
+    # expression receives such an id.
+    #
+    # It's useful for cursors, loops and forgotten branches.
+    #
+    # salt - The String salt to embed in the MD5 result.
+    #
+    # Returns a String MD5 digest.
+    def generate_subid(salt)
+
+      Digest::MD5.hexdigest(
+        "#{rand}-#{salt}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
+    end
   end
 
-  # A shorter shortcut for
-  #
-  #   Ruote::FlowExpressionId.to_storage_id(fei)
-  #
-  def self.sid(fei)
 
-    Ruote::FlowExpressionId.to_storage_id(fei)
-  end
-
-  # A shortcut for
-  #
-  #   Ruote::FlowExpressionId.is_a_fei?(o)
-  #
-  def self.is_a_fei?(o)
-
-    Ruote::FlowExpressionId.is_a_fei?(o)
-  end
-
-  # Will do its best to return a wfid (String) or a fei (Hash instance)
-  # extract from the given o argument.
-  #
-  def self.extract_id(o)
-
-    return o if o.is_a?(String) and o.index('!').nil? # wfid
-
-    Ruote::FlowExpressionId.extract_h(o)
-  end
-
-  # This function is used to generate the subids. Each flow
-  # expression receives such an id (it's useful for cursors, loops and
-  # forgotten branches).
-  #
-  def self.generate_subid(salt)
-
-    Digest::MD5.hexdigest(
-      "#{rand}-#{salt}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
-  end
-
-  #
   # The FlowExpressionId (fei for short) is an process expression identifier.
   # Each expression when instantiated gets a unique fei.
   #
@@ -117,11 +126,15 @@ module Ruote
 
     alias sub_wfid subid
 
+    # Gets the storage id representation of this object.
+    #
+    # Returns a String representing the FlowExpressionId storage id.
     def to_storage_id
 
       "#{@h['expid']}!#{@h['subid']}!#{@h['wfid']}"
     end
-    alias sid to_storage_id
+
+    alias :sid :to_storage_id
 
     def to_sortable_id
 
@@ -144,12 +157,14 @@ module Ruote
       extract("#{engine_id}!#{s}")
     end
 
-    # Returns the last number in the expid. For instance, if the expid is
-    # '0_5_7', the child_id will be '7'.
+    # Extract and returns the child_id for the current instance.
+    # For example, for an expid of '0_1_4' this method returns 4.
     #
+    # hash - The hash FlowExpressionId representation.
+    #
+    # Returns an Integer representing the child_id.
     def child_id
-
-      h.expid.split(CHILD_SEP).last.to_i
+      self.class.child_id(h)
     end
 
     def hash
@@ -177,18 +192,25 @@ module Ruote
     SUBS = %w[ subid sub_wfid ]
     IDS = %w[ engine_id expid wfid ]
 
-    # Returns true if the h is a representation of a FlowExpressionId instance.
+    # Check whether +hash+ is a representation of a FlowExpressionId instance.
     #
-    def self.is_a_fei?(h)
-
-      h.respond_to?(:keys) && (h.keys - SUBS).sort == IDS
+    # hash - The hash FlowExpressionId representation to check.
+    #
+    # Returns a Boolean.
+    def self.is_a_fei?(hash)
+      hash.respond_to?(:keys) && (hash.keys - SUBS).sort == IDS
     end
 
-    # Returns child_id... For an expid of '0_1_4', this will be 4.
+    # Extract and returns the child_id from given +hash+.
+    # The child_id is the last number in the +expid+.
     #
-    def self.child_id(h)
-
-      h['expid'].split(CHILD_SEP).last.to_i
+    # For example, for an expid of '0_1_4' this method returns 4.
+    #
+    # hash - The hash FlowExpressionId representation.
+    #
+    # Returns an Integer representing the child_id.
+    def self.child_id(hash)
+      hash['expid'].split(CHILD_SEP).last.to_i
     end
 
     def to_h
