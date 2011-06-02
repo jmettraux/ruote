@@ -94,6 +94,23 @@ module Ruote::Exp
   #
   #   rset 'customer' => 'Jeff'
   #
+  #
+  # == unset
+  #
+  # 'unset' is the counterpart to 'set', it removes a field (or a variable)
+  #
+  #   unset :field => 'customer_name'
+  #   unset :f => 'customer_name'
+  #   unset :variable => 'vx'
+  #   unset :var => 'vx'
+  #   unset :v => 'vx'
+  #
+  # or simply
+  #
+  #   unset 'f:customer_name'
+  #   unset 'customer_name' # yes, it's field by default
+  #   unset 'v:vx'
+  #
   class SetExpression < FlowExpression
 
     names :rset, :set, :unset
