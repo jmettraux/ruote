@@ -241,5 +241,54 @@ class EftSetTest < Test::Unit::TestCase
 
     assert_equal 'Rebo', r['workitem']['fields']['developer']
   end
+
+  def test_unset_field
+
+    pdef = Ruote.define do
+
+      set 'f:alpha' => 'alice'
+      set 'f:bravo' => 'bob'
+      set 'f:charly' => 'charles'
+
+      unset 'f:alpha'
+      unset :f => 'bravo'
+      unset :field => 'charly'
+    end
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal({}, r['workitem']['fields'])
+  end
+
+  class VarPeek
+    include Ruote::LocalParticipant
+    def consume(workitem)
+      context.tracer << fexp(workitem).compile_variables.inspect
+      reply(workitem)
+    end
+  end
+
+  def test_unset_var
+
+    pdef = Ruote.define do
+      set 'v:v0' => 'nada'
+      set 'v:v1' => 'nada'
+      unset 'v:v0'
+      unset :v => 'v1'
+      peek
+    end
+
+    @engine.register :peek, VarPeek
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal '{}', @tracer.to_s
+  end
 end
 

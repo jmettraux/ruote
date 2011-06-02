@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- unset and fields : made sure the field is removed (Thanks jpgilman)
 - sourcify, using to_raw_source from now on
 - filter expression and blocks
 - set 'v:display' => 'echo', aliasing of expressions

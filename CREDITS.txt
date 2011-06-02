@@ -44,7 +44,7 @@ Richard Jennings
 
 == Feedback
 
-jpgilman - timed_out and name of the participant
+John 'jpgilman' - timed_out and name of the participant
 Pedro Texeira - add_tracker issue
 Greg Lazarev - composite storage issues
 Jan Topiński - https://github.com/simcha

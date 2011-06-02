@@ -128,7 +128,7 @@ module Ruote::Exp
 
       elsif field_key = has_attribute(:f, :fld, :field)
 
-        set_f(attribute(field_key), value)
+        set_f(attribute(field_key), value, name == 'unset')
 
       elsif value == nil && kv = expand_atts(opts).find { |k, v| k != 'escape' }
 
