@@ -219,7 +219,7 @@ end
     end
 
     assert_equal Ruote::Reader::Error, err.class
-    assert_equal Parslet::ParseFailed, err.cause.class
+    assert_equal Parslet::UnconsumedInput, err.cause.class
   end
 end
 

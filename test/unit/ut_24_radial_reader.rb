@@ -147,7 +147,7 @@ class RadialReaderTest < Test::Unit::TestCase
     rescue => e
     end
 
-    assert_equal Parslet::ParseFailed, e.class
+    assert_equal Parslet::UnconsumedInput, e.class
     assert_not_nil e.error_tree
 
     #puts e.error_tree
