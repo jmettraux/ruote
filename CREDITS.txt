@@ -44,6 +44,7 @@ Richard Jennings
 
 == Feedback
 
+Juris Galang - https://github.com/jurisgalang (concurrence vs history issue)
 John 'jpgilman' - timed_out and name of the participant
 Pedro Texeira - add_tracker issue
 Greg Lazarev - composite storage issues

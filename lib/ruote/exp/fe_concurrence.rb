@@ -197,6 +197,12 @@ module Ruote::Exp
 
     def reply(workitem)
 
+      workitem = Ruote.fulldup(workitem)
+        #
+        # since workitem field merging might happen, better to work on
+        # a copy of the workitem (so that history, coming afterwards,
+        # doesn't see a modified version of the workitem)
+
       if h.cmerge == 'first' || h.cmerge == 'last'
         h.workitems << workitem
       else

@@ -110,5 +110,41 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
     assert_equal 3, @engine.history.wfids.size
   end
+
+  # Cf
+  #   https://github.com/jmettraux/ruote/issues/29
+  #   http://ruote-irclogs.s3.amazonaws.com/log_2011-06-06.html
+  #
+  def test_concurrence_replies
+
+    @engine.add_service(
+      'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
+
+    pdef = Ruote.define do
+      concurrence :count => 1 do
+        alpha
+        bravo
+      end
+    end
+
+    @engine.register_participant :alpha, Ruote::NullParticipant
+    @engine.register_participant :bravo, Ruote::NoOpParticipant
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    repliers = []
+
+    @engine.context.history.by_wfid(wfid).each do |record|
+      if record['action'] == 'reply'
+        wi = record['workitem']
+        repliers << [ wi['fei']['expid'], wi['participant_name'] ]
+      end
+    end
+
+    assert_equal [ %w[ 0_0_1 bravo ], %w[ 0_0 bravo ] ], repliers[0, 2]
+  end
 end
 
