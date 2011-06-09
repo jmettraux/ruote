@@ -55,8 +55,9 @@ module Ruote
     # argument is true, engine will start the worker and will be able to both
     # manage and run workflows.
     #
-    # If the second options is set to { :join => true }, the worker wil
-    # be started and run in the current thread.
+    # If the second options is set to { :join => true }, the worker will
+    # be started and run in the current thread (and the initialize method
+    # will not return).
     #
     def initialize(worker_or_storage, opts=true)
 
