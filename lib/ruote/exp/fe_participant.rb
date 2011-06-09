@@ -145,7 +145,9 @@ module Ruote::Exp
       # dispatch to participant
 
       h.applied_workitem['participant_name'] = h.participant_name
+
       h.applied_workitem['fields']['params'] = compile_atts
+      h.applied_workitem['fields'].delete('t')
 
       schedule_timeout(h.participant)
 

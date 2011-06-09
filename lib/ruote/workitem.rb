@@ -302,6 +302,14 @@ module Ruote
       @h['fields'][key] || (@h['fields']['params'] || {})[key]
     end
 
+    # Shortcut to the temporary/trailing fields
+    #
+    # http://groups.google.com/group/openwferu-users/browse_thread/thread/981dba6204f31ccc
+    #
+    def t
+      @h['fields']['t'] ||= {}
+    end
+
     # (advanced)
     #
     # Shortcut for wi.fields['__command__']
