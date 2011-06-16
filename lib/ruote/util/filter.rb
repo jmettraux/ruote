@@ -451,6 +451,11 @@ module Ruote
     end
     alias _sm _smatch
 
+    def _is(field, value, matches, m, v)
+
+      value == v
+    end
+
     def _valid(field, value, matches, m, v)
 
       v.to_s == 'true'

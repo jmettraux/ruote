@@ -168,6 +168,13 @@ module Ruote::Exp
   #
   #   filter 'x', :empty => true
   #
+  # === 'is'
+  #
+  # Checks if a field holds the given value.
+  #
+  #   filter 'x', :is => true
+  #   filter 'x', :is => [ 'a', 2, 3 ]
+  #
   # === 'in'
   #
   # Checks if a value is in a given set of values.

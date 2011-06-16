@@ -684,6 +684,26 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => 2.0 })
   end
 
+  def test_is
+
+    assert_valid(
+      [ { 'field' => 'x', 'is' => true } ],
+      { 'x' => true })
+    assert_valid(
+      [ { 'field' => 'x', 'is' => (1..3).to_a } ],
+      { 'x' => [ 1, 2, 3 ] })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'is' => false } ],
+      { 'x' => true })
+    assert_not_valid(
+      [ { 'field' => 'x', 'is' => true } ],
+      { 'x' => 1 })
+    assert_not_valid(
+      [ { 'field' => 'x', 'is' => (1..3).to_a } ],
+      { 'x' => [ 3, 2, 1 ] })
+  end
+
   def test_size
 
     assert_valid(
