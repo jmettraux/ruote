@@ -113,8 +113,8 @@ module Ruote
         end
       end
 
-      action = msg['action'][0, 2]
-      action = case msg['action']
+      act = msg['action'][0, 2]
+      act = case msg['action']
         when 'receive' then 'rc'
         when 'dispatched' then 'dd'
         when 'dispatch_cancel' then 'dc'
@@ -122,25 +122,25 @@ module Ruote
         when 'dispatch_resume' then 'dr'
         when 'pause', 'pause_process' then 'pz'
         when 'resume', 'resume_process' then 'rz'
-        else action
+        else act
       end
-      action = case action
-        when 'la' then color('4;32', action)
-        when 'te' then color('4;31', action)
-        when 'ce' then color('31', action)
-        when 'ca' then color('31', action)
-        when 'rc' then color('4;33', action)
-        when 'di' then color('4;33', action)
-        when 'dd' then color('4;33', action)
-        when 'dc' then color('4;31', action)
-        when 'pz' then color('4;31', action)
-        when 'rz' then color('4;32', action)
-        when 'dp' then color('4;31', action)
-        when 'dr' then color('4;32', action)
-        else action
+      act = case act
+        when 'la' then color('4;32', act)
+        when 'te' then color('4;31', act)
+        when 'ce' then color('31', act)
+        when 'ca' then color('31', act)
+        when 'rc' then color('4;33', act)
+        when 'di' then color('4;33', act)
+        when 'dd' then color('4;33', act)
+        when 'dc' then color('4;31', act)
+        when 'pz' then color('4;31', act)
+        when 'rz' then color('4;32', act)
+        when 'dp' then color('4;31', act)
+        when 'dr' then color('4;32', act)
+        else act
       end
 
-      if msg['action'] == 'error_intercepted'
+      tail = if msg['action'] == 'error_intercepted'
 
         tail = []
         tail << "  #{wfid} #{rest['error']['class']}"
@@ -151,7 +151,7 @@ module Ruote
 
         color(
           @color,
-          "#{@count} #{ei} #{'  ' * depth}#{action} * #{i}",
+          "#{@count} #{ei} #{'  ' * depth}#{act} * #{i}",
           true
         ) +
         "\n" +
@@ -162,9 +162,12 @@ module Ruote
 
       else
 
+        pa = %w[ receive dispatch ].include?(msg['action']) ?
+          color('34', msg['participant_name']) + ' ' : ''
+
         color(
           @color,
-          "#{@count} #{ei} #{'  ' * depth}#{action} * #{i} #{rest.inspect}",
+          "#{@count} #{ei} #{'  ' * depth}#{act} * #{pa}#{i} #{rest.inspect}",
           true)
       end
     end
