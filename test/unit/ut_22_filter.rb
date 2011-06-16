@@ -795,6 +795,9 @@ class UtFilterTest < Test::Unit::TestCase
     assert_valid(
       [ { 'field' => 'x', 'in' => "alpha, bravo" } ],
       { 'x' => 'alpha' })
+    assert_valid(
+      [ { 'field' => 'x', 'in' => [ true ] } ],
+      { 'x' => true })
 
     assert_not_valid(
       [ { 'field' => 'x', 'in' => %w[ alpha bravo ] } ],
@@ -802,6 +805,9 @@ class UtFilterTest < Test::Unit::TestCase
     assert_not_valid(
       [ { 'field' => 'x', 'in' => "alpha, bravo" } ],
       { 'x' => 'charly' })
+    assert_not_valid(
+      [ { 'field' => 'x', 'in' => [ false ] } ],
+      { 'x' => true })
   end
 
   def test_has__keys
