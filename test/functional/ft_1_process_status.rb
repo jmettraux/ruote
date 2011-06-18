@@ -734,7 +734,42 @@ digraph "process wfid {
 
     leaves = @engine.process(wfid).leaves
 
-    assert_equal %w[ 0_0_0 0_0_1 ], leaves.collect { |fei| fei.expid }.sort
+    assert_equal(
+      [ "0_0_0:Ruote::Exp::ParticipantExpression:nil",
+        "0_0_1:Ruote::Exp::WaitExpression:nil" ],
+      leaves.collect { |fei, klass, err|
+        [ fei.expid, klass.to_s, err.inspect ].join(':')
+      })
+  end
+
+  def test_leaves_when_errors
+
+    pdef = Ruote.define do
+      concurrence do
+        wait '1w'
+        participant
+        alpha
+      end
+    end
+
+    @engine.register_participant :alpha, Ruote::NullParticipant
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+    wait_for(1)
+
+    leaves = @engine.process(wfid).leaves
+
+    assert_equal(
+      [ "0_0_0:Ruote::Exp::WaitExpression:nil",
+        "0_0_1:Ruote::Exp::ParticipantExpression:\"#<ArgumentError: no participant name specified>\"",
+        "0_0_2:Ruote::Exp::ParticipantExpression:nil" ],
+      leaves.collect { |fei, klass, err|
+        [ fei.expid, klass.to_s, err.inspect ].join(':')
+      })
   end
 end
 

@@ -224,14 +224,19 @@ module Ruote
     # #leaves looks at any expressions that is a leave (which has no
     # child at this point).
     #
-    # Returns an array of FlowExpressionId instances.
+    # Returns an array of [ FlowExpressionId, Class, err_message/nil ]
     #
     def leaves
 
       expressions.inject([]) { |a, exp|
+
         a.select { |e| ! exp.ancestor?(e.fei) } + [ exp ]
+
       }.collect { |exp|
-        exp.fei
+
+        err = errors.find { |e| e.fei == exp.fei }
+
+        [ exp.fei, exp.class, err ? err.message : nil ]
       }
     end
 
