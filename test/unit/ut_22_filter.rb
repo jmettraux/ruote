@@ -882,6 +882,31 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => %w[ a b c ] })
   end
 
+  def test_includes
+
+    assert_valid(
+      [ { 'field' => 'x', 'includes' => 'a' } ],
+      { 'x' => %w[ a b c ] })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'includes' => 'z' } ],
+      { 'x' => %w[ a b c ] })
+    assert_not_valid(
+      [ { 'field' => 'x', 'includes' => 'z' } ],
+      { 'x' => 'abcz' })
+  end
+
+  def test_includes__value
+
+    assert_valid(
+      [ { 'field' => 'x', 'includes' => 1 } ],
+      { 'x' => { 'a' => 1 } })
+
+    assert_not_valid(
+      [ { 'field' => 'x', 'includes' => '1' } ],
+      { 'x' => { 'a' => 1 } })
+  end
+
   def test_valid
 
     # 'valid' can be used in conjunction with the dollar notation

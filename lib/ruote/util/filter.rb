@@ -379,6 +379,15 @@ module Ruote
     end
     alias _h _has
 
+    def _includes(field, value, matches, m, v)
+
+      case value
+        when Array then value.include?(v)
+        when Hash then value.values.include?(v)
+        else false
+      end
+    end
+
     def _type(field, value, matches, m, v)
 
       of_type?(value, v)

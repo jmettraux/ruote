@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- filter 'includes' and 'is' (Thanks Nando Sola)
 - trailing fields (a Simone Carletti idea)
 - concurrence vs history issue fixed (Thanks Juris Galang)
 - unset and fields : made sure the field is removed (Thanks jpgilman)

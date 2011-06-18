@@ -196,6 +196,15 @@ module Ruote::Exp
   #   filter 'x', :has => "x"
   #   filter 'x', :has => "abraham, bob, charly"
   #
+  # === 'includes'
+  #
+  # Checks if an array includes a given value. Works with Hash values as well.
+  #
+  #   filter 'x', :includes => 1
+  #
+  # Whereas 'has' accepts multiple values, 'includes' only accepts one (like
+  # Ruby's Array#include?).
+  #
   # === 'valid'
   #
   # Sometimes, it's better to immediately say 'true' or 'false'.
