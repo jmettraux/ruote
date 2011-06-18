@@ -771,5 +771,22 @@ digraph "process wfid {
         [ fei.expid, klass.to_s, err.inspect ].join(':')
       })
   end
+
+  def test_root_workitem
+
+    pdef = Ruote.define do
+      alpha
+    end
+
+    @engine.register_participant :alpha, Ruote::NullParticipant
+
+    wfid = @engine.launch(pdef, 'small' => 'town')
+
+    wait_for(:alpha)
+
+    wi = @engine.process(wfid).root_workitem
+
+    assert_equal 'town', wi.fields['small']
+  end
 end
 

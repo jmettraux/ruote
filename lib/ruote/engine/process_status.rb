@@ -240,6 +240,13 @@ module Ruote
       }
     end
 
+    # Returns the workitem as was applied at the root expression.
+    #
+    def root_workitem
+
+      Ruote::Workitem.new(root_expression.h.applied_workitem)
+    end
+
     # Returns a list of the workitems currently 'out' to participants
     #
     # For example, with an instance of

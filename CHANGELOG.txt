@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- ProcessStatus#root_workitem
 - ProcessStatus#leaves
 - filter 'includes' and 'is' (Thanks Nando Sola)
 - trailing fields (a Simone Carletti idea)
