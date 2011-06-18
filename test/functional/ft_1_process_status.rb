@@ -713,5 +713,28 @@ digraph "process wfid {
     assert_nil @engine.process(wfid).definition_name
     assert_nil @engine.process(wfid).definition_revision
   end
+
+  def test_leaves
+
+    pdef = Ruote.define do
+      concurrence do
+        alpha
+        wait '1w'
+      end
+    end
+
+    @engine.register_participant :alpha, Ruote::NullParticipant
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    wait_for(:alpha)
+    wait_for(1)
+
+    leaves = @engine.process(wfid).leaves
+
+    assert_equal %w[ 0_0_0 0_0_1 ], leaves.collect { |fei| fei.expid }.sort
+  end
 end
 

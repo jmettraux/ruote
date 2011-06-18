@@ -195,6 +195,10 @@ module Ruote
     #
     # It uses #workitems underneath.
     #
+    # If you want to list all the expressions where the "flow currently is"
+    # regardless they are participant expressions or errors, look at the
+    # #leaves method.
+    #
     def position
 
       workitems.collect { |wi|
@@ -210,6 +214,24 @@ module Ruote
 
         r << params
         r
+      }
+    end
+
+    # Returns the expressions where the flow is currently, ak the leaves
+    # of the execution tree.
+    #
+    # Whereas #position only looks at participant expressions (and errors),
+    # #leaves looks at any expressions that is a leave (which has no
+    # child at this point).
+    #
+    # Returns an array of FlowExpressionId instances.
+    #
+    def leaves
+
+      expressions.inject([]) { |a, exp|
+        a.select { |e| ! exp.ancestor?(e.fei) } + [ exp ]
+      }.collect { |exp|
+        exp.fei
       }
     end
 

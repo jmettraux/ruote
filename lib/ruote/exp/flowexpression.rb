@@ -569,6 +569,8 @@ module Ruote::Exp
     #
     def ancestor?(fei)
 
+      fei = fei.to_h if fei.respond_to?(:to_h)
+
       return false unless h.parent_id
       return true if h.parent_id == fei
 
