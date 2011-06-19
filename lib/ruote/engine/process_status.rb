@@ -59,7 +59,12 @@ module Ruote
     #
     attr_reader :schedules
 
+    # Called by Ruote::Engine#processes or Ruote::Engine#process.
+    #
     def initialize(context, expressions, stored_workitems, errors, schedules)
+
+      #
+      # preparing data
 
       @expressions = expressions.collect { |e|
         Ruote::Exp::FlowExpression.from_h(context, e) }
@@ -73,6 +78,14 @@ module Ruote
       @schedules = schedules.sort! { |a, b| a['owner'].sid <=> b['owner'].sid }
 
       @root_expression = root_expressions.first
+
+      #
+      # linking errors and expressions for easy navigation
+
+      @errors.each do |err|
+        err.flow_expression = @expressions.find { |fexp| fexp.fei == err.fei }
+        err.flow_expression.error = err if err.flow_expression
+      end
     end
 
     # Returns a list of all the expressions that have no parent expression.
@@ -224,19 +237,13 @@ module Ruote
     # #leaves looks at any expressions that is a leave (which has no
     # child at this point).
     #
-    # Returns an array of [ FlowExpressionId, Class, err_message/nil ]
+    # Returns an array of FlowExpression instances. (Note that they may
+    # have their attribute #error set).
     #
     def leaves
 
       expressions.inject([]) { |a, exp|
-
         a.select { |e| ! exp.ancestor?(e.fei) } + [ exp ]
-
-      }.collect { |exp|
-
-        err = errors.find { |e| e.fei == exp.fei }
-
-        [ exp.fei, exp.class, err ? err.message : nil ]
       }
     end
 

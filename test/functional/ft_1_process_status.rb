@@ -735,10 +735,12 @@ digraph "process wfid {
     leaves = @engine.process(wfid).leaves
 
     assert_equal(
-      [ "0_0_0:Ruote::Exp::ParticipantExpression:nil",
-        "0_0_1:Ruote::Exp::WaitExpression:nil" ],
-      leaves.collect { |fei, klass, err|
-        [ fei.expid, klass.to_s, err.inspect ].join(':')
+      [ "0_0_0:Ruote::Exp::ParticipantExpression:",
+        "0_0_1:Ruote::Exp::WaitExpression:" ],
+      leaves.collect { |fexp|
+        [ fexp.fei.expid,
+          fexp.class.to_s,
+          fexp.error ? fexp.error.message : '' ].join(':')
       })
   end
 
@@ -764,11 +766,13 @@ digraph "process wfid {
     leaves = @engine.process(wfid).leaves
 
     assert_equal(
-      [ "0_0_0:Ruote::Exp::WaitExpression:nil",
-        "0_0_1:Ruote::Exp::ParticipantExpression:\"#<ArgumentError: no participant name specified>\"",
-        "0_0_2:Ruote::Exp::ParticipantExpression:nil" ],
-      leaves.collect { |fei, klass, err|
-        [ fei.expid, klass.to_s, err.inspect ].join(':')
+      [ "0_0_0:Ruote::Exp::WaitExpression:",
+        "0_0_1:Ruote::Exp::ParticipantExpression:#<ArgumentError: no participant name specified>",
+        "0_0_2:Ruote::Exp::ParticipantExpression:" ],
+      leaves.collect { |fexp|
+        [ fexp.fei.expid,
+          fexp.class.to_s,
+          fexp.error ? fexp.error.message : '' ].join(':')
       })
   end
 

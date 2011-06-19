@@ -66,7 +66,6 @@ module Ruote::Exp
     COMMON_ATT_KEYS = %w[
       if unless forget timeout on_error on_cancel on_timeout ]
 
-    attr_reader :context
     attr_reader :h
 
     h_reader :variables
@@ -80,6 +79,16 @@ module Ruote::Exp
     h_reader :on_error
     h_reader :on_cancel
     h_reader :on_timeout
+
+    attr_reader :context
+
+    # Mostly used when the expression is returned via Ruote::Engine#ps(wfid) or
+    # Ruote::Engine#processes(). If an error occurred for this flow expression,
+    # #ps will set this error field so that it yields the ProcessError.
+    #
+    # So, for short, usually, this attribute yields nil.
+    #
+    attr_accessor :error
 
     def initialize(context, h)
 

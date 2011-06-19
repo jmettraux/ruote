@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- ProcessStatus context : linking expression <-> error
 - ProcessStatus#root_workitem
 - ProcessStatus#leaves
 - filter 'includes' and 'is' (Thanks Nando Sola)
