@@ -9,6 +9,8 @@
 
 require File.join(File.dirname(__FILE__), 'base')
 
+require_json
+Rufus::Json.detect_backend
 require 'ruote'
 require 'ruote/storage/fs_storage'
 require 'ruote/participant'
@@ -19,8 +21,8 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
   def setup
 
-    @dir0 = "work0_#{$$}_#{self.object_id}_#{Time.now.to_f}"
-    @dir1 = "work1_#{$$}_#{self.object_id}_#{Time.now.to_f}"
+    @dir0 = "work_0_#{$$}_#{self.object_id}_#{Time.now.to_f}"
+    @dir1 = "work_1_#{$$}_#{self.object_id}_#{Time.now.to_f}"
 
     @engine0 =
       Ruote::Engine.new(
