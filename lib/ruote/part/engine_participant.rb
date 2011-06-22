@@ -115,7 +115,12 @@ module Ruote
 
       raise(ArgumentError.new("missing 'storage_class' parameter")) unless kl
 
-      @storage = Ruote.constantize(kl).new(opts['storage_args'])
+      args = opts['storage_args']
+      args = args.is_a?(Hash) ? [ args ] : Array(args)
+      args << {} unless args.last.is_a?(Hash)
+      args.last['preserve_configuration'] = true
+
+      @storage = Ruote.constantize(kl).new(*args)
     end
 
     def consume(workitem)

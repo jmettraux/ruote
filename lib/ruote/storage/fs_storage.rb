@@ -60,7 +60,17 @@ module Ruote
 
       @options = options
 
-      @cloche.put(@options.merge('type' => 'configurations', '_id' => 'engine'))
+      unless @options.delete('preserve_configuration')
+        #
+        # save the configuration to the storage
+
+        cur = @cloche.get('configurations', 'engine')
+
+        doc = @options.merge('type' => 'configurations', '_id' => 'engine')
+        doc['_rev'] = cur['_rev'] if cur
+
+        @cloche.put(doc)
+      end
     end
 
     def put(doc, opts={})
