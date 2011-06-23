@@ -19,10 +19,10 @@ def locate_storage_impl (arg)
   File.directory?(path) ? [ pers, path ] : nil
 end
 
+# Returns an instance of the storage to use (the ARGV determines which
+# storage to use).
 #
-# Returns the class of the engine to use, based on the ARGV
-#
-def determine_storage (opts)
+def determine_storage(opts)
 
   if ARGV.include?('--help')
     puts %{

@@ -59,6 +59,18 @@ module Ruote
       get('configurations', key)
     end
 
+    def replace_engine_configuration(opts)
+
+      return if opts['preserve_configuration']
+
+      conf = get('configurations', 'engine')
+
+      doc = opts.merge('type' => 'configurations', '_id' => 'engine')
+      doc['_rev'] = conf['_rev'] if conf
+
+      put(doc)
+    end
+
     #--
     # messages
     #++
@@ -73,6 +85,7 @@ module Ruote
       #(@local_msgs ||= []) << Ruote.fulldup(msg)
     end
 
+    #--
     #def get_local_msgs
     #  p @local_msgs
     #  if @local_msgs
@@ -83,6 +96,7 @@ module Ruote
     #    []
     #  end
     #end
+    #++
 
     def get_msgs
 

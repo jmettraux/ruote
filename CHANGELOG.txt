@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- storages : #replace_engine_configuration(opts)
 - FsStorage : saving newer configuration (Thanks Nicholas Faiz)
 - ProcessStatus context : linking expression <-> error
 - ProcessStatus#root_workitem

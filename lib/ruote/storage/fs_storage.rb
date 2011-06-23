@@ -53,24 +53,19 @@ module Ruote
     #
     def initialize(dir, options={})
 
+      if dir.is_a?(Hash) && options == {}
+        options = dir
+        dir = options.delete('dir')
+      end
+
       FileUtils.mkdir_p(dir)
 
       @cloche = Rufus::Cloche.new(
         :dir => dir, :nolock => options['cloche_nolock'])
 
-      @options = options
+      #@options = options
 
-      unless @options.delete('preserve_configuration')
-        #
-        # save the configuration to the storage
-
-        cur = @cloche.get('configurations', 'engine')
-
-        doc = @options.merge('type' => 'configurations', '_id' => 'engine')
-        doc['_rev'] = cur['_rev'] if cur
-
-        @cloche.put(doc)
-      end
+      replace_engine_configuration(options)
     end
 
     def put(doc, opts={})

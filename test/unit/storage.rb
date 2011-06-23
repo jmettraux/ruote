@@ -368,6 +368,27 @@ class UtStorage < Test::Unit::TestCase
       Ruote::Workitem, @s.query_workitems('place' => 'kyouto').first.class)
   end
 
+  def test_override_configuration
+
+    determine_storage('house' => 'taira')
+    s = determine_storage('house' => 'minamoto')
+
+    assert_equal 'minamoto', s.get_configuration('engine')['house']
+  end
+
+  def test_preserve_configuration
+
+    return if @s.class == Ruote::HashStorage
+      # this test makes no sense with an in-memory hash
+
+    determine_storage(
+      'house' => 'taira')
+    s = determine_storage(
+      'house' => 'minamoto', 'preserve_configuration' => true)
+
+    assert_equal 'taira', s.get_configuration('engine')['house']
+  end
+
   protected
 
   def load_30_errors
