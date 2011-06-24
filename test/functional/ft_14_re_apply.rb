@@ -294,5 +294,31 @@ class FtReApplyTest < Test::Unit::TestCase
 
     assert at1 > at0
   end
+
+  # Making sure re_apply nukes errors
+  #
+  def test_re_apply_error
+
+    #@engine.noisy = true
+
+    @engine.register_participant '.+', Ruote::StorageParticipant
+
+    wfid = @engine.launch(Ruote.define do
+      error "X"
+    end)
+
+    @engine.wait_for(wfid)
+
+    fei = @engine.ps(wfid).expressions.last.fei
+
+    @engine.re_apply(fei, :tree => [ 'alpha', {}, [] ])
+
+    @engine.wait_for(:alpha)
+
+    ps = @engine.ps(wfid)
+
+    assert_equal 0, ps.errors.size
+    assert_equal Ruote::Exp::ParticipantExpression, ps.expressions.last.class
+  end
 end
 
