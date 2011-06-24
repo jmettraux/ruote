@@ -124,6 +124,14 @@ module Ruote
     s.split('::').inject(Object) { |c, n| n == '' ? c : c.const_get(n) }
   end
 
+  # Makes sure all they keys in the given hash are turned into strings
+  # in the resulting hash.
+  #
+  def self.keys_to_s(h)
+
+    h.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+  end
+
 #  # Upon receiving something like
 #  #
 #  #   "(?-mix:nada)"

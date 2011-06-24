@@ -82,7 +82,7 @@ module Ruote
 
     def initialize(opts)
 
-      @opts = opts.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+      @opts = Ruote.keys_to_s(opts)
     end
 
     def consume(workitem)

@@ -252,7 +252,7 @@ module Ruote
     #
     def query(criteria)
 
-      cr = criteria.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+      cr = Ruote.keys_to_s(criteria)
 
       if @context.storage.respond_to?(:query_workitems)
         return @context.storage.query_workitems(cr)

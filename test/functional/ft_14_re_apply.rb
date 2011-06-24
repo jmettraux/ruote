@@ -220,6 +220,8 @@ class FtReApplyTest < Test::Unit::TestCase
 
   def test_new_tree_and_process_status_current_tree
 
+    #@engine.noisy = true
+
     @engine.register_participant '.+', Ruote::StorageParticipant
 
     wfid = @engine.launch(Ruote.define { alpha })

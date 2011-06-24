@@ -279,7 +279,10 @@ module Ruote
     #
     def re_apply(fei, opts={})
 
-      @context.storage.put_msg('cancel', 'fei' => fei.to_h, 're_apply' => opts)
+      @context.storage.put_msg(
+        'cancel',
+        'fei' => fei.to_h,
+        're_apply' => Ruote.keys_to_s(opts))
     end
 
     # Returns a ProcessStatus instance describing the current status of
