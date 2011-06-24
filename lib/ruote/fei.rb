@@ -69,6 +69,13 @@ module Ruote
     Ruote::FlowExpressionId.extract_h(o)
   end
 
+  # Given something, tries to return the fei (Ruote::FlowExpressionId) in it.
+  #
+  def self.extract_fei(o)
+
+    Ruote::FlowExpressionId.extract(o)
+  end
+
   # This function is used to generate the subids. Each flow
   # expression receives such an id (it's useful for cursors, loops and
   # forgotten branches).

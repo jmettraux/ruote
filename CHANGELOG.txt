@@ -4,6 +4,8 @@
 
 == ruote - 2.2.1    not yet released
 
+- Engine#replay_at_error(err_or_fei_or_wi)
+- Engine#error(wi_or_fei)
 - storages : #replace_engine_configuration(opts)
 - FsStorage : saving newer configuration (Thanks Nicholas Faiz)
 - ProcessStatus context : linking expression <-> error

@@ -351,5 +351,30 @@ class FtErrorsTest < Test::Unit::TestCase
     assert_equal "unknown participant or subprocess 'nada'", r['error']['message']
     assert_equal Array, r['error']['trace'].class
   end
+
+  def test_replay_at_error_fei
+
+    #@engine.noisy = true
+
+    @engine.register { catchall }
+
+    wfid = @engine.launch(Ruote.define do
+      error 'alpha'
+      error 'bravo'
+    end)
+
+    @engine.wait_for(wfid)
+
+    err = @engine.ps(wfid).errors.first
+    assert_match /alpha/, err.message
+    fei = err.fei
+
+    @engine.replay_at_error(fei)
+
+    @engine.wait_for(wfid)
+
+    err = @engine.ps(wfid).errors.first
+    assert_match /bravo/, err.message
+  end
 end
 

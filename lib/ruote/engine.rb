@@ -238,6 +238,8 @@ module Ruote
     #
     def replay_at_error(err)
 
+      err = error(err) unless err.is_a?(Ruote::ProcessError)
+
       msg = err.msg.dup
 
       if tree = msg['tree']
@@ -344,6 +346,17 @@ module Ruote
       return errs if options[:count]
 
       errs.collect { |err| ProcessError.new(err) }
+    end
+
+    # Given a workitem or a fei (or a String version of a fei), returns
+    # the corresponding error (or nil if there is no other).
+    #
+    def error(wi_or_fei)
+
+      fei = Ruote.extract_fei(wi_or_fei)
+      err = @context.storage.get('errors', "err_#{fei.sid}")
+
+      err ? ProcessError.new(err) : nil
     end
 
     # Returns an array of schedules. Those schedules are open structs
