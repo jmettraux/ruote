@@ -239,22 +239,23 @@ module Ruote
     def replay_at_error(err)
 
       msg = err.msg.dup
-      action = msg.delete('action')
 
-      msg['replay_at_error'] = true
-        # just an indication
+      if tree = msg['tree']
+        #
+        # as soon as there is a tree, it means it's a re_apply
 
-      if msg['tree'] && fei = msg['fei']
-        #
-        # nukes the expression in case of [re]apply
-        #
-        exp = Ruote::Exp::FlowExpression.fetch(@context, fei)
-        exp.unpersist_or_raise if exp
+        re_apply(msg['fei'], 'tree' => tree, 'replay_at_error' => true)
+
+      else
+
+        action = msg.delete('action')
+
+        msg['replay_at_error'] = true
+          # just an indication
+
+        @context.storage.delete(err.to_h) # remove error
+        @context.storage.put_msg(action, msg) # trigger replay
       end
-
-      @context.storage.delete(err.to_h) # remove error
-
-      @context.storage.put_msg(action, msg) # trigger replay
     end
 
     # Re-applies an expression (given via its FlowExpressionId).
@@ -262,6 +263,9 @@ module Ruote
     # That will cancel the expression and, once the cancel operation is over
     # (all the children have been cancelled), the expression will get
     # re-applied.
+    #
+    # The fei parameter may be a hash, a Ruote::FlowExpressionId instance,
+    # a Ruote::Workitem instance or a sid string.
     #
     # == options
     #
@@ -281,7 +285,7 @@ module Ruote
 
       @context.storage.put_msg(
         'cancel',
-        'fei' => fei.to_h,
+        'fei' => FlowExpressionId.extract_h(fei),
         're_apply' => Ruote.keys_to_s(opts))
     end
 
