@@ -203,7 +203,7 @@ module Ruote
         'workitems', participant_name, opts
       ) if @context.storage.respond_to?(:by_participant)
 
-      select(opts) do |hwi|
+      do_select(opts) do |hwi|
         hwi['participant_name'] == participant_name
       end
     end
@@ -225,7 +225,7 @@ module Ruote
         return @context.storage.by_field('workitems', field, value, opts)
       end
 
-      select(opts) do |hwi|
+      do_select(opts) do |hwi|
         hwi['fields'].keys.include?(field) &&
         (value.nil? || hwi['fields'][field] == value)
       end
@@ -346,7 +346,7 @@ module Ruote
     # Given a few options and a block, returns all the workitems that match
     # the block
     #
-    def select(opts, &block)
+    def do_select(opts, &block)
 
       skip = opts[:offset] || opts[:skip]
       limit = opts[:limit]

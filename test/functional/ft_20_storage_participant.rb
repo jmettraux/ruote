@@ -517,5 +517,27 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal Hash, wi.class
   end
+
+  # StorageParticipant includes Enumerable, therefore, it should respond
+  # to select...
+  #
+  # http://groups.google.com/group/openwferu-users/t/6b594fd141f5d4b1
+  #
+  def test_select
+
+    @engine.register { catchall }
+
+    @engine.launch(Ruote.define do
+      concurrence { alpha; bravo; charly }
+    end)
+
+    while @engine.storage_participant.size < 3; end
+
+    assert_equal(
+      1,
+      @engine.storage_participant.select { |wi|
+        wi.participant_name == 'bravo'
+      }.size)
+  end
 end
 
