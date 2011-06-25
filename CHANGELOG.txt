@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- dollar substitution in expression name as well
 - Engine#replay_at_error(err_or_fei_or_wi)
 - Engine#error(wi_or_fei)
 - storages : #replace_engine_configuration(opts)
