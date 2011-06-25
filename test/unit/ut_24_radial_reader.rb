@@ -134,6 +134,19 @@ class RadialReaderTest < Test::Unit::TestCase
   #  'echo "quebec", b: %w[ A B ] # whatever')
 
   #
+  # weird expression [names]
+
+  assert_read(
+    [ 'server_array.toto.first', {}, [] ],
+    'server_array.toto.first')
+  assert_read(
+    [ 'server_array.${v:/sa_name}.first', {}, [] ],
+    'server_array.${v:/sa_name}.first')
+  assert_read(
+    [ 'server_array.${v:/sa_name}.first', { 'nada' => nil, 'ok' => true }, [] ],
+    'server_array.${v:/sa_name}.first nada, ok:true')
+
+  #
   # more complete tests
 
   def test_error_reporting
