@@ -150,7 +150,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     def initialize(opts)
     end
     def consume(workitem)
-      put(workitem.fei, 'token' => workitem.params['token'])
+      put(workitem, 'token' => workitem.params['token'])
     end
     def cancel(fei, flavour)
       BLACKBOARD['token'] = get(fei, 'token')
