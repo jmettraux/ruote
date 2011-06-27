@@ -188,7 +188,9 @@ module Ruote::Exp
 
       pa = @context.plist.instantiate(pinfo, :if_respond_to? => :on_reply)
 
-      pa.on_reply(Ruote::Workitem.new(workitem)) if pa
+      Ruote.participant_send(
+        pa, :on_reply, 'workitem' => Ruote::Workitem.new(workitem)
+      ) if pa
 
       super(workitem)
     end
@@ -235,9 +237,12 @@ module Ruote::Exp
 
         pa = @context.plist.instantiate(p_info, :if_respond_to? => :rtimeout)
 
-        timeout = (pa.method(:rtimeout).arity == 0 ?
-          pa.rtimeout :
-          pa.rtimeout(Ruote::Workitem.new(h.applied_workitem))
+        #timeout = (pa.method(:rtimeout).arity == 0 ?
+        #  pa.rtimeout :
+        #  pa.rtimeout(Ruote::Workitem.new(h.applied_workitem))
+        #) if pa
+        timeout = Ruote.participant_send(
+          pa, :rtimeout, 'workitem' => Ruote::Workitem.new(h.applied_workitem)
         ) if pa
       end
 

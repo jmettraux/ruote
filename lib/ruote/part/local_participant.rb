@@ -38,9 +38,64 @@ module Ruote
   module LocalParticipant
 
     include ReceiverMixin
-      # the reply_to_engine method is there
 
+    # The engine context, it's a local participant so it knows about the
+    # context in which the engine operates...
+    #
     attr_accessor :context
+
+    # Usually set right before a call to #on_workitem or #accept?
+    #
+    attr_writer :workitem
+
+    # Usually set right before a call to #on_cancel or #cancel
+    #
+    attr_writer :fei
+
+    # Usually set right before a call to #on_cancel or #cancel
+    #
+    attr_accessor :flavour
+
+    # Returns the current workitem
+    #
+    def workitem
+
+      @workitem ? @workitem : applied_workitem
+    end
+
+    # Returns the current fei (Ruote::FlowExpressionId).
+    #
+    def fei
+
+      @fei ? @fei : @workitem.fei
+    end
+
+    # Returns the Ruote::ParticipantExpression that corresponds with this
+    # participant.
+    #
+    def fexp
+
+      flow_expression(fei)
+    end
+
+    # Returns the workitem as was applied when the Ruote::ParticipantExpression
+    # was reached.
+    #
+    def applied_workitem
+
+      Ruote::Workitem.new(fexp.h['applied_workitem'])
+    end
+
+    # Participant implementations call this method when their #on_workitem
+    # (#consume) methods are done and they want to hand back the workitem
+    # to the engine so that the flow can resume.
+    #
+    def reply_to_engine(wi=workitem)
+
+      receive(wi)
+    end
+
+    alias reply reply_to_engine
 
     # Use this method to re_dispatch the workitem.
     #
@@ -51,23 +106,26 @@ module Ruote
     #
     # Without one of those options, the method is a "reject".
     #
-    def re_dispatch(workitem, opts={})
+    def re_dispatch(wi, opts={})
+
+      opts = wi if wi.is_a?(Hash)
+      wi = workitem
 
       msg = {
         'action' => 'dispatch',
-        'fei' => workitem.h.fei,
-        'workitem' => workitem.h,
-        'participant_name' => workitem.participant_name,
+        'fei' => wi.h.fei,
+        'workitem' => wi.h,
+        'participant_name' => wi.participant_name,
         'rejected' => true
       }
 
       if t = opts[:in] || opts[:at]
 
-        sched_id = @context.storage.put_schedule('at', workitem.h.fei, t, msg)
+        sched_id = @context.storage.put_schedule('at', wi.h.fei, t, msg)
 
-        fexp = fetch_flow_expression(workitem)
-        fexp.h['re_dispatch_sched_id'] = sched_id
-        fexp.try_persist
+        exp = fexp
+        exp.h['re_dispatch_sched_id'] = sched_id
+        exp.try_persist
 
       else
 
@@ -86,28 +144,26 @@ module Ruote
     #       @opts = opts
     #     end
     #
-    #     def consume(workitem)
+    #     def on_workitem
     #       begin
     #         do_the_job
-    #         reply(workitem)
+    #         reply
     #       rescue
-    #         re_dispatch(workitem, :in => @opts['delay'] || '1s')
+    #         re_dispatch(:in => @opts['delay'] || '1s')
     #       end
     #     end
     #
-    #     def cancel(fei, flavour)
-    #       unschedule_re_dispatch(fei)
+    #     def cancel
+    #       unschedule_re_dispatch
     #     end
     #   end
     #
     # Note how unschedule_re_dispatch is used in the cancel method. Warning,
     # this example could loop forever...
     #
-    def unschedule_re_dispatch(fei)
+    def unschedule_re_dispatch(fei=nil)
 
-      exp = fexp(fei)
-
-      if s = exp.h['re_dispatch_sched_id']
+      if s = fexp.h['re_dispatch_sched_id']
         @context.storage.delete_schedule(s)
       end
     end

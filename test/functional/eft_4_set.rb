@@ -266,9 +266,9 @@ class EftSetTest < Test::Unit::TestCase
 
   class VarPeek
     include Ruote::LocalParticipant
-    def consume(workitem)
-      context.tracer << fexp(workitem).compile_variables.inspect
-      reply(workitem)
+    def consume
+      context.tracer << fexp.compile_variables.inspect
+      reply
     end
   end
 

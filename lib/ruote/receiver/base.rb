@@ -49,6 +49,16 @@ module Ruote
         'receiver' => sign)
     end
 
+    # Wraps a call to receive(workitem)
+    #
+    # Not aliasing so that if someone changes the receive implementation,
+    # reply is affected as well.
+    #
+    def reply(workitem)
+
+      receive(workitem)
+    end
+
     # Given a process definitions and optional initial fields and variables,
     # launches a new process instance.
     #
@@ -77,26 +87,6 @@ module Ruote
       wfid
     end
 
-    # Wraps a call to receive(workitem)
-    #
-    # Not aliasing so that if someone changes the receive implementation,
-    # reply is affected as well.
-    #
-    def reply(workitem)
-
-      receive(workitem)
-    end
-
-    # Wraps a call to receive(workitem)
-    #
-    # Not aliasing so that if someone changes the receive implementation,
-    # reply_to_engine is affected as well.
-    #
-    def reply_to_engine(workitem)
-
-      receive(workitem)
-    end
-
     # A receiver signs a workitem when it comes back.
     #
     # Not used much as of now.
@@ -116,13 +106,8 @@ module Ruote
         Ruote::FlowExpressionId.extract_h(workitem_or_fei))
     end
 
-    # For example :
-    #
-    #   fexp = engine.fexp(fei)
-    #     # or
-    #   fexp = engine.fexp(workitem)
-    #
     alias fexp fetch_flow_expression
+    alias flow_expression fetch_flow_expression
 
     # A convenience methods for advanced users (like Oleg).
     #
@@ -140,11 +125,13 @@ module Ruote
     # on_terminate processes are not triggered for on_error processes.
     # on_error processes are triggered for on_terminate processes as well.
     #
-    def applied_workitem(workitem_or_fei)
+    def fetch_workitem(fexp_or_fei)
 
-      Ruote::Workitem.new(fexp(workitem_or_fei).h.applied_workitem)
+      Ruote::Workitem.new(flow_expression(fexp_or_fei).h.applied_workitem)
     end
-    alias workitem applied_workitem
+
+    alias workitem fetch_workitem
+    alias applied_workitem fetch_workitem
 
     protected
 
@@ -163,7 +150,7 @@ module Ruote
     #
     def put(workitem_or_fei, hash)
 
-      exp = fexp(workitem_or_fei)
+      exp = fetch_flow_expression(workitem_or_fei)
 
       (exp.h['stash'] ||= {}).merge!(hash)
 
@@ -185,7 +172,7 @@ module Ruote
     #
     def get(workitem_or_fei, key=nil)
 
-      stash = fexp(workitem_or_fei).h['stash'] rescue {}
+      stash = fetch_flow_expression(workitem_or_fei).h['stash'] rescue {}
 
       key ? stash[key] : stash
     end

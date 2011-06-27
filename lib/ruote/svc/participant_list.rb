@@ -172,6 +172,10 @@ module Ruote
     #
     def lookup_info(pname, workitem)
 
+      wi = workitem ?
+        Ruote::Workitem.new(workitem.merge('participant_name' => pname)) :
+        nil
+
       get_list['list'].each do |regex, pinfo|
 
         next unless pname.match(regex)
@@ -181,10 +185,7 @@ module Ruote
         pa = instantiate(pinfo, :if_respond_to? => :accept?)
 
         return pinfo if pa.nil?
-
-        return pinfo if pa.accept?(
-          Ruote::Workitem.new(workitem.merge('participant_name' => pname))
-        )
+        return pinfo if Ruote.participant_send(pa, :accept?, 'workitem' => wi)
       end
 
       # nothing found...

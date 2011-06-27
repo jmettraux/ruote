@@ -49,7 +49,7 @@ class FtMiscTest < Test::Unit::TestCase
 
     @engine.register 'no_cancel', NoCancel
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
 
@@ -60,7 +60,7 @@ class FtMiscTest < Test::Unit::TestCase
     @engine.wait_for(wfid)
 
     assert_match(
-      /undefined method `cancel' for/,
+      /undefined method `on_cancel' for/,
       @engine.ps(wfid).errors.first.message)
   end
 end

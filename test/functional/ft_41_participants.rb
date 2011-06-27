@@ -70,8 +70,9 @@ class FtParticipantsTest < Test::Unit::TestCase
     end
     def on_reply(wi)
       @context.tracer << wi.fields['hello'] + "\n"
-      @context.tracer << applied_workitem(wi.fei).fields['hello'] + "\n"
-      @context.tracer << workitem(wi.fei).fields['hello']
+      @context.tracer << applied_workitem.fields['hello'] + "\n"
+      @context.tracer << fetch_workitem(fei).fields['hello'] + "\n"
+      @context.tracer << workitem.fields['hello']
     end
   end
 
@@ -79,13 +80,13 @@ class FtParticipantsTest < Test::Unit::TestCase
 
     @engine.register 'alpha', MyOtherParticipant
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(Ruote.define { alpha }, 'hello' => 'world')
 
     @engine.wait_for(wfid)
 
-    assert_equal %w[ kitty world world ], @tracer.to_a
+    assert_equal %w[ kitty world world kitty ], @tracer.to_a
   end
 end
 
