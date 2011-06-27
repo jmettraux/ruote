@@ -116,13 +116,20 @@ module Ruote
     # expressions
     #++
 
+    # For a given wfid, returns all the expressions (array of Hash instances)
+    # that have a nil 'parent_id'.
+    #
+    def find_root_expressions(wfid)
+
+      get_many('expressions', wfid).select { |hexp| hexp['parent_id'].nil? }
+    end
+
+    # For a given wfid, fetches all the root expressions, sort by expid and
+    # return the first. Hopefully it's the right root_expression.
+    #
     def find_root_expression(wfid)
 
-      get_many('expressions', wfid).sort_by { |fexp|
-        fexp['fei']['expid']
-      }.select { |e|
-        e['parent_id'].nil?
-      }.first
+      find_root_expressions(wfid).sort_by { |hexp| hexp['fei']['expid'] }.first
     end
 
     # Given all the expressions stored here, returns a sorted list of unique
