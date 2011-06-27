@@ -409,6 +409,48 @@ module Ruote
       Ruote.recompose_tree(h)
     end
 
+    # Used by Engine#process and Engine#processes
+    #
+    def self.fetch(context, wfids, opts)
+
+      swfids = wfids.collect { |wfid| /!#{wfid}-\d+$/ }
+
+      exps = context.storage.get_many('expressions', wfids).compact
+      swis = context.storage.get_many('workitems', wfids).compact
+      errs = context.storage.get_many('errors', wfids).compact
+      schs = context.storage.get_many('schedules', swfids).compact
+        # some slow storages need the compaction... couch...
+
+      errs = errs.collect { |err| ProcessError.new(err) }
+      schs = schs.collect { |sch| Ruote.schedule_to_h(sch) }
+
+      by_wfid = {}
+
+      exps.each do |exp|
+        (by_wfid[exp['fei']['wfid']] ||= [ [], [], [], [] ])[0] << exp
+      end
+      swis.each do |swi|
+        (by_wfid[swi['fei']['wfid']] ||= [ [], [], [], [] ])[1] << swi
+      end
+      errs.each do |err|
+        (by_wfid[err.wfid] ||= [ [], [], [], [] ])[2] << err
+      end
+      schs.each do |sch|
+        (by_wfid[sch['wfid']] ||= [ [], [], [], [] ])[3] << sch
+      end
+
+      wfids = by_wfid.keys.sort
+      wfids = wfids.reverse if opts[:descending]
+        # re-adjust list of wfids, only take what was found
+
+      wfids.inject([]) { |a, wfid|
+        if info = by_wfid[wfid]
+          a << ProcessStatus.new(context, *info)
+        end
+        a
+      }
+    end
+
     protected
 
     def original_tree_from_parent(e)

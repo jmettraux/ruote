@@ -296,7 +296,7 @@ module Ruote
     #
     def process(wfid)
 
-      statuses([ wfid ], {}).first
+      ProcessStatus.fetch(@context, [ wfid ], {}).first
     end
 
     # Returns an array of ProcessStatus instances.
@@ -314,7 +314,7 @@ module Ruote
 
       wfids = @context.storage.expression_wfids(opts)
 
-      opts[:count] ? wfids.size : statuses(wfids, opts)
+      opts[:count] ? wfids.size : ProcessStatus.fetch(@context, wfids, opts)
     end
 
     # Returns a list of processes or the process status of a given process
@@ -933,47 +933,6 @@ module Ruote
         @context.storage.put_msg(
           action, opts.merge('fei' => target))
       end
-    end
-
-    # Used by #process and #processes
-    #
-    def statuses(wfids, opts)
-
-      swfids = wfids.collect { |wfid| /!#{wfid}-\d+$/ }
-
-      exps = @context.storage.get_many('expressions', wfids).compact
-      swis = @context.storage.get_many('workitems', wfids).compact
-      errs = @context.storage.get_many('errors', wfids).compact
-      schs = @context.storage.get_many('schedules', swfids).compact
-        # some slow storages need the compaction... couch...
-
-      errs = errs.collect { |err| ProcessError.new(err) }
-      schs = schs.collect { |sch| Ruote.schedule_to_h(sch) }
-
-      by_wfid = {}
-
-      exps.each do |exp|
-        (by_wfid[exp['fei']['wfid']] ||= [ [], [], [], [] ])[0] << exp
-      end
-      swis.each do |swi|
-        (by_wfid[swi['fei']['wfid']] ||= [ [], [], [], [] ])[1] << swi
-      end
-      errs.each do |err|
-        (by_wfid[err.wfid] ||= [ [], [], [], [] ])[2] << err
-      end
-      schs.each do |sch|
-        (by_wfid[sch['wfid']] ||= [ [], [], [], [] ])[3] << sch
-      end
-
-      wfids = by_wfid.keys.sort
-      wfids = wfids.reverse if opts[:descending]
-        # re-adjust list of wfids, only take what was found
-
-      wfids.inject([]) { |a, wfid|
-        info = by_wfid[wfid]
-        a << ProcessStatus.new(@context, *info) if info
-        a
-      }
     end
   end
 
