@@ -140,9 +140,9 @@ module Ruote
     # on_terminate processes are not triggered for on_error processes.
     # on_error processes are triggered for on_terminate processes as well.
     #
-    def applied_workitem(fei)
+    def applied_workitem(workitem_or_fei)
 
-      Ruote::Workitem.new(fexp(fei).h.applied_workitem)
+      Ruote::Workitem.new(fexp(workitem_or_fei).h.applied_workitem)
     end
     alias workitem applied_workitem
 
@@ -161,13 +161,13 @@ module Ruote
     # http://groups.google.com/group/openwferu-users/t/2e6a95708c10847b for the
     # justification.
     #
-    def put(fei, hash)
+    def put(workitem_or_fei, hash)
 
-      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
+      exp = fexp(workitem_or_fei)
 
-      (fexp.h['stash'] ||= {}).merge!(hash)
+      (exp.h['stash'] ||= {}).merge!(hash)
 
-      fexp.persist_or_raise
+      exp.persist_or_raise
     end
 
     # Fetches back a stashed value.
@@ -183,11 +183,9 @@ module Ruote
     # put & get are useful for a participant that needs to communicate
     # between its consume and its cancel.
     #
-    def get(fei, key=nil)
+    def get(workitem_or_fei, key=nil)
 
-      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei.to_h)
-
-      stash = fexp.h['stash'] rescue {}
+      stash = fexp(workitem_or_fei).h['stash'] rescue {}
 
       key ? stash[key] : stash
     end
