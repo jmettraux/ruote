@@ -292,6 +292,7 @@
 [o] pause engine
 [o] pause process instance
 [o] filter : blank? equivalent (maybe it already exists)
+[o] eft_18 weak with jruby-1.5.1 and 1.5.6
 
 [ ] exp : at expression ? comparable to cron
 [x] exp : exp (restricted form of eval ?) (is it apply ?)
@@ -461,8 +462,6 @@
 [ ] StorageParticipant#proceed : raise if workitem not found ?
 [ ] StorageParticipant#proceed : accept fei ?
 [ ] Engine#reply(wi), should remove from storage...
-
-[ ] eft_18 weak with jruby-1.5.1 and 1.5.6
 
 [ ] participant : consume/cancel/accept?/on_reply without params
 [ ] participant : consume -> on_workitem
