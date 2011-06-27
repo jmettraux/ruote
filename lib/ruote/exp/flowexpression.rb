@@ -141,6 +141,29 @@ module Ruote::Exp
       Ruote::Exp::FlowExpression.fetch(@context, h.parent_id)
     end
 
+    # Returns the root expression of this expression.
+    # The result is an instance of Ruote::FlowExpression.
+    #
+    def root
+
+      exps = @context.storage.find_expressions(h.fei['wfid'])
+      current = exps.find { |e| e['fei'] == h.fei }
+
+      while current['parent_id']
+        current = exps.find { |e| e['fei'] == current['parent_id'] }
+      end
+
+      Ruote::Exp::FlowExpression.from_h(@context, current)
+    end
+
+    # Returns the fei of the root expression of this expression.
+    # The result is an instance of Ruote::FlowExpressionId.
+    #
+    def root_id
+
+      root.fei
+    end
+
     # Turns this FlowExpression instance into a Hash (well, just hands back
     # the base hash behind it).
     #

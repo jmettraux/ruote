@@ -116,12 +116,19 @@ module Ruote
     # expressions
     #++
 
+    # Given a wfid, returns all the expressions of that process instance.
+    #
+    def find_expressions(wfid)
+
+      get_many('expressions', wfid)
+    end
+
     # For a given wfid, returns all the expressions (array of Hash instances)
     # that have a nil 'parent_id'.
     #
     def find_root_expressions(wfid)
 
-      get_many('expressions', wfid).select { |hexp| hexp['parent_id'].nil? }
+      find_expressions(wfid).select { |hexp| hexp['parent_id'].nil? }
     end
 
     # For a given wfid, fetches all the root expressions, sort by expid and
