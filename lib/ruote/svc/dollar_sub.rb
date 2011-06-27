@@ -123,9 +123,9 @@ module Ruote
       attr_reader :fexp
       attr_reader :workitem
 
-      def initialize(flowexpression, workitem)
+      def initialize(flow_expression, workitem)
 
-        @fexp = flowexpression
+        @fexp = flow_expression
         @workitem = workitem
       end
 

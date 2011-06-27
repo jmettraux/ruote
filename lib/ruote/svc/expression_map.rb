@@ -29,7 +29,7 @@ module Exp
 end
 end
 
-require 'ruote/exp/flowexpression'
+require 'ruote/exp/flow_expression'
 
 
 exppath = File.join(File.dirname(__FILE__), '..', 'exp')
