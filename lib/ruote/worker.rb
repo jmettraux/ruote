@@ -314,15 +314,12 @@ module Ruote
           'subid' => Ruote.generate_subid(msg.inspect),
           'expid' => '0' },
         'parent_id' => msg['parent_id'],
-        'original_tree' => tree,
+        #'original_tree' => tree,
         'variables' => variables,
         'applied_workitem' => wi,
-        'forgotten' => msg['forgotten']
+        'forgotten' => msg['forgotten'],
+        'stash' => msg['stash']
       }
-
-      if stash = msg['stash']
-        exp_hash['stash'] = stash
-      end
 
       if not exp_class
 
@@ -335,7 +332,13 @@ module Ruote
         exp_class = Ruote::Exp::SequenceExpression
       end
 
-      exp = exp_class.new(@context, exp_hash.merge!('original_tree' => tree))
+      exp_hash = exp_hash.inject({}) { |h, (k, v)| h[k] = v unless v.nil?; h }
+      exp_hash['original_tree'] = tree
+        #
+        # dropping nils
+        # and registering potentially reorganized tree
+
+      exp = exp_class.new(@context, exp_hash)
 
       exp.initial_persist
       exp.do_apply(msg)
