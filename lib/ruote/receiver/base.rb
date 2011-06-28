@@ -73,7 +73,7 @@ module Ruote
     #
     # variables contain engine variables.
     #
-    def launch(process_definition, fields={}, variables={})
+    def launch(process_definition, fields={}, variables={}, root_stash=nil)
 
       wfid = @context.wfidgen.generate
 
@@ -82,7 +82,8 @@ module Ruote
         'wfid' => wfid,
         'tree' => @context.reader.read(process_definition),
         'workitem' => { 'fields' => fields },
-        'variables' => variables)
+        'variables' => variables,
+        'stash' => root_stash)
 
       wfid
     end
@@ -176,7 +177,8 @@ module Ruote
     #
     def stash_get(workitem_or_fei, key=nil)
 
-      stash = fetch_flow_expression(workitem_or_fei).h['stash'] rescue {}
+      stash = fetch_flow_expression(workitem_or_fei).h['stash'] rescue nil
+      stash ||= {}
 
       key ? stash[key] : stash
     end

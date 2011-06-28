@@ -320,6 +320,10 @@ module Ruote
         'forgotten' => msg['forgotten']
       }
 
+      if stash = msg['stash']
+        exp_hash['stash'] = stash
+      end
+
       if not exp_class
 
         exp_class = Ruote::Exp::RefExpression
