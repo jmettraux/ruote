@@ -148,7 +148,9 @@ module Ruote
     # http://groups.google.com/group/openwferu-users/t/2e6a95708c10847b for the
     # justification.
     #
-    def stash_put(workitem_or_fei, hash)
+    def stash_put(workitem_or_fei, key, value=nil)
+
+      hash = key.is_a?(Hash) ? key : { key => value }
 
       exp = fetch_flow_expression(workitem_or_fei)
 

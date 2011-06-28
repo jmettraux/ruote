@@ -211,9 +211,15 @@ module Ruote
     # expression directly, whereas stash_put and stash_get can point at
     # any expression.
     #
-    def put(hash)
+    # 'put' can be called as
+    #
+    #   put('secret' => 'message', 'to' => 'embassy')
+    #     # or
+    #   put('secret', 'message')
+    #
+    def put(key, value=nil)
 
-      stash_put(fei, hash)
+      stash_put(fei, key, value)
     end
 
     # See #put

@@ -150,10 +150,11 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     def initialize(opts)
     end
     def consume(workitem)
-      put('token' => workitem.params['token'])
+      put('token0' => workitem.params['token0'])
+      put('token1', workitem.params['token1'])
     end
     def cancel(fei, flavour)
-      BLACKBOARD['token'] = get('token')
+      BLACKBOARD['token0'] = get('token0')
       BLACKBOARD['all'] = get
     end
   end
@@ -166,7 +167,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     BLACKBOARD.clear
 
     pdef = Ruote.process_definition do
-      alpha :token => 'of esteem'
+      alpha :token0 => 'of esteem', :token1 => 'of whatever'
     end
 
     @engine.register_participant :alpha, StashingParticipant
@@ -180,13 +181,19 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     ps = @engine.process(wfid)
     fexp = ps.expressions.find { |e| e.fei.expid == '0_0' }
 
-    assert_equal({ 'token' => 'of esteem' }, fexp.h.stash)
+    assert_equal(
+      { 'token0' => 'of esteem', 'token1' => 'of whatever' },
+      fexp.h.stash)
 
     @engine.cancel_process(wfid)
     wait_for(wfid)
 
-    assert_equal('of esteem', BLACKBOARD['token'])
-    assert_equal({ 'token' => 'of esteem' }, BLACKBOARD['all'])
+    assert_equal(
+      'of esteem',
+      BLACKBOARD['token0'])
+    assert_equal(
+      { 'token0' => 'of esteem', 'token1' => 'of whatever' },
+      BLACKBOARD['all'])
   end
 end
 
