@@ -202,6 +202,26 @@ module Ruote
     # Well, here it is, use with care.
     #
     alias :reject :re_dispatch
+
+    protected
+
+    # Receivers and local participants share the #stash_put and #stash_get
+    # methods. The local participant has #put and #get which don't need
+    # an initial fei, thus #get and #put deal with the participant
+    # expression directly, whereas stash_put and stash_get can point at
+    # any expression.
+    #
+    def put(hash)
+
+      stash_put(fei, hash)
+    end
+
+    # See #put
+    #
+    def get(key=nil)
+
+      stash_get(fei, key)
+    end
   end
 end
 

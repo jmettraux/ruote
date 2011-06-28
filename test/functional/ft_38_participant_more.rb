@@ -150,11 +150,11 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     def initialize(opts)
     end
     def consume(workitem)
-      put(workitem, 'token' => workitem.params['token'])
+      put('token' => workitem.params['token'])
     end
     def cancel(fei, flavour)
-      BLACKBOARD['token'] = get(fei, 'token')
-      BLACKBOARD['all'] = get(fei)
+      BLACKBOARD['token'] = get('token')
+      BLACKBOARD['all'] = get
     end
   end
 
@@ -171,12 +171,11 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
     @engine.register_participant :alpha, StashingParticipant
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
     wait_for(:alpha)
-
-    sleep 0.350 # since wait_for(:alpha) releases too early sometimes
+    wait_for(1)
 
     ps = @engine.process(wfid)
     fexp = ps.expressions.find { |e| e.fei.expid == '0_0' }

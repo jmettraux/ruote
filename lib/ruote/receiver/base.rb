@@ -148,7 +148,7 @@ module Ruote
     # http://groups.google.com/group/openwferu-users/t/2e6a95708c10847b for the
     # justification.
     #
-    def put(workitem_or_fei, hash)
+    def stash_put(workitem_or_fei, hash)
 
       exp = fetch_flow_expression(workitem_or_fei)
 
@@ -156,6 +156,8 @@ module Ruote
 
       exp.persist_or_raise
     end
+
+    alias put stash_put
 
     # Fetches back a stashed value.
     #
@@ -170,12 +172,14 @@ module Ruote
     # put & get are useful for a participant that needs to communicate
     # between its consume and its cancel.
     #
-    def get(workitem_or_fei, key=nil)
+    def stash_get(workitem_or_fei, key=nil)
 
       stash = fetch_flow_expression(workitem_or_fei).h['stash'] rescue {}
 
       key ? stash[key] : stash
     end
+
+    alias get stash_get
   end
 
   #
