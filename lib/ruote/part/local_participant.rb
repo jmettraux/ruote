@@ -58,7 +58,9 @@ module Ruote
 
     # Returns the current workitem
     #
-    def workitem
+    # the (_=nil) optional argument is for backward compatibility.
+    #
+    def workitem(_=nil)
 
       @workitem ? @workitem : applied_workitem
     end
@@ -73,7 +75,9 @@ module Ruote
     # Returns the Ruote::ParticipantExpression that corresponds with this
     # participant.
     #
-    def fexp
+    # the (_=nil) optional argument is for backward compatibility.
+    #
+    def fexp(_=nil)
 
       flow_expression(fei)
     end
@@ -81,7 +85,9 @@ module Ruote
     # Returns the workitem as was applied when the Ruote::ParticipantExpression
     # was reached.
     #
-    def applied_workitem
+    # the (_=nil) optional argument is for backward compatibility.
+    #
+    def applied_workitem(_=nil)
 
       Ruote::Workitem.new(fexp.h['applied_workitem'])
     end
@@ -103,6 +109,9 @@ module Ruote
     # Participant implementations call this method when their #on_workitem
     # (#consume) methods are done and they want to hand back the workitem
     # to the engine so that the flow can resume.
+    #
+    # the (wi=workitem) is mostly for backward compatibility (or for passing a
+    # totally different workitem to the engine).
     #
     def reply_to_engine(wi=workitem)
 

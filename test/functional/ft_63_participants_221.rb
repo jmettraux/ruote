@@ -390,5 +390,45 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
     assert_equal 'hypno', @tracer.to_s
   end
+
+  #
+  # fexp, fexp(fei)
+  # workitem, workitem(fei)
+  # applied_workitem, applied_workitem(fei)
+
+  class FexpParticipant
+    include Ruote::LocalParticipant
+    def consume
+
+      @context.tracer << fexp.lookup_variable('nada') + "\n"
+      @context.tracer << fexp(:whatever).lookup_variable('nada') + "\n"
+
+      @context.tracer << workitem.fields.size.to_s + "\n"
+      @context.tracer << workitem(:nada).fields.size.to_s + "\n"
+
+      @context.tracer << applied_workitem.fields.size.to_s + "\n"
+      @context.tracer << applied_workitem(:nada).fields.size.to_s + "\n"
+
+      reply
+    end
+  end
+
+  def test_helper_methods
+
+    @engine.register { felix FexpParticipant }
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(
+      Ruote.define() { felix },
+      {},
+      { 'nada' => 'surf' })
+
+    @engine.wait_for(wfid)
+
+    assert_equal(
+      %w[ surf surf 2 2 1 1 ],
+      @tracer.to_a)
+  end
 end
 
