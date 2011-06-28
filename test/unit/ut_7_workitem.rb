@@ -46,6 +46,11 @@ class UtWorkitemTest < Test::Unit::TestCase
 
     w0.set_field('customer.address', [ 'Cornwall Square 10b', 'Singapore-La' ])
     assert_equal 'Cornwall Square 10b', w0.lookup('customer.address.0')
+
+    assert_equal 'Jeff', w0['customer.name']
+
+    w0['customer.address'] = [ 'hondouri', 'hiroshima' ]
+    assert_equal 'hiroshima', w0['customer.address.1']
   end
 
   #def test_indifferent_access

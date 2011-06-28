@@ -224,6 +224,32 @@ module Ruote
       Ruote.set(@h['fields'], key, value)
     end
 
+    # Shortcut for #lookup(key)
+    #
+    #   workitem.fields['customer']['city']
+    #     # or
+    #   workitem.lookup('customer.city')
+    #     # or
+    #   workitem['customer.city']
+    #
+    def [](key)
+
+      lookup(key)
+    end
+
+    # Shortcut for #set_field(key, value)
+    #
+    #   workitem.fields['customer']['city'] = 'Toronto'
+    #     # or
+    #   workitem.set_field('customer.city', 'Toronto')
+    #     # or
+    #   workitem['customer.city'] = 'Toronto'
+    #
+    def []=(key, value)
+
+      set_field(key, value)
+    end
+
     # Shortcut for wi.fields['__timed_out__']
     #
     def timed_out

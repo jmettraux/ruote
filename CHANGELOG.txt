@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- Workitem #[] amd #[]= (#lookup and #set_field shortcuts)
 - LocalParticipant#lookup_variable(key)
 - LocalParticipant / Receiver : stash_get / stash_put
 - LocalParticipant implicit participant_name
