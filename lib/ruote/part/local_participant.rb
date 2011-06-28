@@ -56,11 +56,15 @@ module Ruote
     #
     attr_accessor :flavour
 
-    # Returns the current workitem
+    # Returns the current workitem if no fei is given.
+    # If a fei is given, it will return the applied workitem for that fei
+    # (if any).
     #
-    # the (_=nil) optional argument is for backward compatibility.
+    # The optional fei is mostly here for backward compatibility (with 2.2.0)
     #
-    def workitem(_=nil)
+    def workitem(fei=nil)
+
+      return fetch_workitem(fei) if fei
 
       @workitem ? @workitem : applied_workitem
     end
@@ -75,21 +79,23 @@ module Ruote
     # Returns the Ruote::ParticipantExpression that corresponds with this
     # participant.
     #
-    # the (_=nil) optional argument is for backward compatibility.
+    # If a wi_or_fei arg is given, will return the corresponding
+    # flow expression. This arg is mostly here for backward compatibility.
     #
-    def fexp(_=nil)
+    def fexp(wi_or_fei=nil)
 
-      flow_expression(fei)
+      flow_expression(wi_or_fei || fei)
     end
 
     # Returns the workitem as was applied when the Ruote::ParticipantExpression
     # was reached.
     #
-    # the (_=nil) optional argument is for backward compatibility.
+    # If the _fei arg is specified, it will return the corresponding applied
+    # workitem. This args is mostly here for backward compatibility.
     #
-    def applied_workitem(_=nil)
+    def applied_workitem(_fei=nil)
 
-      Ruote::Workitem.new(fexp.h['applied_workitem'])
+      fetch_workitem(_fei || fei)
     end
 
     # Up until ruote 2.2.1, the participant name had to be fetched from the

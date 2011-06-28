@@ -401,13 +401,13 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
     def consume
 
       @context.tracer << fexp.lookup_variable('nada') + "\n"
-      @context.tracer << fexp(:whatever).lookup_variable('nada') + "\n"
+      @context.tracer << fexp(fei).lookup_variable('nada') + "\n"
 
       @context.tracer << workitem.fields.size.to_s + "\n"
-      @context.tracer << workitem(:nada).fields.size.to_s + "\n"
+      @context.tracer << workitem(fei).fields.size.to_s + "\n"
 
       @context.tracer << applied_workitem.fields.size.to_s + "\n"
-      @context.tracer << applied_workitem(:nada).fields.size.to_s + "\n"
+      @context.tracer << applied_workitem(fei).fields.size.to_s + "\n"
 
       reply
     end
@@ -427,7 +427,7 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
     @engine.wait_for(wfid)
 
     assert_equal(
-      %w[ surf surf 2 2 1 1 ],
+      %w[ surf surf 2 1 1 1 ],
       @tracer.to_a)
   end
 end
