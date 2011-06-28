@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- LocalParticipant#lookup_variable(key)
 - LocalParticipant / Receiver : stash_get / stash_put
 - LocalParticipant implicit participant_name
 - LocalParticipant implicit workitem, fei, flavour and fexp

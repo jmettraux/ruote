@@ -430,5 +430,29 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
       %w[ surf surf 2 1 1 1 ],
       @tracer.to_a)
   end
+
+  #
+  # lookup_variable(key)
+
+  class LvParticipant
+    include Ruote::LocalParticipant
+    def on_workitem
+      @context.tracer << lookup_variable('nada') + "\n"
+      reply
+    end
+  end
+
+  def test_lookup_variable
+
+    @engine.register { louis LvParticipant }
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(Ruote.define() { louis }, {}, { 'nada' => 'surf' })
+
+    @engine.wait_for(wfid)
+
+    assert_equal 'surf', @tracer.to_s
+  end
 end
 

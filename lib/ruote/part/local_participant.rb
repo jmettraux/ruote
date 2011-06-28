@@ -112,6 +112,15 @@ module Ruote
       workitem.participant_name
     end
 
+    # A shortcut for
+    #
+    #   fexp.lookup_variable(key)
+    #
+    def lookup_variable(key)
+
+      fexp.lookup_variable(key)
+    end
+
     # Participant implementations call this method when their #on_workitem
     # (#consume) methods are done and they want to hand back the workitem
     # to the engine so that the flow can resume.
