@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- LocalParticipant implicit participant_name
 - LocalParticipant implicit workitem, fei, flavour and fexp
 - Participant #on_workitem, #dont_thread?, etc
 - FlowExpression #root and #root_id

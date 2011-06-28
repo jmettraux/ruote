@@ -364,5 +364,31 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
       %w[ ow/alpha op/0_0 or/0_0 oc/0_0 ow/bravo op/0_1 or/0_1 ],
       @tracer.to_a)
   end
+
+  #
+  # implicit participant name
+
+  class IpnParticipant
+    include Ruote::LocalParticipant
+    def consume
+      @context.tracer << participant_name
+      reply
+    end
+  end
+
+  def test_implicit_participant_name
+
+    @engine.register { hypno IpnParticipant }
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(Ruote.define do
+      hypno
+    end)
+
+    @engine.wait_for(wfid)
+
+    assert_equal 'hypno', @tracer.to_s
+  end
 end
 

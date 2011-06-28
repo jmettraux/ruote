@@ -86,6 +86,20 @@ module Ruote
       Ruote::Workitem.new(fexp.h['applied_workitem'])
     end
 
+    # Up until ruote 2.2.1, the participant name had to be fetched from the
+    # workitem. This is a shortcut, it lets you write participant code
+    # that look like
+    #
+    #   def on_workitem
+    #     (workitem.fields['supervisors'] || []) << participant_name
+    #     reply
+    #   end
+    #
+    def participant_name
+
+      workitem.participant_name
+    end
+
     # Participant implementations call this method when their #on_workitem
     # (#consume) methods are done and they want to hand back the workitem
     # to the engine so that the flow can resume.
