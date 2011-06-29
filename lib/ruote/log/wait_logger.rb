@@ -52,7 +52,7 @@ module Ruote
 
     def notify(msg)
 
-      puts(pretty_print(msg)) if @noisy
+      puts(fancy_print(msg)) if @noisy
 
       @seen << msg if msg['action'] != 'noop'
       @seen.shift if @seen.size > 147
