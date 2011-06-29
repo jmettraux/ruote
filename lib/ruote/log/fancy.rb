@@ -26,9 +26,9 @@
 module Ruote
 
   #
-  # A container for the pretty printing logic of TestLogger.
+  # A container for the fancy printing logic of TestLogger.
   #
-  module PrettyLogging
+  module FancyLogging
 
     protected
 
@@ -72,7 +72,7 @@ module Ruote
       "[#{mod}m#{s}[0m#{clear ? '' : "[#{@color}m"}"
     end
 
-    def pretty_print(msg)
+    def fancy_print(msg)
 
       @count += 1
       @count = 0 if @count > 9

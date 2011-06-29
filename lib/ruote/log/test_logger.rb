@@ -22,14 +22,14 @@
 # Made in Japan.
 #++
 
-require 'ruote/log/pretty'
+require 'ruote/log/fancy'
 
 
 module Ruote
 
   class TestLogger
 
-    include PrettyLogging
+    include FancyLogging
 
     attr_reader :seen
     attr_reader :log
@@ -63,7 +63,7 @@ module Ruote
 
     def notify(msg)
 
-      puts(pretty_print(msg)) if @noisy
+      puts(fancy_print(msg)) if @noisy
 
       if msg['action'] != 'noop'
         @seen << msg
@@ -107,7 +107,7 @@ module Ruote
     #
     def dump
 
-      @seen.collect { |msg| pretty_print(msg) }.join("\n")
+      @seen.collect { |msg| fancy_print(msg) }.join("\n")
     end
 
     def color=(c)
@@ -115,10 +115,10 @@ module Ruote
       @color = c
     end
 
-    def self.pp(msg)
+    def self.fp(msg)
 
       @logger ||= TestLogger.new(nil)
-      puts @logger.send(:pretty_print, msg)
+      puts @logger.send(:fancy_print, msg)
     end
 
     protected
