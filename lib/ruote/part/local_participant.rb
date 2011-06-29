@@ -23,6 +23,7 @@
 #++
 
 require 'ruote/receiver/base'
+require 'ruote/svc/dispatch_pool'
 
 
 module Ruote
@@ -226,6 +227,62 @@ module Ruote
     # Well, here it is, use with care.
     #
     alias :reject :re_dispatch
+
+    #--
+    # test methods
+    # prefixed with an underscore
+    #++
+
+    # Test shortcut, alleviates the need to set the workitem before calling
+    # consume / on_workitem.
+    #
+    def _on_workitem(wi)
+      Ruote.participant_send(
+        self, [ :on_workitem, :consume ], 'workitem' => wi)
+    end
+    alias _consume _on_workitem
+
+    # Test shortcut, alleviates the need to set fei and flavour before calling
+    # cancel / on_consume.
+    #
+    def _on_cancel(fei, flavour)
+      Ruote.participant_send(
+        self, [ :on_cancel, :cancel ], 'fei' => fei, 'flavour' => flavour)
+    end
+    alias _cancel _on_cancel
+
+    # Test shortcut, alleviates the need to set the workitem before calling
+    # on_reply.
+    #
+    def _on_reply(wi)
+      Ruote.participant_send(self, :on_reply, 'workitem' => wi)
+    end
+
+    # Test shortcut, alleviates the need to set the workitem before calling
+    # accept?
+    #
+    def _accept?(wi)
+      Ruote.participant_send(self, :accept?, 'workitem' => wi)
+    end
+
+    # Test shortcut, alleviates the need to set the workitem before calling
+    # dont_thread?, do_not_thread? or do_not_thread.
+    #
+    def _dont_thread?(wi)
+      Ruote.participant_send(
+        self,
+        [ :dont_thread?, :do_not_thread?, :do_not_thread ],
+        'workitem' => wi)
+    end
+    alias _do_not_thread _dont_thread?
+    alias _do_not_thread? _dont_thread?
+
+    # Test shortcut, alleviates the need to set the workitem before calling
+    # rtimeout.
+    #
+    def _rtimeout(wi)
+      Ruote.participant_send(self, :rtimeout, 'workitem' => wi)
+    end
 
     protected
 
