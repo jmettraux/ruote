@@ -157,7 +157,13 @@ module Ruote
 
       (exp.h['stash'] ||= {}).merge!(hash)
 
-      exp.persist_or_raise
+      r = exp.try_persist
+
+      return hash if r == nil
+      return stash_put(workitem_or_fei, key, value) if r != true
+
+      fei = Ruote::FlowExpressionId.extract(workitem_or_fei).sid rescue 'xxx'
+      raise ArgumentError.new("failed to put, expression #{fei} is gone")
     end
 
     alias put stash_put
