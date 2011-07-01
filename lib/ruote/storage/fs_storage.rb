@@ -68,6 +68,11 @@ module Ruote
       replace_engine_configuration(options)
     end
 
+    def dir
+
+      @cloche.dir
+    end
+
     def put(doc, opts={})
 
       @cloche.put(doc.merge!('put_at' => Ruote.now_to_utc_s), opts)
