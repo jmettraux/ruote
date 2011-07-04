@@ -150,12 +150,13 @@ module Ruote
       wi, opts = workitem, wi if wi.is_a?(Hash)
       wi ||= workitem
 
+      wi.h['re_dispatch_count'] = wi.h['re_dispatch_count'].to_s.to_i + 1
+
       msg = {
         'action' => 'dispatch',
         'fei' => wi.h.fei,
         'workitem' => wi.h,
-        'participant_name' => wi.participant_name,
-        'rejected' => true
+        'participant_name' => wi.participant_name
       }
 
       if t = opts[:in] || opts[:at]

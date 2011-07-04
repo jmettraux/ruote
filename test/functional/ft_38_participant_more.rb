@@ -18,6 +18,39 @@ class FtParticipantMoreTest < Test::Unit::TestCase
   #
   # tests about reject / re_dispatch
 
+  def test_re_dispatch_count_is_initially_zero
+
+    @engine.register { catchall }
+
+    wfid = @engine.launch(Ruote.define { alpha })
+    r = @engine.wait_for(:alpha)
+
+    assert_equal 0, r['workitem']['re_dispatch_count']
+  end
+
+  class CountingParticipant
+    include Ruote::LocalParticipant
+    def on_workitem
+      context.tracer << "#{workitem.re_dispatch_count}\n"
+      if workitem.re_dispatch_count < 5
+        re_dispatch
+      else
+        reply
+      end
+    end
+  end
+
+  def test_re_dispatch_count_is_incremented_at_each_re_dispatch
+
+    @engine.register { counter CountingParticipant }
+
+    wfid = @engine.launch(Ruote.define { counter })
+
+    @engine.wait_for(wfid)
+
+    assert_equal %w[ 0 1 2 3 4 5 ], @tracer.to_a
+  end
+
   class DifficultParticipant
     include Ruote::LocalParticipant
     def initialize(opts)

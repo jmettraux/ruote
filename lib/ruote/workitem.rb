@@ -394,6 +394,16 @@ module Ruote
       end
     end
 
+    # How many times was this workitem re_dispatched ?
+    #
+    # It's used by LocalParticipant re_dispatch mostly, or by participant
+    # which poll a resource and re_dispatch after a while.
+    #
+    def re_dispatch_count
+
+      @h['re_dispatch_count']
+    end
+
     # Encodes this workitem as JSON. If pretty is set to true, will output
     # prettified JSON.
     #
