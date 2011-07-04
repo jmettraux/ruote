@@ -401,7 +401,7 @@ module Ruote
     #
     def re_dispatch_count
 
-      @h['re_dispatch_count']
+      @h['re_dispatch_count'] || 0
     end
 
     # Encodes this workitem as JSON. If pretty is set to true, will output
