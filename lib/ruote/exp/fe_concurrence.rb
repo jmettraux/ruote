@@ -143,6 +143,8 @@ module Ruote::Exp
   #
   # ==== :union
   #
+  # (Available from ruote 2.2.1)
+  #
   # Will override atomic fields, concat arrays and merge hashes...
   #
   # The union of those two workitems
