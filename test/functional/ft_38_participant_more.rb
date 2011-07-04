@@ -15,6 +15,9 @@ require 'ruote/part/local_participant'
 class FtParticipantMoreTest < Test::Unit::TestCase
   include FunctionalBase
 
+  #
+  # tests about reject / re_dispatch
+
   class DifficultParticipant
     include Ruote::LocalParticipant
     def initialize(opts)
@@ -45,6 +48,30 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     assert_trace(%w[ diff diff ], pdef)
   end
 
+  class ReluctantParticipant
+    include Ruote::LocalParticipant
+    def initialize(opts)
+    end
+    def consume(workitem)
+      context.tracer << "x\n"
+      if workitem.fields['re_dispatched'].nil?
+        workitem.fields['re_dispatched'] = true
+        re_dispatch
+      else
+        reply_to_engine(workitem)
+      end
+    end
+  end
+
+  # Reject and re_dispatch are aliases.
+  #
+  def test_participant_re_dispatch_no_params
+
+    @engine.register_participant :alpha, ReluctantParticipant
+
+    assert_trace(%w[ x x ], Ruote.define { alpha })
+  end
+
   class FightingParticipant
     include Ruote::LocalParticipant
     def initialize(opts)
@@ -61,8 +88,6 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     end
   end
 
-  # Reject and re_dispatch are aliases.
-  #
   def test_participant_re_dispatch
 
     pdef = Ruote.process_definition do
@@ -96,8 +121,6 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     end
   end
 
-  # Reject and re_dispatch are aliases.
-  #
   # re_dispatch with an :in or an :at parameter makes sure the dispatch is
   # performed once more, but a bit later (:in / :at timepoint).
   #
@@ -142,6 +165,9 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
     assert_equal 0, @engine.storage.get_many('schedules').size
   end
+
+  #
+  # tests about stash_put and stash_get
 
   BLACKBOARD = {}
 

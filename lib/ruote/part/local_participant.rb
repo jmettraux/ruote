@@ -145,10 +145,10 @@ module Ruote
     #
     # Without one of those options, the method is a "reject".
     #
-    def re_dispatch(wi, opts={})
+    def re_dispatch(wi=nil, opts={})
 
-      opts = wi if wi.is_a?(Hash)
-      wi = workitem
+      wi, opts = workitem, wi if wi.is_a?(Hash)
+      wi ||= workitem
 
       msg = {
         'action' => 'dispatch',
