@@ -149,12 +149,32 @@ module Ruote::Exp
   #
   # The union of those two workitems
   #
-  #   { 'a' => 0, 'b' => [ 'x' ], 'c' => { 'aa' => 'bb' }
-  #   { 'a' => 1, 'b' => [ 'y' ], 'c' => { 'cc' => 'dd' }
+  #   { 'a' => 0, 'b' => [ 'x', 'y' ], 'c' => { 'aa' => 'bb' }
+  #   { 'a' => 1, 'b' => [ 'y', 'z' ], 'c' => { 'cc' => 'dd' }
   #
   # will be
   #
-  #   { 'a' => 1, 'b' => [ 'x', 'y' ], 'c' => { 'aa' => 'bb', 'cc' => 'dd' } }
+  #   { 'a' => 1,
+  #     'b' => [ 'x', 'y', 'z' ],
+  #     'c' => { 'aa' => 'bb', 'cc' => 'dd' } }
+  #
+  # Warning: duplicates in arrays present _before_ the merge will be removed
+  # as well.
+  #
+  # ==== :concat
+  #
+  # (Available from ruote 2.2.1)
+  #
+  # Much like :union, but duplicates are not removed. Thus
+  #
+  #   { 'a' => 0, 'b' => [ 'x', 'y' ], 'c' => { 'aa' => 'bb' }
+  #   { 'a' => 1, 'b' => [ 'y', 'z' ], 'c' => { 'cc' => 'dd' }
+  #
+  # will be
+  #
+  #   { 'a' => 1,
+  #     'b' => [ 'x', 'y', 'y', 'z' ],
+  #     'c' => { 'aa' => 'bb', 'cc' => 'dd' } }
   #
   #
   # === :over_if (and :over_unless)

@@ -370,7 +370,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
   def test_union_merge_type
 
     pdef = Ruote.process_definition :name => 'test' do
-      concurrent_iterator :on_value => (1..2).to_a, :merge_type => 'union' do
+      concurrent_iterator :on_value => (1..3).to_a, :merge_type => 'union' do
         alpha
       end
     end
@@ -384,7 +384,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
     r = @engine.wait_for(wfid)
 
-    assert_equal %w[ x x ], r['workitem']['fields']['a']
+    assert_equal %w[ x ], r['workitem']['fields']['a']
   end
 
   protected

@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Julien France - https://github.com/xaop - concat/union merge types enhancements
 Simone Carletti - documentation, bug hunting and various ideas
 Raphael Simon - error handling + filters design
 Nando Sola - lots of help

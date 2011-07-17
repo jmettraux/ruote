@@ -54,6 +54,12 @@ module Ruote::Exp
     # in the target workitem. The name of this field is the child_id of the
     # source workitem (a string from '0' to '99999' and beyond)
     #
+    # The 'concat' type merge hashes and concats arrays. The 'union' type
+    # behaves much like 'concat', but it makes sure to remove duplicates.
+    #
+    # Warning: 'union' will remove duplicates that were present _before_ the
+    # merge.
+    #
     def merge_workitem(index, target, source, merge_type)
 
       return source if merge_type == 'override'
@@ -71,7 +77,7 @@ module Ruote::Exp
           when 'isolate'
             source['fields'] = { index.to_s => source['fields'] }
 
-          #when 'union'
+          #when 'union', 'concat'
              # do nothing
         end
 
@@ -94,7 +100,7 @@ module Ruote::Exp
 
             target['fields'][index.to_s] = source['fields']
 
-          when 'union'
+          when 'union', 'concat'
 
             source['fields'].each do |k, sv|
 
@@ -102,6 +108,7 @@ module Ruote::Exp
 
               if sv.is_a?(Array) and tv.is_a?(Array)
                 tv.concat(sv)
+                tv.uniq! if merge_type == 'union'
               elsif sv.is_a?(Hash) and tv.is_a?(Hash)
                 tv.merge!(sv)
               else

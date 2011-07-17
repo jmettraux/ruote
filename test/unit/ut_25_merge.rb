@@ -99,15 +99,33 @@ class MergeTest < Test::Unit::TestCase
   def test_union
 
     workitems = [
-      new_workitem('a' => 0, 'b' => [ 'x' ], 'c' => { 'aa' => 'bb' }),
-      new_workitem('a' => 1, 'b' => [ 'y' ], 'c' => { 'cc' => 'dd' })
+      new_workitem('a' => 0, 'b' => [ 'x', 'y' ], 'c' => { 'aa' => 'bb' }),
+      new_workitem('a' => 1, 'b' => [ 'y', 'z' ], 'c' => { 'cc' => 'dd' })
     ]
 
     assert_equal(
       { 'fields' => {
-        'a' => 1, 'b' => [ 'x', 'y' ], 'c' => { 'aa' => 'bb', 'cc' => 'dd' }
+        'a' => 1,
+        'b' => [ 'x', 'y', 'z' ],
+        'c' => { 'aa' => 'bb', 'cc' => 'dd' }
       } },
       Merger.new.merge_workitems(workitems, 'union'))
+  end
+
+  def test_concat
+
+    workitems = [
+      new_workitem('a' => 0, 'b' => [ 'x', 'y' ], 'c' => { 'aa' => 'bb' }),
+      new_workitem('a' => 1, 'b' => [ 'y', 'z' ], 'c' => { 'cc' => 'dd' })
+    ]
+
+    assert_equal(
+      { 'fields' => {
+        'a' => 1,
+        'b' => [ 'x', 'y', 'y', 'z' ],
+        'c' => { 'aa' => 'bb', 'cc' => 'dd' }
+      } },
+      Merger.new.merge_workitems(workitems, 'concat'))
   end
 end
 
