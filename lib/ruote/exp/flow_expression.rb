@@ -112,10 +112,9 @@ module Ruote::Exp
     end
 
     def h=(hash)
+
       @h = hash
-      class << h
-        include Ruote::HashDot
-      end
+      class << @h; include Ruote::HashDot; end
     end
 
     # Returns the Ruote::FlowExpressionId for this expression.
@@ -682,6 +681,7 @@ module Ruote::Exp
     # if it got updated.
     #
     def tree
+
       h.updated_tree || h.original_tree
     end
 
@@ -702,6 +702,7 @@ module Ruote::Exp
     #   seq.do_persist
     #
     def update_tree(t=nil)
+
       h.updated_tree = t || Ruote.fulldup(h.original_tree)
     end
 
