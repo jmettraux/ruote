@@ -129,7 +129,9 @@ module Ruote::Exp
     #
     def parent_id
 
-      h.parent_id ? Ruote::FlowExpressionId.new(h.parent_id) : nil
+      h.parent_id ?
+        Ruote::FlowExpressionId.new(h.parent_id) :
+        nil
     end
 
     # Fetches the parent expression, or returns nil if there is no parent
@@ -137,7 +139,9 @@ module Ruote::Exp
     #
     def parent
 
-      Ruote::Exp::FlowExpression.fetch(@context, h.parent_id)
+      h.parent_id ?
+        Ruote::Exp::FlowExpression.fetch(@context, h.parent_id) :
+        nil
     end
 
     # Returns the root expression of this expression.
@@ -613,28 +617,10 @@ module Ruote::Exp
     def lookup_on_error
 
       if h.on_error
-
         self
-
-      elsif h.parent_id
-
-        par = parent
-          # :( get_parent would probably be a better name for #parent
-
-        #if par.nil? && ($DEBUG || ARGV.include?('-d'))
-        #  puts "~~"
-        #  puts "parent gone for"
-        #  puts "fei          #{Ruote.sid(h.fei)}"
-        #  puts "tree         #{tree.inspect}"
-        #  puts "replying to  #{Ruote.sid(h.parent_id)}"
-        #  puts "~~"
-        #end
-          # is sometimes helpful during debug sessions
-
-        par ? par.lookup_on_error : nil
-
+      elsif par = parent
+        par.lookup_on_error
       else
-
         nil
       end
     end
