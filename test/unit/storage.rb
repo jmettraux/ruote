@@ -41,6 +41,8 @@ class UtStorage < Test::Unit::TestCase
 
   def teardown
 
+    return unless @s
+
     @s.purge_type!('errors')
     @s.purge_type!('expressions')
     @s.purge_type!('msgs')
