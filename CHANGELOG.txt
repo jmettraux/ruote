@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- on_error expression
 - concurrence :merge_type => 'concat' (vs 'union') (Thanks Julien France)
 - Workitem#re_dispatch_count
 - Engine#launch(pdef, fields, vars, root_stash)

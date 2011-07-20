@@ -315,7 +315,7 @@ module Ruote::Exp
         @context.storage.delete_schedule(h.timeout_schedule_id)
       end
 
-      if h.state == 'failing' # on_error is implicit (#fail got called)
+      if h.state == 'failing' # on_error is implicit (#do_fail got called)
 
         trigger('on_error', workitem)
 
@@ -509,7 +509,7 @@ module Ruote::Exp
 
     # Called when handling an on_error, will place itself in a 'failing' state
     # and cancel the children (when the reply from the children comes back,
-    # the on_reply will get triggered).
+    # the on_error will get triggered).
     #
     def do_fail(msg)
 
@@ -612,17 +612,39 @@ module Ruote::Exp
       parent.ancestor?(fei)
     end
 
-    # Looks up "on_error" attribute
+    # Given an error, returns the on_error registered for it, or nil if none.
     #
-    def lookup_on_error
+    def local_on_error(err)
 
-      if h.on_error
-        self
-      elsif par = parent
-        par.lookup_on_error
-      else
-        nil
+      if h.on_error.is_a?(String) or Ruote.is_tree?(h.on_error)
+
+        return h.on_error
       end
+
+      if h.on_error.is_a?(Array)
+
+        h.on_error.each do |oe|
+          return oe.last if oe.first.nil?
+          return oe.last if Ruote.regex_or_s(oe.first).match(err['message'])
+        end
+      end
+
+      nil
+    end
+
+    # Looks up "on_error" attribute locally and in the parent expressions,
+    # if any.
+    #
+    def lookup_on_error(err)
+
+      if local_on_error(err)
+        return self
+      end
+      if par = parent
+        return par.lookup_on_error(err)
+      end
+
+      nil
     end
 
     # Looks up parent with on_error attribute and triggers it
@@ -631,25 +653,26 @@ module Ruote::Exp
 
       return false if h.state == 'failing'
 
-      oe_parent = lookup_on_error
-
-      return false unless oe_parent
-        # no parent with on_error attribute found
-
-      handler = oe_parent.on_error.to_s
-
-      return false if handler == ''
-        # empty on_error handler nullifies ancestor's on_error
-
-      workitem = msg['workitem']
-
-      workitem['fields']['__error__'] = {
+      err = {
         'fei' => fei,
         'at' => Ruote.now_to_utc_s,
         'class' => error.class.to_s,
         'message' => error.message,
         'trace' => error.backtrace
       }
+
+      oe_parent = lookup_on_error(err)
+
+      return false unless oe_parent
+        # no parent with on_error attribute found
+
+      handler = oe_parent.local_on_error(err).to_s
+
+      return false if handler == ''
+        # empty on_error handler nullifies ancestor's on_error
+
+      workitem = msg['workitem']
+      workitem['fields']['__error__'] = err
 
       @context.storage.put_msg(
         'fail',
@@ -866,27 +889,31 @@ module Ruote::Exp
     #
     def trigger(on, workitem)
 
-      hon = h[on]
+      handler = if on == 'on_error'
+        local_on_error(h.applied_workitem['fields']['__error__'])
+      else
+        h[on]
+      end
 
-      t = hon.is_a?(String) ? [ hon, {}, [] ] : hon
+      t = handler.is_a?(String) ? [ handler, {}, [] ] : handler
 
       if on == 'on_error'
 
-        if hon == 'redo' or hon == 'retry'
+        if handler == 'redo' or handler == 'retry'
 
           t = tree
 
-        elsif hon == 'undo' or hon == 'pass'
+        elsif handler == 'undo' or handler == 'pass'
 
           h.state = 'failed'
           reply_to_parent(workitem)
 
-          return
+          return # let's forget this error
         end
 
       elsif on == 'on_timeout'
 
-        t = tree if hon == 'redo' or hon == 'retry'
+        t = tree if handler == 'redo' or handler == 'retry'
       end
 
       supplant_with(t, 'trigger' => on)
