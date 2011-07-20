@@ -91,5 +91,25 @@ class EftOnErrorTest < Test::Unit::TestCase
 
     assert_equal 'unknown participant', @tracer.to_s
   end
+
+  def test_class_match
+
+    pdef = Ruote.process_definition do
+      on_error 'RuntimeError' => 'bravo'
+      on_error 'alpha'
+      nada
+    end
+
+    @engine.register_participant /alpha|bravo/ do |workitem|
+      @tracer << workitem.participant_name
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal 'bravo', @tracer.to_s
+  end
 end
 

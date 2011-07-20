@@ -623,9 +623,16 @@ module Ruote::Exp
 
       if h.on_error.is_a?(Array)
 
+        # all for the 'on_error' expression
+        # see test/functional/eft_38_
+
         h.on_error.each do |oe|
+
           return oe.last if oe.first.nil?
-          return oe.last if Ruote.regex_or_s(oe.first).match(err['message'])
+
+          crit = Ruote.regex_or_s(oe.first)
+          return oe.last if crit.match(err['message'])
+          return oe.last if crit.match(err['class'])
         end
       end
 
