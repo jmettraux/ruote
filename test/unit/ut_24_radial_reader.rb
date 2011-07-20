@@ -304,11 +304,13 @@ process_definition name: "nada"
 
     tree = Ruote::RadialReader.read(%{
       process_definition "nada"
+        on_error /unknown/: error_handler
         participant nada, fix: /nada/
     })
 
     assert_equal(
       [ 'process_definition', { 'nada' => nil }, [
+        [ 'on_error', { '/unknown/' => 'error_handler' }, [] ],
         [ 'participant', { 'nada' => nil, 'fix' => '/nada/' }, [] ]
       ]],
       tree)
