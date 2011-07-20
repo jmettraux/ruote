@@ -380,5 +380,30 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'fail' }.size
   end
+
+  # Only to show what's behind :on_error
+  #
+  def test_on_error_multi
+
+    pdef = Ruote.process_definition do
+      sequence :on_error => [
+        [ /unknown participant/, 'alpha' ],
+        [ nil, 'bravo' ]
+      ] do
+        nada
+      end
+    end
+
+    @engine.register_participant /alpha|bravo/ do |workitem|
+      @tracer << workitem.participant_name
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal 'alpha', @tracer.to_s
+  end
 end
 
