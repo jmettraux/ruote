@@ -147,6 +147,7 @@ module Ruote::Exp
       h.applied_workitem['participant_name'] = h.participant_name
 
       h.applied_workitem['fields']['params'] = compile_atts
+      h.applied_workitem['fields']['params']['__tree__'] = tree.last if tree.last.any?
       h.applied_workitem['fields'].delete('t')
       h.applied_workitem['re_dispatch_count'] = 0
 

@@ -145,5 +145,30 @@ class EftParticipantTest < Test::Unit::TestCase
     assert_equal nil, fexp.dispatched
       # not yet 'dispatched'
   end
+
+  def test_tree
+
+    require_json
+    Rufus::Json.detect_backend
+
+    @engine.register_participant :alice do |workitem|
+      @tracer << Rufus::Json.encode(workitem.params['__tree__'])
+    end
+
+    pdef = Ruote.define do
+      alice do
+        on_error /500/ => 'this_or_that'
+      end
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal(
+      [ [ 'on_error', { '/500/' => 'this_or_that' }, [] ] ],
+      Rufus::Json.decode(@tracer.to_s))
+  end
 end
 
