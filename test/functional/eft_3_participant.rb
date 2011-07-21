@@ -157,17 +157,23 @@ class EftParticipantTest < Test::Unit::TestCase
 
     pdef = Ruote.define do
       alice do
-        on_error /500/ => 'this_or_that'
+        on_error /500/ => 'this_or_${that}'
+        whatever 'list' => '$f:list'
       end
     end
 
     #@engine.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @engine.launch(
+      pdef,
+      'that' => 'those',
+      'list' => [ 1, 'two of ${that}', 3 ])
+
     @engine.wait_for(wfid)
 
     assert_equal(
-      [ [ 'on_error', { '/500/' => 'this_or_that' }, [] ] ],
+      [ [ 'on_error', { '/500/' => 'this_or_those' }, [] ],
+        [ 'whatever', { 'list' => [ 1, 'two of ${that}', 3 ] }, [] ] ],
       Rufus::Json.decode(@tracer.to_s))
   end
 end

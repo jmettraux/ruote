@@ -60,7 +60,7 @@ module Ruote::Exp
       elsif escape
         v
       else
-        @context.dollar_sub.s(v, self, workitem)
+        dsub(v, workitem)
       end
 
       v = v.to_s if v and string
@@ -130,8 +130,7 @@ module Ruote::Exp
     def expand_atts(opts={})
 
       attributes.keys.inject({}) { |r, k|
-        kk = @context.dollar_sub.s(k, self, h.applied_workitem)
-        r[kk] = attribute(k, h.applied_workitem, opts)
+        r[dsub(k)] = attribute(k, h.applied_workitem, opts)
         r
       }
     end
@@ -154,11 +153,25 @@ module Ruote::Exp
 
       text = attributes.keys.find { |k| attributes[k] == nil }
 
-      @context.dollar_sub.s(text.to_s, self, workitem)
+      dsub(text.to_s, workitem)
     end
 
     protected
 
+    # dollar substitution for expressions.
+    #
+    def dsub(o, wi=h.applied_workitem)
+
+      case o
+        when String; @context.dollar_sub.s(o, self, wi)
+        when Array; o.collect { |e| dsub(e, wi) }
+        when Hash; o.inject({}) { |h, (k, v)| h[dsub(k, wi)] = dsub(v, wi); h }
+        else o
+      end
+    end
+
+    # 'tos' meaning 'many "to"'
+    #
     def determine_tos
 
       to_v = attribute(:to_v) || attribute(:to_var) || attribute(:to_variable)

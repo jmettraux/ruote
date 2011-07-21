@@ -90,7 +90,7 @@ module Ruote
 
     # If the final text is of the form "$f:x" or "$v:y" will lookup the
     # x field or the y variable. If the lookup is successful (not nil) will
-    # return the, not the text.
+    # return the value, not the text (the value.to_s).
     #
     def literal_sub(s, fexp, wi)
 
