@@ -152,7 +152,7 @@ class EftParticipantTest < Test::Unit::TestCase
     Rufus::Json.detect_backend
 
     @engine.register_participant :alice do |workitem|
-      @tracer << Rufus::Json.encode(workitem.params['__tree__'])
+      @tracer << Rufus::Json.encode(workitem.params['__children__'])
     end
 
     pdef = Ruote.define do

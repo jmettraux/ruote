@@ -151,7 +151,7 @@ module Ruote::Exp
       h.applied_workitem['re_dispatch_count'] = 0
 
       if tree.last.any?
-        h.applied_workitem['fields']['params']['__tree__'] = dsub(tree.last)
+        h.applied_workitem['fields']['params']['__children__'] = dsub(tree.last)
       end
 
       schedule_timeout(h.participant)
