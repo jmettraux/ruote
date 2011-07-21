@@ -389,6 +389,11 @@ class UtStorage < Test::Unit::TestCase
       'house' => 'minamoto', 'preserve_configuration' => true)
 
     assert_equal 'taira', s.get_configuration('engine')['house']
+
+    # if this test is giving a
+    # "NoMethodError: undefined method `[]' for nil:NilClass"
+    # for ruote-dm, comment out the auto_upgrade! block in
+    # ruote-dm/test/functional_connection.rb
   end
 
   protected
