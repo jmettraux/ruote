@@ -58,7 +58,7 @@ module Ruote::Exp
         tree[1]['ref'] = key
       end
 
-      key = @context.dollar_sub.s(key, self, h.applied_workitem)
+      key = dsub(key)
         # see test/functional/ft_62_
 
       key2, value = iterative_var_lookup(key)

@@ -308,8 +308,8 @@ module Ruote::Exp
         ref = c[1]['ref']
         tag = c[1]['tag']
 
-        ref = @context.dollar_sub.s(ref, self, workitem) if ref
-        tag = @context.dollar_sub.s(tag, self, workitem) if tag
+        ref = dsub(ref, workitem) if ref
+        tag = dsub(tag, workitem) if tag
 
         next if exp_name != arg && ref != arg && tag != arg
 
