@@ -154,6 +154,24 @@ module Ruote
       @h[type].keys.sort
     end
 
+    #--
+    # keeping it commented out... using it for documentation efforts
+    #class NoisyHash < Hash
+    #  def initialize(type)
+    #    @type = type
+    #    super()
+    #  end
+    #  def []=(k, v)
+    #    puts "       + #{@type}.put #{k} #{v['_rev']}"
+    #    super
+    #  end
+    #  def delete(k)
+    #    puts "       - #{@type}.del #{k} "
+    #    super
+    #  end
+    #end
+    #++
+
     # Purges the storage completely.
     #
     def purge!
@@ -171,6 +189,7 @@ module Ruote
 
       ].inject({}) { |h, k|
         h[k] = {}
+        #h[k] = NoisyHash.new(k)
         h
       }
 
