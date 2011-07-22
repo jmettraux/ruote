@@ -485,3 +485,5 @@
 [ ] Parslet for conditions ?
 [ ] enhance radial/Parslet error messages (cf Raphael)
 
+[ ] citerator: drop the need for the sequence --> implicit sequence
+

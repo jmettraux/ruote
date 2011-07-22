@@ -56,11 +56,13 @@ module Ruote::Exp
 
       var, prefix = split_prefix(var, prefix)
 
-      return @context.storage.get_engine_variable(var) \
-        if prefix.length >= 2
+      if prefix.length >= 2
+        return @context.storage.get_engine_variable(var)
+      end
 
-      return parent.lookup_variable(var, prefix) \
-        if h.parent_id && prefix.length >= 1
+      if prefix.length >= 1 && par = parent
+        return par.lookup_variable(var, prefix)
+      end
 
       if h.variables
 
@@ -166,19 +168,30 @@ module Ruote::Exp
     # Returns the flow expression that owns a variable (or the one
     # that should own it) and the var without its potential / prefixes.
     #
+    # In other words:
+    #
+    #   [ owner, varname_without_slashes ]
+    #
+    # When a location for the variable could not be found, it returns:
+    #
+    #   [ nil, nil ]
+    #
     def locate_var(var, prefix=nil)
 
       var, prefix = split_prefix(var, prefix)
 
       return nil if prefix.length >= 2 # engine variable
-      return parent.locate_var(var, prefix) if prefix.length == 1 && h.parent_id
+
+      if prefix.length == 1 && par = parent
+        return par.locate_var(var, prefix)
+      end
 
       # no prefix...
 
       return [ self, var ] if h.variables
 
       if par = parent
-        return parent.locate_var(var, prefix) rescue nil
+        (return par.locate_var(var, prefix)) rescue nil
       end
 
       #raise "uprooted var lookup, something went wrong"
