@@ -113,8 +113,10 @@ module Ruote
       @h = h
       class << h; include Ruote::HashDot; end
 
-      @h['subid'] = @h.delete('sub_wfid') if @h['sub_wfid']
-        # TODO : for 2.1.13, remove this
+      sub_wfid = @h.delete('sub_wfid')
+      @h['subid'] ||= sub_wfid
+        #
+        # TODO : for 2.2.2, remove those two lines
     end
 
     def expid; @h['expid']; end
