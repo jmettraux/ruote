@@ -151,6 +151,36 @@ class FtTagsTest < Test::Unit::TestCase
     assert_equal [], wi.tags
   end
 
+  # Cf http://groups.google.com/group/openwferu-users/browse_thread/thread/61f037bc491dcf4c
+  #
+  def test_tags_workitems_and_cursor
+
+    pdef = Ruote.define do
+      sequence :tag => 'phase1' do
+        concurrence :merge_type => :union do
+          alpha
+          bravo
+        end
+        charly
+      end
+    end
+
+    @engine.register_participant '.+' do |workitem|
+      if workitem.participant_name == 'charly'
+        workitem.fields['tags'] = workitem.fields['__tags__'].dup
+      end
+      nil
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef, 'my_array' => [ 1 ])
+    r = @engine.wait_for(wfid)
+
+    assert_equal(%w[ phase1 ], r['workitem']['fields']['tags'])
+    assert_equal([], r['workitem']['fields']['__tags__'])
+  end
+
   def test_tag_and_define
 
     pdef = Ruote.define :tag => 'nada' do
