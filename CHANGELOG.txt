@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- Storage#done optional method
 - participant params.__children__
 - on_error expression
 - concurrence :merge_type => 'concat' (vs 'union') (Thanks Julien France)
