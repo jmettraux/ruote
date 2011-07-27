@@ -118,7 +118,7 @@ module Ruote
     #
     # Returns the wfid (workflow instance id) of the running single.
     #
-    def launch_single(process_definition, fields={}, variables={})
+    def launch_single(process_definition, fields={}, variables={}, root_stash=nil)
 
       tree = @context.reader.read(process_definition)
       name = tree[1]['name'] || (tree[1].find { |k, v| v.nil? } || []).first
@@ -141,7 +141,7 @@ module Ruote
 
       r = @context.storage.put(singles)
 
-      return launch_single(tree, fields, variables) unless r.nil?
+      return launch_single(tree, fields, variables, root_stash) unless r.nil?
         #
         # the put failed, back to the start...
         #
@@ -155,7 +155,8 @@ module Ruote
         'wfid' => wfid,
         'tree' => tree,
         'workitem' => { 'fields' => fields },
-        'variables' => variables)
+        'variables' => variables,
+        'stash' => root_stash)
 
       wfid
     end
