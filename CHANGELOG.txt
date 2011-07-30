@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- dispatch_pool and context['do_not_thread_participants']
 - Storage#done optional method
 - participant params.__children__
 - on_error expression

@@ -56,7 +56,7 @@ module Ruote
       participant = @context.plist.lookup(
         msg['participant'] || msg['participant_name'], msg['workitem'])
 
-      if do_not_thread?(participant, msg)
+      if @context['do_not_thread_participants'] || do_not_thread?(participant, msg)
         do_dispatch(participant, msg)
       else
         do_threaded_dispatch(participant, msg)
