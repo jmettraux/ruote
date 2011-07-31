@@ -116,6 +116,19 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     end
   end
 
+  # cf https://github.com/jmettraux/ruote/issues/30
+  #
+  def test_begin_rescue_end
+
+    @engine.register 'rogue' do |workitem|
+      begin
+      rescue => e
+      end
+    end
+
+    assert true
+  end
+
   def test_on_cancel_registration
 
     @engine.register 'nemo',
