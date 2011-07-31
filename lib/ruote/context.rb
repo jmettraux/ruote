@@ -100,9 +100,12 @@ module Ruote
       value
     end
 
+    # Configuration keys and service keys.
+    #
     def keys
 
-      get_conf.keys
+      #get_conf.keys
+      (@services.keys + get_conf.keys).uniq.sort
     end
 
     def add_service(key, *args)

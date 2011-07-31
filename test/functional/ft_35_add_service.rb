@@ -52,5 +52,21 @@ class FtAddServiceTest < Test::Unit::TestCase
 
     assert_equal MyService, toto.class
   end
+
+  # Fighting https://github.com/jmettraux/ruote/issues/28
+  #
+  def test_add_history
+
+    assert_equal Ruote::DefaultHistory, @engine.context.history.class
+
+    @engine.add_service(
+      'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
+
+    assert_equal Ruote::StorageHistory, @engine.context.history.class
+
+    engine = Ruote::Engine.new(@engine.storage)
+
+    assert_equal Ruote::StorageHistory, engine.context.history.class
+  end
 end
 
