@@ -179,6 +179,31 @@ class FtTimeoutTest < Test::Unit::TestCase
     assert_equal 2, ps.expressions.size
   end
 
+  def test_on_timeout_jump
+
+    pdef = Ruote.define do
+      cursor do
+        alpha :timeout => '1.1', :on_timeout => 'jump to charly'
+        bravo
+        charly
+      end
+    end
+
+    @engine.register_participant 'alpha' do |wi|
+      sleep 60
+    end
+    @engine.register_participant '.+' do |wi|
+      @tracer << wi.participant_name + "\n"
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal 'charly', @tracer.to_s
+  end
+
   def test_timeout_then_error
 
     pdef = Ruote.process_definition do

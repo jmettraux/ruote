@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- :on_timeout => 'rewind', :on_timeout => 'jump to alpha'
 - :on_error => 'rewind', :on_error => 'jump to alpha'
 - dispatch_pool and context['do_not_thread_participants']
 - Storage#done optional method

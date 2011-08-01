@@ -904,7 +904,7 @@ module Ruote::Exp
 
       new_tree = handler.is_a?(String) ? [ handler, {}, [] ] : handler
 
-      if on == 'on_error'
+      if on == 'on_error' or on == 'on_timeout'
 
         case handler
 
@@ -933,12 +933,6 @@ module Ruote::Exp
 
             return # we're dealing with it
         end
-
-      elsif on == 'on_timeout'
-
-        new_tree = tree if handler == 'redo' or handler == 'retry'
-
-        # TODO maybe treat on_error and on_timeout identically
       end
 
       supplant_with(new_tree, 'trigger' => on)
