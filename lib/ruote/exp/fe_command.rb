@@ -89,6 +89,10 @@ module Ruote::Exp
 
     names :skip, :back, :jump, :rewind, :continue, :break, :stop, :over, :reset
 
+    # Used by FlowExpression when dealing with :on_error or :on_timeout
+    #
+    REGEXP = Regexp.new("^(#{expression_names.join('|')})( .+)?$")
+
     def apply
 
       param = case name

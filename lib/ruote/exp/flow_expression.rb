@@ -902,28 +902,46 @@ module Ruote::Exp
         h[on]
       end
 
-      t = handler.is_a?(String) ? [ handler, {}, [] ] : handler
+      new_tree = handler.is_a?(String) ? [ handler, {}, [] ] : handler
 
       if on == 'on_error'
 
-        if handler == 'redo' or handler == 'retry'
+        case handler
 
-          t = tree
+          when 'redo', 'retry'
 
-        elsif handler == 'undo' or handler == 'pass'
+            new_tree = tree
 
-          h.state = 'failed'
-          reply_to_parent(workitem)
+          when 'undo', 'pass'
 
-          return # let's forget this error
+            h.state = 'failed'
+            reply_to_parent(workitem)
+
+            return # let's forget this error
+
+          when CommandExpression::REGEXP
+
+            hh = handler.split(' ')
+            command = hh.first
+            step = hh.last
+              # 'jump to shark' or 'jump shark', ...
+
+            h.state = nil
+            workitem['fields'][CommandMixin::F_COMMAND] = [ command, step ]
+
+            reply(workitem)
+
+            return # we're dealing with it
         end
 
       elsif on == 'on_timeout'
 
-        t = tree if handler == 'redo' or handler == 'retry'
+        new_tree = tree if handler == 'redo' or handler == 'retry'
+
+        # TODO maybe treat on_error and on_timeout identically
       end
 
-      supplant_with(t, 'trigger' => on)
+      supplant_with(new_tree, 'trigger' => on)
     end
   end
 end

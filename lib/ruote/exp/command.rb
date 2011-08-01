@@ -30,7 +30,12 @@ module Ruote::Exp
   #
   module CommandMixin
 
+    # Field name '__command__', where one can place a command.
+    #
     F_COMMAND = '__command__'
+
+    # break_if, break_unless, rewind_if, rewind_unless, ...
+    #
     ATT_COMMANDS = %w[ break rewind reset over stop ]
 
     protected

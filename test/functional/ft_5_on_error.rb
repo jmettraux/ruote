@@ -405,5 +405,48 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_equal 'alpha', @tracer.to_s
   end
+
+  def test_on_error_rewind
+
+    pdef = Ruote.define do
+      cursor :on_error => 'rewind' do
+        echo 'in'
+        inc 'v:counter'
+        error 'fail', :if => '${v:counter} == 1'
+        echo 'over.'
+      end
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal %w[ in in over. ], @tracer.to_a
+  end
+
+  def test_on_error_jump_to
+
+    pdef = Ruote.define do
+      cursor :on_error => 'jump to shark' do
+        alpha
+        error 'fail'
+        bravo
+        shark
+        delta
+      end
+    end
+
+    #@engine.noisy = true
+
+    @engine.register '.+' do |workitem|
+      @tracer << workitem.participant_name + "\n"
+    end
+
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
+
+    assert_equal %w[ alpha shark delta ], @tracer.to_a
+  end
 end
 
