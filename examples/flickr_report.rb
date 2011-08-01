@@ -1,4 +1,3 @@
-
 $:.unshift('lib')
 
 require 'rubygems'
@@ -88,7 +87,10 @@ engine.register_participant :generate_result_pdf do |workitem|
   end
   puts ".generated out.pdf"
 
-  `rm pic*.jpg`
+  entries.each_with_index do |entry, i|
+    `rm  "pic#{i}.jpg"`
+     puts "..removed pic#{i}.jpg"
+  end
 end
 
 #
