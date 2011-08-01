@@ -1,3 +1,4 @@
+
 $:.unshift('lib')
 
 require 'rubygems'
@@ -15,23 +16,21 @@ engine = Ruote::Engine.new(Ruote::Worker.new(Ruote::HashStorage.new()))
 # them concurrently to three users for review
 
 pdef = Ruote.process_definition :name => 'picture_acquisition' do
-  sequence do
 
-    get_pictures
+  get_pictures
 
-    concurrence :merge_type => 'mix' do
-      # pass the picture list to three users concurrently
-      # make sure to let their choice appear in the final workitem
-      # at the end of the concurrence
+  concurrence :merge_type => 'mix' do
+    # pass the picture list to three users concurrently
+    # make sure to let their choice appear in the final workitem
+    # at the end of the concurrence
 
-      user_alice
-      user_bob
-      user_charly
-      user_doug
-    end
-
-    generate_result_pdf
+    user_alice
+    user_bob
+    user_charly
+    user_doug
   end
+
+  generate_result_pdf
 end
 
 #
@@ -65,33 +64,44 @@ end
 #
 # the final participant, generates an "out.pdf" file in the current dir
 
-engine.register_participant :generate_result_pdf do |workitem|
+# This time we implement a participant class. The "block participants" we
+# have used so are nice, but they are not allowed to use backquotes, so ...
+#
+class ResultGenerator
+  include Ruote::LocalParticipant
 
-  entries = workitem.fields.inject([]) do |a, (k, v)|
-    a << [ k, v.last ] if k.match(/^user\_.+$/)
-    a
-  end
+  def consume(workitem)
 
-  entries.each_with_index do |entry, i|
-    entry << "pic#{i}.jpg"
-    `curl #{entry[1]} > #{entry[2]}`
-    puts "..got #{entry[0]} / #{entry[2]}"
-  end
-
-  Prawn::Document.generate('out.pdf') do
-    font 'Helvetica'
-    entries.each do |entry|
-      text entry[0]
-      image entry[2], :width => 200
+    entries = workitem.fields.inject([]) do |a, (k, v)|
+      a << [ k, v.last ] if k.match(/^user\_.+$/)
+      a
     end
-  end
-  puts ".generated out.pdf"
 
-  entries.each_with_index do |entry, i|
-    `rm  "pic#{i}.jpg"`
-     puts "..removed pic#{i}.jpg"
+    entries.each_with_index do |entry, i|
+      entry << "pic#{i}.jpg"
+      `curl #{entry[1]} > #{entry[2]}`
+      puts "..got #{entry[0]} / #{entry[2]}"
+    end
+
+    Prawn::Document.generate('out.pdf') do
+      font 'Helvetica'
+      entries.each do |entry|
+        text entry[0]
+        image entry[2], :width => 200
+      end
+    end
+    puts ".generated out.pdf"
+
+    entries.each_with_index do |entry, i|
+      `rm  "pic#{i}.jpg"`
+      puts "..removed pic#{i}.jpg"
+    end
+
+    reply_to_engine(workitem)
   end
 end
+
+engine.register_participant :generate_result_pdf, ResultGenerator
 
 #
 # launching the process, requesting pictures tagged 'cat' and 'fish'
