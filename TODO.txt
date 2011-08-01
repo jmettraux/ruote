@@ -477,6 +477,7 @@
 [ ] @engine.context['trust_code_participants'] = true
 [ ] @engine.register(x, :trusted => true, &block)
 [ ] security service ? context['x'] but then, more advanced behaviours
+[ ] subaltern
 
 [o] register :toto, :accept? => lambda { |workitem| ... }
 [o] register :toto, :do_not_thread => lambda { |workitem| ... }
