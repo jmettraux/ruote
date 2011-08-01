@@ -2,8 +2,16 @@
 $:.unshift('lib') # running from ruote/ probably
 
 require 'rubygems'
+
+begin
+  require 'yajl'
+rescue LoadError => le
+  require 'json'
+end
+
 require 'ruote'
 require 'ruote/storage/fs_storage'
+
 
 # preparing the engine
 
@@ -12,6 +20,7 @@ engine = Ruote::Engine.new(
     Ruote::FsStorage.new(
       'ruote_work',
       's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
+
 
 # registering participants
 
@@ -23,6 +32,7 @@ engine.register_participant :bravo do |workitem|
   puts "I received a message from #{workitem.fields['message']['author']}"
 end
 
+
 # defining a process
 
 pdef = Ruote.process_definition :name => 'test' do
@@ -31,6 +41,7 @@ pdef = Ruote.process_definition :name => 'test' do
     participant :bravo
   end
 end
+
 
 # launching, creating a process instance
 
