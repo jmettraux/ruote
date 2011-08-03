@@ -97,8 +97,8 @@ module Ruote
     delegate :get_engine_variable, :variables
     delegate :put_engine_variable, :variables
 
-    #def add_type (type)
-    #end
+    def add_type (type)
+    end
 
     TYPES = %w[
       variables
