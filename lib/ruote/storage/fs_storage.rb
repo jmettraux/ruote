@@ -111,7 +111,7 @@ module Ruote
       FileUtils.rm_rf(@cloche.dir)
     end
 
-    # No need for that here (FsStorage adds type on the fly).
+    # No need for that here (FsStorage can add types on the fly).
     #
     def add_type(type)
     end

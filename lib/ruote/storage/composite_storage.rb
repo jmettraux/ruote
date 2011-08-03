@@ -97,7 +97,10 @@ module Ruote
     delegate :get_engine_variable, :variables
     delegate :put_engine_variable, :variables
 
-    def add_type (type)
+    # The dilemma for the CompositeStorage with add_type is "to which
+    # real storage should the new type get added". The solution: do nothing.
+    #
+    def add_type(type)
     end
 
     TYPES = %w[
