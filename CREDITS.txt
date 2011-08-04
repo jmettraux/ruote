@@ -14,6 +14,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 == Contributors
 
 Akeem Adeniji - https://github.com/akeem - add_type and composite storage
+Bjoern Boettcher - https://github.com/doITdistributed - example fixing
 Julien France - https://github.com/xaop - concat/union merge types enhancements
 Simone Carletti - documentation, bug hunting and various ideas
 Raphael Simon - error handling + filters design
