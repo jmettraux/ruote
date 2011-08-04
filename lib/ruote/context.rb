@@ -108,11 +108,15 @@ module Ruote
       (@services.keys + get_conf.keys).uniq.sort
     end
 
+    # Called by Ruote::Dashboard#add_service
+    #
     def add_service(key, *args)
 
       path, klass, opts = args
 
       key = "s_#{key}" unless SERVICE_PREFIX.match(key)
+
+      # TODO remove/unsubscribe previous service
 
       service = if klass
 

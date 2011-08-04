@@ -23,7 +23,7 @@
 #++
 
 require 'ruote/util/tree'
-require 'ruote/engine/process_error'
+require 'ruote/dashboard/process_error'
 
 
 module Ruote
@@ -31,7 +31,7 @@ module Ruote
   #
   # A 'view' on the status of a process instance.
   #
-  # Returned by the #process and the #processes methods of the Engine.
+  # Returned by the #process and the #processes methods of Ruote::Dashboard.
   #
   class ProcessStatus
 
@@ -60,7 +60,7 @@ module Ruote
     #
     attr_reader :schedules
 
-    # Called by Ruote::Engine#processes or Ruote::Engine#process.
+    # Called by Ruote::Dashboard#processes or Ruote::Dashboard#process.
     #
     def initialize(context, expressions, stored_workitems, errors, schedules)
 
@@ -410,7 +410,7 @@ module Ruote
       Ruote.recompose_tree(h)
     end
 
-    # Used by Engine#process and Engine#processes
+    # Used by Ruote::Dashboard#process and #processes
     #
     def self.fetch(context, wfids, opts)
 

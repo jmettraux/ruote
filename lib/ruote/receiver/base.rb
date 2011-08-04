@@ -29,7 +29,7 @@ module Ruote
   # The core methods for the Receiver class (sometimes a Mixin is easier
   # to integrate).
   #
-  # (The engine itself includes this mixin, the LocalParticipant module
+  # (The dashboard itself includes this mixin, the LocalParticipant module
   # includes it as well).
   #
   module ReceiverMixin

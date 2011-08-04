@@ -30,9 +30,9 @@ module Ruote
   #
   class ProcessError
 
-    # When this instance was returned by Ruote::Engine#ps or
-    # Ruote::Engine#process, this attribute will point to the flow expression
-    # where the error occurred.
+    # When this instance was returned by Ruote::Dashboard#ps or
+    # Ruote::Dashboard#process, this attribute will point to the flow
+    # expression where the error occurred.
     #
     attr_accessor :flow_expression
 
