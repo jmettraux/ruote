@@ -6,7 +6,6 @@
 #
 
 require 'ruote/storage/hash_storage'
-require 'ruote/storage/fs_storage'
 
 
 def locate_storage_impl (arg)
@@ -43,6 +42,8 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
   persistent = opts.delete(:persistent)
 
   if ps.include?('--fs')
+
+    require 'ruote/storage/fs_storage'
 
     require_json
     Rufus::Json.detect_backend
