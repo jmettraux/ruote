@@ -156,6 +156,9 @@ module Ruote
       now = Time.now.utc
       delta = now - @last_time
 
+      #
+      # trigger schedules whose time has come
+
       if delta >= 0.8
         #
         # at most once per second, deal with 'ats' and 'crons'
@@ -165,7 +168,8 @@ module Ruote
         @storage.get_schedules(delta, now).each { |sche| trigger(sche) }
       end
 
-      # msgs
+      #
+      # process msgs (atomic workflow operations)
 
       @msgs = @storage.get_msgs if @msgs.empty?
 
@@ -188,14 +192,23 @@ module Ruote
 
         #@msgs.concat(@storage.get_local_msgs)
 
-        #print r == false ? '*' : '.'
-
         break if Time.now.utc - @last_time >= 0.8
       end
 
-      #p processed
+      #
+      # batch over
 
-      if processed == 0
+      take_a_rest(processed)
+    end
+
+    # In order not to hammer the storage for msgs too much, take a rest.
+    #
+    # If the number of processed messages is more than zero, there are probably
+    # more msgs coming, no time for a rest...
+    #
+    def take_a_rest(msgs_processed)
+
+      if msgs_processed == 0
         @sleep_time += 0.001
         @sleep_time = 0.499 if @sleep_time > 0.499
         sleep(@sleep_time)
