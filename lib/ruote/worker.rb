@@ -64,7 +64,8 @@ module Ruote
       @run_thread = nil
 
       @msgs = []
-      @sleep_time = 0.000
+
+      @sleep_time = @context['restless_worker'] ? nil : 0.000
     end
 
     # Runs the worker in the current thread. See #run_in_thread for running
@@ -206,13 +207,22 @@ module Ruote
     # If the number of processed messages is more than zero, there are probably
     # more msgs coming, no time for a rest...
     #
+    # If @sleep_time is nil (restless_worker option set to true), the worker
+    # will never rest.
+    #
     def take_a_rest(msgs_processed)
 
+      return if @sleep_time == nil
+
       if msgs_processed == 0
+
         @sleep_time += 0.001
         @sleep_time = 0.499 if @sleep_time > 0.499
+
         sleep(@sleep_time)
+
       else
+
         @sleep_time = 0.000
       end
     end
