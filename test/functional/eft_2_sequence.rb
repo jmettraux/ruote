@@ -47,7 +47,7 @@ class EftSequenceTest < Test::Unit::TestCase
     end
 
     @engine.register_participant '.+' do |workitem|
-      @tracer << workitem.participant_name + "\n"
+      context.tracer << workitem.participant_name + "\n"
     end
 
     #noisy
