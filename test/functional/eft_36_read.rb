@@ -88,8 +88,10 @@ class EftReadTest < Test::Unit::TestCase
 
     fields = @engine.wait_for(wfid)['workitem']['fields']
 
-    assert_equal("kilroy was here\n", fields['x'])
-    assert_equal({ 'kilroy' => 'here' }, fields['y'])
+    assert_equal(
+      "kilroy was here\n", fields['x'], "\nkilroy wasn't here (no network ?)\n")
+    assert_equal(
+      { 'kilroy' => 'here' }, fields['y'])
   end
 end
 
