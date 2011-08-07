@@ -65,7 +65,7 @@ module Ruote
     def initialize(worker_or_storage, opts=true)
 
       @context = worker_or_storage.context
-      @context.engine = self
+      @context.dashboard = self
 
       @variables = EngineVariables.new(@context.storage)
 
@@ -227,7 +227,7 @@ module Ruote
     # root expression. If the root is not paused itself, this will have no
     # effect.
     #
-    #   engine.resume(wfid, :anyway => true)
+    #   dashboard.resume(wfid, :anyway => true)
     #
     # will make sure to call resume on each of the paused branch within the
     # process instance (tree), effectively resuming the whole process.
@@ -277,15 +277,18 @@ module Ruote
     #
     # :tree is used to completely change the tree of the expression at re_apply
     #
-    #   engine.re_apply(fei, :tree => [ 'participant', { 'ref' => 'bob' }, [] ])
+    #   dashboard.re_apply(
+    #     fei, :tree => [ 'participant', { 'ref' => 'bob' }, [] ])
     #
     # :fields is used to replace the fields of the workitem at re_apply
     #
-    #   engine.re_apply(fei, :fields => { 'customer' => 'bob' })
+    #   dashboard.re_apply(
+    #     fei, :fields => { 'customer' => 'bob' })
     #
     # :merge_in_fields is used to add / override fields
     #
-    #   engine.re_apply(fei, :merge_in_fields => { 'customer' => 'bob' })
+    #   dashboard.re_apply(
+    #     fei, :merge_in_fields => { 'customer' => 'bob' })
     #
     def re_apply(fei, opts={})
 
@@ -333,11 +336,11 @@ module Ruote
     #
     # Can be called in two ways :
     #
-    #   engine.errors(wfid)
+    #   dashboard.errors(wfid)
     #
     # and
     #
-    #   engine.errors(:skip => 100, :limit => 100)
+    #   dashboard.errors(:skip => 100, :limit => 100)
     #
     def errors(wfid=nil)
 
@@ -370,11 +373,11 @@ module Ruote
     #
     # Can be called in two ways :
     #
-    #   engine.schedules(wfid)
+    #   dashboard.schedules(wfid)
     #
     # and
     #
-    #   engine.schedules(:skip => 100, :limit => 100)
+    #   dashboard.schedules(:skip => 100, :limit => 100)
     #
     def schedules(wfid=nil)
 
@@ -414,7 +417,7 @@ module Ruote
     #
     # If you want to delete one of them you can do
     #
-    #   engine.storage.delete(doc)
+    #   dashboard.storage.delete(doc)
     #
     def leftovers
 
@@ -496,11 +499,11 @@ module Ruote
     #
     # Takes the form
     #
-    #   engine.register_participant name_or_regex, klass, opts={}
+    #   dashboard.register_participant name_or_regex, klass, opts={}
     #
     # With the form
     #
-    #   engine.register_participant name_or_regex do |workitem|
+    #   dashboard.register_participant name_or_regex do |workitem|
     #     # ...
     #   end
     #
@@ -517,13 +520,13 @@ module Ruote
     #
     # For finer control over this, pass a regex directly
     #
-    #   engine.register_participant /^user-/, MyParticipant
+    #   dashboard.register_participant /^user-/, MyParticipant
     #     # will match all workitems whose participant name starts with "user-"
     #
     #
     # == some examples
     #
-    #   engine.register_participant 'compute_sum' do |wi|
+    #   dashboard.register_participant 'compute_sum' do |wi|
     #     wi.fields['sum'] = wi.fields['articles'].inject(0) do |s, (c, v)|
     #       s + c * v # sum + count * value
     #     end
@@ -543,7 +546,7 @@ module Ruote
     #     end
     #   end
     #
-    #   engine.register_participant(
+    #   dashboard.register_participant(
     #     /^moon-.+/, MyParticipant, 'name' => 'Saturn-V')
     #
     #   # computing the total for a invoice being passed in the workitem.
@@ -558,7 +561,7 @@ module Ruote
     #       reply_to_engine(workitem)
     #     end
     #   end
-    #   engine.register_participant 'total', TotalParticipant
+    #   dashboard.register_participant 'total', TotalParticipant
     #
     # Remember that the options (the hash that follows the class name), must be
     # serializable via JSON.
@@ -569,9 +572,9 @@ module Ruote
     # It's OK to register a participant by passing its full classname as a
     # String.
     #
-    #   engine.register_participant(
+    #   dashboard.register_participant(
     #     'auditor', 'AuditParticipant', 'require_path' => 'part/audit.rb')
-    #   engine.register_participant(
+    #   dashboard.register_participant(
     #     'auto_decision', 'DecParticipant', 'load_path' => 'part/dec.rb')
     #
     # Note the option load_path / require_path that point to the ruby file
@@ -585,15 +588,15 @@ module Ruote
     # that is already used, the previously registered participant gets
     # unregistered.
     #
-    #   engine.register_participant 'alpha', AaParticipant
-    #   engine.register_participant 'alpha', BbParticipant, :override => false
+    #   dashboard.register_participant 'alpha', AaParticipant
+    #   dashboard.register_participant 'alpha', BbParticipant, :override => false
     #
     # This can be useful when the #accept? method of participants are in use.
     #
     # Note that using the #register(&block) method, :override => false is
     # automatically enforced.
     #
-    #   engine.register do
+    #   dashboard.register do
     #     alpha AaParticipant
     #     alpha BbParticipant
     #   end
@@ -604,7 +607,7 @@ module Ruote
     # One can specify the position where the participant should be inserted
     # in the participant list.
     #
-    #   engine.register_participant 'auditor', AuditParticipant, :pos => 'last'
+    #   dashboard.register_participant 'auditor', AuditParticipant, :pos => 'last'
     #
     # * last : it's the default, places the participant at the end of the list
     # * first : top of the list
@@ -634,11 +637,11 @@ module Ruote
 
     # A shorter version of #register_participant
     #
-    #   engine.register 'alice', MailParticipant, :target => 'alice@example.com'
+    #   dashboard.register 'alice', MailParticipant, :target => 'alice@example.com'
     #
     # or a block registering mechanism.
     #
-    #   engine.register do
+    #   dashboard.register do
     #     alpha 'Participants::Alpha', 'flavour' => 'vanilla'
     #     participant 'bravo', 'Participants::Bravo', :flavour => 'peach'
     #     catchall ParticipantCharlie, 'flavour' => 'coconut'
@@ -653,7 +656,7 @@ module Ruote
     #
     # You can prevent the clearing by stating :clear => false like in :
     #
-    #   engine.register :clear => false do
+    #   dashboard.register :clear => false do
     #     alpha 'Participants::Alpha', 'flavour' => 'vanilla'
     #     participant 'bravo', 'Participants::Bravo', :flavour => 'peach'
     #     catchall ParticipantCharlie, 'flavour' => 'coconut'
@@ -689,11 +692,11 @@ module Ruote
 
     # Returns a list of Ruote::ParticipantEntry instances.
     #
-    #   engine.register_participant :alpha, MyParticipant, 'message' => 'hello'
+    #   dashboard.register_participant :alpha, MyParticipant, 'message' => 'hello'
     #
     #   # interrogate participant list
     #   #
-    #   list = engine.participant_list
+    #   list = dashboard.participant_list
     #   participant = list.first
     #   p participant.regex
     #     # => "^alpha$"
@@ -705,7 +708,7 @@ module Ruote
     #   # update participant list
     #   #
     #   participant.regex = '^alfred$'
-    #   engine.participant_list = list
+    #   dashboard.participant_list = list
     #
     def participant_list
 
@@ -719,7 +722,7 @@ module Ruote
     #
     # Some examples :
     #
-    #   engine.participant_list = [
+    #   dashboard.participant_list = [
     #     [ '^charly$', [ 'Ruote::StorageParticipant', {} ] ],
     #     [ '.+', [ 'MyDefaultParticipant', { 'default' => true } ]
     #   ]
@@ -734,11 +737,11 @@ module Ruote
 
     # A convenience method for
     #
-    #   sp = Ruote::StorageParticipant.new(engine)
+    #   sp = Ruote::StorageParticipant.new(dashboard)
     #
     # simply do
     #
-    #   sp = engine.storage_participant
+    #   sp = dashboard.storage_participant
     #
     def storage_participant
 
@@ -756,11 +759,12 @@ module Ruote
     # Adds a service locally (will not get propagated to other workers).
     #
     #   tracer = Tracer.new
-    #   @engine.add_service('tracer', tracer)
+    #   @dashboard.add_service('tracer', tracer)
     #
     # or
     #
-    #   @engine.add_service('tracer', 'ruote/exp/tracer', 'Ruote::Exp::Tracer')
+    #   @dashboard.add_service(
+    #     'tracer', 'ruote/exp/tracer', 'Ruote::Exp::Tracer')
     #
     # This method returns the service instance it just bound.
     #
@@ -773,10 +777,10 @@ module Ruote
     #
     #   # allow remote workflow definitions (for subprocesses or when launching
     #   # processes)
-    #   @engine.configure('remote_definition_allowed', true)
+    #   @dashboard.configure('remote_definition_allowed', true)
     #
     #   # allow ruby_eval
-    #   @engine.configure('ruby_eval_allowed', true)
+    #   @dashboard.configure('ruby_eval_allowed', true)
     #
     def configure(config_key, value)
 
@@ -785,9 +789,9 @@ module Ruote
 
     # Returns a configuration value.
     #
-    #   engine.configure('ruby_eval_allowed', true)
+    #   dashboard.configure('ruby_eval_allowed', true)
     #
-    #   p engine.configuration('ruby_eval_allowed')
+    #   p dashboard.configuration('ruby_eval_allowed')
     #     # => true
     #
     def configuration(config_key)
@@ -828,11 +832,11 @@ module Ruote
     # Sets a participant or subprocess to be triggered when an error occurs
     # in a process instance.
     #
-    #   engine.on_error = participant_name
+    #   dashboard.on_error = participant_name
     #
-    #   engine.on_error = subprocess_name
+    #   dashboard.on_error = subprocess_name
     #
-    #   engine.on_error = Ruote.process_definition do
+    #   dashboard.on_error = Ruote.process_definition do
     #     alpha
     #   end
     #
@@ -857,11 +861,11 @@ module Ruote
     # Sets a participant or a subprocess that is to be launched/called whenever
     # a regular process terminates.
     #
-    #   engine.on_terminate = participant_name
+    #   dashboard.on_terminate = participant_name
     #
-    #   engine.on_terminate = subprocess_name
+    #   dashboard.on_terminate = subprocess_name
     #
-    #   engine.on_terminate = Ruote.define do
+    #   dashboard.on_terminate = Ruote.define do
     #     alpha
     #     bravo
     #   end
@@ -887,9 +891,9 @@ module Ruote
 
     # A debug helper :
     #
-    #   engine.noisy = true
+    #   dashboard.noisy = true
     #
-    # will let the engine (in fact the worker) pour all the details of the
+    # will let the dashboard (in fact the worker) pour all the details of the
     # executing process instances to STDOUT.
     #
     def noisy=(b)
@@ -971,16 +975,16 @@ module Ruote
   #
   class ParticipantRegistrationProxy
 
-    def initialize(engine)
+    def initialize(dashboard)
 
-      @engine = engine
+      @dashboard = dashboard
     end
 
     def participant(name, klass=nil, options={}, &block)
 
       options.merge!(:override => false)
 
-      @engine.register_participant(name, klass, options, &block)
+      @dashboard.register_participant(name, klass, options, &block)
     end
 
     def catchall(*args)

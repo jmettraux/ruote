@@ -33,8 +33,8 @@ module Ruote
   #
   #   opts = {}
   #
-  #   engine =
-  #     Ruote::Engine.new(
+  #   dashboard =
+  #     Ruote::Dashboard.new(
   #       Ruote::Worker.new(
   #         Ruote::CompositeStorage.new(
   #           Ruote::FsStorage.new('ruote_work', opts),

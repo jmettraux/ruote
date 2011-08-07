@@ -38,14 +38,14 @@ module Ruote
 
     attr_reader :storage
     attr_accessor :worker
-    attr_accessor :engine
+    attr_accessor :dashboard
 
     def initialize(storage, worker=nil)
 
       @storage = storage
       @storage.context = self
 
-      @engine = nil
+      @dashboard = nil
       @worker = worker
 
       @services = {}
@@ -112,6 +112,7 @@ module Ruote
     #
     def add_service(key, *args)
 
+      key = key.to_s
       path, klass, opts = args
 
       key = "s_#{key}" unless SERVICE_PREFIX.match(key)
@@ -153,6 +154,9 @@ module Ruote
 
       @services.values.each { |s| s.shutdown if s.respond_to?(:shutdown) }
     end
+
+    alias engine dashboard
+    alias engine= dashboard=
 
     protected
 
