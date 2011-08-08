@@ -109,6 +109,10 @@ module Ruote
     #
     def add_service(key, *args)
 
+      raise ArgumentError.new(
+        '#add_service: at least two arguments please'
+      ) if args.empty?
+
       key = key.to_s
       path, klass, opts = args
 
