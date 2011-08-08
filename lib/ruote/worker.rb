@@ -101,17 +101,13 @@ module Ruote
     # Shuts down this worker (makes sure it won't fetch further messages
     # and schedules).
     #
-    def shutdown(join=true)
+    def shutdown
 
       @running = false
 
-      if join
-        begin
-          @run_thread.join
-        rescue Exception => e
-        end
-      else
-        sleep(3)
+      begin
+        @run_thread.join
+      rescue Exception => e
       end
     end
 

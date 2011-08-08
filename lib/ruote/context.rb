@@ -120,7 +120,7 @@ module Ruote
 
       service = if klass
 
-        require(path) if path
+        require(path)
 
         aa = [ self ]
         aa << opts if opts
