@@ -25,6 +25,7 @@ class UtStorage < Test::Unit::TestCase
   def setup
 
     @s = determine_storage({})
+    @s = @s.storage if @s.respond_to?(:storage)
 
     #@s.add_type('errors')
 
