@@ -37,24 +37,12 @@ module Ruote
     def initialize(context)
 
       @context = context
-
-      if @context.worker
-        #
-        # this is a worker context, DO log
-        #
-        @context.worker.subscribe(:all, self)
-      #else
-        #
-        # this is not a worker context, no notifications. BUT
-        # honour calls to add_tracker/remove_tracker
-        #
-      end
     end
 
-    # The worker passes all the messages it has to process to the tracker via
-    # this method.
+    # The context calls this method for each successfully processed msg
+    # in the worker.
     #
-    def notify(message)
+    def on_msg(message)
 
       m_error = message['error']
       m_wfid = message['wfid'] || (message['fei']['wfid'] rescue nil)

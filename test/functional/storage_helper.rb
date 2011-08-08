@@ -84,6 +84,8 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     require_json
     Rufus::Json.detect_backend
 
+    require 'ruote/storage/fs_storage'
+
     Ruote::FsStorage.new('work', opts)
 
   else

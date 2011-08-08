@@ -41,8 +41,6 @@ module Ruote
       @context = context
       @color = 33
 
-      @context.worker.subscribe(:all, self) if @context.worker
-
       @noisy = false
       @count = -1
 
@@ -50,7 +48,10 @@ module Ruote
       @waiting = []
     end
 
-    def notify(msg)
+    # The context will call this method for each msg sucessfully processed
+    # by the worker.
+    #
+    def on_msg(msg)
 
       puts(fancy_print(msg)) if @noisy
 

@@ -40,18 +40,6 @@ module Ruote
 
       @context = context
 
-      if @context.worker
-        #
-        # this is a worker context, DO log
-        #
-        @context.worker.subscribe(:all, self)
-      #else
-        #
-        # this is not a worker context, DO NOT log, but be ready to
-        # be queried
-        #
-      end
-
       @seen = []
       @log = []
       @waiting = []
@@ -61,7 +49,10 @@ module Ruote
       @noisy = false
     end
 
-    def notify(msg)
+    # The context will call this method for each msg sucessfully processed
+    # by the worker.
+    #
+    def on_msg(msg)
 
       puts(fancy_print(msg)) if @noisy
 
@@ -93,7 +84,7 @@ module Ruote
       #check_waiting
       @context.storage.put_msg('noop', {})
         #
-        # forces the #check_waiting via #notify
+        # forces the #check_waiting via #on_msg
         # (ie let it happen in the worker)
 
       Thread.stop if @waiting.find { |w| w.first == Thread.current }

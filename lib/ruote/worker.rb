@@ -51,12 +51,14 @@ module Ruote
     #
     def initialize(storage)
 
-      @subscribers = []
-        # must be ready before the storage is created
-        # services like Logger to subscribe to the worker
-
-      @storage = storage
-      @context = Ruote::Context.new(storage, self)
+      if storage.respond_to?(:storage)
+        @storage = storage.storage
+        @context = storage.context
+      else
+        @storage = storage
+        @context = Ruote::Context.new(storage)
+      end
+      @context.add_service('worker', self)
 
       @last_time = Time.at(0.0).utc # 1970...
 
@@ -94,14 +96,6 @@ module Ruote
     def join
 
       @run_thread.join if @run_thread
-    end
-
-    # Loggers and trackers call this method when subscribing for events /
-    # actions in this worker.
-    #
-    def subscribe(actions, subscriber)
-
-      @subscribers << [ actions, subscriber ]
     end
 
     # Shuts down this worker (makes sure it won't fetch further messages
@@ -285,7 +279,8 @@ module Ruote
           # msg got deleted, might still be interesting for a subscriber
         end
 
-        notify(msg)
+        @context.notify(msg)
+          # notify subscribers of successfully process msgs
 
       rescue => exception
 
@@ -295,19 +290,6 @@ module Ruote
       @context.storage.done(msg) if @context.storage.respond_to?(:done)
 
       true
-    end
-
-    # Given a successfully executed msg, now notifies all the subscribers
-    # interested in the kind of action the msg ordered.
-    #
-    def notify(msg)
-
-      @subscribers.each do |actions, subscriber|
-
-        if actions == :all || actions.include?(msg['action'])
-          subscriber.notify(msg)
-        end
-      end
     end
 
     # Works for both the 'launch' and the 'apply' msgs.

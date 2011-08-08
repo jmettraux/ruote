@@ -37,19 +37,16 @@ module Ruote
     SERVICE_PREFIX = /^s\_/
 
     attr_reader :storage
-    attr_accessor :worker
     attr_accessor :dashboard
 
-    def initialize(storage, worker=nil)
+    def initialize(storage)
 
       @storage = storage
       @storage.context = self
 
       @dashboard = nil
-      @worker = worker
 
       @services = {}
-
       initialize_services
     end
 
@@ -117,8 +114,6 @@ module Ruote
 
       key = "s_#{key}" unless SERVICE_PREFIX.match(key)
 
-      # TODO remove/unsubscribe previous service
-
       service = if klass
 
         require(path) if path
@@ -145,11 +140,19 @@ module Ruote
       service
     end
 
+    # This method is called by the worker each time it sucessfully processed
+    # a msg. This method calls in turn the #on_msg method for each of the
+    # services (that respond to that method).
+    #
+    def notify(msg)
+
+      @services.values.each { |s| s.on_msg(msg) if s.respond_to?(:on_msg) }
+    end
+
     # Takes care of shutting down every service registered in this context.
     #
     def shutdown
 
-      @worker.shutdown if @worker
       @storage.shutdown if @storage.respond_to?(:shutdown)
 
       @services.values.each { |s| s.shutdown if s.respond_to?(:shutdown) }
@@ -157,6 +160,16 @@ module Ruote
 
     alias engine dashboard
     alias engine= dashboard=
+
+    # Returns true if this context has a given service registered.
+    #
+    def has_service?(service_name)
+
+      service_name = service_name.to_s
+      service_name = "s_#{service_name}" if ! SERVICE_PREFIX.match(service_name)
+
+      @services.has_key?(service_name)
+    end
 
     protected
 

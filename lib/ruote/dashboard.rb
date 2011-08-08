@@ -69,7 +69,7 @@ module Ruote
 
       @variables = EngineVariables.new(@context.storage)
 
-      if @context.worker
+      if @context.has_service?('worker')
         if opts == true
           @context.worker.run_in_thread
             # runs worker in its own thread

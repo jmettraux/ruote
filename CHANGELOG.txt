@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- context and worker : subscription reworked
 - worker : 'restless_worker' option
 - Ruote::Dashboard (will slowly phase Ruote::Engine out)
 - :on_timeout => 'rewind', :on_timeout => 'jump to alpha'

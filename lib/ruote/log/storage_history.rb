@@ -56,13 +56,7 @@ module Ruote
       @context = context
       @options = options
 
-      if @context.worker
-
-        # only care about logging if there is a worker present
-
-        @context.storage.add_type('history')
-        @context.worker.subscribe(:all, self)
-      end
+      @context.storage.add_type('history')
     end
 
     # Returns all the wfids for which there are history items (msgs) stored.
@@ -129,10 +123,10 @@ module Ruote
       @context.storage.purge_type!('history')
     end
 
-    # This is the method called by the workqueue. Incoming engine events
-    # are 'processed' here.
+    # This method is called by the worker via the context. Succesfully
+    # processed msgs are passed here.
     #
-    def notify(msg)
+    def on_msg(msg)
 
       msg = msg.dup
         # a shallow copy is sufficient

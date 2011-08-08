@@ -41,23 +41,23 @@ class FtStorageCopyTest < Test::Unit::TestCase
 
   def test_copy_from_hash_storage
 
-    engine = Ruote::Engine.new(Ruote::Worker.new(Ruote::HashStorage.new()))
+    dash = Ruote::Dashboard.new(Ruote::Worker.new(Ruote::HashStorage.new()))
 
-    engine.register_participant '.+', Ruote::StorageParticipant
+    #dash.noisy = true
 
-    #engine.context.logger.noisy = true
+    dash.register_participant '.+', Ruote::StorageParticipant
 
-    wfid = engine.launch(Ruote.process_definition do
+    wfid = dash.launch(Ruote.process_definition do
       sequence do
         alpha :timeout => '2d'
       end
     end)
 
-    engine.wait_for(:alpha)
+    dash.wait_for(:alpha)
 
     sleep 0.100 # making sure msgs have all been processed
 
-    source = engine.context.storage
+    source = dash.context.storage
     target = @engine.context.storage
 
     #count = source.copy_to(target, :verbose => true)
