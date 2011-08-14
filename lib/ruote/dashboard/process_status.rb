@@ -306,12 +306,13 @@ module Ruote
 
     def to_s
 
-      "(process_status wfid '#{wfid}', " +
-      "expressions #{@expressions.size}, " +
-      "stored_workitems #{@stored_workitems.size}, " +
-      "errors #{@errors.size}, " +
-      "schedules #{@schedules.size}, " +
-      ")"
+      "(" + [
+        "process_status wfid '#{wfid}'",
+        "expressions #{@expressions.size}",
+        "stored_workitems #{@stored_workitems.size}",
+        "errors #{@errors.size}",
+        "schedules #{@schedules.size}"
+      ].join(', ') + ")"
     end
 
     def inspect
