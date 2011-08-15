@@ -68,7 +68,7 @@ module Ruote
 
     protected
 
-    # As used by the worker.
+    # Called by msg_handle or action_handle.
     #
     def handle(msg, fexp, exception)
 

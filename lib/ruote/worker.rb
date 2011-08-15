@@ -272,11 +272,12 @@ module Ruote
           self.send(action, msg)
 
         #else
-          # msg got deleted, might still be interesting for a subscriber
+          # no special processing required for message, let it pass
+          # to the subscribers (the notify two lines after)
         end
 
         @context.notify(msg)
-          # notify subscribers of successfully process msgs
+          # notify subscribers of successfully processed msgs
 
       rescue => exception
 
