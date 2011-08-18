@@ -417,11 +417,20 @@ module Ruote
 
       swfids = wfids.collect { |wfid| /!#{wfid}-\d+$/ }
 
-      exps = context.storage.get_many('expressions', wfids).compact
-      swis = context.storage.get_many('workitems', wfids).compact
-      errs = context.storage.get_many('errors', wfids).compact
-      schs = context.storage.get_many('schedules', swfids).compact
-        # some slow storages need the compaction... couch...
+      batch = "#{Thread.current.object_id}-#{Time.now.to_f}"
+        # some storages may optimize when they can distinguish
+        # which get_many fit in the same batch...
+
+      exps = context.storage.get_many(
+        'expressions', wfids, :batch => batch).compact
+      swis = context.storage.get_many(
+        'workitems', wfids, :batch => batch).compact
+      errs = context.storage.get_many(
+        'errors', wfids, :batch => batch).compact
+      schs = context.storage.get_many(
+        'schedules', swfids, :batch => batch).compact
+          #
+          # some slow storages need the compaction... couch...
 
       errs = errs.collect { |err| ProcessError.new(err) }
       schs = schs.collect { |sch| Ruote.schedule_to_h(sch) }
