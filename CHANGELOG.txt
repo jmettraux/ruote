@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- Storage#done(worker, msg) optional method
 - get_many :batch option (used by some storages for optimization)
 - 'stall' expression (mostly for testing)
 - context and worker : subscription reworked
@@ -12,7 +13,6 @@
 - :on_timeout => 'rewind', :on_timeout => 'jump to alpha'
 - :on_error => 'rewind', :on_error => 'jump to alpha'
 - dispatch_pool and context['do_not_thread_participants']
-- Storage#done optional method
 - participant params.__children__
 - on_error expression
 - concurrence :merge_type => 'concat' (vs 'union') (Thanks Julien France)

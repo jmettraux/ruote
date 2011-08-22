@@ -284,7 +284,7 @@ module Ruote
         @context.error_handler.msg_handle(msg, exception)
       end
 
-      @context.storage.done(msg) if @context.storage.respond_to?(:done)
+      @context.storage.done(self, msg) if @context.storage.respond_to?(:done)
 
       true
     end
