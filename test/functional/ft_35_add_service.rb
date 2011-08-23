@@ -100,7 +100,8 @@ class FtAddServiceTest < Test::Unit::TestCase
 
     sleep 0.500
 
-    assert_equal 'noop', @engine.history.by_date(Time.now.to_s).first['action']
+    assert_equal(
+      'noop', @engine.history.by_date(Time.now.utc.to_s).first['action'])
   end
 end
 
