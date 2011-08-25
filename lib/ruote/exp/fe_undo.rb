@@ -44,6 +44,16 @@ module Ruote::Exp
   #
   #   cancel :ref => 'invoicing_stage'
   #
+  # == a bit shorter
+  #
+  # It's OK to shorten
+  #
+  #   cancel :ref => 'invoicing_stage'
+  #
+  # to
+  #
+  #   cancel 'invoicing_stage'
+  #
   class UndoExpression < FlowExpression
 
     names :undo, :cancel
