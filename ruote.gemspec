@@ -1,13 +1,12 @@
-# encoding: utf-8
-
-require File.expand_path('../lib/ruote/version', __FILE__)
-  # bundler wants absolute path
-
 
 Gem::Specification.new do |s|
 
   s.name = 'ruote'
-  s.version = Ruote::VERSION
+
+  s.version = File.read(
+    File.expand_path('../lib/ruote/version.rb', __FILE__)
+  ).match(/VERSION *= *['"]([^'"]+)/)[1]
+
   s.platform = Gem::Platform::RUBY
   s.authors = [ 'John Mettraux', 'Kenneth Kalmer', 'Torsten Schoenebaum' ]
   s.email = [ 'jmettraux@gmail.com' ]
