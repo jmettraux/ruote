@@ -310,9 +310,15 @@ module Ruote::Exp
           'workitem' => workitem)
       end
 
-      #if h.timeout_schedule_id && h.state != 'timing_out'
-      #  @context.storage.delete_schedule(h.timeout_schedule_id)
-      #end
+      if h.timeout_schedule_id #&& h.state != 'timing_out'
+        @context.storage.delete_schedule(h.timeout_schedule_id)
+      end
+        #
+        # the flow has a h.timeout_schedule_id, it means it has been started
+        # with a pre-timers ruote. We have to remove the schedule anyway.
+        #
+        # those 3 lines will be removed soon.
+
       h.timers.each do |schedule_id|
         @context.storage.delete_schedule(schedule_id)
       end if h.timers
