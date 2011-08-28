@@ -242,7 +242,7 @@ module Ruote::Exp
 
       return unless timeout
 
-      @context.storage.put_schedule(
+      (h.timers ||= []) << @context.storage.put_schedule(
         'at',
         h.fei,
         timeout,

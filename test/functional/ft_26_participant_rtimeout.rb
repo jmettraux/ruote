@@ -176,6 +176,11 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
 
     assert_equal 1, schedules.size
     assert_equal '120s', schedules.first['original']
+
+    ps = @engine.ps(wfid)
+
+    assert_not_nil ps.expressions.last.h.timers
+    assert_equal 1, ps.expressions.last.h.timers.size
   end
 end
 
