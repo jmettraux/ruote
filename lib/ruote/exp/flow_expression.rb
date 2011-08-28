@@ -319,7 +319,7 @@ module Ruote::Exp
         #
         # those 3 lines will be removed soon.
 
-      h.timers.each do |schedule_id|
+      h.timers.each do |schedule_id, action|
         @context.storage.delete_schedule(schedule_id)
       end if h.timers
 
@@ -885,7 +885,7 @@ module Ruote::Exp
         end
 
         (h.timers ||= []) <<
-          @context.storage.put_schedule('at', h.fei, after, msg)
+          [ @context.storage.put_schedule('at', h.fei, after, msg), action ]
       end
     end
 

@@ -5,7 +5,7 @@
 # Mon Jan 31 14:45:09 JST 2011
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class EftFilterTest < Test::Unit::TestCase

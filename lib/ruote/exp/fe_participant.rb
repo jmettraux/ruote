@@ -242,11 +242,14 @@ module Ruote::Exp
 
       return unless timeout
 
-      (h.timers ||= []) << @context.storage.put_schedule(
-        'at',
-        h.fei,
-        timeout,
-        { 'action' => 'cancel', 'fei' => h.fei, 'flavour' => 'timeout' })
+      (h.timers ||= []) << [
+        @context.storage.put_schedule(
+          'at',
+          h.fei,
+          timeout,
+          { 'action' => 'cancel', 'fei' => h.fei, 'flavour' => 'timeout' }),
+        'timeout'
+      ]
     end
 
     def do_pause(msg)

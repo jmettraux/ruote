@@ -181,6 +181,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
 
     assert_not_nil ps.expressions.last.h.timers
     assert_equal 1, ps.expressions.last.h.timers.size
+    assert_equal 'timeout', ps.expressions.last.h.timers.first.last
   end
 end
 

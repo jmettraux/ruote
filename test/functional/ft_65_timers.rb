@@ -32,38 +32,13 @@ class FtTimersTest < Test::Unit::TestCase
       1, @engine.storage.get_many('schedules').size)
     assert_equal(
       'cancel', @engine.storage.get_many('schedules').first['msg']['action'])
-  end
 
-#  def test_timeout
-#
-#    pdef = Ruote.process_definition do
-#      sequence do
-#        alpha :timeout => '1.1'
-#        bravo
-#      end
-#    end
-#
-#    @engine.register_participant :alpha, Ruote::StorageParticipant
-#    sto = @engine.register_participant :bravo, Ruote::StorageParticipant
-#
-#    #noisy
-#
-#    wfid = @engine.launch(pdef)
-#    wait_for(:bravo)
-#
-#    assert_equal 1, sto.size
-#    assert_equal 'bravo', sto.first.participant_name
-#
-#    assert_equal 2, logger.log.select { |e| e['flavour'] == 'timeout' }.size
-#    assert_equal 0, @engine.storage.get_many('schedules').size
-#
-#    assert_equal wfid, sto.first.fields['__timed_out__'][0]['wfid']
-#    assert_equal '0_0_0', sto.first.fields['__timed_out__'][0]['expid']
-#    assert_equal 'participant', sto.first.fields['__timed_out__'][2]
-#
-#    assert_equal(
-#      { 'timeout' => '1.1', 'ref' => 'alpha' },
-#      sto.first.fields['__timed_out__'][3])
-#  end
+    ps = @engine.ps(wfid)
+
+    assert_not_nil ps.expressions.last.h.timers
+    assert_equal 1, ps.expressions.last.h.timers.size
+    assert_match /^at-/, ps.expressions.last.h.timers.first.first
+    assert_equal 'timeout', ps.expressions.last.h.timers.first.last
+  end
 end
 
