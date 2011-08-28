@@ -64,7 +64,7 @@ module Ruote::Exp
     require 'ruote/exp/ro_vf'
 
     COMMON_ATT_KEYS = %w[
-      if unless forget timeout on_error on_cancel on_timeout ]
+      if unless forget timeout timers on_error on_cancel on_timeout ]
 
     attr_reader :h
 
@@ -284,7 +284,7 @@ module Ruote::Exp
       filter
 
       consider_tag
-      consider_timeout
+      consider_timers
 
       apply
     end
@@ -310,10 +310,12 @@ module Ruote::Exp
           'workitem' => workitem)
       end
 
-      if h.timeout_schedule_id && h.state != 'timing_out'
-
-        @context.storage.delete_schedule(h.timeout_schedule_id)
-      end
+      #if h.timeout_schedule_id && h.state != 'timing_out'
+      #  @context.storage.delete_schedule(h.timeout_schedule_id)
+      #end
+      h.timers.each do |schedule_id|
+        @context.storage.delete_schedule(schedule_id)
+      end if h.timers
 
       if h.state == 'failing' # on_error is implicit (#do_fail got called)
 
@@ -838,29 +840,47 @@ module Ruote::Exp
       end
     end
 
-    # Called by do_apply. Overriden in ParticipantExpression and RefExpression.
+    # Reads the :timeout and :timers attributes and schedule as necessary.
     #
-    def consider_timeout
+    def consider_timers
 
-      do_schedule_timeout(attribute(:timeout))
-    end
+      h.has_timers = (attribute(:timers) || attribute(:timeout)) != nil
+        # to enforce pdef defined timers vs participant defined timers
 
-    # Called by consider_timeout (FlowExpression) and schedule_timeout
-    # (ParticipantExpression).
-    #
-    def do_schedule_timeout(timeout)
+      timers = (attribute(:timers) || '').split(/,/)
 
-      timeout = timeout.to_s
+      if to = attribute(:timeout)
+        to = to.strip
+        timers << "#{to}: timeout" unless to == ''
+      end
 
-      return if timeout.strip == ''
+      timers.each do |t|
 
-      h.timeout_schedule_id = @context.storage.put_schedule(
-        'at',
-        h.fei,
-        timeout,
-        'action' => 'cancel',
-        'fei' => h.fei,
-        'flavour' => 'timeout')
+        after, action = if t.is_a?(String)
+          i = t.rindex(':')
+          [ t[0..i - 1], t[i + 1..-1] ]
+        else
+          t
+        end
+
+        after = after.strip
+        action = action.strip
+
+        next if after == ''
+
+        msg = if action == 'timeout'
+          { 'action' => 'cancel',
+            'fei' => h.fei,
+            'flavour' => 'timeout' }
+        else
+          { 'action' => 'apply',
+            'fei' => h.fei, # ????????????????????????
+            'tree' => [ action, {}, [] ] }
+        end
+
+        (h.timers ||= []) <<
+          @context.storage.put_schedule('at', h.fei, after, msg)
+      end
     end
 
     # (Called by trigger_on_cancel & co)

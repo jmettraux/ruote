@@ -131,21 +131,10 @@ module Ruote::Exp
 
       new_exp = new_exp_class.new(@context, @h)
 
-      do_schedule_timeout(attribute(:timeout)) if new_exp_name == 'subprocess'
-        #
-        # since ref neutralizes consider_timeout because participant expressions
-        # handle timeout by themselves, we have to force timeout consideration
-        # for subprocess expressions
-
       #new_exp.initial_persist
         # not necessary
 
       new_exp.apply
-    end
-
-    def consider_timeout
-
-      # neutralized
     end
   end
 end

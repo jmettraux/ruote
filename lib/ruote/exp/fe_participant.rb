@@ -154,7 +154,7 @@ module Ruote::Exp
         h.applied_workitem['fields']['params']['__children__'] = dsub(tree.last)
       end
 
-      schedule_timeout(h.participant)
+      schedule_timers(h.participant)
 
       persist_or_raise
 
@@ -223,35 +223,30 @@ module Ruote::Exp
         # let's not care if it fails...
     end
 
-    # Overriden with an empty behaviour. The work is now done a bit later
-    # via the #schedule_timeout method.
-    #
-    def consider_timeout
-    end
-
     # Determines and schedules timeout if any.
     #
     # Note that process definition timeout has priority over participant
     # specified timeout.
     #
-    def schedule_timeout(p_info)
+    def schedule_timers(p_info)
 
-      timeout = attribute(:timeout)
+      return if h.has_timers
 
-      unless timeout
+      # TODO timers/rtimers ?
 
-        pa = @context.plist.instantiate(p_info, :if_respond_to? => :rtimeout)
+      pa = @context.plist.instantiate(p_info, :if_respond_to? => :rtimeout)
 
-        #timeout = (pa.method(:rtimeout).arity == 0 ?
-        #  pa.rtimeout :
-        #  pa.rtimeout(Ruote::Workitem.new(h.applied_workitem))
-        #) if pa
-        timeout = Ruote.participant_send(
-          pa, :rtimeout, 'workitem' => Ruote::Workitem.new(h.applied_workitem)
-        ) if pa
-      end
+      timeout = Ruote.participant_send(
+        pa, :rtimeout, 'workitem' => Ruote::Workitem.new(h.applied_workitem)
+      ) if pa
 
-      do_schedule_timeout(timeout)
+      return unless timeout
+
+      @context.storage.put_schedule(
+        'at',
+        h.fei,
+        timeout,
+        { 'action' => 'cancel', 'fei' => h.fei, 'flavour' => 'timeout' })
     end
 
     def do_pause(msg)

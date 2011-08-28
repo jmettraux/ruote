@@ -5,7 +5,7 @@
 # Sun Aug 16 14:25:35 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 require 'ruote/participant'
 
@@ -84,6 +84,8 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
   def test_pdef_overriden_timeout
 
     # process definition cancels timeout given by participant
+
+    #@engine.noisy = true
 
     pdef = Ruote.define do
       alpha :timeout => ''
