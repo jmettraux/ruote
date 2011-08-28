@@ -16,13 +16,10 @@ class FtTimersTest < Test::Unit::TestCase
   def test_single_timeout
 
     pdef = Ruote.process_definition do
-      sequence do
-        alpha :timers => '1d: timeout'
-        bravo
-      end
+      alpha :timers => '1d: timeout'
     end
 
-    @engine.register_participant /alpha|bravo/, Ruote::StorageParticipant
+    @engine.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @engine.launch(pdef)
 
@@ -39,6 +36,27 @@ class FtTimersTest < Test::Unit::TestCase
     assert_equal 1, ps.expressions.last.h.timers.size
     assert_match /^at-/, ps.expressions.last.h.timers.first.first
     assert_equal 'timeout', ps.expressions.last.h.timers.first.last
+  end
+
+  def test_reminders
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '1s: remind, 2s: remind'
+      define 'remind' do
+        echo 'reminder'
+      end
+    end
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    #sleep 5.0
+    @engine.wait_for(16)
+
+    assert_equal %w[ reminder reminder ], @tracer.to_a
   end
 end
 

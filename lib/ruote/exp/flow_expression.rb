@@ -339,7 +339,7 @@ module Ruote::Exp
 
         trigger('on_timeout', workitem)
 
-      elsif h.lost and h.state == nil
+      elsif h.lost and (h.state == nil)
 
         # do not reply, sit here (and wait for cancellation probably)
 
@@ -880,8 +880,10 @@ module Ruote::Exp
             'flavour' => 'timeout' }
         else
           { 'action' => 'apply',
-            'fei' => h.fei, # ????????????????????????
-            'tree' => [ action, {}, [] ] }
+            'parent_id' => h.fei,
+            'lost' => true,
+            'tree' => [ action, {}, [] ],
+            'workitem' => h.applied_workitem }
         end
 
         (h.timers ||= []) <<
