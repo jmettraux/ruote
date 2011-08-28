@@ -489,7 +489,7 @@ module Ruote::Exp
         # let's send a cancel message to each of the children
         #
         # maybe some of them are gone or have not yet been applied, anyway,
-        # the message are sent
+        # the messages are sent
 
         @context.storage.put_msg(
           'cancel',
@@ -497,22 +497,6 @@ module Ruote::Exp
           'parent_id' => h.fei, # indicating that this is a "cancel child"
           'flavour' => flavour)
       end
-
-      #if ! children.find { |i| Ruote::Exp::FlowExpression.fetch(@context, i) }
-      #  #
-      #  # since none of the children could be found in the storage right now,
-      #  # it could mean that all children are already done or it could mean
-      #  # that they are not yet applied...
-      #  #
-      #  # just to be sure let's send a new cancel message to this expression
-      #  #
-      #  # it's very important, since if there is no child to cancel the parent
-      #  # the flow might get stuck here
-      #  @context.storage.put_msg(
-      #    'cancel',
-      #    'fei' => h.fei,
-      #    'flavour' => flavour)
-      #end
     end
 
     # Called when handling an on_error, will place itself in a 'failing' state
