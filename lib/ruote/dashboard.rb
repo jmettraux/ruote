@@ -1021,7 +1021,8 @@ module Ruote
     h['action'] = msg['action']
     h['type'] = msg['flavour']
     h['owner'] = Ruote::FlowExpressionId.new(owner)
-    h['target'] = Ruote::FlowExpressionId.new(msg['fei'])
+
+    h['target'] = Ruote::FlowExpressionId.new(msg['fei']) if msg['fei']
 
     h
   end

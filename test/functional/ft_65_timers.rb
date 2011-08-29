@@ -58,5 +58,33 @@ class FtTimersTest < Test::Unit::TestCase
 
     assert_equal %w[ reminder reminder ], @tracer.to_a
   end
+
+  def test_cancelling
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '1d: remind'
+      bravo
+    end
+
+    @engine.register_participant /alpha|bravo/, Ruote::StorageParticipant
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+    @engine.wait_for(1)
+
+    fei = @engine.ps(wfid).expressions.last.fei
+
+    @engine.cancel(fei)
+
+    @engine.wait_for(:bravo)
+    @engine.wait_for(1)
+
+    ps = @engine.ps(wfid)
+
+    assert_equal 0, ps.schedules.size
+  end
 end
 
