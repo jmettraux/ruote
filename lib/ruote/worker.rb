@@ -305,12 +305,13 @@ module Ruote
       # msg['wfid'] only : it's a launch
       # msg['fei'] : it's a sub launch (a supplant ?)
 
-      # TODO: only in case of 'define', use is_launch? probably
-      #
-      wi['wf_name'] ||= (
-        tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil })
-      wi['wf_revision'] ||= (
-        tree[1]['revision'] || tree[1]['rev'])
+      if is_launch?(msg, exp_class)
+
+        wi['wf_name'] ||= (
+          tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil })
+        wi['wf_revision'] ||= (
+          tree[1]['revision'] || tree[1]['rev'])
+      end
 
       exp_hash = {
         'fei' => msg['fei'] || {
@@ -353,9 +354,13 @@ module Ruote
     #
     def is_launch?(msg, exp_class)
 
-      return false if exp_class != Ruote::Exp::DefineExpression
-      return true if msg['action'] == 'launch'
-      (msg['trigger'] == 'on_re_apply')
+      if exp_class != Ruote::Exp::DefineExpression
+        false
+      elsif msg['action'] == 'launch'
+        true
+      else
+        (msg['trigger'] == 'on_re_apply')
+      end
     end
 
     # Handles a 'cancel_process' msg (translates it into a "cancel root
