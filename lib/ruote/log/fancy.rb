@@ -140,7 +140,7 @@ module Ruote
         else act
       end
 
-      tail = if msg['action'] == 'error_intercepted'
+      if msg['action'] == 'error_intercepted'
 
         tail = []
         tail << "  #{wfid} #{rest['error']['class']}"
