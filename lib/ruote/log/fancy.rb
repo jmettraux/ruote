@@ -72,6 +72,30 @@ module Ruote
       "[#{mod}m#{s}[0m#{clear ? '' : "[#{@color}m"}"
     end
 
+    def fei_to_s(fei)
+      [
+        fei['expid'],
+        fei['subid'][0, 5] + '...',
+        fei['wfid']
+      ].join('!')
+    end
+
+    def insp(o)
+
+      case o
+        when nil
+          'nil'
+        when Hash
+          '{' + o.collect { |k, v| "#{k}: #{insp(v)}" }.join(', ') + '}'
+        when Array
+          '[' + o.collect { |e| insp(e) }.join(', ') + ']'
+        when String
+          o.match(/\s/) ? o.inspect : o
+        else
+          o.inspect
+      end
+    end
+
     def fancy_print(msg)
 
       @count += 1
@@ -95,11 +119,13 @@ module Ruote
       ].each { |k| rest.delete(k) }
 
       if v = rest['parent_id']
-        rest['parent_id'] = Ruote.to_storage_id(v)
+        #rest['parent_id'] = Ruote.to_storage_id(v)
+        rest['parent_id'] = fei_to_s(v)
       end
       if v = rest.delete('workitem')
         rest[:wi] = [
-          v['fei'] ? Ruote.to_storage_id(v['fei']) : nil,
+          #v['fei'] ? Ruote.to_storage_id(v['fei']) : nil,
+          v['fei'] ? fei_to_s(v['fei']) : nil,
           v['fields'].size ]
       end
 
@@ -165,9 +191,12 @@ module Ruote
         pa = %w[ receive dispatch ].include?(msg['action']) ?
           color('34', msg['participant_name']) + ' ' : ''
 
+        rest = insp(rest)[1..-2]
+
         color(
           @color,
-          "#{@count} #{ei} #{'  ' * depth}#{act} * #{pa}#{i} #{rest.inspect}",
+          #"#{@count} #{ei} #{'  ' * depth}#{act} * #{pa}#{i} #{rest.inspect}",
+          "#{@count} #{ei} #{'  ' * depth}#{act} * #{pa}#{i}  #{rest}",
           true)
       end
     end
