@@ -864,6 +864,8 @@ module Ruote::Exp
             'flavour' => 'timeout' }
         else
           { 'action' => 'apply',
+            'wfid' => h.fei['wfid'],
+            'expid' => h.fei['expid'],
             'parent_id' => h.fei,
             'lost' => true,
             'tree' => [ action, {}, [] ],

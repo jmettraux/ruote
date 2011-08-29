@@ -21,6 +21,8 @@ class FtTimersTest < Test::Unit::TestCase
 
     @engine.register_participant :alpha, Ruote::StorageParticipant
 
+    #@engine.noisy = true
+
     wfid = @engine.launch(pdef)
 
     @engine.wait_for(:alpha)
@@ -47,7 +49,7 @@ class FtTimersTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @engine.register_participant :alpha, Ruote::NullParticipant
 
     #@engine.noisy = true
 
@@ -57,6 +59,29 @@ class FtTimersTest < Test::Unit::TestCase
     @engine.wait_for(16)
 
     assert_equal %w[ reminder reminder ], @tracer.to_a
+  end
+
+  def test_expid
+
+    # same expid as expression sporting the :timers
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '1s: remind'
+    end
+
+    @engine.register_participant :alpha, Ruote::NullParticipant
+
+    @engine.register_participant :remind do |workitem|
+      @tracer << workitem.fei.expid
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(9)
+
+    assert_equal '0_0', @tracer.to_s
   end
 
   def test_cancelling
@@ -85,6 +110,37 @@ class FtTimersTest < Test::Unit::TestCase
     ps = @engine.ps(wfid)
 
     assert_equal 0, ps.schedules.size
+  end
+
+  def test_cancelling_running_side
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '1s: reminder'
+    end
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @engine.register_participant :reminder, Ruote::NullParticipant
+
+    @engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+    @engine.wait_for(1)
+
+    sleep 2.0
+
+    ps = @engine.ps(wfid)
+
+    assert_equal 3, ps.expressions.size
+
+    fei = ps.expressions.last.fei
+
+    @engine.cancel(fei)
+
+    @engine.wait_for(wfid)
+
+    assert_nil @engine.ps(wfid)
   end
 end
 
