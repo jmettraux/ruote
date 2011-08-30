@@ -119,12 +119,10 @@ module Ruote
       ].each { |k| rest.delete(k) }
 
       if v = rest['parent_id']
-        #rest['parent_id'] = Ruote.to_storage_id(v)
         rest['parent_id'] = fei_to_s(v)
       end
       if v = rest.delete('workitem')
         rest[:wi] = [
-          #v['fei'] ? Ruote.to_storage_id(v['fei']) : nil,
           v['fei'] ? fei_to_s(v['fei']) : nil,
           v['fields'].size ]
       end
@@ -188,15 +186,15 @@ module Ruote
 
       else
 
-        pa = %w[ receive dispatch ].include?(msg['action']) ?
-          color('34', msg['participant_name']) + ' ' : ''
+        pa = %w[ receive dispatch dispatch_cancel ].include?(msg['action']) ?
+          color('34', rest.delete('participant_name')) + ' ' :
+          ''
 
         rest = insp(rest)[1..-2]
 
         color(
           @color,
-          #"#{@count} #{ei} #{'  ' * depth}#{act} * #{pa}#{i} #{rest.inspect}",
-          "#{@count} #{ei} #{'  ' * depth}#{act} * #{pa}#{i}  #{rest}",
+          "#{@count} #{ei} #{'  ' * depth}#{act} * #{i} #{pa}#{rest}",
           true)
       end
     end
