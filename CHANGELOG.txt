@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- :flank common attribute
 - Storage#done(worker, msg) optional method
 - get_many :batch option (used by some storages for optimization)
 - 'stall' expression (mostly for testing)

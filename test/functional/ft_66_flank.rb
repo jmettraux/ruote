@@ -13,7 +13,7 @@ require File.expand_path('../base', __FILE__)
 class FtFlankTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_single_timeout
+  def test_flank
 
     pdef = Ruote.process_definition do
       sequence do
@@ -22,26 +22,47 @@ class FtFlankTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::StorageParticipant
-    @engine.register_participant :bravo, Ruote::StorageParticipant
+    @engine.register_participant '.+', Ruote::NullParticipant
 
-    @engine.noisy = true
+    #@engine.noisy = true
 
-#    wfid = @engine.launch(pdef)
-#
-#    @engine.wait_for(:alpha)
-#
-#    assert_equal(
-#      1, @engine.storage.get_many('schedules').size)
-#    assert_equal(
-#      'cancel', @engine.storage.get_many('schedules').first['msg']['action'])
-#
-#    ps = @engine.ps(wfid)
-#
-#    assert_not_nil ps.expressions.last.h.timers
-#    assert_equal 1, ps.expressions.last.h.timers.size
-#    assert_match /^at-/, ps.expressions.last.h.timers.first.first
-#    assert_equal 'timeout', ps.expressions.last.h.timers.first.last
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+
+    ps = @engine.ps(wfid)
+
+    assert_equal 4, ps.expressions.size
+    assert_equal [ ps.expressions[2].fei.h ], ps.expressions[1].h.flanks
+  end
+
+  # Cancelling the sequence also cancels its "flanks".
+  #
+  def test_cancel
+
+    pdef = Ruote.process_definition do
+      sequence do
+        bravo :flank => true
+        alpha
+      end
+    end
+
+    @engine.register_participant '.+', Ruote::NullParticipant
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+    @engine.wait_for(1)
+
+    fei = @engine.ps(wfid).expressions[1].fei
+
+    @engine.cancel(fei)
+
+    @engine.wait_for(wfid)
+
+    assert_nil @engine.ps(wfid)
   end
 end
 

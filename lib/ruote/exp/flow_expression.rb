@@ -264,21 +264,38 @@ module Ruote::Exp
         return reply_to_parent(h.applied_workitem)
       end
 
-      if attribute(:forget).to_s == 'true'
+      pi = h.parent_id
+      reply_immediately = false
 
-        pi = h.parent_id
-        wi = Ruote.fulldup(h.applied_workitem)
+      if attribute(:forget).to_s == 'true'
 
         h.variables = compile_variables
         h.parent_id = nil
         h.forgotten = true
 
-        @context.storage.put_msg('reply', 'fei' => pi, 'workitem' => wi) if pi
+        #@context.storage.put_msg('reply', 'fei' => pi, 'workitem' => wi) if pi
           # reply to parent immediately (if there is a parent)
+
+        reply_immediately = true
 
       elsif attribute(:lose).to_s == 'true'
 
         h.lost = true
+
+      elsif attribute(:flank).to_s == 'true'
+
+        h.flanking = true
+
+        reply_immediately = true
+      end
+
+      if reply_immediately and pi
+
+        @context.storage.put_msg(
+          'reply',
+          'fei' => pi,
+          'workitem' => Ruote.fulldup(h.applied_workitem),
+          'flanking' => h.flanking)
       end
 
       filter
@@ -382,8 +399,18 @@ module Ruote::Exp
         update_tree(ct)
       end
 
-      h.children.delete(fei)
+      removed = h.children.delete(fei)
         # accept without any check ?
+
+      (h['flanks'] ||= []) << fei if msg['flanking']
+
+      if msg['flanking'] and (not removed)
+        #
+        # it's a timer
+        #
+        puts 'x' * 80
+        # persist or retry
+      end
 
       if h.state == 'paused'
 
@@ -472,6 +499,16 @@ module Ruote::Exp
     #
     def cancel(flavour)
 
+      (h.flanks || []).each do |flank_fei|
+
+        @context.storage.put_msg(
+          'cancel',
+          'fei' => flank_fei,
+          'parent_id' => h.fei,
+            # indicating that this is a "cancel child", well...
+          'flavour' => flavour)
+      end
+
       return reply_to_parent(h.applied_workitem) if h.children.empty?
         #
         # there are no children, nothing to cancel, let's just reply to
@@ -484,7 +521,7 @@ module Ruote::Exp
         # if the do_persist returns false, it means it failed, implying this
         # expression is stale, let's return, thus discarding this cancel message
 
-      children.each do |cfei|
+      children.each do |child_fei|
         #
         # let's send a cancel message to each of the children
         #
@@ -493,7 +530,7 @@ module Ruote::Exp
 
         @context.storage.put_msg(
           'cancel',
-          'fei' => cfei,
+          'fei' => child_fei,
           'parent_id' => h.fei, # indicating that this is a "cancel child"
           'flavour' => flavour)
       end
