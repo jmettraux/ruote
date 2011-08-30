@@ -93,11 +93,15 @@ module Ruote::Exp
     alias persist persist_or_raise
     alias unpersist unpersist_or_raise
 
+    # Make sure to persist (retry if necessary).
+    #
     def do_persist
 
       do_p(true)
     end
 
+    # Make sure to unpersist (retry if necessary).
+    #
     def do_unpersist
 
       do_p(false)
