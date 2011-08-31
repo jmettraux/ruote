@@ -5,8 +5,8 @@
 # Tue Oct 27 01:36:52 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
-require File.join(File.dirname(__FILE__), 'restart_base')
+require File.expand_path('../base', __FILE__)
+require File.expand_path('../restart_base', __FILE__)
 
 
 class RtWhenTest < Test::Unit::TestCase

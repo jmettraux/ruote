@@ -5,8 +5,8 @@
 # Wed Oct 28 14:51:07 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
-require File.join(File.dirname(__FILE__), 'restart_base')
+require File.expand_path('../base', __FILE__)
+require File.expand_path('../restart_base', __FILE__)
 
 require 'ruote/part/null_participant'
 

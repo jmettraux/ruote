@@ -202,8 +202,8 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
   def test_register_require_path
 
-    rpath = File.join(
-      File.dirname(__FILE__), "#{Time.now.to_f}_#{$$}_required_participant")
+    rpath = File.expand_path(
+      "../#{Time.now.to_f}_#{$$}_required_participant", __FILE__)
     path = "#{rpath}.rb"
 
     File.open(path, 'wb') do |f|
