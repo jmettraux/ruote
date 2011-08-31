@@ -64,7 +64,11 @@ module Ruote::Exp
     require 'ruote/exp/ro_vf'
 
     COMMON_ATT_KEYS = %w[
-      if unless forget timeout timers on_error on_cancel on_timeout ]
+      if unless
+      forget lose flank
+      timeout timers
+      on_error on_cancel on_timeout
+    ]
 
     attr_reader :h
 
