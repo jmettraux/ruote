@@ -324,8 +324,8 @@ module Ruote
         'applied_workitem' => wi,
         'forgotten' => msg['forgotten'],
         'lost' => msg['lost'],
-        'stash' => msg['stash']
-      }
+        'flanking' => msg['flanking'],
+        'stash' => msg['stash'] }
 
       if not exp_class
 

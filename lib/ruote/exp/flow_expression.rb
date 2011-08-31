@@ -273,16 +273,13 @@ module Ruote::Exp
         h.parent_id = nil
         h.forgotten = true
 
-        #@context.storage.put_msg('reply', 'fei' => pi, 'workitem' => wi) if pi
-          # reply to parent immediately (if there is a parent)
-
         reply_immediately = true
 
       elsif attribute(:lose).to_s == 'true'
 
         h.lost = true
 
-      elsif attribute(:flank).to_s == 'true'
+      elsif msg['flanking'] or (attribute(:flank).to_s == 'true')
 
         h.flanking = true
 
@@ -356,7 +353,7 @@ module Ruote::Exp
 
         trigger('on_timeout', workitem)
 
-      elsif h.lost and (h.state == nil)
+      elsif (h.lost or h.flanking) and h.state.nil?
 
         # do not reply, sit here (and wait for cancellation probably)
 
@@ -393,23 +390,25 @@ module Ruote::Exp
       workitem = msg['workitem']
       fei = workitem['fei']
 
-      if ut = msg['updated_tree']
-        ct = tree.dup
-        ct.last[Ruote::FlowExpressionId.child_id(fei)] = ut
-        update_tree(ct)
-      end
-
       removed = h.children.delete(fei)
         # accept without any check ?
 
-      (h['flanks'] ||= []) << fei if msg['flanking']
+      if msg['flanking']
 
-      if msg['flanking'] and (not removed)
-        #
-        # it's a timer
-        #
-        puts 'x' * 80
-        # persist or retry
+        (h.flanks ||= []) << fei
+
+        if (not removed) # then it's a timer
+
+          do_persist
+          return
+        end
+      end
+
+      if ut = msg['updated_tree']
+
+        ct = tree.dup
+        ct.last[Ruote::FlowExpressionId.child_id(fei)] = ut
+        update_tree(ct)
       end
 
       if h.state == 'paused'
@@ -447,8 +446,6 @@ module Ruote::Exp
     # is done in the #cancel method).
     #
     def do_cancel(msg)
-
-      @msg = Ruote.fulldup(msg)
 
       flavour = msg['flavour']
 
@@ -494,12 +491,13 @@ module Ruote::Exp
       cancel(flavour)
     end
 
-    # This default implementation cancels all the [registered] children
-    # of this expression.
+    # Emits a cancel message for each flanking expression (if any).
     #
-    def cancel(flavour)
+    def cancel_flanks(flavour)
 
-      (h.flanks || []).each do |flank_fei|
+      return unless h.flanks
+
+      h.flanks.each do |flank_fei|
 
         @context.storage.put_msg(
           'cancel',
@@ -508,6 +506,14 @@ module Ruote::Exp
             # indicating that this is a "cancel child", well...
           'flavour' => flavour)
       end
+    end
+
+    # This default implementation cancels all the [registered] children
+    # of this expression.
+    #
+    def cancel(flavour)
+
+      cancel_flanks(flavour)
 
       return reply_to_parent(h.applied_workitem) if h.children.empty?
         #
@@ -904,7 +910,7 @@ module Ruote::Exp
             'wfid' => h.fei['wfid'],
             'expid' => h.fei['expid'],
             'parent_id' => h.fei,
-            'lost' => true,
+            'flanking' => true,
             'tree' => [ action, {}, [] ],
             'workitem' => h.applied_workitem }
         end

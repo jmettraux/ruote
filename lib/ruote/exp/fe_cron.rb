@@ -112,6 +112,8 @@ module Ruote::Exp
 
     def cancel(flavour)
 
+      cancel_flanks(flavour)
+
       @context.storage.delete_schedule(h.job_id)
       reply_to_parent(h.applied_workitem)
     end

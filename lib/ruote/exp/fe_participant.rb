@@ -168,6 +168,8 @@ module Ruote::Exp
 
     def cancel(flavour)
 
+      cancel_flanks(flavour)
+
       return reply_to_parent(h.applied_workitem) unless h.participant_name
         # no participant, reply immediately
 

@@ -7,6 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'path_helper')
 
+require 'pp'
 require 'test/unit'
 require 'rubygems'
 
