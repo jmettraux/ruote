@@ -324,18 +324,23 @@ module Ruote::Exp
           'workitem' => workitem)
       end
 
-      if h.timeout_schedule_id #&& h.state != 'timing_out'
-        @context.storage.delete_schedule(h.timeout_schedule_id)
+      # deal with the timers and the schedules
+
+      %w[ timeout_schedule_id job_id ].each do |sid|
+        @context.storage.delete_schedule(h[sid]) if h[sid]
       end
         #
-        # the flow has a h.timeout_schedule_id, it means it has been started
-        # with a pre-timers ruote. We have to remove the schedule anyway.
+        # legacy schedule ids, to be removed for ruote 2.2.2 or .3
+
+      @context.storage.delete_schedule(h.schedule_id) if h.schedule_id
         #
-        # those 3 lines will be removed soon.
+        # time-driven exps like cron, wait and once now all use h.schedule_id
 
       h.timers.each do |schedule_id, action|
         @context.storage.delete_schedule(schedule_id)
       end if h.timers
+
+      # trigger or vanilla reply
 
       if h.state == 'failing' # on_error is implicit (#do_fail got called)
 

@@ -56,27 +56,20 @@ module Ruote::Exp
       h.for = attribute(:for) || attribute_text
       h.until = attribute(:until)
 
-      s = h.for
-      s = h.until if s == ''
+      h.at = h.for
+      h.at = h.until if h.at == ''
 
-      h.at = s
+      return reply_to_parent(h.applied_workitem) unless h.at
 
-      if h.at
+      h.schedule_id = @context.storage.put_schedule(
+        'at',
+        h.fei,
+        h.at,
+        'action' => 'reply',
+        'fei' => h.fei,
+        'workitem' => h.applied_workitem)
 
-        h.schedule_id = @context.storage.put_schedule(
-          'at',
-          h.fei,
-          h.at,
-          'action' => 'reply',
-          'fei' => h.fei,
-          'workitem' => h.applied_workitem)
-
-        persist_or_raise
-
-      else
-
-        reply_to_parent(h.applied_workitem)
-      end
+      persist_or_raise
     end
 
     #--
@@ -84,14 +77,6 @@ module Ruote::Exp
     #def reply (workitem)
     #end
     #++
-
-    def cancel(flavour)
-
-      cancel_flanks(flavour)
-
-      @context.storage.delete_schedule(h.schedule_id)
-      reply_to_parent(h.applied_workitem)
-    end
   end
 end
 

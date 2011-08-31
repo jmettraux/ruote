@@ -94,7 +94,6 @@ module Ruote::Exp
     def apply
 
       h.schedule = attribute(:tab) || attribute(:interval) || attribute_text
-      h.job_id = nil
 
       reschedule
     end
@@ -110,19 +109,11 @@ module Ruote::Exp
       reschedule
     end
 
-    def cancel(flavour)
-
-      cancel_flanks(flavour)
-
-      @context.storage.delete_schedule(h.job_id)
-      reply_to_parent(h.applied_workitem)
-    end
-
     # Note : this method has to be public.
     #
     def reschedule
 
-      h.job_id = @context.storage.put_schedule(
+      h.schedule_id = @context.storage.put_schedule(
         'cron',
         h.fei,
         h.schedule,
@@ -130,7 +121,7 @@ module Ruote::Exp
         'fei' => h.fei,
         'workitem' => h.applied_workitem)
 
-      @context.storage.delete_schedule(h.job_id) if try_persist
+      @context.storage.delete_schedule(h.schedule_id) if try_persist
         #
         # if the persist failed, immediately unschedule
         # the just scheduled job
