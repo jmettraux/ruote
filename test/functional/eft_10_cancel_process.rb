@@ -5,7 +5,7 @@
 # Mon Jun 15 21:18:06 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class EftCancelProcessTest < Test::Unit::TestCase

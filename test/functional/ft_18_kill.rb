@@ -5,7 +5,7 @@
 # Sun Jul  5 22:56:06 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtKillTest < Test::Unit::TestCase

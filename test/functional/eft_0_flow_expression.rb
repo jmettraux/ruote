@@ -6,7 +6,7 @@
 #
 
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class EftFlowExpressionTest < Test::Unit::TestCase

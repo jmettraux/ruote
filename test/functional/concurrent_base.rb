@@ -5,7 +5,7 @@
 # Fri Dec  4 17:15:10 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base.rb')
+require File.expand_path('../base', __FILE__)
 
 
 class Ruote::Worker

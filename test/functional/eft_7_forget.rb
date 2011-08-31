@@ -5,7 +5,7 @@
 # Sun Jun 14 13:33:17 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class EftForgetTest < Test::Unit::TestCase

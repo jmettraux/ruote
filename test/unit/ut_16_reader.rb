@@ -5,7 +5,7 @@
 # Tue Oct 20 10:48:11 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
+require File.expand_path('../../test_helper', __FILE__)
 
 require_json
 require 'ruote/reader'

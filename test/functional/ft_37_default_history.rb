@@ -5,7 +5,7 @@
 # Mon Jan 24 11:11:43 JST 2011
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtDefaultHistoryTest < Test::Unit::TestCase

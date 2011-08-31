@@ -5,11 +5,11 @@
 # Mon Dec 14 15:03:13 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
+require File.expand_path('../../test_helper', __FILE__)
 
 require_json
 
-require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
+require File.expand_path('../../functional/storage_helper', __FILE__)
 
 require 'ruote/fei'
 require 'ruote/participant'

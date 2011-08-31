@@ -7,7 +7,7 @@
 # between Denpasar and Singapore
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 require_json
 Rufus::Json.detect_backend

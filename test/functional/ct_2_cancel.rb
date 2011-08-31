@@ -5,7 +5,7 @@
 # Mon Dec 28 19:13:02 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'concurrent_base')
+require File.expand_path('../concurrent_base', __FILE__)
 
 
 class CtCancelTest < Test::Unit::TestCase

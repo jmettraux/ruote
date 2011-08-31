@@ -5,9 +5,7 @@
 # Wed Jul  8 15:30:55 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'concurrent_base')
-
-#require 'ruote/part/hash_participant'
+require File.expand_path('../concurrent_base', __FILE__)
 
 
 class CtConcurrenceTest < Test::Unit::TestCase

@@ -7,7 +7,7 @@
 # between Changi and Haneda (JA622A)
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtCodeParticipantTest < Test::Unit::TestCase

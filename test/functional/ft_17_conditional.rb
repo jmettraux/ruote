@@ -5,7 +5,7 @@
 # Fri Jul  3 19:46:22 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtConditionalTest < Test::Unit::TestCase

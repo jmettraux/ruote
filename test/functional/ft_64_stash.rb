@@ -5,7 +5,7 @@
 # Wed Jun 29 07:42:42 JST 2011
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtStash < Test::Unit::TestCase

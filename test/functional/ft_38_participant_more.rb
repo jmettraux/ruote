@@ -7,7 +7,7 @@
 # Qcon Tokyo, special day
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 require 'ruote/part/local_participant'
 

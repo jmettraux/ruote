@@ -7,8 +7,8 @@
 
 require 'fileutils'
 
-require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
-require File.join(File.dirname(__FILE__), 'storage_helper.rb')
+require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path('../storage_helper', __FILE__)
 
 require 'ruote'
 

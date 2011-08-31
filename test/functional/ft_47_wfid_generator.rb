@@ -5,7 +5,7 @@
 # Sat Oct 23 14:22:15 JST 2010
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtWfidGeneratorTest < Test::Unit::TestCase

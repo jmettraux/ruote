@@ -5,7 +5,7 @@
 # Sun Mar 14 21:25:52 JST 2010
 #
 
-require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
+require File.expand_path('../../test_helper', __FILE__)
 
 require 'ruote'
 require 'ruote/storage/composite_storage'

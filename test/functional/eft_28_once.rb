@@ -7,7 +7,7 @@
 # in the train from Friboug to Zurich-Flughafen
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 require 'ruote/participant'
 

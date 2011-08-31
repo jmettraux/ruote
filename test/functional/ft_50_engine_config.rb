@@ -5,7 +5,7 @@
 # Mon Dec  6 10:40:29 JST 2010
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtEngineConfigTest < Test::Unit::TestCase

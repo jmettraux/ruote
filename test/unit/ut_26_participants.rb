@@ -5,7 +5,7 @@
 # Wed Jun 29 12:05:41 JST 2011
 #
 
-require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
+require File.expand_path('../../test_helper', __FILE__)
 
 require 'ruote/workitem'
 require 'ruote/part/local_participant'

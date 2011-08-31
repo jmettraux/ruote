@@ -5,7 +5,7 @@
 # Sun Jun 28 16:45:57 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtTimeoutTest < Test::Unit::TestCase

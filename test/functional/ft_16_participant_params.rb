@@ -5,7 +5,7 @@
 # Wed Jul  1 09:51:30 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtParticipantParamsTest < Test::Unit::TestCase

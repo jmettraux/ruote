@@ -5,9 +5,6 @@
 # since Mon Oct  9 22:19:44 JST 2006
 #
 
-load File.dirname(__FILE__) + '/unit/test.rb'
-load File.dirname(__FILE__) + '/functional/test.rb'
-
-#load File.dirname(__FILE__) + '/extras/test.rb'
-  # special tests that require external stuff
+load File.expand_path('../unit/test.rb', __FILE__)
+load File.expand_path('../functional/test.rb', __FILE__)
 

@@ -5,7 +5,7 @@
 # Sun Jan 30 21:08:14 JST 2011
 #
 
-require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
+require File.expand_path('../../test_helper', __FILE__)
 
 require_json
 require 'rufus/json'

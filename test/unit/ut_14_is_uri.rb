@@ -5,7 +5,7 @@
 # Tue Sep  1 13:39:43 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
+require File.expand_path('../../test_helper', __FILE__)
 
 require 'ruote/util/misc'
 

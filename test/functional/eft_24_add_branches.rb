@@ -5,7 +5,7 @@
 # Fri Sep 11 16:09:32 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class EftAddBranchesTest < Test::Unit::TestCase

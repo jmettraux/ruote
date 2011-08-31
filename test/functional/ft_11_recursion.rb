@@ -5,7 +5,7 @@
 # Sat Jun 13 22:43:16 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 require 'ruote/part/local_participant'
 

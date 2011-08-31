@@ -5,7 +5,7 @@
 # Wed Aug  5 08:35:38 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtLoadDefsTest < Test::Unit::TestCase

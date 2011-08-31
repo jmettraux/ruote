@@ -7,7 +7,7 @@
 # in Singapore
 #
 
-require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
+require File.expand_path('../../test_helper', __FILE__)
 
 require 'ostruct'
 require 'ruote'

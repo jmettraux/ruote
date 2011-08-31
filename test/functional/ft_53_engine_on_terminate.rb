@@ -5,7 +5,7 @@
 # Thu Jan  6 21:49:01 JST 2011
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 #require 'ruote/participant'
 

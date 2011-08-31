@@ -7,8 +7,8 @@
 # Matt Nichols (http://github.com/mattnichols)
 #
 
-require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
-require File.join(File.dirname(__FILE__), %w[ .. functional storage_helper.rb ])
+require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path('../../functional/storage_helper', __FILE__)
 
 require 'ruote'
 

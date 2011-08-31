@@ -5,7 +5,7 @@
 # Fri Dec 24 14:53:30 JST 2010
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 #

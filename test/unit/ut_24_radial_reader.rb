@@ -6,7 +6,7 @@
 # Sat Apr 30 13:22:49 JST 2011
 #
 
-require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
+require File.expand_path('../../test_helper', __FILE__)
 
 require 'ruote/reader/radial'
 

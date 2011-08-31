@@ -7,7 +7,7 @@
 # Singapore
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtParticipantCodeTest < Test::Unit::TestCase

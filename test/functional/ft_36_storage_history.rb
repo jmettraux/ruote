@@ -5,7 +5,7 @@
 # Tue Jan  5 17:51:10 JST 2010
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 #require 'ruote/log/fs_history'
 require 'ruote/part/no_op_participant'

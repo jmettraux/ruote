@@ -5,7 +5,7 @@
 # Wed Jan 26 09:21:06 JST 2011
 #
 
-require File.join(File.dirname(__FILE__), %w[ .. test_helper.rb ])
+require File.expand_path('../../test_helper', __FILE__)
 
 require 'ostruct'
 require 'ruote'

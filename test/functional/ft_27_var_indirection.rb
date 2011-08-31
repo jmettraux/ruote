@@ -5,7 +5,7 @@
 # Sun Aug 23 16:59:07 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 
 class FtVarIndirectionTest < Test::Unit::TestCase

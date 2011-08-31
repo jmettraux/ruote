@@ -5,7 +5,7 @@
 # Tue Sep 15 09:04:36 JST 2009
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.expand_path('../base', __FILE__)
 
 require 'ruote/part/smtp_participant'
 
