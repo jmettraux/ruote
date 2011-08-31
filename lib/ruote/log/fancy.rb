@@ -98,8 +98,7 @@ module Ruote
 
     def fancy_print(msg)
 
-      @count += 1
-      @count = 0 if @count > 9
+      @count = (@count + 1) % 10
 
       ei = self.object_id.to_s[-2..-1]
 
@@ -164,6 +163,10 @@ module Ruote
         else act
       end
 
+      tm = Time.now
+      tm = tm.strftime('%M:%S.') + ('%02d' % ((tm.to_f % 1.0) * 100.0).to_i)
+      tm = color(37, tm, false)
+
       if msg['action'] == 'error_intercepted'
 
         tail = []
@@ -175,7 +178,7 @@ module Ruote
 
         color(
           @color,
-          "#{@count} #{ei} #{'  ' * depth}#{act} * #{i}",
+          "#{@count} #{tm}  #{ei} #{'  ' * depth}#{act} * #{i}",
           true
         ) +
         "\n" +
@@ -194,7 +197,7 @@ module Ruote
 
         color(
           @color,
-          "#{@count} #{ei} #{'  ' * depth}#{act} * #{i} #{pa}#{rest}",
+          "#{@count} #{tm} #{ei} #{'  ' * depth}#{act} * #{i} #{pa}#{rest}",
           true)
       end
     end
