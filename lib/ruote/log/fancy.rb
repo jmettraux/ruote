@@ -72,11 +72,11 @@ module Ruote
       "[#{mod}m#{s}[0m#{clear ? '' : "[#{@color}m"}"
     end
 
-    def fei_to_s(fei)
+    def fei_to_s(fei, wfid)
       [
         fei['expid'],
         fei['subid'][0, 5] + '...',
-        fei['wfid']
+        fei['wfid'] != wfid ? fei['wfid'] : ''
       ].join('!')
     end
 
@@ -86,7 +86,11 @@ module Ruote
         when nil
           'nil'
         when Hash
-          '{' + o.collect { |k, v| "#{k}: #{insp(v)}" }.join(', ') + '}'
+          '{' + o.select { |k, v|
+            v != nil
+          }.collect { |k, v|
+            "#{k}: #{insp(v)}"
+          }.join(', ') + '}'
         when Array
           '[' + o.collect { |e| insp(e) }.join(', ') + ']'
         when String
@@ -118,11 +122,11 @@ module Ruote
       ].each { |k| rest.delete(k) }
 
       if v = rest['parent_id']
-        rest['parent_id'] = fei_to_s(v)
+        rest['parent_id'] = fei_to_s(v, wfid)
       end
       if v = rest.delete('workitem')
         rest[:wi] = [
-          v['fei'] ? fei_to_s(v['fei']) : nil,
+          v['fei'] ? fei_to_s(v['fei'], wfid) : nil,
           v['fields'].size ]
       end
 
@@ -134,6 +138,10 @@ module Ruote
         if v = rest.delete(k0)
           rest[k1] = v
         end
+      end
+
+      if v = rest.delete('participant')
+        rest['part'] = v.first == 'Ruote::BlockParticipant' ? v.first : v
       end
 
       act = msg['action'][0, 2]
@@ -189,9 +197,11 @@ module Ruote
 
       else
 
-        pa = %w[ receive dispatch dispatch_cancel ].include?(msg['action']) ?
-          color('34', rest.delete('participant_name')) + ' ' :
+        pa = if %w[ receive dispatch dispatch_cancel ].include?(msg['action'])
+          color('34', rest.delete('participant_name')) + ' '
+        else
           ''
+        end
 
         rest = insp(rest)[1..-2]
 
