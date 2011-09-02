@@ -213,7 +213,7 @@ class FtTimersTest < Test::Unit::TestCase
     @engine.register_participant :alpha, Ruote::StorageParticipant
 
     pdef = Ruote.process_definition do
-      alpha :timers => '4s: retry'
+      alpha :timers => '3s: retry'
     end
 
     #@engine.noisy = true
@@ -226,6 +226,28 @@ class FtTimersTest < Test::Unit::TestCase
     assert_equal(
       'on_re_apply',
       @engine.storage_participant.first.params['_triggered'])
+  end
+
+  def test_undo_or_pass
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @engine.register_participant :bravo, Ruote::StorageParticipant
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '1s: pass'
+      bravo
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:bravo)
+
+    ps = @engine.ps(wfid)
+
+    assert_equal 0, ps.errors.size
+    assert_equal 2, ps.expressions.size
   end
 end
 

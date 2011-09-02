@@ -911,10 +911,11 @@ module Ruote::Exp
         next if after == ''
 
         msg = case action
-          when 'timeout'
+
+          when 'timeout', 'undo', 'pass'
             { 'action' => 'cancel',
               'fei' => h.fei,
-              'flavour' => 'timeout' }
+              'flavour' => action == 'timeout' ? 'timeout' : nil }
           when 'redo', 'retry'
             { 'action' => 'cancel',
               'fei' => h.fei,
