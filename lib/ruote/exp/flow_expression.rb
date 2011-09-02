@@ -914,6 +914,11 @@ module Ruote::Exp
           { 'action' => 'cancel',
             'fei' => h.fei,
             'flavour' => 'timeout' }
+        elsif m = action.match(/^error( .+)?$/)
+          { 'action' => 'cancel',
+            'fei' => h.fei,
+            're_apply' => { 'tree' => [ 'error', { m[1].to_s.strip => nil } ] },
+            'flavour' => nil }
         else
           { 'action' => 'apply',
             'wfid' => h.fei['wfid'],

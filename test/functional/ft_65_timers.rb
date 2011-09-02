@@ -162,5 +162,50 @@ class FtTimersTest < Test::Unit::TestCase
 
     assert_nil @engine.ps(wfid)
   end
+
+  def test_error
+
+    @engine.register_participant :alpha, Ruote::NullParticipant
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '1s: error'
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(wfid)
+
+    ps = @engine.ps(wfid)
+
+    assert_equal 1, ps.errors.size
+    assert_equal 2, ps.expressions.size
+
+    assert_equal(
+      '#<Ruote::ForcedError: error triggered from process definition>',
+      ps.errors.first.message)
+  end
+
+  def test_error_message
+
+    @engine.register_participant :alpha, Ruote::NullParticipant
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '1s: error it went wrong, 3d: nada'
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(wfid)
+
+    ps = @engine.ps(wfid)
+
+    assert_equal 1, ps.errors.size
+    assert_equal 2, ps.expressions.size
+    assert_equal '#<Ruote::ForcedError: it went wrong>', ps.errors[0].message
+  end
 end
 
