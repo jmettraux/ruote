@@ -139,7 +139,7 @@
 [o] reserve : perhaps it's better to have an atomic get and set variable...
 [o] clean up lookup_var/set_var into locate_var/lookup_var/set_var
 [x] Sun Hao's up-to-date-tree idea ${f:participant_name} ps#resolved_tree
-[o] error : when an error expression is cancelled, should the err get remove 
+[o] error : when an error expression is cancelled, should the err get removed
     from the process status ? yes.
 [o] file logger / history service
 [o] engine.process_history(wfid)
@@ -484,7 +484,11 @@
 
 [x] investigate 1.9's json
 [ ] Parslet for conditions ?
+[ ] Subaltern for conditions ?
 [ ] enhance radial/Parslet error messages (cf Raphael)
 
 [ ] citerator: drop the need for the sequence --> implicit sequence
+
+[ ] concurrence: allow empty
+[ ] citerator: allow empty
 
