@@ -249,5 +249,24 @@ class FtTimersTest < Test::Unit::TestCase
     assert_equal 0, ps.errors.size
     assert_equal 2, ps.expressions.size
   end
+
+  def test_jump_and_other_commands
+
+    @engine.register '.+', Ruote::StorageParticipant
+
+    pdef = Ruote.process_definition do
+      cursor do
+        alpha :timers => '1s: jump to charly'
+        bravo
+        charly
+      end
+    end
+
+    @engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:charly)
+  end
 end
 

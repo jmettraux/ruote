@@ -4,7 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
-- :timers error, redo/retry, undo/pass
+- :timers error, redo/retry, undo/pass and commands
 - :timers common attribute
 - :flank common attribute
 - Storage#done(worker, msg) optional method

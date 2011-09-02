@@ -924,7 +924,14 @@ module Ruote::Exp
             { 'action' => 'cancel',
               'fei' => h.fei,
               're_apply' => {
-                'tree' => [ 'error', { $~[1].to_s.strip => nil } ] } }
+                'tree' => [
+                  'error', { $~[1].to_s.strip => nil }, [] ] } }
+          when CommandExpression::REGEXP
+            { 'action' => 'cancel',
+              'fei' => h.fei,
+              're_apply' => {
+                'tree' => [
+                  $~[1], { $~[2].split(' ').last.to_s => nil }, [] ] } }
           else
             { 'action' => 'apply',
               'wfid' => h.fei['wfid'],

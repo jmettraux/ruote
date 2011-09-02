@@ -86,11 +86,7 @@ module Ruote
         when nil
           'nil'
         when Hash
-          '{' + o.select { |k, v|
-            v != nil
-          }.collect { |k, v|
-            "#{k}: #{insp(v)}"
-          }.join(', ') + '}'
+          '{' + o.collect { |k, v| "#{k}: #{insp(v)}" }.join(', ') + '}'
         when Array
           '[' + o.collect { |e| insp(e) }.join(', ') + ']'
         when String
