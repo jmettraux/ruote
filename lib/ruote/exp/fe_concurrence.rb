@@ -176,6 +176,14 @@ module Ruote::Exp
   #     'b' => [ 'x', 'y', 'y', 'z' ],
   #     'c' => { 'aa' => 'bb', 'cc' => 'dd' } }
   #
+  # ==== :ignore
+  #
+  # (Available from ruote 2.2.1)
+  #
+  # A very simple merge type, the workitems given back by the branches are
+  # simply discarded and the workitem as passed to the concurrence expression
+  # is used to reply to the parent expression (of the concurrence expression).
+  #
   #
   # === :over_if (and :over_unless)
   #
@@ -206,9 +214,12 @@ module Ruote::Exp
       h.ccount = attribute(:count).to_i rescue 0
       h.ccount = nil if h.ccount < 1
 
-      h.cmerge = att(:merge, %w[ first last highest lowest ])
-      h.cmerge_type = att(:merge_type, %w[ override mix isolate stack union ])
-      h.remaining = att(:remaining, %w[ cancel forget ])
+      h.cmerge = att(
+        :merge, %w[ first last highest lowest ])
+      h.cmerge_type = att(
+        :merge_type, %w[ override mix isolate stack union ignore ])
+      h.remaining = att(
+        :remaining, %w[ cancel forget ])
 
       h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}
 
@@ -322,9 +333,13 @@ module Ruote::Exp
       end
     end
 
+    # Called by #reply_to_parent, returns the unique, merged, workitem that
+    # will be fed back to the parent expression.
+    #
     def merge_all_workitems
 
       return h.applied_workitem if h.workitems.size < 1
+      return h.applied_workitem if h.cmerge_type == 'ignore'
 
       wis = case h.cmerge
         when 'first'
