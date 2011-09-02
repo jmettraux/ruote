@@ -910,23 +910,28 @@ module Ruote::Exp
 
         next if after == ''
 
-        msg = if action == 'timeout'
-          { 'action' => 'cancel',
-            'fei' => h.fei,
-            'flavour' => 'timeout' }
-        elsif m = action.match(/^error( .+)?$/)
-          { 'action' => 'cancel',
-            'fei' => h.fei,
-            're_apply' => { 'tree' => [ 'error', { m[1].to_s.strip => nil } ] },
-            'flavour' => nil }
-        else
-          { 'action' => 'apply',
-            'wfid' => h.fei['wfid'],
-            'expid' => h.fei['expid'],
-            'parent_id' => h.fei,
-            'flanking' => true,
-            'tree' => [ action, {}, [] ],
-            'workitem' => h.applied_workitem }
+        msg = case action
+          when 'timeout'
+            { 'action' => 'cancel',
+              'fei' => h.fei,
+              'flavour' => 'timeout' }
+          when 'redo', 'retry'
+            { 'action' => 'cancel',
+              'fei' => h.fei,
+              're_apply' => true }
+          when /^error( .+)?$/
+            { 'action' => 'cancel',
+              'fei' => h.fei,
+              're_apply' => {
+                'tree' => [ 'error', { $~[1].to_s.strip => nil } ] } }
+          else
+            { 'action' => 'apply',
+              'wfid' => h.fei['wfid'],
+              'expid' => h.fei['expid'],
+              'parent_id' => h.fei,
+              'flanking' => true,
+              'tree' => [ action, {}, [] ],
+              'workitem' => h.applied_workitem }
         end
 
         (h.timers ||= []) <<

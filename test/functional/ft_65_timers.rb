@@ -207,5 +207,25 @@ class FtTimersTest < Test::Unit::TestCase
     assert_equal 2, ps.expressions.size
     assert_equal '#<Ruote::ForcedError: it went wrong>', ps.errors[0].message
   end
+
+  def test_redo_or_retry
+
+    @engine.register_participant :alpha, Ruote::StorageParticipant
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '4s: retry'
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+    @engine.wait_for(:alpha)
+
+    assert_equal(
+      'on_re_apply',
+      @engine.storage_participant.first.params['_triggered'])
+  end
 end
 
