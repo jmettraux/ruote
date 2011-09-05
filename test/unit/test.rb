@@ -5,7 +5,7 @@
 # since Mon Oct  9 22:19:44 JST 2006
 #
 
-def l (t)
+def l(t)
 
   if ARGV.include?('--split')
 
