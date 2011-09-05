@@ -78,7 +78,7 @@ class FtTimersTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    @engine.wait_for(9)
+    @engine.wait_for(10)
 
     assert_equal '0_0', @tracer.to_s
   end
@@ -262,7 +262,7 @@ class FtTimersTest < Test::Unit::TestCase
       end
     end
 
-    @engine.noisy = true
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
 
