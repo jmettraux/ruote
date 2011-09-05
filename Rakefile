@@ -28,6 +28,15 @@ task :default => [ :test ]
 
 
 #
+# tags
+
+task :tags do
+
+  sh '/usr/local/bin/ctags -h ".rb" -R lib/'
+end
+
+
+#
 # gem
 
 GEMSPEC_FILE = Dir['*.gemspec'].first
