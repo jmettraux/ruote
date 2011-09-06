@@ -89,5 +89,33 @@ class EftLoseTest < Test::Unit::TestCase
     assert_equal 0, @engine.storage_participant.size
     assert_nil @engine.process(wfid)
   end
+
+  def test_multi
+
+    pdef = Ruote.define do
+      lose do
+        alpha
+        bravo
+      end
+    end
+
+    @engine.register '.+', Ruote::StorageParticipant
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(9)
+
+    assert_equal 2, @engine.storage_participant.size
+    assert_equal 0, @engine.ps(wfid).errors.size
+    assert_equal 4, @engine.ps(wfid).expressions.size
+
+    @engine.cancel(wfid)
+
+    @engine.wait_for(wfid)
+
+    assert_nil @engine.ps(wfid)
+  end
 end
 

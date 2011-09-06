@@ -85,12 +85,29 @@ module Ruote::Exp
   # Probably produces definitions more compact than when using the 'lose'
   # expression.
   #
-  # == forget vs lose
+  #
+  # == multi lose
+  #
+  # Losing multiple children:
+  #
+  #   lose do
+  #     alice :task => 'take out garbage'
+  #     bob :task => 'clean living room'
+  #   end
+  #
+  # will trigger alice's and bob's tasks together. The lose expression will
+  # never reply, unless cancelled (in which case alice and bob task get
+  # cancelled as well).
+  #
+  #
+  # == forget vs lose vs flank
   #
   # forget : replies to parent expression immediately, is not cancellable
   # (not reachable).
   #
-  # lose : never replies to parent expression, is cancellable.
+  # lose : never replies to the parent expression, is cancellable.
+  #
+  # flank : immediately replies to the parent expression, is cancellable.
   #
   class LoseExpression < FlowExpression
 
@@ -98,7 +115,17 @@ module Ruote::Exp
 
     def apply
 
-      apply_child(0, h.applied_workitem)
+      tree_children.each_with_index do |t, index|
+
+        msg = pre_apply_child(index, Ruote.fulldup(h.applied_workitem), false)
+          # forget ? false
+
+        @context.storage.put_msg('apply', msg)
+      end
+
+      persist_or_raise
+
+      # no reply to the parent expression
     end
 
     def reply(workitem)

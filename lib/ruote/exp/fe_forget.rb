@@ -57,14 +57,31 @@ module Ruote::Exp
   #     participant 'delta'
   #   end
   #
-  # This expression can be useful for fire-and-forget parallelism in processes.
+  # This expression can be useful for fire-and-forget 'parallelism'
+  # in processes.
   #
-  # == forget vs lose
+  #
+  # == multi forget
+  #
+  # Forget multiple children at once.
+  #
+  #   forget do
+  #     alice :task => 'take out garbage'
+  #     bob :task => 'clean living room'
+  #   end
+  #
+  # The forget expression will reply immediately to its parent expression, it
+  # will thus not be cancellable (neither the children will be cancellable).
+  #
+  #
+  # == forget vs lose vs flank
   #
   # forget : replies to parent expression immediately, is not cancellable
   # (not reachable).
   #
-  # lose : never replies to parent expression, is cancellable.
+  # lose : never replies to the parent expression, is cancellable.
+  #
+  # flank : immediately replies to the parent expression, is cancellable.
   #
   class ForgetExpression < FlowExpression
 

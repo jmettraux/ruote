@@ -42,20 +42,27 @@ class EftForgetTest < Test::Unit::TestCase
     assert_equal 1, logger.log.select { |e| e['action'] == 'terminated' }.size
   end
 
-  #def test_variables
-  #  pdef = Ruote.process_definition do
-  #    set :var => 'a', :value => 0
-  #    concurrence do
-  #      set :var => 'a', :value => 1
-  #      forget do
-  #        echo '0_${v:a}'
-  #      end
-  #      echo '1_${v:a}'
-  #    end
-  #    echo '2_${v:a}'
-  #  end
-  #  noisy
-  #  assert_trace %w[ 1_1 0_0 2_1 ], pdef
-  #end
+  def test_multi
+
+    pdef = Ruote.define do
+      forget do
+        alpha
+        bravo
+      end
+      charly
+    end
+
+    @engine.register_participant '.+' do |wi|
+      context.tracer << wi.participant_name + "\n"
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:charly)
+
+    assert_equal %w[ alpha bravo charly ], @tracer.to_a.sort
+  end
 end
 
