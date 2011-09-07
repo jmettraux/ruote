@@ -118,6 +118,7 @@ class FtDollarTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       sequence do
         set 'f:toto' => 'person'
+        echo "${r:wi['toto']}"
         echo "${r:wi.fields['toto']}"
         echo "${r:workitem.fields['toto']}"
       end
@@ -127,7 +128,7 @@ class FtDollarTest < Test::Unit::TestCase
 
     @engine.context['ruby_eval_allowed'] = true
 
-    assert_trace "person\nperson", pdef
+    assert_trace [ 'person' ] * 3, pdef
   end
 
   def test_r_and_d
