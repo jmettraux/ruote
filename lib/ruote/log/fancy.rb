@@ -168,7 +168,7 @@ module Ruote
       end
 
       tm = Time.now
-      tm = tm.strftime('%M:%S.') + ('%02d' % ((tm.to_f % 1.0) * 100.0).to_i)
+      tm = tm.strftime('%M:%S.') + ('%03d' % ((tm.to_f % 1.0) * 1000.0).to_i)
       tm = color(37, tm, false)
 
       if msg['action'] == 'error_intercepted'
