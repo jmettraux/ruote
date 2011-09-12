@@ -268,5 +268,36 @@ class FtTimersTest < Test::Unit::TestCase
 
     @engine.wait_for(:charly)
   end
+
+  class MyParticipant
+    include Ruote::LocalParticipant
+
+    def consume(workitem)
+      # do nothing
+    end
+
+    def rtimers(workitem)
+      "2d: reminder"
+    end
+  end
+
+  def test_participant_defined_timers
+
+    @engine.register 'alpha', MyParticipant
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(Ruote.define do
+      alpha
+    end)
+
+    @engine.wait_for(:alpha)
+
+    alpha = @engine.ps(wfid).expressions.last
+
+    pp alpha.h.timers.size
+
+    assert_equal 1, alpha.h.timers.size
+  end
 end
 

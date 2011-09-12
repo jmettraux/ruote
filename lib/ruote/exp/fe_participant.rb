@@ -154,7 +154,7 @@ module Ruote::Exp
         h.applied_workitem['fields']['params']['__children__'] = dsub(tree.last)
       end
 
-      schedule_timers(h.participant)
+      consider_participant_timers(h.participant)
 
       persist_or_raise
 
@@ -230,28 +230,34 @@ module Ruote::Exp
     # Note that process definition timeout has priority over participant
     # specified timeout.
     #
-    def schedule_timers(p_info)
+    def consider_participant_timers(p_info)
 
       return if h.has_timers
+        # process definition takes precedence over participant defined timers.
 
-      # TODO timers/rtimers ?
+      timers = nil
 
-      pa = @context.plist.instantiate(p_info, :if_respond_to? => :rtimeout)
+      [ :rtimers, :timers, :rtimeout ].each do |meth|
 
-      timeout = Ruote.participant_send(
-        pa, :rtimeout, 'workitem' => Ruote::Workitem.new(h.applied_workitem)
-      ) if pa
+        pa = @context.plist.instantiate(p_info, :if_respond_to? => meth)
 
-      return unless timeout
+        next unless pa
 
-      (h.timers ||= []) << [
-        @context.storage.put_schedule(
-          'at',
-          h.fei,
-          timeout,
-          { 'action' => 'cancel', 'fei' => h.fei, 'flavour' => 'timeout' }),
-        'timeout'
-      ]
+        timers = Ruote.participant_send(
+          pa, meth, 'workitem' => Ruote::Workitem.new(h.applied_workitem))
+
+        break if timers
+      end
+
+      return unless timers
+
+      timers = if timers.index(':')
+        timers.split(/,/)
+      else
+        [ "#{timers}: timeout" ]
+      end
+
+      schedule_timers(timers)
     end
 
     def do_pause(msg)

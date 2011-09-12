@@ -892,9 +892,18 @@ module Ruote::Exp
       timers = (attribute(:timers) || '').split(/,/)
 
       if to = attribute(:timeout)
-        to = to.strip
-        timers << "#{to}: timeout" unless to == ''
+        timers << "#{to}: timeout" unless to.strip == ''
       end
+
+      schedule_timers(timers)
+    end
+
+    # Used by #consider_timers and
+    # ParticipantExpression#consider_participant_timers
+    #
+    # Takes care of registering the timers/timeout for an expression.
+    #
+    def schedule_timers(timers)
 
       timers.each do |t|
 

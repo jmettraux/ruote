@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- participant: #rtimers, #rtimeout and #timers
 - lose and forget expressions: aligned 'multi' behaviour
 - concurrence and citerator: :merge_type => 'ignore'
 - :timers error, redo/retry, undo/pass and commands
