@@ -271,6 +271,10 @@ module Ruote
 
           self.send(action, msg)
 
+        elsif action == 'put_doc'
+
+          put_doc(msg)
+
         #else
           # no special processing required for message, let it pass
           # to the subscribers (the notify two lines after)
@@ -398,6 +402,22 @@ module Ruote
     end
 
     alias resume_process pause_process
+
+    # Puts a document in the storage, must succeed (ie will happily steal
+    # the current _rev to place its doc).
+    #
+    def put_doc(msg)
+
+      doc = msg['doc']
+
+      r = @storage.put(doc)
+
+      return unless r.is_a?(Hash)
+
+      doc['_rev'] = r['_rev']
+
+      put_doc(msg)
+    end
   end
 end
 
