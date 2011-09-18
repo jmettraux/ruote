@@ -84,8 +84,7 @@ module Ruote
     #
     def run_in_thread
 
-      Thread.abort_on_exception = true
-        # TODO : remove me at some point
+      #Thread.abort_on_exception = true
 
       @running = true
 
@@ -445,6 +444,8 @@ module Ruote
       end
 
       def <<(msg)
+
+        pp msg if msg['put_at'].nil?
 
         @msgs << {
           'processed_at' => Ruote.now_to_utc_s,

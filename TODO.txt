@@ -295,6 +295,7 @@
 [o] eft_18 weak with jruby-1.5.1 and 1.5.6
 [o] participant : consume/cancel/accept?/on_reply without params
 [o] participant : consume -> on_workitem
+[o] remove abort_on_exception=true
 
 [ ] exp : at expression ? comparable to cron
 [x] exp : exp (restricted form of eval ?) (is it apply ?)
@@ -359,8 +360,6 @@
 [ ] [un]set_var : via message ? should be ok like that... Not much traffic there
 
 [ ] empty iterator or concurrent-iterator, log ? crash ? empty while...
-
-[ ] remove abort_on_exception=true
 
 [ ] shell ? irb ? Shell.new(storage)
 [ ] focus on fulldup or json.dup (via fulldup ?)
