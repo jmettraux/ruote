@@ -22,6 +22,8 @@
 # Made in Japan.
 #++
 
+require 'socket'
+
 
 module Ruote
 
@@ -162,6 +164,24 @@ module Ruote
     else
       s
     end
+  end
+
+  # From http://coderrr.wordpress.com/2008/05/28/get-your-local-ip-address/
+  #
+  # Returns the (one of the) local IP address.
+  #
+  def self.local_ip
+
+    orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true
+      # turn off reverse DNS resolution temporarily
+
+    UDPSocket.open do |s|
+      s.connect('64.233.187.99', 1)
+      s.addr.last
+    end
+
+  ensure
+    Socket.do_not_reverse_lookup = orig
   end
 end
 

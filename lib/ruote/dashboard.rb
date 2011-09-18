@@ -799,6 +799,14 @@ module Ruote
       @context[config_key]
     end
 
+    # Returns the hash containing info about each worker connected to the
+    # storage.
+    #
+    def worker_info
+
+      (@context.storage.get('variables', 'workers') || {})['workers']
+    end
+
     # Returns the process tree that is triggered in case of error.
     #
     # Note that this 'on_error' doesn't trigger if an on_error is defined

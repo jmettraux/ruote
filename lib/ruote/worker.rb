@@ -68,6 +68,8 @@ module Ruote
       @msgs = []
 
       @sleep_time = @context['restless_worker'] ? nil : 0.000
+
+      @info = Info.new(self)
     end
 
     # Runs the worker in the current thread. See #run_in_thread for running
@@ -290,6 +292,9 @@ module Ruote
 
       @context.storage.done(self, msg) if @context.storage.respond_to?(:done)
 
+      @info << msg
+        # for the stats
+
       true
     end
 
@@ -417,6 +422,84 @@ module Ruote
       doc['_rev'] = r['_rev']
 
       put_doc(msg)
+    end
+
+    #
+    # Gathering stats about this worker.
+    #
+    # Those stats can then be obtained via Dashboard#worker_info
+    # (Engine#worker_info).
+    #
+    class Info
+
+      def initialize(worker)
+
+        @worker = worker
+        @ip = Ruote.local_ip
+        @hostname = `hostname`.strip rescue nil
+        @system = `uname -a`.strip rescue nil
+
+        @since = Time.now
+        @msgs = []
+        @last_save = Time.now - 2 * 60
+      end
+
+      def <<(msg)
+
+        @msgs << {
+          'processed_at' => Ruote.now_to_utc_s,
+          'wait_time' => Time.now - Time.parse(msg['put_at'])
+          #'action' => msg['action']
+        }
+
+        save if @last_save + 60 < Time.now
+      end
+
+      protected
+
+      def save
+
+        doc = @worker.storage.get('variables', 'workers') || {}
+
+        doc['type'] = 'variables'
+        doc['_id'] = 'workers'
+
+        now = Time.now
+
+        @msgs = @msgs.drop_while { |msg|
+          Time.parse(msg['processed_at']) < now - 3600
+        }
+        mm = @msgs.drop_while { |msg|
+          Time.parse(msg['processed_at']) < now - 60
+        }
+
+        hour_count = @msgs.size < 1 ? 1 : @msgs.size
+        minute_count = mm.size < 1 ? 1 : mm.size
+
+        (doc['workers'] ||= {})["#{@ip}/#{$$}"] = {
+
+          'class' => @worker.class.to_s,
+          'ip' => @ip,
+          'hostname' => @hostname,
+          'pid' => $$,
+          'system' => @system,
+          'put_at' => Ruote.now_to_utc_s,
+          'uptime' => Time.now - @since,
+
+          'processed_last_minute' =>
+            minute_count,
+          'wait_time_last_minute' =>
+            mm.inject(0.0) { |s, m| s + m['wait_time'] } / minute_count.to_f,
+          'processed_last_hour' =>
+            hour_count,
+          'wait_time_last_hour' =>
+            @msgs.inject(0.0) { |s, m| s + m['wait_time'] } / hour_count.to_f
+        }
+
+        r = @worker.storage.put(doc)
+
+        save unless r.nil?
+      end
     end
   end
 end

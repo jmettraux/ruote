@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- Dashboard#worker_info
 - msg: put_doc, low-level action
 - participant: #rtimers, #rtimeout and #timers
 - lose and forget expressions: aligned 'multi' behaviour
