@@ -61,6 +61,7 @@ class EftForgetTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
 
     @engine.wait_for(:charly)
+    @engine.wait_for(3)
 
     assert_equal %w[ alpha bravo charly ], @tracer.to_a.sort
   end
