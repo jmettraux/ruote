@@ -34,8 +34,8 @@ class EftWaitTest < Test::Unit::TestCase
       @engine.context.stash[:ts][1].sec - @engine.context.stash[:ts][0].sec
     ) % 60
 
-    deltas = [ 2, 3 ]
-    deltas << 4 if @engine.storage.class.name.match(/^Ruote::Couch::/)
+    deltas = [ 2, 3, 4 ]
+    #deltas << 4 if @engine.storage.class.name.match(/^Ruote::Couch::/)
 
     assert(
       deltas.include?(d),
