@@ -52,6 +52,8 @@ class RtWhenTest < Test::Unit::TestCase
 
     start_new_engine
 
+    sleep 0.500
+
     #noisy
 
     assert_equal 1, @engine.processes.size
