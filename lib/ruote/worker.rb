@@ -445,7 +445,12 @@ module Ruote
 
       def <<(msg)
 
-        pp msg if msg['put_at'].nil?
+        if msg['put_at'].nil?
+          puts '-' * 80
+          puts "msg missing 'put_at':"
+          pp msg
+          puts '-' * 80
+        end
 
         @msgs << {
           'processed_at' => Ruote.now_to_utc_s,
