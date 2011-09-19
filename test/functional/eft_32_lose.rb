@@ -78,13 +78,11 @@ class EftLoseTest < Test::Unit::TestCase
     @engine.wait_for(6)
       # wait until 'alpha' replies to its parent 'lose'
 
-    sleep 0.500
-
     assert_equal 1, @engine.storage_participant.size
 
     @engine.cancel_process(wfid)
 
-    sleep 0.500
+    @engine.wait_for(wfid)
 
     assert_equal 0, @engine.storage_participant.size
     assert_nil @engine.process(wfid)
