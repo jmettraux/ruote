@@ -453,7 +453,7 @@ module Ruote
           #'action' => msg['action']
         }
 
-        save if @last_save + 60 < Time.now
+        save if Time.now > @last_save + 60
       end
 
       protected
@@ -498,6 +498,8 @@ module Ruote
         }
 
         r = @worker.storage.put(doc)
+
+        @last_save = Time.now
 
         save unless r.nil?
       end
