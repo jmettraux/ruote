@@ -254,5 +254,46 @@ class FtParticipantMoreTest < Test::Unit::TestCase
       { 'token0' => 'of esteem', 'token1' => 'of whatever' },
       BLACKBOARD['all'])
   end
+
+  class Doubtful
+    include Ruote::LocalParticipant
+
+    def on_workitem
+      context.tracer << "canceled:#{is_canceled}\n"
+      context.tracer << "gone:#{is_gone}\n"
+      sleep 5
+      context.tracer << "cancelled:#{is_cancelled}\n"
+      context.tracer << "gone:#{is_gone}\n"
+    end
+
+    def on_cancel
+      # nothing
+    end
+  end
+
+  def test_is_cancelled
+
+    @engine.register :alpha, Doubtful
+
+    pdef = Ruote.define do
+      alpha
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(pdef)
+
+    @engine.wait_for(:alpha)
+
+    @engine.cancel(@engine.ps(wfid).expressions.last)
+
+    @engine.wait_for(wfid)
+
+    sleep 10
+
+    assert_equal(
+      %w[ canceled:false gone:false cancelled:true gone:true ],
+      @tracer.to_a)
+  end
 end
 

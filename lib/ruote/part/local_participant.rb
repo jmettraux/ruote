@@ -285,6 +285,28 @@ module Ruote
       Ruote.participant_send(self, :rtimeout, 'workitem' => wi)
     end
 
+    # Returns true if the underlying participant expression is 'gone' (probably
+    # cancelled somehow).
+    #
+    def is_gone
+
+      fexp.nil?
+    end
+
+    # Returns true if the underlying participant expression is gone or
+    # cancelling.
+    #
+    def is_cancelled
+
+      fe = fexp
+
+      return true if fe == nil
+      return true if fe.h.state == 'cancelling'
+      false
+    end
+
+    alias is_canceled is_cancelled
+
     protected
 
     # Receivers and local participants share the #stash_put and #stash_get
