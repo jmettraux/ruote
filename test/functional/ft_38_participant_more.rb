@@ -295,5 +295,39 @@ class FtParticipantMoreTest < Test::Unit::TestCase
       %w[ canceled:false gone:false cancelled:true gone:true ],
       @tracer.to_a)
   end
+
+  class Robust
+    include Ruote::LocalParticipant
+
+    def on_workitem
+      context.tracer << "on_workitem\n"
+      sleep 5
+      workitem.fields['toto'] = 'seen'
+      reply
+    end
+
+    def on_cancel
+      context.tracer << "on_cancel\n"
+      false
+    end
+  end
+
+  def test_on_cancel_returning_false
+
+    @engine.register :rob, Robust
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(Ruote.define { rob })
+
+    @engine.wait_for(:rob)
+
+    @engine.cancel(@engine.ps(wfid).expressions.last)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal 'seen', r['workitem']['fields']['toto']
+    assert_equal %w[ on_workitem on_cancel ], @tracer.to_a
+  end
 end
 

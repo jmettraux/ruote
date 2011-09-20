@@ -129,7 +129,7 @@ module Ruote
 
       participant = @context.plist.instantiate(msg['participant'])
 
-      begin
+      result = begin
 
         Ruote.participant_send(
           participant,
@@ -144,7 +144,8 @@ module Ruote
       @context.storage.put_msg(
         'reply',
         'fei' => msg['fei'],
-        'workitem' => msg['workitem'])
+        'workitem' => msg['workitem']
+      ) if result != false
     end
 
     # Instantiates the participant and calls its on_pause (or on_resume) method.
