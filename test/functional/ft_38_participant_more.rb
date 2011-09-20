@@ -259,11 +259,11 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     include Ruote::LocalParticipant
 
     def on_workitem
-      context.tracer << "canceled:#{is_canceled}\n"
-      context.tracer << "gone:#{is_gone}\n"
+      context.tracer << "canceled:#{is_canceled?}\n"
+      context.tracer << "gone:#{is_gone?}\n"
       sleep 5
-      context.tracer << "cancelled:#{is_cancelled}\n"
-      context.tracer << "gone:#{is_gone}\n"
+      context.tracer << "cancelled:#{is_cancelled?}\n"
+      context.tracer << "gone:#{is_gone?}\n"
     end
 
     def on_cancel

@@ -288,7 +288,7 @@ module Ruote
     # Returns true if the underlying participant expression is 'gone' (probably
     # cancelled somehow).
     #
-    def is_gone
+    def is_gone?
 
       fexp.nil?
     end
@@ -296,7 +296,7 @@ module Ruote
     # Returns true if the underlying participant expression is gone or
     # cancelling.
     #
-    def is_cancelled
+    def is_cancelled?
 
       fe = fexp
 
@@ -305,7 +305,7 @@ module Ruote
       false
     end
 
-    alias is_canceled is_cancelled
+    alias is_canceled? is_cancelled?
 
     protected
 

@@ -4,7 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
-- LocalParticipant #is_gone #is_cancel[l]ed
+- LocalParticipant #is_gone? #is_cancel[l]ed?
 - Dashboard#worker_info
 - msg: put_doc, low-level action
 - participant: #rtimers, #rtimeout and #timers
