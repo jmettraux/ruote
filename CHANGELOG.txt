@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- :take and :discard common attributes
 - filter: 'take' and 'discard'
 - Participant: on_cancel -> false prevents on_cancel reply
 - LocalParticipant #is_gone? #is_cancel[l]ed?

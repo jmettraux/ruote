@@ -336,7 +336,7 @@ module Ruote
     alias _restore_from _restore
     alias _rs _restore
 
-    def prepare_triple_tilde(discard)
+    def _take(field, value, matches, m, v)
 
       unless @hash.has_key?('~~~')
 
@@ -348,27 +348,18 @@ module Ruote
         }
 
         @hash.merge!(@hash['~~'])
-        @hash.merge!(@hash['~~~']) if discard
+        @hash.merge!(@hash['~~~']) if m == 'discard'
       end
-    end
 
-    def _take(field, value, matches, m, v)
-
-      prepare_triple_tilde(false)
-
-      @hash[field] = @hash['~~~'][field]
-
-      nil
-    end
-
-    def _discard(field, value, matches, m, v)
-
-      prepare_triple_tilde(true)
-
-      @hash.delete(field)
+      if m == 'take'
+        @hash[field] = @hash['~~~'][field]
+      else
+        @hash.delete(field)
+      end
 
       nil
     end
+    alias _discard _take
 
     def _size(field, value, matches, m, v)
 

@@ -76,7 +76,13 @@ module Ruote::Exp
 
         workitem['fields'] =
           Ruote.filter(
-            filter, workitem['fields'], :double_tilde => h.fields_pre_filter)
+            filter,
+            workitem['fields'],
+            :double_tilde =>
+              h.fields_pre_filter || h.applied_workitem['fields'])
+
+        workitem['fields'].delete('params')
+          # take and discard tend to copy it over, so let's remove it
       end
     end
 
@@ -90,6 +96,19 @@ module Ruote::Exp
     def lookup_filter(workitem)
 
       f = attribute(:filter)
+
+      if f.nil? and workitem
+
+        reply = if t = attribute(:take)
+          Array(t).collect { |tt| { 'field' => tt, 'take' => true } }
+        elsif d = attribute(:discard)
+          Array(d).collect { |dd| { 'field' => dd, 'discard' => true } }
+        else
+          nil
+        end
+
+        f = { 'reply' => reply } if reply
+      end
 
       return nil unless f
 
