@@ -443,6 +443,11 @@ module Ruote::Exp
   #     # whatever the fields set by 'list_products', only 'products' and
   #     # 'point_of_contact' make it through
   #
+  # Saying :discard => true means "completely ignore any workitem field set
+  # by this expression".
+  #
+  #   subprocess 'review_document', :discard => true
+  #
   #
   # == short forms
   #

@@ -348,12 +348,12 @@ module Ruote
         }
 
         @hash.merge!(@hash['~~'])
-        @hash.merge!(@hash['~~~']) if m == 'discard'
+        @hash.merge!(@hash['~~~']) if m == 'discard' && v != 'all'
       end
 
       if m == 'take'
         @hash[field] = @hash['~~~'][field]
-      else
+      elsif v != 'all'
         @hash.delete(field)
       end
 

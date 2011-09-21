@@ -102,7 +102,11 @@ module Ruote::Exp
         reply = if t = attribute(:take)
           Array(t).collect { |tt| { 'field' => tt, 'take' => true } }
         elsif d = attribute(:discard)
-          Array(d).collect { |dd| { 'field' => dd, 'discard' => true } }
+          if d == true
+            [ { 'field' => /.+/, 'discard' => 'all' } ]
+          else
+            Array(d).collect { |dd| { 'field' => dd, 'discard' => true } }
+          end
         else
           nil
         end

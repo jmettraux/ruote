@@ -72,5 +72,23 @@ class FtTakeAndDiscardAttributesTest < Test::Unit::TestCase
 
     assert_equal %w[ __result__ c x y ], r['workitem']['fields'].keys.sort
   end
+
+  def test_discard_true
+
+    @engine.register :alpha do |workitem|
+      workitem.fields['a'] = 'A'
+    end
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(Ruote.define do
+      set 'f:x' => 'X'
+      alpha :discard => true
+    end)
+
+    r = @engine.wait_for(wfid)
+
+    assert_equal %w[ x ], r['workitem']['fields'].keys.sort
+  end
 end
 
