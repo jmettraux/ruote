@@ -31,9 +31,12 @@ class UtFilterTest < Test::Unit::TestCase
   #
   # transformations
 
-  def assert_filter(result, filter, hash)
+  def assert_filter(result, filter, hash, double_tilde=nil)
 
-    assert_equal(result, Ruote.filter(Rufus::Json.dup(filter), hash))
+    assert_equal(
+      result,
+      Ruote.filter(
+        Rufus::Json.dup(filter), hash, :double_tilde => double_tilde))
   end
 
   def test_remove
@@ -426,6 +429,33 @@ class UtFilterTest < Test::Unit::TestCase
       { 'x' => { 'a' => 2 } },
       [ { 'field' => 'x', 't' => 'hash', 'has' => 'a', 'or' => { 'a' => 2 } } ],
       { 'x' => %w[ a b c ] })
+  end
+
+  def test_take
+
+    assert_filter(
+      { 'x' => 'a', 'z' => 'b' },
+      [ { 'field' => 'x', 'take' => 'true' } ],
+      { 'x' => 'a', 'y' => 'a' },
+      { 'z' => 'b' }) # ~~
+  end
+
+  def test_discard
+
+    assert_filter(
+      { 'y' => 'a', 'z' => 'b' },
+      [ { 'field' => 'x', 'discard' => 'true' } ],
+      { 'x' => 'a', 'y' => 'a' },
+      { 'z' => 'b' }) # ~~
+  end
+
+  def test_discard_multiple
+
+    assert_filter(
+      { 'z' => 'a', '1' => 'b' },
+      [ { 'field' => 'x|y', 'discard' => 'true' } ],
+      { 'x' => 'a', 'y' => 'a', 'z' => 'a' },
+      { '1' => 'b' }) # ~~
   end
 
   #

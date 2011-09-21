@@ -420,6 +420,29 @@ module Ruote::Exp
   #     { 'field' => 'A', 'delete' => true } ]
   #   # out :  { 'x' => 'a', 'y' => 'a' })
   #
+  # === 'take' and 'discard'
+  #
+  # (doesn't work well with the filter expression, it works better with
+  # filter as an attribute)
+  #
+  # Those two only make sense in out filters. One should use one or the other in
+  # a filter, but not both. It's probably better to use them at the bottom of
+  # the filters (last positions), because they switch the applied workitem
+  # (apply time) with the current workitem (reply time).
+  #
+  # 'take' means "the fields to consider are the one in the applied workitem
+  # plus the ones from the new workitem listed here".
+  #
+  # 'discard' means "the fields to consider are the the ones of the applied
+  # workitem plus all the ones from the new workitem except those listed here".
+  #
+  #   subprocess 'list_products', :filter => { :out => [
+  #     { 'field' => 'products', 'take' => true },
+  #     { 'field' => 'point_of_contact', 'take' => true }
+  #   ] }
+  #     # whatever the fields set by 'list_products', only 'products' and
+  #     # 'point_of_contact' make it through
+  #
   #
   # == short forms
   #

@@ -108,6 +108,7 @@ module Ruote
 
     hash.delete('~')
     hash.delete('~~')
+    hash.delete('~~~')
       # remove the 'originals'
 
     if deviations.empty?
@@ -334,6 +335,40 @@ module Ruote
     end
     alias _restore_from _restore
     alias _rs _restore
+
+    def prepare_triple_tilde(discard)
+
+      unless @hash.has_key?('~~~')
+
+        @hash['~~~'] = @hash.keys.select { |k|
+          ! k.match(/^\~+$/)
+        }.inject({}) { |h, k|
+          h[k] = @hash.delete(k)
+          h
+        }
+
+        @hash.merge!(@hash['~~'])
+        @hash.merge!(@hash['~~~']) if discard
+      end
+    end
+
+    def _take(field, value, matches, m, v)
+
+      prepare_triple_tilde(false)
+
+      @hash[field] = @hash['~~~'][field]
+
+      nil
+    end
+
+    def _discard(field, value, matches, m, v)
+
+      prepare_triple_tilde(true)
+
+      @hash.delete(field)
+
+      nil
+    end
 
     def _size(field, value, matches, m, v)
 
