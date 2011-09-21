@@ -47,7 +47,7 @@ class RtCronTest < Test::Unit::TestCase
     assert_equal 1, @engine.processes.size
     assert_equal 1, @engine.storage.get_many('schedules').size
 
-    wait_for(4)
+    wait_for(5)
 
     assert_match /pre\npost/, @tracer.to_s
 

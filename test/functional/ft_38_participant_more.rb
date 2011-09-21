@@ -284,6 +284,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     wfid = @engine.launch(pdef)
 
     @engine.wait_for(:alpha)
+    sleep 1.0 # making sure on_workitem reaches its sleep
 
     @engine.cancel(@engine.ps(wfid).expressions.last)
 
