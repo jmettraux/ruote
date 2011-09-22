@@ -22,8 +22,6 @@
 # Made in Japan.
 #++
 
-require 'ruote/log/fancy'
-
 
 module Ruote
 
@@ -42,7 +40,7 @@ module Ruote
   #
   class WaitLogger
 
-    include FancyLogging
+    require 'ruote/log/fancy_printing'
 
     attr_reader :seen
     attr_reader :log
