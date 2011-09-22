@@ -295,8 +295,6 @@ class FtTimersTest < Test::Unit::TestCase
 
     alpha = @engine.ps(wfid).expressions.last
 
-    pp alpha.h.timers.size
-
     assert_equal 1, alpha.h.timers.size
   end
 end
