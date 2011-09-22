@@ -7,9 +7,7 @@ require 'ruote/worker'
 require 'ruote/part/storage_participant'
 require 'ruote/storage/hash_storage'
 require 'ruote/storage/fs_storage'
-require 'ruote/log/test_logger'
 
-#opts = { 's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ] }
 opts = {}
 
 storage = if ARGV.include?('--fs')

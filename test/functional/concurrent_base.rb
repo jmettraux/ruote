@@ -62,8 +62,7 @@ module ConcurrentBase
 
   def setup
 
-    @storage = determine_storage(
-      's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])
+    @storage = determine_storage({})
 
     @engine0 = Ruote::Engine.new(Ruote::Worker.new(@storage), false)
     @engine1 = Ruote::Engine.new(Ruote::Worker.new(@storage), false)

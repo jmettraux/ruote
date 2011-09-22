@@ -51,11 +51,7 @@ module FunctionalBase
       #
       # uncomment this when "too many open files"
 
-    @engine =
-      Ruote::Engine.new(
-        Ruote::Worker.new(
-          determine_storage(
-            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
+    @engine = Ruote::Engine.new(Ruote::Worker.new(determine_storage({})))
 
     $_test = self
     $_engine = @engine

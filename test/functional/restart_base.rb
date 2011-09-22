@@ -20,9 +20,7 @@ module RestartBase
 
   def start_new_engine
 
-    @storage = determine_storage(
-      's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ],
-      :persistent => true)
+    @storage = determine_storage(:persistent => true)
 
     @engine = Ruote::Engine.new(Ruote::Worker.new(@storage))
 

@@ -28,16 +28,12 @@ class FtEngineParticipantTest < Test::Unit::TestCase
       Ruote::Engine.new(
         Ruote::Worker.new(
           Ruote::FsStorage.new(
-            @dir0,
-            'engine_id' => 'engine0',
-            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
+            @dir0, 'engine_id' => 'engine0')))
     @engine1 =
       Ruote::Engine.new(
         Ruote::Worker.new(
           Ruote::FsStorage.new(
-            @dir1,
-            'engine_id' => 'engine1',
-            's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
+            @dir1, 'engine_id' => 'engine1')))
 
     @tracer0 = Tracer.new
     @engine0.add_service('tracer', @tracer0)

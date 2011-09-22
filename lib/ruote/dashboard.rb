@@ -471,13 +471,7 @@ module Ruote
     #
     def wait_for(*items)
 
-      logger = @context['s_logger']
-
-      raise(
-        "can't wait_for, there is no logger that responds to that call"
-      ) unless logger.respond_to?(:wait_for)
-
-      logger.wait_for(items)
+      @context['s_logger'].wait_for(items)
     end
 
     # Joins the worker thread. If this engine has no nested worker, calling

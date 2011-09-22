@@ -12,7 +12,6 @@ require 'rubygems'
 
 require File.dirname(__FILE__) + '/../path_helper'
 require File.dirname(__FILE__) + '/../functional/engine_helper'
-require 'ruote/log/test_logger'
 
 ac = {
   #:definition_in_launchitem_allowed => true
@@ -28,7 +27,6 @@ engine = determine_engine_class(ac).new(ac)
 #N = 1_000
 N = 300
 
-engine.add_service(:s_logger, Ruote::TestLogger)
 #engine.context[:noisy] = true
 
 Benchmark.benchmark(' ' * 20 + Benchmark::Tms::CAPTION, 20) do |bench|

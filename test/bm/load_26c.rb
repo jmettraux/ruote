@@ -14,7 +14,6 @@ require 'rubygems'
 
 require File.dirname(__FILE__) + '/../path_helper'
 require File.dirname(__FILE__) + '/../functional/engine_helper'
-require 'ruote/log/test_logger'
 
 ac = {
   #:definition_in_launchitem_allowed => true
@@ -36,8 +35,6 @@ engine.register_participant("count") do |workitem|
   $count += 1
   #print '.'
 end
-
-engine.add_service(:s_logger, Ruote::TestLogger)
 
 Benchmark.benchmark(' ' * 20 + Benchmark::Tms::CAPTION, 20) do |bench|
 
