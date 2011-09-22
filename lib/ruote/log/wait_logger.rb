@@ -81,6 +81,14 @@ module Ruote
       check_waiting
     end
 
+    # Returns an array of the latest msgs, but fancy-printed. The oldest
+    # first.
+    #
+    def fancy_log
+
+      @log.collect { |msg| fancy_print(msg) }
+    end
+
     # Blocks until one or more interests are satisfied.
     #
     # interests must be an array of interests. Please refer to

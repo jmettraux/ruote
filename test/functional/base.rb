@@ -26,15 +26,49 @@ trap 'USR2' do
 end
 
 trap 'INT' do
-  #
-  # why do I have to do that ?
-  #
+
+  # why do I have to do that for Ruby 1.9.x ?
+
   puts
   puts '-' * 80
-  caller.each { |l| p l }
+  puts *caller
   puts '-' * 80
+
   exit 1
+
 end if RUBY_VERSION.match(/^1.9./)
+
+trap 'USR2' do
+
+  # for CI timeouts
+
+  begin
+
+    puts
+    puts '-' * 80
+    puts *$_engine.context.logger.fancy_log if $_engine
+
+    puts '-' * 80
+    puts "threads: #{Thread.list.size}"
+    Thread.list.each do |t|
+      puts '-' * 80
+      if t.respond_to?(:backtrace) # only >= 1.9.2p290 it seems
+        puts "thread backtrace:"
+        puts *t.backtrace
+      else # for the others
+        t.abort_on_exception = true
+        t.exit
+      end
+    end
+    puts '-' * 80
+
+  rescue Exception => e
+    p e
+    puts *e.backtrace
+  end
+
+  exit 1
+end
 
 puts "pid #{$$}"
 
