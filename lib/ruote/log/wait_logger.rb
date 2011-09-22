@@ -164,7 +164,15 @@ module Ruote
       end
     end
 
-    FINAL_ACTIONS = %w[ terminated ceased error_intercepted ]
+    FINAL_ACTIONS = %w[
+      terminated ceased error_intercepted
+    ]
+    ACTIONS = FINAL_ACTIONS + %w[
+      launch apply reply
+      dispatch receive
+      cancel dispatch_cancel
+      pause resume dispatch_pause dispatch_resume
+    ]
 
     # Checks whether message msg matches any of interests being waited for.
     #
@@ -198,6 +206,10 @@ module Ruote
 
             (action == 'dispatch' && msg['participant_name'] == interest.to_s)
 
+          when *ACTIONS
+
+            (action == interest)
+
           when Fixnum
 
             interests.delete(interest)
@@ -217,7 +229,7 @@ module Ruote
         interests.delete(interest) if satisfied
       end
 
-      interests.size < 1
+      (interests.size < 1)
     end
   end
 end
