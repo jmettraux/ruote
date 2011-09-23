@@ -328,7 +328,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     r = @engine.wait_for(wfid)
 
     assert_equal 'seen', r['workitem']['fields']['toto']
-    assert_equal %w[ on_workitem on_cancel ], @tracer.to_a
+    assert_equal %w[ on_cancel on_workitem ], @tracer.to_a.sort
   end
 end
 
