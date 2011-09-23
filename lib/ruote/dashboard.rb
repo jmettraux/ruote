@@ -207,9 +207,11 @@ module Ruote
     #
     def pause(wi_or_fei_or_wfid, opts={})
 
+      opts = Ruote.keys_to_s(opts)
+
       raise ArgumentError.new(
         ':breakpoint option only valid when passing a workitem or a fei'
-      ) if opts[:breakpoint] and wi_or_fei_or_wfid.is_a?(String)
+      ) if opts['breakpoint'] and wi_or_fei_or_wfid.is_a?(String)
 
       do_misc('pause', wi_or_fei_or_wfid, opts)
     end
