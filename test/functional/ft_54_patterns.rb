@@ -75,7 +75,7 @@ class FtPatternsTest < Test::Unit::TestCase
       catchall Ruote::StorageParticipant
     end
 
-    #@engine.noisy = true
+    @engine.noisy = true
 
     wfid = @engine.launch(MILESTONE)
 
@@ -95,7 +95,9 @@ class FtPatternsTest < Test::Unit::TestCase
 
     @engine.wait_for(:c)
 
-    sleep 0.7 # give some time for the task d to get removed
+    @engine.wait_for('dispatch_cancel')
+    @engine.wait_for(1)
+      # give some time for the task d to get removed
 
     assert_equal({}, @engine.ps(wfid).tags)
     assert_equal %w[ c ], @engine.ps(wfid).position.collect { |pos| pos[1] }

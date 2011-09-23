@@ -59,10 +59,7 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
     @engine.wait_for(wfid)
     @engine.wait_for(:supervisor)
-
-    sleep 0.350
-      # unfortunately waiting for a participant triggers right
-      # before the consume
+    @engine.wait_for(1)
 
     assert_equal 1, @engine.context.stash[:seen].size
     assert_equal 'yellow', @engine.context.stash[:seen].first.fields['colour']
@@ -87,10 +84,7 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
     wfid = @engine.launch(WRONGY, 'colour' => 'red')
 
-    @engine.wait_for(wfid)
-
-    sleep 0.700
-      # letting the subprocess getting triggered
+    @engine.wait_for(11)
 
     assert_equal 'red seen', @tracer.to_s
     assert_equal 1, @engine.processes.size
@@ -103,6 +97,8 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
     end
     @engine.on_error = 'trigger_alarm'
 
+    #@engine.noisy = true
+
     pdef = Ruote.define do
       error 'still wrong'
       define 'trigger_alarm' do
@@ -112,10 +108,7 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef, 'colour' => 'green')
 
-    @engine.wait_for(wfid)
-
-    sleep 0.700
-      # letting the subprocess getting triggered
+    @engine.wait_for(14)
 
     assert_equal 'saw green', @tracer.to_s
     assert_equal 1, @engine.processes.size
@@ -127,12 +120,11 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
       echo 'case ${colour}'
     end
 
+    #@engine.noisy = true
+
     wfid = @engine.launch(WRONGY, 'colour' => 'blue')
 
-    @engine.wait_for(wfid)
-
-    sleep 0.700
-      # letting the subprocess getting triggered
+    @engine.wait_for(7)
 
     assert_equal 'case blue', @tracer.to_s
     assert_equal 1, @engine.processes.size
@@ -149,10 +141,7 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
     @engine.wait_for(wfid)
     @engine.wait_for(:supervisor)
-
-    sleep 0.350
-      # unfortunately waiting for a participant triggers right
-      # before the consume
+    @engine.wait_for(1)
 
     wi = @engine.context.stash[:seen].first
 
@@ -167,11 +156,7 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
     wfid = @engine.launch(WRONGY, 'colour' => 'purple')
 
-    @engine.wait_for(wfid)
-    @engine.wait_for(wfid)
-
-    sleep 0.700
-      # give it a bit of time, to make sure no supplementary errors crop up
+    @engine.wait_for(6)
 
     assert_equal 2, @engine.process(wfid).errors.size
   end
@@ -188,11 +173,10 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
     wfid = @engine.launch(pdef)
 
-    #noisy
+    #@engine.noisy = true
 
     @engine.wait_for(wfid)
-
-    sleep 0.700
+    sleep 2.0
       # give it a bit of time, to make sure no supplementary errors crop up
 
     assert_equal '', @tracer.to_s

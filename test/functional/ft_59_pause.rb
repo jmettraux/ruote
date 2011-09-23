@@ -15,13 +15,11 @@ class FtPauseTest < Test::Unit::TestCase
 
   def test_pause_process
 
-    pdef = Ruote.process_definition do
-      alice
-    end
+    @engine.register { catchall }
 
-    @engine.register do
-      catchall
-    end
+    pdef = Ruote.define { alice }
+
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
 
@@ -32,7 +30,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.pause(wfid)
 
-    sleep 0.500
+    @engine.wait_for('dispatch_pause')
 
     ps = @engine.ps(wfid)
 
@@ -40,7 +38,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.storage_participant.proceed(@engine.storage_participant.first)
 
-    sleep 0.500
+    @engine.wait_for('receive')
 
     ps = @engine.ps(wfid)
 
@@ -72,7 +70,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.pause(wfid)
 
-    sleep 0.500
+    @engine.wait_for(3)
 
     ps = @engine.ps(wfid)
 
@@ -118,7 +116,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.pause(exp.fei)
 
-    sleep 0.500
+    @engine.wait_for('dispatch_pause')
 
     assert_equal(
       %w[ 0/ 0_0/paused 0_0_0/paused ],
@@ -168,7 +166,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.pause(wfid)
 
-    sleep 0.7 # give time to the pause propagation to reach the participant
+    @engine.wait_for('dispatch_pause')
 
     assert_equal(
       [ "dispatched:#{wfid}", "pause:#{wfid}" ],
@@ -176,7 +174,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.resume(wfid)
 
-    sleep 0.7 # give time to the resume propagation to reach the participant
+    @engine.wait_for('dispatch_resume')
 
     assert_equal(
       [ "dispatched:#{wfid}", "pause:#{wfid}", "resume:#{wfid}" ],
@@ -201,7 +199,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.pause(wfid)
 
-    sleep 0.7 # give time to the pause propagation to reach the participant
+    @engine.wait_for('dispatch_pause')
 
     wi = @engine.ps(wfid).expressions.last.h.applied_workitem
 
@@ -217,7 +215,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.resume(wfid)
 
-    sleep 0.7 # give time to the resume propagation to reach the participant
+    @engine.wait_for(wfid)
 
     assert_equal(
       [ "dispatched:#{wfid}", "pause:#{wfid}" ],
@@ -250,7 +248,7 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.storage_participant.proceed(@engine.storage_participant.first)
 
-    sleep 0.7
+    @engine.wait_for('reply')
 
     assert_equal(
       [ nil, 'paused' ],
@@ -277,13 +275,13 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.pause(alpha.fei, :breakpoint => true)
 
-    sleep 0.7 # give time to the pause propagation to reach the participant
+    @engine.wait_for('pause')
 
     assert_equal([ "dispatched:#{wfid}" ], @tracer.to_a)
 
     @engine.resume(alpha.fei)
 
-    sleep 0.7 # give time to the resume propagation to reach the participant
+    @engine.wait_for('resume')
 
     assert_equal([ "dispatched:#{wfid}" ], @tracer.to_a)
   end
@@ -316,7 +314,8 @@ class FtPauseTest < Test::Unit::TestCase
 
     exps.each { |fexp| @engine.pause(fexp.fei) }
 
-    sleep 0.7
+    @engine.wait_for('dispatch_pause')
+    @engine.wait_for('dispatch_pause')
 
     assert_equal(
       [ nil, nil, 'paused', 'paused', 'paused' ],
@@ -325,7 +324,7 @@ class FtPauseTest < Test::Unit::TestCase
     @engine.resume(wfid)
       # won't resume the process, since the root is not paused
 
-    sleep 0.4
+    @engine.wait_for(2)
 
     assert_equal(
       [ nil, nil, 'paused', 'paused', 'paused' ],
@@ -333,7 +332,8 @@ class FtPauseTest < Test::Unit::TestCase
 
     @engine.resume(wfid, :anyway => true)
 
-    sleep 0.7
+    @engine.wait_for('dispatch_resume')
+    @engine.wait_for('dispatch_resume')
 
     assert_equal(
       [ nil, nil, nil, nil, nil ],

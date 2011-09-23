@@ -39,8 +39,7 @@ class FtEngineOnTerminateTest < Test::Unit::TestCase
       echo 'main'
     end)
 
-    @engine.wait_for(wfid)
-    sleep 1
+    @engine.wait_for(8)
 
     assert_equal [ 'main', "#{wfid} terminated" ], @tracer.to_a
   end
@@ -56,15 +55,14 @@ class FtEngineOnTerminateTest < Test::Unit::TestCase
       echo 'on_terminate'
     end
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(Ruote.define do
       echo 'main'
       error 'in main'
     end)
 
-    @engine.wait_for(wfid)
-    sleep 1
+    @engine.wait_for(9)
 
     assert_equal [ 'main', 'on_error' ], @tracer.to_a
   end
@@ -80,14 +78,13 @@ class FtEngineOnTerminateTest < Test::Unit::TestCase
       error 'in on_terminate'
     end
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(Ruote.define do
       echo 'main'
     end)
 
-    @engine.wait_for(wfid)
-    sleep 1
+    @engine.wait_for(11)
 
     assert_equal [ 'main', 'on_error' ], @tracer.to_a
   end
