@@ -23,11 +23,11 @@ class RtErrorsTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
 
-    wait_for(3)
+    wait_for(wfid)
 
     ps = @engine.process(wfid)
 
@@ -39,7 +39,7 @@ class RtErrorsTest < Test::Unit::TestCase
 
     start_new_engine
 
-    #noisy
+    #@engine.noisy = true
 
     assert_equal 1, @engine.processes.size
 

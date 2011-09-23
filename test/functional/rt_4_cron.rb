@@ -25,11 +25,11 @@ class RtCronTest < Test::Unit::TestCase
 
     @engine.variables['text'] = 'pre'
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
 
-    wait_for(3)
+    wait_for(5)
 
     assert_equal 1, @engine.processes.size
     assert_equal 1, @engine.storage.get_many('schedules').size
@@ -40,7 +40,7 @@ class RtCronTest < Test::Unit::TestCase
 
     start_new_engine
 
-    #noisy
+    #@engine.noisy = true
 
     @engine.variables['text'] = 'post'
 

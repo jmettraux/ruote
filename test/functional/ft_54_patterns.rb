@@ -75,7 +75,7 @@ class FtPatternsTest < Test::Unit::TestCase
       catchall Ruote::StorageParticipant
     end
 
-    @engine.noisy = true
+    #@engine.noisy = true
 
     wfid = @engine.launch(MILESTONE)
 
