@@ -28,11 +28,9 @@ class CtCancelTest < Test::Unit::TestCase
       # let reply immediately
     end
 
-    noisy if ARGV.include?('-N')
-
     wfid = @engine0.launch(pdef)
 
-    @engine0.step 7
+    @engine0.step 6
 
     dispatched_seen = false
     reply_msg = nil

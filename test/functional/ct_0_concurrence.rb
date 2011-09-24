@@ -24,8 +24,6 @@ class CtConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    noisy if ARGV.include?('-N')
-
     wfid = @engine0.launch(pdef)
 
     replies = []

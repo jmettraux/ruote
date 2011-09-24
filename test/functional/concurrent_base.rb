@@ -76,6 +76,8 @@ module ConcurrentBase
     @engine1.context.add_service('s_tracer', @tracer1, nil)
 
     @engine1.context.logger.color = '32' # green
+
+    noisy if ARGV.include?('-N')
   end
 
   def teardown
@@ -90,8 +92,8 @@ module ConcurrentBase
 
   def noisy
 
-    @engine0.context.logger.noisy = true
-    @engine1.context.logger.noisy = true
+    @engine0.noisy = true
+    @engine1.noisy = true
   end
 end
 
