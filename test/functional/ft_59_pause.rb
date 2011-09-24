@@ -265,11 +265,12 @@ class FtPauseTest < Test::Unit::TestCase
       alpha AlphaParticipant
     end
 
-    #@engine.noisy = true
+    @engine.noisy = true
 
     wfid = @engine.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    #@engine.wait_for(:alpha)
+    @engine.wait_for('dispatched')
 
     alpha = @engine.ps(wfid).expressions.last
 
