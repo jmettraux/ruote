@@ -4,17 +4,19 @@
 #
 # the last argument can be an integer, the max number of tests.
 
-COUNT=0
 echo $BASH_ARGV
+COUNT=0
 
-while [ $? == 0 ]
-do
+while [ 1 ]; do
 
   echo
   echo " *** $COUNT"
   ((COUNT=$COUNT + 1))
   time ruby -I. $*
 
+  if [[ "$?" != 0 ]]; then
+    break
+  fi
   if [[ "$COUNT" == $BASH_ARGV ]]; then
     break
   fi
