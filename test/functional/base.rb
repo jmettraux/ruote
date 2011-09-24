@@ -9,70 +9,14 @@ require 'fileutils'
 
 require File.expand_path('../../test_helper', __FILE__)
 require File.expand_path('../storage_helper', __FILE__)
+require File.expand_path('../signals', __FILE__)
 
 require 'ruote'
 
 
-trap 'USR2' do
-
-  require 'irb'
-  require 'irb/completion'
-
-  IRB.setup(nil)
-  ws = IRB::WorkSpace.new(binding)
-  irb = IRB::Irb.new(ws)
-  IRB::conf[:MAIN_CONTEXT] = irb.context
-  irb.eval_input
-end
-
-trap 'INT' do
-
-  # why do I have to do that for Ruby 1.9.x ?
-
-  puts
-  puts '-' * 80
-  puts *caller
-  puts '-' * 80
-
-  exit 1
-
-end if RUBY_VERSION.match(/^1.9./)
-
-trap 'USR2' do
-
-  # for CI timeouts
-
-  begin
-
-    puts
-    puts '-' * 80
-    puts *$_engine.context.logger.fancy_log if $_engine
-
-    puts '-' * 80
-    puts "threads: #{Thread.list.size}"
-    Thread.list.each do |t|
-      puts '-' * 80
-      if t.respond_to?(:backtrace) # only >= 1.9.2p290 it seems
-        puts "thread backtrace:"
-        puts *t.backtrace
-      else # for the others
-        t.abort_on_exception = true
-        t.exit
-      end
-    end
-    puts '-' * 80
-
-  rescue Exception => e
-    p e
-    puts *e.backtrace
-  end
-
-  exit 1
-end
-
-puts "pid #{$$}"
-
-
+#
+# Most of the functional tests extend this class.
+#
 module FunctionalBase
 
   def setup
@@ -244,6 +188,7 @@ module FunctionalBase
   end
 end
 
+#
 # Re-opening workitem for a shortcut to a '_trace' field
 #
 class Ruote::Workitem
@@ -252,6 +197,9 @@ class Ruote::Workitem
   end
 end
 
+#
+# Our tracer class.
+#
 class Tracer
   attr_reader :s
   def initialize
