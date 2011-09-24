@@ -265,7 +265,7 @@ class FtPauseTest < Test::Unit::TestCase
       alpha AlphaParticipant
     end
 
-    @engine.noisy = true
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
 

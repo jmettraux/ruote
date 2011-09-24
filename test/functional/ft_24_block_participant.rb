@@ -92,7 +92,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       [ 'alpha', [ 'Ruote::BlockParticipant', { 'block' => "proc { File.open(\"#{fn}\", \"wb\") { |f| f.puts(\"bad\") } }" } ] ]
     ]
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(Ruote.define { alpha })
 

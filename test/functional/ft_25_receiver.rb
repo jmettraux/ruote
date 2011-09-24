@@ -153,7 +153,7 @@ class FtReceiverTest < Test::Unit::TestCase
       alpha
     end
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
 

@@ -23,15 +23,16 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
     @engine.register_participant 'alpha', Ruote::NullParticipant
 
+    #puts; @engine.noisy = true
+
     pdef = Ruote.define do
       alpha
     end
 
     wfids = 2.times.collect { @engine.launch(pdef) }
 
-    @engine.wait_for(:alpha)
-    @engine.wait_for(:alpha)
-    sleep 0.700
+    @engine.wait_for('dispatched')
+    @engine.wait_for('dispatched')
 
     wfids
   end
@@ -42,7 +43,7 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
     wfids = launch_processes
 
-    assert_equal 11, @engine.history.all.size
+    assert_equal 10, @engine.history.all.size
   end
 
   def test_by_wfid
@@ -59,7 +60,7 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
     launch_processes
 
-    assert_equal 11, @engine.history.all.size
+    assert_equal 10, @engine.history.all.size
 
     @engine.history.clear!
 
@@ -94,7 +95,7 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
     launch_processes(false)
 
-    assert_equal 22, @engine.history.all.size
+    assert_equal 21, @engine.history.all.size
 
     assert_equal 11, @engine.history.by_date(Time.now).size
   end

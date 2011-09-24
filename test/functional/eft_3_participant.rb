@@ -23,7 +23,7 @@ class EftParticipantTest < Test::Unit::TestCase
       @tracer << 'alpha'
     end
 
-    #noisy
+    #@engine.noisy = true
 
     assert_trace 'alpha', pdef
 
