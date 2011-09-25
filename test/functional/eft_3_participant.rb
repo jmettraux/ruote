@@ -15,18 +15,20 @@ class EftParticipantTest < Test::Unit::TestCase
 
   def test_participant
 
+    @engine.register_participant :alpha do |workitem|
+      context.tracer << 'alpha'
+    end
+
     pdef = Ruote.process_definition do
       participant :ref => 'alpha'
     end
 
-    @engine.register_participant :alpha do |workitem|
-      @tracer << 'alpha'
-    end
-
     #@engine.noisy = true
 
-    assert_trace 'alpha', pdef
+    wfid = @engine.launch(pdef)
+    @engine.wait_for(wfid)
 
+    assert_equal 'alpha', @tracer.to_s
     assert_log_count(1) { |e| e['action'] == 'dispatch' }
     assert_log_count(1) { |e| e['action'] == 'dispatched' }
     assert_log_count(1) { |e| e['action'] == 'receive' }
