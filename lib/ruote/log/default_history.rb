@@ -29,10 +29,14 @@ module Ruote
   # A default history implementation, only keeps the most recent stuff
   # in memory.
   #
+  # This class includes Enumerable.
+  #
   # NOTE : this default history is worthless when there are multiple workers.
   # It only keeps track of the 'local' worker if there is one present.
   #
   class DefaultHistory
+
+    include Enumerable
 
     DATE_REGEX = /!(\d{4}-\d{2}-\d{2})!/
     DEFAULT_MAX_SIZE = 1000
@@ -50,6 +54,13 @@ module Ruote
     def all
 
       @history
+    end
+
+    # Enabling Enumerable...
+    #
+    def each(&block)
+
+      @history.each(&block)
     end
 
     # Returns all the wfids for which some piece of history is kept.
