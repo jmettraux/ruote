@@ -97,7 +97,7 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
     assert_equal 21, @engine.history.all.size
 
-    assert_equal 11, @engine.history.by_date(Time.now).size
+    assert_equal 11, @engine.history.by_date(Time.now.utc).size
   end
 
   def test_wfids
