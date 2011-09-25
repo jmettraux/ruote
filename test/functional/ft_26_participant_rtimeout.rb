@@ -31,10 +31,12 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
     @engine.register_participant :alpha, AlphaParticipant
     sto = @engine.register_participant :bravo, Ruote::StorageParticipant
 
-    #noisy
+    #@engine.noisy = true
 
     wfid = @engine.launch(pdef)
-    wait_for(13)
+
+    @engine.wait_for('dispatched')
+    @engine.wait_for('dispatched')
 
     assert_equal 1, sto.size
     assert_equal 'bravo', sto.first.participant_name
