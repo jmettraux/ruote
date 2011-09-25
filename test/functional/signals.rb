@@ -50,14 +50,6 @@ trap 'USR2' do
     puts '-' * 80
     puts *$_engine.context.logger.fancy_log if $_engine
 
-    puts '-' * 80
-    puts "threads: #{Thread.list.size}"
-    Thread.list.each do |t|
-      puts '-' * 80
-      puts "thread backtrace:"
-      puts *t.backtrace
-    end if Thread.current.respond_to?(:backtrace) # only >= 1.9.2p290 it seems
-
     puts
     puts '-' * 80
     if defined?(MiniTest)
@@ -78,6 +70,18 @@ trap 'USR2' do
       end
     else
       puts "no test/unit or MiniTest"
+    end
+
+    puts '-' * 80
+    puts "threads: #{Thread.list.size}"
+    Thread.list.each do |t|
+      puts '-' * 80
+      if Thread.current.respond_to?(:backtrace) # only >= 1.9.2p290 it seems
+        puts "thread backtrace:"
+        puts *t.backtrace
+      else
+        t.exit unless t == Thread.main
+      end
     end
 
     puts '-' * 80
