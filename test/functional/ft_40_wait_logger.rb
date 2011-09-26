@@ -52,7 +52,7 @@ class FtWaitLoggerTest < Test::Unit::TestCase
         @count = (@count || 0) + 1
       end
       def wait_for(i)
-        loop { sleep 0.100; break if @count >= i }
+        loop { sleep 0.100; break if (@count || 0) >= i }
       end
     end
 
