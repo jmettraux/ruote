@@ -11,6 +11,8 @@ require 'pp'
 require 'test/unit'
 require 'rubygems'
 
+Thread.abort_on_exception = true
+
 
 def require_json
 
