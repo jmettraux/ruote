@@ -132,6 +132,27 @@ module Ruote
         'fei' => fei,
         'msg' => msg
       ) if fei
+
+    rescue Exception => e
+
+      # utter failure, can't store the error...
+
+      puts 'err_______' * 8
+      puts
+      puts 'failed to store error'
+      puts
+      puts exception
+      puts *backtrace
+      puts
+      puts 'because of'
+      puts
+      p e
+      puts *e.backtrace
+      puts
+      puts '_______err' * 8
+
+      #exit 1
+        # maybe that'd be best
     end
   end
 end
