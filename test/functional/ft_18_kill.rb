@@ -17,17 +17,17 @@ class FtKillTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(:alpha)
 
-    @engine.kill_process(wfid)
+    @dashboard.kill_process(wfid)
 
     wait_for(wfid)
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_nil ps
     assert_equal 0, alpha.size
@@ -44,13 +44,13 @@ class FtKillTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::StorageParticipant
-    sto = @engine.register_participant :catcher, Ruote::StorageParticipant
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
+    sto = @dashboard.register_participant :catcher, Ruote::StorageParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(:alpha)
 
-    @engine.kill_process(wfid)
+    @dashboard.kill_process(wfid)
 
     wait_for(wfid)
 
@@ -65,13 +65,13 @@ class FtKillTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::StorageParticipant
-    sto = @engine.register_participant :catcher, Ruote::StorageParticipant
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
+    sto = @dashboard.register_participant :catcher, Ruote::StorageParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(:alpha)
 
-    @engine.kill_expression(sto.first.fei)
+    @dashboard.kill_expression(sto.first.fei)
 
     wait_for(wfid)
 
@@ -84,19 +84,19 @@ class FtKillTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant :alpha, Ruote::NullParticipant
+    @dashboard.register_participant :alpha, Ruote::NullParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
-    @engine.kill(wfid)
+    @dashboard.kill(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'kill_process' }.size
   end
@@ -112,23 +112,23 @@ class FtKillTest < Test::Unit::TestCase
       echo '2'
     end
 
-    @engine.register_participant :alpha, Ruote::NullParticipant
+    @dashboard.register_participant :alpha, Ruote::NullParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(:alpha)
+    r = @dashboard.wait_for(:alpha)
 
-    @engine.kill(r['fei']) # fei as a Hash
+    @dashboard.kill(r['fei']) # fei as a Hash
 
-    r = @engine.wait_for(:alpha)
+    r = @dashboard.wait_for(:alpha)
 
-    @engine.kill(Ruote.sid(r['fei'])) # fei as a String
+    @dashboard.kill(Ruote.sid(r['fei'])) # fei as a String
 
-    r = @engine.wait_for(:alpha)
+    r = @dashboard.wait_for(:alpha)
 
-    @engine.kill(Ruote::Workitem.new(r['workitem'])) # fei as workitem
+    @dashboard.kill(Ruote::Workitem.new(r['workitem'])) # fei as workitem
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[ 0 1 2 ], @tracer.to_a
 

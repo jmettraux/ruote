@@ -22,13 +22,13 @@ class EftForgetTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha do
+    @dashboard.register_participant :alpha do
       @tracer << "alpha\n"
     end
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
     wait_for(:alpha)
@@ -52,16 +52,16 @@ class EftForgetTest < Test::Unit::TestCase
       charly
     end
 
-    @engine.register_participant '.+' do |wi|
+    @dashboard.register_participant '.+' do |wi|
       context.tracer << wi.participant_name + "\n"
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:charly)
-    @engine.wait_for(3)
+    @dashboard.wait_for(:charly)
+    @dashboard.wait_for(3)
 
     assert_equal %w[ alpha bravo charly ], @tracer.to_a.sort
   end

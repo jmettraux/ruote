@@ -64,18 +64,18 @@ module ConcurrentBase
 
     @storage = determine_storage({})
 
-    @engine0 = Ruote::Engine.new(Ruote::Worker.new(@storage), false)
-    @engine1 = Ruote::Engine.new(Ruote::Worker.new(@storage), false)
+    @dashboard0 = Ruote::Engine.new(Ruote::Worker.new(@storage), false)
+    @dashboard1 = Ruote::Engine.new(Ruote::Worker.new(@storage), false)
       #
       # the 2 engines are set with run=false
 
     @tracer0 = Tracer.new
     @tracer1 = Tracer.new
 
-    @engine0.context.add_service('s_tracer', @tracer0, nil)
-    @engine1.context.add_service('s_tracer', @tracer1, nil)
+    @dashboard0.context.add_service('s_tracer', @tracer0, nil)
+    @dashboard1.context.add_service('s_tracer', @tracer1, nil)
 
-    @engine1.context.logger.color = '32' # green
+    @dashboard1.context.logger.color = '32' # green
 
     noisy if ARGV.include?('-N')
   end
@@ -84,16 +84,16 @@ module ConcurrentBase
 
     @storage.purge!
 
-    @engine0.shutdown
-    @engine1.shutdown
+    @dashboard0.shutdown
+    @dashboard1.shutdown
   end
 
   protected
 
   def noisy
 
-    @engine0.noisy = true
-    @engine1.noisy = true
+    @dashboard0.noisy = true
+    @dashboard1.noisy = true
   end
 end
 

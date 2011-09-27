@@ -21,11 +21,11 @@ class FtParticipantParamsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
     assert_equal({ 'ref' => 'alpha' }, alpha.first.fields['params'])
@@ -49,24 +49,24 @@ class FtParticipantParamsTest < Test::Unit::TestCase
       bravo
     end
 
-    @engine.register { catchall }
+    @dashboard.register { catchall }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.launch(pdef)
+    @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
-    workitem = @engine.storage_participant.first
+    @dashboard.wait_for(:alpha)
+    workitem = @dashboard.storage_participant.first
 
     assert_equal(
       { 'nemo' => nil, 'action' => 'nada', 'ref' => 'alpha' }, workitem.params)
     assert_equal(
       'nemo', workitem.param_text)
 
-    @engine.storage_participant.proceed(workitem)
+    @dashboard.storage_participant.proceed(workitem)
 
-    @engine.wait_for(:bravo)
-    workitem = @engine.storage_participant.first
+    @dashboard.wait_for(:bravo)
+    workitem = @dashboard.storage_participant.first
 
     assert_equal(
       nil, workitem.param_text)
@@ -79,15 +79,15 @@ class FtParticipantParamsTest < Test::Unit::TestCase
       alpha :theme => :wagner
     end
 
-    @engine.register :alpha do |workitem|
+    @dashboard.register :alpha do |workitem|
       context.tracer << "pof_theme:#{workitem.param_or_field(:theme)}\n"
       context.tracer << "fop_theme:#{workitem.field_or_param(:theme)}\n"
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef, 'theme' => 'mozart')
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'theme' => 'mozart')
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[
        pof_theme:mozart fop_theme:mozart

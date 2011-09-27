@@ -39,7 +39,7 @@ end
       })
     end
 
-    @engine.register do
+    @dashboard.register do
       catchall Ruote::RevParticipant, :dir => dir
     end
 
@@ -48,11 +48,11 @@ end
       alpha
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal %w[ alpha__z alpha ], r['workitem']['fields']['seen']
 
@@ -79,7 +79,7 @@ end
       })
     end
 
-    @engine.register do
+    @dashboard.register do
       catchall Ruote::RevParticipant, :dir => dir
     end
 
@@ -87,17 +87,17 @@ end
       alpha
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
     assert_equal false, $seen
 
-    @engine.cancel(wfid)
+    @dashboard.cancel(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal true, $seen
 
@@ -130,7 +130,7 @@ end
       })
     end
 
-    @engine.register do
+    @dashboard.register do
       catchall Ruote::RevParticipant, :dir => dir
     end
 
@@ -138,11 +138,11 @@ end
       alpha :rev => 'z'
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal %w[ alpha ], r['workitem']['fields']['seen']
 
@@ -167,7 +167,7 @@ end
       })
     end
 
-    @engine.register do
+    @dashboard.register do
       catchall Ruote::RevParticipant, :dir => dir
     end
 
@@ -175,11 +175,11 @@ end
       alpha
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal %w[ on_reply ], r['workitem']['fields']['seen']
 
@@ -211,7 +211,7 @@ end
       })
     end
 
-    @engine.register do
+    @dashboard.register do
       catchall Ruote::RevParticipant, :dir => dir
     end
 
@@ -220,23 +220,23 @@ end
       bravo
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(:alpha)
+    r = @dashboard.wait_for(:alpha)
     sleep 0.350
 
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
 
-    wi = @engine.ps(wfid).workitems.first
+    wi = @dashboard.ps(wfid).workitems.first
 
-    @engine.receive(wi)
+    @dashboard.receive(wi)
 
-    r = @engine.wait_for(:bravo)
+    r = @dashboard.wait_for(:bravo)
     sleep 0.350
 
-    assert_equal 1, @engine.storage.get_many('schedules').size
+    assert_equal 1, @dashboard.storage.get_many('schedules').size
 
   ensure
     FileUtils.rm_rf(dir)

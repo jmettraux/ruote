@@ -44,7 +44,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*', TraceParticipant
+    @dashboard.register_participant '.*', TraceParticipant
 
     #noisy
 
@@ -59,7 +59,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*', TraceParticipant
+    @dashboard.register_participant '.*', TraceParticipant
 
     assert_trace(%w[ alice/0_0_0 bob/0_0_0 charly/0_0_0 ], pdef)
   end
@@ -73,7 +73,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*', TraceParticipant
+    @dashboard.register_participant '.*', TraceParticipant
 
     assert_trace(%w[ alice/0_1_0 bob/0_1_0 charly/0_1_0 ], pdef)
   end
@@ -88,7 +88,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*', TraceParticipant
+    @dashboard.register_participant '.*', TraceParticipant
 
     assert_trace(%w[ alice/0_2_0 bob/0_2_0 charly/0_2_0 ], pdef)
   end
@@ -101,7 +101,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
       @tracer << "#{workitem.fields['f']}/#{workitem.fei.expid}\n"
     end
 
@@ -124,10 +124,10 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[ a b c d e f ], @tracer.to_a
   end
@@ -143,7 +143,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
   def test_break
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
 
       @tracer << "#{workitem.participant_name}\n"
 
@@ -161,7 +161,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
     stash[:rewound] = false
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
 
       @tracer << "#{workitem.participant_name}\n"
 
@@ -178,7 +178,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
   def test_skip
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
 
       @tracer << "#{workitem.participant_name}\n"
 
@@ -194,7 +194,7 @@ class EftIteratorTest < Test::Unit::TestCase
 
   def test_jump
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
 
       @tracer << "#{workitem.participant_name}\n"
 
@@ -219,7 +219,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
       @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
     end
 
@@ -236,7 +236,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
       @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
     end
 
@@ -254,7 +254,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
       @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
     end
 
@@ -271,7 +271,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :p1 do |wi|
+    @dashboard.register_participant :p1 do |wi|
       @tracer << wi.fields['f'].join(':')
       @tracer << "\n"
     end
@@ -289,7 +289,7 @@ class EftIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
       @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
     end
 

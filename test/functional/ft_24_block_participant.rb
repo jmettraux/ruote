@@ -23,13 +23,13 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha do
+    @dashboard.register_participant :alpha do
       @tracer << "a\n"
     end
-    @engine.register_participant :bravo do |workitem|
+    @dashboard.register_participant :bravo do |workitem|
       @tracer << "b:f0:#{workitem.fields['f0']}\n"
     end
-    @engine.register_participant :charly do |workitem, fexp|
+    @dashboard.register_participant :charly do |workitem, fexp|
       @tracer << "c:f0:#{workitem.fields['f0']}:#{fexp.lookup_variable('v0')}\n"
     end
 
@@ -50,7 +50,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     return if Ruote::WIN or Ruote::JAVA
       # defective 'json' lib on windows render this test useless
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
       'seen'
     end
 
@@ -64,7 +64,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     return if Ruote::WIN
       # defective 'json' lib on windows renders this test useless
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
       Time.now
     end
 
@@ -76,9 +76,9 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       /\b#{Time.now.year}\b/
     end
 
-    wfid = @engine.launch(TEST_BLOCK)
+    wfid = @dashboard.launch(TEST_BLOCK)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_match match, @tracer.to_s
   end
@@ -87,21 +87,21 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     fn = "test/bad.#{Time.now.to_f}.txt"
 
-    @engine.participant_list = [
+    @dashboard.participant_list = [
       #[ 'alpha', [ 'Ruote::BlockParticipant', { 'block' => 'exit(3)' } ] ]
       [ 'alpha', [ 'Ruote::BlockParticipant', { 'block' => "proc { File.open(\"#{fn}\", \"wb\") { |f| f.puts(\"bad\") } }" } ] ]
     ]
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(Ruote.define { alpha })
+    wfid = @dashboard.launch(Ruote.define { alpha })
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal false, File.exist?(fn), 'security check not enforced'
 
-    assert_equal 1, @engine.errors(wfid).size
-    assert_match /SecurityError/, @engine.errors(wfid).first.message
+    assert_equal 1, @dashboard.errors(wfid).size
+    assert_match /SecurityError/, @dashboard.errors(wfid).first.message
 
     FileUtils.rm(fn) rescue nil
   end
@@ -110,7 +110,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     assert_raise Rufus::SecurityError do
 
-      @engine.register 'rogue' do |workitem|
+      @dashboard.register 'rogue' do |workitem|
         workitem.content = File.read('test/nada.txt')
       end
     end
@@ -120,7 +120,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
   #
   def test_begin_rescue_end
 
-    @engine.register 'rogue' do |workitem|
+    @dashboard.register 'rogue' do |workitem|
       begin
       rescue => e
       end
@@ -131,7 +131,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
   def test_on_cancel_registration
 
-    @engine.register 'nemo',
+    @dashboard.register 'nemo',
       :on_workitem => lambda { |wi|
         p wi
       },
@@ -142,12 +142,12 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     assert_equal(
       { 'on_cancel' => "proc { |fei, flavour|\n        p fei, flavour\n      }",
         'on_workitem' => "proc { |wi|\n        p wi\n      }" },
-      @engine.participant_list.first.options)
+      @dashboard.participant_list.first.options)
   end
 
   def test_on_cancel
 
-    @engine.register 'sleeper',
+    @dashboard.register 'sleeper',
       :on_workitem => lambda { |workitem|
         context.tracer << "consumed\n"
         sleep 60 # preventing the implicit reply_to_engine(workitem)
@@ -160,25 +160,25 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       sleeper
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:sleeper)
+    @dashboard.wait_for(:sleeper)
     sleep 0.350
 
     assert_equal 'consumed', @tracer.to_s
 
-    @engine.cancel(wfid)
+    @dashboard.cancel(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal "consumed\ncancelled", @tracer.to_s
   end
 
   def test_on_reply
 
-    @engine.register 'consumer',
+    @dashboard.register 'consumer',
       :on_workitem => lambda { |workitem|
         context.tracer << "consumed\n"
       },
@@ -190,17 +190,17 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       consumer
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal "consumed\nreplied", @tracer.to_s
   end
 
   def test_accept
 
-    @engine.register 'consumer',
+    @dashboard.register 'consumer',
       :on_workitem => lambda { |workitem|
         raise 'fail miserably'
       },
@@ -212,17 +212,17 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       consumer
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
-    assert_match /unknown participant/, @engine.ps(wfid).errors.first.message
+    assert_match /unknown participant/, @dashboard.ps(wfid).errors.first.message
   end
 
   def test_do_not_thread
 
-    @engine.register 'consumer',
+    @dashboard.register 'consumer',
       :on_workitem => lambda { |workitem|
         context.tracer << "in\n"
       },
@@ -235,10 +235,10 @@ class FtBlockParticipantTest < Test::Unit::TestCase
       consumer
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(:consumer)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(:consumer)
 
     sleep 0.350
 

@@ -54,7 +54,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
@@ -75,7 +75,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef, 'assets' => %w[ a b c ])
+    wfid = @dashboard.launch(pdef, 'assets' => %w[ a b c ])
 
     wait_for(wfid)
 
@@ -96,7 +96,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
@@ -120,7 +120,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
@@ -143,13 +143,13 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    sto = @engine.register_participant '.+', Ruote::StorageParticipant
+    sto = @dashboard.register_participant '.+', Ruote::StorageParticipant
 
     assert_equal 0, sto.size # just to be sure
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:participant_1)
     wait_for(:participant_1)
@@ -186,7 +186,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :p1 do |workitem|
+    @dashboard.register_participant :p1 do |workitem|
       @tracer << "p1:#{workitem.fields['f'].join(':')}\n"
     end
 
@@ -233,7 +233,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
@@ -269,7 +269,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       bravo
     end
 
-    @engine.register_participant :bravo do |workitem|
+    @dashboard.register_participant :bravo do |workitem|
       stash[:mf] = workitem.fields
       nil
     end
@@ -278,7 +278,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     assert_trace(%w[ . . . ], pdef)
 
-    mf = ('0'..'2').to_a.map { |k| @engine.context.stash[:mf][k]['f'] }.sort
+    mf = ('0'..'2').to_a.map { |k| @dashboard.context.stash[:mf][k]['f'] }.sort
     assert_equal %w[ a b c ], mf
   end
 
@@ -291,7 +291,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       bravo
     end
 
-    @engine.register_participant :bravo do |workitem|
+    @dashboard.register_participant :bravo do |workitem|
       stash[:mf] = workitem.fields
       nil
     end
@@ -302,10 +302,10 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     assert_equal(
       [["a"], ["b"]],
-      @engine.context.stash[:mf]['stack'].collect { |f| f.values }.sort)
+      @dashboard.context.stash[:mf]['stack'].collect { |f| f.values }.sort)
     assert_equal(
       {"on"=>"a, b", "to_f"=>"f", "merge_type"=>"stack"},
-      @engine.context.stash[:mf]['stack_attributes'])
+      @dashboard.context.stash[:mf]['stack_attributes'])
   end
 
   def test_cancel
@@ -322,23 +322,23 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.context.stash[:a_count] = 0
-    @engine.register_participant(:alpha) { |wi| stash[:a_count] += 1 }
-    @engine.register_participant(:bravo, Ruote::NullParticipant)
+    @dashboard.context.stash[:a_count] = 0
+    @dashboard.register_participant(:alpha) { |wi| stash[:a_count] += 1 }
+    @dashboard.register_participant(:bravo, Ruote::NullParticipant)
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(2 + n * 5)
     #p "=" * 80
 
-    assert_equal n, @engine.context.stash[:a_count]
+    assert_equal n, @dashboard.context.stash[:a_count]
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 
   def test_add_branch_command
@@ -352,7 +352,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant 'alpha' do |wi|
+    @dashboard.register_participant 'alpha' do |wi|
 
       @tracer << "#{wi.fields['f']}\n"
 
@@ -361,7 +361,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
     assert_equal %w[ . 1 2 a b ], @tracer.to_a.sort
@@ -375,21 +375,21 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
       workitem.fields['a'] = [ 'x' ]
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal %w[ x ], r['workitem']['fields']['a']
   end
 
   def test_ignore_merge_type
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
       workitem.fields['a'] = 'B'
     end
 
@@ -401,8 +401,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       echo '${f:a}'
     end
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'a', @tracer.to_s
   end
@@ -413,11 +413,11 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     @subs = []
     subs = @subs
-    @engine.context.instance_eval do
+    @dashboard.context.instance_eval do
       @subs = subs
     end
 
-    @engine.register_participant '.*' do |workitem|
+    @dashboard.register_participant '.*' do |workitem|
 
       @subs << workitem.fei.subid
 

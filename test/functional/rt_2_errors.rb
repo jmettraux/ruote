@@ -23,34 +23,34 @@ class RtErrorsTest < Test::Unit::TestCase
       end
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
 
-    @engine.shutdown
+    @dashboard.shutdown
 
     # restart...
 
     start_new_engine
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    assert_equal 1, @engine.processes.size
+    assert_equal 1, @dashboard.processes.size
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
     assert_equal 1, ps.errors.size
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
 
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 end
 

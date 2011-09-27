@@ -30,27 +30,27 @@ class FtWorkerTest < Test::Unit::TestCase
 
     sleep 0.010 # warm up time
 
-    assert_equal true, @engine.context.worker.running
+    assert_equal true, @dashboard.context.worker.running
 
-    @engine.shutdown
+    @dashboard.shutdown
 
-    assert_equal false, @engine.context.worker.running
+    assert_equal false, @dashboard.context.worker.running
 
     pdef = Ruote.process_definition do; end
 
-    @engine.launch(pdef)
+    @dashboard.launch(pdef)
 
     Thread.pass
 
-    #assert_equal 1, @engine.storage.get_many('msgs').size
+    #assert_equal 1, @dashboard.storage.get_many('msgs').size
       # won't work with the latest ruote-redis implementations
 
-    assert_equal 1, @engine.storage.get_msgs.size
+    assert_equal 1, @dashboard.storage.get_msgs.size
   end
 
   def test_remaining_messages
 
-    @engine.register_participant :alfred, Ruote::NullParticipant
+    @dashboard.register_participant :alfred, Ruote::NullParticipant
 
     pdef = Ruote.process_definition do
     end
@@ -59,7 +59,7 @@ class FtWorkerTest < Test::Unit::TestCase
 
     sleep 0.300
 
-    assert_equal [], @engine.storage.get_msgs
+    assert_equal [], @dashboard.storage.get_msgs
   end
 end
 

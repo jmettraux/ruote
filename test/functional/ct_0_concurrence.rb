@@ -24,18 +24,18 @@ class CtConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    wfid = @engine0.launch(pdef)
+    wfid = @dashboard0.launch(pdef)
 
     replies = []
 
     while replies.size < 2
 
-      msg = @engine0.next_msg
+      msg = @dashboard0.next_msg
 
       if msg['action'] == 'reply'
         replies << msg
       else
-        @engine0.do_process(msg)
+        @dashboard0.do_process(msg)
       end
     end
 
@@ -43,12 +43,12 @@ class CtConcurrenceTest < Test::Unit::TestCase
 
     #replies.each { |r| p r }
 
-    t0 = Thread.new { @engine1.do_process(replies[0]) }
-    t1 = Thread.new { @engine0.do_process(replies[1]) }
+    t0 = Thread.new { @dashboard1.do_process(replies[0]) }
+    t1 = Thread.new { @dashboard0.do_process(replies[1]) }
     t0.join
     t1.join
 
-    msgs = @engine0.gather_msgs
+    msgs = @dashboard0.gather_msgs
 
     assert_equal 1, msgs.size, 'exactly 1 message was expected'
 

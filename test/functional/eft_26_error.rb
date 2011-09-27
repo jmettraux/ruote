@@ -23,11 +23,11 @@ class EftErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(PDEF0)
+    wfid = @dashboard.launch(PDEF0)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal(
       'a', @tracer.to_s)
@@ -42,35 +42,35 @@ class EftErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(PDEF0)
+    wfid = @dashboard.launch(PDEF0)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
-    @engine.replay_at_error(ps.errors.first)
+    @dashboard.replay_at_error(ps.errors.first)
 
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
     assert_equal "a\nb", @tracer.to_s
   end
 
   def test_error_cancel
 
-    wfid = @engine.launch(PDEF0)
+    wfid = @dashboard.launch(PDEF0)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     sequence = ps.expressions.find { |fe| fe.fei.expid == '0_0' }
 
-    @engine.cancel_expression(sequence.fei)
+    @dashboard.cancel_expression(sequence.fei)
 
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
     assert_equal 'a', @tracer.to_s
   end
 end

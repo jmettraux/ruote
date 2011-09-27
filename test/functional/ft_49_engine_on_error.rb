@@ -15,21 +15,21 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
   def setup
     super
-    @engine.context.stash[:seen] = []
+    @dashboard.context.stash[:seen] = []
   end
 
   def test_no_on_error
 
-    assert_nil @engine.on_error
+    assert_nil @dashboard.on_error
   end
 
   def test_on_error
 
-    @engine.on_error = 'supervisor'
+    @dashboard.on_error = 'supervisor'
 
     assert_equal(
       [ 'define', {}, [ [ 'supervisor', {}, [] ] ] ],
-      @engine.on_error)
+      @dashboard.on_error)
   end
 
   class Supervisor
@@ -50,54 +50,54 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
 
   def test_on_error_participant
 
-    @engine.register 'supervisor', Supervisor, 'flavour' => 'vanilla'
-    @engine.on_error = 'supervisor'
+    @dashboard.register 'supervisor', Supervisor, 'flavour' => 'vanilla'
+    @dashboard.on_error = 'supervisor'
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(WRONGY, 'colour' => 'yellow')
+    wfid = @dashboard.launch(WRONGY, 'colour' => 'yellow')
 
-    @engine.wait_for(wfid)
-    @engine.wait_for(:supervisor)
-    @engine.wait_for(1)
+    @dashboard.wait_for(wfid)
+    @dashboard.wait_for(:supervisor)
+    @dashboard.wait_for(1)
 
-    assert_equal 1, @engine.context.stash[:seen].size
-    assert_equal 'yellow', @engine.context.stash[:seen].first.fields['colour']
-    assert_equal 'vanilla', @engine.context.stash[:seen].first.fields['flavour']
-    assert_not_nil @engine.context.stash[:seen].first.fei.subid
+    assert_equal 1, @dashboard.context.stash[:seen].size
+    assert_equal 'yellow', @dashboard.context.stash[:seen].first.fields['colour']
+    assert_equal 'vanilla', @dashboard.context.stash[:seen].first.fields['flavour']
+    assert_not_nil @dashboard.context.stash[:seen].first.fei.subid
 
     # TODO : look for error message and such
 
-    @engine.wait_for(@engine.context.stash[:seen].first.wfid)
+    @dashboard.wait_for(@dashboard.context.stash[:seen].first.wfid)
 
-    assert_equal 1, @engine.processes.size
+    assert_equal 1, @dashboard.processes.size
   end
 
   def test_on_error_engine_subprocess_name
 
-    @engine.variables['trigger_alarm'] = Ruote.define do
+    @dashboard.variables['trigger_alarm'] = Ruote.define do
       echo '${colour} seen'
     end
-    @engine.on_error = 'trigger_alarm'
+    @dashboard.on_error = 'trigger_alarm'
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(WRONGY, 'colour' => 'red')
+    wfid = @dashboard.launch(WRONGY, 'colour' => 'red')
 
-    @engine.wait_for(11)
+    @dashboard.wait_for(11)
 
     assert_equal 'red seen', @tracer.to_s
-    assert_equal 1, @engine.processes.size
+    assert_equal 1, @dashboard.processes.size
   end
 
   def test_on_error_local_subprocess_name
 
-    @engine.variables['trigger_alarm'] = Ruote.define do
+    @dashboard.variables['trigger_alarm'] = Ruote.define do
       echo '${colour} seen'
     end
-    @engine.on_error = 'trigger_alarm'
+    @dashboard.on_error = 'trigger_alarm'
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     pdef = Ruote.define do
       error 'still wrong'
@@ -106,59 +106,59 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    wfid = @engine.launch(pdef, 'colour' => 'green')
+    wfid = @dashboard.launch(pdef, 'colour' => 'green')
 
-    @engine.wait_for(14)
+    @dashboard.wait_for(14)
 
     assert_equal 'saw green', @tracer.to_s
-    assert_equal 1, @engine.processes.size
+    assert_equal 1, @dashboard.processes.size
   end
 
   def test_on_error_subprocess_tree
 
-    @engine.on_error = Ruote.define do
+    @dashboard.on_error = Ruote.define do
       echo 'case ${colour}'
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(WRONGY, 'colour' => 'blue')
+    wfid = @dashboard.launch(WRONGY, 'colour' => 'blue')
 
-    @engine.wait_for(7)
+    @dashboard.wait_for(7)
 
     assert_equal 'case blue', @tracer.to_s
-    assert_equal 1, @engine.processes.size
+    assert_equal 1, @dashboard.processes.size
   end
 
   def test_on_error_workitem
 
-    @engine.register 'supervisor', Supervisor
-    @engine.on_error = 'supervisor'
+    @dashboard.register 'supervisor', Supervisor
+    @dashboard.on_error = 'supervisor'
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(WRONGY, 'colour' => 'crimson')
+    wfid = @dashboard.launch(WRONGY, 'colour' => 'crimson')
 
-    @engine.wait_for(wfid)
-    @engine.wait_for(:supervisor)
-    @engine.wait_for(1)
+    @dashboard.wait_for(wfid)
+    @dashboard.wait_for(:supervisor)
+    @dashboard.wait_for(1)
 
-    wi = @engine.context.stash[:seen].first
+    wi = @dashboard.context.stash[:seen].first
 
     assert_not_nil wi.error
   end
 
   def test_cascade_prevention
 
-    @engine.on_error = Ruote.define { error "nada" }
+    @dashboard.on_error = Ruote.define { error "nada" }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(WRONGY, 'colour' => 'purple')
+    wfid = @dashboard.launch(WRONGY, 'colour' => 'purple')
 
-    @engine.wait_for(6)
+    @dashboard.wait_for(6)
 
-    assert_equal 2, @engine.process(wfid).errors.size
+    assert_equal 2, @dashboard.process(wfid).errors.size
   end
 
   def test_doesnt_trigger_for_checked_error
@@ -167,15 +167,15 @@ class FtEngineOnErrorTest < Test::Unit::TestCase
       nemo :on_error => 'pass'
     end
 
-    @engine.on_error = Ruote.define do
+    @dashboard.on_error = Ruote.define do
       echo 'seen'
     end
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
     sleep 2.0
       # give it a bit of time, to make sure no supplementary errors crop up
 

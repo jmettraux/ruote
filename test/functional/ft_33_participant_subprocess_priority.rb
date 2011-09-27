@@ -20,7 +20,7 @@ class FtParticipantSubprocessPriorityTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+' do
+    @dashboard.register_participant '.+' do
       @tracer << 'participant'
     end
 

@@ -32,11 +32,11 @@ class EftReadTest < Test::Unit::TestCase
       set 'f:z' => '$v:z'
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    fields = @engine.wait_for(wfid)['workitem']['fields']
+    fields = @dashboard.wait_for(wfid)['workitem']['fields']
 
     assert_equal(
       [ 'kilroy was here' ],
@@ -63,11 +63,11 @@ class EftReadTest < Test::Unit::TestCase
       set 'f:z' => '$v:z'
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    fields = @engine.wait_for(wfid)['workitem']['fields']
+    fields = @dashboard.wait_for(wfid)['workitem']['fields']
 
     assert_equal(
       [ { 'kilroy' => 'here' } ],
@@ -84,9 +84,9 @@ class EftReadTest < Test::Unit::TestCase
       read 'http://ruote.s3.amazonaws.com/eft_36_read.json', :to => :y
     end
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    fields = @engine.wait_for(wfid)['workitem']['fields']
+    fields = @dashboard.wait_for(wfid)['workitem']['fields']
 
     assert_equal(
       "kilroy was here\n", fields['x'], "\nkilroy wasn't here (no network ?)\n")

@@ -30,12 +30,12 @@ class FtCaseTest < Test::Unit::TestCase
       subprocess '${the_case}'
     end
 
-    wfid = @engine.launch(pdef, 'the_case' => 'a')
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'the_case' => 'a')
+    r = @dashboard.wait_for(wfid)
     assert_equal 'a', r['workitem']['fields']['result']
 
-    wfid = @engine.launch(pdef, 'the_case' => 'b')
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'the_case' => 'b')
+    r = @dashboard.wait_for(wfid)
     assert_equal 'b', r['workitem']['fields']['result']
   end
 
@@ -58,12 +58,12 @@ class FtCaseTest < Test::Unit::TestCase
       subprocess 'case'
     end
 
-    wfid = @engine.launch(pdef, 'the_case' => 'a')
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'the_case' => 'a')
+    r = @dashboard.wait_for(wfid)
     assert_equal 'a', r['workitem']['fields']['result']
 
-    wfid = @engine.launch(pdef, 'the_case' => 'b')
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'the_case' => 'b')
+    r = @dashboard.wait_for(wfid)
     assert_equal 'b', r['workitem']['fields']['result']
   end
 
@@ -88,12 +88,12 @@ class FtCaseTest < Test::Unit::TestCase
       subprocess 'a' # /!\
     end
 
-    wfid = @engine.launch(pdef, 'the_case' => 'a')
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'the_case' => 'a')
+    r = @dashboard.wait_for(wfid)
     assert_equal 'a', r['workitem']['fields']['result']
 
-    wfid = @engine.launch(pdef, 'the_case' => 'b')
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'the_case' => 'b')
+    r = @dashboard.wait_for(wfid)
     assert_equal 'a', r['workitem']['fields']['result']
   end
 
@@ -120,14 +120,14 @@ class FtCaseTest < Test::Unit::TestCase
       subprocess 'a'
     end
 
-    wfid = @engine.launch(pdef, 'the_case' => 'a')
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'the_case' => 'a')
+    @dashboard.wait_for(wfid)
     assert_equal %w[ a global_a ], @tracer.to_a
 
     @tracer.clear
 
-    wfid = @engine.launch(pdef, 'the_case' => 'b')
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'the_case' => 'b')
+    @dashboard.wait_for(wfid)
     assert_equal %w[ b global_a ], @tracer.to_a
   end
 end

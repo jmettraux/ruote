@@ -129,7 +129,7 @@ class EftSetTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
       workitem.fields.delete('params')
       workitem.fields.delete('dispatched_at')
       @tracer << workitem.fields.inspect
@@ -164,7 +164,7 @@ class EftSetTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
       @tracer << workitem.fields['f']
       @tracer << "\n"
     end
@@ -219,12 +219,12 @@ class EftSetTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
-    assert_nil @engine.variables['v']
+    assert_nil @dashboard.process(wfid)
+    assert_nil @dashboard.variables['v']
   end
 
   # 'rset' is an alias for 'set'.
@@ -233,11 +233,11 @@ class EftSetTest < Test::Unit::TestCase
   #
   def test_rset
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       rset 'developer' => 'Rebo'
     end)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal 'Rebo', r['workitem']['fields']['developer']
   end
@@ -257,9 +257,9 @@ class EftSetTest < Test::Unit::TestCase
       unset :field => '__timed_out__'
     end
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal({}, r['workitem']['fields'])
   end
@@ -282,13 +282,13 @@ class EftSetTest < Test::Unit::TestCase
       peek
     end
 
-    @engine.register :peek, VarPeek
+    @dashboard.register :peek, VarPeek
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal '{}', @tracer.to_s
   end

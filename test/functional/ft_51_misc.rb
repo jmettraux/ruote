@@ -20,13 +20,13 @@ class FtMiscTest < Test::Unit::TestCase
     prev = $stdout
     $stdout = out
 
-    @engine.noisy = true
+    @dashboard.noisy = true
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       echo 'nada'
     end)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     out.close
     $stdout = prev
@@ -47,21 +47,21 @@ class FtMiscTest < Test::Unit::TestCase
       participant 'no_cancel'
     end
 
-    @engine.register 'no_cancel', NoCancel
+    @dashboard.register 'no_cancel', NoCancel
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:no_cancel)
+    @dashboard.wait_for(:no_cancel)
 
-    @engine.cancel(wfid)
+    @dashboard.cancel(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_match(
       /undefined method `on_cancel' for/,
-      @engine.ps(wfid).errors.first.message)
+      @dashboard.ps(wfid).errors.first.message)
   end
 end
 

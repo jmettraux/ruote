@@ -15,7 +15,7 @@ require 'ruote/storage/fs_storage'
 
 # preparing the engine
 
-engine = Ruote::Engine.new(
+dashboard = Ruote::Dashboard.new(
   Ruote::Worker.new(
     Ruote::FsStorage.new(
       'ruote_work',
@@ -24,11 +24,11 @@ engine = Ruote::Engine.new(
 
 # registering participants
 
-engine.register_participant :alpha do |workitem|
+dashboard.register_participant :alpha do |workitem|
   workitem.fields['message'] = { 'text' => 'hello !', 'author' => 'Alice' }
 end
 
-engine.register_participant :bravo do |workitem|
+dashboard.register_participant :bravo do |workitem|
   puts "I received a message from #{workitem.fields['message']['author']}"
 end
 
@@ -45,9 +45,9 @@ end
 
 # launching, creating a process instance
 
-wfid = engine.launch(pdef)
+wfid = dashboard.launch(pdef)
 
-engine.wait_for(wfid)
+dashboard.wait_for(wfid)
   # blocks current thread until our process instance terminates
 
 # => 'I received a message from Alice'

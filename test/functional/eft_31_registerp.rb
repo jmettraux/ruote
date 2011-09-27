@@ -19,11 +19,11 @@ class EftRegisterpTest < Test::Unit::TestCase
       registerp 'alpha', :class => 'C', :opt0 => 'val0'
     end
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    err = @engine.errors.first
+    err = @dashboard.errors.first
 
     assert_equal(
       "#<ArgumentError: 'registerp_allowed' is set to false, " +
@@ -33,9 +33,9 @@ class EftRegisterpTest < Test::Unit::TestCase
 
   def test_register_from_attributes
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.context['registerp_allowed'] = true
+    @dashboard.context['registerp_allowed'] = true
 
     pdef = Ruote.define do
       registerp 'alpha', :class => 'C', :opt0 => 'val_a'
@@ -44,8 +44,8 @@ class EftRegisterpTest < Test::Unit::TestCase
       registerp :regex => 'delta', :class => 'C', :opt0 => 'val_d'
     end
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal(
       [
@@ -54,28 +54,28 @@ class EftRegisterpTest < Test::Unit::TestCase
         [ 'charly', [ 'C', { 'opt0' => 'val_c' } ] ],
         [ 'delta', [ 'C', { 'opt0' => 'val_d' } ] ]
       ],
-      @engine.participant_list.collect { |e| e.to_a })
+      @dashboard.participant_list.collect { |e| e.to_a })
   end
 
   def test_register_from_workitem
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.context['registerp_allowed'] = true
+    @dashboard.context['registerp_allowed'] = true
 
     pdef = Ruote.define do
       registerp :participants => 'participants'
       registerp :participant => 'participant'
     end
 
-    wfid = @engine.launch(pdef,
+    wfid = @dashboard.launch(pdef,
       'participants' => [
         [ 'alpha', 'C', { 'opt0' => 'val_a' } ],
         [ '/bravo/', 'C', { 'opt0' => 'val_b' } ]
       ],
       'participant' => [ '/charly/', 'C', { 'opt0' => 'val_c' } ])
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal(
       [
@@ -83,48 +83,48 @@ class EftRegisterpTest < Test::Unit::TestCase
         [ 'bravo', [ 'C', { 'opt0' => 'val_b' } ] ],
         [ 'charly', [ 'C', { 'opt0' => 'val_c' } ] ]
       ],
-      @engine.participant_list.collect { |e| e.to_a })
+      @dashboard.participant_list.collect { |e| e.to_a })
   end
 
   def test_register_with_position
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.context['registerp_allowed'] = true
+    @dashboard.context['registerp_allowed'] = true
 
     pdef = Ruote.define do
       registerp 'alpha', :class => 'C', :opt0 => 'val_a'
       registerp /bravo/, :class => 'C', :opt0 => 'val_b', :position => 0
     end
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal(
       [
         [ 'bravo', [ 'C', { 'opt0' => 'val_b', 'position' => 0 } ] ],
         [ '^alpha$', [ 'C', { 'opt0' => 'val_a' } ] ]
       ],
-      @engine.participant_list.collect { |e| e.to_a })
+      @dashboard.participant_list.collect { |e| e.to_a })
   end
 
   def test_unregister
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.context['registerp_allowed'] = true
+    @dashboard.context['registerp_allowed'] = true
 
     pdef = Ruote.define do
       registerp 'alpha', :class => 'C', :opt0 => 'val_a'
       unregisterp 'alpha'
     end
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal(
       [],
-      @engine.participant_list.collect { |e| e.to_a })
+      @dashboard.participant_list.collect { |e| e.to_a })
   end
 end
 

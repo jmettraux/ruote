@@ -20,14 +20,14 @@ define
   user_${v:nada}
     EOS
 
-    @engine.register /^user_/ do |wi|
+    @dashboard.register /^user_/ do |wi|
       @tracer << wi.participant_name + "\n"
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[ user_alpha user_ ], @tracer.to_a
   end

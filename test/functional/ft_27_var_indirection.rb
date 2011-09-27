@@ -21,7 +21,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :bravo do |workitem|
+    alpha = @dashboard.register_participant :bravo do |workitem|
       @tracer << "b:#{workitem.fields['params']['original_ref']}\n"
     end
 
@@ -40,7 +40,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
       @tracer << "alpha\n"
     end
 
@@ -90,7 +90,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.variables['v'] = File.join(File.dirname(__FILE__), '..', 'pdef.xml')
+    @dashboard.variables['v'] = File.join(File.dirname(__FILE__), '..', 'pdef.xml')
 
     assert_trace %w[ a b ], pdef
   end
@@ -103,7 +103,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.variables['v'] = File.expand_path(
+    @dashboard.variables['v'] = File.expand_path(
       File.join(File.dirname(__FILE__), '..', 'pdef.xml'))
 
     assert_trace %w[ a b ], pdef
@@ -115,12 +115,12 @@ class FtVarIndirectionTest < Test::Unit::TestCase
       output "nada"
     end
 
-    @engine.variables['output'] = 'echo'
+    @dashboard.variables['output'] = 'echo'
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'nada', @tracer.to_s
   end

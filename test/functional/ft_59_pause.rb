@@ -15,32 +15,32 @@ class FtPauseTest < Test::Unit::TestCase
 
   def test_pause_process
 
-    @engine.register { catchall }
+    @dashboard.register { catchall }
 
     pdef = Ruote.define { alice }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alice)
+    @dashboard.wait_for(:alice)
 
     #
     # pause the process
 
-    @engine.pause(wfid)
+    @dashboard.pause(wfid)
 
-    @engine.wait_for('dispatch_pause')
+    @dashboard.wait_for('dispatch_pause')
 
-    ps = @engine.ps(wfid)
+    ps = @dashboard.ps(wfid)
 
     assert_equal %w[ paused ], ps.expressions.collect { |fexp| fexp.state }.uniq
 
-    @engine.storage_participant.proceed(@engine.storage_participant.first)
+    @dashboard.storage_participant.proceed(@dashboard.storage_participant.first)
 
-    @engine.wait_for('receive')
+    @dashboard.wait_for('receive')
 
-    ps = @engine.ps(wfid)
+    ps = @dashboard.ps(wfid)
 
     exp = ps.expressions.last
 
@@ -49,11 +49,11 @@ class FtPauseTest < Test::Unit::TestCase
     #
     # resume the process
 
-    @engine.resume(wfid)
+    @dashboard.resume(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_nil @engine.ps(wfid)
+    assert_nil @dashboard.ps(wfid)
   end
 
   def test_pause_process_in_error
@@ -62,17 +62,17 @@ class FtPauseTest < Test::Unit::TestCase
       nada
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    @engine.pause(wfid)
+    @dashboard.pause(wfid)
 
-    @engine.wait_for(3)
+    @dashboard.wait_for(3)
 
-    ps = @engine.ps(wfid)
+    ps = @dashboard.ps(wfid)
 
     assert_equal(
       %w[ paused failed ],
@@ -81,16 +81,16 @@ class FtPauseTest < Test::Unit::TestCase
     #
     # cancel at error
 
-    @engine.cancel(ps.expressions.last.fei)
+    @dashboard.cancel(ps.expressions.last.fei)
 
     #
     # resume the process
 
-    @engine.resume(wfid)
+    @dashboard.resume(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_nil @engine.ps(wfid)
+    assert_nil @dashboard.ps(wfid)
   end
 
   def test_cancel_paused_branch
@@ -102,35 +102,35 @@ class FtPauseTest < Test::Unit::TestCase
       bob
     end
 
-    @engine.register do
+    @dashboard.register do
       catchall
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alice)
+    @dashboard.wait_for(:alice)
 
-    exp = @engine.ps(wfid).expressions.find { |e| e.name == 'sequence' }
+    exp = @dashboard.ps(wfid).expressions.find { |e| e.name == 'sequence' }
 
-    @engine.pause(exp.fei)
+    @dashboard.pause(exp.fei)
 
-    @engine.wait_for('dispatch_pause')
+    @dashboard.wait_for('dispatch_pause')
 
     assert_equal(
       %w[ 0/ 0_0/paused 0_0_0/paused ],
-      @engine.ps(wfid).expressions.collect { |fe|
+      @dashboard.ps(wfid).expressions.collect { |fe|
         "#{fe.fei.expid}/#{fe.state}"
       })
 
-    @engine.cancel(exp.fei)
+    @dashboard.cancel(exp.fei)
 
-    @engine.wait_for(:bob)
+    @dashboard.wait_for(:bob)
 
     assert_equal(
       %w[ 0/ 0_1/ ],
-      @engine.ps(wfid).expressions.collect { |fe|
+      @dashboard.ps(wfid).expressions.collect { |fe|
         "#{fe.fei.expid}/#{fe.state}"
       })
   end
@@ -154,27 +154,27 @@ class FtPauseTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register do
+    @dashboard.register do
       alpha AlphaParticipant
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
-    @engine.pause(wfid)
+    @dashboard.pause(wfid)
 
-    @engine.wait_for('dispatch_pause')
+    @dashboard.wait_for('dispatch_pause')
 
     assert_equal(
       [ "dispatched:#{wfid}", "pause:#{wfid}" ],
       @tracer.to_a)
 
-    @engine.resume(wfid)
+    @dashboard.resume(wfid)
 
-    @engine.wait_for('dispatch_resume')
+    @dashboard.wait_for('dispatch_resume')
 
     assert_equal(
       [ "dispatched:#{wfid}", "pause:#{wfid}", "resume:#{wfid}" ],
@@ -187,35 +187,35 @@ class FtPauseTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register do
+    @dashboard.register do
       alpha AlphaParticipant
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
-    @engine.pause(wfid)
+    @dashboard.pause(wfid)
 
-    @engine.wait_for('dispatch_pause')
+    @dashboard.wait_for('dispatch_pause')
 
-    wi = @engine.ps(wfid).expressions.last.h.applied_workitem
+    wi = @dashboard.ps(wfid).expressions.last.h.applied_workitem
 
-    part = @engine.participant(:alpha.to_s)
+    part = @dashboard.participant(:alpha.to_s)
 
     part.instance_eval { reply_to_engine(Ruote::Workitem.new(wi)) }
 
-    @engine.wait_for(1)
+    @dashboard.wait_for(1)
 
     assert_equal(
       [ "dispatched:#{wfid}", "pause:#{wfid}" ],
       @tracer.to_a)
 
-    @engine.resume(wfid)
+    @dashboard.resume(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal(
       [ "dispatched:#{wfid}", "pause:#{wfid}" ],
@@ -232,27 +232,27 @@ class FtPauseTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register do
+    @dashboard.register do
       catchall
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
-    sequence = @engine.ps(wfid).expressions[1]
+    sequence = @dashboard.ps(wfid).expressions[1]
 
-    @engine.pause(sequence.fei, :breakpoint => true)
+    @dashboard.pause(sequence.fei, :breakpoint => true)
 
-    @engine.storage_participant.proceed(@engine.storage_participant.first)
+    @dashboard.storage_participant.proceed(@dashboard.storage_participant.first)
 
-    @engine.wait_for('reply')
+    @dashboard.wait_for('reply')
 
     assert_equal(
       [ nil, 'paused' ],
-      @engine.ps(wfid).expressions.collect { |fexp| fexp.state })
+      @dashboard.ps(wfid).expressions.collect { |fexp| fexp.state })
   end
 
   def test_no_propagation_to_participant_when_breakpoint
@@ -261,28 +261,28 @@ class FtPauseTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register do
+    @dashboard.register do
       alpha AlphaParticipant
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    #@engine.wait_for(:alpha)
-    @engine.wait_for('dispatched')
+    #@dashboard.wait_for(:alpha)
+    @dashboard.wait_for('dispatched')
 
-    alpha = @engine.ps(wfid).expressions.last
+    alpha = @dashboard.ps(wfid).expressions.last
 
-    @engine.pause(alpha.fei, :breakpoint => true)
+    @dashboard.pause(alpha.fei, :breakpoint => true)
 
-    @engine.wait_for('pause')
+    @dashboard.wait_for('pause')
 
     assert_equal([ "dispatched:#{wfid}" ], @tracer.to_a)
 
-    @engine.resume(alpha.fei)
+    @dashboard.resume(alpha.fei)
 
-    @engine.wait_for('resume')
+    @dashboard.wait_for('resume')
 
     assert_equal([ "dispatched:#{wfid}" ], @tracer.to_a)
   end
@@ -298,47 +298,47 @@ class FtPauseTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register do
+    @dashboard.register do
       catchall
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
-    @engine.wait_for(:bravo)
+    @dashboard.wait_for(:alpha)
+    @dashboard.wait_for(:bravo)
 
-    exps = @engine.ps(wfid).expressions.select { |fexp|
+    exps = @dashboard.ps(wfid).expressions.select { |fexp|
       fexp.fei.expid.match(/^0_0_[01]$/)
     }
 
-    exps.each { |fexp| @engine.pause(fexp.fei) }
+    exps.each { |fexp| @dashboard.pause(fexp.fei) }
 
-    @engine.wait_for('dispatch_pause')
-    @engine.wait_for('dispatch_pause')
+    @dashboard.wait_for('dispatch_pause')
+    @dashboard.wait_for('dispatch_pause')
 
     assert_equal(
       [ nil, nil, 'paused', 'paused', 'paused' ],
-      @engine.ps(wfid).expressions.collect { |fexp| fexp.state })
+      @dashboard.ps(wfid).expressions.collect { |fexp| fexp.state })
 
-    @engine.resume(wfid)
+    @dashboard.resume(wfid)
       # won't resume the process, since the root is not paused
 
-    @engine.wait_for(2)
+    @dashboard.wait_for(2)
 
     assert_equal(
       [ nil, nil, 'paused', 'paused', 'paused' ],
-      @engine.ps(wfid).expressions.collect { |fexp| fexp.state })
+      @dashboard.ps(wfid).expressions.collect { |fexp| fexp.state })
 
-    @engine.resume(wfid, :anyway => true)
+    @dashboard.resume(wfid, :anyway => true)
 
-    @engine.wait_for('dispatch_resume')
-    @engine.wait_for('dispatch_resume')
+    @dashboard.wait_for('dispatch_resume')
+    @dashboard.wait_for('dispatch_resume')
 
     assert_equal(
       [ nil, nil, nil, nil, nil ],
-      @engine.ps(wfid).expressions.collect { |fexp| fexp.state })
+      @dashboard.ps(wfid).expressions.collect { |fexp| fexp.state })
   end
 end
 

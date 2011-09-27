@@ -13,10 +13,10 @@ class FtEngineConfigTest < Test::Unit::TestCase
 
   def test_engine_config
 
-    @engine.configure('a', 'b')
+    @dashboard.configure('a', 'b')
 
-    assert_equal 'b', @engine.configuration('a')
-    assert_equal 'b', @engine.storage.get_configuration('engine')['a']
+    assert_equal 'b', @dashboard.configuration('a')
+    assert_equal 'b', @dashboard.storage.get_configuration('engine')['a']
   end
 end
 

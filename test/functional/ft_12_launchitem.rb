@@ -17,7 +17,7 @@ class FtLaunchitemTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
       stash[:fields] = workitem.fields
       @tracer << 'a'
       nil
@@ -25,19 +25,19 @@ class FtLaunchitemTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef, 'a' => 0, 'b' => 1)
+    wfid = @dashboard.launch(pdef, 'a' => 0, 'b' => 1)
     wait_for(wfid)
 
     assert_equal('a', @tracer.to_s)
 
-    @engine.context.stash[:fields].delete('__result__')
+    @dashboard.context.stash[:fields].delete('__result__')
 
     assert_not_nil(
-      @engine.context.stash[:fields].delete('dispatched_at'))
+      @dashboard.context.stash[:fields].delete('dispatched_at'))
 
     assert_equal(
       {"a"=>0, "b"=>1, "params"=>{"ref"=>"alpha"}},
-      @engine.context.stash[:fields])
+      @dashboard.context.stash[:fields])
   end
 end
 

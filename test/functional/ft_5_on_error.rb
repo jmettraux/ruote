@@ -21,7 +21,7 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :catcher do
+    @dashboard.register_participant :catcher do
       @tracer << "caught\n"
     end
 
@@ -42,21 +42,21 @@ class FtOnErrorTest < Test::Unit::TestCase
       participant :mark_finished
     end
 
-    @engine.context.stash[:marks] = []
+    @dashboard.context.stash[:marks] = []
 
-    @engine.register_participant 'mark\_.+' do |workitem|
+    @dashboard.register_participant 'mark\_.+' do |workitem|
       stash[:marks] << workitem.participant_name
     end
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
     assert_equal(
       %w[ mark_started mark_failed mark_finished ],
-      @engine.context.stash[:marks])
+      @dashboard.context.stash[:marks])
   end
 
   def test_on_error_unknown_participant_name_2
@@ -67,21 +67,21 @@ class FtOnErrorTest < Test::Unit::TestCase
       participant :mark_finished
     end
 
-    @engine.context.stash[:marks] = []
+    @dashboard.context.stash[:marks] = []
 
-    @engine.register_participant 'mark\_.+' do |workitem|
+    @dashboard.register_participant 'mark\_.+' do |workitem|
       stash[:marks] << workitem.participant_name
     end
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
     assert_equal(
       %w[ mark_started mark_failed mark_finished ],
-      @engine.context.stash[:marks])
+      @dashboard.context.stash[:marks])
   end
 
   def test_on_error_neutralization
@@ -94,15 +94,15 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :catcher do
+    @dashboard.register_participant :catcher do
       @tracer << "caught\n"
     end
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal(1, ps.errors.size)
   end
@@ -132,7 +132,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.register_participant :troublemaker, TroubleMaker
+    @dashboard.register_participant :troublemaker, TroubleMaker
 
     assert_trace(%w[ 1 2 done. ], pdef)
   end
@@ -145,7 +145,7 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :troublemaker, TroubleMaker
+    @dashboard.register_participant :troublemaker, TroubleMaker
 
     assert_trace(%w[ 1 2 done. ], pdef)
   end
@@ -168,12 +168,12 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     wfid = assert_trace(%w[ a b d ], pdef)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 
   def test_on_error_undo_single_expression
 
-    @engine.register_participant :nemo do |wi|
+    @dashboard.register_participant :nemo do |wi|
       wi.fields['fail_count'] = 1
       raise 'nemo'
     end
@@ -188,7 +188,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     wfid = assert_trace(%w[ in |1 ], pdef)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 
   def test_on_error_pass
@@ -209,7 +209,7 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     wfid = assert_trace(%w[ a b d ], pdef)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 
   def test_missing_handler_triggers_regular_error
@@ -220,9 +220,9 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
 
@@ -256,17 +256,17 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.context.stash[:a_count] = 0
-    @engine.context.stash[:e_count] = 0
+    @dashboard.context.stash[:a_count] = 0
+    @dashboard.context.stash[:e_count] = 0
 
-    @engine.register_participant(:alpha) { |wi| stash[:a_count] += 1 }
-    @engine.register_participant(:emil) { |wi| stash[:e_count] += 1 }
+    @dashboard.register_participant(:alpha) { |wi| stash[:a_count] += 1 }
+    @dashboard.register_participant(:emil) { |wi| stash[:e_count] += 1 }
 
     #noisy
 
     assert_trace 'done.', pdef
-    assert_equal 1, @engine.context.stash[:a_count]
-    assert_equal 1, @engine.context.stash[:e_count]
+    assert_equal 1, @dashboard.context.stash[:a_count]
+    assert_equal 1, @dashboard.context.stash[:e_count]
   end
 
   def test_participant_on_error
@@ -278,25 +278,25 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :troublemaker do |wi|
+    @dashboard.register_participant :troublemaker do |wi|
       wi.fields['seen'] = true
       raise 'Beijing, we have a problem !'
     end
-    @engine.register_participant :troublespotter do |wi|
+    @dashboard.register_participant :troublespotter do |wi|
       stash[:workitem] = wi
       @tracer << 'err...'
     end
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
-    #er = @engine.process(wfid).errors.first
+    #er = @dashboard.process(wfid).errors.first
     #puts er.message
     #puts er.trace
 
-    wi = @engine.context.stash[:workitem]
+    wi = @dashboard.context.stash[:workitem]
 
     assert_equal 'err...', @tracer.to_s
     assert_equal 5, wi.error.size
@@ -328,16 +328,16 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register do
+    @dashboard.register do
       murphy FtOnErrorTest::Murphy
       catchall
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.launch(pdef)
+    @dashboard.launch(pdef)
 
-    @engine.wait_for(:catcher)
+    @dashboard.wait_for(:catcher)
   end
 
   class RescuerOne
@@ -369,12 +369,12 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register do
+    @dashboard.register do
       rescuer RescuerOne
       rescuer RescuerTwo
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     assert_trace('two', pdef)
 
@@ -394,14 +394,14 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant /alpha|bravo/ do |workitem|
+    @dashboard.register_participant /alpha|bravo/ do |workitem|
       @tracer << workitem.participant_name
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'alpha', @tracer.to_s
   end
@@ -417,10 +417,10 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[ in in over. ], @tracer.to_a
   end
@@ -437,14 +437,14 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.register '.+' do |workitem|
+    @dashboard.register '.+' do |workitem|
       @tracer << workitem.participant_name + "\n"
     end
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[ alpha shark delta ], @tracer.to_a
   end

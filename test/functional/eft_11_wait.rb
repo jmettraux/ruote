@@ -24,18 +24,18 @@ class EftWaitTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.context.stash[:ts] = []
+    @dashboard.context.stash[:ts] = []
 
-    @engine.register_participant(:alpha) { stash[:ts] << Time.now }
+    @dashboard.register_participant(:alpha) { stash[:ts] << Time.now }
 
     assert_trace 'done.', pdef
 
     d = (
-      @engine.context.stash[:ts][1].sec - @engine.context.stash[:ts][0].sec
+      @dashboard.context.stash[:ts][1].sec - @dashboard.context.stash[:ts][0].sec
     ) % 60
 
     deltas = [ 2, 3, 4 ]
-    #deltas << 4 if @engine.storage.class.name.match(/^Ruote::Couch::/)
+    #deltas << 4 if @dashboard.storage.class.name.match(/^Ruote::Couch::/)
 
     assert(
       deltas.include?(d),
@@ -54,23 +54,23 @@ class EftWaitTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(4)
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
 
     wait_for(wfid)
 
     assert_equal 'a', @tracer.to_s
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
   end
 
   def test_wait_until
 
-    @engine.context.stash[:ts] = []
+    @dashboard.context.stash[:ts] = []
 
-    @engine.register_participant(:alpha) { stash[:ts] << Time.now }
+    @dashboard.register_participant(:alpha) { stash[:ts] << Time.now }
 
     pdef = Ruote.process_definition do
       sequence do
@@ -85,8 +85,8 @@ class EftWaitTest < Test::Unit::TestCase
 
     assert_trace 'done.', pdef
 
-    ts0 = @engine.context.stash[:ts][0]
-    ts1 = @engine.context.stash[:ts][1]
+    ts0 = @dashboard.context.stash[:ts][0]
+    ts1 = @dashboard.context.stash[:ts][1]
 
     assert(ts1 - ts0 > 1.0, "#{ts1 - ts0} should be > 1.0")
   end

@@ -13,21 +13,21 @@ class FtWorkerInfoTest < Test::Unit::TestCase
 
   def test_empty_worker_info
 
-    assert_nil @engine.worker_info
+    assert_nil @dashboard.worker_info
   end
 
   def test_worker_info
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     3.times {
-      @engine.launch(Ruote.define do
+      @dashboard.launch(Ruote.define do
         10.times { echo 'hello' }
       end)
     }
-    @engine.wait_for(3)
+    @dashboard.wait_for(3)
 
-    info = @engine.worker_info
+    info = @dashboard.worker_info
 
     assert_equal(
       "#{Ruote.local_ip}/#{$$}",

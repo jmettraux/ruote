@@ -20,10 +20,10 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
   def test_re_dispatch_count_is_initially_zero
 
-    @engine.register { catchall }
+    @dashboard.register { catchall }
 
-    wfid = @engine.launch(Ruote.define { alpha })
-    r = @engine.wait_for(:alpha)
+    wfid = @dashboard.launch(Ruote.define { alpha })
+    r = @dashboard.wait_for(:alpha)
 
     assert_equal 0, r['workitem']['re_dispatch_count']
   end
@@ -42,11 +42,11 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
   def test_re_dispatch_count_is_incremented_at_each_re_dispatch
 
-    @engine.register { counter CountingParticipant }
+    @dashboard.register { counter CountingParticipant }
 
-    wfid = @engine.launch(Ruote.define { counter })
+    wfid = @dashboard.launch(Ruote.define { counter })
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[ 0 1 2 3 4 5 ], @tracer.to_a
   end
@@ -74,7 +74,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant :alpha, DifficultParticipant
+    @dashboard.register_participant :alpha, DifficultParticipant
 
     #noisy
 
@@ -100,7 +100,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
   #
   def test_participant_re_dispatch_no_params
 
-    @engine.register_participant :alpha, ReluctantParticipant
+    @dashboard.register_participant :alpha, ReluctantParticipant
 
     assert_trace(%w[ x x ], Ruote.define { alpha })
   end
@@ -127,7 +127,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant :alpha, FightingParticipant
+    @dashboard.register_participant :alpha, FightingParticipant
 
     #noisy
 
@@ -163,11 +163,11 @@ class FtParticipantMoreTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant :alpha, RetryParticipant
+    @dashboard.register_participant :alpha, RetryParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
     times = @tracer.to_s.split("\n").collect { |t| Float(t) }
@@ -186,17 +186,17 @@ class FtParticipantMoreTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant :alpha, RetryParticipant, 'delay' => '1m'
+    @dashboard.register_participant :alpha, RetryParticipant, 'delay' => '1m'
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     sleep 0.7
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
     wait_for(wfid)
 
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
   end
 
   #
@@ -229,22 +229,22 @@ class FtParticipantMoreTest < Test::Unit::TestCase
       alpha :token0 => 'of esteem', :token1 => 'of whatever'
     end
 
-    @engine.register_participant :alpha, StashingParticipant
+    @dashboard.register_participant :alpha, StashingParticipant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(:alpha)
     wait_for(1)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
     fexp = ps.expressions.find { |e| e.fei.expid == '0_0' }
 
     assert_equal(
       { 'token0' => 'of esteem', 'token1' => 'of whatever' },
       fexp.h.stash)
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
     wait_for(wfid)
 
     assert_equal(
@@ -273,22 +273,22 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
   def test_is_cancelled
 
-    @engine.register :alpha, Doubtful
+    @dashboard.register :alpha, Doubtful
 
     pdef = Ruote.define do
       alpha
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
     sleep 1.0 # making sure on_workitem reaches its sleep
 
-    @engine.cancel(@engine.ps(wfid).expressions.last)
+    @dashboard.cancel(@dashboard.ps(wfid).expressions.last)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     sleep 10
 
@@ -315,17 +315,17 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
   def test_on_cancel_returning_false
 
-    @engine.register :rob, Robust
+    @dashboard.register :rob, Robust
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(Ruote.define { rob })
+    wfid = @dashboard.launch(Ruote.define { rob })
 
-    @engine.wait_for(:rob)
+    @dashboard.wait_for(:rob)
 
-    @engine.cancel(@engine.ps(wfid).expressions.last)
+    @dashboard.cancel(@dashboard.ps(wfid).expressions.last)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal 'seen', r['workitem']['fields']['toto']
     assert_equal %w[ on_cancel on_workitem ], @tracer.to_a.sort

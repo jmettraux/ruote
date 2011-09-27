@@ -39,7 +39,7 @@ class FtRecursionTest < Test::Unit::TestCase
 
   def test_main_recursion
 
-    @engine.context.stash[:wfids] = []
+    @dashboard.context.stash[:wfids] = []
 
     pdef = Ruote.process_definition :name => 'def0' do
       sequence do
@@ -48,18 +48,18 @@ class FtRecursionTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, CountingParticipant
+    alpha = @dashboard.register_participant :alpha, CountingParticipant
 
     #noisy
 
     assert_trace(%w[ 1 2 3 4 5 6 ], pdef)
 
-    assert_equal 6, @engine.context.stash[:wfids].uniq.size
+    assert_equal 6, @dashboard.context.stash[:wfids].uniq.size
   end
 
   def test_sub_recursion
 
-    @engine.context.stash[:wfids] = []
+    @dashboard.context.stash[:wfids] = []
 
     pdef = Ruote.process_definition do
       define 'sub0' do
@@ -71,7 +71,7 @@ class FtRecursionTest < Test::Unit::TestCase
       sub0
     end
 
-    alpha = @engine.register_participant :alpha, CountingParticipant
+    alpha = @dashboard.register_participant :alpha, CountingParticipant
 
     #noisy
 
@@ -79,7 +79,7 @@ class FtRecursionTest < Test::Unit::TestCase
 
     #p alpha.wfids.uniq
 
-    assert_equal 6, @engine.context.stash[:wfids].uniq.size
+    assert_equal 6, @dashboard.context.stash[:wfids].uniq.size
   end
 
   def test_forgotten_main_recursion
@@ -93,11 +93,11 @@ class FtRecursionTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, CountingParticipant
+    alpha = @dashboard.register_participant :alpha, CountingParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     6.times { wait_for(:alpha) }
 

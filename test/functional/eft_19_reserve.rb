@@ -28,16 +28,16 @@ class EftReserveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
 
     assert_equal 1, alpha.size
     assert_equal '0_0_0_0', alpha.first.fei.expid
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 2, ps.variables.size
 
@@ -74,16 +74,16 @@ class EftReserveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
     exp = ps.expressions.find { |e| e.fei.expid == '0_0_0' }
 
-    @engine.cancel_expression(exp.fei)
+    @dashboard.cancel_expression(exp.fei)
 
     wait_for(:alpha)
 
@@ -112,9 +112,9 @@ class EftReserveTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     2.times do
 
@@ -122,7 +122,7 @@ class EftReserveTest < Test::Unit::TestCase
 
       assert_equal 1, alpha.size
 
-      ps = @engine.process(wfid)
+      ps = @dashboard.process(wfid)
 
       assert_equal 2, ps.variables.size
       assert_not_nil ps.variables['reserve']

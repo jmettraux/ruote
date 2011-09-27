@@ -12,7 +12,9 @@ require 'ruote/storage/fs_storage'
 #
 # start a ruote workflow engine, with file based persistence (in dir work/)
 
-$engine = Ruote::Engine.new(Ruote::Worker.new(Ruote::FsStorage.new('work')))
+$dashboard = Ruote::Dashboard.new(
+  Ruote::Worker.new(
+    Ruote::FsStorage.new('work')))
 
 #
 # participant implementation, for this demo, it merely emits a message
@@ -64,7 +66,7 @@ end
 # instances of DemoParticipant do the task handling, let's map
 # task_.+ to DemoParticipant in the ruote engine
 
-$engine.register do
+$dashboard.register do
   participant 'task_.+', DemoParticipant
 end
 
@@ -95,7 +97,7 @@ loop do
 
     FileUtils.mv(filepath, seen)
 
-    process_id = $engine.launch(PDEF, 'datafile' => seen)
+    process_id = $dashboard.launch(PDEF, 'datafile' => seen)
       # launch a workflow instance for our datafile
 
     puts ".. launched process #{process_id}"

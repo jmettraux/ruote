@@ -21,10 +21,10 @@ class FtStorageHistoryTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    history = @engine.add_service(
+    history = @dashboard.add_service(
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
-    @engine.register_participant :alpha, Ruote::NoOpParticipant
+    @dashboard.register_participant :alpha, Ruote::NoOpParticipant
 
     #noisy
 
@@ -33,51 +33,51 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
     sleep 0.100
 
-    assert_equal 21, @engine.storage.get_many('history').size
+    assert_equal 21, @dashboard.storage.get_many('history').size
 
-    h = @engine.context.history.by_process(wfid0)
+    h = @dashboard.context.history.by_process(wfid0)
     #h.each { |r| p r }
     assert_equal 9, h.size
 
     # testing record.to_h
 
-    h = @engine.context.history.by_process(wfid1)
+    h = @dashboard.context.history.by_process(wfid1)
     #h.each { |r| p r }
     assert_equal 9, h.size
 
     history.clear!
 
-    assert_equal 0, @engine.storage.get_many('history').size
+    assert_equal 0, @dashboard.storage.get_many('history').size
   end
 
   def test_by_date
 
-    @engine.add_service(
+    @dashboard.add_service(
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
     6.times do |i|
-      @engine.storage.put(
+      @dashboard.storage.put(
         '_id' => "!2010-01-06!11414#{i}!0!!20100106-bichisosupo",
         'type' => 'history')
     end
     7.times do |i|
-      @engine.storage.put(
+      @dashboard.storage.put(
         '_id' => "!2010-01-07!11414#{i}!0!!20100107-bichitehoni",
         'type' => 'history')
     end
 
-    assert_equal 6, @engine.context.history.by_date('2010-01-06').size
-    assert_equal 7, @engine.context.history.by_date('2010-01-07').size
+    assert_equal 6, @dashboard.context.history.by_date('2010-01-06').size
+    assert_equal 7, @dashboard.context.history.by_date('2010-01-07').size
   end
 
   def test_range
 
-    @engine.add_service(
+    @dashboard.add_service(
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
     7.times do |i|
       i = i + 1
-      @engine.storage.put(
+      @dashboard.storage.put(
         '_id' => "!2010-01-0#{i}!114147!0!!2010010#{i}-bichisosupo",
         'type' => 'history')
     end
@@ -85,30 +85,30 @@ class FtStorageHistoryTest < Test::Unit::TestCase
     assert_equal(
       [ Time.parse('2010-01-01 00:00:00 UTC'),
         Time.parse('2010-01-08 00:00:00 UTC') ],
-      @engine.context.history.range)
+      @dashboard.context.history.range)
   end
 
   def test_engine_dot_history
 
-    @engine.add_service(
+    @dashboard.add_service(
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
-    assert_equal Ruote::StorageHistory, @engine.history.class
+    assert_equal Ruote::StorageHistory, @dashboard.history.class
   end
 
   def test_wfids
 
-    @engine.add_service(
+    @dashboard.add_service(
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
-    @engine.register_participant 'alpha', Ruote::NullParticipant
+    @dashboard.register_participant 'alpha', Ruote::NullParticipant
 
     3.times do
-      @engine.launch(Ruote.define { alpha })
-      @engine.wait_for(:alpha)
+      @dashboard.launch(Ruote.define { alpha })
+      @dashboard.wait_for(:alpha)
     end
 
-    assert_equal 3, @engine.history.wfids.size
+    assert_equal 3, @dashboard.history.wfids.size
   end
 
   # Cf
@@ -117,7 +117,7 @@ class FtStorageHistoryTest < Test::Unit::TestCase
   #
   def test_concurrence_replies
 
-    @engine.add_service(
+    @dashboard.add_service(
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
     pdef = Ruote.define do
@@ -127,17 +127,17 @@ class FtStorageHistoryTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::NullParticipant
-    @engine.register_participant :bravo, Ruote::NoOpParticipant
+    @dashboard.register_participant :alpha, Ruote::NullParticipant
+    @dashboard.register_participant :bravo, Ruote::NoOpParticipant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     repliers = []
 
-    @engine.context.history.by_wfid(wfid).each do |record|
+    @dashboard.context.history.by_wfid(wfid).each do |record|
       if record['action'] == 'reply'
         wi = record['workitem']
         repliers << [ wi['fei']['expid'], wi['participant_name'] ]

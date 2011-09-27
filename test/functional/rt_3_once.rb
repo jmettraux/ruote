@@ -39,14 +39,14 @@ class RtWhenTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(5)
 
-    assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.storage.get_many('schedules').size
+    assert_equal 1, @dashboard.processes.size
+    assert_equal 1, @dashboard.storage.get_many('schedules').size
 
-    @engine.shutdown
+    @dashboard.shutdown
 
     # restart...
 
@@ -56,17 +56,17 @@ class RtWhenTest < Test::Unit::TestCase
 
     #noisy
 
-    assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.storage.get_many('schedules').size
+    assert_equal 1, @dashboard.processes.size
+    assert_equal 1, @dashboard.storage.get_many('schedules').size
 
-    @engine.variables['resume'] = true
+    @dashboard.variables['resume'] = true
 
     wait_for(wfid)
 
     assert_equal "in\nout.", @tracer.to_s
 
-    assert_equal 0, @engine.processes.size
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.processes.size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
   end
 end
 

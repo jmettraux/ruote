@@ -49,7 +49,7 @@ class FtPartTemplateTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.register_participant(
+    @dashboard.register_participant(
       :alpha,
       MyParticipant,
       :template => "0:${v:var0}\n1:${f:field0}")

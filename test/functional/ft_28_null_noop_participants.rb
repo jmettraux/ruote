@@ -20,15 +20,15 @@ class FtNullNoopParticipantsTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::NullParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::NullParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(4)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_not_nil ps
     assert_equal [], ps.errors
@@ -41,7 +41,7 @@ class FtNullNoopParticipantsTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    @engine.register_participant :alpha, Ruote::NoOpParticipant
+    @dashboard.register_participant :alpha, Ruote::NoOpParticipant
 
     #noisy
 

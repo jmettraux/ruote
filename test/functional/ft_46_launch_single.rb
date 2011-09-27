@@ -14,7 +14,7 @@ class FtLaunchSingleTest < Test::Unit::TestCase
   def test_no_name_singles_are_rejected
 
     assert_raise ArgumentError do
-      @engine.launch_single(Ruote.process_definition do
+      @dashboard.launch_single(Ruote.process_definition do
         wait '2y'
         echo 'over.'
       end)
@@ -30,22 +30,22 @@ class FtLaunchSingleTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch_single(pdef)
+    wfid = @dashboard.launch_single(pdef)
 
     assert_equal(
       wfid,
-      @engine.storage.get('variables', 'singles')['h']['unique_process'].first)
+      @dashboard.storage.get('variables', 'singles')['h']['unique_process'].first)
 
-    @engine.wait_for(2)
+    @dashboard.wait_for(2)
 
-    assert_not_nil @engine.process(wfid)
+    assert_not_nil @dashboard.process(wfid)
 
-    wfid1 = @engine.launch_single(pdef)
+    wfid1 = @dashboard.launch_single(pdef)
 
     sleep 1
 
     assert_equal wfid, wfid1
-    assert_equal 1, @engine.processes.size
+    assert_equal 1, @dashboard.processes.size
   end
 
   # Fighting the issue reported by Gonzalo in
@@ -60,24 +60,24 @@ class FtLaunchSingleTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid0 = @engine.launch_single(pdef)
+    wfid0 = @dashboard.launch_single(pdef)
 
     sleep 0.700
-    assert_not_nil @engine.process(wfid0)
+    assert_not_nil @dashboard.process(wfid0)
 
-    @engine.cancel(wfid0)
+    @dashboard.cancel(wfid0)
 
-    @engine.wait_for(6)
-    assert_nil @engine.process(wfid0)
+    @dashboard.wait_for(6)
+    assert_nil @dashboard.process(wfid0)
 
     sleep 0.700
-    wfid1 = @engine.launch_single(pdef)
+    wfid1 = @dashboard.launch_single(pdef)
 
-    @engine.wait_for(2)
+    @dashboard.wait_for(2)
 
     assert_not_equal wfid0, wfid1
-    assert_nil @engine.process(wfid0)
-    assert_not_nil @engine.process(wfid1)
+    assert_nil @dashboard.process(wfid0)
+    assert_not_nil @dashboard.process(wfid1)
   end
 end
 

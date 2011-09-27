@@ -21,14 +21,14 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(:alpha)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     #p ps.variables
     #ps.expressions.each { |e| p [ e.fei, e.variables ] }
@@ -60,31 +60,31 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
 
-    assert_equal 1, @engine.process(wfid).tags.size
+    assert_equal 1, @dashboard.process(wfid).tags.size
 
-    fei = @engine.process(wfid).expressions.find { |e|
+    fei = @dashboard.process(wfid).expressions.find { |e|
       e.fei.expid == '0_1_0'
     }.fei
 
-    @engine.cancel_expression(fei)
+    @dashboard.cancel_expression(fei)
 
     wait_for(:alpha)
 
-    assert_equal 0, @engine.process(wfid).tags.size
+    assert_equal 0, @dashboard.process(wfid).tags.size
 
     alpha.proceed(alpha.first)
 
     wait_for(:alpha)
 
-    assert_equal 0, @engine.process(wfid).tags.size
+    assert_equal 0, @dashboard.process(wfid).tags.size
   end
 
   def test_unset_tag_when_parent_gone
@@ -99,16 +99,16 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.register :alpha, Ruote::NullParticipant
-    @engine.register :bravo, Ruote::NoOpParticipant
+    @dashboard.register :alpha, Ruote::NullParticipant
+    @dashboard.register :bravo, Ruote::NoOpParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(23)
+    @dashboard.wait_for(23)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 
   def test_tags_and_workitems
@@ -124,29 +124,29 @@ class FtTagsTest < Test::Unit::TestCase
       david
     end
 
-    @engine.register { catchall }
+    @dashboard.register { catchall }
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(:alpha)
-    wi = @engine.storage_participant.first
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(:alpha)
+    wi = @dashboard.storage_participant.first
 
     assert_equal %w[ first-stage ], wi.tags
 
-    @engine.storage_participant.proceed(wi)
-    @engine.wait_for(:bravo)
-    wi = @engine.storage_participant.first
+    @dashboard.storage_participant.proceed(wi)
+    @dashboard.wait_for(:bravo)
+    wi = @dashboard.storage_participant.first
 
     assert_equal %w[ second-stage ], wi.tags
 
-    @engine.storage_participant.proceed(wi)
-    @engine.wait_for(:charly)
-    wi = @engine.storage_participant.first
+    @dashboard.storage_participant.proceed(wi)
+    @dashboard.wait_for(:charly)
+    wi = @dashboard.storage_participant.first
 
     assert_equal %w[ second-stage third-stage ], wi.tags
 
-    @engine.storage_participant.proceed(wi)
-    @engine.wait_for(:david)
-    wi = @engine.storage_participant.first
+    @dashboard.storage_participant.proceed(wi)
+    @dashboard.wait_for(:david)
+    wi = @dashboard.storage_participant.first
 
     assert_equal [], wi.tags
   end
@@ -165,17 +165,17 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+' do |workitem|
+    @dashboard.register_participant '.+' do |workitem|
       if workitem.participant_name == 'charly'
         workitem.fields['tags'] = workitem.fields['__tags__'].dup
       end
       nil
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef, 'my_array' => [ 1 ])
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, 'my_array' => [ 1 ])
+    r = @dashboard.wait_for(wfid)
 
     assert_equal(%w[ phase1 ], r['workitem']['fields']['tags'])
     assert_equal([], r['workitem']['fields']['__tags__'])
@@ -187,19 +187,19 @@ class FtTagsTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register 'alpha', Ruote::StorageParticipant
+    @dashboard.register 'alpha', Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(:alpha)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(:alpha)
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'entered_tag' }.size
 
-    wi = @engine.storage_participant.first
-    @engine.storage_participant.proceed(wi)
+    wi = @dashboard.storage_participant.first
+    @dashboard.storage_participant.proceed(wi)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'left_tag' }.size
   end

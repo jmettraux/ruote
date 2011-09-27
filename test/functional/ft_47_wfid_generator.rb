@@ -18,7 +18,7 @@ class FtWfidGeneratorTest < Test::Unit::TestCase
     n = 147
 
     wfids = []
-    n.times { wfids << @engine.context.wfidgen.generate }
+    n.times { wfids << @dashboard.context.wfidgen.generate }
 
     assert_equal n, wfids.uniq.size
   end
@@ -28,19 +28,19 @@ class FtWfidGeneratorTest < Test::Unit::TestCase
   #
   def test_generate_even_after_a_purge
 
-    assert_not_nil @engine.context.wfidgen.generate
+    assert_not_nil @dashboard.context.wfidgen.generate
 
-    @engine.storage.purge!
-    #@engine.context.wfidgen.instance_eval { @last = nil }
+    @dashboard.storage.purge!
+    #@dashboard.context.wfidgen.instance_eval { @last = nil }
 
-    assert_not_nil @engine.context.wfidgen.generate
+    assert_not_nil @dashboard.context.wfidgen.generate
   end
 
   def test_generate_after_a_put_failed
 
-    assert_not_nil @engine.context.wfidgen.generate
+    assert_not_nil @dashboard.context.wfidgen.generate
 
-    @engine.context.wfidgen.instance_eval do
+    @dashboard.context.wfidgen.instance_eval do
       if @last['_rev'].is_a?(String)
         @last['_rev'] = '1-cc9bc774f00b65ee28a6c0e4f26474de'
       else # integer
@@ -48,7 +48,7 @@ class FtWfidGeneratorTest < Test::Unit::TestCase
       end
     end
 
-    assert_not_nil @engine.context.wfidgen.generate
+    assert_not_nil @dashboard.context.wfidgen.generate
   end
 end
 

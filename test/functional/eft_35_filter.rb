@@ -13,8 +13,8 @@ class EftFilterTest < Test::Unit::TestCase
 
   def assert_terminates(pdef, fields, result=nil)
 
-    wfid = @engine.launch(pdef, fields)
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, fields)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal 'terminated', r['action']
     assert_equal(result, r['workitem']['fields']) if result
@@ -22,10 +22,10 @@ class EftFilterTest < Test::Unit::TestCase
 
   def assert_does_not_validate(pdef, fields={})
 
-    wfid = @engine.launch(pdef, fields)
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef, fields)
+    r = @dashboard.wait_for(wfid)
 
-    err = @engine.errors.first
+    err = @dashboard.errors.first
 
     assert_equal 'error_intercepted', r['action']
     assert_match /ValidationError/, err.message
@@ -287,7 +287,7 @@ class EftFilterTest < Test::Unit::TestCase
       end
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     assert_terminates(pdef, 'x' => 's', 'y' => 2)
     assert_does_not_validate(pdef, 'x' => 's', 'y' => 's')
@@ -302,7 +302,7 @@ class EftFilterTest < Test::Unit::TestCase
           f y, type: 'number'
     }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     assert_terminates(pdef, 'x' => 's', 'y' => 2)
     assert_does_not_validate(pdef, 'x' => 's', 'y' => 's')
@@ -317,7 +317,7 @@ class EftFilterTest < Test::Unit::TestCase
           y type: 'number'
     }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     assert_terminates(pdef, 'x' => 's', 'y' => 2)
     assert_does_not_validate(pdef, 'x' => 's', 'y' => 's')
@@ -332,7 +332,7 @@ class EftFilterTest < Test::Unit::TestCase
           y type: 'number'
     }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     assert_terminates(pdef, 'x' => 's', 'y' => 2)
     assert_does_not_validate(pdef, 'x' => 's', 'y' => 's')
@@ -348,7 +348,7 @@ class EftFilterTest < Test::Unit::TestCase
       end
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     assert_terminates(pdef, 'x' => 's')
     assert_terminates(pdef, 'x' => 5)
@@ -365,7 +365,7 @@ class EftFilterTest < Test::Unit::TestCase
           x type: 'number'
     }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     assert_terminates(pdef, 'x' => 's')
     assert_terminates(pdef, 'x' => 5)

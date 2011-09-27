@@ -24,30 +24,30 @@ class FtAddServiceTest < Test::Unit::TestCase
 
   def test_as_path_class
 
-    @engine.add_service('toto', 'ruote', 'FtAddServiceTest::MyService')
+    @dashboard.add_service('toto', 'ruote', 'FtAddServiceTest::MyService')
 
-    assert_equal MyService, @engine.context.toto.class
+    assert_equal MyService, @dashboard.context.toto.class
   end
 
   def test_as_instance
 
-    @engine.add_service('toto', MyService.new(nil))
+    @dashboard.add_service('toto', MyService.new(nil))
 
-    assert_equal MyService, @engine.context.toto.class
+    assert_equal MyService, @dashboard.context.toto.class
   end
 
   def test_as_path_class_options
 
-    @engine.add_service(
+    @dashboard.add_service(
       'toto', 'ruote', 'FtAddServiceTest::MyService', 'colour' => 'blue')
 
-    assert_equal MyService, @engine.context.toto.class
-    assert_equal 'blue', @engine.context.toto.options['colour']
+    assert_equal MyService, @dashboard.context.toto.class
+    assert_equal 'blue', @dashboard.context.toto.options['colour']
   end
 
   def test_add_service_returns_service
 
-    toto = @engine.add_service(
+    toto = @dashboard.add_service(
       'toto', 'ruote', 'FtAddServiceTest::MyService', 'colour' => 'blue')
 
     assert_equal MyService, toto.class
@@ -57,14 +57,14 @@ class FtAddServiceTest < Test::Unit::TestCase
   #
   def test_add_history
 
-    assert_equal Ruote::DefaultHistory, @engine.context.history.class
+    assert_equal Ruote::DefaultHistory, @dashboard.context.history.class
 
-    @engine.add_service(
+    @dashboard.add_service(
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
-    assert_equal Ruote::StorageHistory, @engine.context.history.class
+    assert_equal Ruote::StorageHistory, @dashboard.context.history.class
 
-    engine = Ruote::Engine.new(@engine.storage)
+    engine = Ruote::Engine.new(@dashboard.storage)
 
     assert_equal Ruote::StorageHistory, engine.context.history.class
   end
@@ -73,14 +73,14 @@ class FtAddServiceTest < Test::Unit::TestCase
   #
   def test_add_history
 
-    assert_equal Ruote::DefaultHistory, @engine.history.class
+    assert_equal Ruote::DefaultHistory, @dashboard.history.class
 
-    @engine.add_service(
+    @dashboard.add_service(
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
-    assert_equal Ruote::StorageHistory, @engine.history.class
+    assert_equal Ruote::StorageHistory, @dashboard.history.class
 
-    engine = Ruote::Engine.new(@engine.storage)
+    engine = Ruote::Engine.new(@dashboard.storage)
 
     assert_equal Ruote::StorageHistory, engine.history.class
   end
@@ -89,19 +89,19 @@ class FtAddServiceTest < Test::Unit::TestCase
   #
   def test_add_history_and_log
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    #previous_history = @engine.history
+    #previous_history = @dashboard.history
 
-    @engine.add_service(
+    @dashboard.add_service(
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
-    @engine.storage.put_msg('noop', 'nada' => true)
+    @dashboard.storage.put_msg('noop', 'nada' => true)
 
     sleep 0.500
 
     assert_equal(
-      'noop', @engine.history.by_date(Time.now.utc.to_s).first['action'])
+      'noop', @dashboard.history.by_date(Time.now.utc.to_s).first['action'])
   end
 end
 

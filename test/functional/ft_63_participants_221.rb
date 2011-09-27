@@ -56,7 +56,7 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
   def test_on_workitem
 
-    @engine.register do
+    @dashboard.register do
       classic ClassicParticipant
       alpha AlphaParticipant
       bravo BravoParticipant
@@ -64,13 +64,13 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
       delta DeltaParticipant
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       classic; alpha; bravo; charly; delta
     end)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal(
       %w[ classic alpha bravo charly delta ], r['workitem']['fields']['trace'])
@@ -114,25 +114,25 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
   def test_on_cancel
 
-    @engine.register do
+    @dashboard.register do
       xray XrayParticipant
       yankee YankeeParticipant
       zulu ZuluParticipant
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       xray; yankee; zulu
     end)
 
     [ :xray, :yankee, :zulu ].each do |participant|
-      r = @engine.wait_for(participant)
-      @engine.wait_for(1)
-      @engine.cancel(r['fei'])
+      r = @dashboard.wait_for(participant)
+      @dashboard.wait_for(1)
+      @dashboard.cancel(r['fei'])
     end
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
   end
 
   #
@@ -164,18 +164,18 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
   def test_accept
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.register do
+    @dashboard.register do
       alpha AcAlphaParticipant
       bravo AcBravoParticipant
     end
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       alpha; bravo
     end)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[ a/alpha alpha a/bravo bravo ], @tracer.to_a
   end
@@ -207,18 +207,18 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
   def test_on_reply
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.register do
+    @dashboard.register do
       alpha OrAlphaParticipant
       bravo OrBravoParticipant
     end
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       alpha; bravo
     end)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[ ow/alpha or/alpha ow/bravo or/bravo ], @tracer.to_a
   end
@@ -272,20 +272,20 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
   def test_do_not_thread
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.register do
+    @dashboard.register do
       alpha DntAlphaParticipant
       bravo DntBravoParticipant
       charly DntCharlyParticipant
       delta DntDeltaParticipant
     end
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       alpha; bravo; charly; delta
     end)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal(
       %w[ dnt/alpha ow/alpha
@@ -329,36 +329,36 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
   def test_on_pause_on_resume
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.register do
+    @dashboard.register do
       alpha OpAlphaParticipant
       bravo OpBravoParticipant
     end
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       alpha; bravo
     end)
 
-    r = @engine.wait_for(:alpha)
-    @engine.wait_for(1)
+    r = @dashboard.wait_for(:alpha)
+    @dashboard.wait_for(1)
 
-    @engine.pause(r['fei'])
-    @engine.wait_for(2)
+    @dashboard.pause(r['fei'])
+    @dashboard.wait_for(2)
 
-    @engine.resume(r['fei'])
-    @engine.wait_for(2)
+    @dashboard.resume(r['fei'])
+    @dashboard.wait_for(2)
 
-    @engine.cancel(r['fei'])
+    @dashboard.cancel(r['fei'])
 
-    r = @engine.wait_for(:bravo)
-    @engine.wait_for(1)
+    r = @dashboard.wait_for(:bravo)
+    @dashboard.wait_for(1)
 
-    @engine.pause(r['fei'])
-    @engine.wait_for(2)
+    @dashboard.pause(r['fei'])
+    @dashboard.wait_for(2)
 
-    @engine.resume(r['fei'])
-    @engine.wait_for(2)
+    @dashboard.resume(r['fei'])
+    @dashboard.wait_for(2)
 
     assert_equal(
       %w[ ow/alpha op/0_0 or/0_0 oc/0_0 ow/bravo op/0_1 or/0_1 ],
@@ -378,15 +378,15 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
   def test_implicit_participant_name
 
-    @engine.register { hypno IpnParticipant }
+    @dashboard.register { hypno IpnParticipant }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       hypno
     end)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'hypno', @tracer.to_s
   end
@@ -415,16 +415,16 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
   def test_helper_methods
 
-    @engine.register { felix FexpParticipant }
+    @dashboard.register { felix FexpParticipant }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(
+    wfid = @dashboard.launch(
       Ruote.define() { felix },
       {},
       { 'nada' => 'surf' })
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal(
       %w[ surf surf 2 1 1 1 ],
@@ -444,13 +444,13 @@ class FtParticipantsTwoTwoOne < Test::Unit::TestCase
 
   def test_lookup_variable
 
-    @engine.register { louis LvParticipant }
+    @dashboard.register { louis LvParticipant }
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(Ruote.define() { louis }, {}, { 'nada' => 'surf' })
+    wfid = @dashboard.launch(Ruote.define() { louis }, {}, { 'nada' => 'surf' })
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'surf', @tracer.to_s
   end

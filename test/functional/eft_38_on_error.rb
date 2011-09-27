@@ -22,14 +22,14 @@ class EftOnErrorTest < Test::Unit::TestCase
       nada
     end
 
-    @engine.register_participant :catcher do
+    @dashboard.register_participant :catcher do
       @tracer << "caught\n"
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'caught', @tracer.to_s
     assert_equal 1, logger.log.select { |e| e['action'] == 'fail' }.size
@@ -43,14 +43,14 @@ class EftOnErrorTest < Test::Unit::TestCase
       nada
     end
 
-    @engine.register_participant /alpha|bravo/ do |workitem|
+    @dashboard.register_participant /alpha|bravo/ do |workitem|
       @tracer << workitem.participant_name
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'bravo', @tracer.to_s
   end
@@ -64,10 +64,10 @@ class EftOnErrorTest < Test::Unit::TestCase
       nada
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'caught', @tracer.to_s
   end
@@ -84,10 +84,10 @@ class EftOnErrorTest < Test::Unit::TestCase
       nada
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'unknown participant', @tracer.to_s
   end
@@ -100,14 +100,14 @@ class EftOnErrorTest < Test::Unit::TestCase
       nada
     end
 
-    @engine.register_participant /alpha|bravo/ do |workitem|
+    @dashboard.register_participant /alpha|bravo/ do |workitem|
       @tracer << workitem.participant_name
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'bravo', @tracer.to_s
   end

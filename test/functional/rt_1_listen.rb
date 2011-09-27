@@ -32,21 +32,21 @@ class RtListenTest < Test::Unit::TestCase
 
     #puts; noisy
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
 
     assert_equal '', @tracer.to_s
 
-    @engine.shutdown
+    @dashboard.shutdown
 
     start_new_engine
 
     #puts; noisy
 
-    @engine.reply(alpha.first)
+    @dashboard.reply(alpha.first)
 
     wait_for(wfid)
 

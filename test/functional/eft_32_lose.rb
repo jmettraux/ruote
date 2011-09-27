@@ -19,16 +19,16 @@ class EftLoseTest < Test::Unit::TestCase
       lose
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(2)
+    @dashboard.wait_for(2)
       # wait until the process reaches the 'lose' expression
 
     sleep 0.500
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 0, ps.errors.size
     assert_equal 2, ps.expressions.size
@@ -45,15 +45,15 @@ class EftLoseTest < Test::Unit::TestCase
       charly
     end
 
-    @engine.register_participant '.+' do |wi|
+    @dashboard.register_participant '.+' do |wi|
       @tracer << wi.participant_name
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(7)
+    @dashboard.wait_for(7)
       # wait until 'alpha' replies to its parent 'lose'
 
     sleep 0.500
@@ -69,23 +69,23 @@ class EftLoseTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+', Ruote::StorageParticipant
+    @dashboard.register_participant '.+', Ruote::StorageParticipant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(6)
+    @dashboard.wait_for(6)
       # wait until 'alpha' replies to its parent 'lose'
 
-    assert_equal 1, @engine.storage_participant.size
+    assert_equal 1, @dashboard.storage_participant.size
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_equal 0, @engine.storage_participant.size
-    assert_nil @engine.process(wfid)
+    assert_equal 0, @dashboard.storage_participant.size
+    assert_nil @dashboard.process(wfid)
   end
 
   def test_multi
@@ -97,23 +97,23 @@ class EftLoseTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register '.+', Ruote::StorageParticipant
+    @dashboard.register '.+', Ruote::StorageParticipant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(9)
+    @dashboard.wait_for(9)
 
-    assert_equal 2, @engine.storage_participant.size
-    assert_equal 0, @engine.ps(wfid).errors.size
-    assert_equal 4, @engine.ps(wfid).expressions.size
+    assert_equal 2, @dashboard.storage_participant.size
+    assert_equal 0, @dashboard.ps(wfid).errors.size
+    assert_equal 4, @dashboard.ps(wfid).expressions.size
 
-    @engine.cancel(wfid)
+    @dashboard.cancel(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_nil @engine.ps(wfid)
+    assert_nil @dashboard.ps(wfid)
   end
 end
 

@@ -25,7 +25,7 @@ class EftAddBranchesTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
     assert_equal %w[ a b c d ], @tracer.to_a.sort
@@ -44,7 +44,7 @@ class EftAddBranchesTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
     assert_equal %w[ 1 2 3 4 5 ], @tracer.to_a.sort
@@ -63,7 +63,7 @@ class EftAddBranchesTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
     assert_equal %w[ 1 2 3 a b ], @tracer.to_a.sort
@@ -87,7 +87,7 @@ class EftAddBranchesTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
     assert_equal(

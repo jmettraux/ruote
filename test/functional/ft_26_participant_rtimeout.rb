@@ -28,22 +28,22 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, AlphaParticipant
-    sto = @engine.register_participant :bravo, Ruote::StorageParticipant
+    @dashboard.register_participant :alpha, AlphaParticipant
+    sto = @dashboard.register_participant :bravo, Ruote::StorageParticipant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for('dispatched')
-    @engine.wait_for('dispatched')
+    @dashboard.wait_for('dispatched')
+    @dashboard.wait_for('dispatched')
 
     assert_equal 1, sto.size
     assert_equal 'bravo', sto.first.participant_name
 
     #logger.log.each { |l| p l }
     assert_equal 2, logger.log.select { |e| e['flavour'] == 'timeout' }.size
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
 
     assert_not_nil sto.first.fields['__timed_out__']
   end
@@ -71,13 +71,13 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    @engine.register_participant :alpha, MyParticipant
+    @dashboard.register_participant :alpha, MyParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'done.', @tracer.to_s
     assert_equal 2, logger.log.select { |e| e['flavour'] == 'timeout' }.size
@@ -87,22 +87,22 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
 
     # process definition cancels timeout given by participant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     pdef = Ruote.define do
       alpha :timeout => ''
       echo 'done.'
     end
 
-    @engine.register_participant :alpha, MyParticipant
+    @dashboard.register_participant :alpha, MyParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
     sleep 0.350
 
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
     assert_equal '', @tracer.to_s
   end
 
@@ -130,16 +130,16 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    @engine.register_participant :alpha, MyOtherParticipant, 'timeout' => '1s'
-    @engine.register_participant :bravo, MyOtherParticipant
+    @dashboard.register_participant :alpha, MyOtherParticipant, 'timeout' => '1s'
+    @dashboard.register_participant :bravo, MyOtherParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:bravo)
+    @dashboard.wait_for(:bravo)
 
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
       # no timeout for participant :bravo
   end
 
@@ -165,21 +165,21 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant :alpha, YetAnotherParticipant
+    @dashboard.register_participant :alpha, YetAnotherParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef, 'timeout' => 60)
+    wfid = @dashboard.launch(pdef, 'timeout' => 60)
 
-    @engine.wait_for(:alpha)
-    @engine.wait_for(1)
+    @dashboard.wait_for(:alpha)
+    @dashboard.wait_for(1)
 
-    schedules = @engine.storage.get_many('schedules')
+    schedules = @dashboard.storage.get_many('schedules')
 
     assert_equal 1, schedules.size
     assert_equal '120s', schedules.first['original']
 
-    ps = @engine.ps(wfid)
+    ps = @dashboard.ps(wfid)
 
     assert_not_nil ps.expressions.last.h.timers
     assert_equal 1, ps.expressions.last.h.timers.size

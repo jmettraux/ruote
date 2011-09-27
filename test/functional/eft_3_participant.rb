@@ -15,7 +15,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
   def test_participant
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
       context.tracer << 'alpha'
     end
 
@@ -23,10 +23,10 @@ class EftParticipantTest < Test::Unit::TestCase
       participant :ref => 'alpha'
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'alpha', @tracer.to_s
     assert_log_count(1) { |e| e['action'] == 'dispatch' }
@@ -40,7 +40,7 @@ class EftParticipantTest < Test::Unit::TestCase
       participant :bravo
     end
 
-    @engine.register_participant :bravo do |workitem|
+    @dashboard.register_participant :bravo do |workitem|
       @tracer << 'bravo'
     end
 
@@ -55,7 +55,7 @@ class EftParticipantTest < Test::Unit::TestCase
       charly
     end
 
-    @engine.register_participant :charly do |workitem|
+    @dashboard.register_participant :charly do |workitem|
       @tracer << 'charly'
     end
 
@@ -70,14 +70,14 @@ class EftParticipantTest < Test::Unit::TestCase
       delta :tag => 'whatever'
     end
 
-    delta = @engine.register_participant :delta, Ruote::StorageParticipant
+    delta = @dashboard.register_participant :delta, Ruote::StorageParticipant
 
-    @engine.launch(pdef)
+    @dashboard.launch(pdef)
     wait_for(:delta)
 
     assert_equal(
       ['participant', {'tag'=>'whatever', 'ref'=>'delta'}, []],
-      Ruote::Exp::FlowExpression.fetch(@engine.context, delta.first.h.fei).tree)
+      Ruote::Exp::FlowExpression.fetch(@dashboard.context, delta.first.h.fei).tree)
   end
 
   def test_participant_if
@@ -89,7 +89,7 @@ class EftParticipantTest < Test::Unit::TestCase
     end
 
     %w[ eecho fox gamma ].each do |pname|
-      @engine.register_participant pname do |workitem|
+      @dashboard.register_participant pname do |workitem|
         @tracer << "#{workitem.participant_name}\n"
       end
     end
@@ -106,7 +106,7 @@ class EftParticipantTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    @engine.register_participant :notify do |wi, fe|
+    @dashboard.register_participant :notify do |wi, fe|
       #p fe.attribute_text
       stash[:atts] = fe.attributes
     end
@@ -122,7 +122,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
   def test_dispatched
 
-    @engine.register_participant :hotel do
+    @dashboard.register_participant :hotel do
       sleep 5
     end
 
@@ -132,13 +132,13 @@ class EftParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     #wait_for(:hotel)
     sleep 0.777
     sleep 1 # just for ruote-couch :-(
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     fexp = ps.expressions.find { |fe|
       fe.class == Ruote::Exp::ParticipantExpression
@@ -153,7 +153,7 @@ class EftParticipantTest < Test::Unit::TestCase
     require_json
     Rufus::Json.detect_backend
 
-    @engine.register_participant :alice do |workitem|
+    @dashboard.register_participant :alice do |workitem|
       @tracer << Rufus::Json.encode(workitem.params['__children__'])
     end
 
@@ -164,14 +164,14 @@ class EftParticipantTest < Test::Unit::TestCase
       end
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(
+    wfid = @dashboard.launch(
       pdef,
       'that' => 'those',
       'list' => [ 1, 'two of ${that}', 3 ])
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal(
       [ [ 'on_error', { '/500/' => 'this_or_those' }, [] ],

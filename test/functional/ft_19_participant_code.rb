@@ -27,11 +27,11 @@ class FtParticipantCodeTest < Test::Unit::TestCase
       alpha
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal(
       { 'alpha' => 'alpha', 'x' => 0, '__result__' => 0 },
@@ -53,11 +53,11 @@ class FtParticipantCodeTest < Test::Unit::TestCase
       alpha
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal(
       { 'x' => 0, 'alpha' => 'alpha' },

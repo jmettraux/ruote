@@ -19,17 +19,17 @@ class FtWaitForTest < Test::Unit::TestCase
       alpha
     end
 
-    sp = @engine.register_participant :alpha, Ruote::StorageParticipant
+    sp = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     r = wait_for(:alpha)
 
     assert_equal(
       Ruote::Workitem,
-      @engine.workitem(Ruote.sid(r['fei'])).class)
+      @dashboard.workitem(Ruote.sid(r['fei'])).class)
   end
 
   class MyParticipant
@@ -48,17 +48,17 @@ class FtWaitForTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant :alpha, MyParticipant
+    @dashboard.register_participant :alpha, MyParticipant
 
     4.times do
-      @engine.launch(pdef)
+      @dashboard.launch(pdef)
     end
 
     #noisy
 
-    @engine.wait_for(:empty)
+    @dashboard.wait_for(:empty)
 
-    assert_equal [], @engine.processes
+    assert_equal [], @dashboard.processes
   end
 
   def test_wait_for_multiple
@@ -66,18 +66,18 @@ class FtWaitForTest < Test::Unit::TestCase
     pdef0 = Ruote.process_definition { alpha }
     pdef1 = Ruote.process_definition { bravo }
 
-    @engine.register_participant :alpha, MyParticipant
+    @dashboard.register_participant :alpha, MyParticipant
 
     #noisy
 
     wfids = []
 
-    2.times { wfids << @engine.launch(pdef0) }
-    2.times { wfids << @engine.launch(pdef1) }
+    2.times { wfids << @dashboard.launch(pdef0) }
+    2.times { wfids << @dashboard.launch(pdef1) }
 
-    @engine.wait_for(*wfids)
+    @dashboard.wait_for(*wfids)
 
-    assert_equal 2, @engine.processes.size
+    assert_equal 2, @dashboard.processes.size
   end
 
   def test_wait_for_inactive
@@ -85,43 +85,43 @@ class FtWaitForTest < Test::Unit::TestCase
     pdef0 = Ruote.process_definition { alpha }
     pdef1 = Ruote.process_definition { bravo }
 
-    @engine.register_participant :alpha, MyParticipant
+    @dashboard.register_participant :alpha, MyParticipant
 
     #noisy
 
     wfids = []
 
-    2.times { @engine.launch(pdef0) }
-    2.times { wfids << @engine.launch(pdef1) }
+    2.times { @dashboard.launch(pdef0) }
+    2.times { wfids << @dashboard.launch(pdef1) }
 
-    @engine.wait_for(:inactive)
+    @dashboard.wait_for(:inactive)
 
-    assert_equal wfids.sort, @engine.processes.collect { |ps| ps.wfid }.sort
+    assert_equal wfids.sort, @dashboard.processes.collect { |ps| ps.wfid }.sort
   end
 
   def test_wait_for_multithreaded
 
     pdef = Ruote.process_definition { alpha }
 
-    sp = @engine.register_participant :alpha, Ruote::StorageParticipant
+    sp = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     seen = []
     threads = []
 
     threads << Thread.new do
-      @engine.wait_for(wfid)
+      @dashboard.wait_for(wfid)
       seen << 'this'
     end
     threads << Thread.new do
-      @engine.wait_for(wfid)
+      @dashboard.wait_for(wfid)
       seen << 'that'
     end
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
     sp.proceed(sp.first)
 
@@ -130,7 +130,7 @@ class FtWaitForTest < Test::Unit::TestCase
     end
 
     assert_equal %w[ that this ], seen.sort
-    assert_equal [], @engine.context.logger.instance_variable_get(:@waiting)
+    assert_equal [], @dashboard.context.logger.instance_variable_get(:@waiting)
   end
 end
 

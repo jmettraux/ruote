@@ -44,7 +44,7 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
 #    sleep 0.040
 #      # give it some time to start listening
 #
-#    @engine.register_participant(
+#    @dashboard.register_participant(
 #      :alpha,
 #      Ruote::SmtpParticipant.new(
 #        :server => '127.0.0.1',
@@ -58,13 +58,13 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
 #
 #    #noisy
 #
-#    wfid = @engine.launch(pdef)
+#    wfid = @dashboard.launch(pdef)
 #
 #    #sleep 0.450
 #    wait_for(wfid)
 #
 #    assert_match(/cat food/, File.read(trapfile))
-#    assert_nil @engine.process(wfid)
+#    assert_nil @dashboard.process(wfid)
 #
 #    t.kill
 #  end
@@ -91,7 +91,7 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
     sleep 0.040
       # give it some time to start listening
 
-    @engine.register_participant(
+    @dashboard.register_participant(
       :alpha,
       Ruote::SmtpParticipant,
       :server => '127.0.0.1',
@@ -105,7 +105,7 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     #sleep 0.450
     wait_for(wfid)
@@ -114,7 +114,7 @@ class NftSmtpParticipantTest < Test::Unit::TestCase
     FileUtils.rm_f(trapfile)
 
     assert_match /want cat food/, trapped
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
 
     t.kill
   end

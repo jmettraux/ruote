@@ -24,30 +24,30 @@ class FtEngineParticipantTest < Test::Unit::TestCase
     @dir0 = "work_0_#{$$}_#{self.object_id}_#{Time.now.to_f}"
     @dir1 = "work_1_#{$$}_#{self.object_id}_#{Time.now.to_f}"
 
-    @engine0 =
+    @dashboard0 =
       Ruote::Engine.new(
         Ruote::Worker.new(
           Ruote::FsStorage.new(
             @dir0, 'engine_id' => 'engine0')))
-    @engine1 =
+    @dashboard1 =
       Ruote::Engine.new(
         Ruote::Worker.new(
           Ruote::FsStorage.new(
             @dir1, 'engine_id' => 'engine1')))
 
     @tracer0 = Tracer.new
-    @engine0.add_service('tracer', @tracer0)
+    @dashboard0.add_service('tracer', @tracer0)
 
     @tracer1 = Tracer.new
-    @engine1.add_service('tracer', @tracer1)
+    @dashboard1.add_service('tracer', @tracer1)
 
-    @engine0.register_participant(
+    @dashboard0.register_participant(
       'engine1',
       Ruote::EngineParticipant,
       'storage_class' => Ruote::FsStorage,
       'storage_path' => 'ruote/storage/fs_storage',
       'storage_args' => @dir1)
-    @engine1.register_participant(
+    @dashboard1.register_participant(
       'engine0',
       Ruote::EngineParticipant,
       'storage_class' => Ruote::FsStorage,
@@ -57,8 +57,8 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
   def teardown
 
-    @engine0.shutdown
-    @engine1.shutdown
+    @dashboard0.shutdown
+    @dashboard1.shutdown
 
   ensure
     FileUtils.rm_rf(@dir0)
@@ -67,9 +67,9 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
   def noisy
 
-    @engine0.context.logger.noisy = true
-    @engine1.context.logger.noisy = true
-    @engine1.context.logger.color = '32' # green
+    @dashboard0.context.logger.noisy = true
+    @dashboard1.context.logger.noisy = true
+    @dashboard1.context.logger.color = '32' # green
   end
 
   def test_as_participant
@@ -87,8 +87,8 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine0.launch(pdef)
-    @engine0.wait_for(wfid)
+    wfid = @dashboard0.launch(pdef)
+    @dashboard0.wait_for(wfid)
 
     assert_equal "a\nc", @tracer0.to_s
     assert_equal "b", @tracer1.to_s
@@ -109,8 +109,8 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine0.launch(pdef)
-    @engine0.wait_for(wfid)
+    wfid = @dashboard0.launch(pdef)
+    @dashboard0.wait_for(wfid)
 
     assert_equal "a\nc", @tracer0.to_s
     assert_equal "b", @tracer1.to_s
@@ -131,8 +131,8 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine0.launch(pdef)
-    @engine0.wait_for(wfid)
+    wfid = @dashboard0.launch(pdef)
+    @dashboard0.wait_for(wfid)
 
     assert_equal "a\nc", @tracer0.to_s
     assert_equal "b", @tracer1.to_s
@@ -153,19 +153,19 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    alpha = @engine1.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard1.register_participant :alpha, Ruote::StorageParticipant
 
-    wfid = @engine0.launch(pdef)
+    wfid = @dashboard0.launch(pdef)
 
-    @engine1.wait_for(:alpha)
+    @dashboard1.wait_for(:alpha)
 
     assert_equal 1, alpha.size
     assert_not_nil alpha.first.fei.subid
 
-    @engine0.cancel_process(wfid)
-    @engine0.wait_for(wfid)
+    @dashboard0.cancel_process(wfid)
+    @dashboard0.wait_for(wfid)
 
-    #@engine0.wait_for(1) # since dispatch_cancel is asynchronous now
+    #@dashboard0.wait_for(1) # since dispatch_cancel is asynchronous now
     sleep 0.777 # but well sometimes the dispatch is too fast
 
     assert_equal 0, alpha.size
@@ -188,18 +188,18 @@ class FtEngineParticipantTest < Test::Unit::TestCase
       end
     end
 
-    @engine1.context['ruby_eval_allowed'] = true
+    @dashboard1.context['ruby_eval_allowed'] = true
       # just for ${r:engine_id}
 
     #noisy
 
-    wfid = @engine0.launch(pdef)
-    @engine0.wait_for(wfid)
+    wfid = @dashboard0.launch(pdef)
+    @dashboard0.wait_for(wfid)
 
     assert_equal "a\nc", @tracer0.to_s
     assert_equal "engine1:b", @tracer1.to_s
 
-    assert_nil @engine0.process(wfid)
+    assert_nil @dashboard0.process(wfid)
   end
 
   def test_with_uri
@@ -212,13 +212,13 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine0.launch(pdef)
-    @engine0.wait_for(wfid)
+    wfid = @dashboard0.launch(pdef)
+    @dashboard0.wait_for(wfid)
 
     assert_equal "", @tracer0.to_s
     assert_equal "a\nb", @tracer1.to_s
 
-    assert_nil @engine0.process(wfid)
+    assert_nil @dashboard0.process(wfid)
   end
 
   def test_forget
@@ -234,28 +234,28 @@ class FtEngineParticipantTest < Test::Unit::TestCase
       end
     end
 
-    bravo = @engine1.register_participant :bravo, Ruote::StorageParticipant
+    bravo = @dashboard1.register_participant :bravo, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine0.launch(pdef)
-    @engine0.wait_for(wfid) # terminated
+    wfid = @dashboard0.launch(pdef)
+    @dashboard0.wait_for(wfid) # terminated
 
-    assert_equal [], @engine0.processes
+    assert_equal [], @dashboard0.processes
 
-    @engine1.wait_for(:bravo)
+    @dashboard1.wait_for(:bravo)
 
     bravo.proceed(bravo.first)
 
-    @engine1.wait_for(wfid) # ceased
+    @dashboard1.wait_for(wfid) # ceased
 
-    assert_equal [], @engine0.processes
-    assert_equal [], @engine1.processes
+    assert_equal [], @dashboard0.processes
+    assert_equal [], @dashboard1.processes
   end
 
   def test_replay_gone_engine_participant
 
-    @engine1.unregister_participant('engine0')
+    @dashboard1.unregister_participant('engine0')
 
     pdef = Ruote.process_definition do
       sequence do
@@ -270,16 +270,16 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine0.launch(pdef)
-    @engine1.wait_for(wfid) # error
+    wfid = @dashboard0.launch(pdef)
+    @dashboard1.wait_for(wfid) # error
 
-    errs = @engine1.process(wfid).errors
+    errs = @dashboard1.process(wfid).errors
 
     assert_equal 1, errs.size
 
     # fix error cause
 
-    @engine1.register_participant(
+    @dashboard1.register_participant(
       'engine0',
       Ruote::EngineParticipant,
       'storage_class' => Ruote::FsStorage,
@@ -288,9 +288,9 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     # replay
 
-    @engine1.replay_at_error(errs.first)
+    @dashboard1.replay_at_error(errs.first)
 
-    @engine0.wait_for(wfid)
+    @dashboard0.wait_for(wfid)
 
     assert_equal "a\nc", @tracer0.to_s
     assert_equal "b", @tracer1.to_s

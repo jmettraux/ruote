@@ -21,12 +21,12 @@ class FtRadialMiscTest < Test::Unit::TestCase
         echo "$f:a"
     }
 
-    @engine.register_participant '.+', Ruote::NullParticipant
+    @dashboard.register_participant '.+', Ruote::NullParticipant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
 
     assert_equal 'toto', @tracer.to_s
   end

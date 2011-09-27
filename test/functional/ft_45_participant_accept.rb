@@ -53,8 +53,8 @@ class FtParticipantAcceptTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant 'a.+', MyParticipant, 'filter' => '^ab'
-    @engine.register_participant '.+', MyOtherParticipant
+    @dashboard.register_participant 'a.+', MyParticipant, 'filter' => '^ab'
+    @dashboard.register_participant '.+', MyOtherParticipant
 
     #noisy
 

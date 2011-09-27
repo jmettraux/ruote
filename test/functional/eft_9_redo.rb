@@ -22,11 +22,11 @@ class EftRedoTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(:alpha)
 
     alpha.proceed(alpha.first)
@@ -35,7 +35,7 @@ class EftRedoTest < Test::Unit::TestCase
     alpha.proceed(alpha.first)
     wait_for(:alpha)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 0, ps.errors.size
     assert_equal 3, ps.expressions.size
@@ -61,7 +61,7 @@ class EftRedoTest < Test::Unit::TestCase
       echo '.'
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     assert_trace '.', pdef
   end
@@ -74,7 +74,7 @@ class EftRedoTest < Test::Unit::TestCase
       echo '.'
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
     assert_trace '.', pdef
   end
@@ -90,16 +90,16 @@ class EftRedoTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.register 'alpha', Ruote::StorageParticipant
+    @dashboard.register 'alpha', Ruote::StorageParticipant
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    while @engine.storage_participant.size < 2
+    while @dashboard.storage_participant.size < 2
       sleep 0.350
     end
 
-    assert_not_nil @engine.process(wfid)
-    assert_equal [], @engine.errors
+    assert_not_nil @dashboard.process(wfid)
+    assert_equal [], @dashboard.errors
   end
 
   class Alpha
@@ -115,7 +115,7 @@ class EftRedoTest < Test::Unit::TestCase
 
   def test_redo__blank_workitem
 
-    @engine.register do
+    @dashboard.register do
       alpha Alpha
     end
 
@@ -128,9 +128,9 @@ class EftRedoTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal %w[ x ], r['workitem']['fields']['alpha']
   end

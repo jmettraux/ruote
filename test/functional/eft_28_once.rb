@@ -35,7 +35,7 @@ class EftOnceTest < Test::Unit::TestCase
 
     assert_trace %w[ in over done. ], pdef
 
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
   end
 
   def test_once_blocking
@@ -59,7 +59,7 @@ class EftOnceTest < Test::Unit::TestCase
 
     assert_trace %w[ in over done. ], pdef
 
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
   end
 
   def test_cancel
@@ -71,18 +71,18 @@ class EftOnceTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(2)
 
-    assert_equal 1, @engine.storage.get_many('schedules').size
+    assert_equal 1, @dashboard.storage.get_many('schedules').size
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
 
     wait_for(4)
 
-    assert_nil @engine.process(wfid)
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_nil @dashboard.process(wfid)
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
   end
 
   def test_cancel_once_child_is_active
@@ -93,20 +93,20 @@ class EftOnceTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
-    @engine.cancel(wfid)
+    @dashboard.cancel(wfid)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_equal 0, @engine.storage_participant.size
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage_participant.size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
   end
 
   def test_once_cron
@@ -129,7 +129,7 @@ class EftOnceTest < Test::Unit::TestCase
 
     assert_trace %w[ in over done. ], pdef
 
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
   end
 end
 

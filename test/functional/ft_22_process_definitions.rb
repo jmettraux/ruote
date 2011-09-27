@@ -32,16 +32,16 @@ class FtProcessDefinitionTest < Test::Unit::TestCase
   def test_remote_definitions_not_allowed
 
     assert_raise ArgumentError do
-      @engine.launch('http://defs.example.com/def0.rb')
+      @dashboard.launch('http://defs.example.com/def0.rb')
     end
   end
 
   def test_remote_definitions_allowed
 
-    @engine.context['remote_definition_allowed'] = true
+    @dashboard.context['remote_definition_allowed'] = true
 
     e = assert_raise SocketError, OpenURI::HTTPError, ArgumentError do
-      @engine.launch('http://defs.example.com/def0.rb')
+      @dashboard.launch('http://defs.example.com/def0.rb')
     end
 
     assert_not_equal 'remote process definitions are not allowed', e.message

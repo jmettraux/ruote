@@ -13,36 +13,36 @@ class FtPutDocTest < Test::Unit::TestCase
 
   def test_put_doc
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.storage.put_msg(
+    @dashboard.storage.put_msg(
       'put_doc',
       'doc' => {
         'type' => 'variables',
         '_id' => 'variables',
         'variables' => { 'hello' => 'world' }
       })
-    @engine.wait_for(1)
+    @dashboard.wait_for(1)
 
-    assert_equal 'world', @engine.variables['hello']
+    assert_equal 'world', @dashboard.variables['hello']
   end
 
   def test_re_put_doc
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.variables['hello'] = 'world'
+    @dashboard.variables['hello'] = 'world'
 
-    @engine.storage.put_msg(
+    @dashboard.storage.put_msg(
       'put_doc',
       'doc' => {
         'type' => 'variables',
         '_id' => 'variables',
         'variables' => { 'hello' => 'Welt' }
       })
-    @engine.wait_for(1)
+    @dashboard.wait_for(1)
 
-    assert_equal 'Welt', @engine.variables['hello']
+    assert_equal 'Welt', @dashboard.variables['hello']
   end
 end
 

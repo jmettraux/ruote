@@ -33,15 +33,15 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register :alpha, AlphaParticipant
+    @dashboard.register :alpha, AlphaParticipant
 
     #noisy
 
-    wfid = @engine.launch(
+    wfid = @dashboard.launch(
       pdef,
       'private_a' => 'x', 'a' => 'y')
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal(
       "fields: a dispatched_at params\n" +
@@ -65,18 +65,18 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register :bravo do |wi|
+    @dashboard.register :bravo do |wi|
       wi.fields['protected_thing'] = 'stolen'
       wi.fields['other_thing'] = 'stolen'
     end
 
     #noisy
 
-    wfid = @engine.launch(
+    wfid = @dashboard.launch(
       pdef,
       'protected_thing' => 'here', 'other_thing' => 'here')
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal(
       { 'protected_thing' => 'here', 'other_thing' => 'stolen' },
@@ -89,13 +89,13 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       alpha :filter => 'f'
     end
 
-    @engine.register :alpha, Ruote::NoOpParticipant
+    @dashboard.register :alpha, Ruote::NoOpParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_not_nil r['error']
     assert_equal 'ArgumentError', r['error']['class']
@@ -111,13 +111,13 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       alpha :filter => 'f'
     end
 
-    @engine.register :alpha, AlphaParticipant
+    @dashboard.register :alpha, AlphaParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_not_nil r['error']
     assert_equal 'ArgumentError', r['error']['class']
@@ -135,14 +135,14 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       alpha :filter => 'filter_a'
     end
 
-    @engine.register :alpha, AlphaParticipant
-    @engine.register :filter_a, AaFilterParticipant
+    @dashboard.register :alpha, AlphaParticipant
+    @dashboard.register :filter_a, AaFilterParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_nil r['workitem']['fields']['__filter_direction__']
     assert_equal %w[ in out ], r['workitem']['fields']['seen']
@@ -162,14 +162,14 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       alpha :filter => 'filter_b'
     end
 
-    @engine.register :alpha, AlphaParticipant
-    @engine.register :filter_b, BbFilterParticipant
+    @dashboard.register :alpha, AlphaParticipant
+    @dashboard.register :filter_b, BbFilterParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal %w[ in out ], r['workitem']['fields']['seen']
     assert_equal 'fields: dispatched_at params seen', @tracer.to_s
@@ -187,16 +187,16 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       alpha :filter => 'filter_c'
     end
 
-    @engine.register :alpha, AlphaParticipant
-    @engine.register :filter_c, CcFilterParticipant
+    @dashboard.register :alpha, AlphaParticipant
+    @dashboard.register :filter_c, CcFilterParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_equal 1, @engine.ps(wfid).errors.size
+    assert_equal 1, @dashboard.ps(wfid).errors.size
     assert_equal '', @tracer.to_s
   end
 
@@ -213,15 +213,15 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       alpha :filter => { :in => 'f0', :out => 'f1' }
     end
 
-    @engine.register :alpha, AlphaParticipant
-    @engine.register :f0, DdFilterParticipant
-    @engine.register :f1, DdFilterParticipant
+    @dashboard.register :alpha, AlphaParticipant
+    @dashboard.register :f0, DdFilterParticipant
+    @dashboard.register :f1, DdFilterParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal({ 'f0' => 'in', 'f1' => 'out' }, r['workitem']['fields'])
     assert_equal('fields: dispatched_at f0 params', @tracer.to_s)
@@ -237,15 +237,15 @@ class FtFilterAttributeTest < Test::Unit::TestCase
 #      alpha :filter => 'f'
 #    end
 #
-#    @engine.register :alpha, AlphaParticipant
+#    @dashboard.register :alpha, AlphaParticipant
 #
 #    #noisy
 #
-#    wfid = @engine.launch(
+#    wfid = @dashboard.launch(
 #      pdef,
 #      'x' => 'not a number')
 #
-#    @engine.wait_for(wfid)
+#    @dashboard.wait_for(wfid)
 #
 #    assert_equal(
 #      "fields: a dispatched_at params\n" +

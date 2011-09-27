@@ -22,7 +22,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant :alpha do
+    @dashboard.register_participant :alpha do
       @tracer << "alpha\n"
     end
 
@@ -42,19 +42,19 @@ class EftConcurrenceTest < Test::Unit::TestCase
       bravo
     end
 
-    @engine.context.instance_eval do
+    @dashboard.context.instance_eval do
       @count = 0
     end
       # since block participants are evaluated in the context context
 
-    alpha = @engine.register_participant :alpha, 'do_not_thread' => true do |wi|
+    alpha = @dashboard.register_participant :alpha, 'do_not_thread' => true do |wi|
       wi.fields['seen'] = 'indeed' if @count == 1
       @tracer << "alpha\n"
       @count = @count + 1
       nil
     end
 
-    @engine.register_participant :bravo do |workitem|
+    @dashboard.register_participant :bravo do |workitem|
       stash[:fields] = workitem.fields
       nil
     end
@@ -67,10 +67,10 @@ class EftConcurrenceTest < Test::Unit::TestCase
     #  {'1'=>{"seen"=>"indeed"}, '0'=>{}, "params"=>{"ref"=>"bravo"}},
     #  fields)
 
-    params = @engine.context.stash[:fields].delete('params')
+    params = @dashboard.context.stash[:fields].delete('params')
 
     assert_equal({ 'ref' => 'bravo' }, params)
-    assert_match /seen/, @engine.context.stash[:fields].inspect
+    assert_match /seen/, @dashboard.context.stash[:fields].inspect
   end
 
   def test_over_unless
@@ -85,12 +85,12 @@ class EftConcurrenceTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    @engine.context.instance_eval do
+    @dashboard.context.instance_eval do
       @count = 0
     end
       # since block participants are evaluated in the context context
 
-    alpha = @engine.register_participant :alpha, 'do_not_thread' => true do |wi|
+    alpha = @dashboard.register_participant :alpha, 'do_not_thread' => true do |wi|
       if @count > 1
         wi.fields['ok'] = false
       else
@@ -101,7 +101,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     fields = nil
 
-    @engine.register_participant :bravo do |workitem|
+    @dashboard.register_participant :bravo do |workitem|
       fields = workitem.fields
     end
 
@@ -139,11 +139,11 @@ class EftConcurrenceTest < Test::Unit::TestCase
       alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     noisy if noise
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
     wait_for(:alpha)
@@ -158,7 +158,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     wi = alpha.first
 
-    ps = @engine.process(wi.fei.wfid)
+    ps = @dashboard.process(wi.fei.wfid)
     assert_equal %w[ 0 0_1 ], ps.expressions.collect { |e| e.fei.expid }.sort
 
     wi
@@ -217,15 +217,15 @@ class EftConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+', Ruote::StorageParticipant
+    @dashboard.register_participant '.+', Ruote::StorageParticipant
 
     noisy if noise
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
 
-    @engine.storage_participant.proceed(@engine.storage_participant.first)
+    @dashboard.storage_participant.proceed(@dashboard.storage_participant.first)
 
     wait_for(wfid)
 
@@ -245,7 +245,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     sleep 0.350 # since now dispatch_cancel occurs asynchronously...
 
-    assert_equal 0, @engine.storage_participant.size
+    assert_equal 0, @dashboard.storage_participant.size
   end
 
   def test_count_remaining_forget
@@ -256,20 +256,20 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     #assert_equal 1, logger.log.select { |e| e['action'] == 'forget' }.size
 
-    assert_equal 1, @engine.storage_participant.size
-    assert_equal 'bravo', @engine.storage_participant.first.participant_name
+    assert_equal 1, @dashboard.storage_participant.size
+    assert_equal 'bravo', @dashboard.storage_participant.first.participant_name
 
-    #@engine.context.storage.get_many('expressions').each { |e| p e['fei'] }
-    #puts @engine.context.storage.dump('expressions')
-    assert_equal 2, @engine.context.storage.get_many('expressions').size
-    assert_not_nil @engine.process(wfid)
+    #@dashboard.context.storage.get_many('expressions').each { |e| p e['fei'] }
+    #puts @dashboard.context.storage.dump('expressions')
+    assert_equal 2, @dashboard.context.storage.get_many('expressions').size
+    assert_not_nil @dashboard.process(wfid)
 
-    @engine.storage_participant.proceed(@engine.storage_participant.first)
+    @dashboard.storage_participant.proceed(@dashboard.storage_participant.first)
 
     wait_for(wfid)
 
-    @engine.context.storage.get_many('expressions').each { |e| p e['fei'] }
-    assert_equal 0, @engine.context.storage.get_many('expressions').size
+    @dashboard.context.storage.get_many('expressions').each { |e| p e['fei'] }
+    assert_equal 0, @dashboard.context.storage.get_many('expressions').size
   end
 
   def test_cancel
@@ -281,22 +281,22 @@ class EftConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
     wait_for(:alpha)
 
     assert_equal 2, alpha.size
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_nil ps
   end

@@ -34,11 +34,11 @@ class FtParticipantsTest < Test::Unit::TestCase
 
   def test_participant_without_initialize
 
-    @engine.register_participant :alpha, MyParticipant
+    @dashboard.register_participant :alpha, MyParticipant
 
     #noisy
 
-    wfid = @engine.launch(Ruote.process_definition do
+    wfid = @dashboard.launch(Ruote.process_definition do
       alpha
     end)
 
@@ -49,11 +49,11 @@ class FtParticipantsTest < Test::Unit::TestCase
 
   def test_participant_with_initialize
 
-    @engine.register_participant :bravo, MyMessageParticipant, 'message' => 'hi'
+    @dashboard.register_participant :bravo, MyMessageParticipant, 'message' => 'hi'
 
     #noisy
 
-    wfid = @engine.launch(Ruote.process_definition do
+    wfid = @dashboard.launch(Ruote.process_definition do
       bravo
     end)
 
@@ -78,13 +78,13 @@ class FtParticipantsTest < Test::Unit::TestCase
 
   def test_workitem_method
 
-    @engine.register 'alpha', MyOtherParticipant
+    @dashboard.register 'alpha', MyOtherParticipant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(Ruote.define { alpha }, 'hello' => 'world')
+    wfid = @dashboard.launch(Ruote.define { alpha }, 'hello' => 'world')
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal %w[ kitty world world kitty ], @tracer.to_a
   end

@@ -22,14 +22,14 @@ class EftLoopTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
 
       @tracer << "a\n"
       (workitem.fields['count'] ||= 0)
       workitem.fields['count'] += 1
     end
 
-    @engine.register_participant :bravo do |workitem|
+    @dashboard.register_participant :bravo do |workitem|
 
       @tracer << "b\n"
       workitem.fields['count'] += 1
@@ -52,7 +52,7 @@ class EftLoopTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.register_participant :alpha do |workitem|
+    @dashboard.register_participant :alpha do |workitem|
 
       @tracer << "a\n"
       (workitem.fields['count'] ||= 0)

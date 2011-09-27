@@ -24,56 +24,56 @@ class CtCancelTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @engine0.register_participant :alpha do |workitem|
+    alpha = @dashboard0.register_participant :alpha do |workitem|
       # let reply immediately
     end
 
-    wfid = @engine0.launch(pdef)
+    wfid = @dashboard0.launch(pdef)
 
-    @engine0.step 6
+    @dashboard0.step 6
 
     dispatched_seen = false
     reply_msg = nil
 
     loop do
-      m = @engine0.next_msg
+      m = @dashboard0.next_msg
       ma = m['action']
       if ma == 'dispatched'
         dispatched_seen = true
-        @engine0.do_process(m)
+        @dashboard0.do_process(m)
         break if reply_msg
       elsif ma == 'reply'
         reply_msg = m
         break
       else
-        @engine0.do_process(m)
+        @dashboard0.do_process(m)
       end
     end
 
     #p dispatched_seen
 
-    @engine0.cancel_expression(
+    @dashboard0.cancel_expression(
       { 'engine_id' => 'engine', 'wfid' => wfid, 'expid' => '0_0' })
 
-    msgs = @engine0.gather_msgs
+    msgs = @dashboard0.gather_msgs
 
     msgs = msgs - [ reply_msg ]
 
     assert_equal 1, msgs.size
     assert_equal 'cancel', msgs.first['action']
 
-    t1 = Thread.new { @engine1.do_process(msgs.first) }
-    t0 = Thread.new { @engine0.do_process(reply_msg) }
+    t1 = Thread.new { @dashboard1.do_process(msgs.first) }
+    t0 = Thread.new { @dashboard0.do_process(reply_msg) }
     t1.join
     t0.join
 
     loop do
-      m = @engine0.next_msg
-      @engine0.do_process(m)
+      m = @dashboard0.next_msg
+      @dashboard0.do_process(m)
       break if m['action'] == 'terminated'
     end
 
-    assert_nil @engine0.process(wfid)
+    assert_nil @dashboard0.process(wfid)
   end
 end
 

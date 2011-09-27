@@ -19,13 +19,13 @@ class EftStallTest < Test::Unit::TestCase
       stall
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     sleep 0.750
 
-    ps = @engine.ps(wfid)
+    ps = @dashboard.ps(wfid)
 
     assert_equal 0, ps.errors.size
     assert_equal 2, ps.expressions.size

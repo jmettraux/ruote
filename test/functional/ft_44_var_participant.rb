@@ -24,12 +24,12 @@ class FtVarParticipantTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
-    assert_equal 1, @engine.storage_participant.size
-    assert_equal 'alpha', @engine.storage_participant.first.participant_name
+    assert_equal 1, @dashboard.storage_participant.size
+    assert_equal 'alpha', @dashboard.storage_participant.first.participant_name
   end
 end
 

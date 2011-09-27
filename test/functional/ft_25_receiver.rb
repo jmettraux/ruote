@@ -24,7 +24,7 @@ class FtReceiverTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant 'alpha', MyParticipant
+    @dashboard.register_participant 'alpha', MyParticipant
   end
 
   class MyParticipant
@@ -52,50 +52,50 @@ class FtReceiverTest < Test::Unit::TestCase
 
   def test_my_receiver_init
 
-    cid = @engine.context.object_id
+    cid = @dashboard.context.object_id
 
-    receiver = MyReceiver.new(@engine)
+    receiver = MyReceiver.new(@dashboard)
     assert_equal cid, receiver.context.object_id
     assert_not_nil receiver.context.storage
 
-    receiver = MyReceiver.new(@engine.context)
+    receiver = MyReceiver.new(@dashboard.context)
     assert_equal cid, receiver.context.object_id
     assert_not_nil receiver.context.storage
 
-    receiver = MyReceiver.new(@engine.worker)
+    receiver = MyReceiver.new(@dashboard.worker)
     assert_equal cid, receiver.context.object_id
     assert_not_nil receiver.context.storage
 
-    receiver = MyReceiver.new(@engine.storage)
+    receiver = MyReceiver.new(@dashboard.storage)
     assert_equal cid, receiver.context.object_id
     assert_not_nil receiver.context.storage
 
-    @engine.storage.instance_variable_set(:@context, nil)
-    receiver = MyReceiver.new(@engine.storage)
+    @dashboard.storage.instance_variable_set(:@context, nil)
+    receiver = MyReceiver.new(@dashboard.storage)
     assert_not_equal cid, receiver.context.object_id
     assert_not_nil receiver.context.storage
   end
 
   def test_my_receiver
 
-    receiver = MyReceiver.new(@engine.context)
+    receiver = MyReceiver.new(@dashboard.context)
 
     #noisy
 
-    wfid = @engine.launch(@pdef)
+    wfid = @dashboard.launch(@pdef)
 
     wait_for(:alpha)
-    while @engine.context.stash[:wi].nil? do
+    while @dashboard.context.stash[:wi].nil? do
       Thread.pass
     end
 
-    assert_equal 3, @engine.process(wfid).expressions.size
+    assert_equal 3, @dashboard.process(wfid).expressions.size
 
-    receiver.receive(@engine.context.stash[:wi])
+    receiver.receive(@dashboard.context.stash[:wi])
 
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
 
     rcv = logger.log.select { |e| e['action'] == 'receive' }.first
     assert_equal 'FtReceiverTest::MyReceiver', rcv['receiver']
@@ -103,18 +103,18 @@ class FtReceiverTest < Test::Unit::TestCase
 
   def test_engine_receive
 
-    wfid = @engine.launch(@pdef)
+    wfid = @dashboard.launch(@pdef)
 
     wait_for(:alpha)
 
-    @engine.receive(@engine.context.stash[:wi])
+    @dashboard.receive(@dashboard.context.stash[:wi])
 
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
 
     rcv = logger.log.select { |e| e['action'] == 'receive' }.first
-    assert_equal 'Ruote::Engine', rcv['receiver']
+    assert_equal 'Ruote::Dashboard', rcv['receiver']
   end
 
   class MyOtherParticipant
@@ -141,67 +141,67 @@ class FtReceiverTest < Test::Unit::TestCase
 
   def test_receiver_triggered_dispatch_error
 
-    class << @engine.context
+    class << @dashboard.context
       def receiver
         @rcv ||= MyOtherReceiver.new(engine)
       end
     end
 
-    @engine.register_participant :alpha, MyOtherParticipant
+    @dashboard.register_participant :alpha, MyOtherParticipant
 
     pdef = Ruote.process_definition do
       alpha
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
     err = ps.errors.first
 
     assert_equal 1, ps.errors.size
     assert_equal '#<RuntimeError: something went wrong>', err.message
 
-    @engine.replay_at_error(err)
+    @dashboard.replay_at_error(err)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_nil ps
   end
 
   def test_receiver_fexp_and_wi
 
-    #@engine.register do
+    #@dashboard.register do
     #  catchall Ruote::StorageParticipant
     #end
-    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       alpha
     end)
 
-    @engine.wait_for(:alpha)
-    @engine.wait_for(1)
+    @dashboard.wait_for(:alpha)
+    @dashboard.wait_for(1)
 
-    wi = @engine.storage_participant.first
+    wi = @dashboard.storage_participant.first
 
     assert_equal wfid, wi.fei.wfid
 
-    assert_equal wfid, @engine.fexp(wi).fei.wfid
-    assert_equal wfid, @engine.fexp(wi.fei).fei.wfid
-    assert_equal wfid, @engine.fexp(wi.fei.sid).fei.wfid
-    assert_equal wfid, @engine.fexp(wi.fei.sid).h.applied_workitem['fei']['wfid']
+    assert_equal wfid, @dashboard.fexp(wi).fei.wfid
+    assert_equal wfid, @dashboard.fexp(wi.fei).fei.wfid
+    assert_equal wfid, @dashboard.fexp(wi.fei.sid).fei.wfid
+    assert_equal wfid, @dashboard.fexp(wi.fei.sid).h.applied_workitem['fei']['wfid']
 
-    assert_equal wfid, @engine.workitem(wi).wfid
-    assert_equal wfid, @engine.workitem(wi.fei).wfid
-    assert_equal wfid, @engine.workitem(wi.fei.sid).wfid
+    assert_equal wfid, @dashboard.workitem(wi).wfid
+    assert_equal wfid, @dashboard.workitem(wi.fei).wfid
+    assert_equal wfid, @dashboard.workitem(wi.fei.sid).wfid
   end
 end
 

@@ -27,17 +27,17 @@ class FtCodeParticipantTest < Test::Unit::TestCase
       alpha
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
-    @engine.wait_for(1)
+    @dashboard.wait_for(:alpha)
+    @dashboard.wait_for(1)
 
     assert_equal 'alpha', @tracer.to_s
 
-    @engine.cancel(wfid)
-    @engine.wait_for(wfid)
+    @dashboard.cancel(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal "alpha\ncancelled", @tracer.to_s
   end

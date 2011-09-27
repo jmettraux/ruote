@@ -19,7 +19,7 @@ class FtVariablesTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
     assert_equal "at:#{wfid}:0_0", @tracer.to_s
@@ -82,7 +82,7 @@ class FtVariablesTest < Test::Unit::TestCase
 
     #noisy
 
-    @engine.variables['vb'] = 'b0'
+    @dashboard.variables['vb'] = 'b0'
 
     assert_trace(%w[ a0: b0:b0 done. ], pdef)
 
@@ -104,9 +104,9 @@ class FtVariablesTest < Test::Unit::TestCase
       end
     end
 
-    @engine.context.stash[:results] = []
+    @dashboard.context.stash[:results] = []
 
-    @engine.register_participant :alpha do |workitem, fexp|
+    @dashboard.register_participant :alpha do |workitem, fexp|
 
       class << fexp
         public :locate_var
@@ -121,14 +121,14 @@ class FtVariablesTest < Test::Unit::TestCase
 
     assert_trace 'done.', pdef
 
-    assert_equal(nil, @engine.context.stash[:results][0])
-    assert_match(/^0||\d+_\d+$/, @engine.context.stash[:results][1])
-    assert_match(/^0\_0|\d+|\d+_\d+$/, @engine.context.stash[:results][2])
+    assert_equal(nil, @dashboard.context.stash[:results][0])
+    assert_match(/^0||\d+_\d+$/, @dashboard.context.stash[:results][1])
+    assert_match(/^0\_0|\d+|\d+_\d+$/, @dashboard.context.stash[:results][2])
   end
 
   def test_lookup_in_var
 
-    @engine.register_participant :echo_toto do |wi, fexp|
+    @dashboard.register_participant :echo_toto do |wi, fexp|
       @tracer << fexp.lookup_variable('toto').join
       @tracer << "\n"
     end

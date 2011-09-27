@@ -23,42 +23,42 @@ class RtCronTest < Test::Unit::TestCase
       end
     end
 
-    @engine.variables['text'] = 'pre'
+    @dashboard.variables['text'] = 'pre'
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(5)
 
-    assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.storage.get_many('schedules').size
+    assert_equal 1, @dashboard.processes.size
+    assert_equal 1, @dashboard.storage.get_many('schedules').size
 
-    @engine.shutdown
+    @dashboard.shutdown
 
     # restart...
 
     start_new_engine
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.variables['text'] = 'post'
+    @dashboard.variables['text'] = 'post'
 
-    assert_equal 1, @engine.processes.size
-    assert_equal 1, @engine.storage.get_many('schedules').size
+    assert_equal 1, @dashboard.processes.size
+    assert_equal 1, @dashboard.storage.get_many('schedules').size
 
     wait_for(5)
 
     assert_match /pre\npost/, @tracer.to_s
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
 
     while msg = wait_for(wfid)
       break if msg['action'] == 'terminated'
     end
 
-    assert_equal 0, @engine.processes.size
-    assert_equal 0, @engine.storage.get_many('schedules').size
+    assert_equal 0, @dashboard.processes.size
+    assert_equal 0, @dashboard.storage.get_many('schedules').size
   end
 end
 

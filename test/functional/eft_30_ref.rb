@@ -31,7 +31,7 @@ class EftRefTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    @engine.register_participant :alpha, AlphaParticipant
+    @dashboard.register_participant :alpha, AlphaParticipant
 
     #noisy
 
@@ -64,23 +64,23 @@ class EftRefTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
 
     # correct problem and replay at error
 
-    @engine.register_participant 'alpha', AlphaParticipant
+    @dashboard.register_participant 'alpha', AlphaParticipant
 
-    @engine.replay_at_error(ps.errors.first)
+    @dashboard.replay_at_error(ps.errors.first)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
     assert_equal '0_0', @tracer.to_s
   end
 
@@ -92,25 +92,25 @@ class EftRefTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
 
     # correct problem and replay at error
 
-    @engine.variables['alpha'] = Ruote.process_definition do
+    @dashboard.variables['alpha'] = Ruote.process_definition do
       echo 'alpha'
     end
 
-    @engine.replay_at_error(ps.errors.first)
+    @dashboard.replay_at_error(ps.errors.first)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
     assert_equal 'alpha', @tracer.to_s
   end
 
@@ -119,7 +119,7 @@ class EftRefTest < Test::Unit::TestCase
   #
   def test_ref_and_subprocess_timeout
 
-    @engine.register_participant :alpha, Ruote::StorageParticipant
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     pdef = Ruote.process_definition do
       define 'sub0' do
@@ -128,10 +128,10 @@ class EftRefTest < Test::Unit::TestCase
       ref 'sub0', :timeout => '2d'
     end
 
-    wfid = @engine.launch(pdef)
-    @engine.wait_for(:alpha)
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(:alpha)
 
-    scheds = @engine.schedules
+    scheds = @dashboard.schedules
 
     assert_equal 1, scheds.size
     assert_equal '0_1', scheds.first['target'].expid
@@ -145,11 +145,11 @@ class EftRefTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 end
 

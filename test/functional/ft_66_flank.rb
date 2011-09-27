@@ -22,15 +22,15 @@ class FtFlankTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+', Ruote::NullParticipant
+    @dashboard.register_participant '.+', Ruote::NullParticipant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
-    ps = @engine.ps(wfid)
+    ps = @dashboard.ps(wfid)
 
     assert_equal 4, ps.expressions.size
     assert_equal [ ps.expressions[2].fei.h ], ps.expressions[1].h.flanks
@@ -47,22 +47,22 @@ class FtFlankTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+', Ruote::NullParticipant
+    @dashboard.register_participant '.+', Ruote::NullParticipant
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(:alpha)
-    @engine.wait_for(1)
+    @dashboard.wait_for(:alpha)
+    @dashboard.wait_for(1)
 
-    fei = @engine.ps(wfid).expressions[1].fei
+    fei = @dashboard.ps(wfid).expressions[1].fei
 
-    @engine.cancel(fei)
+    @dashboard.cancel(fei)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    assert_nil @engine.ps(wfid)
+    assert_nil @dashboard.ps(wfid)
   end
 end
 

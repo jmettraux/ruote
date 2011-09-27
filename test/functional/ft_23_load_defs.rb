@@ -33,7 +33,7 @@ end
         ['sequence', {}, [
           ['echo', { 'a' => nil }, [] ],
           ['echo', { 'b' => nil}, [] ] ] ] ] ],
-      @engine.load_definition(fn))
+      @dashboard.load_definition(fn))
   end
 
   def test_load_definition_with_absolute_path
@@ -54,7 +54,7 @@ end
 
     assert_equal(
       [ 'define', {}, [ [ 'echo', { 'a' => nil }, [] ] ] ],
-      @engine.load_definition(fn))
+      @dashboard.load_definition(fn))
   end
 
   def test_load_illegal_definition
@@ -72,7 +72,7 @@ end
     File.open(fn, 'w') { |f| f.write(pdef) }
 
     assert_raise Ruote::Reader::Error do
-      @engine.load_definition(fn)
+      @dashboard.load_definition(fn)
     end
   end
 end

@@ -93,7 +93,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_inc_array
 
-    @engine.context['ruby_eval_allowed'] = true
+    @dashboard.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -113,8 +113,8 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_inc_array_head
 
-    #@engine.context['ruby_eval_allowed'] = true
-    @engine.configure('ruby_eval_allowed', true)
+    #@dashboard.context['ruby_eval_allowed'] = true
+    @dashboard.configure('ruby_eval_allowed', true)
 
     pdef = Ruote.process_definition do
       sequence do
@@ -134,7 +134,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_inc_array_missing
 
-    @engine.context['ruby_eval_allowed'] = true
+    @dashboard.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -175,7 +175,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_dec_array
 
-    @engine.context['ruby_eval_allowed'] = true
+    @dashboard.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -199,7 +199,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_dec_to
 
-    @engine.context['ruby_eval_allowed'] = true
+    @dashboard.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -220,7 +220,7 @@ class EftIncTest < Test::Unit::TestCase
 
   def test_dec_val
 
-    @engine.context['ruby_eval_allowed'] = true
+    @dashboard.context['ruby_eval_allowed'] = true
 
     pdef = Ruote.process_definition do
       sequence do
@@ -268,11 +268,11 @@ class EftIncTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
   end

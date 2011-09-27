@@ -19,14 +19,14 @@ class FtErrorsTest < Test::Unit::TestCase
       nada
     end
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
 
-    pss = @engine.processes
+    pss = @dashboard.processes
 
     assert_equal 1, pss.size
     assert_equal 1, pss.first.errors.size
@@ -42,25 +42,25 @@ class FtErrorsTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     exp = ps.expressions.find { |fe| fe.class == Ruote::Exp::RefExpression }
 
     assert_not_nil exp
 
-    @engine.register_participant :nada do |workitem|
+    @dashboard.register_participant :nada do |workitem|
       @tracer << 'done.'
     end
 
-    @engine.re_apply(exp.fei)
+    @dashboard.re_apply(exp.fei)
     wait_for(wfid)
 
     assert_equal 'done.', @tracer.to_s
 
-    assert_equal 0, @engine.storage.get_many('errors').size
+    assert_equal 0, @dashboard.storage.get_many('errors').size
   end
 
   def test_error_replay
@@ -71,17 +71,17 @@ class FtErrorsTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     err = ps.errors.first
 
-    @engine.replay_at_error(err)
+    @dashboard.replay_at_error(err)
 
     wait_for(wfid)
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     #p ps
 
@@ -93,7 +93,7 @@ class FtErrorsTest < Test::Unit::TestCase
     assert_not_equal err.at, err1.at
       # not the same error
 
-    assert_equal 1, @engine.storage.get_many('errors').size
+    assert_equal 1, @dashboard.storage.get_many('errors').size
   end
 
   def test_error_fix_then_replay
@@ -102,30 +102,30 @@ class FtErrorsTest < Test::Unit::TestCase
       nada
     end
 
-    @engine.register_participant :alpha do
+    @dashboard.register_participant :alpha do
       @tracer << "alpha\n"
     end
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     err = ps.errors.first
     assert_equal [ 'nada', { 'ref' => 'nada' }, [] ], err.tree
 
     err.tree = [ 'alpha', {}, [] ]
-    @engine.replay_at_error(err)
+    @dashboard.replay_at_error(err)
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
 
     assert_equal 'alpha', @tracer.to_s
 
     # check if error is really gone from error journal...
 
-    assert_equal [], @engine.storage.get_many('errors')
+    assert_equal [], @dashboard.storage.get_many('errors')
   end
 
   def test_error_in_participant
@@ -137,9 +137,9 @@ class FtErrorsTest < Test::Unit::TestCase
       end
     end
 
-    @engine.context.stash[:count] = 0
+    @dashboard.context.stash[:count] = 0
 
-    @engine.register_participant :alpha do
+    @dashboard.register_participant :alpha do
       stash[:count] += 1
       @tracer << "alpha\n"
       raise "something went wrong" if stash[:count] == 1
@@ -147,17 +147,17 @@ class FtErrorsTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
     sleep 0.250 # grrr...
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
 
-    @engine.replay_at_error(ps.errors.first)
+    @dashboard.replay_at_error(ps.errors.first)
 
     wait_for(wfid)
 
@@ -173,9 +173,9 @@ class FtErrorsTest < Test::Unit::TestCase
       end
     end
 
-    @engine.context.stash[:count] = 0
+    @dashboard.context.stash[:count] = 0
 
-    alpha = @engine.register_participant :alpha, 'do_not_thread' => true do
+    alpha = @dashboard.register_participant :alpha, 'do_not_thread' => true do
       stash[:count] += 1
       @tracer << "alpha\n"
       raise "something went wrong" if stash[:count] == 1
@@ -183,15 +183,15 @@ class FtErrorsTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
 
-    @engine.replay_at_error(ps.errors.first)
+    @dashboard.replay_at_error(ps.errors.first)
 
     wait_for(wfid)
 
@@ -220,29 +220,29 @@ class FtErrorsTest < Test::Unit::TestCase
       alpha
     end
 
-    @engine.register_participant 'alpha', WeakCancelParticipant
+    @dashboard.register_participant 'alpha', WeakCancelParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     #puts ps.errors.first.trace
     assert_equal 1, ps.errors.size
     assert_equal 2, ps.expressions.size
 
-    @engine.kill_process(wfid)
+    @dashboard.kill_process(wfid)
 
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 
   def test_errors_and_subprocesses
@@ -257,9 +257,9 @@ class FtErrorsTest < Test::Unit::TestCase
       end
     end
 
-    @engine.context.stash[:count] = 0
+    @dashboard.context.stash[:count] = 0
 
-    alpha = @engine.register_participant :alpha, :do_not_thread => true do
+    alpha = @dashboard.register_participant :alpha, :do_not_thread => true do
       stash[:count] += 1
       @tracer << "alpha\n"
       raise "something went wrong" if stash[:count] == 1
@@ -267,11 +267,11 @@ class FtErrorsTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
 
@@ -280,7 +280,7 @@ class FtErrorsTest < Test::Unit::TestCase
     assert_equal wfid, err.fei.wfid
     assert_not_nil err.fei.subid
 
-    @engine.replay_at_error(err)
+    @dashboard.replay_at_error(err)
 
     wait_for(wfid)
 
@@ -295,18 +295,18 @@ class FtErrorsTest < Test::Unit::TestCase
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
 
-    assert_equal 1, @engine.process(wfid).errors.size
+    assert_equal 1, @dashboard.process(wfid).errors.size
 
-    @engine.cancel_process(wfid)
+    @dashboard.cancel_process(wfid)
 
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
-    assert_equal [], @engine.storage.get_many('errors')
+    assert_nil @dashboard.process(wfid)
+    assert_equal [], @dashboard.storage.get_many('errors')
   end
 
   def test_forgotten_subprocess
@@ -321,20 +321,20 @@ class FtErrorsTest < Test::Unit::TestCase
       end
     end
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
     wait_for(wfid)
     wait_for(wfid)
 
     assert_equal 'done.', @tracer.to_s
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
     assert_equal 3, ps.expressions.size
     assert_equal 1, ps.errors.size
 
-    @engine.replay_at_error(ps.errors.first)
+    @dashboard.replay_at_error(ps.errors.first)
     wait_for(wfid)
 
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 
   def test_error_intercepted
@@ -343,9 +343,9 @@ class FtErrorsTest < Test::Unit::TestCase
       nada
     end
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    r = @engine.wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal 'RuntimeError', r['error']['class']
     assert_equal "unknown participant or subprocess 'nada'", r['error']['message']
@@ -354,26 +354,26 @@ class FtErrorsTest < Test::Unit::TestCase
 
   def test_replay_at_error_fei
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    @engine.register { catchall }
+    @dashboard.register { catchall }
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       error 'alpha'
       error 'bravo'
     end)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    err = @engine.ps(wfid).errors.first
+    err = @dashboard.ps(wfid).errors.first
     assert_match /alpha/, err.message
     fei = err.fei
 
-    @engine.replay_at_error(fei)
+    @dashboard.replay_at_error(fei)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
-    err = @engine.ps(wfid).errors.first
+    err = @dashboard.ps(wfid).errors.first
     assert_match /bravo/, err.message
   end
 end

@@ -22,21 +22,21 @@ class FtLoseTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+' do |wi|
+    @dashboard.register_participant '.+' do |wi|
       @tracer << wi.participant_name + "\n"
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(6)
+    @dashboard.wait_for(6)
 
     #sleep 0.500
 
     assert_equal 'alpha', @tracer.to_s
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 3, ps.expressions.size
     assert_equal 0, ps.errors.size
@@ -54,20 +54,20 @@ class FtLoseTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+' do |wi|
+    @dashboard.register_participant '.+' do |wi|
       @tracer << wi.participant_name + "\n"
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(12)
+    @dashboard.wait_for(12)
 
     assert_match /alpha/, @tracer.to_s
     assert_match /bravo/, @tracer.to_s
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal 3, ps.expressions.size
     assert_equal 0, ps.errors.size
@@ -84,29 +84,29 @@ class FtLoseTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+' do |wi|
+    @dashboard.register_participant '.+' do |wi|
       @tracer << wi.participant_name + "\n"
     end
 
-    #@engine.noisy = true
+    #@dashboard.noisy = true
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
-    @engine.wait_for(12)
+    @dashboard.wait_for(12)
       # until bravo is reached
 
     #sleep 0.500
 
     assert_equal "alpha\nbravo", @tracer.to_s
 
-    bravo = @engine.process(wfid).expressions.last
+    bravo = @dashboard.process(wfid).expressions.last
 
-    @engine.cancel_expression(bravo.fei)
+    @dashboard.cancel_expression(bravo.fei)
 
-    @engine.wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     assert_equal "alpha\nbravo\ncharly", @tracer.to_s
-    assert_nil @engine.process(wfid)
+    assert_nil @dashboard.process(wfid)
   end
 end
 

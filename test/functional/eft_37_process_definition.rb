@@ -28,15 +28,15 @@ class EftProcessDefinitionTest < Test::Unit::TestCase
       participant :ref => :alpha
     end
 
-    alpha = @engine.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     #noisy
 
-    wfid = @engine.launch(pdef)
+    wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
 
-    ps = @engine.process(wfid)
+    ps = @dashboard.process(wfid)
 
     assert_equal(
       {"sub0"=> ["0_0", ["define", {"name"=>"sub0"}, []]],

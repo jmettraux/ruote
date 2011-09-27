@@ -14,17 +14,17 @@ class EftFlowExpressionTest < Test::Unit::TestCase
 
   def test_root_and_root_id
 
-    @engine.register :alpha, Ruote::NullParticipant
+    @dashboard.register :alpha, Ruote::NullParticipant
 
-    wfid = @engine.launch(Ruote.define do
+    wfid = @dashboard.launch(Ruote.define do
       sequence do
         alpha
       end
     end)
 
-    @engine.wait_for(:alpha)
+    @dashboard.wait_for(:alpha)
 
-    fexp = @engine.ps(wfid).expressions.last
+    fexp = @dashboard.ps(wfid).expressions.last
 
     assert_equal '0', fexp.root.fei.expid
     assert_equal Ruote::Exp::SequenceExpression, fexp.root.class

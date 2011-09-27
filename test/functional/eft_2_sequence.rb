@@ -46,7 +46,7 @@ class EftSequenceTest < Test::Unit::TestCase
       end
     end
 
-    @engine.register_participant '.+' do |workitem|
+    @dashboard.register_participant '.+' do |workitem|
       context.tracer << workitem.participant_name + "\n"
     end
 
