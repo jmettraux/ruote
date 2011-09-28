@@ -276,6 +276,9 @@ class ConditionTest < Test::Unit::TestCase
 
     assert_b false, "3 in [1, 2]"
     assert_b false, "2 in {1 => 2}"
+
+    assert_b "a in [a, b]"
+    assert_b "'a' in [a, b]"
   end
 
   def test_not_in
