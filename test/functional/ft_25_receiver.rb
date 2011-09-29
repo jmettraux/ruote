@@ -164,6 +164,7 @@ class FtReceiverTest < Test::Unit::TestCase
 
     assert_equal 1, ps.errors.size
     assert_equal '#<RuntimeError: something went wrong>', err.message
+    assert_equal String, err.msg['put_at'].class
 
     @dashboard.replay_at_error(err)
 

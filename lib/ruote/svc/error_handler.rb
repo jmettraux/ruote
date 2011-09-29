@@ -61,7 +61,8 @@ module Ruote
         'action' => action,
         'fei' => fei,
         'participant_name' => fexp.h.participant_name,
-        'workitem' => fexp.h.applied_workitem }
+        'workitem' => fexp.h.applied_workitem,
+        'put_at' => Ruote.now_to_utc_s }
 
       handle(msg, fexp, exception)
     end
