@@ -162,6 +162,7 @@ class FtReceiverTest < Test::Unit::TestCase
     ps = @dashboard.process(wfid)
     err = ps.errors.first
 
+    assert_equal 2, ps.expressions.size
     assert_equal 1, ps.errors.size
     assert_equal '#<RuntimeError: something went wrong>', err.message
     assert_equal String, err.msg['put_at'].class
