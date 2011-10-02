@@ -6,6 +6,27 @@
 #
 
 
+# Hitting CTRL-C reveals the fancy dashboard log (if any) and the
+# current backtrace.
+#
+trap 'INT' do
+
+  if $_dashboard
+    puts
+    puts '-' * 80
+    puts $_dashboard.context.logger.fancy_log
+  end
+
+  puts
+  puts '-' * 80
+  puts *caller
+  puts '-' * 80
+
+  exit 1
+
+end #if RUBY_VERSION.match(/^1.9./)
+
+
 # Didn't use it much, pops a console while tests are running.
 #
 trap 'USR1' do
@@ -19,22 +40,6 @@ trap 'USR1' do
   IRB::conf[:MAIN_CONTEXT] = irb.context
   irb.eval_input
 end
-
-
-# I want to be able to hit CTRL-C and see a trace, even with Ruby 1.9.x
-#
-trap 'INT' do
-
-  # why do I have to do that for Ruby 1.9.x ?
-
-  puts
-  puts '-' * 80
-  puts *caller
-  puts '-' * 80
-
-  exit 1
-
-end if RUBY_VERSION.match(/^1.9./)
 
 
 # USR2 is used for CI timeouts. Tries to print a max of useful information
