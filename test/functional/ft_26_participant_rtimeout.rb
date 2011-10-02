@@ -98,9 +98,7 @@ class FtParticipantTimeoutTest < Test::Unit::TestCase
 
     wfid = @dashboard.launch(pdef)
 
-    @dashboard.wait_for(:alpha)
-
-    sleep 0.350
+    @dashboard.wait_for('dispatched')
 
     assert_equal 0, @dashboard.storage.get_many('schedules').size
     assert_equal '', @tracer.to_s
