@@ -28,10 +28,13 @@ class EftParticipantTest < Test::Unit::TestCase
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
+    3.times { Thread.pass }
+      # give a chance to the 'dispatched' message for reaching us
+
     assert_equal 'alpha', @tracer.to_s
     assert_log_count(1) { |e| e['action'] == 'dispatch' }
-    assert_log_count(1) { |e| e['action'] == 'dispatched' }
     assert_log_count(1) { |e| e['action'] == 'receive' }
+    assert_log_count(1) { |e| e['action'] == 'dispatched' }
   end
 
   def test_participant_att_text
