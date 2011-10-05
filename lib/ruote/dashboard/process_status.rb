@@ -315,13 +315,22 @@ module Ruote
       ].join(', ') + ")"
     end
 
+    def hinspect(indent, h)
+
+      h.collect { |k, v|
+        s << "#{' ' * indent}#{k.inspect}: #{v.inspect}"
+      }.join("\n")
+    end
+
     def inspect
 
       vars = variables rescue nil
       avars = all_variables.inject({}) { |h, (k, v)| h[Ruote.sid(k)] = v; h }
 
       s = [ "== #{self.class} ==" ]
-      s << "   expressions : #{@expressions.size}"
+      s << ''
+      s << "  expressions: #{@expressions.size}"
+      s << ''
       @expressions.each do |e|
         s << "     #{e.fei.to_storage_id}"
         s << "       | #{e.name}"
@@ -329,21 +338,25 @@ module Ruote
         s << "       | #{e.attributes.inspect}"
         s << "       `-parent--> #{e.h.parent_id ? e.parent_id.to_storage_id : 'nil'}"
       end
-      s << "   schedules : #{@schedules.size}"
-      s << "   stored workitems : #{@stored_workitems.size}"
-      s << "   variables :     #{vars.inspect}"
-      s << "   all_variables : #{avars.inspect}"
-      s << "   errors : #{@errors.size}"
+      s << ''
+      s << "  schedules: #{@schedules.size}"
+      s << "  stored workitems: #{@stored_workitems.size}"
+      s << ''
+      s << "  variables:"; s << hinspect(4, vars)
+      s << ''
+      s << "  all_variables:"; s << hinspect(4, avars)
+      s << ''
+      s << "  errors: #{@errors.size}"
       @errors.each do |e|
-        s << "     ***"
+        s << "    ***"
         s << "     #{e.fei.to_storage_id} :" if e.fei
-        s << "     action : #{e.action}"
-        s << "     message : #{e.message}"
-        s << "     trace :"
+        s << "    action: #{e.action}"
+        s << "    message: #{e.message}"
+        s << "    trace:"
         e.trace.split("\n").each do |line|
           s << "       #{line}"
         end
-        s << "     fields : #{e.fields.inspect}"
+        s << "    fields:"; s << hinspect(6, e.fields)
       end
 
       s.join("\n") + "\n"
