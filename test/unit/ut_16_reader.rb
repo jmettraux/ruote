@@ -212,7 +212,7 @@ end
 
     begin
       Ruote::Reader.read(%{
-        process_definition ${f:y}
+        process_definition [f:y]
           alpha
       })
     rescue => err

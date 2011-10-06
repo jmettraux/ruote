@@ -93,8 +93,14 @@ class RadialReaderTest < Test::Unit::TestCase
     [ 'define', { 'india' => nil, 'mount' => 'batten' }, [] ],
     'define "india", mount: batten # whatever')
   assert_read(
-    [ 'romeo', { 'timeout' => '2d'}, [] ],
+    [ 'romeo', { 'timeout' => '2d' }, [] ],
     'romeo timeout: 2d # whatever')
+  assert_read(
+    [ 'audit', { '$href' => nil, 'summary' => 'scale up' }, [] ],
+    'audit $href, summary: "scale up"')
+  assert_read(
+    [ 'audit', { '${href}' => nil, 'summary' => 'scale up' }, [] ],
+    'audit ${href}, summary: "scale up"')
 
   assert_read(
     [ 'sierra', {}, [] ],
