@@ -329,6 +329,12 @@ module Ruote
 
       s = [ "== #{self.class} ==" ]
       s << ''
+      s << "  wfid:           #{wfid}"
+      s << "  name:           #{definition_name}"
+      s << "  revision:       #{definition_revision}"
+      s << "  last_active:    #{last_active}"
+      s << "  launched_time:  #{launched_time}"
+      s << ''
       s << "  expressions: #{@expressions.size}"
       s << ''
       @expressions.each do |e|
@@ -340,6 +346,15 @@ module Ruote
       end
       s << ''
       s << "  schedules: #{@schedules.size}"
+      if @schedules.size > 0
+        @schedules.each do |sched|
+          s << "    * #{sched['original']}"
+          s << "      #{sched['flavour']} #{sched['at']}"
+          s << "      #{sched['action']}"
+          s << "      #{Ruote.sid(sched['target'])}"
+        end
+        s << ''
+      end
       s << "  stored workitems: #{@stored_workitems.size}"
       s << ''
       s << "  variables:"; s << hinspect(4, vars)
