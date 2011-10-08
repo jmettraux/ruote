@@ -376,5 +376,30 @@ class FtErrorsTest < Test::Unit::TestCase
     err = @dashboard.ps(wfid).errors.first
     assert_match /bravo/, err.message
   end
+
+  class MyError < RuntimeError
+    def ruote_details
+      'where the devil is'
+    end
+  end
+
+  def test_error_details
+
+    #@dashboard.noisy = true
+
+    @dashboard.register :alpha do |workitem|
+      raise FtErrorsTest::MyError
+    end
+
+    wfid = @dashboard.launch(Ruote.define do
+      alpha
+    end)
+
+    @dashboard.wait_for('error_intercepted')
+
+    assert_equal 'where the devil is',  @dashboard.ps(wfid).errors.first.details
+
+    #p @dashboard.ps(wfid)
+  end
 end
 

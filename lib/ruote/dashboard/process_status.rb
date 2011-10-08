@@ -371,6 +371,10 @@ module Ruote
         e.trace.split("\n").each do |line|
           s << "       #{line}"
         end
+        s << "    details:"
+        (e.details || '').split("\n").each do |line|
+          s << "       #{line}"
+        end
         s << "    fields:"; s << hinspect(6, e.fields)
       end
 

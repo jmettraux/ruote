@@ -52,6 +52,10 @@ module Ruote
       @h['msg']
     end
 
+    def details
+      @h['details']
+    end
+
     def fei
       Ruote::FlowExpressionId.new(msg['fei'])
     end
