@@ -313,7 +313,8 @@ module Ruote::Exp
     #
     def reply_to_parent(workitem, delete=true)
 
-      filter(workitem)
+      filter(workitem) if h.state.nil?
+        # only filter on a normal reply (not cancelling)
 
       if h.tagname
 

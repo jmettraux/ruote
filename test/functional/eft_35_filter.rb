@@ -373,5 +373,47 @@ class EftFilterTest < Test::Unit::TestCase
     assert_terminates(pdef, 'x' => 5)
     assert_does_not_validate(pdef, 'x' => true)
   end
+
+  def test_cancel_filter_in_error
+
+    #@dashboard.noisy = true
+
+    pdef = Ruote.define do
+      filter :in => [ { :field => 'x', :type => :number } ]
+    end
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for(wfid)
+
+    assert_equal 1, @dashboard.ps(wfid).errors.size
+
+    @dashboard.cancel(wfid)
+
+    @dashboard.wait_for('terminated')
+
+    assert_nil @dashboard.ps(wfid)
+  end
+
+  def test_cancel_filter_out_error
+
+    #@dashboard.noisy = true
+
+    pdef = Ruote.define do
+      filter :out => [ { :field => 'x', :type => :number } ]
+    end
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for(wfid)
+
+    assert_equal 1, @dashboard.ps(wfid).errors.size
+
+    @dashboard.cancel(wfid)
+
+    @dashboard.wait_for('terminated')
+
+    assert_nil @dashboard.ps(wfid)
+  end
 end
 

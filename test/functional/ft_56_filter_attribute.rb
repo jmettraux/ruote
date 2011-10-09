@@ -247,6 +247,48 @@ class FtFilterAttributeTest < Test::Unit::TestCase
     assert_equal %w[ alpha bravo charly ], @tracer.to_a
   end
 
+  def test_cancel_after_error
+
+    @dashboard.register :alpha, Ruote::NoOpParticipant
+
+    #@dashboard.noisy = true
+
+    pdef = Ruote.define do
+      alpha :filter => { :in => [ { :field => 'x', :type => :number } ] }
+    end
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for('error_intercepted')
+
+    @dashboard.cancel(wfid)
+
+    @dashboard.wait_for('terminated')
+
+    assert_nil @dashboard.ps(wfid)
+  end
+
+  def test_cancel_after_error_out
+
+    @dashboard.register :alpha, Ruote::NoOpParticipant
+
+    #@dashboard.noisy = true
+
+    pdef = Ruote.define do
+      alpha :filter => { :out => [ { :field => 'x', :type => :number } ] }
+    end
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for('error_intercepted')
+
+    @dashboard.cancel(wfid)
+
+    @dashboard.wait_for('terminated')
+
+    assert_nil @dashboard.ps(wfid)
+  end
+
 #  def test_filter_record
 #
 #    pdef = Ruote.define do
