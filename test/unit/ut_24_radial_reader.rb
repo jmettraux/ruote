@@ -247,6 +247,62 @@ process_definition name: "nada"
       tree)
   end
 
+#  def test_lonely_comma
+#
+#    tree = Ruote::RadialReader.read(%{
+#      echo,
+#        e: 5,
+#        f: 6
+#    })
+#
+#    assert_equal(
+#      [ 'define', { '' => nil }, [] ],
+#      tree)
+#  end
+  #
+  # kept in the fridge for now, could be interesting
+
+  def test_multine_attributes
+
+    tree = Ruote::RadialReader.read(%{
+      define vladivostok
+        charly a: 1,
+          b: 2
+        doug c:
+          3, d:
+          4
+    })
+
+    assert_equal(
+      [ 'define', { 'vladivostok' => nil }, [
+        [ 'charly', { 'a' => 1, 'b' => 2 }, [] ],
+        [ 'doug', { 'c' => 3, 'd' => 4 }, [] ]
+      ] ],
+      tree)
+  end
+
+  def test_multine_hashes_and_arrays
+
+    tree = Ruote::RadialReader.read(%{
+      define vladivostok
+        alpha data: {
+          a: 1,
+          b: 2
+        }
+        bravo data: [
+          1,
+          2
+        ]
+    })
+
+    assert_equal(
+      [ 'define', { 'vladivostok' => nil }, [
+        [ 'alpha', { 'data' => { 'a' => 1, 'b' => 2 } }, [] ],
+        [ 'bravo', { 'data' => [ 1, 2 ] }, [] ]
+      ] ],
+      tree)
+  end
+
   def test_unicode
 
     tree = Ruote::RadialReader.read(%{
