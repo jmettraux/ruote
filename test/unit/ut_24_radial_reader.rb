@@ -247,20 +247,18 @@ process_definition name: "nada"
       tree)
   end
 
-#  def test_lonely_comma
-#
-#    tree = Ruote::RadialReader.read(%{
-#      echo,
-#        e: 5,
-#        f: 6
-#    })
-#
-#    assert_equal(
-#      [ 'define', { '' => nil }, [] ],
-#      tree)
-#  end
-  #
-  # kept in the fridge for now, could be interesting
+  def test_lonely_comma
+
+    tree = Ruote::RadialReader.read(%{
+      echo,
+        e: 5,
+        f: 6
+    })
+
+    assert_equal(
+      [ 'echo', { 'e' => 5, 'f' => 6 }, [] ],
+      tree)
+  end
 
   def test_multine_attributes
 

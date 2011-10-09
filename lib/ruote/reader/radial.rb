@@ -104,8 +104,10 @@ module Ruote
       rule(:line) {
         (
           str(' ').repeat.as(:ind) >>
-          match('[^ \n#"\']').repeat(1).as(:exp) >>
-          (blanks >> attribute >> (comma >> attribute).repeat).as(:atts).maybe
+          match('[^ \n#"\',]').repeat(1).as(:exp) >>
+          (
+            (comma | blanks) >> attribute >> (comma >> attribute).repeat
+          ).as(:atts).maybe
         ).as(:line)
       }
 
