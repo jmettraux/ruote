@@ -364,16 +364,22 @@ module Ruote
       s << "  errors: #{@errors.size}"
       @errors.each do |e|
         s << "    ***"
-        s << "     #{e.fei.to_storage_id} :" if e.fei
+        s << "      #{e.fei.to_storage_id} :" if e.fei
         s << "    action: #{e.action}"
         s << "    message: #{e.message}"
         s << "    trace:"
         e.trace.split("\n").each do |line|
-          s << "       #{line}"
+          s << "      #{line}"
         end
         s << "    details:"
         (e.details || '').split("\n").each do |line|
-          s << "       #{line}"
+          s << "      #{line}"
+        end
+        if e.respond_to?(:deviations)
+          s << "    deviations:"
+          (e.deviations || []).each do |line|
+            s << "      #{line.inspect}"
+          end
         end
         s << "    fields:"; s << hinspect(6, e.fields)
       end

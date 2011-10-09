@@ -30,6 +30,8 @@ class EftFilterTest < Test::Unit::TestCase
     assert_equal 'error_intercepted', r['action']
     assert_match /ValidationError/, err.message
     assert_equal Array, err.deviations.class
+
+    #p @dashboard.ps(wfid)
   end
 
   #
