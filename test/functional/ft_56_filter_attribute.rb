@@ -227,6 +227,26 @@ class FtFilterAttributeTest < Test::Unit::TestCase
     assert_equal('fields: dispatched_at f0 params', @tracer.to_s)
   end
 
+  def test_filter_empty
+
+    @dashboard.register '.+' do |workitem|
+      context.tracer << workitem.participant_name + "\n"
+    end
+
+    pdef = Ruote.define do
+      alpha :filter => {}
+      bravo :filter => { 'in' => [] }
+      charly :filter => { 'out' => [] }
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal %w[ alpha bravo charly ], @tracer.to_a
+  end
+
 #  def test_filter_record
 #
 #    pdef = Ruote.define do

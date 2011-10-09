@@ -91,7 +91,7 @@ module Ruote::Exp
     #
     # Returns nil, if there is no filter. Raises an ArgumentError if the
     # filter is not usable. Returns the instantiated participant if the
-    # filter points to one.
+    # filter points to a participant filter.
     #
     def lookup_filter(workitem)
 
@@ -115,14 +115,17 @@ module Ruote::Exp
       end
 
       return nil unless f
+        # no filter
+
+      if f.is_a?(Hash)
+        f['in'] = [] unless f['in'] or f['apply']
+        f['out'] = [] unless f['out'] or f['reply']
+      end
+        # empty ins and outs for a sucessful narrowing
 
       3.times { f = narrow_filter(f, workitem) }
 
-      raise ArgumentError.new(
-        "found no filter corresponding to '#{f}'"
-      ) unless f
-
-      f
+      f or raise ArgumentError.new("found no filter corresponding to '#{f}'")
     end
 
     # Called successively to dig for the filter (Array or Participant).
