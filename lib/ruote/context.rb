@@ -92,7 +92,9 @@ module Ruote
 
       cf = get_conf
       cf[key] = value
+
       @storage.put(cf)
+        # TODO blindly trust the put ? retry in case of failure ?
 
       value
     end
