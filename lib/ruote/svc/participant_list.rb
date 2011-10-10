@@ -40,14 +40,16 @@ module Ruote
   #
   class ParticipantList
 
+    # Vanilla service #initialize.
+    #
     def initialize(context)
 
       @context = context
     end
 
-    # Registers a participant. Called by Engine#register_participant.
+    # Used by #register and by Ruote::ParticipantRegistrationProxy
     #
-    def register(name, participant, options, block)
+    def to_entry(name, participant, options, block)
 
       raise(
         ArgumentError.new(
@@ -72,8 +74,20 @@ module Ruote
         @context.treechecker.block_check(options['on_workitem'])
       end
 
-      key = (name.is_a?(Regexp) ? name : Regexp.new("^#{name}$")).source
-      entry = [ key, [ klass, options ] ]
+      [
+        (name.is_a?(Regexp) ? name : Regexp.new("^#{name}$")).source,
+        [ klass, options ]
+      ]
+    end
+
+    # Registers a participant. Called by Engine#register_participant.
+    #
+    def register(name, participant, options, block)
+
+      entry = to_entry(name, participant, options, block)
+
+      key = entry.first
+      options = entry.last.last
 
       list = get_list
 

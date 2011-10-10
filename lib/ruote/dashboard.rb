@@ -23,6 +23,7 @@
 #++
 
 require 'ruote/context'
+require 'ruote/util/ometa'
 require 'ruote/receiver/base'
 require 'ruote/dashboard/process_status'
 
@@ -665,9 +666,9 @@ module Ruote
       if args.size > 0
         register_participant(*args, &block)
       else
-        @context.plist.clear if clear
-        proxy = ParticipantRegistrationProxy.new(self)
+        proxy = ParticipantRegistrationProxy.new(self, clear)
         block.arity < 1 ? proxy.instance_eval(&block) : block.call(proxy)
+        proxy._flush
       end
     end
 
@@ -977,18 +978,29 @@ module Ruote
   #
   # Originally written by Torsten Schoenebaum for ruote-kit.
   #
-  class ParticipantRegistrationProxy
+  class ParticipantRegistrationProxy < Ruote::BlankSlate
 
-    def initialize(dashboard)
+    def initialize(dashboard, clear)
 
       @dashboard = dashboard
+
+      @dashboard.context.plist.clear if clear
+
+      @list = clear ? [] : nil
     end
 
     def participant(name, klass=nil, options={}, &block)
 
-      options.merge!(:override => false)
+      if @list
 
-      @dashboard.register_participant(name, klass, options, &block)
+        @list <<
+          @dashboard.context.plist.to_entry(name, klass, options, block)
+
+      else
+
+        @dashboard.register_participant(
+          name, klass, options.merge!(:override => false), &block)
+      end
     end
 
     def catchall(*args)
@@ -1006,6 +1018,11 @@ module Ruote
     def method_missing(method_name, *args, &block)
 
       participant(method_name, *args, &block)
+    end
+
+    def _flush
+
+      @dashboard.participant_list = @list if @list
     end
   end
 
