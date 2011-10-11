@@ -153,6 +153,18 @@ module Ruote
 
     protected
 
+    # Hiding the details of @storage.get_msgs away.
+    #
+    def get_msgs
+
+      if @msgs = @storage.method(:get_msgs).arity == 0
+        # fortunately method and arity are cheap
+        @storage.get_msgs
+      else
+        @storage.get_msgs(self)
+      end
+    end
+
     # One worker step, fetches schedules and triggers those whose time has
     # came, then fetches msgs and processes them.
     #
@@ -176,13 +188,7 @@ module Ruote
       #
       # process msgs (atomic workflow operations)
 
-      if @msgs.empty?
-
-        @msgs = @storage.method(:get_msgs).arity == 0 ?
-          @storage.get_msgs : @storage.get_msgs(@name)
-            #
-            # fortunately method and arity are cheap
-      end
+      @msgs = get_msgs if @msgs.empty?
 
       processed = 0
       collisions = 0
@@ -207,7 +213,7 @@ module Ruote
       end
 
       #
-      # batch over
+      # batch over, let's rest
 
       take_a_rest(processed)
     end

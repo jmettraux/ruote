@@ -14,15 +14,15 @@ require 'ruote'
 class UtWorkerTest < Test::Unit::TestCase
 
   class StorageA < Ruote::HashStorage
-    attr_accessor :success
+    attr_accessor :caller
     def get_msgs
-      @success = true
+      @caller = :nemo
       []
     end
   end
   class StorageB < StorageA
-    def get_msgs(worker_name)
-      @success = true
+    def get_msgs(worker)
+      @caller = worker
       []
     end
   end
@@ -32,9 +32,9 @@ class UtWorkerTest < Test::Unit::TestCase
     storage = StorageA.new
     worker = Ruote::Worker.new(storage)
 
-    assert_nil storage.success
+    assert_nil storage.caller
     worker.send(:step)
-    assert_equal true, storage.success
+    assert_equal :nemo, storage.caller
   end
 
   def test_get_msgs_with_worker_name
@@ -42,9 +42,9 @@ class UtWorkerTest < Test::Unit::TestCase
     storage = StorageB.new
     worker = Ruote::Worker.new(storage)
 
-    assert_nil storage.success
+    assert_nil storage.caller
     worker.send(:step)
-    assert_equal true, storage.success
+    assert_equal worker, storage.caller
   end
 end
 
