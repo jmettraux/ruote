@@ -177,6 +177,14 @@ module Ruote
       @services.has_key?(service_name)
     end
 
+    # List of services in this context, sorted by their name in alphabetical
+    # order.
+    #
+    def services
+
+      @services.keys.sort.collect { |k| @services[k] }
+    end
+
     protected
 
     def get_conf

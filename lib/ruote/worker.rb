@@ -41,6 +41,8 @@ module Ruote
     PROC_ACTIONS = %w[ cancel kill pause resume ].collect { |a| a + '_process' }
     DISP_ACTIONS = %w[ dispatch dispatch_cancel dispatch_pause dispatch_resume ]
 
+    attr_reader :name
+
     attr_reader :storage
     attr_reader :context
 
@@ -49,7 +51,14 @@ module Ruote
 
     # Given a storage, creates a new instance of a Worker.
     #
-    def initialize(storage)
+    def initialize(name, storage=nil)
+
+      if storage.nil?
+        storage = name
+        name = nil
+      end
+
+      @name = name || 'worker'
 
       if storage.respond_to?(:storage)
         @storage = storage.storage
@@ -58,7 +67,11 @@ module Ruote
         @storage = storage
         @context = Ruote::Context.new(storage)
       end
-      @context.add_service('worker', self)
+
+      service_name = @name
+      service_name << '_worker' unless service_name.match(/worker$/)
+
+      @context.add_service(service_name, self)
 
       @last_time = Time.at(0.0).utc # 1970...
 
@@ -163,7 +176,13 @@ module Ruote
       #
       # process msgs (atomic workflow operations)
 
-      @msgs = @storage.get_msgs if @msgs.empty?
+      if @msgs.empty?
+
+        @msgs = @storage.method(:get_msgs).arity == 0 ?
+          @storage.get_msgs : @storage.get_msgs(@name)
+            #
+            # fortunately method and arity are cheap
+      end
 
       processed = 0
       collisions = 0
@@ -482,9 +501,12 @@ module Ruote
         hour_count = @msgs.size < 1 ? 1 : @msgs.size
         minute_count = mm.size < 1 ? 1 : mm.size
 
-        (doc['workers'] ||= {})["#{@ip}/#{$$}"] = {
+        key = [ @worker.name, @ip, $$.to_s ].join('/')
+
+        (doc['workers'] ||= {})[key] = {
 
           'class' => @worker.class.to_s,
+          'name' => @name,
           'ip' => @ip,
           'hostname' => @hostname,
           'pid' => $$,

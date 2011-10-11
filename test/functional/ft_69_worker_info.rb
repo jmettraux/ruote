@@ -30,11 +30,11 @@ class FtWorkerInfoTest < Test::Unit::TestCase
     info = @dashboard.worker_info
 
     assert_equal(
-      "#{Ruote.local_ip}/#{$$}",
+      "worker/#{Ruote.local_ip}/#{$$}",
       info.keys.first)
     assert_equal(
       %w[
-        class hostname ip pid
+        class hostname ip name pid
         processed_last_hour processed_last_minute
         put_at system uptime
         wait_time_last_hour wait_time_last_minute

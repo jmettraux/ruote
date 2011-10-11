@@ -70,19 +70,25 @@ module Ruote
 
       @variables = EngineVariables.new(@context.storage)
 
-      if @context.has_service?('worker')
-        if opts == true
-          @context.worker.run_in_thread
-            # runs worker in its own thread
-        elsif opts == { :join => true }
-          @context.worker.run
-            # runs worker in current thread (and doesn't return)
-        #else
-          # worker is not run
-        end
-      #else
-        # no worker
+      workers = @context.services.select { |ser|
+        ser.respond_to?(:run) && ser.respond_to?(:run_in_thread)
+      }
+
+      return unless opts && workers.any?
+
+      # let's isolate a worker to join
+
+      worker = if opts.is_a?(Hash) && opts[:join]
+        workers.find { |wor| wor.name == 'worker' } || workers.first
+      else
+        nil
       end
+
+      (workers - Array(worker)).each { |wor| wor.run_in_thread }
+        # launch their thread, but let's not join them
+
+      worker.run if worker
+        # and let's not return
     end
 
     # Returns the storage this engine works with passed at engine
