@@ -61,7 +61,7 @@ module Ruote
 
     def replace_engine_configuration(opts)
 
-      return if opts['preserve_configuration']
+      return if opts.delete('preserve_configuration')
 
       conf = get('configurations', 'engine')
 
