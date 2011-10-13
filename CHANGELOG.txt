@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- dsub for attribute keys as well
 - conf option: 'worker_info_disabled' (defaults to false, enabled)
 - Dashboard#register saves list in one batch (unless :clear => true)
 - DefaultHistory include Enumerable

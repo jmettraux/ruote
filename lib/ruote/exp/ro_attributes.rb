@@ -116,20 +116,6 @@ module Ruote::Exp
     def compile_atts(opts={})
 
       attributes.keys.inject({}) { |r, k|
-        r[k] = attribute(k, h.applied_workitem, opts)
-        r
-      }
-    end
-
-    # Like compile_atts, but the keys are expanded as well.
-    #
-    # Useful for things like
-    #
-    #   set "f:${v:field_name}" => "${v:that_variable}"
-    #
-    def expand_atts(opts={})
-
-      attributes.keys.inject({}) { |r, k|
         r[dsub(k)] = attribute(k, h.applied_workitem, opts)
         r
       }

@@ -301,5 +301,29 @@ class FtDollarTest < Test::Unit::TestCase
 
     assert_equal "a0\na1", @tracer.to_s
   end
+
+  def test_participant_params
+
+    #@dashboard.noisy = true
+
+    @dashboard.register :toto do |workitem, fexp|
+      workitem['a'] = fexp.compile_atts
+      workitem['p'] = workitem.params
+    end
+
+    pdef = Ruote.define do
+      toto "${a}", "${b}" => "${c}"
+    end
+
+    wfid = @dashboard.launch(pdef, 'a' => 'x', 'b' => 'y', 'c' => 'z')
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal(
+      { 'y' => 'z', 'x' => nil, 'ref' => 'toto' },
+      r['workitem']['fields']['a'])
+    assert_equal(
+      { 'y' => 'z', 'x' => nil, 'ref' => 'toto' },
+      r['workitem']['fields']['p'])
+  end
 end
 

@@ -130,7 +130,7 @@ module Ruote::Exp
 
         set_f(attribute(field_key), value, name == 'unset')
 
-      elsif value == nil && kv = expand_atts(opts).find { |k, v| k != 'escape' }
+      elsif value == nil && kv = compile_atts(opts).find { |k, v| k != 'escape' }
 
         kv << (name == 'unset')
 

@@ -94,7 +94,7 @@ module Ruote::Exp
           when 'stack'
 
             target['fields']['stack'] << source['fields']
-            target['fields']['stack_attributes'] = expand_atts
+            target['fields']['stack_attributes'] = compile_atts
 
           when 'isolate'
 
