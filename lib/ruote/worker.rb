@@ -82,7 +82,7 @@ module Ruote
 
       @sleep_time = @context['restless_worker'] ? nil : 0.000
 
-      @info = Info.new(self)
+      @info = @context['worker_info_disabled'] == true ? nil : Info.new(self)
     end
 
     # Runs the worker in the current thread. See #run_in_thread for running
@@ -316,7 +316,7 @@ module Ruote
 
       @context.storage.done(self, msg) if @context.storage.respond_to?(:done)
 
-      @info << msg
+      @info << msg if @info
         # for the stats
 
       true
