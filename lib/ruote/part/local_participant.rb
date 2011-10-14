@@ -175,7 +175,7 @@ module Ruote
 
     # Cancels the scheduled re_dispatch, if any.
     #
-    # An example or 'retrying participant' :
+    # An example of 'retrying participant' :
     #
     #   class RetryParticipant
     #     include Ruote::LocalParticipant
