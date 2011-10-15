@@ -48,7 +48,7 @@ class FtWorkerInfoTest < Test::Unit::TestCase
 
     worker = Ruote::Worker.new(
       Ruote::HashStorage.new(
-        'worker_info_disabled' => true))
+        'worker_info_enabled' => false))
 
     assert_nil worker.instance_variable_get(:@info)
   end
