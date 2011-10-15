@@ -8,16 +8,18 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 module Ruote; end
+require 'ruote/exp/flow_expression'
 require 'ruote/exp/merge'
 
 
 class MergeTest < Test::Unit::TestCase
 
-  class Merger
+  class Merger < Ruote::Exp::FlowExpression
     include Ruote::Exp::MergeMixin
-
-    def expand_atts
-      nil
+    def initialize
+    end
+    def tree
+      [ 'nada', {}, [] ]
     end
   end
 
@@ -75,13 +77,13 @@ class MergeTest < Test::Unit::TestCase
     assert_equal(
       { 'fields' => {
           'stack' => [ { 'a' => 0, 'b' => -1 }, { 'a' => 1 } ],
-          'stack_attributes' => nil
+          'stack_attributes' => {}
       } },
       Merger.new.merge_workitems(new_workitems, 'stack'))
     assert_equal(
       { 'fields' => {
           'stack' => [ { 'a' => 1 }, { 'a' => 0, 'b' => -1 } ],
-          'stack_attributes' => nil
+          'stack_attributes' => {}
       } },
       Merger.new.merge_workitems(new_workitems.reverse, 'stack'))
   end
