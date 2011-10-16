@@ -30,7 +30,7 @@
 - Ruote::Dashboard (will slowly phase Ruote::Engine out)
 - :on_timeout => 'rewind', :on_timeout => 'jump to alpha'
 - :on_error => 'rewind', :on_error => 'jump to alpha'
-- dispatch_pool and context['do_not_thread_participants']
+- dispatch_pool and context['participant_threads_enabled']
 - participant params.__children__
 - on_error expression
 - concurrence :merge_type => 'concat' (vs 'union') (Thanks Julien France)
