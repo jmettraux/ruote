@@ -995,6 +995,15 @@ module Ruote::Exp
       retries = retries.split(/ *, */)
       after, action = retries.shift.split(/:/)
 
+      if m = action.match(/^ *([^ ]+) *\* *(\d+)$/)
+        count = m[2].to_i - 1
+        if count == 1
+          retries.unshift("#{after}: #{m[1]}")
+        elsif count > 1
+          retries.unshift("#{after}: #{m[1]} * #{count}")
+        end
+      end
+
       t = Ruote.fulldup(tree)
       t[1]['on_error'] = retries.join(', ')
       update_tree(t)
@@ -1014,6 +1023,7 @@ module Ruote::Exp
       persist_or_raise
 
     rescue Exception => e
+
       raise Ruote::MetaError.new(__method__.to_s, e)
     end
 

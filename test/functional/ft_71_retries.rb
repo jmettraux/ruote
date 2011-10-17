@@ -100,5 +100,45 @@ class FtRetriesTest < Test::Unit::TestCase
 
     assert_equal 'over.', @tracer.to_s
   end
+
+  #
+  # :on_error => '1s: retry * 3'
+
+  def test_star_three
+
+    @dashboard.register_participant :alpha, BadParticipant
+
+    pdef = Ruote.process_definition do
+      alpha :on_error => '1s: retry * 3'
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for('fail')
+
+    alpha = @dashboard.ps(wfid).expressions.last
+
+    assert_equal '1s: retry * 2', alpha.tree[1]['on_error']
+
+    @dashboard.wait_for('fail')
+
+    alpha = @dashboard.ps(wfid).expressions.last
+
+    assert_equal '1s: retry', alpha.tree[1]['on_error']
+
+    @dashboard.wait_for('fail')
+
+    alpha = @dashboard.ps(wfid).expressions.last
+
+    assert_equal '', alpha.tree[1]['on_error']
+
+    @dashboard.wait_for('error_intercepted')
+
+    assert_equal(
+      '#<RuntimeError: badly>',
+      @dashboard.ps(wfid).errors.first.message)
+  end
 end
 
