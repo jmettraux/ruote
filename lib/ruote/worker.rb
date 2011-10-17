@@ -157,7 +157,7 @@ module Ruote
     #
     def get_msgs
 
-      @msgs = if @storage.method(:get_msgs).arity == 0
+      if @storage.method(:get_msgs).arity == 0
         # fortunately method and arity are cheap
         @storage.get_msgs
       else
