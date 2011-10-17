@@ -342,6 +342,7 @@ module Ruote
         s << "       | #{e.name}"
         s << "       | * #{e.state} *" if e.state
         s << "       | #{e.attributes.inspect}"
+        s << "       | timers: #{e.h.timers.collect { |e| e[1] }}" if e.h.timers
         s << "       `-parent--> #{e.h.parent_id ? e.parent_id.to_storage_id : 'nil'}"
       end
       s << ''
@@ -351,7 +352,7 @@ module Ruote
           s << "    * #{sched['original']}"
           s << "      #{sched['flavour']} #{sched['at']}"
           s << "      #{sched['action']}"
-          s << "      #{Ruote.sid(sched['target'])}"
+          s << "      #{Ruote.sid(sched['target']) rescue '** no target **'}"
         end
         s << ''
       end

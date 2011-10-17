@@ -26,6 +26,20 @@
 module Ruote
 
   #
+  # For errors occuring when handling errors.
+  #
+  class MetaError < StandardError
+
+    attr_reader :error
+
+    def initialize(message, error)
+
+      super("#{message}: #{error.to_s}")
+      @error = error
+    end
+  end
+
+  #
   # A ruote service for turning exceptions into process errors (or letting
   # those error fire any potential :on_error attributes in the process
   # definition).
@@ -73,6 +87,8 @@ module Ruote
     #
     def handle(msg, fexp, exception)
 
+      meta = exception.is_a?(Ruote::MetaError)
+
       wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
       fei = msg['fei'] || (fexp.h.fei rescue nil)
 
@@ -101,7 +117,7 @@ module Ruote
 
       # on_error ?
 
-      return if fexp && fexp.handle_on_error(msg, exception)
+      return if ( ! meta) && fexp && fexp.handle_on_error(msg, exception)
 
       # emit 'msg'
       #

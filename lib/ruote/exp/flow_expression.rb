@@ -986,6 +986,37 @@ module Ruote::Exp
         }.merge!(opts))
     end
 
+    # Called by #trigger when it encounters something like
+    #
+    #   :on_error => '5m: retry, pass'
+    #
+    def schedule_retries(retries)
+
+      retries = retries.split(/ *, */)
+      after, action = retries.shift.split(/:/)
+
+      t = Ruote.fulldup(tree)
+      t[1]['on_error'] = retries.join(', ')
+      update_tree(t)
+
+      after = after.strip
+      action = action.strip
+
+      msg = {
+        'action' => 'cancel',
+        'fei' => h.fei,
+        'flavour' => 'retry',
+        're_apply' => true }
+
+      (h.timers ||= []) <<
+        [ @context.storage.put_schedule('at', h.fei, after, msg), 'retry' ]
+
+      persist_or_raise
+
+    rescue Exception => e
+      raise Ruote::MetaError.new(__method__.to_s, e)
+    end
+
     # 'on_{error|timeout|cancel|re_apply}' triggering
     #
     def trigger(on, workitem)
@@ -996,9 +1027,15 @@ module Ruote::Exp
         h[on]
       end
 
+      if on == 'on_error' && handler.is_a?(String) && handler.match(/:/)
+
+        schedule_retries(handler)
+        return
+      end
+
       new_tree = handler.is_a?(String) ? [ handler, {}, [] ] : handler
 
-      if on == 'on_error' or on == 'on_timeout'
+      if on == 'on_error' || on == 'on_timeout'
 
         case handler
 

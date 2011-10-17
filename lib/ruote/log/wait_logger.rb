@@ -169,6 +169,7 @@ module Ruote
     ]
     ACTIONS = FINAL_ACTIONS + %w[
       launch apply reply
+      fail
       dispatch dispatched receive
       cancel dispatch_cancel
       pause resume dispatch_pause dispatch_resume
