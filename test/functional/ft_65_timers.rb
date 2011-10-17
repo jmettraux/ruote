@@ -297,5 +297,24 @@ class FtTimersTest < Test::Unit::TestCase
 
     assert_equal 1, alpha.h.timers.size
   end
+
+  def test_bad_syntax
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '1x: timeout'
+    end
+
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for('error_intercepted')
+
+    err = @dashboard.ps(wfid).errors.first
+
+    assert_equal "#<ArgumentError: unknown time char 'x'>", err.message
+  end
 end
 
