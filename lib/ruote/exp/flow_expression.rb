@@ -657,6 +657,17 @@ module Ruote::Exp
       parent.ancestor?(fei)
     end
 
+    # TODO
+    #
+    def err_match?(pattern, err)
+
+      return true if pattern == nil
+
+      pat = Ruote.regex_or_s(pattern)
+
+      pat.match(err['message']) || pat.match(err['class'])
+    end
+
     # Given an error, returns the on_error registered for it, or nil if none.
     #
     def local_on_error(err)
@@ -673,11 +684,7 @@ module Ruote::Exp
 
         h.on_error.each do |oe|
 
-          return oe.last if oe.first.nil?
-
-          crit = Ruote.regex_or_s(oe.first)
-          return oe.last if crit.match(err['message'])
-          return oe.last if crit.match(err['class'])
+          return oe.last if err_match?(oe.first, err)
         end
       end
 
@@ -990,13 +997,17 @@ module Ruote::Exp
     #
     #   :on_error => '5m: retry, pass'
     #
-    def schedule_retries(retries)
+    def schedule_retries(handler, err)
 
-      retries = retries.split(/ *, */)
+      retries = handler.split(/ *, */)
       after, action = retries.shift.split(/:/)
 
+      # deal with "* 3"
+
       if m = action.match(/^ *([^ ]+) *\* *(\d+)$/)
+
         count = m[2].to_i - 1
+
         if count == 1
           retries.unshift("#{after}: #{m[1]}")
         elsif count > 1
@@ -1004,9 +1015,27 @@ module Ruote::Exp
         end
       end
 
+      # rewrite tree to remove current retry
+
       t = Ruote.fulldup(tree)
-      t[1]['on_error'] = retries.join(', ')
+
+      if h.on_error.is_a?(Array)
+
+        t[2].delete_if { |c|
+          Ruote::Exp::OnErrorExpression.expression_names.include?(c[0])
+        }
+        oe = h.on_error.find { |pat, han| err_match?(pat, err) }
+        oe[1] = retries.join(', ')
+        t[1]['on_error'] = h.on_error
+
+      else
+
+        t[1]['on_error'] = retries.join(', ')
+      end
+
       update_tree(t)
+
+      # schedule current retry
 
       after = after.strip
       action = action.strip
@@ -1020,6 +1049,8 @@ module Ruote::Exp
       (h.timers ||= []) <<
         [ @context.storage.put_schedule('at', h.fei, after, msg), 'retry' ]
 
+      # over
+
       persist_or_raise
 
     rescue Exception => e
@@ -1031,15 +1062,17 @@ module Ruote::Exp
     #
     def trigger(on, workitem)
 
+      err = h.applied_workitem['fields']['__error__']
+
       handler = if on == 'on_error'
-        local_on_error(h.applied_workitem['fields']['__error__'])
+        local_on_error(err)
       else
         h[on]
       end
 
       if on == 'on_error' && handler.is_a?(String) && handler.match(/:/)
 
-        schedule_retries(handler)
+        schedule_retries(handler, err)
         return
       end
 
