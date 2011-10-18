@@ -78,6 +78,9 @@ module Ruote::Exp
         handler = [ 'sequence', {}, Ruote.fulldup(tree.last) ]
       end
 
+      return reply_to_parent(h.applied_workitem) if regex.nil? && handler.nil?
+        # nothing to register, let's move on
+
       par = parent
       oe = par.h.on_error
 
@@ -86,7 +89,7 @@ module Ruote::Exp
       end
 
       oe = Array(par.h.on_error).compact
-      oe << [ regex, handler ]
+      oe << [ regex, handler, fei.child_id ]
 
       par.h.on_error = oe
 

@@ -40,7 +40,7 @@ class FtRetriesTest < Test::Unit::TestCase
     alpha = @dashboard.ps(wfid).expressions.last
 
     assert_not_nil alpha.h.timers
-    assert_equal '', alpha.tree[1]['on_error']
+    assert_nil alpha.tree[1]['on_error']
 
     @dashboard.wait_for('error_intercepted')
 
@@ -132,7 +132,7 @@ class FtRetriesTest < Test::Unit::TestCase
 
     alpha = @dashboard.ps(wfid).expressions.last
 
-    assert_equal '', alpha.tree[1]['on_error']
+    assert_equal nil, alpha.tree[1]['on_error']
 
     @dashboard.wait_for('error_intercepted')
 

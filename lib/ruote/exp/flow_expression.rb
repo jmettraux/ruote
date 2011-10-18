@@ -657,15 +657,56 @@ module Ruote::Exp
       parent.ancestor?(fei)
     end
 
+    #
     # TODO
     #
-    def err_match?(pattern, err)
+    class HandlerEntry
 
-      return true if pattern == nil
+      attr_reader :pattern, :action, :child_id
 
-      pat = Ruote.regex_or_s(pattern)
+      def initialize(on_error_entry)
 
-      pat.match(err['message']) || pat.match(err['class'])
+        @pattern, @action, @child_id = on_error_entry
+        @pat = Ruote.regex_or_s(@pattern)
+      end
+
+      def split(pat)
+
+        @action.split(pat)
+      end
+
+      def match(regex_or_err)
+
+        if regex_or_err.is_a?(Regexp)
+          @action.match(regex_or_err)
+        else
+          @pat.nil? ||
+          @pat.match(regex_or_err['message']) ||
+          @pat.match(regex_or_err['class'])
+        end
+      end
+
+      def narrow
+
+        @action.is_a?(Array) ? @action : self
+      end
+
+      def update_tree(tree, retries)
+
+        child = tree[2][@child_id]
+
+        if @pattern
+          if retries.empty?
+            child[1].delete(@pattern)
+          else
+            child[1][@pattern] = retries.join(', ')
+          end
+        else
+          key, _ = child[1].find { |k, v| v.nil? }
+          child[1].delete(key)
+          child[1][retries.join(', ')] = nil if retries.any?
+        end
+      end
     end
 
     # Given an error, returns the on_error registered for it, or nil if none.
@@ -684,7 +725,9 @@ module Ruote::Exp
 
         h.on_error.each do |oe|
 
-          return oe.last if err_match?(oe.first, err)
+          if (he = HandlerEntry.new(oe)).match(err)
+            return he.narrow
+          end
         end
       end
 
@@ -1020,17 +1063,13 @@ module Ruote::Exp
       t = Ruote.fulldup(tree)
 
       if h.on_error.is_a?(Array)
-
-        t[2].delete_if { |c|
-          Ruote::Exp::OnErrorExpression.expression_names.include?(c[0])
-        }
-        oe = h.on_error.find { |pat, han| err_match?(pat, err) }
-        oe[1] = retries.join(', ')
-        t[1]['on_error'] = h.on_error
-
+        handler.update_tree(t, retries)
       else
-
-        t[1]['on_error'] = retries.join(', ')
+        if retries.empty?
+          t[1].delete('on_error')
+        else
+          t[1]['on_error'] = retries.join(', ')
+        end
       end
 
       update_tree(t)
@@ -1070,13 +1109,17 @@ module Ruote::Exp
         h[on]
       end
 
-      if on == 'on_error' && handler.is_a?(String) && handler.match(/:/)
+      if on == 'on_error' && handler.respond_to?(:match) && handler.match(/:/)
 
         schedule_retries(handler, err)
         return
       end
 
-      new_tree = handler.is_a?(String) ? [ handler, {}, [] ] : handler
+      new_tree = case handler
+        when Array then handler
+        when HandlerEntry then [ handler.action, {}, [] ]
+        else [ handler.to_s, {}, [] ]
+      end
 
       if on == 'on_error' || on == 'on_timeout'
 
