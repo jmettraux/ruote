@@ -280,6 +280,8 @@ module Ruote::Exp
 
       if on == 'on_error' || on == 'on_timeout'
 
+        handler = handler.action if handler.is_a?(HandlerEntry)
+
         case handler
 
           when 'redo', 'retry'

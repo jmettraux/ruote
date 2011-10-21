@@ -431,6 +431,30 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal 'alpha', @tracer.to_s
   end
 
+  def test_on_error_multi_pass
+
+    @dashboard.register_participant /alpha|bravo/ do |workitem|
+      @tracer << workitem.participant_name
+    end
+
+    pdef = Ruote.define do
+      sequence :on_error => [
+        { /unknown participant/ => :pass },
+        { nil => 'bravo' }
+      ] do
+        nada
+      end
+      echo 'done.'
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
+
+    assert_equal 'done.', @tracer.to_s
+  end
+
   def test_on_error_rewind
 
     pdef = Ruote.define do
