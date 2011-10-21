@@ -385,10 +385,35 @@ class FtOnErrorTest < Test::Unit::TestCase
   #
   def test_on_error_multi
 
-    pdef = Ruote.process_definition do
+    pdef = Ruote.define do
       sequence :on_error => [
         [ /unknown participant/, 'alpha' ],
         [ nil, 'bravo' ]
+      ] do
+        nada
+      end
+    end
+
+    @dashboard.register_participant /alpha|bravo/ do |workitem|
+      @tracer << workitem.participant_name
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
+
+    assert_equal 'alpha', @tracer.to_s
+  end
+
+  # Let's be open
+  #
+  def test_on_error_multi_nice
+
+    pdef = Ruote.process_definition do
+      sequence :on_error => [
+        { /unknown participant/ => 'alpha' },
+        { nil => 'bravo' }
       ] do
         nada
       end

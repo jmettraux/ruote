@@ -360,6 +360,17 @@ process_definition name: "nada"
       tree)
   end
 
+  def test_regex
+
+    tree = Ruote::RadialReader.read(%{
+      on_error /a b/: error_handler
+    })
+
+    assert_equal(
+      [ 'on_error', { '/a b/' => 'error_handler' }, [] ],
+      tree)
+  end
+
   def test_regexes
 
     tree = Ruote::RadialReader.read(%{
@@ -388,6 +399,24 @@ process_definition name: "nada"
         { 'in' => [ { 'empty' => false, 'type' => 'bool', 'field' => 'f' } ] },
         []
       ],
+      Ruote::RadialReader.read(pdef))
+  end
+
+  def test_regex_att_keys
+
+    pdef = %{
+      sequence on_error: [
+        { /unknown participant/: alpha }, { null: bravo }
+      ]
+        nada
+    }
+
+    assert_equal(
+      [ 'sequence', { 'on_error' => [
+        { '/unknown participant/' => 'alpha' }, { nil => 'bravo' }
+        ] }, [
+        [ 'nada', {}, [] ]
+      ] ],
       Ruote::RadialReader.read(pdef))
   end
 end

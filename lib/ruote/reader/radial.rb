@@ -70,6 +70,12 @@ module Ruote
         ).repeat.as(:string) >> str("'")
       }
 
+      rule(:regex) {
+        str('/') >> (
+          str('\\') >> any | str('/').absent? >> any
+        ).repeat.as(:regex) >> str('/')
+      }
+
       rule(:array) {
         str('[') >> spaces? >>
         (value >> (comma >> value).repeat).maybe.as(:array) >>
@@ -82,16 +88,19 @@ module Ruote
         spaces? >> str('}')
       }
 
+      rule(:null) {
+        (str('null') | str('nil')).as(:null)
+      }
+
       rule(:value) {
         array | object |
         string | number |
         str('true').as(:true) | str('false').as(:false) |
-        str('null').as(:nil) | str('nil').as(:nil) |
-        text
+        null | regex | text
       }
 
       rule(:entry) {
-        ((string | text).as(:key) >> spaces? >>
+        ((string | null | regex | text).as(:key) >> spaces? >>
          (str(':') | str('=>')) >> spaces? >>
          value.as(:val)).as(:ent)
       }
@@ -197,11 +206,12 @@ module Ruote
       }
 
       rule(:text => simple(:te)) { te.to_s }
+      rule(:regex => simple(:re)) { "/#{re}/" }
       rule(:string => simple(:st)) { st.to_s }
       rule(:number => simple(:n)) { n.match(/[eE\.]/) ? Float(n) : Integer(n) }
       rule(:false => simple(:b)) { false }
       rule(:true => simple(:b)) { true }
-      rule(:nil => simple(:n)) { nil }
+      rule(:null => simple(:n)) { nil }
 
       rule(:array => subtree(:ar)) {
         ar.is_a?(Array) ? ar : [ ar ]

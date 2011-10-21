@@ -221,5 +221,27 @@ end
     assert_equal Ruote::Reader::Error, err.class
     assert_equal Parslet::UnconsumedInput, err.cause.class
   end
+
+  def test_ruby_attributes
+
+    pdef = Ruote.define do
+      sequence :on_error => [
+        { /unknown participant/ => 'alpha' },
+        { nil => 'bravo' }
+      ] do
+        nada
+      end
+    end
+
+    assert_equal(
+      [ 'define', {}, [
+        [ 'sequence', { 'on_error' => [
+          { '/unknown participant/' => 'alpha' }, { nil => 'bravo' }
+          ] }, [
+          [ 'nada', {}, [] ]
+        ] ]
+      ] ],
+      pdef)
+  end
 end
 

@@ -78,6 +78,10 @@ module Ruote::Exp
 
       def initialize(on_error_entry)
 
+        if on_error_entry.is_a?(Hash)
+          on_error_entry = on_error_entry.to_a.flatten
+        end
+
         @pattern, @action, @child_id = on_error_entry
         @pat = Ruote.regex_or_s(@pattern)
       end
