@@ -261,11 +261,7 @@ module Ruote::Exp
 
       err = h.applied_workitem['fields']['__error__']
 
-      handler = if on == 'on_error'
-        local_on_error(err)
-      else
-        h[on]
-      end
+      handler = on == 'on_error' ? local_on_error(err) : h[on]
 
       if on == 'on_error' && handler.respond_to?(:match) && handler.match(/:/)
 

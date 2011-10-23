@@ -173,6 +173,7 @@ module Ruote
       dispatch dispatched receive
       cancel dispatch_cancel
       pause resume dispatch_pause dispatch_resume
+      regenerate
     ]
 
     # Checks whether message msg matches any of interests being waited for.

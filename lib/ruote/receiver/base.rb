@@ -71,8 +71,6 @@ module Ruote
     #
     # fields are workflow parameters that will be placed in workitem.fields.
     #
-    # variables contain engine variables.
-    #
     def launch(process_definition, fields={}, variables={}, root_stash=nil)
 
       wfid = @context.wfidgen.generate

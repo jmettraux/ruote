@@ -277,33 +277,31 @@ module Ruote
 
       begin
 
-        action = msg['action']
+        case msg['action']
 
-        if msg['tree']
-          #
-          # warning here, it could be a reply, with a 'tree' key...
+          when 'launch', 'apply', 'regenerate'
 
-          launch(msg)
+            launch(msg)
 
-        elsif EXP_ACTIONS.include?(action)
+          when *EXP_ACTIONS
 
-          Ruote::Exp::FlowExpression.do_action(@context, msg)
+            Ruote::Exp::FlowExpression.do_action(@context, msg)
 
-        elsif DISP_ACTIONS.include?(action)
+          when *DISP_ACTIONS
 
-          @context.dispatch_pool.handle(msg)
+            @context.dispatch_pool.handle(msg)
 
-        elsif PROC_ACTIONS.include?(action)
+          when *PROC_ACTIONS
 
-          self.send(action, msg)
+            self.send(msg['action'], msg)
 
-        elsif action == 'put_doc'
+          when 'put_doc'
 
-          put_doc(msg)
+            put_doc(msg)
 
-        #else
-          # no special processing required for message, let it pass
-          # to the subscribers (the notify two lines after)
+          #else
+            # no special processing required for message, let it pass
+            # to the subscribers (the notify two lines after)
         end
 
         @context.notify(msg)
@@ -389,7 +387,7 @@ module Ruote
 
       if exp_class != Ruote::Exp::DefineExpression
         false
-      elsif msg['action'] == 'launch'
+      elsif %w[ launch regenerate ].include?(msg['action'])
         true
       else
         (msg['trigger'] == 'on_re_apply')

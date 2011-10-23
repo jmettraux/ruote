@@ -85,6 +85,7 @@ module Ruote::Exp
     h_reader :on_error
     h_reader :on_cancel
     h_reader :on_timeout
+    h_reader :on_terminate
 
     attr_reader :context
 
@@ -115,6 +116,7 @@ module Ruote::Exp
       h.on_cancel ||= attribute(:on_cancel)
       h.on_error ||= attribute(:on_error)
       h.on_timeout ||= attribute(:on_timeout)
+      h.on_terminate ||= attribute(:on_terminate)
     end
 
     def h=(hash)
@@ -388,6 +390,15 @@ module Ruote::Exp
             'wfid' => h.fei['wfid'],
             'fei' => h.fei,
             'workitem' => workitem)
+
+          @context.storage.put_msg(
+            'regenerate',
+            'wfid' => h.fei['wfid'],
+            'tree' => h.original_tree,
+            'workitem' => workitem,
+            'variables' => compile_variables,
+            #'stash' =>
+          ) if h.on_terminate == 'regenerate' && ( ! h.forgotten)
         end
       end
     end

@@ -146,10 +146,11 @@ class Ruote::WaitLogger
       when 'dispatch_resume' then 'dr'
       when 'pause', 'pause_process' then 'pz'
       when 'resume', 'resume_process' then 'rz'
+      when 'regenerate' then 'rg'
       else act
     end
     act = case act
-      when 'la' then color('4;32', act)
+      when 'la', 'rg' then color('4;32', act)
       when 'te' then color('4;31', act)
       when 'ce' then color('31', act)
       when 'ca' then color('31', act)
