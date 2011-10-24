@@ -391,14 +391,17 @@ module Ruote::Exp
             'fei' => h.fei,
             'workitem' => workitem)
 
-          @context.storage.put_msg(
-            'regenerate',
-            'wfid' => h.fei['wfid'],
-            'tree' => h.original_tree,
-            'workitem' => workitem,
-            'variables' => compile_variables,
-            #'stash' =>
-          ) if h.on_terminate == 'regenerate' && ( ! h.forgotten)
+          if h.state.nil? && h.on_terminate == 'regenerate' && ( ! h.forgotten)
+
+            @context.storage.put_msg(
+              'regenerate',
+              'wfid' => h.fei['wfid'],
+              'tree' => h.original_tree,
+              'workitem' => workitem,
+              'variables' => compile_variables,
+              #'stash' =>
+            )
+          end
         end
       end
     end

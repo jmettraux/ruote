@@ -27,5 +27,30 @@ class FtOnTerminateTest < Test::Unit::TestCase
     assert_equal [ wfid ], @tracer.to_a.uniq
     #assert_not_nil @dashboard.ps(wfid)
   end
+
+  def test_cancel_regenerating_flow
+
+    pdef = Ruote.define :on_terminate => :regenerate do
+      echo 'a'
+      wait 0.100
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    2.times { @dashboard.wait_for('regenerate') }
+
+    @dashboard.cancel(wfid)
+    @dashboard.cancel(wfid)
+
+    sleep 3.0
+
+    assert_equal(
+      2,
+      @dashboard.context.logger.log.select { |m|
+        m['action'] == 'regenerate'
+      }.size)
+  end
 end
 
