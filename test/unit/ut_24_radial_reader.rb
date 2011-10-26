@@ -151,6 +151,9 @@ class RadialReaderTest < Test::Unit::TestCase
   assert_read(
     [ 'server_array.${v:/sa_name}.first', { 'nada' => nil, 'ok' => true }, [] ],
     'server_array.${v:/sa_name}.first nada, ok:true')
+  assert_read(
+    [ 'server_array.take[-2]', {}, [] ],
+    'server_array.take[-2]')
 
   #
   # more complete tests

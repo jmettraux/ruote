@@ -146,7 +146,8 @@ module Ruote
         @indentation = indentation
         @children = []
 
-        @expname = expname.gsub(/-/, '_')
+        @expname = expname#.gsub(/-/, '_')
+        @expname.gsub!(/-/, '_') if @expname.match(/^[a-z\-]+$/)
         @attributes = attributes
       end
 
