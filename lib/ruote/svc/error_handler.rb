@@ -128,6 +128,21 @@ module Ruote
       dev = exception.respond_to?(:deviations) ?
         exception.deviations : nil
 
+      # fill error in the error journal
+
+      @context.storage.put(
+        'type' => 'errors',
+        '_id' => "err_#{Ruote.to_storage_id(fei)}",
+        'message' => exception.inspect,
+        'trace' => backtrace.join("\n"),
+        'details' => det,
+        'deviations' => dev,
+        'fei' => fei,
+        'msg' => msg
+      ) if fei
+
+      # advertise 'error_intercepted'
+
       @context.storage.put_msg(
         'error_intercepted',
         'error' => {
@@ -141,19 +156,6 @@ module Ruote
         'wfid' => wfid,
         'fei' => fei,
         'msg' => msg)
-
-      # fill error in the error journal
-
-      @context.storage.put(
-        'type' => 'errors',
-        '_id' => "err_#{Ruote.to_storage_id(fei)}",
-        'message' => exception.inspect,
-        'trace' => backtrace.join("\n"),
-        'details' => det,
-        'deviations' => dev,
-        'fei' => fei,
-        'msg' => msg
-      ) if fei
 
     rescue Exception => e
 
