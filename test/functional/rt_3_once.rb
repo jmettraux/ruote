@@ -37,11 +37,14 @@ class RtWhenTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
+    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
     wait_for(5)
+
+    sleep 0.300
+      # give it some time to register the schedule
 
     assert_equal 1, @dashboard.processes.size
     assert_equal 1, @dashboard.storage.get_many('schedules').size
