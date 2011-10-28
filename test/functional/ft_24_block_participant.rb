@@ -97,6 +97,7 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     wfid = @dashboard.launch(Ruote.define { alpha })
 
     @dashboard.wait_for(wfid)
+    sleep 0.300
 
     assert_equal false, File.exist?(fn), 'security check not enforced'
 
