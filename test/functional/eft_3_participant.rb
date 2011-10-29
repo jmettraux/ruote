@@ -28,7 +28,7 @@ class EftParticipantTest < Test::Unit::TestCase
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
-    3.times { Thread.pass }
+    sleep 0.300
       # give a chance to the 'dispatched' message for reaching us
 
     assert_equal 'alpha', @tracer.to_s
