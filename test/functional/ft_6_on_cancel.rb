@@ -204,7 +204,7 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
+    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -212,8 +212,7 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     @dashboard.cancel(@dashboard.process(wfid).expressions.last)
 
-    @dashboard.wait_for(wfid)
-    sleep 0.350
+    @dashboard.wait_for(11)
 
     assert_equal "bailed\ndone.", @tracer.to_s
   end
