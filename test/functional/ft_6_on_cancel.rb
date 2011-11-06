@@ -212,7 +212,7 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     @dashboard.cancel(@dashboard.process(wfid).expressions.last)
 
-    @dashboard.wait_for(11)
+    @dashboard.wait_for('terminated')
 
     assert_equal "bailed\ndone.", @tracer.to_s
   end
