@@ -810,6 +810,38 @@ module Ruote
       (@context.storage.get('variables', 'workers') || {})['workers']
     end
 
+    # TODO
+    #
+    def worker_state
+
+      doc =
+        @context.storage.get('variables', 'worker') ||
+        { 'type' => 'variables', '_id' => 'worker', 'state' => 'running' }
+
+      doc['state']
+    end
+
+    WORKER_STATES = %w[ running stopped paused ]
+
+    # TODO
+    #
+    def worker_state=(state)
+
+      state = state.to_s
+
+      raise ArgumentError.new(
+        "#{state.inspect} not in #{WORKER_STATES.inspect}"
+      ) unless WORKER_STATES.include?(state)
+
+      doc =
+        @context.storage.get('variables', 'worker') ||
+        { 'type' => 'variables', '_id' => 'worker', 'state' => 'running' }
+
+      doc['state'] = state
+
+      @context.storage.put(doc) && worker_state=(state)
+    end
+
     # Returns the process tree that is triggered in case of error.
     #
     # Note that this 'on_error' doesn't trigger if an on_error is defined

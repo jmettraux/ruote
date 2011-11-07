@@ -7,8 +7,6 @@
 
 require File.expand_path('../base', __FILE__)
 
-require 'ruote/part/null_participant'
-
 
 class FtWorkerTest < Test::Unit::TestCase
   include FunctionalBase
@@ -60,6 +58,62 @@ class FtWorkerTest < Test::Unit::TestCase
     sleep 0.300
 
     assert_equal [], @dashboard.storage.get_msgs
+  end
+
+  def test_pause_workers
+
+    pdef = Ruote.define do
+      10.times { echo 'a' }
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.worker_state = 'paused'
+
+    s = @tracer.to_a.size
+    assert s < 10
+
+    sleep 0.500
+
+    assert @tracer.to_a.size < 10
+    assert_equal s, @tracer.to_a.size
+
+    assert_equal 'paused', @dashboard.worker_state
+
+    @dashboard.worker_state = 'running'
+
+    @dashboard.wait_for('terminated')
+
+    assert_equal 10, @tracer.to_a.size
+    assert_equal 'running', @dashboard.worker_state
+  end
+
+  def test_stop_workers
+
+    pdef = Ruote.define do
+      10.times { echo 'a' }
+    end
+
+    #@dashboard.noisy = true
+
+    assert_equal true, @dashboard.context.worker.running
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.worker_state = 'stopped'
+
+    s = @tracer.to_a.size
+    assert s < 10
+
+    sleep 0.500
+
+    assert @tracer.to_a.size < 10
+    assert_equal s, @tracer.to_a.size
+
+    assert_equal 'stopped', @dashboard.worker_state
+    assert_equal false, @dashboard.context.worker.running
   end
 end
 

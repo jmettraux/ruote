@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- Dashboard#worker_state[=] (running/paused/stopped)
 - define :on_terminate => :regenerate
 - :on_error => '5m: retry * 3, 10m: retry'
 - :on_error => '5m: retry, 2m: retry, pass'
