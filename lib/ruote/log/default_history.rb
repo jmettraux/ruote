@@ -111,7 +111,7 @@ module Ruote
       @history.clear
     end
 
-    # This method is called by the worker via the context. Succesfully
+    # This method is called by the worker via the context. Successfully
     # processed msgs are passed here.
     #
     def on_msg(msg)
