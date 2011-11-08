@@ -164,6 +164,33 @@ class FtOnCancelTest < Test::Unit::TestCase
       @dashboard.process(wfid).current_tree)
   end
 
+  def test_on_cancel_tree
+
+    pdef = Ruote.process_definition :name => 'test' do
+      set 'bar' => 'baz'
+      sequence :on_cancel => [ 'sub0', { 'foo' => '${bar}' }, [] ] do
+        alpha
+      end
+      define 'sub0' do
+        echo 'foo:${v:foo}'
+      end
+    end
+
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    wait_for(:alpha)
+
+    @dashboard.cancel_process(wfid)
+
+    wait_for(wfid)
+
+    assert_equal 'foo:baz', @tracer.to_s
+  end
+
   def test_on_cancel_participant_resume
 
     pdef = Ruote.define do
