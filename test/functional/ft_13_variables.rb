@@ -147,5 +147,15 @@ class FtVariablesTest < Test::Unit::TestCase
 
     assert_trace(%w[ b abC aC ], pdef)
   end
+
+  def test_terminated_and_variables
+
+    pdef = Ruote.define {}
+
+    wfid = @engine.launch(pdef, {}, { 'a' => 'b' })
+    r = @engine.wait_for(wfid)
+
+    assert_equal({ 'a' => 'b' }, r['variables'])
+  end
 end
 

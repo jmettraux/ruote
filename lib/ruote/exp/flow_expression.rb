@@ -389,7 +389,8 @@ module Ruote::Exp
             h.forgotten ? 'ceased' : 'terminated',
             'wfid' => h.fei['wfid'],
             'fei' => h.fei,
-            'workitem' => workitem)
+            'workitem' => workitem,
+            'variables' => h.variables)
 
           if h.state.nil? && h.on_terminate == 'regenerate' && ( ! h.forgotten)
 
