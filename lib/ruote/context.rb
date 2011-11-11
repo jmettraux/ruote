@@ -150,9 +150,17 @@ module Ruote
     # a msg. This method calls in turn the #on_msg method for each of the
     # services (that respond to that method).
     #
+    # Makes sure that observers that respond to #wait_for are called last.
+    #
     def notify(msg)
 
-      @services.values.each { |s| s.on_msg(msg) if s.respond_to?(:on_msg) }
+      waiters, observers = @services.values.select { |s|
+        s.respond_to?(:on_msg)
+      }.partition { |s|
+        s.respond_to?(:wait_for)
+      }
+
+      (observers + waiters).each { |o| o.on_msg(msg) }
     end
 
     # Takes care of shutting down every service registered in this context.

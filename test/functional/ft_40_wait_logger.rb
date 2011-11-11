@@ -73,5 +73,44 @@ class FtWaitLoggerTest < Test::Unit::TestCase
     assert_equal 'terminated', r['action']
     assert_equal 0, @dashboard.context.logger.instance_variable_get(:@seen).size
   end
+
+  def test_wait_for_goes_last
+
+    @dashboard = Ruote::Engine.new(Ruote::Worker.new(determine_storage({})))
+
+    log = []
+
+    a = Object.new
+    class << a
+      attr_accessor :log
+      def on_msg(msg)
+        log << 'a'
+      end
+      def wait_for
+        raise "never called anyway"
+      end
+    end
+    a.log = log
+
+    b = Object.new
+    class << b
+      attr_accessor :log
+      def on_msg(msg)
+        log << 'b'
+      end
+    end
+    b.log = log
+
+    @dashboard.add_service('a', a)
+    @dashboard.add_service('b', b)
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(Ruote.define do
+    end)
+    @dashboard.wait_for(wfid)
+
+    assert_equal %w[ b a b a b a ], log
+  end
 end
 
