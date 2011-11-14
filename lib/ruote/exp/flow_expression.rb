@@ -132,6 +132,14 @@ module Ruote::Exp
       Ruote::FlowExpressionId.new(h.fei)
     end
 
+    # Returns the workflow instance id of the workflow this expression
+    # belongs to.
+    #
+    def wfid
+
+      h.fei['wfid']
+    end
+
     # Returns the Ruote::FlowExpressionIf of the parent expression, or nil
     # if there is no parent expression.
     #
