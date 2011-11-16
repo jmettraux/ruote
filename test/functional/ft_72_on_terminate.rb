@@ -13,18 +13,22 @@ class FtOnTerminateTest < Test::Unit::TestCase
 
   def test_regenerate
 
+    # var0 is used to determine if root variables are passed correctly
+    # to the next generation of the workflow instance.
+
     pdef = Ruote.define :on_terminate => :regenerate do
       echo '${wfid}'
+      echo '${v:var0}'
     end
 
     #@dashboard.noisy = true
 
-    wfid = @dashboard.launch(pdef)
+    wfid = @dashboard.launch(pdef, {}, { 'var0' => 'x' })
 
     3.times { @dashboard.wait_for('regenerate') }
 
     assert @tracer.to_a.size >= 3
-    assert_equal [ wfid ], @tracer.to_a.uniq
+    assert_equal [ wfid, 'x' ], @tracer.to_a.uniq
     #assert_not_nil @dashboard.ps(wfid)
   end
 

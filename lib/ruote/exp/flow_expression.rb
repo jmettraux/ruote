@@ -407,7 +407,7 @@ module Ruote::Exp
               'wfid' => h.fei['wfid'],
               'tree' => h.original_tree,
               'workitem' => workitem,
-              'variables' => compile_variables
+              'variables' => h.variables
               #'stash' =>
             )
           end
