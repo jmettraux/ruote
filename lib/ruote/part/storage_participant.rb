@@ -98,15 +98,17 @@ module Ruote
     #
     alias update consume
 
-    # Removes the document/workitem from the storage
+    # Removes the document/workitem from the storage.
     #
-    def cancel(fei, flavour)
+    # Warning: this method is called by the engine (worker), i.e. not by you.
+    #
+    def on_cancel(fei, flavour)
 
       doc = fetch(fei)
 
       r = @context.storage.delete(doc)
 
-      cancel(fei, flavour) if r != nil
+      on_cancel(fei, flavour) if r != nil
     end
 
     # Given a fei (or its string version, a sid), returns the corresponding
@@ -123,16 +125,25 @@ module Ruote
 
     # Removes the workitem from the storage and replies to the engine.
     #
-    # TODO : should it raise if the workitem can't be found ?
-    # TODO : should it accept just the fei ?
-    #
     def proceed(workitem)
 
-      doc = fetch(Ruote::FlowExpressionId.extract_h(workitem))
+      hwi = fetch(workitem)
 
-      r = @context.storage.delete(doc)
+      fail ArgumentError.new(
+        "cannot proceed, workitem not found"
+      ) if hwi == nil
 
-      raise ArgumentError.new('cannot proceed, workitem is gone') if r == true
+      fail ArgumentError.new(
+        "cannot proceed, " +
+        "workitem is owned by '#{hwi['owner']}', not '#{workitem.owner}'"
+      ) if hwi['owner'] && hwi['owner'] != workitem.owner
+
+      r = @context.storage.delete(hwi)
+
+      fail ArgumentError.new(
+        "cannot proceed, workitem is gone"
+      ) if r == true
+
       return proceed(workitem) if r != nil
 
       workitem.h.delete('_rev')
@@ -321,13 +332,84 @@ module Ruote
       per_participant.inject({}) { |h, (k, v)| h[k] = v.size; h }
     end
 
+    # Claims a workitem. Returns the [updated] workitem if successful.
+    #
+    # Returns nil if the workitem is already reserved.
+    #
+    # Fails if the workitem can't be found, is gone, or got modified
+    # elsewhere.
+    #
+    # Here is a mini-diagram explaining the reserve/delegate/proceed flow:
+    #
+    #    in    delegate(nil)    delegate(other)
+    #    |    +---------------+ +------+
+    #    v    v               | |      v
+    #   +-------+  reserve   +----------+  proceed
+    #   | ready | ---------> | reserved | ---------> out
+    #   +-------+            +----------+
+    #
+    def reserve(workitem_or_fei, owner)
+
+      hwi = fetch(workitem_or_fei)
+
+      fail ArgumentError.new("workitem not found") if hwi.nil?
+
+      return nil if hwi['owner'] && hwi['owner'] != owner
+
+      hwi['owner'] = owner
+
+      r = @context.storage.put(hwi, :update_rev => true)
+
+      fail ArgumentError.new("workitem is gone") if r == true
+      fail ArgumentError.new("workitem got modified meanwhile") if r != nil
+
+      Workitem.new(hwi)
+    end
+
+    # Delegates a currently owned workitem to a new owner.
+    #
+    # Fails if the workitem can't be found, belongs to noone, or if the
+    # workitem passed as argument is out of date (got modified in the mean
+    # time).
+    #
+    # It's OK to delegate to nil, thus freeing the workitem.
+    #
+    # See #reserve for an an explanation of the reserve/delegate/proceed flow.
+    #
+    def delegate(workitem, new_owner)
+
+      hwi = fetch(workitem)
+
+      fail ArgumentError.new(
+        "workitem not found"
+      ) if hwi == nil
+
+      fail ArgumentError.new(
+        "cannot delegate, workitem doesn't belong to anyone"
+      ) if hwi['owner'] == nil
+
+      fail ArgumentError.new(
+        "cannot delegate, " +
+        "workitem owned by '#{hwi['owner']}', not '#{workitem.owner}'"
+      ) if hwi['owner'] != workitem.owner
+
+      hwi['owner'] = new_owner
+
+      r = @context.storage.put(hwi, :update_rev => true)
+
+      fail ArgumentError.new("workitem is gone") if r == true
+      fail ArgumentError.new("workitem got modified meanwhile") if r != nil
+
+      Workitem.new(hwi)
+    end
+
     protected
 
     # Fetches a workitem in its raw form (Hash).
     #
-    def fetch(fei)
+    def fetch(workitem_or_fei)
 
-      hfei = Ruote::FlowExpressionId.extract_h(fei)
+      hfei = Ruote::FlowExpressionId.extract_h(workitem_or_fei)
 
       @context.storage.get('workitems', to_id(hfei))
     end

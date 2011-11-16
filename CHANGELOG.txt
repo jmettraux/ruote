@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- StorageParticipant #reserve and #delegate
 - 'terminated/ceased' msg: include root exp variables
 - define :on_terminate => :regenerate
 - :on_error => '5m: retry * 3, 10m: retry'

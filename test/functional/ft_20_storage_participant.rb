@@ -539,5 +539,98 @@ class FtStorageParticipantTest < Test::Unit::TestCase
         wi.participant_name == 'bravo'
       }.size)
   end
+
+  def test_reserve
+
+    #@dashboard.noisy = true
+
+    @dashboard.register { catchall }
+
+    wfid = @dashboard.launch(Ruote.define do
+      alpha
+    end)
+
+    while @dashboard.storage_participant.size < 1; end
+
+    wi0 = @dashboard.storage_participant.first
+
+    # #reserve yields the [updated] workitem when successful
+
+    wi = @dashboard.storage_participant.first
+    wi = @dashboard.storage_participant.reserve(wi, 'user0')
+
+    assert_equal 'user0', wi.owner
+    assert_not_equal wi0.h._rev, wi.h._rev # it's not the same wi
+
+    # #reserve yields nil when failing
+
+    wi = @dashboard.storage_participant.first
+    wi = @dashboard.storage_participant.reserve(wi, 'user1')
+
+    assert_equal nil, wi
+
+    # #proceed raises when the owner is not the right one
+
+    assert_raise(ArgumentError) do
+      @dashboard.storage_participant.proceed(wi0)
+    end
+
+    wi = @dashboard.storage_participant.first
+    @dashboard.storage_participant.proceed(wi)
+
+    @dashboard.wait_for('terminated')
+
+    # #proceed raises when the workitem is gone
+
+    assert_raise(ArgumentError) do
+      @dashboard.storage_participant.proceed(wi)
+    end
+  end
+
+  def test_delegate
+
+    #@dashboard.noisy = true
+
+    @dashboard.register { catchall }
+
+    wfid = @dashboard.launch(Ruote.define do
+      alpha
+    end)
+
+    while @dashboard.storage_participant.size < 1; end
+
+    wi0 = @dashboard.storage_participant.first
+
+    # can't delegate when there is no owner
+
+    assert_raise(ArgumentError) do
+      @dashboard.storage_participant.delegate(wi0, 'user0')
+    end
+
+    # can't delegate if the owner is not the right one
+
+    wi1 = @dashboard.storage_participant.reserve(wi0, 'user0')
+    wi1.h.owner = 'user9'
+
+    assert_raise(ArgumentError) do
+      @dashboard.storage_participant.delegate(wi1, 'user0')
+    end
+
+    # it delegates alrighty
+
+    wi1.h.owner = 'user0'
+    wi2 = @dashboard.storage_participant.delegate(wi1, 'user1')
+
+    assert_equal 'user1', wi2.h.owner
+
+    # it's ok to delegate to nil (disowns workitem)
+
+    wi = @dashboard.storage_participant.first
+    x = @dashboard.storage_participant.delegate(wi, nil)
+
+    wi = @dashboard.storage_participant.first
+
+    assert_equal nil, wi.h.owner
+  end
 end
 

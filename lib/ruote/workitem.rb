@@ -126,6 +126,14 @@ module Ruote
 
     alias definition_revision wf_revision
 
+    # Used by some participants, returns the "owner" of the workitem. Mostly
+    # used when reserving workitems.
+    #
+    def owner
+
+      @h['owner']
+    end
+
     # Returns the payload, ie the fields hash.
     #
     def fields

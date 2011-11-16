@@ -32,14 +32,10 @@ module Ruote
       m = m.to_s
 
       if m[-1, 1] == '='
-
-        val = args.first
-        self[m[0..-2]] = val
-
-        return val
+        self[m[0..-2]] = args.first
+      else
+        self[m]
       end
-
-      self[m]
     end
 
     def dump
