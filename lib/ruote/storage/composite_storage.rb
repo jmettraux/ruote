@@ -62,16 +62,16 @@ module Ruote
 
       if type == nil
         define_method(method_name) do |*args|
-          storage(args.first['type']).send(method_name, *args)
+          storage_for(args.first['type']).send(method_name, *args)
         end
       elsif type.is_a?(Fixnum)
         define_method(method_name) do |*args|
-          storage(args[type]).send(method_name, *args)
+          storage_for(args[type]).send(method_name, *args)
         end
       else
         type = type.to_s
         define_method(method_name) do |*args|
-          storage(type).send(method_name, *args)
+          storage_for(type).send(method_name, *args)
         end
       end
     end
@@ -102,7 +102,7 @@ module Ruote
     #
     def get_msgs(worker_name='worker')
 
-      sto = storage('msgs')
+      sto = storage_for('msgs')
 
       if sto.method(:get_msgs).arity == 0
         sto.get_msgs
@@ -129,7 +129,7 @@ module Ruote
 
     protected
 
-    def storage(type)
+    def storage_for(type)
 
       @storages[type] || @default_storage
     end
