@@ -515,7 +515,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     wi = @dashboard.storage_participant.send(:fetch, fei)
 
-    assert_equal Hash, wi.class
+    assert wi.kind_of?(Hash)
   end
 
   # StorageParticipant includes Enumerable, therefore, it should respond
