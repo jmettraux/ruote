@@ -30,7 +30,7 @@ class EftSaveTest < Test::Unit::TestCase
 
     ps = @dashboard.process(wfid)
 
-    assert_equal Hash, ps.variables['v'].class
+    assert ps.variables['v'].kind_of?(Hash)
   end
 
   def test_save_to_field
