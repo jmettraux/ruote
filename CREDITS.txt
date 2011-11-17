@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Nathan Stults - https://github.com/PlasticLizard - lots of help
 Akeem Adeniji - https://github.com/akeem - add_type and composite storage
 Bjoern Boettcher - https://github.com/doITdistributed - example fixing
 Julien France - https://github.com/xaop - concat/union merge types enhancements
@@ -64,7 +65,6 @@ Claudio Petasecca Donati - many help
 Daniel Neighman "hassox" - :on_timeout => "error" and many issue reports
 Eric Platon - engine.launch_single idea
 Marc Lee - storage.clear consistency
-Nathan Stults - enhanced dollar substitution and service
 Don H. French - Engine#register_from_dir idea
 Kaspar Schiess - http://github.com/kschiess
 Oleg (foenixx) - many suggestions and bug reports
