@@ -409,7 +409,7 @@ module Ruote
         'cancel',
         'fei' => root['fei'],
         'wfid' => msg['wfid'], # indicates this was triggered by cancel_process
-        'flavour' => msg['action'] == 'kill_process' ? 'kill' : nil)
+        'flavour' => msg['flavour'])
     end
 
     alias kill_process cancel_process

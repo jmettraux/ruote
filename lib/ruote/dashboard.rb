@@ -174,9 +174,16 @@ module Ruote
     # Given a workitem or a fei, will do a cancel_expression,
     # else it's a wfid and it does a cancel_process.
     #
-    def cancel(wi_or_fei_or_wfid)
+    # == A note about opts
+    #
+    # They will get passed as is in the underlying 'msg',
+    # it can be useful to flag the message for historical purposes as in
+    #
+    #   dashboard.cancel(wfid, 'reason' => 'cleanup', 'user' => current_user)
+    #
+    def cancel(wi_or_fei_or_wfid, opts={})
 
-      do_misc('cancel', wi_or_fei_or_wfid, {})
+      do_misc('cancel', wi_or_fei_or_wfid, opts)
     end
 
     alias cancel_process cancel
@@ -185,9 +192,11 @@ module Ruote
     # Given a workitem or a fei, will do a kill_expression,
     # else it's a wfid and it does a kill_process.
     #
-    def kill(wi_or_fei_or_wfid)
+    # (also see notes about opts for #cancel)
+    #
+    def kill(wi_or_fei_or_wfid, opts={})
 
-      do_misc('kill', wi_or_fei_or_wfid, {})
+      do_misc('cancel', wi_or_fei_or_wfid, opts.merge('flavour' => 'kill'))
     end
 
     alias kill_process kill
@@ -918,9 +927,11 @@ module Ruote
     #
     def do_misc(action, wi_or_fei_or_wfid, opts)
 
+      opts = Ruote.keys_to_s(opts)
+
       target = Ruote.extract_id(wi_or_fei_or_wfid)
 
-      if action == 'resume' && opts[:anyway]
+      if action == 'resume' && opts['anyway']
         #
         # determines the roots of the branches that are paused
         # sends the resume message to them.
@@ -941,11 +952,6 @@ module Ruote
 
         @context.storage.put_msg(
           "#{action}_process", opts.merge('wfid' => target))
-
-      elsif action == 'kill'
-
-        @context.storage.put_msg(
-          'cancel', opts.merge('fei' => target, 'flavour' => 'kill'))
 
       else
 

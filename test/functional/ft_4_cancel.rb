@@ -92,7 +92,18 @@ class FtCancelTest < Test::Unit::TestCase
 
     assert_nil @dashboard.process(wfid)
 
-    assert_equal 1, logger.log.select { |e| e['action'] == 'cancel_process' }.size
+    assert_equal(
+      1,
+      logger.log.select { |e| e['action'] == 'cancel_process' }.size)
+  end
+
+  def test_cancel_process_with_source
+
+    @dashboard.cancel('20111121-nada', :source => 'x')
+
+    @dashboard.wait_for(1)
+
+    assert_equal 'x', logger.log.first['source']
   end
 
   def test_cancel__expression

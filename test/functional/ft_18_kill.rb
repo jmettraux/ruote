@@ -33,7 +33,20 @@ class FtKillTest < Test::Unit::TestCase
     assert_equal 0, alpha.size
 
     assert_equal(
-      1, logger.log.select { |e| e['action'] == 'kill_process' }.size)
+      1,
+      logger.log.select { |e|
+        e['action'] == 'cancel_process' &&
+        e['flavour'] == 'kill'
+      }.size)
+  end
+
+  def test_kill_process_with_source
+
+    @dashboard.kill('20111121-nada', :source => 'y')
+
+    @dashboard.wait_for(1)
+
+    assert_equal 'y', @dashboard.context.logger.log.first['source']
   end
 
   def test_kill_does_not_trigger_on_cancel
@@ -98,7 +111,12 @@ class FtKillTest < Test::Unit::TestCase
 
     assert_nil @dashboard.process(wfid)
 
-    assert_equal 1, logger.log.select { |e| e['action'] == 'kill_process' }.size
+    assert_equal(
+      1,
+      logger.log.select { |e|
+        e['action'] == 'cancel_process' &&
+        e['flavour'] == 'kill'
+      }.size)
   end
 
   def test_kill__process
