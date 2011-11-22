@@ -164,6 +164,9 @@ class UtStorage < Test::Unit::TestCase
 
     doc = @s.get('errors', 'h0')
 
+    return if doc.class != Hash
+      # MongoDB uses BSON::OrderedHash which is happy with symbols...
+
     assert_equal 'z', doc['m0']
     assert_equal %w[ a b ], doc['m1']
   end
@@ -225,6 +228,21 @@ class UtStorage < Test::Unit::TestCase
     assert_equal 30, @s.get_many('errors', /^xx!/).size
     assert_equal 30, @s.get_many('errors', /x/).size
     assert_equal 10, @s.get_many('errors', nil, :limit => 10).size
+  end
+
+  def test_get_many_multi_keys
+
+    28.times do |i|
+      @s.put(
+        '_id' => "yy!#{i}",
+        'type' => 'errors',
+        'wfid' => i.to_s,
+        'msg' => "anyway #{i}")
+    end
+
+    assert_equal 29, @s.get_many('errors').size
+    assert_equal 2, @s.get_many('errors', [ '7', '8' ]).size
+    assert_equal 2, @s.get_many('errors', [ /!7$/, /!8$/ ]).size
   end
 
   def test_get_many_options
