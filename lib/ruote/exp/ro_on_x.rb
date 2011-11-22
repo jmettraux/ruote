@@ -83,7 +83,7 @@ module Ruote::Exp
         end
 
         @pattern, @action, @child_id = on_error_entry
-        @pat = Ruote.regex_or_s(@pattern)
+        @pat = Ruote.regex_or_s(@pattern) || //
       end
 
       def split(pat)
@@ -96,7 +96,6 @@ module Ruote::Exp
         if regex_or_err.is_a?(Regexp)
           @action.match(regex_or_err)
         else
-          @pat.nil? ||
           @pat.match(regex_or_err['message']) ||
           @pat.match(regex_or_err['class'])
         end

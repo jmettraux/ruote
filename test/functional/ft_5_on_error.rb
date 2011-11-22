@@ -413,7 +413,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       sequence :on_error => [
         { /unknown participant/ => 'alpha' },
-        { nil => 'bravo' }
+        { // => 'bravo' }
       ] do
         nada
       end
@@ -440,7 +440,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     pdef = Ruote.define do
       sequence :on_error => [
         { /unknown participant/ => :pass },
-        { nil => 'bravo' }
+        { // => 'bravo' }
       ] do
         nada
       end
