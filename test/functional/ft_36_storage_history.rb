@@ -57,7 +57,7 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
     6.times do |i|
       @dashboard.storage.put(
-        '_id' => "!2010-01-06!11414#{i}!0!!20100106-bichisosupo",
+        '_id' => "!2010-01-06!11414#{i}!0!!20100106-bichisosupa",
         'type' => 'history')
     end
     7.times do |i|
