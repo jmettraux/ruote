@@ -20,7 +20,7 @@ class FtErrorsTest < Test::Unit::TestCase
     end
 
     wfid = @dashboard.launch(pdef)
-    wait_for(wfid)
+    @dashboard.wait_for(wfid)
 
     ps = @dashboard.process(wfid)
 

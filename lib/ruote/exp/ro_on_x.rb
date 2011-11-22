@@ -38,7 +38,7 @@ module Ruote::Exp
       return false if h.state == 'failing'
 
       err = {
-        'fei' => fei,
+        'fei' => h.fei,
         'at' => Ruote.now_to_utc_s,
         'class' => error.class.to_s,
         'message' => error.message,
