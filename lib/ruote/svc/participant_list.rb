@@ -396,14 +396,16 @@ module Ruote
           regex = regex.is_a?(String) ? Regexp.new(regex) : regex
         end
 
-        klass = elt['classname'] || elt['class']
+        klass = (elt['classname'] || elt['class']).to_s
 
         return [ regex, [ klass, options ] ]
       end
 
       # else elt is a Array
 
-      return [ Ruote.regex_or_s(elt[0]), [ elt[1], elt[2] ] ] if elt.size == 3
+      if elt.size == 3
+        return [ Ruote.regex_or_s(elt[0]), [ elt[1].to_s, elt[2] ] ]
+      end
 
       [ Ruote.regex_or_s(elt[0]), elt[1] ]
     end
