@@ -30,10 +30,17 @@ class CtCancelTest < Test::Unit::TestCase
 
     wfid = @dashboard0.launch(pdef)
 
+    #
+    # test preparation...
+
     @dashboard0.step 6
 
     dispatched_seen = false
     reply_msg = nil
+
+    #
+    # reach the point where the reply is coming (and the dispatched msg has
+    # passed)
 
     loop do
       m = @dashboard0.next_msg
@@ -44,13 +51,14 @@ class CtCancelTest < Test::Unit::TestCase
         break if reply_msg
       elsif ma == 'reply'
         reply_msg = m
-        break
+        break if dispatched_seen
       else
         @dashboard0.do_process(m)
       end
     end
 
-    #p dispatched_seen
+    #
+    # inject the cancel message
 
     @dashboard0.cancel_expression(
       { 'engine_id' => 'engine', 'wfid' => wfid, 'expid' => '0_0' })
@@ -61,6 +69,11 @@ class CtCancelTest < Test::Unit::TestCase
 
     assert_equal 1, msgs.size
     assert_equal 'cancel', msgs.first['action']
+      #
+      # trusting is good, checking is better
+
+    #
+    # try to force a collision between the reply msg and the cancel msg
 
     t1 = Thread.new { @dashboard1.do_process(msgs.first) }
     t0 = Thread.new { @dashboard0.do_process(reply_msg) }
