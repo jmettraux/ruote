@@ -532,7 +532,7 @@ module Ruote
 
         @last_save = Time.now
 
-        save unless r.nil?
+        save if r != nil
       end
     end
   end

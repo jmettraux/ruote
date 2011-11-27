@@ -30,6 +30,7 @@ require 'monitor'
 
 module Ruote
 
+  #
   # An in-memory storage.
   #
   class HashStorage

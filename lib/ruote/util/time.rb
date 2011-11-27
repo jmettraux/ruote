@@ -50,7 +50,7 @@ module Ruote
     "#{t.utc.strftime('%Y-%m-%d %H:%M:%S')}.#{sprintf('%06d', t.usec)} UTC"
   end
 
-  # Returns a parsable representation of the UTC time now.
+  # Returns a parseable representation of the UTC time now.
   #
   # like "2009/11/23 11:11:50.947109 UTC"
   #
