@@ -321,7 +321,7 @@ module Ruote
         @blocks = {}
       end
       def method_missing(m, *args, &block)
-        @blocks[m.to_s] = block.to_source
+        @blocks[m.to_s] = block.to_raw_source
       end
     end
 
@@ -342,7 +342,7 @@ module Ruote
 
       return {} unless block
 
-      source = block.to_source
+      source = block.to_raw_source
       tree = Ruote.parse_ruby(source)
 
       multi =
