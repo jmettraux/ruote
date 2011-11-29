@@ -69,9 +69,9 @@ module Ruote
         h
       }
 
-      if block
-        options['on_workitem'] = block.to_raw_source
-        @context.treechecker.block_check(options['on_workitem'])
+      extract_blocks(block).each do |meth, code|
+        @context.treechecker.block_check(code)
+        options[meth] = code
       end
 
       [
@@ -312,6 +312,58 @@ module Ruote
     end
 
     protected
+
+    # Used by #extract_blocks when evaluating sub-blocks.
+    #
+    class BlockParticipantContext
+      attr_reader :blocks
+      def initialize
+        @blocks = {}
+      end
+      def method_missing(m, *args, &block)
+        @blocks[m.to_s] = block.to_source
+      end
+    end
+
+    # If the given block is nil, will return {}, else tries to determine
+    # if it's a single "on_workitem" block or a block that has sub-blocks,
+    # like in
+    #
+    #   dashboard.register 'toto' do
+    #     on_workitem do
+    #       puts "hey I'm toto"
+    #     end
+    #     accept? do
+    #       workitem.fields.length > 3
+    #     end
+    #   end
+    #
+    def extract_blocks(block)
+
+      return {} unless block
+
+      source = block.to_source
+      tree = Ruote.parse_ruby(source)
+
+      multi =
+        tree[0, 3] == [ :iter, [ :call, nil, :proc, [ :arglist ] ], nil ] &&
+        tree[3].is_a?(Array) &&
+        tree[3].first == :block &&
+        tree[3][1..-1].all? { |e|
+          e[0] == :iter &&
+          e[2] == nil &&
+          e[1][0, 2] == [ :call, nil ] &&
+          e[1][3] == [ :arglist ]
+        }
+
+      if multi
+        bpc = BlockParticipantContext.new
+        bpc.instance_eval(&block)
+        bpc.blocks
+      else
+        { 'on_workitem' => source }
+      end
+    end
 
     # Fetches and returns the participant list in the storage.
     #

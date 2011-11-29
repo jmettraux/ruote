@@ -95,13 +95,7 @@ module Ruote::Exp
 
     def self.parse(conditional)
 
-      Rufus::TreeChecker.parse(conditional)
-
-    rescue NoMethodError => nme
-
-      raise NoMethodError.new(
-        "/!\\ please upgrade your rufus-treechecker gem /!\\"
-      )
+      Ruote.parse_ruby(conditional)
 
     rescue SyntaxError => se
 

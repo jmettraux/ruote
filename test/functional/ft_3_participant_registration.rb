@@ -35,7 +35,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal(
       [ [ '^alpha$',
           [ 'Ruote::BlockParticipant',
-            { 'on_workitem' => "proc do |workitem|\n      @tracer << 'alpha'\n    end" } ] ],
+            { 'on_workitem' => "proc { |workitem| (@tracer << \"alpha\") }" } ] ],
         [ '^user_',
           [ 'Ruote::NullParticipant',
             {} ] ] ],

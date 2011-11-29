@@ -245,5 +245,50 @@ class FtBlockParticipantTest < Test::Unit::TestCase
 
     assert_equal "dnt\nin", @tracer.to_s
   end
+
+  def test_block_with_methods
+
+    @dashboard.register 'consumer' do
+      on_workitem do
+        context.tracer << "on_workitem\n"
+      end
+      on_cancel do
+        context.tracer << "on_cancel\n"
+      end
+    end
+
+    assert_equal(
+      %w[ on_cancel on_workitem ],
+      @dashboard.participant_list[0].options.keys.sort)
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(Ruote.define do
+      consumer
+    end)
+    @dashboard.wait_for(wfid)
+
+    assert_equal 'on_workitem', @tracer.to_s
+  end
+
+  def test_block_with_methods_2
+
+    @dashboard.register do
+
+      consumer do
+
+        on_workitem do
+          context.tracer << "on_workitem\n"
+        end
+        on_cancel do
+          context.tracer << "on_cancel\n"
+        end
+      end
+    end
+
+    assert_equal(
+      %w[ on_cancel on_workitem ],
+      @dashboard.participant_list[0].options.keys.sort)
+  end
 end
 

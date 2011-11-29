@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- BlockParticipant: nicer multi blocks
 - Dashboard #cancel and #kill now accept options
 - StorageParticipant #reserve and #delegate
 - 'terminated/ceased' msg: include root exp variables

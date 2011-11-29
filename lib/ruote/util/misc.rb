@@ -134,23 +134,6 @@ module Ruote
     h.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
   end
 
-#  # Upon receiving something like
-#  #
-#  #   "(?-mix:nada)"
-#  #
-#  # will return
-#  #
-#  #   /nada/
-#  #
-#  def self.regex_from_s(s)
-#
-#    if s.is_a?(String) && m = s.match(/^\(\?-mix:(.+)\)$/)
-#      Regexp.new(m[1])
-#    else
-#      nil
-#    end
-#  end
-
   REGEX_IN_STRING = /^\s*\/(.*)\/\s*$/
 
   #   regex_or_s("/nada/") #==> /nada/
@@ -182,6 +165,18 @@ module Ruote
 
   ensure
     Socket.do_not_reverse_lookup = orig
+  end
+
+  # Attempts to parse a string of Ruby code (and return the AST).
+  #
+  def self.parse_ruby(ruby_string)
+
+    Rufus::TreeChecker.parse(ruby_string)
+
+  rescue NoMethodError
+
+    raise NoMethodError.new(
+      "/!\\ please upgrade your rufus-treechecker gem /!\\")
   end
 end
 
