@@ -167,9 +167,9 @@ module Ruote
     #
     def shutdown
 
-      @storage.shutdown if @storage.respond_to?(:shutdown)
-
-      @services.values.each { |s| s.shutdown if s.respond_to?(:shutdown) }
+      ([ @storage ] + @services.values).each do |s|
+        s.shutdown if s.respond_to?(:shutdown)
+      end
     end
 
     alias engine dashboard
