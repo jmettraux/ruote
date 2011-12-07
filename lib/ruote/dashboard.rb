@@ -810,7 +810,8 @@ module Ruote
       (@context.storage.get('variables', 'workers') || {})['workers']
     end
 
-    # TODO
+    # Returns the state the workers are supposed to be in right now.
+    # It's usually 'running', but it could be 'stopped' or 'paused'.
     #
     def worker_state
 
@@ -823,7 +824,14 @@ module Ruote
 
     WORKER_STATES = %w[ running stopped paused ]
 
-    # TODO
+    # Sets the [desired] worker state. The workers will check that target
+    # state at their next beat and switch to it.
+    #
+    # Setting the state to 'stopped' will force the workers to stop as soon
+    # as they notice the new state.
+    #
+    # Setting the state to 'paused' will force the workers to pause. They
+    # will not process msgs until the state is set back to 'running'.
     #
     def worker_state=(state)
 
