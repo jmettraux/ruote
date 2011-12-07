@@ -160,7 +160,11 @@ module Ruote
       # since we have to access the storage, let's ask him if we should
       # stop or pause.
 
-      case (@storage.get('variables', 'worker') || {})['state']
+      state =
+        @context['worker_state_enabled'] &&
+        (@storage.get('variables', 'worker') || {})['state']
+
+      case state
         when 'stopped' then (@running = false; return [])
         when 'paused' then return []
       end

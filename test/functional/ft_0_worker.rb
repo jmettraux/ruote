@@ -60,7 +60,16 @@ class FtWorkerTest < Test::Unit::TestCase
     assert_equal [], @dashboard.storage.get_msgs
   end
 
+  def test_stop_workers_not_enabled
+
+    assert_raise(RuntimeError) do
+      @dashboard.worker_state = 'stopped'
+    end
+  end
+
   def test_pause_workers
+
+    @dashboard.context['worker_state_enabled'] = true
 
     pdef = Ruote.define do
       10.times { echo 'a' }
@@ -91,6 +100,8 @@ class FtWorkerTest < Test::Unit::TestCase
   end
 
   def test_stop_workers
+
+    @dashboard.context['worker_state_enabled'] = true
 
     pdef = Ruote.define do
       10.times { echo 'a' }

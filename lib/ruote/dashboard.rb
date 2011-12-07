@@ -833,7 +833,15 @@ module Ruote
     # Setting the state to 'paused' will force the workers to pause. They
     # will not process msgs until the state is set back to 'running'.
     #
+    # By default the [engine] option 'worker_state_enabled' is not set, so
+    # calling this method will result in a error, unless 'worker_state_enabled'
+    # was set to true when the storage was initialized.
+    #
     def worker_state=(state)
+
+      raise RuntimeError.new(
+        "'worker_state_enabled' is not set, cannot change state"
+      ) unless @context['worker_state_enabled']
 
       state = state.to_s
 
