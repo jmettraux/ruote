@@ -819,6 +819,54 @@ module Ruote
       (@context.storage.get('variables', 'workers') || {})['workers']
     end
 
+    # Returns the state the workers are supposed to be in right now.
+    # It's usually 'running', but it could be 'stopped' or 'paused'.
+    #
+    def worker_state
+
+      doc =
+        @context.storage.get('variables', 'worker') ||
+        { 'type' => 'variables', '_id' => 'worker', 'state' => 'running' }
+
+      doc['state']
+    end
+
+    WORKER_STATES = %w[ running stopped paused ]
+
+    # Sets the [desired] worker state. The workers will check that target
+    # state at their next beat and switch to it.
+    #
+    # Setting the state to 'stopped' will force the workers to stop as soon
+    # as they notice the new state.
+    #
+    # Setting the state to 'paused' will force the workers to pause. They
+    # will not process msgs until the state is set back to 'running'.
+    #
+    # By default the [engine] option 'worker_state_enabled' is not set, so
+    # calling this method will result in a error, unless 'worker_state_enabled'
+    # was set to true when the storage was initialized.
+    #
+    def worker_state=(state)
+
+      raise RuntimeError.new(
+        "'worker_state_enabled' is not set, cannot change state"
+      ) unless @context['worker_state_enabled']
+
+      state = state.to_s
+
+      raise ArgumentError.new(
+        "#{state.inspect} not in #{WORKER_STATES.inspect}"
+      ) unless WORKER_STATES.include?(state)
+
+      doc =
+        @context.storage.get('variables', 'worker') ||
+        { 'type' => 'variables', '_id' => 'worker', 'state' => 'running' }
+
+      doc['state'] = state
+
+      @context.storage.put(doc) && worker_state=(state)
+    end
+
     # Returns the process tree that is triggered in case of error.
     #
     # Note that this 'on_error' doesn't trigger if an on_error is defined

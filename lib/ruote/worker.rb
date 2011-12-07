@@ -157,6 +157,20 @@ module Ruote
     #
     def get_msgs
 
+      # since we have to access the storage, let's ask him if we should
+      # stop or pause.
+
+      state =
+        @context['worker_state_enabled'] &&
+        (@storage.get('variables', 'worker') || {})['state']
+
+      case state
+        when 'stopped' then (@running = false; return [])
+        when 'paused' then return []
+      end
+
+      # green, let's get the next batch of messages to process
+
       if @storage.method(:get_msgs).arity == 0
         # fortunately method and arity are cheap
         @storage.get_msgs
