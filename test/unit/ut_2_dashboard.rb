@@ -93,5 +93,22 @@ class UtDashboardTest < Test::Unit::TestCase
     assert_not_nil @dashboard.context.alpha_worker.run_thread
     assert_not_nil @dashboard.context.bravo_worker.run_thread
   end
+
+  def test_join_when_no_worker
+
+    @dashboard = Ruote::Dashboard.new(determine_storage({}))
+
+    @dashboard.join
+
+    assert true
+  end
+
+  def test_context__dashboard_engine
+
+    @dashboard = Ruote::Dashboard.new(determine_storage({}))
+
+    assert_equal @dashboard, @dashboard.context.engine
+    assert_equal @dashboard, @dashboard.context.dashboard
+  end
 end
 

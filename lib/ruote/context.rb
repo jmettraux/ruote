@@ -63,6 +63,19 @@ module Ruote
       self
     end
 
+    # Let's make sure Context always responds to #storage, #dashboard (#engine)
+    # and #worker.
+    #
+    alias engine dashboard
+
+    # Let's make sure Context always responds to #storage, #dashboard (#engine)
+    # and #worker.
+    #
+    def worker
+
+      @services['s_worker']
+    end
+
     # Returns the engine_id (as set in the configuration under the key
     # "engine_id"), or, by default, "engine".
     #
@@ -103,7 +116,6 @@ module Ruote
     #
     def keys
 
-      #get_conf.keys
       (@services.keys + get_conf.keys).uniq.sort
     end
 
@@ -133,15 +145,16 @@ module Ruote
         @services[key] = path
       end
 
-      self.class.class_eval %{ def #{key[2..-1]}; @services['#{key}']; end }
-        #
-        # This 'one-liner' will add an instance method to Context for this
-        # service.
-        #
-        # If the service key is 's_dishwasher', then the service will be
-        # available via Context#dishwasher.
-        #
-        # I.e. dishwasher = engine.context.dishwasher
+      (class << self; self; end).class_eval(
+        %{ def #{key[2..-1]}; @services['#{key}']; end })
+          #
+          # This 'two-liner' will add an instance method to Context for this
+          # service.
+          #
+          # If the service key is 's_dishwasher', then the service will be
+          # available via Context#dishwasher.
+          #
+          # I.e. dishwasher = engine.context.dishwasher
 
       service
     end
