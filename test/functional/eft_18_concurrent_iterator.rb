@@ -387,6 +387,26 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal %w[ x ], r['workitem']['fields']['a']
   end
 
+  def test_union_concat_type
+
+    pdef = Ruote.process_definition :name => 'test' do
+      concurrent_iterator :on_value => (1..3).to_a, :merge_type => 'concat' do
+        alpha
+      end
+    end
+
+    @dashboard.register_participant :alpha do |workitem|
+      workitem.fields['a'] = [ 'x' ]
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal %w[ x x x ], r['workitem']['fields']['a']
+  end
+
   def test_ignore_merge_type
 
     @dashboard.register_participant :alpha do |workitem|
