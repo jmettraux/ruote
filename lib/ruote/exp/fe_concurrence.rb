@@ -217,7 +217,7 @@ module Ruote::Exp
       h.cmerge = att(
         :merge, %w[ first last highest lowest ])
       h.cmerge_type = att(
-        :merge_type, %w[ override mix isolate stack union ignore ])
+        :merge_type, %w[ override mix isolate stack union ignore concat ])
       h.remaining = att(
         :remaining, %w[ cancel forget ])
 
