@@ -77,7 +77,7 @@ module Ruote
     # This is the method called by ruote when passing a workitem to
     # this participant.
     #
-    def consume(workitem)
+    def on_workitem
 
       doc = workitem.to_h
 
@@ -92,17 +92,25 @@ module Ruote
       @context.storage.put(doc)
     end
 
-    # Though #update is an alias to #consume, it is meant to be used by
-    # client code when "saving" a workitem (fields may have changed). Calling
-    # update won't proceed the workitem.
+    # Used by client code when "saving" a workitem (fields may have changed).
+    # Calling #update won't proceed the workitem.
     #
-    alias update consume
+    # Returns nil in case of success, true if the workitem is already gone and
+    # the newer version of the workitem if the workitem changed in the mean
+    # time.
+    #
+    def update(workitem)
+
+      r = @context.storage.put(workitem.h)
+
+      r.is_a?(Hash) ? Ruote::Workitem.new(r) : r
+    end
 
     # Removes the document/workitem from the storage.
     #
     # Warning: this method is called by the engine (worker), i.e. not by you.
     #
-    def on_cancel(fei, flavour)
+    def on_cancel
 
       doc = fetch(fei)
 

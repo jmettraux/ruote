@@ -466,8 +466,8 @@ class FtStorageParticipantTest < Test::Unit::TestCase
   end
 
   class MyParticipant < Ruote::StorageParticipant
-    def consume(wi)
-      @context.tracer << "consume\n"
+    def on_workitem
+      @context.tracer << "on_workitem\n"
       super
     end
     #def update(wi)
@@ -496,7 +496,7 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     part.update(part.first)
 
     assert_not_equal initial_rev, part.first.h['_rev']
-    assert_equal %w[ consume ], @tracer.to_a
+    assert_equal %w[ on_workitem ], @tracer.to_a
   end
 
   def test_fetch
