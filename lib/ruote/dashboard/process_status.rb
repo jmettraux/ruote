@@ -250,7 +250,11 @@ module Ruote
 
     # Returns the workitem as was applied at the root expression.
     #
+    # Returns nil if no root expression could be found.
+    #
     def root_workitem
+
+      return nil unless root_expression
 
       Ruote::Workitem.new(root_expression.h.applied_workitem)
     end
@@ -357,6 +361,15 @@ module Ruote
         s << ''
       end
       s << "  stored workitems: #{@stored_workitems.size}"
+
+      s << ''
+      s << "  initial workitem fields:"
+      if @root_expression
+        s << hinspect(4, @root_expression.h.applied_workitem['fields'])
+      else
+        s << "    (no root expression identified)"
+      end
+
       s << ''
       s << "  variables:"; s << hinspect(4, vars)
       s << ''
