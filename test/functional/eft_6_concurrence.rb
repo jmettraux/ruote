@@ -300,5 +300,32 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     assert_nil ps
   end
+
+  #
+  # 'wait_for' tests
+
+  # 'wait_for => 1' is equivalent to 'count => 1'
+  #
+  def test_wait_for_int
+
+    pdef = Ruote.define do
+      concurrence :wait_for => 1 do
+        sequence do
+          stall
+          echo 'alpha'
+        end
+        echo 'bravo'
+      end
+      echo 'over.'
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for(wfid)
+
+    assert_equal %w[ bravo over. ], @tracer.to_a
+  end
 end
 

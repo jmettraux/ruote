@@ -211,7 +211,18 @@ module Ruote::Exp
 
     def apply
 
+      #
+      # count and wait_for
+
       h.ccount = attribute(:count).to_i rescue 0
+
+      wf = attribute(:wait_for)
+
+      h.ccount = wf.to_i if wf.to_s.match(/^\d+$/)
+
+      #
+      # other attributes
+
       h.ccount = nil if h.ccount < 1
 
       h.cmerge = att(
