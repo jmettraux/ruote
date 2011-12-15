@@ -14,7 +14,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 == Contributors
 
 Sjors - https://github.com/xtr3me - missing "concat" tactic for concurrence
-Phaeron - https://github.com/iamer
+Islam Amer - https://github.com/iamer
 Nathan Stults - https://github.com/PlasticLizard - lots of help
 Akeem Adeniji - https://github.com/akeem - add_type and composite storage
 Bjoern Boettcher - https://github.com/doITdistributed - example fixing
