@@ -321,9 +321,13 @@ module Ruote
 
     def hinspect(indent, h)
 
-      h.collect { |k, v|
-        s << "#{' ' * indent}#{k.inspect}: #{v.inspect}"
-      }.join("\n")
+      if h
+        h.collect { |k, v|
+          s << "#{' ' * indent}#{k.inspect}: #{v.inspect}"
+        }.join("\n")
+      else
+        "#{' ' * indent}(nil)"
+      end
     end
 
     def inspect
