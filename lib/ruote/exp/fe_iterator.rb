@@ -81,13 +81,24 @@ module Ruote::Exp
   #
   # == the classical case
   #
-  # Iterating over a workitem field :
+  # Iterating over a workitem field:
   #
   #   pdef = Ruote.process_definition :name => 'test' do
   #     iterator :on_field => 'customers', :to_f => 'customer'
   #       participant '${f:customer}'
   #     end
   #   end
+  #
+  # It's equivalent to:
+  #
+  #   pdef = Ruote.process_definition :name => 'test' do
+  #     iterator :on => '$f:customers', :to_f => 'customer'
+  #       participant '${f:customer}'
+  #     end
+  #   end
+  #
+  # "$f:customers" yields the actual array, whereas "${f:customers}"
+  # yields the string representation of the array.
   #
   #
   # == break/rewind/continue/skip/jump

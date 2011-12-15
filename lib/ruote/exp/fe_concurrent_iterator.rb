@@ -64,6 +64,28 @@ module Ruote::Exp
   # rewind/break/jump/... like 'iterator' does, since it fires all its
   # branches when applied.
   #
+  # == :on and arrays
+  #
+  # Given a workitem field named 'x' containing the array value
+  # [ 'a', 'b', 'c' ] and a workitem field 'y' containing the string 'a, b, c',
+  # this:
+  #
+  #   concurrent_iterator :on_field => 'x', :to_f => 'xx' do
+  #     # ...
+  #   end
+  #
+  # is equivalent to
+  #
+  #   concurrent_iterator :on => '$f:x', :to_f => 'xx' do
+  #     # ...
+  #   end
+  #
+  # is equivalent to
+  #
+  #   concurrent_iterator :on => '${f:y}', :to_f => 'xx' do
+  #     # ...
+  #   end
+  #
   # == :to_field and :to_f, :to_var and :to_v, :to
   #
   # Those 4 lines are equivalent:
