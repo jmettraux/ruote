@@ -357,6 +357,10 @@ module Ruote::Exp
         @context.storage.delete_schedule(schedule_id)
       end if h.timers
 
+      # cancel flanking expressions if any
+
+      cancel_flanks(h.state == 'dying' ? 'kill' : nil)
+
       # trigger or vanilla reply
 
       if h.state == 'failing' # on_error is implicit (#do_fail got called)
@@ -547,8 +551,6 @@ module Ruote::Exp
     # of this expression.
     #
     def cancel(flavour)
-
-      cancel_flanks(flavour)
 
       return reply_to_parent(h.applied_workitem) if h.children.empty?
         #

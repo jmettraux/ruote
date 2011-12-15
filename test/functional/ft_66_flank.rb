@@ -64,5 +64,33 @@ class FtFlankTest < Test::Unit::TestCase
 
     assert_nil @dashboard.ps(wfid)
   end
+
+  # Expressions replying "naturally" to their parent weren't cancelling their
+  # flanks.
+  #
+  # https://github.com/kennethkalmer/ruote-kit/issues/13
+  #
+  # This test verifies the fix is in place.
+  #
+  def test_cancel_flank_when_done
+
+    pdef = Ruote.process_definition do
+      sequence do
+        sub0 :flank => true
+        echo 'over'
+      end
+      define 'sub0' do
+        stall
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for(19)
+
+    assert_nil @dashboard.ps(wfid)
+  end
 end
 
