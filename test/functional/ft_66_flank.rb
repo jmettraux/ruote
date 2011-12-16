@@ -61,6 +61,7 @@ class FtFlankTest < Test::Unit::TestCase
     @dashboard.cancel(fei)
 
     @dashboard.wait_for(wfid)
+    sleep 1.0
 
     assert_nil @dashboard.ps(wfid)
   end
