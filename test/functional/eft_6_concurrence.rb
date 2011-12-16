@@ -327,5 +327,56 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     assert_equal %w[ bravo over. ], @tracer.to_a
   end
+
+  def test_wait_for_tags
+
+    pdef = Ruote.define do
+      concurrence :wait_for => 'azuma, bashamichi', :merge_type => 'concat' do
+        sequence :tag => 'azuma' do
+          set 'seen' => [ 'azuma' ]
+        end
+        sequence :tag => 'bashamichi' do
+          set 'seen' => [ 'bashamichi' ]
+        end
+        sequence :tag => 'katou' do
+          set 'seen' => [ 'katou' ]
+        end
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal %w[ azuma bashamichi ], r['workitem']['fields']['seen'].sort
+  end
+
+  def test_wait_for_tags_array
+
+    pdef = Ruote.define do
+      concurrence :wait_for => %w[ azuma bashamichi ], :merge_type => 'concat' do
+        sequence :tag => 'azuma' do
+          set 'seen' => [ 'azuma' ]
+        end
+        sequence :tag => 'bashamichi' do
+          set 'seen' => [ 'bashamichi' ]
+        end
+        sequence :tag => 'katou' do
+          set 'seen' => [ 'katou' ]
+          wait '5s'
+        end
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal %w[ azuma bashamichi ], r['workitem']['fields']['seen'].sort
+  end
 end
 

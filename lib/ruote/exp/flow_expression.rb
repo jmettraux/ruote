@@ -394,7 +394,9 @@ module Ruote::Exp
             'reply',
             'fei' => h.parent_id,
             'workitem' => workitem.merge!('fei' => h.fei),
-            'updated_tree' => h.updated_tree) # nil most of the time
+            'updated_tree' => h.updated_tree, # nil most of the time
+            'left_tag' => h.tagname)
+
         else
 
           @context.storage.put_msg(

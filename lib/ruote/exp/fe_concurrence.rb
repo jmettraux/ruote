@@ -52,6 +52,37 @@ module Ruote::Exp
   # in that example, the concurrence will terminate as soon as 1 (count) of
   # the branches replies. The other branch will get cancelled.
   #
+  # === :wait_for
+  #
+  # This attribute accepts either an integer, either a list of tags.
+  #
+  # When used with the integer, it's equivalent to the :count attribute:
+  #
+  #   concurrence :wait_for => 1 do
+  #     # ...
+  #   end
+  #
+  # It waits for 1 branch to respond and then moves on (concurrence over).
+  #
+  # When used with a string (or an array), it extracts a list of tags and waits
+  # for the branches with those tags. Once all the tags have replied,
+  # the concurrence is over.
+  #
+  #   concurrence :wait_for => 'alpha, bravo' do
+  #     sequence :tag => 'alpha' do
+  #       # ...
+  #     end
+  #     sequence :tag => 'bravo' do
+  #       # ...
+  #     end
+  #     sequence :tag => 'charly' do
+  #       # ...
+  #     end
+  #   end
+  #
+  # This concurrence will be over when the branches alpha and bravo have
+  # replied. The charly branch may have replied or not, it doesn't matter.
+  #
   # === :remaining
   #
   # As said for :count, the remaining branches get cancelled. By setting
@@ -185,7 +216,7 @@ module Ruote::Exp
   # is used to reply to the parent expression (of the concurrence expression).
   #
   #
-  # === :over_if (and :over_unless)
+  # === :over_if (and :over_unless) attribute
   #
   # Like the :count attribute controls how many branches have to reply before
   # a concurrence ends, the :over attribute is used to specify a condition
@@ -215,15 +246,20 @@ module Ruote::Exp
       # count and wait_for
 
       h.ccount = attribute(:count).to_i rescue 0
-
       wf = attribute(:wait_for)
 
-      h.ccount = wf.to_i if wf.to_s.match(/^\d+$/)
+      if wf.to_s.match(/^\d+$/)
+        h.ccount = wf.to_i
+      elsif wf.is_a?(Array)
+        h.wait_for = wf
+      elsif wf
+        h.wait_for = wf.to_s.split(/,/).collect(&:strip)
+      end
+
+      h.ccount = nil if h.ccount < 1
 
       #
       # other attributes
-
-      h.ccount = nil if h.ccount < 1
 
       h.cmerge = att(
         :merge, %w[ first last highest lowest ])
@@ -251,6 +287,10 @@ module Ruote::Exp
         h.workitems << workitem
       else
         h.workitems[workitem['fei']['expid']] = workitem
+      end
+
+      if h.wait_for && tag = @msg['left_tag']
+        h.wait_for.delete(tag)
       end
 
       over = h.over
@@ -302,6 +342,8 @@ module Ruote::Exp
         true
       elsif over_unless && (not Condition.true?(over_unless))
         true
+      elsif h.wait_for
+        h.wait_for.empty?
       else
         (h.workitems.size >= expected_count)
       end
