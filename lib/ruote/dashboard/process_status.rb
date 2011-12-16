@@ -120,6 +120,8 @@ module Ruote
 
     # Returns the process variables set for this process instance.
     #
+    # Returns nil if there is no defined root expression.
+    #
     def variables
 
       @root_expression && @root_expression.variables
