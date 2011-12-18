@@ -87,7 +87,9 @@ class EftSaveTest < Test::Unit::TestCase
     #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
+
     fields = @dashboard.wait_for(wfid)['workitem']['fields']
+    Ruote.delete_all(fields, '__result__')
 
     assert_equal(
       { 'deep' => { 'x' => 'val0', 'h' => {} } },
@@ -110,7 +112,7 @@ class EftSaveTest < Test::Unit::TestCase
     wfid = @dashboard.launch(pdef)
     fields = @dashboard.wait_for(wfid)['workitem']['fields']
 
-    assert_equal({ 'x' => 'val0' }, fields['y'])
+    assert_equal({ 'x' => 'val0', '__result__' => 'val0' }, fields['y'])
   end
 end
 

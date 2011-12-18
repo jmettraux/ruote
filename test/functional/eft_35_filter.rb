@@ -17,7 +17,11 @@ class EftFilterTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal 'terminated', r['action']
-    assert_equal(result, r['workitem']['fields']) if result
+
+    fields = r['workitem']['fields']
+    fields.delete('__result__')
+
+    assert_equal(result, fields) if result
   end
 
   def assert_does_not_validate(pdef, fields={})

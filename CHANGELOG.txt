@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- [un]set: setting __result__
 - concurrence :wait_for => 'alpha, bravo' (idea Raphael Simon)
 - BlockParticipant: nicer multi blocks
 - Dashboard #cancel and #kill now accept options

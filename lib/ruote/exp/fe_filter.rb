@@ -527,6 +527,10 @@ module Ruote::Exp
 
     def apply
 
+      h.applied_workitem['fields'].delete('__result__')
+        #
+        # get rid of __result__
+
       filter =
         referenced_filter || complete_filter || one_line_filter || block_filter
 

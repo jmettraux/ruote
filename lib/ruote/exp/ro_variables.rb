@@ -131,7 +131,7 @@ module Ruote::Exp
     #
     def un_set_variable(op, var, val, should_persist)
 
-      if op == :set
+      result = if op == :set
         Ruote.set(h.variables, var, val)
       else # op == :unset
         Ruote.unset(h.variables, var)
@@ -146,6 +146,8 @@ module Ruote::Exp
 
         @context.storage.put_msg("variable_#{op}", 'var' => var, 'fei' => h.fei)
       end
+
+      result
     end
 
     VAR_PREFIX_REGEX = /^(\/*)/

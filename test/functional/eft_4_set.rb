@@ -261,7 +261,7 @@ class EftSetTest < Test::Unit::TestCase
 
     r = @dashboard.wait_for(wfid)
 
-    assert_equal({}, r['workitem']['fields'])
+    assert_equal({ '__result__' => %w[ seriously ]}, r['workitem']['fields'])
   end
 
   class VarPeek
@@ -291,6 +291,18 @@ class EftSetTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal '{}', @tracer.to_s
+  end
+
+  def test_set_sets_return_field
+
+    pdef = Ruote.define do
+      set 'v:v0' => 'nada'
+    end
+
+    wfid = @engine.launch(pdef)
+    r = @engine.wait_for(wfid)
+
+    assert_equal 'nada', r['workitem']['fields']['__result__']
   end
 end
 

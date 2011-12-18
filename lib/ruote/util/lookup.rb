@@ -83,6 +83,16 @@ module Ruote
     end
   end
 
+  # Given a hash and a key, deletes all the entries with that key, in child
+  # hashes too.
+  #
+  def Ruote.delete_all(h, key)
+
+    h.delete(key)
+
+    h.each { |k, v| delete_all(v, key) if v.is_a?(Hash) }
+  end
+
   protected # well...
 
   # Pops the first key in a path key.

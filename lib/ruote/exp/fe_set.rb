@@ -111,6 +111,18 @@ module Ruote::Exp
   #   unset 'customer_name' # yes, it's field by default
   #   unset 'v:vx'
   #
+  #
+  # == __result__
+  #
+  # 'set' and 'unset' place the [un]set value in the field named __result__.
+  #
+  #   sequence do
+  #     set 'f0' => 2
+  #     participant 'x${__result__}''
+  #   end
+  #
+  # will route a workitem to the participant named 'x2'.
+  #
   class SetExpression < FlowExpression
 
     names :rset, :set, :unset
@@ -122,7 +134,7 @@ module Ruote::Exp
       value = lookup_val(opts)
         # a nil value is totally OK
 
-      if var_key = has_attribute(:v, :var, :variable)
+      result = if var_key = has_attribute(:v, :var, :variable)
 
         set_v(attribute(var_key), value, name == 'unset')
 
@@ -141,6 +153,8 @@ module Ruote::Exp
         raise ArgumentError.new(
           "missing a variable or field target in #{tree.inspect}")
       end
+
+      h.applied_workitem['fields']['__result__'] = result
 
       reply_to_parent(h.applied_workitem)
     end
