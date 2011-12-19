@@ -117,7 +117,7 @@ module Ruote::Exp
   #   dec 'v:x', :to_v => 'a'
   #   participant :ref => '${v:a}'
   #
-  class IncExpression < SetExpression
+  class IncExpression < FlowExpression
 
     names :inc, :dec, :increment, :decrement
 

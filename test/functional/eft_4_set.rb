@@ -299,10 +299,30 @@ class EftSetTest < Test::Unit::TestCase
       set 'v:v0' => 'nada'
     end
 
-    wfid = @engine.launch(pdef)
-    r = @engine.wait_for(wfid)
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
 
     assert_equal 'nada', r['workitem']['fields']['__result__']
+  end
+
+  def test_set_picks_latest
+
+    pdef = Ruote.define do
+      set 'f0' do
+        set 'v:v0' => '1'
+        set 'v:v1' => '2'
+        set 'f1' => '${v:v0}${v:v1}'
+      end
+      echo '${f0}/${v:v0}'
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal '12', r['workitem']['fields']['f0']
+    assert_equal '12/', @tracer.to_s
   end
 end
 

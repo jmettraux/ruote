@@ -112,6 +112,25 @@ module Ruote::Exp
   #   unset 'v:vx'
   #
   #
+  # == using set with a block
+  #
+  # (not a very common usage, introduced by ruote 2.2.1)
+  #
+  # 'set' can be used with a block. It then behaves like a 'sequence' and
+  # picks its value in the workitem field named '__result__'.
+  #
+  #   set 'customer_name' do
+  #     participant 'alice'
+  #     participant 'bob'
+  #   end
+  #
+  # Here, alice or bob may set the field '__result__' to some value,
+  # that will get picked as the value of the field 'customer_name'.
+  #
+  # Note that inside the set, a blank variable scope will be used (like in
+  # a 'let).
+  #
+  #
   # == __result__
   #
   # 'set' and 'unset' place the [un]set value in the field named __result__.
@@ -123,15 +142,35 @@ module Ruote::Exp
   #
   # will route a workitem to the participant named 'x2'.
   #
-  class SetExpression < FlowExpression
+  class SetExpression < SequenceExpression
 
     names :rset, :set, :unset
 
     def apply
 
+      h.variables = {}
+        # a blank local scope
+
+      reply(h.applied_workitem)
+    end
+
+    def reply_to_parent(workitem)
+
+      h.applied_workitem['fields'] = workitem['fields']
+        # since set_vf and co work on h.applied_workitem...
+
+      h.variables = nil
+        # the local scope is over,
+        # variables set here will be set in the parent scope
+
       opts = { :escape => attribute(:escape) }
 
-      value = lookup_val(opts)
+      value = if tree_children.empty?
+        lookup_val(opts)
+      else
+        h.applied_workitem['fields']['__result__']
+      end
+        #
         # a nil value is totally OK
 
       result = if var_key = has_attribute(:v, :var, :variable)
@@ -148,6 +187,10 @@ module Ruote::Exp
 
         set_vf(*kv)
 
+      elsif kv = compile_atts(opts).find { |k, v| k != 'escape' }
+
+        set_vf(kv.first, value, name == 'unset')
+
       else
 
         raise ArgumentError.new(
@@ -156,12 +199,7 @@ module Ruote::Exp
 
       h.applied_workitem['fields']['__result__'] = result
 
-      reply_to_parent(h.applied_workitem)
-    end
-
-    def reply(workitem)
-
-      # never called
+      super(h.applied_workitem)
     end
   end
 end
