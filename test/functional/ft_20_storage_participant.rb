@@ -632,5 +632,11 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal nil, wi.h.owner
   end
+
+  def test_worklist
+
+    assert_equal Ruote::StorageParticipant, @dashboard.storage_participant.class
+    assert_equal Ruote::StorageParticipant, @dashboard.worklist.class
+  end
 end
 

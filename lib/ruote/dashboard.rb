@@ -760,6 +760,10 @@ module Ruote
       @storage_participant ||= Ruote::StorageParticipant.new(self)
     end
 
+    # #worklist or #storage_participant
+    #
+    alias worklist storage_participant
+
     # Returns an instance of the participant registered under the given name.
     # Returns nil if there is no participant registered for that name.
     #
