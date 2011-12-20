@@ -23,9 +23,6 @@
 #++
 
 
-require 'ruote/exp/fe_set'
-
-
 module Ruote::Exp
 
   #
