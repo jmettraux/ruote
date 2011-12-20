@@ -159,5 +159,26 @@ class EftSubprocessTest < Test::Unit::TestCase
 
     assert_trace "in sub0\ndone.", pdef
   end
+
+  def test_atts_to_fields
+
+    pdef = Ruote.define do
+      set 'address' => { 'city' => 'boston' }
+      subprocess(
+        'sub0',
+        'f:a' => 'fa',
+        'field:b' => 'mi',
+        'c' => 'sol',
+        'f:address.city' => 'nyc')
+      define 'sub0' do
+        echo '${a} ${b} ${v:c} ${address.city}'
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
+
+    assert_equal 'fa mi sol nyc', @tracer.to_s
+  end
 end
 

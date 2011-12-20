@@ -183,7 +183,12 @@ module Ruote::Exp
 
       pos, subtree = Ruote.lookup_subprocess(self, ref)
 
-      vars = compile_atts
+      fs, vs = compile_atts.partition { |k, v| k.match(/^f(ield)?:./) }
+
+      fields = h.applied_workitem['fields']
+      fs.each { |k, v| Ruote.set(fields, k.split(':', 2)[1], v) }
+
+      vars = Hash[vs]
       vars.merge!('tree' => tree_children.first)
         # NOTE : we're taking the first child here...
 
