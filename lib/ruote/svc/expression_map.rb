@@ -34,7 +34,7 @@ require 'ruote/exp/flow_expression'
 
 exppath = File.join(File.dirname(__FILE__), '..', 'exp')
 
-Dir.new(exppath).entries.each do |pa|
+Dir.new(exppath).entries.sort.each do |pa|
   require(File.join('ruote', 'exp', pa)) if pa.match(/^fe_.*\.rb$/)
 end
 
