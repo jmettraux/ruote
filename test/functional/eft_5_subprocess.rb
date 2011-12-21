@@ -168,7 +168,7 @@ class EftSubprocessTest < Test::Unit::TestCase
         'sub0',
         'f:a' => 'fa',
         'field:b' => 'mi',
-        'c' => 'sol',
+        'var:c' => 'sol',
         'f:address.city' => 'nyc')
       define 'sub0' do
         echo '${a} ${b} ${v:c} ${address.city}'

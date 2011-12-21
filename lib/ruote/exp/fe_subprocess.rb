@@ -186,9 +186,10 @@ module Ruote::Exp
       fs, vs = compile_atts.partition { |k, v| k.match(/^f(ield)?:./) }
 
       fields = h.applied_workitem['fields']
-      fs.each { |k, v| Ruote.set(fields, k.split(':', 2)[1], v) }
+      fs.each { |k, v| Ruote.set(fields, k.split(':', 2).last, v) }
 
-      vars = Hash[vs]
+      vars = Hash[vs.collect { |k, v| [ k.split(':', 2).last, v ] }]
+
       vars.merge!('tree' => tree_children.first)
         # NOTE : we're taking the first child here...
 
