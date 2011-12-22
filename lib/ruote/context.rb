@@ -249,5 +249,30 @@ module Ruote
           'ruote/log/default_history', 'Ruote::DefaultHistory' ] }
     end
   end
+
+  #
+  # A minimal context, useful for testing expressions in isolation.
+  #
+  class TestContext < Context
+
+    def initialize
+
+      @services = {}
+      initialize_services
+    end
+
+    protected
+
+    def get_conf
+
+      {}
+    end
+
+    def default_conf
+
+      { 's_dollar_sub' => [
+          'ruote/svc/dollar_sub', 'Ruote::DollarSubstitution' ] }
+    end
+  end
 end
 
