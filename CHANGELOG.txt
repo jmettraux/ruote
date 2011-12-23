@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- :scope => true forces a new variable scope
 - subprocess 'field:x' => 'y' (variables and now fields)
 - Dashboard#worklist (alias for Dashboard#storage_participant)
 - set: now accepting children (and behaving like a sequence)

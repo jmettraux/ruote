@@ -283,6 +283,11 @@ module Ruote::Exp
       pi = h.parent_id
       reply_immediately = false
 
+      if attribute(:scope).to_s == 'true'
+
+        h.variables = {}
+      end
+
       if attribute(:forget).to_s == 'true'
 
         h.variables = compile_variables
