@@ -346,6 +346,11 @@ module Ruote::Exp
           'workitem' => workitem)
       end
 
+      if h.state.nil? && f = attribute(:vars_to_f)
+
+        Ruote.set(workitem['fields'], f, h.variables)
+      end
+
       # deal with the timers and the schedules
 
       %w[ timeout_schedule_id job_id ].each do |sid|
