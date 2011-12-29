@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- iterator: implicit sequence
 - iterator: stopped creating new variable scope
 - :vars_to_f common attribute
 - :scope => true forces a new variable scope

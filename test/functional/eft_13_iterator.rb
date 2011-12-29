@@ -344,5 +344,28 @@ class EftIteratorTest < Test::Unit::TestCase
 
     assert_trace %w[ 1 2 ], pdef
   end
+
+  def test_implicit_sequence
+
+    pdef = Ruote.process_definition :name => 'test' do
+      iterator :on_val => 'alice, bob, charly', :to_var => 'v' do
+        echo '0:${v:v}'
+        echo '1:${v:v}'
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal(
+      %w[
+        0:alice 1:alice
+        0:bob 1:bob
+        0:charly 1:charly
+      ],
+      @tracer.to_a)
+  end
 end
 

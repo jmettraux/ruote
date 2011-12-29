@@ -481,7 +481,7 @@
 [ ] subaltern for conditions ?
 [ ] enhance radial/Parslet error messages (cf Raphael)
 
-[ ] iterator: drop the need for the sequence --> implicit sequence
+[o] iterator: drop the need for the sequence --> implicit sequence
 [ ] citerator: drop the need for the sequence --> implicit sequence
 
 [ ] concurrence: allow empty

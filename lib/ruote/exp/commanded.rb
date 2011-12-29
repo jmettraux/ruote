@@ -58,7 +58,7 @@ module Ruote::Exp
       h.command_workitem = workitem
       h.command_workitem['fei'] = h.children.first
 
-      do_persist || return
+      do_persist or return
 
       @context.storage.put_msg('cancel', 'fei' => h.children.first)
 

@@ -216,7 +216,7 @@ module Ruote::Exp
       h.to_v, h.to_f = determine_tos
       h.position = -1
 
-      h.to_v = 'i' if h.to_v == nil && h.to_f == nil
+      h.to_v = 'i' unless h.to_v or h.to_f
 
       move_on
     end
@@ -225,19 +225,29 @@ module Ruote::Exp
 
     def move_on(workitem=h.applied_workitem)
 
-      h.position += 1
+      current_position = h.position
+      h.position = 0 if h.position == -1
+
+      child_id = workitem['fei'] == h.fei ?
+        0 : Ruote::FlowExpressionId.new(workitem['fei']).child_id + 1
 
       com, arg = get_command(workitem)
 
-      return reply_to_parent(workitem) if com == 'break'
-
       case com
+
+        when 'break' then return reply_to_parent(workitem)
+
         when 'rewind', 'continue' then h.position = 0
-        when 'skip' then h.position += arg
+        when 'skip' then h.position += (arg + 1)
         when 'jump' then h.position = arg
+
+        else
+          h.position = h.position + 1 if child_id >= tree_children.size
       end
 
       h.position = h.list.length + h.position if h.position < 0
+
+      return apply_child(child_id, workitem) if h.position == current_position
 
       val = h.list[h.position]
 
@@ -252,7 +262,6 @@ module Ruote::Exp
       end
 
       apply_child(0, workitem)
-        # persist is done in there
     end
   end
 end
