@@ -44,6 +44,27 @@ module Ruote
     lookup(value, rest, container_lookup)
   end
 
+  #   h = { 'a' => { 'b' => [ 1, 3, 4 ] } }
+  #
+  #   p Ruote.lookup(h, 'a.b.1') # => true
+  #
+  def Ruote.has_key?(collection, key)
+
+    return collection if key == '.'
+
+    key, rest = pop_key(key)
+
+    return has_key?(fetch(collection, key), rest) if rest.any?
+
+    if collection.respond_to?(:has_key?)
+      collection.has_key?(key)
+    elsif collection.respond_to?(:[])
+      key.to_i < collection.size
+    else
+      false
+    end
+  end
+
   #   h = { 'customer' => { 'name' => 'alpha' } }
   #
   #   Ruote.set(h, 'customer.name', 'bravo')

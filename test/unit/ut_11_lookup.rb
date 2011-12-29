@@ -18,6 +18,12 @@ class LookupTest < Test::Unit::TestCase
     assert_equal('B', Ruote.lookup({ 'h' => %w[ A B C ] }, 'h.1'))
   end
 
+  def test_hash_lookup_and_number_keys
+
+    assert_equal('B', Ruote.lookup({ '1' => %w[ A B C ] }, '1.1'))
+    assert_equal('B', Ruote.lookup({ 1 => %w[ A B C ] }, '1.1'))
+  end
+
   def test_lookup_dot
 
     h = { 'a' => 'b' }
@@ -52,6 +58,21 @@ class LookupTest < Test::Unit::TestCase
     assert_equal(
       [ 'nada', nil ],
       Ruote.lookup({ 'h' => { 'hh' => %w[ A B C ]} }, 'nada.nada', true))
+  end
+
+  def test_has_key
+
+    h = { 'h' => %w[ a b c ] }
+
+    assert_equal(true, Ruote.has_key?(h, 'h'))
+    assert_equal(true, Ruote.has_key?(h, 'h.1'))
+
+    h = { 'foo' => { 'bar' => { 'baz' => { 'fruit' => 'pineapple' } } } }
+
+    assert_equal(true, Ruote.has_key?(h, 'foo.bar.baz.fruit'))
+    assert_equal(true, Ruote.has_key?(h, 'foo.bar'))
+
+    assert_equal(false, Ruote.has_key?(h, 'bar'))
   end
 
   def test_set

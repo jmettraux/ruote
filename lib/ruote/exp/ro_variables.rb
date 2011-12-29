@@ -64,11 +64,8 @@ module Ruote::Exp
         return par.lookup_variable(var, prefix)
       end
 
-      if h.variables
-
-        val = Ruote.lookup(h.variables, var)
-
-        return val if val != nil
+      if h.variables and Ruote.has_key?(h.variables, var)
+        return Ruote.lookup(h.variables, var)
       end
 
       if h.parent_id && h.parent_id['engine_id'] == @context.engine_id

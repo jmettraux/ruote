@@ -126,6 +126,24 @@ class FtVariablesTest < Test::Unit::TestCase
     assert_match(/^0\_0|\d+|\d+_\d+$/, @dashboard.context.stash[:results][2])
   end
 
+  def test_lookup_var
+
+    pdef = Ruote.define do
+      set 'v:v0' => 'a'
+      sequence :scope => true do
+        echo 'v0:${v:v0}'
+        set 'v:v0' => nil
+        echo 'v0:${v:v0}'
+      end
+      echo 'v0:${v:v0}'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal %w[ v0:a v0: v0:a ], @tracer.to_a
+  end
+
   def test_lookup_in_var
 
     @dashboard.register_participant :echo_toto do |wi, fexp|
