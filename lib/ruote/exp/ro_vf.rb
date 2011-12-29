@@ -44,7 +44,7 @@ module Ruote::Exp
     def set_f(key, value, unset=false)
 
       if unset
-        h.applied_workitem['fields'].delete(key)
+        h.applied_workitem['fields'].delete(key) # why not Ruote.unset() ?
       else
         Ruote.set(h.applied_workitem['fields'], key, value)
       end

@@ -123,6 +123,28 @@ module Ruote::Exp
   #   end
   #
   #
+  # == ruote 2.2.1 and the citerator children
+  #
+  # Prior to ruote 2.2.1, the concurrent-iterator only considered one child
+  # expression:
+  #
+  #   concurrent_iterator :times => 3 do
+  #     participant 'al'
+  #     participant 'bob' # 'bob' would never be reached
+  #   end
+  #
+  # So one had to write:
+  #
+  #   concurrent_iterator :times => 3 do
+  #     sequence do
+  #       participant 'al'
+  #       participant 'bob' # 'bob' would never be reached
+  #     end
+  #   end
+  #
+  # Ruote 2.2.1 lifts that restriction.
+  #
+  #
   # == options
   #
   # the concurrent_iterator accepts the same options for merging as its bigger
@@ -190,7 +212,6 @@ module Ruote::Exp
         h.list_size += 1
 
         workitem = Ruote.fulldup(h.applied_workitem)
-        #workitem = Rufus::Json.dup(h.applied_workitem)
 
         variables = { 'ii' => h.list_size - 1 }
 
@@ -200,11 +221,14 @@ module Ruote::Exp
           workitem['fields'][h.to_f] = val
         end
 
+        expid, subtree = if tree_children.size > 1
+          [ h.fei['expid'], [ 'sequence', {}, tree_children ] ]
+        else
+          [ "#{h.fei['expid']}_0", tree_children[0] ]
+        end
+
         launch_sub(
-          "#{h.fei['expid']}_0",
-          tree_children[0],
-          :workitem => workitem,
-          :variables => variables)
+          expid, subtree, :workitem => workitem, :variables => variables)
       end
     end
 
@@ -236,7 +260,7 @@ module Ruote::Exp
       return reply_to_parent(h.applied_workitem) if list.empty?
 
       h.to_v, h.to_f = determine_tos
-      h.to_v = 'i' if h.to_v.nil? && h.to_f.nil?
+      h.to_v = 'i' unless h.to_v or h.to_f
 
       h.list_size = 0
 

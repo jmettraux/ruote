@@ -427,6 +427,25 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal 'a', @tracer.to_s
   end
 
+  def test_implicit_sequence
+
+    pdef = Ruote.define do
+      concurrent_iterator :on => %w[ a b c ] do
+        echo '0:${v:i}'
+        echo '1:${v:i}'
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
+
+    assert_equal(
+      %w[ 0:a 0:b 0:c 1:a 1:b 1:c ],
+      @tracer.to_a.sort)
+  end
+
   protected
 
   def register_catchall_participant

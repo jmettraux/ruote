@@ -482,10 +482,10 @@
 [ ] enhance radial/Parslet error messages (cf Raphael)
 
 [o] iterator: drop the need for the sequence --> implicit sequence
-[ ] citerator: drop the need for the sequence --> implicit sequence
+[o] citerator: drop the need for the sequence --> implicit sequence
 
 [ ] concurrence: allow empty
-[ ] citerator: allow empty
+[o] citerator: allow empty
 
 [ ] cursor: deeper jumps
     http://groups.google.com/group/openwferu-users/browse_thread/thread/a973f0ea5fbb1a96
