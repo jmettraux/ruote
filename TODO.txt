@@ -296,6 +296,16 @@
 [o] participant : consume/cancel/accept?/on_reply without params
 [o] participant : consume -> on_workitem
 [o] remove abort_on_exception=true
+[o] concurrence / concurrent_iterator : merge_type => 'discard' / 'ignore'
+    keep track of the first "process sub id" ?
+[o] register :toto, :accept? => lambda { |workitem| ... }
+[o] register :toto, :do_not_thread => lambda { |workitem| ... }
+[o] :on_timeout => :rewind (break, jump to x)...
+[o] :on_error => :rewind (break, jump to x)...
+[o] worker identification/registration
+    http://groups.google.com/group/openwferu-users/browse_thread/thread/c51b94fb8bb685da
+[o] worker shutdown initiated by engine (same thread)
+[o] set :var => 'y' { '2342342' }
 
 [ ] exp : at expression ? comparable to cron
 [x] exp : exp (restricted form of eval ?) (is it apply ?)
@@ -318,8 +328,6 @@
 
 [ ] recursion : should cope with modified trees 'main' => :tree ??
 
-[ ] set :var => 'y' { '2342342' }
-
 [ ] file/fs_listener [example] ?
 
 [ ] concurrence / concurrent_iterator : merge plugin ?
@@ -337,13 +345,7 @@
 
 [ ] Ruote.process_definition ... Ruote.method_missing or sequence ?
 
-[ ] concurrence / concurrent_iterator : merge_type => 'discard' / 'ignore'
-    keep track of the first "process sub id" ?
-
 [ ] @children diff/undiff idea ?
-
-[o] :on_timeout => :rewind (break, jump to x)...
-[o] :on_error => :rewind (break, jump to x)...
 
 [o] cursor : 'reset' command ?
 [ ] cursor : 'restart' alias for 'reset' ?
@@ -457,16 +459,12 @@
 [ ] ruote slides
 
 [x] ci : ruote-amqp
-[ ] ci : ruote-mongodb
+[ ] ci : ruote-mon
 [ ] ci : jruby
 
 [ ] StorageParticipant#proceed : raise if workitem not found ?
 [ ] StorageParticipant#proceed : accept fei ?
 [ ] Engine#reply(wi), should remove from storage...
-
-[ ] worker identification/registration
-    http://groups.google.com/group/openwferu-users/browse_thread/thread/c51b94fb8bb685da
-[ ] worker shutdown initiated by engine (same thread)
 
 [ ] wait_for(:participant) what about 'dispatched' instead of 'dispatch' ?
 
@@ -478,14 +476,12 @@
 [ ] security service ? context['x'] but then, more advanced behaviours
 [ ] subaltern
 
-[o] register :toto, :accept? => lambda { |workitem| ... }
-[o] register :toto, :do_not_thread => lambda { |workitem| ... }
-
 [x] investigate 1.9's json
 [ ] Parslet for conditions ?
-[ ] Subaltern for conditions ?
+[ ] subaltern for conditions ?
 [ ] enhance radial/Parslet error messages (cf Raphael)
 
+[ ] iterator: drop the need for the sequence --> implicit sequence
 [ ] citerator: drop the need for the sequence --> implicit sequence
 
 [ ] concurrence: allow empty
@@ -493,3 +489,6 @@
 
 [ ] cursor: deeper jumps
     http://groups.google.com/group/openwferu-users/browse_thread/thread/a973f0ea5fbb1a96
+
+[ ] ruote-doozer ?
+
