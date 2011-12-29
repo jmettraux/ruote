@@ -293,9 +293,15 @@ class EftIteratorTest < Test::Unit::TestCase
       @tracer << "#{workitem.participant_name}/#{workitem.fei.expid}\n"
     end
 
-    #noisy
+    #@dashboard.noisy = true
 
-    assert_trace(%w[ alice:0/0_0_0 bob:1/0_0_0 charly:2/0_0_0 ], pdef)
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal %w[ alice:0/0_0_0 bob:1/0_0_0 charly:2/0_0_0 ], @tracer.to_a
+
+    assert_equal 'charly', r['variables']['i']
+    assert_equal 2, r['variables']['ii']
   end
 
   def test_nested_break
