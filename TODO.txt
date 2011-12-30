@@ -487,6 +487,9 @@
 [ ] concurrence: allow empty
 [o] citerator: allow empty
 
+[ ] concurrence: reply_to_parent instead of cease when no more children ?
+    https://github.com/jmettraux/ruote/blob/1f9add961f90049ea951b8940622fbe8d136c45f/lib/ruote/exp/fe_concurrence.rb#L304-310
+
 [ ] cursor: deeper jumps
     http://groups.google.com/group/openwferu-users/browse_thread/thread/a973f0ea5fbb1a96
 

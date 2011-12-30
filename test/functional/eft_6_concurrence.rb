@@ -378,5 +378,24 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     assert_equal %w[ azuma bashamichi ], r['workitem']['fields']['seen'].sort
   end
+
+  def test_wait_for_unknown_tag
+
+    pdef = Ruote.define do
+      concurrence :wait_for => 'nada' do
+        echo 'a'
+        echo 'b'
+      end
+      echo 'c'
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'ceased', r['action']
+    assert_equal %w[ a b ], @tracer.to_a.sort
+  end
 end
 
