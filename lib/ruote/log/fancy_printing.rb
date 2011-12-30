@@ -77,13 +77,20 @@ class Ruote::WaitLogger
     ].join('!')
   end
 
-  def insp(o)
+  def insp(o, opts={})
 
     case o
       when nil
         'nil'
       when Hash
-        '{' + o.collect { |k, v| "#{k}: #{insp(v)}" }.join(', ') + '}'
+        trim = opts[:trim] || []
+        '{' +
+        o.reject { |k, v|
+          v.nil? && trim.include?(k.to_s)
+        }.collect { |k, v|
+          "#{k}: #{insp(v)}"
+        }.join(', ') +
+        '}'
       when Array
         '[' + o.collect { |e| insp(e) }.join(', ') + ']'
       when String
@@ -197,7 +204,7 @@ class Ruote::WaitLogger
         ''
       end
 
-      rest = insp(rest)[1..-2]
+      rest = insp(rest, :trim => %[ updated_tree left_tag ])[1..-2]
 
       color(
         @color,
