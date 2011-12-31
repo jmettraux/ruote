@@ -289,7 +289,7 @@ module Ruote::Exp
         h.workitems[workitem['fei']['expid']] = workitem
       end
 
-      if h.wait_for && tag = @msg['left_tag']
+      if h.wait_for && tag = workitem['fields']['__left_tag__']
         h.wait_for.delete(tag)
       end
 

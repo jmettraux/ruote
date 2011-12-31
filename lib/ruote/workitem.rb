@@ -400,6 +400,8 @@ module Ruote
       if index = tags.rindex(tag)
         tags.delete_at(index)
       end
+
+      hworkitem['fields']['__left_tag__'] = tag
     end
 
     # How many times was this workitem re_dispatched ?

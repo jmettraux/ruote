@@ -204,7 +204,7 @@ class Ruote::WaitLogger
         ''
       end
 
-      rest = insp(rest, :trim => %[ updated_tree left_tag ])[1..-2]
+      rest = insp(rest, :trim => %[ updated_tree ])[1..-2]
 
       color(
         @color,
