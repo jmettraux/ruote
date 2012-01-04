@@ -328,6 +328,27 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal %w[ bravo over. ], @tracer.to_a
   end
 
+  def test_wait_for_zero
+
+    pdef = Ruote.define do
+      concurrence :wait_for => 0, :remaining => :forget do
+        sequence do
+          wait '5s'
+          echo 'alpha'
+        end
+      end
+      echo 'over.'
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for(wfid)
+
+    assert_equal %w[ over. ], @tracer.to_a
+  end
+
   def test_wait_for_tags
 
     pdef = Ruote.define do

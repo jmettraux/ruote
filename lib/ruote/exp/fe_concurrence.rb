@@ -245,8 +245,10 @@ module Ruote::Exp
       #
       # count and wait_for
 
-      h.ccount = attribute(:count).to_i rescue 0
-      wf = attribute(:wait_for)
+      count = attribute(:count).to_s
+      count = nil unless count.match(/^\d+$/)
+
+      wf = count || attribute(:wait_for)
 
       if wf.to_s.match(/^\d+$/)
         h.ccount = wf.to_i
@@ -255,8 +257,6 @@ module Ruote::Exp
       elsif wf
         h.wait_for = wf.to_s.split(/,/).collect(&:strip)
       end
-
-      h.ccount = nil if h.ccount < 1
 
       #
       # other attributes
@@ -273,6 +273,12 @@ module Ruote::Exp
       h.over = false
 
       apply_children
+
+      @context.storage.put_msg(
+        'reply', 'fei' => h.fei, 'workitem' => h.applied_workitem
+      ) if h.ccount == 0
+        #
+        # force an immediate reply
     end
 
     def reply(workitem)

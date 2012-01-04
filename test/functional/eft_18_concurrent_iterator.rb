@@ -446,6 +446,24 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       @tracer.to_a.sort)
   end
 
+  def test_count_zero
+
+    pdef = Ruote.define do
+      concurrent_iterator :on => %w[ a b c ], :count => 0 do
+        wait '2s'
+        echo '0:${v:i}'
+      end
+      echo 'over.'
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(wfid)
+
+    assert_equal %w[ over. ], @tracer.to_a
+  end
+
   protected
 
   def register_catchall_participant
