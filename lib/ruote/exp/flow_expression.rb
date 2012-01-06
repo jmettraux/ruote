@@ -191,6 +191,13 @@ module Ruote::Exp
       @h
     end
 
+    # Returns a one-off Ruote::Workitem instance (the applied workitem).
+    #
+    def applied_workitem
+
+      @awi ||= Ruote::Workitem.new(h.applied_workitem)
+    end
+
     # Instantiates expression back from hash.
     #
     def self.from_h(context, h)
@@ -336,12 +343,14 @@ module Ruote::Exp
       if h.tagname
 
         unset_variable(h.tagname)
+        unset_variable('/' + h.full_tagname) if h.full_tagname
 
-        Ruote::Workitem.remove_tag(workitem, h.tagname)
+        Ruote::Workitem.new(workitem).send(:remove_tag, h.tagname)
 
         @context.storage.put_msg(
           'left_tag',
           'tag' => h.tagname,
+          'full_tag' => h.full_tagname,
           'fei' => h.fei,
           'workitem' => workitem)
       end
@@ -830,15 +839,20 @@ module Ruote::Exp
     #
     def consider_tag
 
-      if h.tagname = attribute(:tag)
+      if tag = attribute(:tag)
+
+        h.tagname = tag
+        h.full_tagname = (applied_workitem.tags + [ tag ]).join('/')
 
         set_variable(h.tagname, h.fei)
+        set_variable('/' + h.full_tagname, h.fei)
 
-        Ruote::Workitem.add_tag(h.applied_workitem, h.tagname)
+        applied_workitem.send(:add_tag, h.tagname)
 
         @context.storage.put_msg(
           'entered_tag',
           'tag' => h.tagname,
+          'full_tag' => h.full_tagname,
           'fei' => h.fei,
           'workitem' => h.applied_workitem)
       end

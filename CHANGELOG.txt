@@ -4,6 +4,7 @@
 
 == ruote - 2.2.1    not yet released
 
+- full tags
 - concurrence and citerator: :count => 0 (immediate reply)
 - iterator and concurrent-iterator: implicit sequence
 - iterator: stopped creating new variable scope

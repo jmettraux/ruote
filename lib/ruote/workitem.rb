@@ -379,31 +379,6 @@ module Ruote
       @h['fields']['__tags__'] || []
     end
 
-    # Used by FlowExpression when entering a tag.
-    #
-    def self.add_tag(hworkitem, tag)
-
-      (hworkitem['fields']['__tags__'] ||= []) << tag
-    end
-
-    # Used by FlowExpression when leaving a tag.
-    #
-    def self.remove_tag(hworkitem, tag)
-
-      # it's a bit convoluted... trying to cope with potential inconsistencies
-      #
-      # normally, it should only be a tags.pop(), but since user have
-      # access to the workitem and its fields... better be safe than sorry
-
-      tags = (hworkitem['fields']['__tags__'] || [])
-
-      if index = tags.rindex(tag)
-        tags.delete_at(index)
-      end
-
-      hworkitem['fields']['__left_tag__'] = tag
-    end
-
     # How many times was this workitem re_dispatched ?
     #
     # It's used by LocalParticipant re_dispatch mostly, or by participant
@@ -434,6 +409,33 @@ module Ruote
       ) unless h.is_a?(Hash)
 
       self.new(h)
+    end
+
+    protected
+
+    # Used by FlowExpression when entering a tag.
+    #
+    def add_tag(tag)
+
+      (@h['fields']['__tags__'] ||= []) << tag
+    end
+
+    # Used by FlowExpression when leaving a tag.
+    #
+    def remove_tag(tag)
+
+      # it's a bit convoluted... trying to cope with potential inconsistencies
+      #
+      # normally, it should only be a tags.pop(), but since user have
+      # access to the workitem and its fields... better be safe than sorry
+
+      tags = (@h['fields']['__tags__'] || [])
+
+      if index = tags.rindex(tag)
+        tags.delete_at(index)
+      end
+
+      @h['fields']['__left_tag__'] = tag
     end
   end
 end

@@ -178,6 +178,7 @@ class FtTagsTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal(%w[ phase1 ], r['workitem']['fields']['tags'])
+    assert_equal('phase1', r['workitem']['fields']['__left_tag__'])
     assert_equal([], r['workitem']['fields']['__tags__'])
   end
 
@@ -202,6 +203,34 @@ class FtTagsTest < Test::Unit::TestCase
     @dashboard.wait_for(wfid)
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'left_tag' }.size
+  end
+
+  def test_absolute_tags
+
+    pdef = Ruote.define do
+      concurrence do
+        sequence do
+          listen :to => 'b', :upon => 'entering'
+          echo 'b'
+        end
+        sequence do
+          listen :to => 'a/b', :upon => 'entering'
+          echo 'a/b'
+        end
+        sequence :tag => 'a' do
+          wait '1s'
+          sequence :tag => 'b' do
+          end
+        end
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal %w[ a/b b ], @tracer.to_a.sort
   end
 end
 

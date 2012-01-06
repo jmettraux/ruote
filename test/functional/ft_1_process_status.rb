@@ -223,9 +223,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     ps = @dashboard.process(wfid)
 
-    assert_equal %w[ main part ], ps.tags.keys.sort
+    assert_equal %w[ main main/part part ], ps.tags.keys.sort
+    assert_equal %w[ main main/part part ], ps.all_tags.keys.sort
 
-    assert_equal 2, ps.all_tags.size
+    assert_equal 3, ps.all_tags.size
     assert_kind_of Array, ps.all_tags['main']
     assert_equal 1, ps.all_tags['main'].size
   end
@@ -252,7 +253,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     ps = @dashboard.process(wfid)
 
-    assert_equal 1, ps.tags.size
+    assert_equal 2, ps.tags.size
     assert_equal 2, ps.all_tags['tag0'].size
   end
 

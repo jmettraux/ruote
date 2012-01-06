@@ -118,6 +118,24 @@ module Ruote::Exp
   # * 'entering' 'phase_two'
   # * 'leaving' 'phase_two'
   #
+  # When listening to tags, absolute paths can be given.
+  #
+  #   concurrence do
+  #     sequence :tag => 'a' do
+  #       alpha
+  #       sequence :tag => 'b' do
+  #         bravo
+  #       end
+  #     end
+  #     sequence do
+  #       listen :to => 'a/b', :upon => 'entering'
+  #       charly
+  #     end
+  #    end
+  #   end
+  #
+  # Charly will be next when the flow is about to reach bravo.
+  #
   #
   # == :to and :on
   #
@@ -296,7 +314,7 @@ module Ruote::Exp
 
       else
 
-        { 'tag' => h.to }
+        { h.to.match(/\//) ? 'full_tag' : 'tag' => h.to }
       end
     end
   end
