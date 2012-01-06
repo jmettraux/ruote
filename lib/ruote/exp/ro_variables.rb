@@ -147,7 +147,7 @@ module Ruote::Exp
       result
     end
 
-    VAR_PREFIX_REGEX = /^(\/*)/
+    VAR_PREFIX_REGEX = /^(\/{0,2})\/*(.+)$/
 
     # Used by lookup_variable and set_variable to extract the
     # prefix in a variable name
@@ -155,10 +155,9 @@ module Ruote::Exp
     def split_prefix(var, prefix)
 
       if prefix.nil?
-        var = var.to_s
-        m = VAR_PREFIX_REGEX.match(var)
-        prefix = m ? m[1][0, 2] : ''
-        var = var[prefix.length..-1]
+        m = VAR_PREFIX_REGEX.match(var.to_s)
+        prefix = m[1]
+        var = m[2]
       end
 
       [ var, prefix ]
