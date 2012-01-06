@@ -123,9 +123,9 @@ module Ruote::Exp
   #   end
   #
   #
-  # == ruote 2.2.1 and the citerator children
+  # == ruote 2.3.0 and the citerator children
   #
-  # Prior to ruote 2.2.1, the concurrent-iterator only considered one child
+  # Prior to ruote 2.3.0, the concurrent-iterator only considered one child
   # expression:
   #
   #   concurrent_iterator :times => 3 do
@@ -142,7 +142,7 @@ module Ruote::Exp
   #     end
   #   end
   #
-  # Ruote 2.2.1 lifts that restriction.
+  # Ruote 2.3.0 lifts that restriction.
   #
   #
   # == options

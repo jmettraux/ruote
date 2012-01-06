@@ -174,7 +174,7 @@ module Ruote::Exp
   #
   # ==== :union
   #
-  # (Available from ruote 2.2.1)
+  # (Available from ruote 2.3.0)
   #
   # Will override atomic fields, concat arrays and merge hashes...
   #
@@ -194,7 +194,7 @@ module Ruote::Exp
   #
   # ==== :concat
   #
-  # (Available from ruote 2.2.1)
+  # (Available from ruote 2.3.0)
   #
   # Much like :union, but duplicates are not removed. Thus
   #
@@ -209,7 +209,7 @@ module Ruote::Exp
   #
   # ==== :ignore
   #
-  # (Available from ruote 2.2.1)
+  # (Available from ruote 2.3.0)
   #
   # A very simple merge type, the workitems given back by the branches are
   # simply discarded and the workitem as passed to the concurrence expression

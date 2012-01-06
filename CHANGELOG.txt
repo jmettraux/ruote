@@ -2,7 +2,7 @@
 = ruote - CHANGELOG.txt
 
 
-== ruote - 2.2.1    not yet released
+== ruote - 2.3.0    not yet released
 
 - root expression: __past_tags__ variable
 - full tags

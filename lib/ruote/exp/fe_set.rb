@@ -116,7 +116,7 @@ module Ruote::Exp
   #
   # == using set with a block
   #
-  # (not a very common usage, introduced by ruote 2.2.1)
+  # (not a very common usage, introduced by ruote 2.3.0)
   #
   # 'set' can be used with a block. It then behaves like a 'sequence' and
   # picks its value in the workitem field named '__result__'.

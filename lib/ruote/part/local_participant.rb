@@ -99,7 +99,7 @@ module Ruote
       fetch_workitem(_fei || fei)
     end
 
-    # Up until ruote 2.2.1, the participant name had to be fetched from the
+    # Up until ruote 2.3.0, the participant name had to be fetched from the
     # workitem. This is a shortcut, it lets you write participant code
     # that look like
     #

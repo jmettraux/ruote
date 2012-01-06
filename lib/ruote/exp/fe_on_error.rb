@@ -26,7 +26,7 @@
 module Ruote::Exp
 
   #
-  # Up until ruote 2.2.1, 'on_error' was only an attribute
+  # Up until ruote 2.3.0, 'on_error' was only an attribute
   #
   #   sequence :on_error => 'error_handler' do
   #     # ...

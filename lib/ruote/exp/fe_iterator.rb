@@ -80,7 +80,7 @@ module Ruote::Exp
   #
   # === variables and scope
   #
-  # Starting with ruote 2.2.1, the iterator doesn't create a new scope for
+  # Starting with ruote 2.3.0, the iterator doesn't create a new scope for
   # its variables, it uses the current scope.
   #
   # The old behaviour can be obtained by setting :scope => true, as in:
