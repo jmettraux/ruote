@@ -84,7 +84,16 @@ class FtTagsTest < Test::Unit::TestCase
 
     wait_for(:alpha)
 
-    assert_equal 0, @dashboard.process(wfid).tags.size
+    ps = @dashboard.process(wfid)
+
+    assert_equal 0, ps.tags.size
+    assert_equal 1, ps.root_expression.variables['__past_tags__'].size
+    assert_equal 1, ps.past_tags.size
+
+    a = ps.root_expression.variables['__past_tags__'].first
+
+    assert_equal 'a', a[0]
+    assert_equal 'cancelling', a[2]
   end
 
   def test_unset_tag_when_parent_gone
@@ -190,7 +199,7 @@ class FtTagsTest < Test::Unit::TestCase
 
     @dashboard.register 'alpha', Ruote::StorageParticipant
 
-    #noisy
+    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(:alpha)

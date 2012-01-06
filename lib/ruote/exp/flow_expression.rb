@@ -161,18 +161,20 @@ module Ruote::Exp
     end
 
     # Returns the root expression of this expression.
-    # The result is an instance of Ruote::FlowExpression.
+    #
+    # The result is an instance of Ruote::FlowExpression or nil if the
+    # parent cannot be found.
     #
     def root
 
+      current = @h
       exps = @context.storage.find_expressions(h.fei['wfid'])
-      current = exps.find { |e| e['fei'] == h.fei }
 
-      while current['parent_id']
+      while current && current['parent_id']
         current = exps.find { |e| e['fei'] == current['parent_id'] }
       end
 
-      Ruote::Exp::FlowExpression.from_h(@context, current)
+      current ? Ruote::Exp::FlowExpression.from_h(@context, current) : nil
     end
 
     # Returns the fei of the root expression of this expression.
@@ -340,20 +342,7 @@ module Ruote::Exp
       filter(workitem) if h.state.nil?
         # only filter on a normal reply (not cancelling)
 
-      if h.tagname
-
-        unset_variable(h.tagname)
-        unset_variable('/' + h.full_tagname) if h.full_tagname
-
-        Ruote::Workitem.new(workitem).send(:remove_tag, h.tagname)
-
-        @context.storage.put_msg(
-          'left_tag',
-          'tag' => h.tagname,
-          'full_tag' => h.full_tagname,
-          'fei' => h.fei,
-          'workitem' => workitem)
-      end
+      leave_tag(workitem) if h.tagname
 
       if h.state.nil? && f = attribute(:vars_to_f)
 
@@ -856,6 +845,36 @@ module Ruote::Exp
           'fei' => h.fei,
           'workitem' => h.applied_workitem)
       end
+    end
+
+    # Called when the expression is about to reply to its parent and wants
+    # to get rid of its tags.
+    #
+    def leave_tag(workitem)
+
+      unset_variable(h.tagname)
+
+      Ruote::Workitem.new(workitem).send(:remove_tag, h.tagname)
+
+      @context.storage.put_msg(
+        'left_tag',
+        'tag' => h.tagname,
+        'full_tag' => h.full_tagname,
+        'fei' => h.fei,
+        'workitem' => workitem)
+
+      return unless h.full_tagname # for backward compatibility
+
+      r = root
+
+      return unless r && r.variables # might happen
+
+      r.variables.delete(h.full_tagname)
+
+      (r.variables['__past_tags__'] ||= []) <<
+        [ h.full_tagname, fei.sid, h.state ]
+
+      r.do_persist unless r.fei == self.fei
     end
   end
 end
