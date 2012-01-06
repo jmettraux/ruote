@@ -56,11 +56,11 @@ module Ruote::Exp
 
       var, prefix = split_prefix(var, prefix)
 
-      if prefix.length >= 2
+      if prefix == '//'
         return @context.storage.get_engine_variable(var)
       end
 
-      if prefix.length >= 1 && par = parent
+      if prefix == '/' && par = parent
         return par.lookup_variable(var, prefix)
       end
 
@@ -178,9 +178,9 @@ module Ruote::Exp
 
       var, prefix = split_prefix(var, prefix)
 
-      return nil if prefix.length >= 2 # engine variable
+      return nil if prefix == '//' # engine variable
 
-      if prefix.length == 1 && par = parent
+      if prefix == '/' && par = parent
         return par.locate_var(var, prefix)
       end
 
