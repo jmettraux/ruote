@@ -240,6 +240,10 @@ class FtTagsTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal %w[ a/b b ], @tracer.to_a.sort
+
+    assert_equal(
+      %w[ a a/b ],
+      r['variables']['__past_tags__'].collect { |e| e.first }.sort)
   end
 end
 
