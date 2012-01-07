@@ -150,7 +150,7 @@ module Ruote
         val = msg[k]
         val = msg['error']['message'] if k == 'message'
 
-        return false unless val && v.is_a?(String) ? (v == val) : v.match(val)
+        return false unless val && (v.is_a?(String) ? (v == val) : v.match(val))
       end
 
       true

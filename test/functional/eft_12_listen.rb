@@ -37,7 +37,8 @@ class EftListenTest < Test::Unit::TestCase
     assert_equal %w[ 1 alpha ], @tracer.to_a.sort
 
     assert_equal(
-      0, @dashboard.context.storage.get('variables', 'trackers')['trackers'].size)
+      0,
+      @dashboard.context.storage.get('variables', 'trackers')['trackers'].size)
   end
 
   def test_listen_with_child
@@ -85,7 +86,8 @@ class EftListenTest < Test::Unit::TestCase
     assert_equal 0, ps.errors.size
 
     assert_equal(
-      1, @dashboard.context.storage.get('variables', 'trackers')['trackers'].size)
+      1,
+      @dashboard.context.storage.get('variables', 'trackers')['trackers'].size)
   end
 
   def test_upon
