@@ -52,6 +52,15 @@ module Ruote::Exp
   # in that example, the concurrence will terminate as soon as 1 (count) of
   # the branches replies. The other branch will get cancelled.
   #
+  # :count and :wait_for may point to a negative integer, meaning "all but
+  # x".
+  #
+  #   concurrence :count => -2 do # all the branches replied but 2
+  #     # ...
+  #   end
+  #
+  # :count can be shortened to :c.
+  #
   # === :wait_for
   #
   # This attribute accepts either an integer, either a list of tags.
@@ -83,6 +92,8 @@ module Ruote::Exp
   # This concurrence will be over when the branches alpha and bravo have
   # replied. The charly branch may have replied or not, it doesn't matter.
   #
+  # :wait_for can be shortened to :wf.
+  #
   # === :remaining
   #
   # As said for :count, the remaining branches get cancelled. By setting
@@ -93,6 +104,8 @@ module Ruote::Exp
   #     alpha
   #     bravo
   #   end
+  #
+  # :remaining can be shortened to :rem or :r.
   #
   # === :merge
   #
@@ -127,6 +140,8 @@ module Ruote::Exp
   #   end
   #
   # makes sure that alpha's version of the workitem wins.
+  #
+  # :merge can be shortened to :m.
   #
   # === :merge_type
   #
@@ -215,6 +230,8 @@ module Ruote::Exp
   # simply discarded and the workitem as passed to the concurrence expression
   # is used to reply to the parent expression (of the concurrence expression).
   #
+  # :merge_type can be shortened to :mt.
+  #
   #
   # === :over_if (and :over_unless) attribute
   #
@@ -240,22 +257,20 @@ module Ruote::Exp
 
     names :concurrence
 
+    COUNT_R = /^-?\d+$/
+
     def apply
 
       #
       # count and wait_for
 
-      count = attribute(:count).to_s
-      count = nil unless count.match(/^\d+$/)
+      count = (attribute(:count) || attribute(:c)).to_s
+      count = nil unless COUNT_R.match(count)
 
-      wf = count || attribute(:wait_for)
+      wf = count || attribute(:wait_for) || attribute(:wf)
 
-      if wf.to_s.match(/^\d+$/)
+      if COUNT_R.match(wf.to_s)
         h.ccount = wf.to_i
-      #elsif wf.is_a?(Array)
-      #  h.wait_for = wf
-      #elsif wf
-      #  h.wait_for = wf.to_s.split(/,/).collect(&:strip)
       elsif wf
         h.wait_for = Ruote.comma_split(wf)
       end
@@ -264,11 +279,14 @@ module Ruote::Exp
       # other attributes
 
       h.cmerge = att(
-        :merge, %w[ first last highest lowest ])
+        [ :merge, :m ],
+        %w[ first last highest lowest ])
       h.cmerge_type = att(
-        :merge_type, %w[ override mix isolate stack union ignore concat ])
+        [ :merge_type, :mt ],
+        %w[ override mix isolate stack union ignore concat ])
       h.remaining = att(
-        :remaining, %w[ cancel forget ])
+        [ :remaining, :rem, :r ],
+        %w[ cancel forget ])
 
       h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}
 
@@ -359,11 +377,23 @@ module Ruote::Exp
 
     # How many branch replies are expected before the concurrence is over ?
     #
-    # (note : concurrent_iterator overrides it)
-    #
     def expected_count
 
-      h.ccount ? [ h.ccount, tree_children.size ].min : tree_children.size
+      if h.ccount.nil?
+        count_list_size
+      elsif h.ccount >= 0
+        [ h.ccount, count_list_size ].min
+      else # all but 1, 2, ...
+        i = count_list_size + h.ccount
+        i < 1 ? 1 : i
+      end
+    end
+
+    # (note : concurrent_iterator overrides it)
+    #
+    def count_list_size
+
+      tree_children.size
     end
 
     def reply_to_parent(_workitem)

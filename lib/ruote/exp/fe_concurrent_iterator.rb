@@ -271,9 +271,9 @@ module Ruote::Exp
 
     # Overrides the implementation found in ConcurrenceExpression
     #
-    def expected_count
+    def count_list_size
 
-      h.ccount ? [ h.ccount, h.list_size ].min : h.list_size
+      h.list_size
     end
   end
 end

@@ -7,8 +7,6 @@
 
 require File.expand_path('../base', __FILE__)
 
-#require 'ruote/part/hash_participant'
-
 
 class EftConcurrenceTest < Test::Unit::TestCase
   include FunctionalBase
@@ -270,6 +268,24 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     @dashboard.context.storage.get_many('expressions').each { |e| p e['fei'] }
     assert_equal 0, @dashboard.context.storage.get_many('expressions').size
+  end
+
+  def test_count_negative
+
+    pdef = Ruote.define do
+      concurrence :mt => 'mix', :c => -1 do # all but 1
+        set 'a' => 1
+        set 'b' => 2
+        set 'c' => 3
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 1, r['workitem']['fields']['a']
+    assert_equal 2, r['workitem']['fields']['b']
+    assert_equal nil, r['workitem']['fields']['c']
   end
 
   def test_cancel

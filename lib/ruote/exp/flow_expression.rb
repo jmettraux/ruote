@@ -294,7 +294,7 @@ module Ruote::Exp
 
       if attribute(:scope).to_s == 'true'
 
-        h.variables = {}
+        h.variables ||= {}
       end
 
       if attribute(:forget).to_s == 'true'

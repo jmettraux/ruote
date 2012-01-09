@@ -150,8 +150,8 @@ module Ruote::Exp
 
     def apply
 
-      h.variables = {}
-        # a blank local scope
+      h.variables ||= {}
+        # ensures a local scope
 
       reply(h.applied_workitem)
     end
@@ -161,11 +161,13 @@ module Ruote::Exp
       h.applied_workitem['fields'] = workitem['fields']
         # since set_vf and co work on h.applied_workitem...
 
+      opts = { :escape => attribute(:escape) }
+
+      compiled_atts = compile_atts(opts)
+
       h.variables = nil
         # the local scope is over,
         # variables set here will be set in the parent scope
-
-      opts = { :escape => attribute(:escape) }
 
       value = if tree_children.empty?
         lookup_val(opts)
@@ -183,13 +185,13 @@ module Ruote::Exp
 
         set_f(attribute(field_key), value, name == 'unset')
 
-      elsif value == nil && kv = compile_atts(opts).find { |k, v| k != 'escape' }
+      elsif value == nil && kv = compiled_atts.find { |k, v| k != 'escape' }
 
         kv << (name == 'unset')
 
         set_vf(*kv)
 
-      elsif kv = compile_atts(opts).find { |k, v| k != 'escape' }
+      elsif kv = compiled_atts.find { |k, v| k != 'escape' }
 
         set_vf(kv.first, value, name == 'unset')
 

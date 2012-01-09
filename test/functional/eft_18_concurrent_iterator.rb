@@ -464,6 +464,25 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal %w[ over. ], @tracer.to_a
   end
 
+  def test_negative_count
+
+    pdef = Ruote.define do
+      concurrent_iterator :on => %w[ a b c d ], :c => -2, :mt => 'mix' do
+        set '${v:i}' => 'x'
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'x', r['workitem']['fields']['a']
+    assert_equal 'x', r['workitem']['fields']['b']
+    assert_equal nil, r['workitem']['fields']['c']
+    assert_equal nil, r['workitem']['fields']['d']
+  end
+
   protected
 
   def register_catchall_participant
