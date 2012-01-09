@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- "await" expression, successor to "listen"
 - root expression: __past_tags__ variable
 - full tags
 - concurrence and citerator: :count => 0 (immediate reply)

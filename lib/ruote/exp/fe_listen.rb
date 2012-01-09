@@ -88,6 +88,11 @@ module Ruote::Exp
   # and this copy is delivered to the expressions that are client to the
   # 'listen'.
   #
+  # :merge can be set to 'override' where the event's workitem fields are
+  # used or some value which isn't true or 'true', in which case the
+  # workitem fields of the 'listen' expression is used as is (as it was
+  # when the flow reached the 'listen' expression).
+  #
   # == :upon
   #
   # There are two kinds of main events in ruote, apply and reply. Thus,
@@ -260,7 +265,7 @@ module Ruote::Exp
       # :where guard
 
       where = attribute(:where, workitem)
-      return if where && ( ! Condition.true?(where))
+      return if where && Condition.false?(where)
 
       #
       # green for trigger
@@ -274,10 +279,16 @@ module Ruote::Exp
       #else don't touch
       end
 
-      if tree_children.size > 0
+      if tree_children.any?
 
-        launch_sub(
-          "#{h.fei['expid']}_0", tree[2][0], :forget => true, :workitem => wi)
+        i, t = if tree_children.size == 1
+          [ "#{h.fei['expid']}_0", tree_children[0] ]
+        else
+          [ h.fei['expid'], [ 'sequence', {}, tree_children ] ]
+        end
+
+        launch_sub(i, t, :forget => true, :workitem => wi)
+
       else
 
         reply_to_parent(wi)
@@ -306,7 +317,7 @@ module Ruote::Exp
       elsif h.upon == 'error_intercepted'
 
         {
-          'class' => (attribute(:class) || '').split(/, */),
+          'class' => Ruote.comma_split(attribute(:class) || ''),
           'message' => attribute(:message) || attribute(:msg)
         }.delete_if { |k, v|
           v == nil or v == []
@@ -314,7 +325,7 @@ module Ruote::Exp
 
       else
 
-        { h.to.match(/\//) ? 'full_tag' : 'tag' => h.to }
+        { (h.to.match(/\//) ? 'full_tag' : 'tag') => h.to }
       end
     end
   end

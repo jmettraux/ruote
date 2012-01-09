@@ -77,6 +77,13 @@ module Ruote::Exp
       raise ConditionError.new(conditional)
     end
 
+    # Returns true if the given conditional string evaluates to false.
+    #
+    def self.false?(conditional)
+
+      ( ! true?(conditional))
+    end
+
     # Evaluates the given [conditional] code string and returns the
     # result.
     #

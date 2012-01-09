@@ -252,10 +252,12 @@ module Ruote::Exp
 
       if wf.to_s.match(/^\d+$/)
         h.ccount = wf.to_i
-      elsif wf.is_a?(Array)
-        h.wait_for = wf
+      #elsif wf.is_a?(Array)
+      #  h.wait_for = wf
+      #elsif wf
+      #  h.wait_for = wf.to_s.split(/,/).collect(&:strip)
       elsif wf
-        h.wait_for = wf.to_s.split(/,/).collect(&:strip)
+        h.wait_for = Ruote.comma_split(wf)
       end
 
       #

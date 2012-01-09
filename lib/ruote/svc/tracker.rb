@@ -102,6 +102,10 @@ module Ruote
     #
     def add_tracker(wfid, action, id, conditions, msg)
 
+      conditions =
+        conditions &&
+        conditions.inject({}) { |h, (k, v)| h[k] = Array(v); h }
+
       doc = @context.storage.get_trackers
 
       doc['trackers'][id] =
@@ -140,17 +144,21 @@ module Ruote
 
       conditions.each do |k, v|
 
-        if k == 'class'
-          return false unless v.include?(msg['error']['class'])
-          next
+        return false unless Array(v).find do |vv|
+
+          # the Array(v) is for backward compatibility, although newer
+          # track conditions are already stored as arrays.
+
+          vv = Ruote.regex_or_s(vv)
+
+          val = case k
+            when 'class' then msg['error']['class']
+            when 'message' then msg['error']['message']
+            else msg[k]
+          end
+
+          val && (vv.is_a?(String) ? (vv == val) : vv.match(val))
         end
-
-        v = Ruote.regex_or_s(v)
-
-        val = msg[k]
-        val = msg['error']['message'] if k == 'message'
-
-        return false unless val && (v.is_a?(String) ? (v == val) : v.match(val))
       end
 
       true

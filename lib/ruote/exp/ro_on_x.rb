@@ -199,7 +199,7 @@ module Ruote::Exp
     #
     def schedule_retries(handler, err)
 
-      retries = handler.split(/ *, */)
+      retries = handler.split(/\s*,\s*/)
       after, action = retries.shift.split(/:/)
 
       # deal with "* 3"

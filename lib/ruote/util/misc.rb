@@ -178,5 +178,13 @@ module Ruote
     raise NoMethodError.new(
       "/!\\ please upgrade your rufus-treechecker gem /!\\")
   end
+
+  # Returns an array. If the argument is an array, return it as is. Else
+  # turns the argument into a string and "comma splits" it.
+  #
+  def self.comma_split(o)
+
+    o.is_a?(Array) ? o : o.to_s.split(/\s*,\s*/).collect { |e| e.strip }
+  end
 end
 
