@@ -101,7 +101,15 @@ class LookupTest < Test::Unit::TestCase
     h = {}
     Ruote.set(h, 'customer.name', 'bravo')
 
-    assert_equal({"customer.name"=>"bravo"}, h)
+    assert_equal({ 'customer.name' => 'bravo' }, h)
+  end
+
+  def test_set_integer_corner_case
+
+    h = {}
+    Ruote.set(h, '0_0_1', 'charly')
+
+    assert_equal({ '0_0_1' => 'charly' }, h)
   end
 
   def test_hash_unset
