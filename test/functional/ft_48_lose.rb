@@ -62,7 +62,7 @@ class FtLoseTest < Test::Unit::TestCase
 
     wfid = @dashboard.launch(pdef)
 
-    @dashboard.wait_for(12)
+    @dashboard.wait_for(13)
 
     assert_match /alpha/, @tracer.to_s
     assert_match /bravo/, @tracer.to_s
