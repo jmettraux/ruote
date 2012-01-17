@@ -178,22 +178,17 @@ module Ruote::Exp
 
       var, prefix = split_prefix(var, prefix)
 
-      return nil if prefix == '//' # engine variable
-
-      if prefix == '/' && par = parent
-        return par.locate_var(var, prefix)
+      if prefix == '//' # engine variable
+        nil
+      elsif prefix == '/' && par = parent # process variable
+        par.locate_var(var, prefix)
+      elsif h.variables # it's here
+        [ self, var ]
+      elsif par = parent # look in the parent expression
+        par.locate_var(var, prefix)
+      else # uprooted var lookup...
+        [ nil, nil ]
       end
-
-      # no prefix...
-
-      return [ self, var ] if h.variables
-
-      if par = parent
-        (return par.locate_var(var, prefix)) rescue nil
-      end
-
-      #raise "uprooted var lookup, something went wrong"
-      [ nil, nil ]
     end
 
     def set_v(key, value, unset=false)
