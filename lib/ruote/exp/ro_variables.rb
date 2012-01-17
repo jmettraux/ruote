@@ -195,6 +195,38 @@ module Ruote::Exp
       #raise "uprooted var lookup, something went wrong"
       [ nil, nil ]
     end
+
+    def set_v(key, value, unset=false)
+
+      if unset
+        unset_variable(key)
+      else
+        set_variable(key, value)
+      end
+    end
+
+    def set_f(key, value, unset=false)
+
+      if unset
+        h.applied_workitem['fields'].delete(key) # why not Ruote.unset() ?
+      else
+        Ruote.set(h.applied_workitem['fields'], key, value)
+      end
+    end
+
+    PREFIX_REGEX = /^([^:]+):(.+)$/
+    F_PREFIX_REGEX = /^f/
+
+    def set_vf(key, value, unset=false)
+
+      field, key = if m = PREFIX_REGEX.match(key)
+        [ F_PREFIX_REGEX.match(m[1]), m[2] ]
+      else
+        [ true, key ]
+      end
+
+      field ? set_f(key, value, unset) : set_v(key, value, unset)
+    end
   end
 end
 

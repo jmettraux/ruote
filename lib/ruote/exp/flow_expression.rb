@@ -63,7 +63,6 @@ module Ruote::Exp
     require 'ruote/exp/ro_persist'
     require 'ruote/exp/ro_timers'
     require 'ruote/exp/ro_variables'
-    require 'ruote/exp/ro_vf'
 
     COMMON_ATT_KEYS = %w[
       if unless
