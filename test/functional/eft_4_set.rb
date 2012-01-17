@@ -250,18 +250,22 @@ class EftSetTest < Test::Unit::TestCase
       set 'f:bravo' => 'bob'
       set 'f:charly' => 'charles'
       set 'f:__timed_out__' => %w[ seriously ]
+      set 'f:delta' => { 'echo' => 'e', 'foxtrott' => 'f' }
 
       unset 'f:alpha'
       unset :f => 'bravo'
       unset :field => 'charly'
       unset :field => '__timed_out__'
+      unset 'f:delta.echo'
     end
 
     wfid = @dashboard.launch(pdef)
 
     r = @dashboard.wait_for(wfid)
 
-    assert_equal({ '__result__' => %w[ seriously ]}, r['workitem']['fields'])
+    assert_equal(
+      { '__result__' => 'e', 'delta' => { 'foxtrott' => 'f' } },
+      r['workitem']['fields'])
   end
 
   class VarPeek

@@ -106,7 +106,7 @@ module Ruote::Exp
       fexp.un_set_variable(:unset, v, nil, (fexp.h.fei != h.fei)) if fexp
     end
 
-    # TODO : redoc rewrite needed
+    # TODO : rdoc rewrite needed
     #
     # This method is mostly used by the worker when looking up
     # a process name or participant name bound under a variable.
@@ -208,7 +208,7 @@ module Ruote::Exp
     def set_f(key, value, unset=false)
 
       if unset
-        h.applied_workitem['fields'].delete(key) # why not Ruote.unset() ?
+        Ruote.unset(h.applied_workitem['fields'], key)
       else
         Ruote.set(h.applied_workitem['fields'], key, value)
       end
