@@ -68,12 +68,12 @@ module Ruote
       # preparing data
 
       @expressions = expressions.collect { |e|
-        Ruote::Exp::FlowExpression.from_h(context, e) }
-      @expressions.sort! { |a, b| a.fei.expid <=> b.fei.expid }
-
-      @stored_workitems = stored_workitems.collect { |h|
-        Ruote::Workitem.new(h)
+        Ruote::Exp::FlowExpression.from_h(context, e)
+      }.sort { |a, b|
+        a.fei.expid <=> b.fei.expid
       }
+
+      @stored_workitems = stored_workitems.map { |h| Ruote::Workitem.new(h) }
 
       @errors = errors.sort! { |a, b| a.fei.expid <=> b.fei.expid }
       @schedules = schedules.sort! { |a, b| a['owner'].sid <=> b['owner'].sid }
@@ -132,6 +132,8 @@ module Ruote
     #
     def all_variables
 
+      return nil if @expressions.empty?
+
       @expressions.inject({}) do |h, exp|
         h[exp.fei] = exp.variables if exp.variables
         h
@@ -141,9 +143,15 @@ module Ruote
     # Returns a hash tagname => fei of tags set at the root of the process
     # instance.
     #
+    # Returns nil if there is no defined root expression.
+    #
     def tags
 
-      Hash[variables.select { |k, v| FlowExpressionId.is_a_fei?(v) }]
+      if variables
+        Hash[variables.select { |k, v| FlowExpressionId.is_a_fei?(v) }]
+      else
+        nil
+      end
     end
 
     # Returns a hash tagname => array of feis of all the tags set in the process
@@ -186,7 +194,9 @@ module Ruote
     #
     def wfid
 
-      @expressions.any? ? @expressions.first.fei.wfid : @errors.first.fei.wfid
+      l = [ @expressions, @errors, @stored_workitems ].find { |l| l.any? }
+
+      l ? l.first.fei.wfid : nil
     end
 
     # For a process
@@ -468,7 +478,12 @@ module Ruote
     # manipulation (gardening) was performed on the tree, this method yields
     # the same result as the #original_tree method.
     #
+    # Returns nil if there are no expressions (happens in the case of an
+    # orphan workitem)
+    #
     def current_tree
+
+      return nil if @expressions.empty?
 
       h = Ruote.decompose_tree(original_tree)
 
