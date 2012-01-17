@@ -90,18 +90,18 @@ module Ruote::Exp
     # Sets a variable to a given value.
     # (will set at the appropriate level).
     #
-    def set_variable(var, val)
+    def set_variable(var, val, override=false)
 
-      fexp, v = locate_var(var)
+      fexp, v = locate_set_var(var, override) || locate_var(var)
 
       fexp.un_set_variable(:set, v, val, (fexp.h.fei != h.fei)) if fexp
     end
 
     # Unbinds a variables.
     #
-    def unset_variable(var)
+    def unset_variable(var, override=false)
 
-      fexp, v = locate_var(var)
+      fexp, v = locate_set_var(var, override) || locate_var(var)
 
       fexp.un_set_variable(:unset, v, nil, (fexp.h.fei != h.fei)) if fexp
     end
@@ -191,18 +191,33 @@ module Ruote::Exp
       end
     end
 
-    def set_v(key, value, unset=false)
+    # TODO
+    #
+    def locate_set_var(var, override)
 
-      if unset
-        unset_variable(key)
+      if override != true || var.match(/^\//)
+        false
+      elsif h.variables && h.variables.has_key?(var)
+        [ self, var ]
+      elsif par = parent
+        par.locate_set_var(var, override)
       else
-        set_variable(key, value)
+        false
       end
     end
 
-    def set_f(key, value, unset=false)
+    def set_v(key, value, opts={})
 
-      if unset
+      if opts[:unset]
+        unset_variable(key, opts[:override])
+      else
+        set_variable(key, value, opts[:override])
+      end
+    end
+
+    def set_f(key, value, opts={})
+
+      if opts[:unset]
         Ruote.unset(h.applied_workitem['fields'], key)
       else
         Ruote.set(h.applied_workitem['fields'], key, value)
@@ -212,7 +227,7 @@ module Ruote::Exp
     PREFIX_REGEX = /^([^:]+):(.+)$/
     F_PREFIX_REGEX = /^f/
 
-    def set_vf(key, value, unset=false)
+    def set_vf(key, value, opts={})
 
       field, key = if m = PREFIX_REGEX.match(key)
         [ F_PREFIX_REGEX.match(m[1]), m[2] ]
@@ -220,7 +235,7 @@ module Ruote::Exp
         [ true, key ]
       end
 
-      field ? set_f(key, value, unset) : set_v(key, value, unset)
+      field ? set_f(key, value, opts) : set_v(key, value, opts)
     end
   end
 end

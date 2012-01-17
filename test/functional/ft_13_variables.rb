@@ -144,6 +144,25 @@ class FtVariablesTest < Test::Unit::TestCase
     assert_equal %w[ v0:a v0: v0:a ], @tracer.to_a
   end
 
+  def test_set_var_override
+
+    pdef = Ruote.define do
+      set 'v:v0' => 'a'
+      sequence :scope => true do
+        set 'v:v0' => 'b', :over => true
+        set 'v:v1' => 'b', :over => true
+        set 'v:/v2' => 'b', :over => true
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal(
+      { 'v0' => 'b', 'v2' => 'b' },
+      r['variables'])
+  end
+
   def test_lookup_in_var
 
     @dashboard.register_participant :echo_toto do |wi, fexp|

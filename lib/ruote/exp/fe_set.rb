@@ -60,6 +60,30 @@ module Ruote::Exp
   #
   #   set :f => 'my_field', :value => 'oh and ${whatever}', :escape => true
   #
+  # == :override / :over
+  #
+  # (attribute introduced in ruote 2.3.0)
+  #
+  # When setting a variable with no slash prefix, the target will always be the
+  # most local scope. When one wants to purposely override/overwrite an already
+  # set variable, the attribute :override can be set to true.
+  #
+  # In this example, althogh the second 'set' happens in its own scope, the
+  # variable v0, will be set to 'b' in the initial (top) scope:
+  #
+  #   pdef = Ruote.define do
+  #     set 'v:v0' => 'a'
+  #     sequence :scope => true do
+  #       set 'v:v0' => 'b', :over => true
+  #     end
+  #   end
+  #
+  # :over(ride) tells the 'set' expression to locate where the var is set
+  # and change the value there.
+  #
+  # :over is ignored for process (/) and engine (//) variables. It has no
+  # meaning for workitem fields.
+  #
   # == ruote 2.0's shorter form
   #
   # Ruote 2.0 introduces a shorter form for the 'set' expression :
@@ -162,8 +186,10 @@ module Ruote::Exp
         # since set_vf and co work on h.applied_workitem...
 
       opts = { :escape => attribute(:escape) }
-
       compiled_atts = compile_atts(opts)
+
+      over = (attribute(:override) || attribute(:over)).to_s == 'true'
+      unset = name == 'unset'
 
       h.variables = nil
         # the local scope is over,
@@ -179,21 +205,21 @@ module Ruote::Exp
 
       result = if var_key = has_attribute(:v, :var, :variable)
 
-        set_v(attribute(var_key), value, name == 'unset')
+        set_v(attribute(var_key), value, :unset => unset, :override => over)
 
       elsif field_key = has_attribute(:f, :fld, :field)
 
-        set_f(attribute(field_key), value, name == 'unset')
+        set_f(attribute(field_key), value, :unset => unset)
 
       elsif value == nil && kv = compiled_atts.find { |k, v| k != 'escape' }
 
-        kv << (name == 'unset')
+        kv << { :unset => unset, :override => over }
 
         set_vf(*kv)
 
       elsif kv = compiled_atts.find { |k, v| k != 'escape' }
 
-        set_vf(kv.first, value, name == 'unset')
+        set_vf(kv.first, value, :unset => unset, :over => over)
 
       else
 
