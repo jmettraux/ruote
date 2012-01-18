@@ -191,7 +191,8 @@ module Ruote::Exp
       end
     end
 
-    # TODO
+    # When used with override = true, will try to locate the binding site
+    # for the variable and return it.
     #
     def locate_set_var(var, override)
 

@@ -155,6 +155,8 @@ class FtVariablesTest < Test::Unit::TestCase
       end
     end
 
+    #@dashboard.noisy = true
+
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 

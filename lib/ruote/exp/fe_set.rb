@@ -188,6 +188,8 @@ module Ruote::Exp
       opts = { :escape => attribute(:escape) }
       compiled_atts = compile_atts(opts)
 
+      kv = find_kv(compiled_atts)
+
       over = (attribute(:override) || attribute(:over)).to_s == 'true'
       unset = name == 'unset'
 
@@ -211,15 +213,15 @@ module Ruote::Exp
 
         set_f(attribute(field_key), value, :unset => unset)
 
-      elsif value == nil && kv = compiled_atts.find { |k, v| k != 'escape' }
+      elsif value == nil && kv
 
         kv << { :unset => unset, :override => over }
 
         set_vf(*kv)
 
-      elsif kv = compiled_atts.find { |k, v| k != 'escape' }
+      elsif kv
 
-        set_vf(kv.first, value, :unset => unset, :over => over)
+        set_vf(kv.first, value, :unset => unset, :override => over)
 
       else
 
@@ -230,6 +232,14 @@ module Ruote::Exp
       h.applied_workitem['fields']['__result__'] = result
 
       super(h.applied_workitem)
+    end
+
+    protected
+
+    def find_kv(atts)
+
+      atts.find { |k, v| ! %w[ escape over override ].include?(k) } ||
+      atts.first # finally...
     end
   end
 end
