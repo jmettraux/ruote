@@ -68,7 +68,7 @@ module Ruote::Exp
   # most local scope. When one wants to purposely override/overwrite an already
   # set variable, the attribute :override can be set to true.
   #
-  # In this example, althogh the second 'set' happens in its own scope, the
+  # In this example, although the second 'set' happens in its own scope, the
   # variable v0, will be set to 'b' in the initial (top) scope:
   #
   #   pdef = Ruote.define do
@@ -83,6 +83,9 @@ module Ruote::Exp
   #
   # :over is ignored for process (/) and engine (//) variables. It has no
   # meaning for workitem fields.
+  #
+  # When :over is set to 'sub' (or :sub), the :over => true behaviour is
+  # followed, but it doesn't cross into the parent subprocess.
   #
   # == ruote 2.0's shorter form
   #
@@ -190,7 +193,7 @@ module Ruote::Exp
 
       kv = find_kv(compiled_atts)
 
-      over = (attribute(:override) || attribute(:over)).to_s == 'true'
+      over = attribute(:override) || attribute(:over)
       unset = name == 'unset'
 
       h.variables = nil

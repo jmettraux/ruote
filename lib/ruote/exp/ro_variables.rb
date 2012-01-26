@@ -191,13 +191,18 @@ module Ruote::Exp
       end
     end
 
-    # When used with override = true, will try to locate the binding site
+    # When used with override = true(ish), will try to locate the binding site
     # for the variable and return it.
+    #
+    # If override is set to 'sub', will stop before digging into the parent
+    # subprocess.
     #
     def locate_set_var(var, override)
 
-      if override != true || var.match(/^\//)
+      if ( ! override) || var.match(/^\//)
         false
+      elsif override == 'sub' && DefineExpression.is_definition?(tree)
+        [ self, var ]
       elsif h.variables && h.variables.has_key?(var)
         [ self, var ]
       elsif par = parent

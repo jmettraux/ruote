@@ -165,6 +165,38 @@ class FtVariablesTest < Test::Unit::TestCase
       r['variables'])
   end
 
+  def test_set_var_override_sub
+
+    pdef = Ruote.define do
+
+      set 'v:v0' => 'a'
+      set 'v:v1' => 'a'
+      set 'v:v2' => 'a'
+      set 'v:v3' => 'a'
+      sub0
+
+      define 'sub0' do
+        set 'v:v0' => 'b'
+        set 'v:v1' => 'b', :over => true
+        set 'v:v3' => 'b'
+        sequence :scope => true do
+          set 'v:v2' => 'c', :over => 'sub'
+          set 'v:v3' => 'c', :over => 'sub'
+        end
+        set 'v:/v3' => '${v:v3}'
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal(
+      %w[ a b a c ],
+      r['variables'].values_at(*%w[ v0 v1 v2 v3 ]))
+  end
+
   def test_lookup_in_var
 
     @dashboard.register_participant :echo_toto do |wi, fexp|
