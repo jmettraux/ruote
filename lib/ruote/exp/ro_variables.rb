@@ -199,11 +199,13 @@ module Ruote::Exp
     #
     def locate_set_var(var, override)
 
+      hk = h.variables && h.variables.has_key?(var)
+
       if ( ! override) || var.match(/^\//)
         false
-      elsif override == 'sub' && DefineExpression.is_definition?(tree)
-        [ self, var ]
-      elsif h.variables && h.variables.has_key?(var)
+      elsif override == 'sub' && DefineExpression.is_definition?(tree) && ! hk
+        false
+      elsif hk
         [ self, var ]
       elsif par = parent
         par.locate_set_var(var, override)

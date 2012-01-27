@@ -174,6 +174,9 @@ class FtVariablesTest < Test::Unit::TestCase
       set 'v:v2' => 'a'
       set 'v:v3' => 'a'
       sub0
+      sequence :scope => true do
+        set 'v:v4' => 'a', :over => 'sub'
+      end
 
       define 'sub0' do
         set 'v:v0' => 'b'
@@ -193,8 +196,8 @@ class FtVariablesTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal(
-      %w[ a b a c ],
-      r['variables'].values_at(*%w[ v0 v1 v2 v3 ]))
+      [ 'a', 'b', 'a', 'c', nil ],
+      r['variables'].values_at(*%w[ v0 v1 v2 v3 v4 ]))
   end
 
   def test_lookup_in_var
