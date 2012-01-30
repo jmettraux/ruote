@@ -460,13 +460,13 @@ module Ruote
     # This method expects there to be a logger with a wait_for method in the
     # context, else it will raise an exception.
     #
-    # *WARNING* : wait_for() is meant for environments where there is a unique
+    # *WARNING*: #wait_for() is meant for environments where there is a unique
     # worker and that worker is nested in this engine. In a multiple worker
     # environment wait_for doesn't see events handled by 'other' workers.
     #
     # This method is only useful for test/quickstart/examples environments.
     #
-    #   engine.wait_for(:alpha)
+    #   dashboard.wait_for(:alpha)
     #     # will make the current thread block until a workitem is delivered
     #     # to the participant named 'alpha'
     #
@@ -483,9 +483,60 @@ module Ruote
     #     # as there are no more processes running in the engine (no more
     #     # expressions placed in the storage)
     #
+    #   engine.wait_for('terminated')
+    #     # will return as soon as any process has a 'terminated' event.
+    #
     # It's OK to wait for multiple wfids :
     #
     #   engine.wait_for('20100612-bezerijozo', '20100612-yakisoba')
+    #
+    #
+    # == ruote 2.3.0 and wait_for(event)
+    #
+    # Ruote 2.3.0 introduced the ability to wait for an event given its name.
+    # Here is a quick list of event names and a their description:
+    #
+    # * 'launch' - [sub]process launch
+    # * 'terminated' - process terminated
+    # * 'ceased' - orphan process terminated
+    # * 'apply' - expression application
+    # * 'reply' - expression reply
+    # * 'dispatched' - emitted workitem towards participant
+    # * 'receive' - received workitem from participant
+    # * 'pause' - pause order
+    # * 'resume' - pause order
+    # * 'dispatch_cancel' - emitting a cancel order to a participant
+    # * 'dispatch_pause' - emitting a pause order to a participant
+    # * 'dispatch_resume' - emitting a resume order to a participant
+    #
+    # Names that are past participles are for notification events, while
+    # plain verbs are for action events. Most of the time, a notitication
+    # is emitted has the result of an action event, workers don't take any
+    # action on them, but services that are listening to the ruote activity
+    # might want to do something about them.
+    #
+    # == what wait_for returns
+    #
+    # #wait_for returns the intercepted event. It's useful when testing/
+    # spec'ing, as in:
+    #
+    #   it 'completes successfully' do
+    #
+    #     definition = Ruote.define :on_error => 'charly' do
+    #       alpha
+    #       bravo
+    #     end
+    #
+    #     wfid = @board.launch(definition)
+    #
+    #     r = @board.wait_for(wfid)
+    #       # wait until process terminates or hits an error
+    #
+    #     r['workitem'].should_not == nil
+    #     r['workitem']['fields']['alpha'].should == 'was here'
+    #     r['workitem']['fields']['bravo'].should == 'was here'
+    #     r['workitem']['fields']['charly'].should == nil
+    #   end
     #
     def wait_for(*items)
 
