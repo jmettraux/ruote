@@ -363,6 +363,22 @@ process_definition name: "nada"
       tree)
   end
 
+  def test_string_escaping
+
+    tree = Ruote::RadialReader.read(%q{
+      define
+        participant toto, msg: "a\"'a"
+        participant toto, msg: 'b"\'b'
+    })
+
+    assert_equal(
+      [ 'define', {}, [
+        [ 'participant', { 'toto' => nil, 'msg' => "a\"'a" }, [] ],
+        [ 'participant', { 'toto' => nil, 'msg' => "b\"'b" }, [] ]
+      ] ],
+      tree)
+  end
+
   def test_regex
 
     tree = Ruote::RadialReader.read(%{

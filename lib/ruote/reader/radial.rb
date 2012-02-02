@@ -206,9 +206,12 @@ module Ruote
         Value.new(t)
       }
 
+      rule(:string => simple(:st)) {
+        st.to_s.gsub(/\\(.)/) { eval("\"\\#{$~[1]}\"") }
+      }
+
       rule(:text => simple(:te)) { te.to_s }
       rule(:regex => simple(:re)) { "/#{re}/" }
-      rule(:string => simple(:st)) { st.to_s }
       rule(:number => simple(:n)) { n.match(/[eE\.]/) ? Float(n) : Integer(n) }
       rule(:false => simple(:b)) { false }
       rule(:true => simple(:b)) { true }
