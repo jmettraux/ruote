@@ -207,11 +207,13 @@ module Ruote
       }
 
       rule(:string => simple(:st)) {
-        st.to_s.gsub(/\\(.)/) { eval("\"\\#{$~[1]}\"") }
+        st.to_s.gsub(/\\(.)/) { eval("\"\\" + $~[1] + '"') }
+      }
+      rule(:regex => simple(:re)) {
+        '/' + re.to_s.gsub(/\\(.)/) { eval("\"\\" + $~[1] + '"') } + '/'
       }
 
       rule(:text => simple(:te)) { te.to_s }
-      rule(:regex => simple(:re)) { "/#{re}/" }
       rule(:number => simple(:n)) { n.match(/[eE\.]/) ? Float(n) : Integer(n) }
       rule(:false => simple(:b)) { false }
       rule(:true => simple(:b)) { true }

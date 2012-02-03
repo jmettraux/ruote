@@ -438,5 +438,21 @@ process_definition name: "nada"
       ] ],
       Ruote::RadialReader.read(pdef))
   end
+
+  def test_regex_escape
+
+    tree = Ruote::RadialReader.read(%q{
+      define
+        participant nada, r: /nada\ntoto/
+        participant nada, r: /nada\/toto/
+    })
+
+    assert_equal(
+      [ 'define', {}, [
+        [ 'participant', { 'nada' => nil, 'r' => "/nada\ntoto/" }, [] ],
+        [ 'participant', { 'nada' => nil, 'r' => "/nada/toto/" }, [] ]
+      ]],
+      tree)
+  end
 end
 
