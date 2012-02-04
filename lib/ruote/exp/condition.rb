@@ -65,9 +65,8 @@ module Ruote::Exp
       conditional = unescape(conditional.to_s)
 
       REGEXES.each do |method, regex|
-        if m = regex.match(conditional)
-          return self.send(method, m)
-        end
+        m = regex.match(conditional)
+        return self.send(method, m) if m
       end
 
       evl(conditional) ? true : false
