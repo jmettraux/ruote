@@ -495,3 +495,5 @@
 
 [ ] ruote-doozer ?
 
+[ ] move test/unit/storage[s].rb to test/functional/
+

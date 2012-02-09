@@ -1,5 +1,6 @@
 
-$:.unshift('lib') # running from ruote/ probably
+$:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+  # running from ruote/ probably
 
 require 'rubygems'
 
@@ -17,9 +18,7 @@ require 'ruote/storage/fs_storage'
 
 dashboard = Ruote::Dashboard.new(
   Ruote::Worker.new(
-    Ruote::FsStorage.new(
-      'ruote_work',
-      's_logger' => [ 'ruote/log/test_logger', 'Ruote::TestLogger' ])))
+    Ruote::FsStorage.new('ruote_work')))
 
 
 # registering participants
