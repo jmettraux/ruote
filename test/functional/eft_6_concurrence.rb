@@ -434,5 +434,25 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal 'ceased', r['action']
     assert_equal %w[ a b ], @tracer.to_a.sort
   end
+
+  def test_remaining_wait
+
+    pdef = Ruote.define do
+      concurrence :count => 1, :rem => 'wait', :mt => 'mix' do
+        set 'a' => true
+        sequence do
+          set 'b' => true
+          stall
+        end
+      end
+    end
+
+    #@dashboard.noisy = true
+    wfid = @dashboard.launch(pdef); r = @dashboard.wait_for(wfid)
+
+    assert_equal(
+      { 'a' => true, 'b' => true, '__result__' => true },
+      r['workitem']['fields'])
+  end
 end
 

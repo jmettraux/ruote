@@ -107,6 +107,13 @@ module Ruote::Exp
   #
   # :remaining can be shortened to :rem or :r.
   #
+  # The default is 'cancel', where all the remaining branches are cancelled
+  # while the hand is given back to the main flow.
+  #
+  # There is a third setting, 'wait'. It behaves like 'cancel', but the
+  # concurrence waits for the cancelled children to reply. The workitems
+  # from cancelled branches are merged in as well.
+  #
   # === :merge
   #
   # By default, the workitems override each others. By default, the first
@@ -286,7 +293,7 @@ module Ruote::Exp
         %w[ override mix isolate stack union ignore concat ])
       h.remaining = att(
         [ :remaining, :rem, :r ],
-        %w[ cancel forget ])
+        %w[ cancel forget wait ])
 
       h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}
 
@@ -324,6 +331,10 @@ module Ruote::Exp
 
       if (not over) && h.over
         # just became 'over'
+
+        reply_to_parent(nil)
+
+      elsif h.over && h.remaining == 'wait'
 
         reply_to_parent(nil)
 
@@ -398,6 +409,36 @@ module Ruote::Exp
 
     def reply_to_parent(_workitem)
 
+      #
+      # remaining 'wait' case first
+
+      if h.remaining == 'wait'
+
+        if h.workitems.size >= count_list_size
+          #
+          # all children have replied
+
+          workitem = merge_all_workitems
+
+          do_unpersist && super(workitem, false)
+
+        elsif h.children_cancelled == nil
+          #
+          # the concurrence is over, let's cancel all children and then
+          # wait for them
+
+          h.children_cancelled = true
+          do_persist
+
+          h.children.each { |i| @context.storage.put_msg('cancel', 'fei' => i) }
+        end
+
+        return
+      end
+
+      #
+      # remaining 'forget' and 'cancel' cases
+
       workitem = merge_all_workitems
 
       if h.ccount == nil || h.children.empty?
@@ -410,9 +451,7 @@ module Ruote::Exp
 
           super(workitem, false)
 
-          h.children.each do |i|
-            @context.storage.put_msg('cancel', 'fei' => i) #unless replied?(i)
-          end
+          h.children.each { |i| @context.storage.put_msg('cancel', 'fei' => i) }
         end
 
       else # h.remaining == 'forget'

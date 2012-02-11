@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- concurrence and citerator :remaining => 'wait' (idea Pedro Visintin)
 - set 'v:x' => 'y', :over[ride] => true/'sub'
 - concurrence and citerator :count => -x (all but x)
 - "await" expression, successor to "listen"
