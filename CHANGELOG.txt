@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- concurrence over_if bug (thanks alexw668)
 - concurrence and citerator :remaining => 'wait' (idea Pedro Visintin)
 - set 'v:x' => 'y', :over[ride] => true/'sub'
 - concurrence and citerator :count => -x (all but x)

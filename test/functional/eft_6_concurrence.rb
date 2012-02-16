@@ -71,6 +71,34 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_match /seen/, @dashboard.context.stash[:fields].inspect
   end
 
+  def test_over_if__remaining_cancel
+
+    @dashboard.register 'alpha', Ruote::StorageParticipant
+
+    pdef = Ruote.define do
+      concurrence :over_if => '${seen}' do
+        alpha
+        alpha
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for('dispatched')
+
+    wi = @dashboard.storage_participant.first
+
+    wi.fields['seen'] = true
+    @dashboard.storage_participant.proceed(wi)
+
+    @dashboard.wait_for('dispatch_cancel')
+    sleep 0.350
+
+    assert_equal 0, @dashboard.storage_participant.size
+  end
+
   def test_over_unless
 
     pdef = Ruote.process_definition do

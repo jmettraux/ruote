@@ -441,13 +441,13 @@ module Ruote::Exp
 
       workitem = merge_all_workitems
 
-      if h.ccount == nil || h.children.empty?
+      if h.children.empty?
 
         do_unpersist && super(workitem, false)
 
       elsif h.remaining == 'cancel'
 
-        if r = do_unpersist
+        if do_unpersist
 
           super(workitem, false)
 

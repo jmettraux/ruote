@@ -51,6 +51,7 @@ Richard Jennings
 
 == Feedback
 
+Alex - https://github.com/alexw668
 Pedro Visintin - :remaining => 'wait'
 Christophe Malaurie - quickstart fix
 Juris Galang - https://github.com/jurisgalang (concurrence vs history issue)
