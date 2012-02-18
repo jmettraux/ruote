@@ -77,5 +77,29 @@ class UtWaitLoggerTest < Test::Unit::TestCase
     assert_includes [ i0, i1 ], r['wfid']
     assert_includes %w[ terminated error_intercepted ], r['action']
   end
+
+  def test_or_error
+
+    @engine.register :alpha, Ruote::NullParticipant
+
+    d0 = Ruote.define do
+      35.times { noop }
+      alpha
+    end
+    d1 = Ruote.define do
+      3.times { noop }
+      error 'oh crap'
+    end
+
+    #@engine.noisy = true
+
+    i0 = @engine.launch(d0)
+    i1 = @engine.launch(d1)
+
+    r = @engine.wait_for(:alpha, :or_error)
+
+    assert_equal i1, r['wfid']
+    assert_equal 'error_intercepted', r['action']
+  end
 end
 

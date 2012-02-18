@@ -486,9 +486,14 @@ module Ruote
     #   engine.wait_for('terminated')
     #     # will return as soon as any process has a 'terminated' event.
     #
-    # It's OK to wait for multiple wfids :
+    # It's OK to wait for multiple wfids:
     #
     #   engine.wait_for('20100612-bezerijozo', '20100612-yakisoba')
+    #
+    # If one needs to wait for something else than a wfid but needs to break
+    # in case of error:
+    #
+    #   engine.wait_for(:alpha, :or_error)
     #
     #
     # == ruote 2.3.0 and wait_for(event)

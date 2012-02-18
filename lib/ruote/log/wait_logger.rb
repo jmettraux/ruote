@@ -196,6 +196,12 @@ module Ruote
 
         satisfied = case interest
 
+          when :or_error
+            #
+            # let's force an immediate reply
+
+            interests.clear if action == 'error_intercepted'
+
           when :inactive
 
             (FINAL_ACTIONS.include?(action) && @context.worker.inactive?)

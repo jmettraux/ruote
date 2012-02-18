@@ -51,6 +51,7 @@ Richard Jennings
 
 == Feedback
 
+John Roberts - idea for wait_for(:x, :or_error)
 Alex - https://github.com/alexw668
 Pedro Visintin - :remaining => 'wait'
 Christophe Malaurie - quickstart fix
