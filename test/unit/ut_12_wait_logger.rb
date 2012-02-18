@@ -56,5 +56,26 @@ class UtWaitLoggerTest < Test::Unit::TestCase
 
     assert_equal 'dispatch', msg['action']
   end
+
+  def test_wait_for_muliple_things
+
+    d0 = Ruote.define do
+      7.times { noop }
+    end
+    d1 = Ruote.define do
+      7.times { noop }
+      error 'oh crap'
+    end
+
+    #@engine.noisy = true
+
+    i0 = @engine.launch(d0)
+    i1 = @engine.launch(d1)
+
+    r = @engine.wait_for(i0, i1)
+
+    assert_includes [ i0, i1 ], r['wfid']
+    assert_includes %w[ terminated error_intercepted ], r['action']
+  end
 end
 
