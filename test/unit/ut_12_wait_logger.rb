@@ -74,8 +74,8 @@ class UtWaitLoggerTest < Test::Unit::TestCase
 
     r = @engine.wait_for(i0, i1)
 
-    assert_includes [ i0, i1 ], r['wfid']
-    assert_includes %w[ terminated error_intercepted ], r['action']
+    assert [ i0, i1 ].include?(r['wfid'])
+    assert %w[ terminated error_intercepted ].include?(r['action'])
   end
 
   def test_or_error
