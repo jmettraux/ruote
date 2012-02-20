@@ -35,7 +35,7 @@ class FtStorageCopyTest < Test::Unit::TestCase
     #count = source.copy_to(target, :verbose => true)
     count = source.copy_to(target)
 
-    assert_equal 9, count
+    assert_equal 8, count
     assert_equal source.ids('expressions'), target.ids('expressions')
   end
 
@@ -63,7 +63,7 @@ class FtStorageCopyTest < Test::Unit::TestCase
     #count = source.copy_to(target, :verbose => true)
     count = source.copy_to(target)
 
-    assert_equal 9, count
+    assert_equal 8, count
     assert_equal source.ids('expressions'), target.ids('expressions')
     assert_not_nil @dashboard.process(wfid)
   end

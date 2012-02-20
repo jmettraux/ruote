@@ -22,21 +22,44 @@
 # Made in Japan.
 #++
 
+require 'digest/md5'
 require 'rufus/mnemo' # gem install rufus-mnemo
-require 'ruote/id/wfid_generator'
 
 
 module Ruote
 
-  class MnemoWfidGenerator < WfidGenerator
+  #
+  # The default wfid generator.
+  #
+  class MnemoWfidGenerator
+
+    def initialize(context)
+
+      @context = context
+
+      @here = "#{Ruote.local_ip}!#{Process.pid}"
+      @counter = 0
+      #@mutex = Mutex.new
+    end
 
     def generate
 
-      raw = get_raw
+      t = Time.now
+      time = t.strftime('%Y%m%d-%H%M')
+      ms = t.to_f % 60.0
 
-      m = ((raw.to_f % 60 * 60 * 24) * 1000).to_i
+      #c = @mutex.synchronize { @counter = (@counter + 1) % 100_000 }
+      @counter = (@counter + 1) % 100_000
+        #
+        # no need to worry about skipping a beat, no mutex.
 
-      "#{raw.strftime('%Y%m%d')}-#{Rufus::Mnemo.from_integer(m)}"
+      s = "#{ms}!#{Thread.current.object_id}!#{@here}!#{@counter}"
+      s = Digest::MD5.hexdigest(s)
+
+      x = Rufus::Mnemo.from_i(s[0, 5].to_i(16))
+      y = Rufus::Mnemo.from_i(s[5, 5].to_i(16))
+
+      "#{time}-#{x}-#{y}"
     end
   end
 end
