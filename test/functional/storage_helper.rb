@@ -8,14 +8,18 @@
 require 'ruote/storage/hash_storage'
 
 
-def locate_storage_impl (arg)
+def locate_storage_impl(arg)
 
   pers = arg[2..-1]
+  glob = File.expand_path("../../../../ruote-#{pers}*", __FILE__)
 
-  path = Dir[File.expand_path(
-    File.join(File.dirname(__FILE__), %w[ .. .. .. ], "ruote-#{pers}*"))].first
+  path = Dir[glob].first
 
-  File.directory?(path) ? [ pers, path ] : nil
+  if path
+    File.directory?(path) ? [ pers, path ] : nil
+  elsif glob.split('/').include?('bundler')
+    glob.match(/^(.+\/ruote-#{pers}\/).+/) ? [ pers, $~[1] ] : nil
+  end
 end
 
 # Returns an instance of the storage to use (the ARGV determines which
@@ -52,8 +56,7 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   elsif not ps.empty?
 
-    pers = nil
-    ps.find { |a| pers = locate_storage_impl(a) }
+    pers = ps.inject(nil) { |r, a| r ? r : locate_storage_impl(a) }
 
     raise "no persistence found (#{ps.inspect})" unless pers
 
