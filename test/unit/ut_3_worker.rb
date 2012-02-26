@@ -46,5 +46,25 @@ class UtWorkerTest < Test::Unit::TestCase
     worker.send(:step)
     assert_equal worker, storage.caller
   end
+
+  class StorageX < Ruote::HashStorage
+    def get_msgs
+      raise('failing...')
+    end
+  end
+
+  def test_step_error_interception
+
+    $err = nil
+
+    worker = Ruote::Worker.new(StorageX.new)
+    def worker.handle_step_error(e)
+      $err = e
+    end
+
+    worker.send(:step)
+
+    assert_equal 'failing...', $err.message
+  end
 end
 

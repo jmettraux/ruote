@@ -230,6 +230,34 @@ module Ruote
       # batch over, let's rest
 
       take_a_rest(processed)
+
+    rescue => e
+      handle_step_error(e)
+    end
+
+    # This default implementation dumps error information to $stderr as
+    # soon as #step intercepts the error.
+    #
+    # Normally such information should only appear when developing a
+    # storage, the information here is thus helpful for storage developers.
+    # If such info is emitted in production or in application development,
+    # you should pass the info to the storage developer/maintainer.
+    #
+    # Feel free to override this method if you need it to output to
+    # a channel different than $stderr.
+    #
+    def handle_step_error(e)
+
+      $stderr.puts '#' * 80
+      $stderr.puts
+      $stderr.puts '** worker#step intercepted exception **'
+      $stderr.puts
+      $stderr.puts "please report issue or fix your #{@storage.class} impl"
+      $stderr.puts
+      $stderr.puts e.inspect
+      $stderr.puts *e.backtrace
+      $stderr.puts
+      $stderr.puts '#' * 80
     end
 
     # In order not to hammer the storage for msgs too much, take a rest.
