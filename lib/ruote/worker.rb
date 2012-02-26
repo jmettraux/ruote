@@ -500,7 +500,7 @@ module Ruote
 
         @worker = worker
         @ip = Ruote.local_ip
-        @hostname = `hostname`.strip rescue nil
+        @hostname = Socket.gethostname
         @system = `uname -a`.strip rescue nil
 
         @since = Time.now
