@@ -63,21 +63,31 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
     lib, path = pers
     $:.unshift(File.join(path, 'lib'))
 
-    begin
-      load 'test/functional_connection.rb'
-    rescue LoadError => le
-      begin
-        load File.join(path, %w[ test functional_connection.rb ])
-      rescue LoadError => lee
+    load_errors = []
+
+    [ '.', path ].each do |pa|
+      %w[ connection functional_connection integration_connection ].each do |f|
+        paf = "#{File.join(pa, 'test', f)}.rb"
         begin
-          load File.join(path, %w[ test integration_connection.rb ])
-        rescue LoadError => leee
-          p le
-          p lee
-          p leee
-          raise leee
+          load(paf)
+          load_errors = nil
+          break
+        rescue LoadError => le
+          load_errors << [ paf, le ]
         end
       end
+    end
+
+    if load_errors
+      puts "=" * 80
+      puts "** failed to load connection"
+      load_errors.each do |paf, le|
+        puts
+        puts paf
+        p le
+      end
+      puts "=" * 80
+      exit(1)
     end
 
     new_storage(opts)

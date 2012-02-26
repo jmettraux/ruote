@@ -29,7 +29,10 @@ module FunctionalBase
       #
       # uncomment this when "too many open files"
 
-    @dashboard = Ruote::Dashboard.new(Ruote::Worker.new(determine_storage({})))
+    sto = determine_storage({})
+
+    @dashboard = Ruote::Dashboard.new(
+      sto.class.name.match(/Worker$/) ? sto : Ruote::Worker.new(sto))
 
     @engine = @dashboard
       # for 'backward compatibility'
