@@ -23,16 +23,22 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
       @tracer << "#{workitem.participant_name}\n"
     end
 
-    #noisy
+    #@dashboard.noisy = true
 
-    assert_trace('alpha', pdef)
-
-    Thread.pass
-      # making sure the reply to the participant expression is intercepted
-      # as well
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for('dispatched', 'receive', 'terminated')
 
     assert_equal(
-      3, logger.log.select { |e| e['participant_name'] == 'alpha' }.size)
+      'alpha',
+      @tracer.to_s)
+
+    assert_equal(
+      %w[ dispatch dispatched receive ],
+      logger.log.select { |e|
+        e['participant_name'] == 'alpha'
+      }.collect { |e|
+        e['action']
+      }.sort)
   end
 
   def test_missing_participant_name
