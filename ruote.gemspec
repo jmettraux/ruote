@@ -27,10 +27,10 @@ ruote is an open source Ruby workflow engine
   s.add_runtime_dependency 'parslet', '1.2.3'
   s.add_runtime_dependency 'sourcify', '0.5.0'
   s.add_runtime_dependency 'rufus-json', '>= 1.0.1'
-  s.add_runtime_dependency 'rufus-cloche', '>= 1.0.1'
+  s.add_runtime_dependency 'rufus-cloche', '>= 1.0.2'
   s.add_runtime_dependency 'rufus-dollar', '>= 1.0.4'
   s.add_runtime_dependency 'rufus-mnemo', '>= 1.2.2'
-  s.add_runtime_dependency 'rufus-scheduler', '>= 2.0.13'
+  s.add_runtime_dependency 'rufus-scheduler', '>= 2.0.16'
   s.add_runtime_dependency 'rufus-treechecker', '>= 1.0.8'
 
   s.add_development_dependency 'rake'
