@@ -43,7 +43,7 @@ module Ruote
 
     def generate
 
-      t = Time.now
+      t = Time.now.utc
       time = t.strftime('%Y%m%d-%H%M%S')
       ms = t.to_f % 1.0
 
