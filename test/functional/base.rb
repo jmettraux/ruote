@@ -58,6 +58,8 @@ module FunctionalBase
 
   def teardown
 
+    return if @dashboard.nil?
+
     @dashboard.shutdown
     @dashboard.context.storage.purge!
     @dashboard.context.storage.close if @dashboard.context.storage.respond_to?(:close)
