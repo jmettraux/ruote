@@ -493,7 +493,9 @@
 [ ] cursor: deeper jumps
     http://groups.google.com/group/openwferu-users/browse_thread/thread/a973f0ea5fbb1a96
 
-[ ] ruote-doozer ?
+[ ] ruote-doozer?
 
 [ ] move test/unit/storage[s].rb to test/functional/
+
+[ ] wfid generator UTC?
 

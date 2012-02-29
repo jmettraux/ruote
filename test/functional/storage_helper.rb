@@ -65,16 +65,17 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
     load_errors = []
 
-    [ '.', path ].each do |pa|
-      %w[ connection functional_connection integration_connection ].each do |f|
-        paf = "#{File.join(pa, 'test', f)}.rb"
-        begin
-          load(paf)
-          load_errors = nil
-          break
-        rescue LoadError => le
-          load_errors << [ paf, le ]
-        end
+    [ '.', path ].product(%w[
+      connection functional_connection integration_connection
+    ]).each do |pa, f|
+
+      paf = "#{File.join(pa, 'test', f)}.rb"
+      begin
+        load(paf)
+        load_errors = nil
+        break
+      rescue LoadError => le
+        load_errors << [ paf, le ]
       end
     end
 
