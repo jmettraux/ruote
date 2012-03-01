@@ -337,9 +337,9 @@ module Ruote
 
             self.send(msg['action'], msg)
 
-          when 'put_doc'
+          when 'reput'
 
-            put_doc(msg)
+            reput(msg)
 
           #else
             # no special processing required for message, let it pass
@@ -472,20 +472,27 @@ module Ruote
 
     alias resume_process pause_process
 
-    # Puts a document in the storage, must succeed (ie will happily steal
-    # the current _rev to place its doc).
+    # Reputs a doc or a msg.
     #
-    def put_doc(msg)
+    # Used by certain storage implementations to pass documents around workers
+    # or to reschedule msgs (see ruote-swf).
+    #
+    def reput(msg)
 
-      doc = msg['doc']
+      if doc = msg['doc']
 
-      r = @storage.put(doc)
+        r = @storage.put(doc)
 
-      return unless r.is_a?(Hash)
+        return unless r.is_a?(Hash)
 
-      doc['_rev'] = r['_rev']
+        doc['_rev'] = r['_rev']
 
-      put_doc(msg)
+        reput(msg)
+
+      elsif msg = msg['msg']
+
+        @storage.put_msg(msg['action'], msg)
+      end
     end
 
     #

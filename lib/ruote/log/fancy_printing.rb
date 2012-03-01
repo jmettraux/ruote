@@ -154,6 +154,7 @@ class Ruote::WaitLogger
       when 'pause', 'pause_process' then 'pz'
       when 'resume', 'resume_process' then 'rz'
       when 'regenerate' then 'rg'
+      when 'reput' then 'rp'
       else act
     end
     act = case act
@@ -161,6 +162,7 @@ class Ruote::WaitLogger
       when 'te' then color('4;31', act)
       when 'ce' then color('31', act)
       when 'ca' then color('31', act)
+      when 'er' then color('31', act)
       when 'rc' then color('4;33', act)
       when 'di' then color('4;33', act)
       when 'dd' then color('4;33', act)
@@ -169,6 +171,7 @@ class Ruote::WaitLogger
       when 'rz' then color('4;32', act)
       when 'dp' then color('4;31', act)
       when 'dr' then color('4;32', act)
+      when 'rp' then color('32', act)
       else act
     end
 
