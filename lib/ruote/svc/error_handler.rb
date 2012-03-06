@@ -157,7 +157,7 @@ module Ruote
         'fei' => fei,
         'msg' => msg)
 
-    rescue Exception => e
+    rescue => e
 
       # utter failure, can't store the error...
 

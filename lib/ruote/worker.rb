@@ -121,7 +121,7 @@ module Ruote
 
       begin
         @run_thread.join
-      rescue Exception => e
+      rescue => e
       end
     end
 

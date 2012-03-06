@@ -249,7 +249,7 @@ module Ruote::Exp
 
       persist_or_raise
 
-    rescue Exception => e
+    rescue => e
 
       raise Ruote::MetaError.new(__method__.to_s, e)
     end

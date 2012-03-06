@@ -107,7 +107,7 @@ module Ruote::Exp
 
       [ :str, conditional ]
 
-    rescue Exception => e
+    rescue => e
 
       [ :false ]
     end
