@@ -287,10 +287,10 @@ module Ruote
 
     # Given a schedule, attempts to trigger it.
     #
-    # It first tries to
-    # reserve the schedule. If the reservation fails (another worker
-    # was successful probably), false is returned. The schedule is
-    # triggered if the reservation was successful, true is returned.
+    # It first tries to reserve the schedule. If the reservation fails
+    # (another worker was successful probably), false is returned.
+    # The schedule is triggered if the reservation was successful, true
+    # is returned.
     #
     def trigger(schedule)
 

@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- Ruote::Reader.to_expid_radial
 - wfid_generator: dropping the @last['raw'] concept
 - wait_for(:x, :or_error) (thanks John Roberts)
 - concurrence over_if bug (thanks alexw668)

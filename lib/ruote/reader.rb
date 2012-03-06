@@ -197,6 +197,8 @@ module Ruote
       s
     end
 
+    # Turns the given tree into a radial process definition.
+    #
     def self.to_radial(tree, level=0)
 
       s =
@@ -204,12 +206,40 @@ module Ruote
         tree[0] +
         atts_to_x(tree[1]) { |k, v|
           "#{k}: #{v.inspect}"
-        }
+        } +
+        "\n"
 
-      return "#{s}\n" if tree[2].empty?
+      return s if tree[2].empty?
 
-      s << "\n"
-      tree[2].each { |child| s << to_radial(child, level + 1) }
+      tree[2].inject(s) { |ss, child| ss << to_radial(child, level + 1); ss }
+    end
+
+    # Produces an expid annotated radial version of the process definition,
+    # like:
+    #
+    #   0  define name: "nada"
+    #     0_0  sequence
+    #       0_0_0  alpha
+    #       0_0_1  participant "bravo", timeout: "2d", on_board: true
+    #
+    # Can be useful when debugging noisy engines.
+    #
+    def self.to_expid_radial(tree, expid='0')
+
+      s =
+        '  ' * (expid.split('_').size - 1) +
+        expid + '  ' +
+        tree[0] +
+        atts_to_x(tree[1]) { |k, v|
+          "#{k}: #{v.inspect}"
+        } +
+        "\n"
+
+      return s if tree[2].empty?
+
+      tree[2].each_with_index { |child, i|
+        s << to_expid_radial(child, "#{expid}_#{i}")
+      }
 
       s
     end
