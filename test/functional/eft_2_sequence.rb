@@ -32,7 +32,7 @@ class EftSequenceTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
+    #@dashboard.noisy = true
 
     assert_trace("a\nb", pdef)
   end

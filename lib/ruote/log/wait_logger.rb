@@ -67,7 +67,7 @@ module Ruote
     #
     def on_msg(msg)
 
-      puts(fancy_print(msg)) if @noisy
+      puts(fancy_print(msg, @noisy)) if @noisy
 
       if msg['action'] != 'noop'
 

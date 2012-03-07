@@ -100,7 +100,18 @@ class Ruote::WaitLogger
     end
   end
 
-  def fancy_print(msg)
+  def radial_tree(msg)
+
+    Ruote::Reader.to_expid_radial(msg['tree']).split("\n").inject('') do |s, l|
+      m = l.match(/^(\s*[0-9_]+)(.+)$/)
+      s << "\n  "
+      s << color(33, m[1])
+      s << color(32, m[2])
+      s
+    end
+  end
+
+  def fancy_print(msg, noisy=true)
 
     @count = (@count + 1) % 10
 
@@ -179,7 +190,7 @@ class Ruote::WaitLogger
     tm = tm.strftime('%M:%S.') + ('%03d' % ((tm.to_f % 1.0) * 1000.0).to_i)
     tm = color(37, tm, false)
 
-    if msg['action'] == 'error_intercepted'
+    s = if msg['action'] == 'error_intercepted'
 
       tail = []
       tail << "  #{wfid} #{rest['error']['class']}"
@@ -214,6 +225,10 @@ class Ruote::WaitLogger
         "#{@count} #{tm} #{ei} #{'  ' * depth}#{act} * #{i} #{pa}#{rest}",
         true)
     end
+
+    s << radial_tree(msg) if fei.nil? && msg['action'] == 'launch'
+
+    s
   end
 end
 
