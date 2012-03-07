@@ -138,7 +138,8 @@ module Ruote
         'details' => det,
         'deviations' => dev,
         'fei' => fei,
-        'msg' => msg
+        'msg' => msg,
+        'tree' => fexp ? fexp.tree : nil
       ) if fei
 
       # advertise 'error_intercepted'
@@ -152,7 +153,8 @@ module Ruote
           'message' => exception.message,
           'trace' => backtrace,
           'details' => det,
-          'deviations' => dev },
+          'deviations' => dev,
+          'tree' => fexp ? fexp.tree : nil },
         'wfid' => wfid,
         'fei' => fei,
         'msg' => msg)

@@ -347,9 +347,11 @@ class FtErrorsTest < Test::Unit::TestCase
 
     r = @dashboard.wait_for(wfid)
 
+    assert_equal 'error_intercepted', r['action']
     assert_equal 'RuntimeError', r['error']['class']
     assert_equal "unknown participant or subprocess 'nada'", r['error']['message']
     assert_equal Array, r['error']['trace'].class
+    assert_equal [ 'nada', { 'ref' => 'nada' }, [] ], r['error']['tree']
   end
 
   def test_replay_at_error_fei

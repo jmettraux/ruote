@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- added 'tree' entry to error doc and error msg
 - error handler $f:__error__: added 'tree' entry
 - Ruote::Reader.to_expid_radial
 - wfid_generator: dropping the @last['raw'] concept
