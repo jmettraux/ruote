@@ -299,8 +299,8 @@ class FtOnErrorTest < Test::Unit::TestCase
     wi = @dashboard.context.stash[:workitem]
 
     assert_equal 'err...', @tracer.to_s
-    assert_equal 5, wi.error.size
     assert_equal 'RuntimeError', wi.error['class']
+    assert_equal %w[ at class fei message trace tree ], wi.error.keys.sort
     assert_equal 'Beijing, we have a problem !', wi.error['message']
     assert_equal Array, wi.error['trace'].class
     assert_equal true, wi.fields['seen']
@@ -496,6 +496,30 @@ class FtOnErrorTest < Test::Unit::TestCase
     @dashboard.wait_for(wfid)
 
     assert_equal %w[ alpha shark delta ], @tracer.to_a
+  end
+
+  def test_on_error_var
+
+    pdef = Ruote.define do
+      define 'sub0' do
+        set 'v:/a' => '$f:__error__'
+      end
+      sequence :on_error => 'sub0' do
+        error 'nada'
+      end
+    end
+
+    @dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal(
+      'terminated', r['action'])
+    assert_equal(
+      %w[ at class fei message trace tree ], r['variables']['a'].keys.sort)
+    assert_equal(
+      [ 'error', { 'nada' => nil }, [] ], r['variables']['a']['tree'])
   end
 end
 

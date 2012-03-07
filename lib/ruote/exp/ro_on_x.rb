@@ -42,7 +42,8 @@ module Ruote::Exp
         'at' => Ruote.now_to_utc_s,
         'class' => error.class.to_s,
         'message' => error.message,
-        'trace' => error.backtrace
+        'trace' => error.backtrace,
+        'tree' => tree
       }
 
       oe_parent = lookup_on_error(err)
