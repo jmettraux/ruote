@@ -164,7 +164,7 @@ class FtSubprocessesTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    @dashboard.noisy = true
+    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)

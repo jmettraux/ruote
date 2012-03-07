@@ -224,24 +224,43 @@ module Ruote
     #
     # Can be useful when debugging noisy engines.
     #
-    def self.to_expid_radial(tree, expid='0')
+    def self.to_expid_radial(tree)
 
-      s =
-        '  ' * (expid.split('_').size - 1) +
-        expid + '  ' +
-        tree[0] +
-        atts_to_x(tree[1]) { |k, v|
-          "#{k}: #{v.inspect}"
-        } +
-        "\n"
+      lines = to_raw_expid_radial(tree, '0')
+      max = lines.collect { |l| l[1].length }.max
 
-      return s if tree[2].empty?
+      lines.collect { |l|
+        "%#{max}s  " % l[1] + "  " * l[0] + l[2] + l[3]
+      }.join("\n")
+    end
 
-      tree[2].each_with_index { |child, i|
-        s << to_expid_radial(child, "#{expid}_#{i}")
-      }
+    # Used by .to_expid_radial. Outputs an array of 'lines'. Each line
+    # is a process definition line, represented as an array:
+    #
+    #   [ level, expid, name, atts ]
+    #
+    # Like in:
+    #
+    #   [[0, "0", "define", " name: \"nada\""],
+    #    [1, "0_0", "sequence", ""],
+    #    [2, "0_0_0", "alpha", ""],
+    #    [2, "0_0_1", "participant", " \"bravo\", timeout: \"2d\"]]
+    #
+    def self.to_raw_expid_radial(tree, expid='0')
 
-      s
+      i = -1
+
+      [
+        [
+          expid.split('_').size - 1, # level
+          expid,
+          tree[0],
+          atts_to_x(tree[1]) { |k, v| "#{k}: #{v.inspect}" }
+        ]
+      ] +
+      tree[2].collect { |t|
+        i = i + 1; to_raw_expid_radial(t, "#{expid}_#{i}")
+      }.flatten(1)
     end
 
     # Turns the process definition tree (ruote syntax tree) to a JSON String.

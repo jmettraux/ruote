@@ -130,13 +130,11 @@ define name: "nada"
   def test_to_expid_radial
 
     assert_equal(
-      %{
-0  define name: "nada"
-  0_0  sequence
-    0_0_0  alpha
-    0_0_1  participant "bravo", timeout: "2d", on_board: true
-      }.strip,
-      Ruote::Reader.to_expid_radial(TREE1).strip)
+      %{    0  define name: "nada"
+  0_0    sequence
+0_0_0      alpha
+0_0_1      participant "bravo", timeout: "2d", on_board: true},
+      Ruote::Reader.to_expid_radial(TREE1))
   end
 
   DEF1 = %{
