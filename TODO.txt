@@ -306,6 +306,7 @@
     http://groups.google.com/group/openwferu-users/browse_thread/thread/c51b94fb8bb685da
 [o] worker shutdown initiated by engine (same thread)
 [o] set :var => 'y' { '2342342' }
+[o] wfid generator UTC?
 
 [ ] exp : at expression ? comparable to cron
 [x] exp : exp (restricted form of eval ?) (is it apply ?)
@@ -496,6 +497,4 @@
 [ ] ruote-doozer?
 
 [ ] move test/unit/storage[s].rb to test/functional/
-
-[ ] wfid generator UTC?
 
