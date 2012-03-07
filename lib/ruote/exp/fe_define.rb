@@ -105,6 +105,8 @@ module Ruote::Exp
       definitions, bodies = tree[2].partition { |b| is_definition?(b) }
       name = tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil }
 
+      definitions = definitions.collect { |d| reorganize(d)[1] }
+
       [ name, [ 'define', tree[1], definitions + bodies ] ]
     end
   end

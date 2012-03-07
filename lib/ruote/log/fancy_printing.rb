@@ -102,7 +102,9 @@ class Ruote::WaitLogger
 
   def radial_tree(msg)
 
-    Ruote::Reader.to_expid_radial(msg['tree']).split("\n").inject('') do |s, l|
+    _, t = Ruote::Exp::DefineExpression.reorganize(msg['tree'])
+
+    Ruote::Reader.to_expid_radial(t).split("\n").inject('') do |s, l|
       m = l.match(/^(\s*[0-9_]+)(.+)$/)
       s << "\n  "
       s << color(33, m[1])
@@ -150,6 +152,11 @@ class Ruote::WaitLogger
         rest[k1] = v
       end
     end
+
+    #rest.delete(:t) if fei.nil? && msg['action'] == 'launch'
+      #
+      # don't do that since the radial display is reorganized and this
+      # tree is not.
 
     if v = rest.delete('participant')
       rest['part'] = v.first == 'Ruote::BlockParticipant' ? v.first : v

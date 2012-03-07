@@ -101,6 +101,8 @@ class FtSubprocessesTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
+    #@dashboard.noisy = true
+
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -141,6 +143,34 @@ class FtSubprocessesTest < Test::Unit::TestCase
     wait_for(wfid)
 
     assert_equal 0, alpha.size
+  end
+
+  # testing noisy and process definition output...
+  #
+  def test_sub_subprocess
+
+    pdef = Ruote.process_definition do
+      sequence do
+        sub0
+      end
+      define 'sub0' do
+        echo 'a'
+        sub1
+        define 'sub1' do
+          echo 'b'
+        end
+      end
+    end
+
+    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
+
+    @dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal %w[ a b ], @tracer.to_a
   end
 end
 
