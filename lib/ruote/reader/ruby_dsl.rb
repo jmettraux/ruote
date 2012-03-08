@@ -93,6 +93,10 @@ module Ruote
     RubyDsl.create_branch('x', {}, &block).last.first
   end
 
+  class << self
+    alias tree to_tree
+  end
+
   # :nodoc:
   #
   module RubyDsl

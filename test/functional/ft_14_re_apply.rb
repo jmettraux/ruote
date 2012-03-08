@@ -295,6 +295,34 @@ class FtReApplyTest < Test::Unit::TestCase
     assert at1 > at0
   end
 
+  def test_re_apply_chunk
+
+    @dashboard.register_participant '.+', Ruote::StorageParticipant
+
+    wfid = @dashboard.launch(Ruote.define do
+      alpha
+    end)
+
+    @dashboard.wait_for(:alpha)
+
+    at0 = @dashboard.storage_participant.first.dispatched_at
+
+    exp = @dashboard.process(wfid).expressions.last
+
+    t = Ruote.tree do
+      alpha :take => two
+    end
+
+    @dashboard.re_apply(exp)
+    @dashboard.wait_for(:alpha)
+
+    wi1 = @dashboard.storage_participant.first
+    at1 = wi1.dispatched_at
+
+    assert at1 > at0
+    assert_equal 'on_re_apply', wi1.params['_triggered']
+  end
+
   # Making sure re_apply nukes errors
   #
   def test_re_apply_error
