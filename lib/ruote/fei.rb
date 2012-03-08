@@ -130,8 +130,18 @@ module Ruote
 
       "#{@h['expid']}!#{@h['subid']}!#{@h['wfid']}"
     end
+
     alias sid to_storage_id
 
+    #   expid!subid[0, 5]!wfid
+    #
+    def short_sid
+
+      "#{@h['expid']}!#{@h['subid'][0, 5]}!#{@h['wfid']}"
+    end
+
+    #   wfid!!expid
+    #
     def to_sortable_id
 
       "#{@h['wfid']}!!#{@h['expid']}"
@@ -161,11 +171,15 @@ module Ruote
       h.expid.split(CHILD_SEP).last.to_i
     end
 
+    # For proper hashing and sorting.
+    #
     def hash
 
       to_storage_id.hash
     end
 
+    # For proper hashing and sorting.
+    #
     def <=>(other)
 
       self.to_sortable_id <=> other.to_sortable_id
