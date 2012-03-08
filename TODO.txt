@@ -307,6 +307,8 @@
 [o] worker shutdown initiated by engine (same thread)
 [o] set :var => 'y' { '2342342' }
 [o] wfid generator UTC?
+[o] iterator: drop the need for the sequence --> implicit sequence
+[o] citerator: drop the need for the sequence --> implicit sequence
 
 [ ] exp : at expression ? comparable to cron
 [x] exp : exp (restricted form of eval ?) (is it apply ?)
@@ -380,6 +382,7 @@
 [ ] LocalParticipant def consume; handle; reply; end
 
 [ ] find better solution than "get all schedules"
+    ... or discard get_schedules completely
 
 [ ] worker : minuteman, make it cron triggerable
     trap SIGUSR1 or USR2
@@ -394,7 +397,7 @@
 [ ] re_apply_stalled
     http://groups.google.com/group/openwferu-users/browse_thread/thread/ff29f26d6b5fd135
 
-[ ] engine.purge (arts style : worker.@msgs = [])
+[ ] engine.purge (arts style: worker.@msgs = [])
 
 [ ] http://ruote.rubyforge.org/irclogs/ruote_2010-07-07.txt
     configuration issue
@@ -460,8 +463,10 @@
 [ ] ruote slides
 
 [x] ci : ruote-amqp
-[ ] ci : ruote-mon
+[o] ci : ruote-mon
 [ ] ci : jruby
+
+[ ] ruote-doozer?
 
 [ ] StorageParticipant#proceed : raise if workitem not found ?
 [ ] StorageParticipant#proceed : accept fei ?
@@ -478,12 +483,9 @@
 [ ] subaltern
 
 [x] investigate 1.9's json
-[ ] Parslet for conditions ?
-[ ] subaltern for conditions ?
+[ ] Parslet for conditions?
+[ ] subaltern for conditions?
 [ ] enhance radial/Parslet error messages (cf Raphael)
-
-[o] iterator: drop the need for the sequence --> implicit sequence
-[o] citerator: drop the need for the sequence --> implicit sequence
 
 [ ] concurrence: allow empty
 [o] citerator: allow empty
@@ -494,7 +496,10 @@
 [ ] cursor: deeper jumps
     http://groups.google.com/group/openwferu-users/browse_thread/thread/a973f0ea5fbb1a96
 
-[ ] ruote-doozer?
-
 [ ] move test/unit/storage[s].rb to test/functional/
+
+[ ] on_cancel like on_error expression
+[ ] on_timeout like on_error expression (or make timeout an error)
+
+[ ] #get_msgs to cover #get_schedules (make #get_schedules empty)
 
