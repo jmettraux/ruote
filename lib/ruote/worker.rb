@@ -433,6 +433,7 @@ module Ruote
         true
       else
         (msg['trigger'] == 'on_re_apply')
+          # let re-apply "define" blocks, as in Ruote.define {}
       end
     end
 

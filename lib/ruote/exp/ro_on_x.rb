@@ -165,35 +165,6 @@ module Ruote::Exp
       nil
     end
 
-    # (Called by #trigger & co)
-    #
-    def supplant_with(tree, opts)
-
-      # at first, nuke self
-
-      r = try_unpersist
-
-      raise(
-        "failed to remove exp to supplant "+
-        "#{Ruote.to_storage_id(h.fei)} #{tree.first}"
-      ) if r.respond_to?(:keys)
-
-      # then re-apply
-
-      if t = opts['trigger']
-        tree[1]['_triggered'] = t.to_s
-      end
-
-      @context.storage.put_msg(
-        'apply',
-        { 'fei' => h.fei,
-          'parent_id' => h.parent_id,
-          'tree' => tree,
-          'workitem' => h.applied_workitem,
-          'variables' => h.variables
-        }.merge!(opts))
-    end
-
     # Called by #trigger when it encounters something like
     #
     #   :on_error => '5m: retry, pass'
@@ -307,7 +278,26 @@ module Ruote::Exp
         end
       end
 
-      supplant_with(new_tree, 'trigger' => on)
+      #
+      # supplant this expression with new tree
+
+      r = try_unpersist
+
+      raise(
+        "failed to remove exp to supplant " +
+        "#{Ruote.to_storage_id(h.fei)} #{tree.first}"
+      ) if r.respond_to?(:keys)
+
+      new_tree[1]['_triggered'] = on
+
+      @context.storage.put_msg(
+        'apply',
+        { 'fei' => h.fei,
+          'parent_id' => h.parent_id,
+          'tree' => new_tree,
+          'workitem' => h.applied_workitem,
+          'variables' => h.variables,
+          'trigger' => on })
     end
   end
 end
