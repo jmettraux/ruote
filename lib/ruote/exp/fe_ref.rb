@@ -42,7 +42,7 @@ module Ruote::Exp
   #
   # Subprocesses have the priority over participants.
   #
-  # Note : this expression is used by the worker when substituting unknown
+  # Note: this expression is used by the worker when substituting unknown
   # expression names with participant or subprocess refs.
   #
   class RefExpression < FlowExpression

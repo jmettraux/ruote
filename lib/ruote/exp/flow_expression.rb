@@ -52,6 +52,31 @@ module Ruote::Exp
   #
   # Each node is an expression...
   #
+  #
+  # == the states of an expression
+  #
+  # === nil
+  # the normal state
+  #
+  # === 'cancelling'
+  # the expression and its children are getting cancelled
+  #
+  # === 'dying'
+  # the expression and its children are getting killed
+  #
+  # === 'failed'
+  # the expression has finishing
+  #
+  # === 'failing'
+  # the expression just failed and it's cancelling its children
+  #
+  # === 'timing_out'
+  # the expression just timedout and it's cancelling its children
+  #
+  # === 'paused'
+  # the expression is paused, it will store downstream messages and play
+  # them only when a 'resume' message comes from upstream.
+  #
   class FlowExpression
 
     include Ruote::WithH
