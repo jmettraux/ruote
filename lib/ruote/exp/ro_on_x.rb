@@ -255,6 +255,7 @@ module Ruote::Exp
       end
 
       handler = handler.action if handler.is_a?(HandlerEntry)
+      handler = handler.strip if handler.respond_to?(:strip)
 
       case handler
 
@@ -262,7 +263,7 @@ module Ruote::Exp
 
           new_tree = tree
 
-        when 'undo', 'pass'
+        when 'undo', 'pass', ''
 
           h.state = on == 'on_cancel' ? 'cancelled' : 'failed'
           reply_to_parent(workitem)

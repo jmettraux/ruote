@@ -115,7 +115,7 @@ class FtOnErrorTest < Test::Unit::TestCase
       @tracer << "caught\n"
     end
 
-    #noisy
+    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     wait_for(wfid)
@@ -565,6 +565,25 @@ class FtOnErrorTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal 3, r['workitem']['fields']['_trace'].size
+  end
+
+  def test_blank_second_take
+
+    pdef = Ruote.define do
+      define 'sub0' do
+        set '__on_error__' => ''
+      end
+      sequence :on_error => 'sub0' do
+        nada
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    #assert_equal 3, r['workitem']['fields']['_trace'].size
   end
 end
 
