@@ -398,7 +398,9 @@ module Ruote
         'forgotten' => msg['forgotten'],
         'lost' => msg['lost'],
         'flanking' => msg['flanking'],
-        'stash' => msg['stash'] }
+        'stash' => msg['stash'],
+        'trigger' => msg['trigger'],
+        'supplanted' => msg['supplanted'] }
 
       if not exp_class
 
@@ -412,10 +414,10 @@ module Ruote
       end
 
       exp_hash = exp_hash.inject({}) { |h, (k, v)| h[k] = v unless v.nil?; h }
+        # compact nils away
+
       exp_hash['original_tree'] = tree
-        #
-        # dropping nils
-        # and registering potentially reorganized tree
+        # keep track of original tree
 
       exp = exp_class.new(@context, exp_hash)
 

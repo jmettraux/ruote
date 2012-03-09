@@ -243,5 +243,34 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     assert_equal "bailed\ndone.", @tracer.to_s
   end
+
+  #
+  # the "second take" feature
+
+  def test_second_take
+
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
+
+    pdef = Ruote.define do
+      define 'sub0' do
+        set '__on_cancel__' => 'redo'
+      end
+      sequence :on_cancel => 'sub0' do
+        alpha
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for('dispatched')
+
+    exp = @dashboard.ps(wfid).expressions[1]
+    @dashboard.cancel(exp)
+
+    r = @dashboard.wait_for('dispatched')
+
+    assert_equal 'alpha', r['participant_name']
+  end
 end
 

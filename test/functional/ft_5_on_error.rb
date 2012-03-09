@@ -13,6 +13,23 @@ require 'ruote/participant'
 class FtOnErrorTest < Test::Unit::TestCase
   include FunctionalBase
 
+  class TroubleMaker
+    include Ruote::LocalParticipant
+
+    def consume(workitem)
+      hits = (workitem.fields['hits'] || 0) + 1
+      workitem.fields['hits'] = hits
+      workitem.trace << "#{hits.to_s}\n"
+      raise 'Houston, we have a problem !' if hits == 1
+      workitem.trace << 'done.'
+      reply(workitem)
+    end
+
+    def cancel(fei, flavour)
+      # nothing to do
+    end
+  end
+
   def test_on_error
 
     pdef = Ruote.process_definition do
@@ -105,21 +122,6 @@ class FtOnErrorTest < Test::Unit::TestCase
     ps = @dashboard.process(wfid)
 
     assert_equal(1, ps.errors.size)
-  end
-
-  class TroubleMaker
-    include Ruote::LocalParticipant
-    def consume(workitem)
-      hits = (workitem.fields['hits'] || 0) + 1
-      workitem.fields['hits'] = hits
-      workitem.trace << "#{hits.to_s}\n"
-      raise 'Houston, we have a problem !' if hits == 1
-      workitem.trace << 'done.'
-      reply(workitem)
-    end
-    def cancel(fei, flavour)
-      # nothing to do
-    end
   end
 
   def test_on_error_redo
@@ -520,6 +522,30 @@ class FtOnErrorTest < Test::Unit::TestCase
       %w[ at class fei message trace tree ], r['variables']['a'].keys.sort)
     assert_equal(
       [ 'error', { 'nada' => nil }, [] ], r['variables']['a']['tree'])
+  end
+
+  #
+  # the "second take" feature
+
+  def test_second_take
+
+    @dashboard.register_participant :troublemaker, TroubleMaker
+
+    pdef = Ruote.define do
+      define 'sub0' do
+        set '__on_error__' => 'redo'
+      end
+      sequence :on_error => 'sub0' do
+        troublemaker
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 3, r['workitem']['fields']['_trace'].size
   end
 end
 

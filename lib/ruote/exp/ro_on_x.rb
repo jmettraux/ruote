@@ -230,12 +230,21 @@ module Ruote::Exp
     #
     def trigger(on, workitem)
 
+      tree = tree()
       err = h.applied_workitem['fields']['__error__']
 
       handler = on == 'on_error' ? local_on_error(err) : h[on]
 
-      if on == 'on_error' && handler.respond_to?(:match) && handler.match(/:/)
+      if h.trigger && t = workitem['fields']["__#{h.trigger}__"]
+        #
+        # the "second take"...
 
+        handler = t
+        tree = h.supplanted['original_tree']
+        workitem = h.supplanted['applied_workitem']
+      end
+
+      if on == 'on_error' && handler.respond_to?(:match) && handler.match(/:/)
         return schedule_retries(handler, err)
       end
 
@@ -245,37 +254,48 @@ module Ruote::Exp
         else [ handler.to_s, {}, [] ]
       end
 
-      if on == 'on_error' || on == 'on_timeout'
+      handler = handler.action if handler.is_a?(HandlerEntry)
 
-        handler = handler.action if handler.is_a?(HandlerEntry)
+      case handler
 
-        case handler
+        when 'redo', 'retry'
 
-          when 'redo', 'retry'
+          new_tree = tree
 
-            new_tree = tree
+        when 'undo', 'pass'
 
-          when 'undo', 'pass'
+          h.state = 'failed'
+          reply_to_parent(workitem)
 
-            h.state = 'failed'
-            reply_to_parent(workitem)
+          return # let's forget this error
 
-            return # let's forget this error
+        when CommandExpression::REGEXP
 
-          when CommandExpression::REGEXP
+          hh = handler.split(' ')
+          command = hh.first
+          step = hh.last
+            # 'jump to shark' or 'jump shark', ...
 
-            hh = handler.split(' ')
-            command = hh.first
-            step = hh.last
-              # 'jump to shark' or 'jump shark', ...
+          h.state = nil
+          workitem['fields'][CommandMixin::F_COMMAND] = [ command, step ]
 
-            h.state = nil
-            workitem['fields'][CommandMixin::F_COMMAND] = [ command, step ]
+          reply(workitem)
 
-            reply(workitem)
+          return # we're dealing with it
 
-            return # we're dealing with it
-        end
+        #else
+        #
+        #  if h.trigger
+        #    #
+        #    # do not accept participant or subprocess names
+        #    # for "second trigger"
+        #
+        #    h.state = 'failed'
+        #    reply_to_parent(workitem)
+        #    return
+        #  end
+          #
+          # actually, let's not care about that and trust people.
       end
 
       #
@@ -297,7 +317,13 @@ module Ruote::Exp
           'tree' => new_tree,
           'workitem' => h.applied_workitem,
           'variables' => h.variables,
-          'trigger' => on })
+          'trigger' => on,
+          'supplanted' => {
+            'tree' => tree,
+            'original_tree' => original_tree,
+            'applied_workitem' => h.applied_workitem,
+            'variables' => h.variables
+          }})
     end
   end
 end

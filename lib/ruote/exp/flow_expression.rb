@@ -412,8 +412,14 @@ module Ruote::Exp
         trigger('on_timeout', workitem)
 
       elsif (h.lost or h.flanking) and h.state.nil?
-
+        #
         # do not reply, sit here (and wait for cancellation probably)
+
+      elsif h.trigger && workitem['fields']["__#{h.trigger}__"]
+        #
+        # the "second take"
+
+        trigger(h.trigger, workitem)
 
       else # vanilla reply
 

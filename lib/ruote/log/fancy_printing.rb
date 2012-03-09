@@ -142,6 +142,9 @@ class Ruote::WaitLogger
         v['fei'] ? fei_to_s(v['fei'], wfid) : nil,
         v['fields'].size ]
     end
+    if v = rest.delete('supplanted')
+      rest[:supplanted] = '...'
+    end
 
     #if t = rest.delete('tree')
     #  rest[:t] = color(37, t.inspect, true)
