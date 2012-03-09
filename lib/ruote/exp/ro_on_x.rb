@@ -264,7 +264,7 @@ module Ruote::Exp
 
         when 'undo', 'pass'
 
-          h.state = 'failed'
+          h.state = on == 'on_cancel' ? 'cancelled' : 'failed'
           reply_to_parent(workitem)
 
           return # let's forget this error

@@ -62,11 +62,14 @@ module Ruote::Exp
   #
   class CancelProcessExpression < FlowExpression
 
-    names :cancel_process, :terminate
+    names :cancel_process, :terminate, :kill_process
 
     def apply
 
-      @context.storage.put_msg('cancel_process', 'wfid' => h.fei['wfid'])
+      @context.storage.put_msg(
+        'cancel_process',
+        'wfid' => h.fei['wfid'],
+        'flavour' => name == 'kill_process' ? 'kill' : nil)
     end
 
     def reply(workitem)

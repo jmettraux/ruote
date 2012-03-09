@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- kill_process expression (and on_error)
 - the "second take" (__on_error__, __on_cancel__)
 - Ruote.tree(&block) alias to Ruote.to_tree(&block)
 - added 'tree' entry to error doc and error msg

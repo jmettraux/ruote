@@ -524,6 +524,25 @@ class FtOnErrorTest < Test::Unit::TestCase
       [ 'error', { 'nada' => nil }, [] ], r['variables']['a']['tree'])
   end
 
+  def test_on_error_kill_process
+
+    pdef = Ruote.define do
+      sequence do
+        sequence :on_error => 'cancel_process' do
+          nemo0
+        end
+        nemo1
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+  end
+
   #
   # the "second take" feature
 
