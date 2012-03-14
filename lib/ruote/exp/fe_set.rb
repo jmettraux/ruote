@@ -114,6 +114,29 @@ module Ruote::Exp
   #     set 'f_${v:v}' => 'val2'
   #   end
   #
+  # === shorter form and non-string values
+  #
+  # Dollar substitutions like '${a}' will always squash the field or the
+  # variable into a string. It's useful, especially when one is doing
+  # 'user-${name}', but when the field (or variable) is an array or an hash
+  #
+  #   set 'f' => '${array}'
+  #
+  # will put the string representation of array into the field 'f', not
+  # a copy of the array itself.
+  #
+  # This will copy the array into the field 'f':
+  #
+  #   set 'f' => '$f:array'
+  #
+  # Note the mandatory 'f:'. There is a thing to be aware of: if the field
+  # array is missing, it will resolve into "$f:array" (no substitution at all).
+  #
+  # There is always the old-style fallback:
+  #
+  #   set :field => 'f', :field_value => 'array'
+  #
+  #
   # == set and rset
   #
   # Some gems (Sinatra) for example may provide a set method that hides calls
