@@ -19,6 +19,17 @@ require 'ruote'
 #
 module FunctionalBase
 
+  # For functional tests that want to provide their own setup or teardown
+  # and still have an opportunity to call this base's setup/teardown
+  #
+  def self.included(target)
+
+    target.class_eval do
+      alias base_setup setup
+      alias base_teardown teardown
+    end
+  end
+
   def setup
 
     p self.class if ARGV.include?('-T') or ARGV.include?('-N')
