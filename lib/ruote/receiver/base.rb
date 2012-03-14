@@ -71,9 +71,18 @@ module Ruote
     #
     # fields are workflow parameters that will be placed in workitem.fields.
     #
+    # Calls to this method returns the newly launched "workflow instance id"
+    # ("wfid" for short), the [hopefully] unique identifier for the
+    # process instance.
+    #
+    # == custom :wfid
+    #
+    # When calling this method, it's OK to pass a field named :wfid (Symbol,
+    # not String) that will be used as the identifier for the process instance.
+    #
     def launch(process_definition, fields={}, variables={}, root_stash=nil)
 
-      wfid = @context.wfidgen.generate
+      wfid = fields[:wfid] || @context.wfidgen.generate
 
       @context.storage.put_msg(
         'launch',
