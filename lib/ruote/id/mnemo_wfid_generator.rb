@@ -23,7 +23,7 @@
 #++
 
 require 'digest/md5'
-require 'rufus/mnemo' # gem install rufus-mnemo
+require 'rufus/mnemo'
 
 
 module Ruote
@@ -56,8 +56,8 @@ module Ruote
       s = "#{ms}!#{Thread.current.object_id}!#{@here}!#{@counter}"
       s = Digest::MD5.hexdigest(s)
 
-      x = Rufus::Mnemo.from_i(s[0, 5].to_i(16))
-      y = Rufus::Mnemo.from_i(s[5, 5].to_i(16))
+      x = Rufus::Mnemo.from_i(s[0, 6].to_i(16))
+      y = Rufus::Mnemo.from_i(s[6, 6].to_i(16))
 
       "#{time}-#{x}-#{y}"
     end
