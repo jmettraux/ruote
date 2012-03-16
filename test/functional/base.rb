@@ -32,7 +32,7 @@ module FunctionalBase
 
   def setup
 
-    p self.class if ARGV.include?('-T') or ARGV.include?('-N')
+    p self.class if ARGV.include?('-T') or ARGV.include?('-N') or ENV['noisy']
 
     #require 'ruote/util/look'
     #Ruote::Look.dump_lsof
@@ -62,7 +62,7 @@ module FunctionalBase
     @dashboard.add_service('tracer', @tracer)
     @dashboard.add_service('stash', {})
 
-    noisy if ARGV.include?('-N')
+    noisy if ARGV.include?('-N') or ENV['NOISY']
 
     #noisy # uncommented, it makes all the tests noisy
   end
