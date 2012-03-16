@@ -8,5 +8,7 @@
 #require 'rubygems'
 source 'http://rubygems.org'
 
+gem 'yajl-ruby', :require => 'yajl'
+
 gemspec
 
