@@ -36,6 +36,13 @@ class FtAddServiceTest < Test::Unit::TestCase
     assert_equal MyService, @dashboard.context.toto.class
   end
 
+  def test_as_class
+
+    @dashboard.add_service('toto', MyService)
+
+    assert_equal MyService, @dashboard.context.toto.class
+  end
+
   def test_as_path_class_options
 
     @dashboard.add_service(

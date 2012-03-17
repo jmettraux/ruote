@@ -132,14 +132,18 @@ module Ruote
 
       key = "s_#{key}" unless SERVICE_PREFIX.match(key)
 
+      aa = [ self, opts ].compact
+
       service = if klass
 
         require(path)
 
-        aa = [ self ]
-        aa << opts if opts
-
         @services[key] = Ruote.constantize(klass).new(*aa)
+
+      elsif path.is_a?(Class)
+
+        @services[key] = path.new(*aa)
+
       else
 
         @services[key] = path
@@ -217,9 +221,7 @@ module Ruote
 
       default_conf.merge(get_conf).each do |key, value|
 
-        next unless SERVICE_PREFIX.match(key)
-
-        add_service(key, *value)
+        add_service(key, *value) if SERVICE_PREFIX.match(key)
       end
     end
 
