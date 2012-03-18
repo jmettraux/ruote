@@ -33,7 +33,7 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
     sleep 0.100
 
-    assert_equal 21, @dashboard.storage.get_many('history').size
+    assert_equal 19, @dashboard.storage.get_many('history').size
 
     h = @dashboard.context.history.by_process(wfid0)
     #h.each { |r| p r }

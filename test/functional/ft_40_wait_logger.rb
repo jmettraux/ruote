@@ -110,7 +110,24 @@ class FtWaitLoggerTest < Test::Unit::TestCase
     end)
     @dashboard.wait_for(wfid)
 
-    assert_equal %w[ b a b a b a ], log
+    assert_equal %w[ b a b a ], log
+  end
+
+  def test_timeout
+
+    @dashboard = Ruote::Engine.new(Ruote::Worker.new(determine_storage({})))
+
+    wfid = @dashboard.launch(Ruote.define { stall })
+
+    e = nil
+
+    begin
+      @dashboard.wait_for(wfid, :timeout => 1)
+    rescue => e
+    end
+
+    assert_equal Ruote::LoggerTimeout, e.class
+    assert_equal "waited for [\"#{wfid}\"], timed out after 1s", e.message
   end
 end
 

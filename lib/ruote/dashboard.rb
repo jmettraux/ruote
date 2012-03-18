@@ -543,9 +543,20 @@ module Ruote
     #     r['workitem']['fields']['charly'].should == nil
     #   end
     #
+    # == :timeout option
+    #
+    # One can pass a timeout value in seconds for the #wait_for call, as in:
+    #
+    #   dashboard.wait_for(wfid, :timeout => 5 * 60)
+    #
+    # The default timeout is 60 (seconds). A nil or negative timeout disables
+    # the timeout.
+    #
     def wait_for(*items)
 
-      @context['s_logger'].wait_for(items)
+      opts = items.last.is_a?(Hash) ? items.pop : {}
+
+      @context.logger.wait_for(items, opts)
     end
 
     # Joins the worker thread. If this engine has no nested worker, calling

@@ -25,6 +25,16 @@
 
 module Ruote
 
+  # The error raised by WaitLogger#wait_for upon a timeout.
+  #
+  class LoggerTimeout < StandardError
+
+    def initialize(interests, timeout)
+
+      super("waited for #{interests.inspect}, timed out after #{timeout}s")
+    end
+  end
+
   #
   # The logic behind Ruote::Dashboard#wait_for is implemented here.
   #
@@ -45,7 +55,15 @@ module Ruote
     attr_reader :seen
     attr_reader :log
 
+    # When set to true, this logger will spit out the ruote activity
+    # happening in this Ruby's runtime ruote worker (if any) to $stdout.
+    #
     attr_accessor :noisy
+
+    # The timeout for #wait_for. Defaults to 60 (seconds). When set to
+    # number inferior or equal to zero, no timeout will be enforced.
+    #
+    attr_accessor :timeout
 
     def initialize(context)
 
@@ -60,6 +78,10 @@ module Ruote
       @noisy = false
 
       @log_max = context['wait_logger_max'] || 147
+
+      @timeout = 60 # 1 minute
+
+      @check_mutex = Mutex.new
     end
 
     # The context will call this method for each msg sucessfully processed
@@ -77,8 +99,6 @@ module Ruote
         while @log.size > @log_max; @log.shift; end
         while @seen.size > @log_max; @seen.shift; end
       end
-
-      check_waiting
     end
 
     # Returns an array of the latest msgs, but fancy-printed. The oldest
@@ -92,7 +112,7 @@ module Ruote
     # Blocks until one or more interests are satisfied.
     #
     # interests must be an array of interests. Please refer to
-    # Engine#wait_for documentation for allowed values of each interest.
+    # Dashboard#wait_for documentation for allowed values of each interest.
     #
     # If multiple interests are given, wait_for blocks until
     # all of the interests are satisfied.
@@ -102,19 +122,28 @@ module Ruote
     # while the first thread is waiting, the first thread's
     # interests are lost and the first thread will never wake up.
     #
-    def wait_for(interests)
+    def wait_for(interests, opts={})
 
       @waiting << [ Thread.current, interests ]
 
-      #check_waiting
-      @context.storage.put_msg('noop', {})
-        #
-        # forces the #check_waiting via #on_msg
-        # (ie let it happen in the worker)
+      Thread.current['__result__'] = nil
+      start = Time.now
 
-      Thread.stop if @waiting.find { |w| w.first == Thread.current }
+      to = opts[:timeout] || @timeout
+      to = nil if to.nil? || to <= 0
 
-      # and when this thread gets woken up, go on and return __result__
+      loop do
+
+        raise(
+          Ruote::LoggerTimeout.new(interests, to)
+        ) if to && (Time.now - start) > to
+
+        @check_mutex.synchronize { check_waiting }
+
+        break if Thread.current['__result__']
+
+        sleep 0.007
+      end
 
       Thread.current['__result__']
     end
@@ -142,25 +171,11 @@ module Ruote
     def check_waiting
 
       while @waiting.any? and msg = @seen.shift
-        check_msg(msg)
-      end
-    end
 
-    def check_msg(msg)
-
-      wakeup = []
-
-      @waiting.each do |thread, interests|
-
-        wakeup << thread if matches(interests, msg)
-      end
-
-      @waiting.delete_if { |t, i| i.size < 1 }
-
-      wakeup.each do |thread|
-
-        thread['__result__'] = msg
-        thread.wakeup
+        @waiting.delete_if do |thread, interests|
+          thread['__result__'] = msg if matches(interests, msg)
+          (interests.size < 1)
+        end
       end
     end
 
