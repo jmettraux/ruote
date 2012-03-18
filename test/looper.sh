@@ -12,7 +12,8 @@ while [ 1 ]; do
   echo
   echo " *** $COUNT"
   ((COUNT=$COUNT + 1))
-  time ruby -I. $*
+  #time ruby -I. $*
+  time bundle exec ruby -I. $*
 
   if [[ "$?" != 0 ]]; then
     break
