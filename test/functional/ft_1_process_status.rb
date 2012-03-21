@@ -793,5 +793,29 @@ digraph "process wfid {
 
     assert_equal 'town', wi.fields['small']
   end
+
+  def test_to_h
+
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
+
+    pdef = Ruote.define do
+      concurrence do
+        alpha
+        wait '1d'
+        nada
+      end
+    end
+
+    #@dashboard.noisy = true
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for(7)
+
+    ps = @dashboard.ps(wfid)
+
+    assert_equal Hash, eval(ps.to_h.inspect).class
+      #
+      # making sure the output of to_h is JSONifiable...
+  end
 end
 

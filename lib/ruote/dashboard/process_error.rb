@@ -83,6 +83,8 @@ module Ruote
       @h
     end
 
+    alias h to_h
+
     # 'apply', 'reply', 'receive', ... Indicates in which "direction" the
     # error occured.
     #

@@ -1164,6 +1164,11 @@ module Ruote
 
     h = sched.dup
 
+    class << h; attr_accessor :h; end
+    h.h = sched
+      #
+      # for the sake of ProcessStatus#to_h
+
     h.delete('_rev')
     h.delete('type')
     msg = h.delete('msg')
