@@ -476,7 +476,7 @@ module Ruote
         k = a == 'stored_workitems' ? 'workitems' : a
 
         v = self.send(a)
-        v = v.collect { |e| e.h }
+        v = v.collect { |e| e.respond_to?(:h) ? e.h : e }
 
         h[k] = v
 
