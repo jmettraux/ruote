@@ -228,6 +228,8 @@ module Ruote::Exp
     #
     def self.from_h(context, h)
 
+      return self.new(nil, h) unless context
+
       exp_class = context.expmap.expression_class(h['name'])
 
       exp_class.new(context, h)

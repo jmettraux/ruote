@@ -60,20 +60,24 @@ module Ruote
     #
     attr_reader :schedules
 
+    # TODO
+    #
+    attr_reader :trackers
+
     # Called by Ruote::Dashboard#processes or Ruote::Dashboard#process.
     #
-    def initialize(context, expressions, stored_workitems, errors, schedules)
+    def initialize(context, expressions, sworkitems, errors, schedules, trackers)
 
       #
       # preparing data
 
       @expressions = expressions.collect { |e|
         Ruote::Exp::FlowExpression.from_h(context, e)
-      }.sort { |a, b|
-        a.fei.expid <=> b.fei.expid
+      }.sort_by { |e|
+        e.fei.expid
       }
 
-      @stored_workitems = stored_workitems.map { |h| Ruote::Workitem.new(h) }
+      @stored_workitems = sworkitems.map { |h| Ruote::Workitem.new(h) }
 
       @errors = errors.sort! { |a, b| a.fei.expid <=> b.fei.expid }
       @schedules = schedules.sort! { |a, b| a['owner'].sid <=> b['owner'].sid }
@@ -87,6 +91,8 @@ module Ruote
         err.flow_expression = @expressions.find { |fexp| fexp.fei == err.fei }
         err.flow_expression.error = err if err.flow_expression
       end
+
+      @trackers = trackers
     end
 
     # Returns a list of all the expressions that have no parent expression.
@@ -316,7 +322,8 @@ module Ruote
     def workitems
 
       @expressions.select { |fexp|
-        fexp.is_a?(Ruote::Exp::ParticipantExpression)
+        #fexp.is_a?(Ruote::Exp::ParticipantExpression)
+        fexp.h.name == 'participant'
       }.collect { |fexp|
         Ruote::Workitem.new(fexp.h.applied_workitem)
       }
@@ -347,13 +354,14 @@ module Ruote
 
     def to_s
 
-      "(" + [
+      '(' + [
         "process_status wfid '#{wfid}'",
         "expressions #{@expressions.size}",
         "stored_workitems #{@stored_workitems.size}",
         "errors #{@errors.size}",
-        "schedules #{@schedules.size}"
-      ].join(', ') + ")"
+        "schedules #{@schedules.size}",
+        "trackers #{@trackers.size}"
+      ].join(', ') + ')'
     end
 
     def hinspect(indent, h)
@@ -439,6 +447,8 @@ module Ruote
         s << "    fields:"; s << hinspect(6, e.fields)
       end
 
+      # TODO: add trackers
+
       s.join("\n") + "\n"
     end
 
@@ -450,29 +460,29 @@ module Ruote
       s = [ "digraph \"process wfid #{wfid}\" {" ]
       @expressions.each { |e| s.push(*e.send(:to_dot, opts)) }
       @errors.each { |e| s.push(*e.send(:to_dot, opts)) }
-      s << "}"
+      s << '}'
 
       s.join("\n")
     end
 
-    #--
-    #def to_h
-    #  h = {}
-    #  %w[
-    #    wfid
-    #    definition_name definition_revision
-    #    original_tree current_tree
-    #    variables tags
-    #  ].each { |m| h[m] = self.send(m) }
-    #  h['launched_time'] = launched_time
-    #  h['last_active'] = last_active
-    #  # all_variables and all_tags ?
-    #  h['root_expression'] = nil
-    #  h['expressions'] = @expressions.collect { |e| e.fei.to_h }
-    #  h['errors'] = @errors.collect { |e| e.to_h }
-    #  h
-    #end
-    #++
+    # Outputs the process status as a hash (easily JSONifiable).
+    #
+    def to_h
+
+      %w[
+        expressions errors stored_workitems schedules trackers
+      ].inject({}) do |h, a|
+
+        k = a == 'stored_workitems' ? 'workitems' : a
+
+        v = self.send(a)
+        v = v.collect { |e| e.h }
+
+        h[k] = v
+
+        h
+      end
+    end
 
     # Returns the current version of the process definition tree. If no
     # manipulation (gardening) was performed on the tree, this method yields
@@ -516,6 +526,7 @@ module Ruote
       swfids = wfids.collect { |wfid| /!#{wfid}-\d+$/ }
 
       batch = "#{Thread.current.object_id}-#{Time.now.to_f}"
+        #
         # some storages may optimize when they can distinguish
         # which get_many fit in the same batch...
 
@@ -534,31 +545,31 @@ module Ruote
       schs = schs.collect { |sch| Ruote.schedule_to_h(sch) }
 
       by_wfid = {}
+      as = lambda { [ [], [], [], [], [] ] }
 
-      exps.each do |exp|
-        (by_wfid[exp['fei']['wfid']] ||= [ [], [], [], [] ])[0] << exp
-      end
-      swis.each do |swi|
-        (by_wfid[swi['fei']['wfid']] ||= [ [], [], [], [] ])[1] << swi
-      end
-      errs.each do |err|
-        (by_wfid[err.wfid] ||= [ [], [], [], [] ])[2] << err
-      end
-      schs.each do |sch|
-        (by_wfid[sch['wfid']] ||= [ [], [], [], [] ])[3] << sch
-      end
+      exps.each { |exp| (by_wfid[exp['fei']['wfid']]  ||= as.call)[0] << exp }
+      swis.each { |swi| (by_wfid[swi['fei']['wfid']]  ||= as.call)[1] << swi }
+      errs.each { |err| (by_wfid[err.wfid]            ||= as.call)[2] << err }
+      schs.each { |sch| (by_wfid[sch['wfid']]         ||= as.call)[3] << sch }
+      # TODO: trackers
 
       wfids = by_wfid.keys.sort
       wfids = wfids.reverse if opts[:descending]
         # re-adjust list of wfids, only take what was found
 
-      wfids.inject([]) { |a, wfid|
-        if info = by_wfid[wfid]
-          a << ProcessStatus.new(context, *info)
-        end
-        a
-      }
+      wfids.collect { |wfid|
+        info = by_wfid[wfid]
+        info ? self.new(context, *info) : nil
+      }.compact
     end
+
+    #--
+    #def self.from_h(h)
+    #  self.new(
+    #    nil,
+    #    *%w[ expressions workitems errors schedules trackers ].map { |k| h[k] })
+    #end
+    #++
 
     protected
 
