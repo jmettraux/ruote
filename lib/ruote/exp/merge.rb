@@ -37,8 +37,6 @@ module Ruote::Exp
     #
     def merge_workitems(workitems, merge_type)
 
-      rworkitems = workitems.reverse
-
       workitems.inject(nil) do |t, wi|
         merge_workitem(workitems.index(wi), t, wi, merge_type)
       end
@@ -48,13 +46,13 @@ module Ruote::Exp
     #
     # If type is 'override', the source will prevail and be returned.
     #
-    # If type is 'mix', the source fields will be merge into the target fields.
+    # If type is 'mix', the source fields will be merged into the target fields.
     #
     # If type is 'isolate', the source fields will be placed in a separte field
     # in the target workitem. The name of this field is the child_id of the
     # source workitem (a string from '0' to '99999' and beyond)
     #
-    # The 'concat' type merge hashes and concats arrays. The 'union' type
+    # The 'concat' type merges hashes and concats arrays. The 'union' type
     # behaves much like 'concat', but it makes sure to remove duplicates.
     #
     # Warning: 'union' will remove duplicates that were present _before_ the
