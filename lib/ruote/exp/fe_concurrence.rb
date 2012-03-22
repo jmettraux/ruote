@@ -229,6 +229,13 @@ module Ruote::Exp
   #     'b' => [ 'x', 'y', 'y', 'z' ],
   #     'c' => { 'aa' => 'bb', 'cc' => 'dd' } }
   #
+  # ==== :deep
+  #
+  # (Available from ruote 2.3.0)
+  #
+  # Identical to :concat but hashes are merged with deep_merge (ActiveSupport
+  # flavour).
+  #
   # ==== :ignore
   #
   # (Available from ruote 2.3.0)
@@ -290,7 +297,7 @@ module Ruote::Exp
         %w[ first last highest lowest ])
       h.cmerge_type = att(
         [ :merge_type, :mt ],
-        %w[ override mix isolate stack union ignore concat ])
+        %w[ override mix isolate stack union ignore concat deep ])
       h.remaining = att(
         [ :remaining, :rem, :r ],
         %w[ cancel forget wait ])

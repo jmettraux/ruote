@@ -98,7 +98,7 @@ module Ruote::Exp
 
             target['fields'][index.to_s] = source['fields']
 
-          when 'union', 'concat'
+          when 'union', 'concat', 'deep'
 
             source['fields'].each do |k, sv|
 
@@ -108,7 +108,7 @@ module Ruote::Exp
                 tv.concat(sv)
                 tv.uniq! if merge_type == 'union'
               elsif sv.is_a?(Hash) and tv.is_a?(Hash)
-                tv.merge!(sv)
+                merge_type == 'deep' ? deep_merge!(tv, sv) : tv.merge!(sv)
               else
                 target['fields'][k] = sv
               end
@@ -116,6 +116,17 @@ module Ruote::Exp
         end
 
         target
+      end
+    end
+
+    protected
+
+    # Inspired by the one found in ActiveSupport, though not strictly equivalent.
+    #
+    def deep_merge!(target, source)
+
+      target.merge!(source) do |k, o, n|
+        o.is_a?(Hash) && n.is_a?(Hash) ? deep_merge!(o, n) : n
       end
     end
   end

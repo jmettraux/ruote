@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- :merge_type => 'deep' (idea Jim MarsBomber Li)
 - Dashboard#launch accepts :wfid "field", custom wfid
 - kill_process expression (and on_error)
 - the "second take" (__on_error__, __on_cancel__)

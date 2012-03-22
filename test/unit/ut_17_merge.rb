@@ -129,5 +129,27 @@ class MergeTest < Test::Unit::TestCase
       } },
       Merger.new.merge_workitems(workitems, 'concat'))
   end
+
+  def test_deep
+
+    workitems = [
+      new_workitem(
+        'a' => 0,
+        'b' => [ 'x', 'y' ],
+        'c' => { 'aa' => 'bb', 'cc' => { 'a' => 'b' } }),
+      new_workitem(
+        'a' => 1,
+        'b' => [ 'y', 'z' ],
+        'c' => { 'dd' => 'ee', 'cc' => { 'c' => 'd' } })
+    ]
+
+    assert_equal(
+      { 'fields' => {
+        'a' => 1,
+        'b' => [ 'x', 'y', 'y', 'z' ],
+        'c' => { 'aa' => 'bb', 'cc' => { 'a' => 'b', 'c' => 'd' }, 'dd' => 'ee' }
+      } },
+      Merger.new.merge_workitems(workitems, 'deep'))
+  end
 end
 
