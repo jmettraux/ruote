@@ -51,6 +51,7 @@ Richard Jennings
 
 == Feedback
 
+Chris Conley - https://github.com/chrisconley
 Jim "MarsBomber" Li - :merge_type => 'deep'
 John Roberts - idea for wait_for(:x, :or_error)
 Alex - https://github.com/alexw668
