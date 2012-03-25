@@ -103,8 +103,7 @@ module Ruote
     def add_tracker(wfid, action, id, conditions, msg)
 
       conditions =
-        conditions &&
-        conditions.inject({}) { |h, (k, v)| h[k] = Array(v); h }
+        conditions && conditions.remap { |(k, v), h| h[k] = Array(v) }
 
       doc = @context.storage.get_trackers
 

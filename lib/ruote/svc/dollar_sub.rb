@@ -65,10 +65,8 @@ module Ruote
 
       elsif text.is_a?(Hash)
 
-        text.inject({}) { |h, (k, v)|
-
+        text.remap { |(k, v), h|
           h[s(k, flow_expression, workitem)] = s(v, flow_expression, workitem)
-          h
         }
 
       else

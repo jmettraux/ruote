@@ -107,9 +107,8 @@ module Ruote::Exp
     #
     def compile_atts(opts={})
 
-      attributes.keys.inject({}) { |r, k|
+      attributes.keys.each_with_object({}) { |k, r|
         r[dsub(k)] = attribute(k, h.applied_workitem, opts)
-        r
       }
     end
 
@@ -143,7 +142,7 @@ module Ruote::Exp
       case o
         when String; @context.dollar_sub.s(o, self, wi)
         when Array; o.collect { |e| dsub(e, wi) }
-        when Hash; o.inject({}) { |h, (k, v)| h[dsub(k, wi)] = dsub(v, wi); h }
+        when Hash; o.remap { |(k, v), h| h[dsub(k, wi)] = dsub(v, wi) }
         else o
       end
     end

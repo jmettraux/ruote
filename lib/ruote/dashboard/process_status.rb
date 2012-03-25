@@ -102,8 +102,8 @@ module Ruote
 
       roots = @expressions.select { |e| e.h.parent_id == nil }
 
-      roots = roots.inject({}) { |h, e|
-        h["#{e.h.fei['expid']}__#{e.h.fei['subid']}"] = e; h
+      roots = roots.each_with_object({}) { |e, h|
+        h["#{e.h.fei['expid']}__#{e.h.fei['subid']}"] = e
       }
 
       roots.keys.sort.collect { |k| roots[k] }
@@ -140,9 +140,8 @@ module Ruote
 
       return nil if @expressions.empty?
 
-      @expressions.inject({}) do |h, exp|
+      @expressions.each_with_object({}) do |exp, h|
         h[exp.fei] = exp.variables if exp.variables
-        h
       end
     end
 
@@ -165,9 +164,8 @@ module Ruote
     #
     def all_tags
 
-      all_variables.inject({}) do |h, (fei, vars)|
+      all_variables.remap do |(fei, vars), h|
         vars.each { |k, v| (h[k] ||= []) << v if FlowExpressionId.is_a_fei?(v) }
-        h
       end
     end
 
@@ -378,7 +376,7 @@ module Ruote
     def inspect
 
       vars = variables rescue nil
-      avars = all_variables.inject({}) { |h, (k, v)| h[Ruote.sid(k)] = v; h }
+      avars = all_variables.remap { |(k, v), h| h[Ruote.sid(k)] = v }
 
       s = [ "== #{self.class} ==" ]
       s << ''
@@ -471,7 +469,7 @@ module Ruote
 
       %w[
         expressions errors stored_workitems schedules trackers
-      ].inject({}) do |h, a|
+      ].each_with_object({}) do |a, h|
 
         k = a == 'stored_workitems' ? 'workitems' : a
 
@@ -479,8 +477,6 @@ module Ruote
         v = v.collect { |e| e.respond_to?(:h) ? e.h : e }
 
         h[k] = v
-
-        h
       end
     end
 

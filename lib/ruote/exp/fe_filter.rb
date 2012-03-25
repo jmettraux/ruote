@@ -604,13 +604,12 @@ module Ruote::Exp
 
         next 'or' if line.first == 'or'
 
-        rule = line[1].inject({}) { |h, (k, v)|
+        rule = line[1].remap { |(k, v), h|
           if v == nil
             h['field'] = k
           else
             h[k] = v
           end
-          h
         }
 
         rule['field'] ||= line.first
@@ -666,13 +665,12 @@ module Ruote::Exp
         return nil
       end
 
-      [ attributes.inject({}) { |h, (k, v)|
+      [ attributes.remap { |(k, v), h|
         if v.nil?
           h['field'] = k
         else
           h[k] = v
         end
-        h
       } ]
     end
   end

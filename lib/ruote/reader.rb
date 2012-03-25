@@ -30,6 +30,7 @@ require 'ruote/reader/xml'
 require 'ruote/reader/json'
 require 'ruote/reader/radial'
 require 'ruote/reader/ruby_dsl' # just making sure it's loaded
+require 'ruote/util/mpatch'
 require 'ruote/util/subprocess'
 
 
@@ -92,9 +93,12 @@ module Ruote
 
       if is_uri?(definition)
 
-        raise ArgumentError.new(
-          "remote process definitions are not allowed"
-        ) if Ruote::Reader.remote?(definition) && @context['remote_definition_allowed'] != true
+        if
+          Ruote::Reader.remote?(definition) &&
+          @context['remote_definition_allowed'] != true
+        then
+          raise ArgumentError.new('remote process definitions are not allowed')
+        end
 
         return read(open(definition).read)
       end
@@ -159,7 +163,7 @@ module Ruote
           atts[key] = t.first
         end
 
-        atts = atts.inject({}) { |h, (k, v)| h[k.to_s.gsub(/\_/, '-')] = v; h }
+        atts = atts.remap { |(k, v), h| h[k.to_s.gsub(/\_/, '-')] = v }
 
         if tree[2].empty?
           xml.tag!(tree[0], atts)
@@ -314,10 +318,8 @@ module Ruote
       t = atts.find { |k, v| v == nil }
       s << t.first.inspect if t
 
-      s = atts.inject(s) { |a, (k, v)|
-        #a << ":#{k} => #{v.inspect}" if t.nil? || k != t.first
+      s = atts.each_with_object(s) { |(k, v), a|
         a << block.call(k, v) if t.nil? || k != t.first
-        a
       }.join(', ')
 
       s.length > 0 ? " #{s}" : s

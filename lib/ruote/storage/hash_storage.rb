@@ -186,10 +186,8 @@ module Ruote
         configurations
         workitems
 
-      ].inject({}) { |h, k|
+      ].each_with_object({}) { |k, h|
         h[k] = {}
-        #h[k] = NoisyHash.new(k)
-        h
       }
 
       @h['configurations']['engine'] = @options

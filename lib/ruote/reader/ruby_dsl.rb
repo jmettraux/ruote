@@ -125,18 +125,18 @@ module Ruote
 
       name = name[1..-1] while name[0, 1] == '_'
 
-      h = attributes.inject({}) { |h1, a|
+      h = attributes.each_with_object({}) { |a, h1|
 
-        a.is_a?(Hash) ? h1.merge!(a) : h1[a] = nil
+        if a.is_a?(Hash)
+          h1.merge!(a)
+        else
+          h1[a] = nil
+        end
 
-        h1
-
-      }.inject({}) { |h1, (k, v)|
+      }.remap { |(k, v), h1|
 
         k = k.is_a?(Regexp) ? k.inspect : k.to_s
         h1[k] = to_json(v)
-
-        h1
       }
 
       c = BranchContext.new(name, h)
@@ -151,7 +151,7 @@ module Ruote
         when Symbol; v.to_s
         when Regexp; v.inspect
         when Array; v.collect { |e| to_json(e) }
-        when Hash; v.inject({}) { |h, (k, v)| h[to_json(k)] = to_json(v); h }
+        when Hash; v.remap { |(k, v), h| h[to_json(k)] = to_json(v) }
         when Proc; v.to_raw_source + "\n"
         else v
       end

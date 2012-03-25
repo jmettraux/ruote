@@ -24,6 +24,7 @@
 
 
 require 'sourcify'
+
 require 'ruote/part/local_participant'
 require 'ruote/part/block_participant'
 require 'ruote/part/code_participant'
@@ -53,20 +54,17 @@ module Ruote
 
       raise(
         ArgumentError.new(
-          "can only accept strings (classnames) or classes as participant arg")
+          'can only accept strings (classnames) or classes as participant arg')
       ) unless [ String, Class, NilClass ].include?(participant.class)
 
       klass = (participant || Ruote::BlockParticipant).to_s
 
-      options = options.inject({}) { |h, (k, v)|
-
+      options = options.remap { |(k, v), h|
         h[k.to_s] = case v
           when Symbol then v.to_s
           when Proc then v.to_raw_source
           else v
         end
-
-        h
       }
 
       extract_blocks(block).each do |meth, code|
@@ -399,13 +397,13 @@ module Ruote
     attr_accessor :regex, :classname, :options
 
     def initialize(a)
+
       @regex = a.first
-      if a.last.is_a?(Array)
-        @classname = a.last.first
-        @options = a.last.last
+
+      @classname, @options = if a.last.is_a?(Array)
+        [ a.last.first, a.last.last ]
       else
-        @classname = a.last
-        @options = nil
+        [ a.last, nil ]
       end
     end
 
@@ -425,41 +423,49 @@ module Ruote
     #
     def self.read(elt)
 
-      return elt.to_a if elt.is_a?(ParticipantEntry)
+      case elt
 
-      if elt.is_a?(Hash)
+        when ParticipantEntry
 
-        options = elt['options'] || elt.reject { |k, v|
-          %w[ name regex regexp class classname ].include?(k)
-        }
+          elt.to_a
 
-        name = elt.find { |k, v| v == nil }
-        if name
-          name = name.first
-          elt.delete(name)
-          options.delete(name)
-        end
-        name = name || elt['name']
-        name = Ruote.regex_or_s(name)
+        when Hash
 
-        regex = name
-        unless name
-          regex = Ruote.regex_or_s(elt['regex'] || elt['regexp'])
-          regex = regex.is_a?(String) ? Regexp.new(regex) : regex
-        end
+          options = elt['options'] || elt.reject { |k, v|
+            %w[ name regex regexp class classname ].include?(k)
+          }
 
-        klass = (elt['classname'] || elt['class']).to_s
+          name, _ = elt.find { |k, v| v == nil }
+          if name
+            elt.delete(name)
+            options.delete(name)
+          end
+          name = name || elt['name']
+          name = Ruote.regex_or_s(name)
 
-        return [ regex, [ klass, options ] ]
+          regex = name
+          if name.nil?
+            regex = Ruote.regex_or_s(elt['regex'] || elt['regexp'])
+            regex = regex.is_a?(String) ? Regexp.new(regex) : regex
+          end
+
+          klass = (elt['classname'] || elt['class']).to_s
+
+          [ regex, [ klass, options ] ]
+
+        when Array
+
+          if elt.size == 3
+            [ Ruote.regex_or_s(elt[0]), [ elt[1].to_s, elt[2] ] ]
+          else
+            [ Ruote.regex_or_s(elt[0]), elt[1] ]
+          end
+
+        else
+
+          raise ArgumentError.new(
+            "cannot read participant out of #{elt.inspect} (#{elt.class})")
       end
-
-      # else elt is a Array
-
-      if elt.size == 3
-        return [ Ruote.regex_or_s(elt[0]), [ elt[1].to_s, elt[2] ] ]
-      end
-
-      [ Ruote.regex_or_s(elt[0]), elt[1] ]
     end
   end
 end

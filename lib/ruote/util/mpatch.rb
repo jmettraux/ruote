@@ -22,49 +22,32 @@
 # Made in Japan.
 #++
 
-#--
-# note, it's ometa, not omerta.
-#++
 
-module Ruote
+# Adding some 1.9 methods to 1.8 Rubies.
+#
+unless {}.respond_to?(:each_with_object)
 
-  # meta a la lucky stiff
-  #
-  module WithMeta
+  module Enumerable
 
-    def self.included(target)
+    def each_with_object(o, &block)
 
-      def target.metaclass
-        class << self
-          self
-        end
-      end
-      def target.meta_eval(&block)
-        metaclass.instance_eval(&block)
-      end
-      def target.meta_def(method_name, &block)
-        meta_eval { define_method method_name, &block }
-      end
-      def class_def(method_name, &block)
-        class_eval { define_method name, &block }
+      self.inject(o) do |oo, e|
+        block.call(e, oo)
+        oo
       end
     end
   end
+end
 
-  # A blank slate of a class
+class Hash
+
+  # A shortcut for
   #
-  class BlankSlate
+  #   hash.each_with_object({}) { |(k, v), h)| ... }
+  #
+  def remap(&block)
 
-    instance_methods.each do |m|
-
-      next if %w[
-        method_missing respond_to? instance_eval object_id
-      ].include?(m.to_s)
-
-      next if m.to_s.match(/^__/)
-
-      undef_method(m)
-    end
+    each_with_object({}, &block)
   end
 end
 

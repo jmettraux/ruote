@@ -413,7 +413,7 @@ module Ruote
         exp_class = Ruote::Exp::SequenceExpression
       end
 
-      exp_hash = exp_hash.inject({}) { |h, (k, v)| h[k] = v unless v.nil?; h }
+      exp_hash = exp_hash.reject { |k, v| v.nil? }
         # compact nils away
 
       exp_hash['original_tree'] = tree

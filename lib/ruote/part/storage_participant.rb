@@ -328,7 +328,7 @@ module Ruote
     #
     def per_participant
 
-      inject({}) { |h, wi| (h[wi.participant_name] ||= []) << wi; h }
+      each_with_object({}) { |wi, h| (h[wi.participant_name] ||= []) << wi }
     end
 
     # Mostly a test method. Returns a Hash were keys are participant names
@@ -337,7 +337,7 @@ module Ruote
     #
     def per_participant_count
 
-      per_participant.inject({}) { |h, (k, v)| h[k] = v.size; h }
+      per_participant.remap { |(k, v), h| h[k] = v.size }
     end
 
     # Claims a workitem. Returns the [updated] workitem if successful.

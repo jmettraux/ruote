@@ -131,7 +131,7 @@ module Ruote
   #
   def self.keys_to_s(h)
 
-    h.inject({}) { |h, (k, v)| h[k.to_s] = v; h }
+    h.remap { |(k, v), h| h[k.to_s] = v }
   end
 
   REGEX_IN_STRING = /^\s*\/(.*)\/\s*$/

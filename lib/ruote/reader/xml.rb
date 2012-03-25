@@ -47,14 +47,11 @@ module Ruote
 
       attr_reader :parent, :attributes, :children
 
-      def initialize(parent, name, attributes)
+      def initialize(parent, name, atts)
 
         @parent = parent
         @name = name
-        @attributes = attributes.inject({}) { |h, (k, v)|
-          h[k.gsub(/-/, '_')] = v
-          h
-        }
+        @attributes = atts.remap { |(k, v), h| h[k.gsub(/-/, '_')] = v }
         @children = []
 
         parent.children << self if parent

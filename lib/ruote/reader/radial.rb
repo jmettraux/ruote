@@ -185,14 +185,14 @@ module Ruote
       rule(:line => subtree(:line)) { line }
 
       rule(:ind => simple(:i), :exp => simple(:e), :atts => subtree(:as)) {
-        atts = Array(as).inject({}) { |h, att| h[att.key] = att.val; h }
+        atts = Array(as).each_with_object({}) { |att, h| h[att.key] = att.val }
         Node.new(i.to_s.length, e.to_s, atts)
       }
       rule(:ind => simple(:i), :exp => simple(:e)) {
         Node.new(i.to_s.length, e.to_s, {})
       }
       rule(:ind => sequence(:i), :exp => simple(:e), :atts => subtree(:as)) {
-        atts = Array(as).inject({}) { |h, att| h[att.key] = att.val; h }
+        atts = Array(as).each_with_object({}) { |att, h| h[att.key] = att.val }
         Node.new(0, e.to_s, atts)
       }
       rule(:ind => sequence(:i), :exp => simple(:e)) {
@@ -223,8 +223,8 @@ module Ruote
         ar.is_a?(Array) ? ar : [ ar ]
       }
       rule(:object => subtree(:es)) {
-        (es.is_a?(Array) ? es : [ es ]).inject({}) { |h, e|
-          e = e[:ent]; h[e[:key]] = e[:val]; h
+        (es.is_a?(Array) ? es : [ es ]).each_with_object({}) { |e, h|
+          e = e[:ent]; h[e[:key]] = e[:val]
         }
       }
     end

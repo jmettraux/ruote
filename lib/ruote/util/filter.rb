@@ -160,11 +160,9 @@ module Ruote
 
         # now only keep the keys that match our regexp
 
-        keys.inject([]) { |a, k|
-          if m = fl.match(k)
-            a << [ k, Ruote.lookup(@hash, k), m[1..-1] ]
-          end
-          a
+        keys.each_with_object([]) { |k, a|
+          m = fl.match(k)
+          a << [ k, Ruote.lookup(@hash, k), m[1..-1] ] if m
         }
 
       elsif fl.is_a?(String) and PIPE_SPLIT.match(fl)
@@ -342,9 +340,8 @@ module Ruote
 
         @hash['~~~'] = @hash.keys.select { |k|
           ! k.match(/^\~+$/)
-        }.inject({}) { |h, k|
+        }.each_with_object({}) { |k, h|
           h[k] = @hash.delete(k)
-          h
         }
 
         @hash.merge!(@hash['~~'])
