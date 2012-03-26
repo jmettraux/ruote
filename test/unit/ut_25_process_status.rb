@@ -7,9 +7,7 @@
 
 require File.expand_path('../../test_helper', __FILE__)
 
-require 'ruote/fei'
-require 'ruote/exp/flow_expression'
-require 'ruote/dashboard/process_status'
+require 'ruote'
 
 
 class ProcessStatusTest < Test::Unit::TestCase

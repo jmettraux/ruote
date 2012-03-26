@@ -23,7 +23,7 @@
 #++
 
 require 'ruote/util/tree'
-require 'ruote/dashboard/process_error'
+require 'ruote/dboard/process_error'
 
 
 module Ruote
