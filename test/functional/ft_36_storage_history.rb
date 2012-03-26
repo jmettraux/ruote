@@ -7,7 +7,7 @@
 
 require File.expand_path('../base', __FILE__)
 
-#require 'ruote/log/fs_history'
+require 'ruote/log/storage_history'
 require 'ruote/part/no_op_participant'
 
 
@@ -145,6 +145,38 @@ class FtStorageHistoryTest < Test::Unit::TestCase
     end
 
     assert_equal [ %w[ 0_0_1 bravo ], %w[ 0_0 bravo ] ], repliers[0, 2]
+  end
+
+  class MyStorageHistory < Ruote::StorageHistory
+
+    # Only accept 'dispatched' messages.
+    #
+    def accept?(msg)
+
+      msg['action'] == 'dispatched'
+    end
+  end
+
+  def test_accept
+
+    @dashboard.add_service('history', MyStorageHistory)
+
+    @dashboard.register_participant '.+', Ruote::NoOpParticipant
+
+    pdef = Ruote.define do
+      alpha
+      bravo
+      charly
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+
+    msgs = @dashboard.history.by_process(wfid)
+
+    assert_equal %w[ dispatched ] * 3, msgs.collect { |m| m['action'] }
   end
 end
 

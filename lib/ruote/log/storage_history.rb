@@ -128,6 +128,8 @@ module Ruote
     #
     def on_msg(msg)
 
+      return unless accept?(msg)
+
       msg = msg.dup
         # a shallow copy is sufficient
 
@@ -147,6 +149,17 @@ module Ruote
       msg.delete('_rev')
 
       @context.storage.put(msg)
+    end
+
+    protected
+
+    # This default implementation lets all the messages in.
+    #
+    # Feel free to override this method in a subclass.
+    #
+    def accept?(msg)
+
+      true
     end
   end
 end
