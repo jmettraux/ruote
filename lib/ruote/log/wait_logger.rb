@@ -186,9 +186,11 @@ module Ruote
       launch apply reply
       fail
       dispatch dispatched receive
-      cancel dispatch_cancel
+      cancel dispatch_cancel kill
       pause resume dispatch_pause dispatch_resume
       regenerate
+      pause_process resume_process cancel_process kill_process
+      reput noop
     ]
 
     # Checks whether message msg matches any of interests being waited for.
