@@ -21,7 +21,7 @@ class FtParticipantSubprocessPriorityTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant '.+' do
-      @tracer << 'participant'
+      tracer << 'participant'
     end
 
     #noisy

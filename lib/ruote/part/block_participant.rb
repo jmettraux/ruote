@@ -48,6 +48,19 @@ module Ruote
   # By default, this participant (like most other participants) is executed
   # in its own thread.
   #
+  #
+  # == context
+  #
+  # As it includes Ruote::LocalParticipant, the block partitcipant has
+  # access to:
+  #
+  # * #context: the ruote context
+  # * #workitem: the current workitem (usually passed as arg to the block)
+  # * #fei: the current flow expression id
+  # * #fexp: the current flow expression
+  # * #flavour: only used in #on_cancel (nil or 'kill')
+  # * #lookup_variable(key): looks up a variable...
+  #
   class BlockParticipant
 
     include LocalParticipant
@@ -59,7 +72,7 @@ module Ruote
       @opts = opts
     end
 
-    def consume(workitem)
+    def on_workitem
 
       block = get_block('on_workitem', 'block')
 
@@ -129,7 +142,9 @@ module Ruote
 
       #eval(block, @context.send(:binding))
         # doesn't work with ruby 1.9.2-p136
-      eval(block, @context.instance_eval { binding })
+      #eval(block, @context.instance_eval { binding })
+        # works OK with ruby 1.8.7-249 and 1.9.2-p136
+      eval(block, self.instance_eval { binding })
         # works OK with ruby 1.8.7-249 and 1.9.2-p136
     end
   end

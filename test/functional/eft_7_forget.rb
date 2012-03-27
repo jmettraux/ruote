@@ -23,7 +23,7 @@ class EftForgetTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha do
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
     end
 
     #noisy

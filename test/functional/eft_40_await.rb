@@ -57,7 +57,7 @@ class EftAwaitTest < Test::Unit::TestCase
   def test_await_participant
 
     @dashboard.register 'a' do
-      @tracer << "a\n"
+      tracer << "a\n"
     end
 
     pdef = Ruote.process_definition do

@@ -23,7 +23,7 @@ class FtForgetTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha do
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
     end
 
     #noisy
@@ -63,10 +63,6 @@ class FtForgetTest < Test::Unit::TestCase
 
     fei = ps.expressions.first.fei
     assert_equal fei, ps.root_expression_for(fei).fei
-
-    #puts "not sure..."
-    #p ps.original_tree
-    #p ps.current_tree
   end
 
   def test_forget_true_string
@@ -80,7 +76,7 @@ class FtForgetTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant '.+' do |wi|
-      @tracer << wi.participant_name + "\n"
+      tracer << wi.participant_name + "\n"
     end
 
     wfid = @dashboard.launch(pdef)
@@ -88,7 +84,6 @@ class FtForgetTest < Test::Unit::TestCase
     wait_for(wfid)
     wait_for(wfid)
 
-    #assert_equal "alpha\nbravo\ncharly", @tracer.to_s
     assert_equal %w[ alpha bravo charly ], @tracer.to_a.sort
   end
 

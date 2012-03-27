@@ -193,7 +193,7 @@ class FtTimeoutTest < Test::Unit::TestCase
       sleep 60
     end
     @dashboard.register_participant '.+' do |wi|
-      @tracer << wi.participant_name + "\n"
+      tracer << wi.participant_name + "\n"
     end
 
     #@dashboard.noisy = true

@@ -242,7 +242,7 @@ module Ruote
     #
     def [](key)
 
-      lookup(key)
+      lookup(key.to_s)
     end
 
     # Shortcut for #set_field(key, value)
@@ -255,7 +255,7 @@ module Ruote
     #
     def []=(key, value)
 
-      set_field(key, value)
+      set_field(key.to_s, value)
     end
 
     # Shortcut for wi.fields['__timed_out__']

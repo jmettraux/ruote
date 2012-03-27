@@ -23,7 +23,7 @@ class FtLoseTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant '.+' do |wi|
-      @tracer << wi.participant_name + "\n"
+      tracer << wi.participant_name + "\n"
     end
 
     #@dashboard.noisy = true
@@ -55,7 +55,7 @@ class FtLoseTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant '.+' do |wi|
-      @tracer << wi.participant_name + "\n"
+      tracer << wi.participant_name + "\n"
     end
 
     #@dashboard.noisy = true
@@ -85,7 +85,7 @@ class FtLoseTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant '.+' do |wi|
-      @tracer << wi.participant_name + "\n"
+      tracer << wi.participant_name + "\n"
     end
 
     #@dashboard.noisy = true

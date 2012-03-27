@@ -150,7 +150,7 @@ class EftCursorTest < Test::Unit::TestCase
     @dashboard.register_participant :alpha do |workitem|
       workitem.fields['counter'] += 1
       workitem.fields['rewind'] = workitem.fields['counter'] < 5
-      @tracer << "a\n"
+      tracer << "a\n"
     end
 
     #noisy
@@ -170,16 +170,16 @@ class EftCursorTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :author do |workitem|
-      @tracer << "a\n"
-      stash[:count] ||= 0
-      stash[:count] += 1
+      tracer << "a\n"
+      context.stash[:count] ||= 0
+      context.stash[:count] += 1
     end
     @dashboard.register_participant :reviewer do |workitem|
-      @tracer << "r\n"
-      workitem.fields['not_ok'] = (stash[:count] < 3)
+      tracer << "r\n"
+      workitem.fields['not_ok'] = (context.stash[:count] < 3)
     end
     @dashboard.register_participant :publisher do |workitem|
-      @tracer << "p\n"
+      tracer << "p\n"
     end
 
     #noisy

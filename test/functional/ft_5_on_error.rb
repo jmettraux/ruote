@@ -39,7 +39,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :catcher do
-      @tracer << "caught\n"
+      tracer << "caught\n"
     end
 
     #noisy
@@ -112,7 +112,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :catcher do
-      @tracer << "caught\n"
+      tracer << "caught\n"
     end
 
     #@dashboard.noisy = true
@@ -286,7 +286,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     end
     @dashboard.register_participant :troublespotter do |wi|
       stash[:workitem] = wi
-      @tracer << 'err...'
+      tracer << 'err...'
     end
 
     #noisy
@@ -397,7 +397,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant /alpha|bravo/ do |workitem|
-      @tracer << workitem.participant_name
+      tracer << workitem.participant_name
     end
 
     #@dashboard.noisy = true
@@ -422,7 +422,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant /alpha|bravo/ do |workitem|
-      @tracer << workitem.participant_name
+      tracer << workitem.participant_name
     end
 
     #@dashboard.noisy = true
@@ -436,7 +436,7 @@ class FtOnErrorTest < Test::Unit::TestCase
   def test_on_error_multi_pass
 
     @dashboard.register_participant /alpha|bravo/ do |workitem|
-      @tracer << workitem.participant_name
+      tracer << workitem.participant_name
     end
 
     pdef = Ruote.define do
@@ -491,7 +491,7 @@ class FtOnErrorTest < Test::Unit::TestCase
     #@dashboard.noisy = true
 
     @dashboard.register '.+' do |workitem|
-      @tracer << workitem.participant_name + "\n"
+      tracer << workitem.participant_name + "\n"
     end
 
     wfid = @dashboard.launch(pdef)

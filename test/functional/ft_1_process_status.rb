@@ -338,7 +338,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha do |wi, fexp|
 
-      @tracer << "a\n"
+      tracer << "a\n"
 
       parent = fexp.parent
       parent.update_tree
@@ -347,14 +347,14 @@ class FtProcessStatusTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :bravo do |wi, fexp|
-      @tracer << "b\n"
+      tracer << "b\n"
     end
     @dashboard.register_participant :charly do |wi, fexp|
-      @tracer << "c\n"
+      tracer << "c\n"
       stash[:tree0] = fexp.context.engine.process(fexp.fei.wfid).current_tree
     end
     @dashboard.register_participant :delta do |wi, fexp|
-      @tracer << "d\n"
+      tracer << "d\n"
       stash[:tree1] = fexp.context.engine.process(fexp.fei.wfid).current_tree
     end
 

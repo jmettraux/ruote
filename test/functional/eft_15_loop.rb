@@ -24,14 +24,14 @@ class EftLoopTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha do |workitem|
 
-      @tracer << "a\n"
+      tracer << "a\n"
       (workitem.fields['count'] ||= 0)
       workitem.fields['count'] += 1
     end
 
     @dashboard.register_participant :bravo do |workitem|
 
-      @tracer << "b\n"
+      tracer << "b\n"
       workitem.fields['count'] += 1
 
       if workitem.fields['count'] > 5
@@ -54,7 +54,7 @@ class EftLoopTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha do |workitem|
 
-      @tracer << "a\n"
+      tracer << "a\n"
       (workitem.fields['count'] ||= 0)
       workitem.fields['count'] += 1
 

@@ -52,7 +52,7 @@ class FtErrorsTest < Test::Unit::TestCase
     assert_not_nil exp
 
     @dashboard.register_participant :nada do |workitem|
-      @tracer << 'done.'
+      tracer << 'done.'
     end
 
     @dashboard.re_apply(exp.fei)
@@ -103,7 +103,7 @@ class FtErrorsTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha do
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
     end
 
     #noisy
@@ -141,7 +141,7 @@ class FtErrorsTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha do
       stash[:count] += 1
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
       raise "something went wrong" if stash[:count] == 1
     end
 
@@ -177,7 +177,7 @@ class FtErrorsTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, 'do_not_thread' => true do
       stash[:count] += 1
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
       raise "something went wrong" if stash[:count] == 1
     end
 
@@ -261,7 +261,7 @@ class FtErrorsTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, :do_not_thread => true do
       stash[:count] += 1
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
       raise "something went wrong" if stash[:count] == 1
     end
 

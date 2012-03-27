@@ -39,7 +39,7 @@ class EftOnErrorTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :catcher do
-      @tracer << "caught\n"
+      tracer << "caught\n"
     end
 
     #@dashboard.noisy = true
@@ -60,7 +60,7 @@ class EftOnErrorTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant /alpha|bravo/ do |workitem|
-      @tracer << workitem.participant_name
+      tracer << workitem.participant_name
     end
 
     #@dashboard.noisy = true
@@ -117,7 +117,7 @@ class EftOnErrorTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant /alpha|bravo/ do |workitem|
-      @tracer << workitem.participant_name
+      tracer << workitem.participant_name
     end
 
     #@dashboard.noisy = true

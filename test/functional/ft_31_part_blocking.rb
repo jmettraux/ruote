@@ -60,7 +60,7 @@ class FtPartBlockingTest < Test::Unit::TestCase
    end
 
    @dashboard.register_participant :trace do |wi|
-     @tracer << "#{wi.fields['result']}"
+     tracer << "#{wi.fields['result']}"
    end
 
    wfid = @dashboard.launch(pdef)

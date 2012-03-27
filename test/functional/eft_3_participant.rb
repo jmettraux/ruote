@@ -44,7 +44,7 @@ class EftParticipantTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :bravo do |workitem|
-      @tracer << 'bravo'
+      tracer << 'bravo'
     end
 
     #noisy
@@ -59,7 +59,7 @@ class EftParticipantTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :charly do |workitem|
-      @tracer << 'charly'
+      tracer << 'charly'
     end
 
     #noisy
@@ -93,7 +93,7 @@ class EftParticipantTest < Test::Unit::TestCase
 
     %w[ eecho fox gamma ].each do |pname|
       @dashboard.register_participant pname do |workitem|
-        @tracer << "#{workitem.participant_name}\n"
+        tracer << "#{workitem.participant_name}\n"
       end
     end
 
@@ -157,7 +157,7 @@ class EftParticipantTest < Test::Unit::TestCase
     Rufus::Json.detect_backend
 
     @dashboard.register_participant :alice do |workitem|
-      @tracer << Rufus::Json.encode(workitem.params['__children__'])
+      tracer << Rufus::Json.encode(workitem.params['__children__'])
     end
 
     pdef = Ruote.define do

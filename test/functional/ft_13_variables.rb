@@ -203,8 +203,7 @@ class FtVariablesTest < Test::Unit::TestCase
   def test_lookup_in_var
 
     @dashboard.register_participant :echo_toto do |wi, fexp|
-      @tracer << fexp.lookup_variable('toto').join
-      @tracer << "\n"
+      tracer << fexp.lookup_variable('toto').join + "\n"
     end
 
     pdef = Ruote.process_definition do

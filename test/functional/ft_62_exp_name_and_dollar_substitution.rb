@@ -21,7 +21,7 @@ define
     EOS
 
     @dashboard.register /^user_/ do |wi|
-      @tracer << wi.participant_name + "\n"
+      tracer << wi.participant_name + "\n"
     end
 
     #@dashboard.noisy = true

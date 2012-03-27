@@ -22,7 +22,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
     end
 
     alpha = @dashboard.register_participant :bravo do |workitem|
-      @tracer << "b:#{workitem.fields['params']['original_ref']}\n"
+      tracer << "b:#{workitem.fields['params']['original_ref']}\n"
     end
 
     #noisy
@@ -41,7 +41,7 @@ class FtVarIndirectionTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha do |workitem|
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
     end
 
     #noisy

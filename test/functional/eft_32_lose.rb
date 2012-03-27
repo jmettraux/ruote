@@ -46,7 +46,7 @@ class EftLoseTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant '.+' do |wi|
-      @tracer << wi.participant_name
+      tracer << wi.participant_name
     end
 
     #@dashboard.noisy = true

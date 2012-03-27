@@ -503,3 +503,5 @@
 
 [ ] #get_msgs to cover #get_schedules (make #get_schedules empty)
 
+[ ] eft_6 : 2 Fs when running standalone...
+

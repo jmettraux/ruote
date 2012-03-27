@@ -71,7 +71,7 @@ class FtTimersTest < Test::Unit::TestCase
     @dashboard.register_participant :alpha, Ruote::NullParticipant
 
     @dashboard.register_participant :remind do |workitem|
-      @tracer << workitem.fei.expid
+      tracer << workitem.fei.expid
     end
 
     #@dashboard.noisy = true

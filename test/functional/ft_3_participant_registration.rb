@@ -18,7 +18,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     #noisy
 
     @dashboard.register_participant :alpha do |workitem|
-      @tracer << 'alpha'
+      tracer << 'alpha'
     end
     @dashboard.register_participant /^user_/, Ruote::NullParticipant
 
@@ -35,7 +35,7 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
     assert_equal(
       [ [ '^alpha$',
           [ 'Ruote::BlockParticipant',
-            { 'on_workitem' => "proc do |workitem|\n      @tracer << 'alpha'\n    end" } ] ],
+            { 'on_workitem' => "proc do |workitem|\n      tracer << 'alpha'\n    end" } ] ],
         [ '^user_',
           [ 'Ruote::NullParticipant',
             {} ] ] ],
@@ -119,10 +119,10 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
   def test_double_registration
 
     @dashboard.register_participant :alpha do |workitem|
-      @tracer << 'alpha'
+      tracer << 'alpha'
     end
     @dashboard.register_participant :alpha do |workitem|
-      @tracer << 'alpha'
+      tracer << 'alpha'
     end
 
     assert_equal 1, @dashboard.context.plist.send(:get_list)['list'].size

@@ -19,7 +19,7 @@ class FtLaunchitemTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha do |workitem|
       stash[:fields] = workitem.fields
-      @tracer << 'a'
+      tracer << 'a'
       nil
     end
 

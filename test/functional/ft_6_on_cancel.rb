@@ -24,7 +24,7 @@ class FtOnCancelTest < Test::Unit::TestCase
     nemo = @dashboard.register_participant :nemo, Ruote::StorageParticipant
 
     @dashboard.register_participant :catcher do
-      @tracer << "caught\n"
+      tracer << "caught\n"
     end
 
     #noisy

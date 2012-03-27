@@ -132,7 +132,7 @@ class EftSetTest < Test::Unit::TestCase
     @dashboard.register_participant :alpha do |workitem|
       workitem.fields.delete('params')
       workitem.fields.delete('dispatched_at')
-      @tracer << workitem.fields.inspect
+      tracer << workitem.fields.inspect
     end
 
     assert_trace '{"f"=>nil}', pdef
@@ -165,8 +165,7 @@ class EftSetTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha do |workitem|
-      @tracer << workitem.fields['f']
-      @tracer << "\n"
+      tracer << workitem.fields['f'] + "\n"
     end
 
     #noisy

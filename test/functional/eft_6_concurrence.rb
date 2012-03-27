@@ -21,7 +21,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha do
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
     end
 
     #noisy
@@ -40,15 +40,12 @@ class EftConcurrenceTest < Test::Unit::TestCase
       bravo
     end
 
-    @dashboard.context.instance_eval do
-      @count = 0
-    end
-      # since block participants are evaluated in the context context
+    stash[:count] = 0
 
-    alpha = @dashboard.register_participant :alpha, 'do_not_thread' => true do |wi|
-      wi.fields['seen'] = 'indeed' if @count == 1
-      @tracer << "alpha\n"
-      @count = @count + 1
+    alpha = @dashboard.register :alpha, 'do_not_thread' => true do |wi|
+      wi.fields['seen'] = 'indeed' if stash[:count] == 1
+      tracer << "alpha\n"
+      stash[:count] += 1
       nil
     end
 
@@ -111,17 +108,14 @@ class EftConcurrenceTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    @dashboard.context.instance_eval do
-      @count = 0
-    end
-      # since block participants are evaluated in the context context
+    stash[:count] = 0
 
-    alpha = @dashboard.register_participant :alpha, 'do_not_thread' => true do |wi|
-      if @count > 1
+    alpha = @dashboard.register :alpha, 'do_not_thread' => true do |wi|
+      if stash[:count] > 1
         wi.fields['ok'] = false
       else
-        @tracer << "a\n"
-        @count = @count + 1
+        tracer << "a\n"
+        stash[:count] += 1
       end
     end
 
@@ -421,7 +415,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
   def test_wait_for_tags_array
 
     pdef = Ruote.define do
-      concurrence :wait_for => %w[ azuma bashamichi ], :merge_type => 'concat' do
+      concurrence :wait_for => %w[ azuma bashamichi ], :mt => 'concat' do
         sequence :tag => 'azuma' do
           set 'seen' => [ 'azuma' ]
         end

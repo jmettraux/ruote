@@ -56,15 +56,19 @@ module FunctionalBase
 
     @tracer = Tracer.new
 
-    tracer = @tracer
-    @dashboard.context.instance_eval { @tracer = tracer }
+    Ruote::BlockParticipant.class_eval do
+      def tracer
+        @context.tracer
+      end
+      def stash
+        @context.stash
+      end
+    end
 
     @dashboard.add_service('tracer', @tracer)
     @dashboard.add_service('stash', {})
 
-    noisy if ARGV.include?('-N') or ENV['NOISY']
-
-    #noisy # uncommented, it makes all the tests noisy
+    noisy if ARGV.include?('-N') || ENV['NOISY']
   end
 
   def teardown

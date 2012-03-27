@@ -187,7 +187,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :p1 do |workitem|
-      @tracer << "p1:#{workitem.fields['f'].join(':')}\n"
+      tracer << "p1:#{workitem.fields['f'].join(':')}\n"
     end
 
     #noisy
@@ -231,11 +231,12 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     register_catchall_participant
 
-    #noisy
+    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
 
-    wait_for(wfid)
+    assert_equal 'terminated', r['action']
 
     trace = @tracer.to_s.split("\n").sort
     assert_equal %w[ alice:0/0_0_0 bob:1/0_0_0 charly:2/0_0_0 ], trace
@@ -354,7 +355,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     @dashboard.register_participant 'alpha' do |wi|
 
-      @tracer << "#{wi.fields['f']}\n"
+      tracer << "#{wi.fields['f']}\n"
 
       wi.fields['__add_branches__'] = %w[ a b ] if wi.fields['f'] == 2
     end
@@ -488,16 +489,13 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
   def register_catchall_participant
 
     @subs = []
-    subs = @subs
-    @dashboard.context.instance_eval do
-      @subs = subs
-    end
+    @dashboard.context.add_service('subs', @subs)
 
     @dashboard.register_participant '.*' do |workitem|
 
-      @subs << workitem.fei.subid
+      context.subs << workitem.fei.subid
 
-      @tracer << [
+      tracer << [
         workitem.participant_name, workitem.fei.expid
       ].join('/') + "\n"
     end

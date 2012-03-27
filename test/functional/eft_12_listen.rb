@@ -28,7 +28,7 @@ class EftListenTest < Test::Unit::TestCase
     #noisy
 
     @dashboard.register_participant :alpha do
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
     end
 
     wfid = @dashboard.launch(pdef)
@@ -56,11 +56,11 @@ class EftListenTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha do
-      @tracer << "a\n"
+      tracer << "a\n"
     end
     @dashboard.register_participant :bravo do |workitem|
-      @tracer << "#{workitem.fei.wfid}|#{workitem.fei.subid}"
-      @tracer << "\n"
+      tracer << "#{workitem.fei.wfid}|#{workitem.fei.subid}"
+      tracer << "\n"
     end
 
     #noisy
@@ -70,9 +70,6 @@ class EftListenTest < Test::Unit::TestCase
     wait_for(:bravo)
     wait_for(:bravo)
     wait_for(3)
-
-    #sleep 0.001
-    #p @tracer.to_s
 
     a = @tracer.to_a
     assert_equal 2, a.select { |e| e == 'a' }.size
@@ -111,11 +108,11 @@ class EftListenTest < Test::Unit::TestCase
     #noisy
 
     @dashboard.register_participant :alpha do |workitem|
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
       workitem.fields['seen'] = 'yes'
     end
     @dashboard.register_participant :bravo do |workitem|
-      @tracer << "bravo:#{workitem.fields['seen']}\n"
+      tracer << "bravo:#{workitem.fields['seen']}\n"
     end
 
     wfid = @dashboard.launch(pdef)
@@ -143,12 +140,12 @@ class EftListenTest < Test::Unit::TestCase
     #noisy
 
     @dashboard.register_participant :alpha do |wi|
-      @tracer << "alpha\n"
+      tracer << "alpha\n"
       wi.fields['name'] = 'William Mandella'
     end
     @dashboard.register_participant :bravo do |wi|
-      @tracer << "name:#{wi.fields['name']} "
-      @tracer << "other:#{wi.fields['other']}\n"
+      tracer << "name:#{wi.fields['name']} "
+      tracer << "other:#{wi.fields['other']}\n"
     end
 
     assert_trace("alpha\nname:William Mandella other:nothing", pdef)
@@ -170,14 +167,14 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
+    #@dashboard.noisy = true
 
     stash[:count] = 0
 
     @dashboard.register_participant :alpha do |wi|
-      @tracer << "alpha\n"
-      wi.fields['who'] = 'toto' if stash[:count] > 0
-      stash[:count] += 1
+      tracer << "alpha\n"
+      wi.fields['who'] = 'toto' if context.stash[:count] > 0
+      context.stash[:count] += 1
     end
 
     wfid = @dashboard.launch(pdef)

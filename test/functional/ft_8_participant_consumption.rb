@@ -20,7 +20,7 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha do |workitem|
-      @tracer << "#{workitem.participant_name}\n"
+      tracer << "#{workitem.participant_name}\n"
     end
 
     #@dashboard.noisy = true
@@ -72,7 +72,7 @@ class FtParticipantConsumptionTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant '.*' do |workitem|
-      @tracer << "#{workitem.participant_name} #{workitem.fei.expid}\n"
+      tracer << "#{workitem.participant_name} #{workitem.fei.expid}\n"
     end
 
     assert_trace('alpha 0_0_0', pdef)

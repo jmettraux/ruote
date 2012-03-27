@@ -24,18 +24,22 @@ class FtBlockParticipantTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha do
-      @tracer << "a\n"
+      tracer << "a\n"
     end
     @dashboard.register_participant :bravo do |workitem|
-      @tracer << "b:f0:#{workitem.fields['f0']}\n"
+      tracer << "b:f0:#{workitem.fields['f0']}\n"
     end
     @dashboard.register_participant :charly do |workitem, fexp|
-      @tracer << "c:f0:#{workitem.fields['f0']}:#{fexp.lookup_variable('v0')}\n"
+      tracer << "c:f0:#{workitem.fields['f0']}:#{fexp.lookup_variable('v0')}\n"
     end
 
-    #noisy
+    #@dashboard.noisy = true
 
-    assert_trace "a\nb:f0:f0val\nc:f0:f0val:v0val", pdef
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal "a\nb:f0:f0val\nc:f0:f0val:v0val", @tracer.to_s
   end
 
   TEST_BLOCK = Ruote.process_definition do
