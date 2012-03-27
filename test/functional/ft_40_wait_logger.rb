@@ -129,5 +129,20 @@ class FtWaitLoggerTest < Test::Unit::TestCase
     assert_equal Ruote::LoggerTimeout, e.class
     assert_equal "waited for [\"#{wfid}\"], timed out after 1s", e.message
   end
+
+  def _test_fancy_logging
+
+    @dashboard = Ruote::Engine.new(Ruote::Worker.new(determine_storage({})))
+
+    @dashboard.register :alpha do |workitem|
+      context.storage.put_msg('decision_done', 'nada' => 'creep')
+      sleep 0.200
+    end
+
+    @dashboard.noisy = true
+
+    wfid = @dashboard.launch(Ruote.define { alpha })
+    r = @dashboard.wait_for(wfid)
+  end
 end
 

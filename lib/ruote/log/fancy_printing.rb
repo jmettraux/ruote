@@ -29,6 +29,19 @@ class Ruote::WaitLogger
 
   protected
 
+  KNOWN_ACTIONS = %w[
+    launch
+    apply reply
+    dispatch dispatch_cancel dispatch_pause dispatch_resume dispatched
+    receive
+    ceased terminated
+    pause pause_process resume resume_process
+    cancel cancel_process kill kill_process
+    fail error_intercepted
+    reput
+    noop
+  ]
+
   #--
   # <ESC>[{attr1};...;{attrn}m
   #
@@ -194,6 +207,10 @@ class Ruote::WaitLogger
       when 'dr' then color('4;32', act)
       when 'rp' then color('32', act)
       else act
+    end
+    unless KNOWN_ACTIONS.include?(msg['action'])
+      rest['action'] = msg['action']
+      act = color('36', msg['action'][0, 2])
     end
 
     tm = Time.now
