@@ -240,6 +240,7 @@ class FtEngineParticipantTest < Test::Unit::TestCase
 
     wfid = @dashboard0.launch(pdef)
     @dashboard0.wait_for(wfid) # terminated
+    sleep 0.100
 
     assert_equal [], @dashboard0.processes
 

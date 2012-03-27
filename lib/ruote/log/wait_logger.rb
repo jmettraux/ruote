@@ -237,10 +237,6 @@ module Ruote
 
             (action == 'dispatch' && msg['participant_name'] == interest.to_s)
 
-          when *ACTIONS
-
-            (action == interest)
-
           when Fixnum
 
             interests.delete(interest)
@@ -251,6 +247,10 @@ module Ruote
             else
               true
             end
+
+          when /^[a-z_]+$/
+
+            (action == interest)
 
           else # wfid
 
