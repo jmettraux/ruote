@@ -48,6 +48,13 @@ module Ruote
   # To access the log of processed msgs, look at history services, not
   # at this wait_logger.
   #
+  # === options (storage initialization options)
+  #
+  # wait_logger_max(Integer)::
+  #   defaults to 147, max number of recent records to keep track of
+  # wait_logger_timeout(Integer)::
+  #   defaults to 60 (seconds), #wait_for times out after how many seconds?
+  #
   class WaitLogger
 
     require 'ruote/log/fancy_printing'
@@ -78,8 +85,7 @@ module Ruote
       @noisy = false
 
       @log_max = context['wait_logger_max'] || 147
-
-      @timeout = 60 # 1 minute
+      @timeout = context['wait_logger_timeout'] || 60 # in seconds
 
       @check_mutex = Mutex.new
     end
