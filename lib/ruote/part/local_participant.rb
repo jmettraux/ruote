@@ -298,11 +298,11 @@ module Ruote
     #
     def is_cancelled?
 
-      fe = fexp
-
-      return true if fe == nil
-      return true if fe.h.state == 'cancelling'
-      false
+      if fe = fexp
+        return fe.h.state == 'cancelling'
+      else
+        true
+      end
     end
 
     alias is_canceled? is_cancelled?
