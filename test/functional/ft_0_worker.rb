@@ -126,5 +126,10 @@ class FtWorkerTest < Test::Unit::TestCase
     assert_equal 'stopped', @dashboard.worker_state
     assert_equal false, @dashboard.context.worker.running
   end
+
+  def test_worker_thread_worker_name
+
+    assert_equal 'worker', @dashboard.worker.run_thread['worker_name']
+  end
 end
 

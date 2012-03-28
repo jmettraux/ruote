@@ -102,6 +102,7 @@ module Ruote
       @running = true
 
       @run_thread = Thread.new { run }
+      @run_thread['worker_name'] = @name
     end
 
     # Joins the run thread of this worker (if there is no such thread, this
