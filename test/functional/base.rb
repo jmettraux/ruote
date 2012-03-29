@@ -32,7 +32,9 @@ module FunctionalBase
 
   def setup
 
-    p self.class if ARGV.include?('-T') or ARGV.include?('-N') or ENV['noisy']
+    if ARGV.include?('-T') || ARGV.include?('-N') || ENV['NOISY'] == 'true'
+      p self.class
+    end
 
     #require 'ruote/util/look'
     #Ruote::Look.dump_lsof
@@ -68,7 +70,7 @@ module FunctionalBase
     @dashboard.add_service('tracer', @tracer)
     @dashboard.add_service('stash', {})
 
-    noisy if ARGV.include?('-N') || ENV['NOISY']
+    noisy if ARGV.include?('-N') || ENV['NOISY'].to_s == 'true'
   end
 
   def teardown
