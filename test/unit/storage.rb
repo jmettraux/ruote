@@ -11,8 +11,7 @@ require_json
 
 require File.expand_path('../../functional/storage_helper', __FILE__)
 
-require 'ruote/fei'
-require 'ruote/participant'
+require 'ruote'
 
 
 #
