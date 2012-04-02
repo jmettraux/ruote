@@ -383,8 +383,10 @@ module Ruote::Exp
       over_unless = attribute(:over_unless, workitem)
 
       if over_if && Condition.true?(over_if)
+        workitem['winner'] = true
         true
       elsif over_unless && (not Condition.true?(over_unless))
+        workitem['winner'] = true
         true
       elsif h.wait_for
         h.wait_for.empty?
@@ -487,6 +489,12 @@ module Ruote::Exp
           is = h.workitems.keys.sort.collect { |k| h.workitems[k] }
           h.cmerge == 'highest' ? is.reverse : is
       end
+
+      as, bs = wis.partition { |wi| wi.delete('winner') }
+      wis = bs + as
+        #
+        # the 'winner' is the workitem that triggered successfully the
+        # :over_if or :over_unless, let's take him precedence in the merge...
 
       merge_workitems(wis, h.cmerge_type)
     end

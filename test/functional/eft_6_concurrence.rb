@@ -96,6 +96,38 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal 0, @dashboard.storage_participant.size
   end
 
+  def test_over_if__post
+
+    @dashboard.register :alpha do |workitem|
+      tracer << "alpha\n"
+      workitem.fields['ok'] = 'yes'
+    end
+    @dashboard.register :bravo do |workitem|
+      sleep 0.5
+      tracer << "bravo\n"
+    end
+    @dashboard.register :zulu do |workitem|
+      tracer << "zulu\n"
+    end
+
+    pdef = Ruote.define do
+      set 'f:ok' => 'no'
+      concurrence :over_if => '${f:ok} == yes' do
+      #concurrence :over_if => '${f:ok} == yes', :merge_type => 'mix' do
+        alpha
+        bravo :if => 'false'
+      end
+      zulu :if => '${f:ok} == yes'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal 'yes', r['workitem']['fields']['ok']
+    assert_equal %w[ alpha zulu ], @tracer.to_a
+  end
+
   def test_over_unless
 
     pdef = Ruote.process_definition do
