@@ -32,7 +32,11 @@ module Ruote
       m = m.to_s
 
       if m[-1, 1] == '='
-        self[m[0..-2]] = args.first
+        if args.first.nil?
+          self.delete(m[0..-2]); nil
+        else
+          self[m[0..-2]] = args.first
+        end
       else
         self[m]
       end
