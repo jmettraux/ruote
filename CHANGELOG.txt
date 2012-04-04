@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- :on_error => 'raise'
 - :over_if bug fix (reported by Alex Wang)
 - :merge_type => 'deep' (idea Jim MarsBomber Li)
 - Dashboard#launch accepts :wfid "field", custom wfid

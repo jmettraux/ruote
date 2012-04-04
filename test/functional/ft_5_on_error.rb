@@ -152,6 +152,21 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_trace(%w[ 1 2 done. ], pdef)
   end
 
+  def test_on_error_raise
+
+    pdef = Ruote.define do
+      sequence :on_error => :raise do
+        error 'nada'
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'nada', r['error']['message']
+  end
+
   def test_on_error_undo
 
     pdef = Ruote.process_definition do
@@ -559,11 +574,10 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
+    assert_equal 'terminated', r['action']
     assert_equal 3, r['workitem']['fields']['_trace'].size
   end
 
@@ -578,12 +592,28 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+  end
+
+  def test_second_take_raise
+
+    pdef = Ruote.define do
+      define 'sub0' do
+        set '__on_error__' => 'raise'
+      end
+      sequence :on_error => 'sub0' do
+        error 'nada'
+      end
+    end
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
-    #assert_equal 3, r['workitem']['fields']['_trace'].size
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'nada', r['error']['message']
   end
 end
 

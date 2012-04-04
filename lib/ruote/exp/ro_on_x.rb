@@ -260,29 +260,40 @@ module Ruote::Exp
       case handler
 
         when 'redo', 'retry'
+          #
+          # retry with the same tree as before
 
           new_tree = tree
 
         when 'undo', 'pass', ''
+          #
+          # let's forget it
 
           h.state = on == 'on_cancel' ? 'cancelled' : 'failed'
           reply_to_parent(workitem)
 
-          return # let's forget this error
+          return
+
+        when 'raise'
+          #
+          # re-raise
+
+          raise Ruote.constantize(err['class']), err['message'], err['trace']
 
         when CommandExpression::REGEXP
+          #
+          # a command like 'jump to shark'...
 
           hh = handler.split(' ')
           command = hh.first
           step = hh.last
-            # 'jump to shark' or 'jump shark', ...
 
           h.state = nil
           workitem['fields'][CommandMixin::F_COMMAND] = [ command, step ]
 
           reply(workitem)
 
-          return # we're dealing with it
+          return
 
         #else
         #
