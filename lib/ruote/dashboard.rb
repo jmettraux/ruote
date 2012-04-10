@@ -115,6 +115,13 @@ module Ruote
       @context.history
     end
 
+    # A shortcut for engine.context.logger
+    #
+    def logger
+
+      @context.logger
+    end
+
     # Quick note : the implementation of launch is found in the module
     # Ruote::ReceiverMixin that the engine includes.
     #
