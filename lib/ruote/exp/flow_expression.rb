@@ -365,6 +365,19 @@ module Ruote::Exp
     #
     def reply_to_parent(workitem, delete=true)
 
+      # propagate the cancel "flavour" back, so that one can know
+      # why a branch got cancelled.
+
+      flavour = if @msg['action'] == 'cancel'
+        @msg['flavour'] || 'cancel'
+      elsif h.state.nil?
+        nil
+      else
+        @msg['flavour']
+      end
+
+      # misc
+
       filter(workitem) if h.state.nil?
         # only filter on a normal reply (not cancelling)
 
@@ -434,7 +447,8 @@ module Ruote::Exp
             'reply',
             'fei' => h.parent_id,
             'workitem' => workitem.merge!('fei' => h.fei),
-            'updated_tree' => h.updated_tree) # nil most of the time
+            'updated_tree' => h.updated_tree, # nil most of the time
+            'flavour' => flavour)
 
         else
 
@@ -443,18 +457,19 @@ module Ruote::Exp
             'wfid' => h.fei['wfid'],
             'fei' => h.fei,
             'workitem' => workitem,
-            'variables' => h.variables)
+            'variables' => h.variables,
+            'flavour' => flavour)
 
-          if h.state.nil? && h.on_terminate == 'regenerate' && ( ! h.forgotten)
+          if h.state.nil? && h.on_terminate == 'regenerate' && ! h.forgotten
 
             @context.storage.put_msg(
               'regenerate',
               'wfid' => h.fei['wfid'],
               'tree' => h.original_tree,
               'workitem' => workitem,
-              'variables' => h.variables
+              'variables' => h.variables,
+              'flavour' => flavour)
               #'stash' =>
-            )
           end
         end
       end

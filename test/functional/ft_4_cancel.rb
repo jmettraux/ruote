@@ -139,5 +139,52 @@ class FtCancelTest < Test::Unit::TestCase
 
     assert_equal 3, logger.log.select { |e| e['action'] == 'cancel' }.size
   end
+
+  def test_cancel_rebound
+
+    pdef = Ruote.define do
+      stall
+    end
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for('apply')
+
+    @dashboard.cancel(wfid)
+    r = @dashboard.wait_for('terminated')
+
+    assert_equal 'cancel', r['flavour']
+  end
+
+  def test_kill_rebound
+
+    pdef = Ruote.define do
+      stall
+    end
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for('apply')
+
+    @dashboard.kill(wfid)
+    r = @dashboard.wait_for('terminated')
+
+    assert_equal 'kill', r['flavour']
+  end
+
+  def test_cancel_limited_rebound
+
+    pdef = Ruote.define do
+      stall
+    end
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for('apply')
+
+    exp = @dashboard.process(wfid).expressions.last
+
+    @dashboard.cancel(exp)
+    r = @dashboard.wait_for('terminated')
+
+    assert_equal nil, r['flavour']
+  end
 end
 

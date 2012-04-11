@@ -4,7 +4,8 @@
 
 == ruote - 2.3.0    not yet released
 
-- Dashboard#logger
+- cancel "flavour" rebound
+- Dashboard#logger shortcut
 - :on_error => 'raise'
 - :over_if bug fix (reported by Alex Wang)
 - :merge_type => 'deep' (idea Jim MarsBomber Li)
