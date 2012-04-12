@@ -300,15 +300,23 @@ module Ruote::Exp
       end
         # this retry system is only useful with ruote-couch
 
-      fexp.send("do_#{action}", msg) if fexp
+      fexp.do(action, msg) if fexp
+    end
+
+    # Wraps a call to "apply", "reply", etc... Makes sure to set @msg
+    # with a deep copy of the msg before.
+    #
+    def do(action, msg)
+
+      @msg = Ruote.fulldup(msg)
+
+      send("do_#{action}", msg)
     end
 
     # Called by the worker when it has just created this FlowExpression and
     # wants to apply it.
     #
     def do_apply(msg)
-
-      @msg = Ruote.fulldup(msg)
 
       if not Condition.apply?(attribute(:if), attribute(:unless))
 
@@ -479,9 +487,6 @@ module Ruote::Exp
     #
     def do_reply(msg)
 
-      @msg = Ruote.fulldup(msg)
-        # keeping the message, for 'retry' in collision cases
-
       workitem = msg['workitem']
       fei = workitem['fei']
 
@@ -549,8 +554,6 @@ module Ruote::Exp
 
       return if h.state == 'failed' && flavour == 'timeout'
         # do not timeout expressions that are "in error" (failed)
-
-      @msg = Ruote.fulldup(msg)
 
       h.state = case flavour
         when 'kill' then 'dying'
@@ -640,8 +643,6 @@ module Ruote::Exp
     # the on_error will get triggered).
     #
     def do_fail(msg)
-
-      @msg = Ruote.fulldup(msg)
 
       @h['state'] = 'failing'
       @h['applied_workitem'] = msg['workitem']
