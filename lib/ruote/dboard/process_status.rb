@@ -376,7 +376,7 @@ module Ruote
     def inspect
 
       vars = variables rescue nil
-      avars = all_variables.remap { |(k, v), h| h[Ruote.sid(k)] = v }
+      avars = (all_variables || {}).remap { |(k, v), h| h[Ruote.sid(k)] = v }
 
       s = [ "== #{self.class} ==" ]
       s << ''
