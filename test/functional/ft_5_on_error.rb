@@ -615,5 +615,28 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal 'error_intercepted', r['action']
     assert_equal 'nada', r['error']['message']
   end
+
+  # "stashing that for now"
+  #
+#  def test_second_take_skip
+#
+#    pdef = Ruote.define do
+#      define 'sub0' do
+#        set '__on_error__' => 'cancel'
+#      end
+#      define 'sub1' do
+#        set 'sub1' => true
+#      end
+#      sequence :on_error => 'sub0', :on_cancel => 'sub1' do
+#        error 'nada'
+#      end
+#    end
+#
+#    wfid = @dashboard.launch(pdef)
+#    r = @dashboard.wait_for(wfid)
+#
+#    #assert_equal 'error_intercepted', r['action']
+#    #assert_equal 'nada', r['error']['message']
+#  end
 end
 
