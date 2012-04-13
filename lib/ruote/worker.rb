@@ -253,9 +253,23 @@ module Ruote
       $stderr.puts
       $stderr.puts '** worker#step intercepted exception **'
       $stderr.puts
-      $stderr.puts "please report issue or fix your #{@storage.class} impl"
+      $stderr.puts "Please report issue or fix your #{@storage.class} impl,"
+      $stderr.puts
+      $stderr.puts "or override Ruote::Worker#handle_step_error(e) so that"
+      $stderr.puts "the issue is dealt with appropriately. For example:"
+      $stderr.puts
+      $stderr.puts "    class Ruote::Worker"
+      $stderr.puts "      def handle_step_error(e)"
+      $stderr.puts "        logger.error('ruote step error: ' + e.inspect)"
+      $stderr.puts "        mailer.send_error('admin@acme.com', e)"
+      $stderr.puts "      end"
+      $stderr.puts "    end"
+      $stderr.puts
+      $stderr.puts '# ' * 40
       $stderr.puts
       $stderr.puts e.inspect
+      $stderr.puts
+      $stderr.puts "#{e.class.name}: #{e.message}"
       $stderr.puts *e.backtrace
       $stderr.puts
       $stderr.puts '#' * 80
