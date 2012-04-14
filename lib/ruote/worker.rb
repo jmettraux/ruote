@@ -245,7 +245,7 @@ module Ruote
     # you should pass the info to the storage developer/maintainer.
     #
     # Feel free to override this method if you need it to output to
-    # a channel different than $stderr.
+    # a channel different than $stderr (or rebind $stderr).
     #
     def handle_step_error(e)
 
@@ -267,9 +267,12 @@ module Ruote
       $stderr.puts
       $stderr.puts '# ' * 40
       $stderr.puts
-      $stderr.puts e.inspect
+      $stderr.puts 'error.to_s:'
+      $stderr.puts e.to_s
       $stderr.puts
-      $stderr.puts "#{e.class.name}: #{e.message}"
+      $stderr.puts 'error class/message/backtrace:'
+      $stderr.puts e.class.name
+      $stderr.p    e.message
       $stderr.puts *e.backtrace
       $stderr.puts
       $stderr.puts '#' * 80
