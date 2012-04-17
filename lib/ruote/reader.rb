@@ -22,7 +22,6 @@
 # Made in Japan.
 #++
 
-
 require 'uri'
 require 'open-uri'
 require 'rufus/json'
@@ -148,30 +147,54 @@ module Ruote
     #
     def self.to_xml(tree, options={})
 
-      require 'builder'
+      s = StringIO.new
+      s.puts('<?xml version="1.0" encoding="UTF-8"?>')
 
-      # TODO : deal with "participant 'toto'"
+      _to_xml(tree, options[:indent], 0, s)
 
-      builder(options) do |xml|
+      s.string
+    end
 
-        atts = tree[1].dup
+    # Not as good as the builder gem, but at least doesn't come bundled with
+    # lib/blankslate.rb
+    #
+    def self._to_xml(tree, indent, level, s) # :nodoc:
 
-        t = atts.find { |k, v| v == nil }
-        if t
-          atts.delete(t.first)
-          key = tree[0] == 'if' ? 'test' : 'ref'
-          atts[key] = t.first
-        end
+      atts = tree[1].dup
 
-        atts = atts.remap { |(k, v), h| h[k.to_s.gsub(/\_/, '-')] = v }
+      if t = atts.find { |k, v| v == nil }
+        atts.delete(t.first)
+        atts[tree[0] == 'if' ? 'test' : 'ref'] = t.first
+      end
 
-        if tree[2].empty?
-          xml.tag!(tree[0], atts)
-        else
-          xml.tag!(tree[0], atts) do
-            tree[2].each { |child| to_xml(child, options) }
-          end
-        end
+      atts = atts.remap { |(k, v), h| h[k.to_s.gsub(/\_/, '-')] = v }
+
+      s.print ' ' * level
+
+      s.print '<'
+      s.print tree[0]
+
+      if atts.any?
+        s.print ' '
+        s.print atts.map { |k, v|
+          "#{k}=#{v.is_a?(String) ? v.inspect : v.inspect.inspect}"
+        }.join(' ')
+      end
+
+      if tree[2].empty?
+
+        s.puts '/>'
+
+      else
+
+        s.puts '>'
+
+        tree[2].each { |child| _to_xml(child, indent, level + (indent || 0), s) }
+
+        s.print ' ' * level
+        s.print '</'
+        s.print tree[0]
+        s.puts '>'
       end
     end
 
@@ -292,21 +315,6 @@ module Ruote
       return false if s.index("\n")
 
       ((URI.parse(s); true) rescue false)
-    end
-
-    # A convenience method when building XML
-    #
-    def self.builder(options={}, &block)
-
-      if b = options[:builder]
-        block.call(b)
-      else
-        b = Builder::XmlMarkup.new(:indent => (options[:indent] || 0))
-        options[:builder] = b
-        b.instruct! unless options[:instruct] == false
-        block.call(b)
-        b.target!
-      end
     end
 
     # As used by to_ruby and to_radial

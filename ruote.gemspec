@@ -35,7 +35,6 @@ ruote is an open source Ruby workflow engine
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'json'
-  s.add_development_dependency 'builder'
   s.add_development_dependency 'mailtrap'
 
   s.require_path = 'lib'
