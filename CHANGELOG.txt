@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- Worker#handle_step_error(e, msg) enhancements
 - cancel "flavour" rebound
 - Dashboard#logger shortcut
 - :on_error => 'raise'

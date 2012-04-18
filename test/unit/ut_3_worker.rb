@@ -58,7 +58,7 @@ class UtWorkerTest < Test::Unit::TestCase
     $err = nil
 
     worker = Ruote::Worker.new(StorageX.new)
-    def worker.handle_step_error(e)
+    def worker.handle_step_error(e, msg)
       $err = e
     end
 

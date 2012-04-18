@@ -185,6 +185,7 @@ module Ruote
     #
     def step
 
+      msg = nil
       now = Time.now.utc
       delta = now - @last_time
 
@@ -233,7 +234,7 @@ module Ruote
       take_a_rest(processed)
 
     rescue => e
-      handle_step_error(e)
+      handle_step_error(e, msg) # msg may be nil
     end
 
     # This default implementation dumps error information to $stderr as
@@ -247,7 +248,11 @@ module Ruote
     # Feel free to override this method if you need it to output to
     # a channel different than $stderr (or rebind $stderr).
     #
-    def handle_step_error(e)
+    # The second parameter is "msg", if the error occured while processing a
+    # msg, then this message is passed to handle_step_error. msg will be
+    # nil if the error occurred while doing get_msgs or get_schedules.
+    #
+    def handle_step_error(e, msg)
 
       $stderr.puts '#' * 80
       $stderr.puts
@@ -255,11 +260,11 @@ module Ruote
       $stderr.puts
       $stderr.puts "Please report issue or fix your #{@storage.class} impl,"
       $stderr.puts
-      $stderr.puts "or override Ruote::Worker#handle_step_error(e) so that"
+      $stderr.puts "or override Ruote::Worker#handle_step_error(e, msg) so that"
       $stderr.puts "the issue is dealt with appropriately. For example:"
       $stderr.puts
       $stderr.puts "    class Ruote::Worker"
-      $stderr.puts "      def handle_step_error(e)"
+      $stderr.puts "      def handle_step_error(e, msg)"
       $stderr.puts "        logger.error('ruote step error: ' + e.inspect)"
       $stderr.puts "        mailer.send_error('admin@acme.com', e)"
       $stderr.puts "      end"
@@ -274,6 +279,11 @@ module Ruote
       $stderr.puts e.class.name
       $stderr.p    e.message
       $stderr.puts *e.backtrace
+      if msg
+        $stderr.puts
+        $stderr.puts 'msg:'
+        $stderr.p    msg.select { |k, v| %w[ action wfid fei ].include?(k) }
+      end
       $stderr.puts
       $stderr.puts '#' * 80
     end
