@@ -25,8 +25,6 @@ class EftUndoTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     assert_trace %w[ over ], pdef
 
     assert_equal 0, alpha.size
@@ -49,8 +47,6 @@ class EftUndoTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     assert_trace %w[ over ], pdef
 
     assert_equal 0, alpha.size
@@ -69,8 +65,6 @@ class EftUndoTest < Test::Unit::TestCase
       end
       echo '.'
     end
-
-    #noisy
 
     assert_trace '.', pdef
   end
@@ -93,8 +87,6 @@ class EftUndoTest < Test::Unit::TestCase
       echo '.'
     end
 
-    #@dashboard.noisy = true
-
     assert_trace '.', pdef
   end
 
@@ -106,9 +98,21 @@ class EftUndoTest < Test::Unit::TestCase
       echo '.'
     end
 
-    #@dashboard.noisy = true
-
     assert_trace '.', pdef
+  end
+
+  def test_undo_no_tag
+
+    pdef = Ruote.process_definition do
+      cancel
+      echo 'x'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal 'x', @tracer.to_s
   end
 end
 
