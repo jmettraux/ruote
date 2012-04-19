@@ -257,6 +257,9 @@ module Ruote::Exp
       handler = handler.action if handler.is_a?(HandlerEntry)
       handler = handler.strip if handler.respond_to?(:strip)
 
+      handler = 'undo' if on == 'on_cancel' && handler == 'cancel'
+      handler = 'undo' if handler == 'cancel' && h.on_cancel == nil
+
       case handler
 
         when 'redo', 'retry'
@@ -273,6 +276,12 @@ module Ruote::Exp
           reply_to_parent(workitem)
 
           return
+
+        when 'cancel'
+          #
+          # let's trigger on the on_cancel
+
+          return trigger('on_cancel', workitem)
 
         when 'raise'
           #

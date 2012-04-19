@@ -231,8 +231,6 @@ class FtOnCancelTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(6)
@@ -242,6 +240,44 @@ class FtOnCancelTest < Test::Unit::TestCase
     @dashboard.wait_for('terminated')
 
     assert_equal "bailed\ndone.", @tracer.to_s
+  end
+
+  def test_on_cancel_is_not_triggered_by_on_error_undo
+
+    pdef = Ruote.define do
+      sequence :on_cancel => 'c', :on_error => 'undo' do
+        echo 'n'
+        error 'nada'
+      end
+      define 'c' do
+        echo 'c'
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal %w[ n ], @tracer.to_a
+  end
+
+  def test_on_cancel_is_triggered_by_on_error_cancel
+
+    pdef = Ruote.define do
+      sequence :on_cancel => 'c', :on_error => 'cancel' do
+        echo 'n'
+        error 'nada'
+      end
+      define 'c' do
+        echo 'c'
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal %w[ n c ], @tracer.to_a
   end
 
   #

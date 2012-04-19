@@ -638,5 +638,23 @@ class FtOnErrorTest < Test::Unit::TestCase
 #    #assert_equal 'error_intercepted', r['action']
 #    #assert_equal 'nada', r['error']['message']
 #  end
+
+  # behaves like 'undo' when there is no on_cancel present
+  #
+  def test_on_error_cancel
+
+    pdef = Ruote.define do
+      sequence :on_error => 'cancel' do
+        echo 'n'
+        error 'nada'
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal %w[ n ], @tracer.to_a
+  end
 end
 
