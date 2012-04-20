@@ -115,8 +115,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       tracer << "caught\n"
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     wait_for(wfid)
     ps = @dashboard.process(wfid)

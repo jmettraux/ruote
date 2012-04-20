@@ -422,19 +422,23 @@ module Ruote::Exp
 
         trigger('on_error', workitem)
 
-      elsif h.state == 'cancelling' and h.on_cancel
+      elsif h.state == 'cancelling' && h.on_cancel
 
         trigger('on_cancel', workitem)
 
-      elsif h.state == 'cancelling' and h.on_re_apply
+      elsif h.state == 'cancelling' && h.on_re_apply
 
         trigger('on_re_apply', workitem)
 
-      elsif h.state == 'timing_out' and h.on_timeout
+      elsif h.state == 'timing_out' && h.on_timeout
 
         trigger('on_timeout', workitem)
 
-      elsif (h.lost or h.flanking) and h.state.nil?
+      elsif h.state == nil && h.on_reply
+
+        trigger('on_reply', workitem)
+
+      elsif (h.lost or h.flanking) && h.state.nil?
         #
         # do not reply, sit here (and wait for cancellation probably)
 

@@ -281,6 +281,61 @@ class FtOnCancelTest < Test::Unit::TestCase
   end
 
   #
+  # 'cando'
+
+  class MyBrokenParticipant
+    include Ruote::LocalParticipant
+    @@seen = 0
+    def on_workitem
+      if @@seen > 1
+        reply
+      else
+        @@seen += 1
+        raise 'broke'
+      end
+    end
+    def on_cancel
+    end
+  end
+
+  def test_on_cancel_is_triggered_by_on_error_cando
+
+    @dashboard.register :broken, MyBrokenParticipant
+
+    pdef = Ruote.define do
+      define 'c' do; echo 'c'; end
+      sequence :on_cancel => 'c', :on_error => 'cando' do
+        echo 'n'
+        broken
+      end
+      echo 'z'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal %w[ n c n c n z ], @tracer.to_a
+  end
+
+  def test_on_error_cando_when_no_on_cancel
+
+    pdef = Ruote.define do
+      sequence :on_error => 'cando' do
+        echo 'n'
+        broken
+      end
+      echo 'z'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal %w[ n z ], @tracer.to_a
+  end
+
+  #
   # the "second take" feature
 
   def test_second_take
@@ -295,8 +350,6 @@ class FtOnCancelTest < Test::Unit::TestCase
         alpha
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for('dispatched')

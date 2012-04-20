@@ -257,8 +257,12 @@ module Ruote::Exp
       handler = handler.action if handler.is_a?(HandlerEntry)
       handler = handler.strip if handler.respond_to?(:strip)
 
-      handler = 'undo' if on == 'on_cancel' && handler == 'cancel'
-      handler = 'undo' if handler == 'cancel' && h.on_cancel == nil
+      if handler =~ /^can(cel|do)$/ && (on == 'on_cancel' || h.on_cancel == nil)
+        handler = 'undo'
+      end
+
+      h.on_reply = nil if on == 'on_reply'
+        # preventing cascades
 
       case handler
 
@@ -273,15 +277,22 @@ module Ruote::Exp
           # let's forget it
 
           h.state = on == 'on_cancel' ? 'cancelled' : 'failed'
-          reply_to_parent(workitem)
 
-          return
+          reply_to_parent(workitem); return
 
         when 'cancel'
           #
           # let's trigger on the on_cancel
 
-          return trigger('on_cancel', workitem)
+          trigger('on_cancel', workitem); return
+
+        when 'cando'
+          #
+          # trigger on_cancel, then redo
+
+          h.on_reply = tree
+
+          trigger('on_cancel', workitem); return
 
         when 'raise'
           #
@@ -300,9 +311,7 @@ module Ruote::Exp
           h.state = nil
           workitem['fields'][CommandMixin::F_COMMAND] = [ command, step ]
 
-          reply(workitem)
-
-          return
+          reply(workitem); return
 
         #else
         #
@@ -339,6 +348,7 @@ module Ruote::Exp
           'workitem' => h.applied_workitem,
           'variables' => h.variables,
           'trigger' => on,
+          'on_reply' => h.on_reply,
           'supplanted' => {
             'tree' => tree,
             'original_tree' => original_tree,

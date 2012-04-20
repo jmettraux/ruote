@@ -428,6 +428,7 @@ module Ruote
         'flanking' => msg['flanking'],
         'stash' => msg['stash'],
         'trigger' => msg['trigger'],
+        'on_reply' => msg['on_reply'],
         'supplanted' => msg['supplanted'] }
 
       if not exp_class
