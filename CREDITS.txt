@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Doug Bryant - re_dispatch bug
 Sjors - https://github.com/xtr3me - missing "concat" tactic for concurrence
 Islam Amer - https://github.com/iamer
 Nathan Stults - https://github.com/PlasticLizard - lots of help

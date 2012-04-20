@@ -76,9 +76,27 @@ class FtParticipantMoreTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, DifficultParticipant
 
-    #noisy
-
     assert_trace(%w[ diff diff ], pdef)
+  end
+
+  # https://groups.google.com/d/topic/openwferu-users/_k-VIQwMvXw/discussion
+  #
+  def test_re_dispatch_outside_of_participant
+
+    @dashboard.register :alpha, Ruote::StorageParticipant
+
+    pdef = Ruote.process_definition do
+      alpha
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for('dispatched')
+
+    wi = @dashboard.storage_participant.first
+
+    @dashboard.storage_participant.re_dispatch(wi, :in => '100')
+
+    sleep 10
   end
 
   class ReluctantParticipant
@@ -164,8 +182,6 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha, RetryParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
     wait_for(wfid)

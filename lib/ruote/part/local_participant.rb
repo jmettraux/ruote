@@ -145,10 +145,11 @@ module Ruote
     #
     # Without one of those options, the method is a "reject".
     #
-    def re_dispatch(wi=nil, opts={})
+    def re_dispatch(wi=nil, opts=nil)
 
-      wi, opts = workitem, wi if wi.is_a?(Hash)
-      wi ||= workitem
+      wi, opts = [ nil, wi ] if wi.is_a?(Hash) && opts.nil?
+      wi ||= workitem()
+      opts ||= {}
 
       wi.h['re_dispatch_count'] = wi.h['re_dispatch_count'].to_s.to_i + 1
 
@@ -163,7 +164,7 @@ module Ruote
 
         sched_id = @context.storage.put_schedule('at', wi.h.fei, t, msg)
 
-        exp = fexp
+        exp = fexp(wi)
         exp.h['re_dispatch_sched_id'] = sched_id
         exp.try_persist
 
