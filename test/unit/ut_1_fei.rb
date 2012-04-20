@@ -7,6 +7,7 @@
 
 require File.expand_path('../../test_helper', __FILE__)
 
+require 'ostruct'
 require 'ruote'
 
 
@@ -159,7 +160,15 @@ class UtFeiTest < Test::Unit::TestCase
 
     ids = n.times.collect { Ruote.generate_subid(h) }
 
-    assert_equal n, ids.uniq.size, "subid generation seems weak"
+    assert_equal n, ids.uniq.size, '/!\ subid generation seems weak'
+  end
+
+  def test_extract_wfid
+
+    assert_equal 'i', Ruote.extract_wfid('i')
+    assert_equal 'i', Ruote.extract_wfid({ 'wfid' => 'i' })
+    assert_equal 'i', Ruote.extract_wfid({ 'fei' => { 'wfid' => 'i' } })
+    assert_equal 'i', Ruote.extract_wfid(OpenStruct.new('wfid' => 'i'))
   end
 end
 

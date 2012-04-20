@@ -76,6 +76,19 @@ module Ruote
     Ruote::FlowExpressionId.extract(o)
   end
 
+  # Given an object, will return the wfid (workflow instance id) nested into
+  # it (or nil if it can't find or doesn't know how to find).
+  #
+  # The wfid is a String instance.
+  #
+  def self.extract_wfid(o)
+
+    return o.strip == '' ? nil : o if o.is_a?(String)
+    return o.wfid if o.respond_to?(:wfid)
+    return o['wfid'] || o.fetch('fei', {})['wfid'] if o.respond_to?(:[])
+    nil
+  end
+
   # This function is used to generate the subids. Each flow
   # expression receives such an id (it's useful for cursors, loops and
   # forgotten branches).
