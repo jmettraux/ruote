@@ -320,7 +320,7 @@ module Ruote::Exp
 
       if not Condition.apply?(attribute(:if), attribute(:unless))
 
-        return reply_to_parent(h.applied_workitem)
+        return do_reply_to_parent(h.applied_workitem)
       end
 
       pi = h.parent_id
@@ -371,7 +371,17 @@ module Ruote::Exp
     # parent expression to take over (it will end up calling the #reply of
     # the parent expression).
     #
+    # Expression implementations are free to override this method.
+    # The common behaviour is in #do_reply_to_parent.
+    #
     def reply_to_parent(workitem, delete=true)
+
+      do_reply_to_parent(workitem, delete)
+    end
+
+    # The essence of the reply_to_parent job...
+    #
+    def do_reply_to_parent(workitem, delete=true)
 
       # propagate the cancel "flavour" back, so that one can know
       # why a branch got cancelled.

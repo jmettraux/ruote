@@ -327,5 +327,18 @@ class EftSetTest < Test::Unit::TestCase
     assert_equal '12', r['workitem']['fields']['f0']
     assert_equal '12/', @tracer.to_s
   end
+
+  def test_set_if
+
+    pdef = Ruote.define do
+      set 'f:x' => '${v:v_r}', :if => '${v:v_r}'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal('terminated', r['action'])
+    assert_equal({}, r['workitem']['fields'])
+  end
 end
 
