@@ -258,7 +258,7 @@ module Ruote::Exp
       handler = handler.strip if handler.respond_to?(:strip)
 
       if handler =~ /^can(cel|do)$/ && (on == 'on_cancel' || h.on_cancel == nil)
-        handler = 'undo'
+        handler = handler == 'cancel' ? 'undo' : 'redo'
       end
 
       h.on_reply = nil if on == 'on_reply'
