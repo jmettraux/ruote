@@ -51,6 +51,7 @@ module Ruote
       attr_reader :ruby, :radial, :xml, :json
 
       def initialize(definition)
+        super('cannot read process definition')
         @definition = definition
       end
 
@@ -64,13 +65,6 @@ module Ruote
       #
       def cause
         @ruby || @radial || @xml || @json
-      end
-
-      def inspect
-        s = "#<#{self.class}: "
-        [ @ruby, @radial, @xml, @json ].each { |e| s << e.inspect; s << ' ' }
-        s << '>'
-        s
       end
     end
 
