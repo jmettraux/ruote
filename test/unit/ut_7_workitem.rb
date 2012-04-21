@@ -5,13 +5,14 @@
 # Mon Jun 15 16:43:06 JST 2009
 #
 
+
 require File.expand_path('../../test_helper', __FILE__)
+
+#require_json
+require 'rufus-json/automatic'
 
 require 'ruote/fei'
 require 'ruote/workitem'
-
-require_json
-require 'rufus/json'
 
 
 class UtWorkitemTest < Test::Unit::TestCase

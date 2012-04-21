@@ -309,6 +309,11 @@
 [o] wfid generator UTC?
 [o] iterator: drop the need for the sequence --> implicit sequence
 [o] citerator: drop the need for the sequence --> implicit sequence
+[o] move test/unit/storage[s].rb to test/functional/
+[x] exp : defined (not really necessary)
+[x] exp : quote (not really necessary)
+[x] exp : field / attribute (not really necessary)
+[x] exp : variable (not really necessary)
 
 [ ] exp : at expression ? comparable to cron
 [x] exp : exp (restricted form of eval ?) (is it apply ?)
@@ -316,17 +321,15 @@
 [x] exp : filter-definition
 [x] exp : parameter
 [ ] exp : log : or could it be a participant ?
-
-[ ] exp : defined (not really necessary)
-[ ] exp : quote (not really necessary)
-[ ] exp : field / attribute (not really necessary)
-[ ] exp : variable (not really necessary)
+[x] wait_for(:participant) what about 'dispatched' instead of 'dispatch' ?
 
 [ ] define without name (__result__)
 
 [ ] participant dispatch thread throttling ?
 
 [ ] tailcall
+  - is it really necessary? The storage is the limit.
+
 [ ] subprocesses participants (alias ?)
 
 [ ] recursion : should cope with modified trees 'main' => :tree ??
@@ -341,8 +344,6 @@
 [ ] one file, no multi-process, persistence ? LateHashStorage ?
 
 [ ] apply : ruby or xml (instead of just ast) ?
-
-[ ] unify ruote/util/json and ruote/util/serializer
 
 [ ] history.to_tree ?
 
@@ -472,8 +473,6 @@
 [ ] StorageParticipant#proceed : accept fei ?
 [ ] Engine#reply(wi), should remove from storage...
 
-[ ] wait_for(:participant) what about 'dispatched' instead of 'dispatch' ?
-
 [ ] expression :concurrent => true idea (reply immediately, cancellable)
 
 [ ] @engine.context['trust_block_participants'] = true
@@ -496,12 +495,10 @@
 [ ] cursor: deeper jumps
     http://groups.google.com/group/openwferu-users/browse_thread/thread/a973f0ea5fbb1a96
 
-[ ] move test/unit/storage[s].rb to test/functional/
-
 [ ] on_cancel like on_error expression
 [ ] on_timeout like on_error expression (or make timeout an error)
 
 [ ] #get_msgs to cover #get_schedules (make #get_schedules empty)
 
-[ ] eft_6 : 2 Fs when running standalone...
+[ ] eft_6_concurrence : 2 Fs when running standalone...
 

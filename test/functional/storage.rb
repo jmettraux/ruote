@@ -19,7 +19,7 @@ require 'ruote'
 #        about errors per se.
 #
 
-class UtStorage < Test::Unit::TestCase
+class FtStorage < Test::Unit::TestCase
 
   def setup
 

@@ -21,8 +21,5 @@ def l(t)
   end
 end
 
-load File.join(File.dirname(__FILE__), 'storage.rb')
-
 Dir.glob(File.join(File.dirname(__FILE__), 'ut_*.rb')).sort.each { |t| l(t) }
-Dir.glob(File.join(File.dirname(__FILE__), 'hut_*.rb')).sort.each { |t| l(t) }
 
