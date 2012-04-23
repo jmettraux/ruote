@@ -143,13 +143,25 @@ class EftRefTest < Test::Unit::TestCase
       ref 'nemo', :on_error => 'undo'
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(wfid)
 
     assert_nil @dashboard.process(wfid)
+  end
+
+  def test_ref_pointing_to_filter
+
+    @dashboard.variables['needs'] = 'filter'
+
+    pdef = Ruote.process_definition do
+      needs { x :type => 'string' }
+    end
+
+    wfid = @dashboard.launch(pdef, 'x' => 'nada')
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
   end
 end
 

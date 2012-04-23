@@ -386,7 +386,9 @@ module Ruote::Exp
       # propagate the cancel "flavour" back, so that one can know
       # why a branch got cancelled.
 
-      flavour = if @msg['action'] == 'cancel'
+      flavour = if @msg.nil?
+        nil
+      elsif @msg['action'] == 'cancel'
         @msg['flavour'] || 'cancel'
       elsif h.state.nil?
         nil
