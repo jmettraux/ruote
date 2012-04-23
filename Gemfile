@@ -10,5 +10,7 @@ source 'http://rubygems.org'
 
 gem 'yajl-ruby', :require => 'yajl'
 
+gem 'rufus-jig'
+
 gemspec
 

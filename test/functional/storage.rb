@@ -47,6 +47,7 @@ class FtStorage < Test::Unit::TestCase
     @s.purge_type!('expressions')
     @s.purge_type!('msgs')
     @s.purge_type!('workitems')
+    @s.purge_type!('schedules')
 
     @s.shutdown
   end
@@ -422,6 +423,8 @@ class FtStorage < Test::Unit::TestCase
   def test_remove_process
 
     @s.purge_type!('errors')
+    ts = @s.get_trackers
+    @s.delete(ts) if ts['_rev']
 
     dboard = Ruote::Dashboard.new(Ruote::Worker.new(@s))
     dboard.noisy = ENV['NOISY'] == 'true'
@@ -458,7 +461,7 @@ class FtStorage < Test::Unit::TestCase
     assert_equal 1, @s.get_trackers['trackers'].size
 
   ensure
-    dboard.shutdown
+    dboard.shutdown rescue nil
   end
 
   protected

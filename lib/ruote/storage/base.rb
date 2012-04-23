@@ -356,6 +356,7 @@ module Ruote
         'original' => s,
         'at' => Ruote.time_to_utc_s(at),
         'owner' => owner_fei,
+        'wfid' => owner_fei['wfid'],
         'msg' => msg
       }
     end

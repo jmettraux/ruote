@@ -90,13 +90,13 @@ module Ruote
 
     def get_many(type, key=nil, opts={})
 
-      if key
-        key = Array(key)
-        key = key.map { |k| "!#{k}" } if key.first.is_a?(String)
-      end
-        # assuming /!#{wfid}$/...
+      keys = key ? Array(key) : nil
 
-      @cloche.get_many(type, key, opts)
+      keys = keys.map { |k|
+        type == 'schedules' ? /!#{k}-\d+$/ : "!#{k}"
+      } if keys && keys.first.is_a?(String)
+
+      @cloche.get_many(type, keys, opts)
     end
 
     def ids(type)
