@@ -124,19 +124,16 @@ module Ruote
 
       synchronize do
 
-        keys = key ?
-          Array(key).map { |k| k.is_a?(String) ? "!#{k}" : k } : nil
-
-        docs = keys ?
-          @h[type].values.select { |doc|
-            Ruote::StorageBase.key_match?(keys, doc)
-          } :
+        docs = if key
+          keys = Array(key).map { |k| k.is_a?(String) ? "!#{k}" : k }
+          @h[type].values.select { |doc| key_match?(type, keys, doc) }
+        else
           @h[type].values
-
-        docs = docs.sort_by { |d| d['_id'] }
+        end
 
         return docs.size if opts[:count]
 
+        docs = docs.sort_by { |d| d['_id'] }
         docs = docs.reverse if opts[:descending]
 
         skip = opts[:skip] || 0

@@ -209,6 +209,17 @@ module Ruote
     alias kill_process kill
     alias kill_expression kill
 
+    # Removes a process by removing all its schedules, expressions, errors,
+    # workitems and trackers.
+    #
+    # Warning: will not trigger any cancel behaviours at all, just removes
+    # the process.
+    #
+    def remove_process(wfid)
+
+      @context.storage.remove_process(wfid)
+    end
+
     # Given a wfid, will [attempt to] pause the corresponding process instance.
     # Given an expression id (fei) will [attempt to] pause the expression
     # and its children.

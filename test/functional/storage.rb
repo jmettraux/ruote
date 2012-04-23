@@ -414,6 +414,53 @@ class FtStorage < Test::Unit::TestCase
     # ruote-dm/test/functional_connection.rb
   end
 
+  # Put documents for process 0 and process 1, remove_process(1), check that
+  # only documents for process 0 are remaining.
+  #
+  # Don't forget to deal with trackers and schedules.
+  #
+  def test_remove_process
+
+    @s.purge_type!('errors')
+
+    dboard = Ruote::Dashboard.new(Ruote::Worker.new(@s))
+    dboard.noisy = ENV['NOISY'] == 'true'
+
+    dboard.register :human, Ruote::StorageParticipant
+
+    pdef = Ruote.define do
+      concurrence do
+        wait '1d'
+        human
+        listen :to => 'bob'
+        error 'nada'
+      end
+    end
+
+    wfid0 = dboard.launch(pdef)
+    wfid1 = dboard.launch(pdef)
+
+    dboard.wait_for('error_intercepted')
+    dboard.wait_for('error_intercepted')
+
+    assert_equal 12, @s.get_many('expressions').size
+    assert_equal 2, @s.get_many('schedules').size
+    assert_equal 2, @s.get_many('workitems').size
+    assert_equal 2, @s.get_many('errors').size
+    assert_equal 2, @s.get_trackers['trackers'].size
+
+    @s.remove_process(wfid0)
+
+    assert_equal 6, @s.get_many('expressions').size
+    assert_equal 1, @s.get_many('schedules').size
+    assert_equal 1, @s.get_many('workitems').size
+    assert_equal 1, @s.get_many('errors').size
+    assert_equal 1, @s.get_trackers['trackers'].size
+
+  ensure
+    dboard.shutdown
+  end
+
   protected
 
   def load_30_errors

@@ -278,6 +278,31 @@ module Ruote
       end
     end
 
+    # Removes a process by removing all its schedules, expressions, errors,
+    # workitems and trackers.
+    #
+    # Warning: will not trigger any cancel behaviours at all, just removes
+    # the process.
+    #
+    def remove_process(wfid)
+
+      2.times do
+        # two passes
+
+        Thread.pass
+
+        %w[ schedules expressions errors workitems ].each do |type|
+          get_many(type, wfid).each { |d| delete(d) }
+        end
+
+        doc = get_trackers
+
+        doc['trackers'].delete_if { |k, v| k.end_with?("!#{wfid}") }
+
+        @context.storage.put(doc)
+      end
+    end
+
     protected
 
     # Used by put_msg
@@ -350,27 +375,35 @@ module Ruote
       schedules.select { |sch| sch['at'] <= now }
     end
 
-    ## Returns true if the doc wfid is included in the wfids passed.
-    ##
-    #def wfid_match? (doc, wfids)
-    #  wfids.find { |wfid| doc['_id'].index(wfid) } != nil
-    #end
-
     # Used by #get_many. Returns true whenever one of the keys matches the
     # doc['_id']. Works with strings (_id ends with key) or regexes (_id matches
     # key).
     #
-    # It's a class method meant to be used by the various storage
-    # implementations.
+    def key_match?(type, keys, doc)
+
+      _id = doc.is_a?(Hash) ? doc['_id'] : doc
+
+      if keys.first.is_a?(String) && type == 'schedules'
+        keys.find { |key| _id.match(/#{key}-\d+$/) }
+      elsif keys.first.is_a?(String)
+        keys.find { |key| _id.end_with?(key) }
+      else # Regexp
+        keys.find { |key| _id.match(key) }
+      end
+    end
+
+    # (Only used by ruote-couch 2.2.x)
+    #
+    # TODO: remove me at some point
     #
     def self.key_match?(keys, doc)
 
       _id = doc.is_a?(Hash) ? doc['_id'] : doc
 
       if keys.first.is_a?(String)
-        keys.find { |key| _id[-key.length..-1] == key }
+        keys.find { |key| _id.end_with?(key) }
       else # Regexp
-        keys.find { |key| key.match(_id) }
+        keys.find { |key| _id.match(key) }
       end
     end
   end

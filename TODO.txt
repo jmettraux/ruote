@@ -504,3 +504,8 @@
 
 [ ] get rid of the "web" test[s]
 
+== 3.0
+[ ] deprecate get_schedules
+    (let the storage include triggered schedules as msgs)
+[ ] deprecate "trackers as variables"
+

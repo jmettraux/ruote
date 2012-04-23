@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- Dashboard#remove_process (idea Claudio Petasecca Donati)
 - re_dispatch bug fix (patch by Doug Bryant)
 - Ruote.extract_wfid(o)
 - on_error/on_timeout: cancel/cando
