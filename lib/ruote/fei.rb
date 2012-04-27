@@ -184,6 +184,13 @@ module Ruote
       h.expid.split(CHILD_SEP).last.to_i
     end
 
+    # Returns a rufus-mnemo version of the first 9 hexdigits in the subid.
+    #
+    def mnemo_id
+
+      Rufus::Mnemo.from_i(@h['subid'][0, 9].to_i(16))
+    end
+
     # For proper hashing and sorting.
     #
     def hash

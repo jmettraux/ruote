@@ -135,6 +135,7 @@ module Ruote
         return @fexp.fei.subid if key == 'sub_wfid' # deprecated in 2.1.12
         return @fexp.fei.expid if key == 'expid'
         return @fexp.fei.engine_id if key == 'engine_id'
+        return @fexp.fei.mnemo_id if key == 'mnemo_id'
 
         pr, k = extract_prefix(key)
 

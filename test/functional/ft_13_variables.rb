@@ -17,12 +17,24 @@ class FtVariablesTest < Test::Unit::TestCase
       echo 'at:${wfid}:${expid}'
     end
 
-    #noisy
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal "at:#{wfid}:0_0", @tracer.to_s
+  end
+
+  def test_mnemo_id
+
+    pdef = Ruote.process_definition do
+      echo '>${mnemo_id}<'
+    end
 
     wfid = @dashboard.launch(pdef)
-    wait_for(wfid)
+    r = @dashboard.wait_for(wfid)
 
-    assert_equal "at:#{wfid}:0_0", @tracer.to_s
+    assert_equal 'terminated', r['action']
+    assert_match /^>[a-z]+<$/, @tracer.to_s
   end
 
   def test_variables_event
@@ -34,8 +46,6 @@ class FtVariablesTest < Test::Unit::TestCase
         echo 'done.'
       end
     end
-
-    #noisy
 
     assert_trace('done.', pdef)
 
