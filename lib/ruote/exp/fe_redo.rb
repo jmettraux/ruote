@@ -63,7 +63,8 @@ module Ruote::Exp
 
       if tag && Ruote.is_a_fei?(tag)
 
-        @context.storage.put_msg('cancel', 'fei' => tag, 're_apply' => true)
+        @context.storage.put_msg(
+          'cancel', 'fei' => tag, 're_apply' => { 'workitem' => 'applied' })
 
         reply_to_parent(h.applied_workitem) unless ancestor?(tag)
 

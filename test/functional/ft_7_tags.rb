@@ -234,8 +234,6 @@ class FtTagsTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
@@ -244,6 +242,30 @@ class FtTagsTest < Test::Unit::TestCase
     assert_equal(
       %w[ a a/b ],
       r['variables']['__past_tags__'].collect { |e| e.first }.sort)
+  end
+
+  def test_tags_and_re_apply
+
+    @dashboard.register_participant :look_at_tags do |workitem|
+      tracer << workitem.tags.join('/') + "\n"
+    end
+
+    pdef = Ruote.define do
+      sequence :tag => 'alpha' do
+        look_at_tags
+        error 'nada'
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for('error_intercepted')
+
+    seq = @dashboard.ps(wfid).expressions[1]
+    @dashboard.re_apply(seq)
+
+    r = @dashboard.wait_for('error_intercepted')
+
+    assert_equal %w[ alpha alpha ], @tracer.to_a
   end
 end
 

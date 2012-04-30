@@ -126,12 +126,10 @@ class EftRedoTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
-
     r = @dashboard.wait_for(wfid)
 
+    assert_equal 'terminated', r['action']
     assert_equal %w[ x ], r['workitem']['fields']['alpha']
   end
 end

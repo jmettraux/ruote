@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- make re_apply use the applied workitem by default
 - ${mnemo_id} (along with ${expid} and ${subid})
 - Dashboard#remove_process (idea Claudio Petasecca Donati)
 - re_dispatch bug fix (patch by Doug Bryant)

@@ -235,6 +235,24 @@ module Ruote::Exp
 
       handler = on == 'on_error' ? local_on_error(err) : h[on]
 
+      if handler.is_a?(Hash) # on_re_apply
+
+        wi = handler['workitem']
+        fi = handler['fields']
+        me = handler['merge_in_fields']
+
+        workitem = if wi == 'applied' || me
+          h.applied_workitem
+        elsif wi
+          wi
+        else
+          workitem
+        end
+
+        workitem['fields'] = fi if fi
+        workitem['fields'].merge!(me) if me
+      end
+
       if h.trigger && t = workitem['fields']["__#{h.trigger}__"]
         #
         # the "second take"...
@@ -249,6 +267,7 @@ module Ruote::Exp
       end
 
       new_tree = case handler
+        when Hash then handler['tree']
         when Array then handler
         when HandlerEntry then [ handler.action, {}, [] ]
         else [ handler.to_s, {}, [] ]
@@ -325,8 +344,10 @@ module Ruote::Exp
         #    return
         #  end
           #
-          # actually, let's not care about that and trust people.
+          # actually, let's not care about that, let's trust people.
       end
+
+      workitem = h.applied_workitem if on == 'on_error'
 
       #
       # supplant this expression with new tree
@@ -345,7 +366,7 @@ module Ruote::Exp
         { 'fei' => h.fei,
           'parent_id' => h.parent_id,
           'tree' => new_tree,
-          'workitem' => h.applied_workitem,
+          'workitem' => workitem,
           'variables' => h.variables,
           'trigger' => on,
           'on_reply' => h.on_reply,
