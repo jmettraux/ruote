@@ -29,7 +29,6 @@ class Ruote::WaitLogger
 
   protected
 
-
   #--
   # <ESC>[{attr1};...;{attrn}m
   #
@@ -216,7 +215,7 @@ class Ruote::WaitLogger
 
       color(
         @color,
-        "#{@count} #{tm}  #{ei} #{'  ' * depth}#{act} * #{i}",
+        "#{@count} #{tm} #{ei} #{'  ' * depth}#{act} * #{i}",
         true
       ) +
       "\n" +
