@@ -125,6 +125,24 @@ class EftParticipantTest < Test::Unit::TestCase
 
   def test_dispatched
 
+    @dashboard.register 'toto', Ruote::StorageParticipant
+
+    pdef = Ruote.process_definition do
+      toto
+    end
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for('dispatched')
+    sleep 0.700
+
+    fexp = @dashboard.ps(wfid).expressions.last
+
+    assert_equal true, fexp.dispatched
+  end
+
+  def test_not_dispatched
+
     @dashboard.register_participant :hotel do
       sleep 5
     end
@@ -132,8 +150,6 @@ class EftParticipantTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       hotel
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
