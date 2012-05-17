@@ -51,8 +51,6 @@ class FtTimersTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, Ruote::NullParticipant
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(20)

@@ -269,8 +269,6 @@ module Ruote::Exp
       fei = msg['fei']
       action = msg['action']
 
-      #p msg unless fei
-
       if action == 'reply' && fei['engine_id'] != context.engine_id
         #
         # the reply has to go to another engine, let's locate the
@@ -450,9 +448,11 @@ module Ruote::Exp
 
         trigger('on_reply', workitem)
 
-      elsif (h.lost or h.flanking) && h.state.nil?
+      elsif (h.lost || h.flanking) && h.state.nil?
         #
         # do not reply, sit here (and wait for cancellation probably)
+
+        do_persist
 
       elsif h.trigger && workitem['fields']["__#{h.trigger}__"]
         #

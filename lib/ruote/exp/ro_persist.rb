@@ -34,6 +34,13 @@ module Ruote::Exp
     # PERSISTENCE
     #++
 
+    # Outputs ids like "0_2!d218c1b", no wfid, only <expid>!<subid>[0, 7]
+    #
+    def debug_id
+
+      "#{h.fei['expid']}!#{h.fei['subid'][0, 7]}"
+    end
+
     # Persists and fetches the _rev identifier from the storage.
     #
     # Only used by the worker when creating the expression.
@@ -43,7 +50,7 @@ module Ruote::Exp
       r = @context.storage.put(@h, :update_rev => true)
 
       #t = Thread.current.object_id.to_s[-3..-1]
-      #puts "+ per #{h.fei['expid']} #{tree[0]} r#{h._rev} t#{t} -> #{r.class}"
+      #puts "+ per #{debug_id} #{tree[0]} r#{h._rev} t#{t} -> #{r.class}"
       #Ruote.p_caller('+ per')
 
       raise_or_return('initial_persist failed', r)
@@ -54,7 +61,8 @@ module Ruote::Exp
       r = @context.storage.put(@h)
 
       #t = Thread.current.object_id.to_s[-3..-1]
-      #puts "+ per #{h.fei['expid']} #{tree[0]} r#{h._rev} t#{t} -> #{r.class}"
+      #puts "+ per #{debug_id} #{tree[0]} r#{h._rev} t#{t} -> #{r.class}"
+      #p self.h.children.collect { |i| Ruote.sid(i) }
       #Ruote.p_caller('+ per')
 
       r
@@ -65,7 +73,7 @@ module Ruote::Exp
       r = @context.storage.delete(@h)
 
       #t = Thread.current.object_id.to_s[-3..-1]
-      #puts "- unp #{h.fei['expid']} #{tree[0]} r#{h._rev} t#{t} -> #{r.class}"
+      #puts "- unp #{debug_id} #{tree[0]} r#{h._rev} t#{t} -> #{r.class}"
       #Ruote.p_caller('- unp')
 
       return r if r
@@ -135,9 +143,9 @@ module Ruote::Exp
       raise_or_return(pers, r)
     end
 
-    # Does persist or unpersist, if successful then return true. If the
-    # expression is gone, return false.
-    # If there is a 'fresher' version of the expression, re-attempt and return
+    # Does persist or unpersist, if successful then returns true. If the
+    # expression is gone, returns false.
+    # If there is a 'fresher' version of the expression, re-attempt and returns
     # false.
     #
     def do_p(pers)

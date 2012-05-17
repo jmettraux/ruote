@@ -391,9 +391,14 @@ module Ruote
       @expressions.each do |e|
         s << "     #{e.fei.to_storage_id}"
         s << "       | #{e.name}"
+        s << "       | _rev: #{e.h._rev.inspect}"
         s << "       | * #{e.state} *" if e.state
         s << "       | #{e.attributes.inspect}"
+        e.children.each do |ce|
+          s << "       | . child-> #{Ruote.sid(ce)}"
+        end if e.children.any?
         s << "       | timers: #{e.h.timers.collect { |e| e[1] }}" if e.h.timers
+        s << "       | (flanking)" if e.h.flanking
         s << "       `-parent--> #{e.h.parent_id ? e.parent_id.to_storage_id : 'nil'}"
       end
       s << ''
