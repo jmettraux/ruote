@@ -32,6 +32,11 @@ class FtFlankTest < Test::Unit::TestCase
 
     assert_equal 4, ps.expressions.size
     assert_equal [ ps.expressions[2].fei.h ], ps.expressions[1].h.flanks
+
+    assert_equal(
+      [ ["participant", { "flank" => true, "ref" => "bravo" }, [] ],
+        ["participant", { "ref" => "alpha" }, [] ] ],
+      ps.leaves.collect(&:tree))
   end
 
   # Cancelling the sequence also cancels its "flanks".
