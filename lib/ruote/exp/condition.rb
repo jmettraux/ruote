@@ -52,8 +52,8 @@ module Ruote::Exp
 
     def self.apply?(sif, sunless)
 
-      return (true?(sif)) if sif
-      return ( ! true?(sunless)) if sunless
+      return (true?(sif)) if sif != nil
+      return ( ! true?(sunless)) if sunless != nil
 
       true
     end

@@ -318,7 +318,7 @@ module Ruote::Exp
     #
     def do_apply(msg)
 
-      if not Condition.apply?(attribute(:if), attribute(:unless))
+      unless Condition.apply?(attribute(:if), attribute(:unless))
 
         return do_reply_to_parent(h.applied_workitem)
       end
