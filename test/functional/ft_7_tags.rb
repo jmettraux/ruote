@@ -239,9 +239,21 @@ class FtTagsTest < Test::Unit::TestCase
 
     assert_equal %w[ a/b b ], @tracer.to_a.sort
 
+    past_tags = r['variables']['__past_tags__']
+
     assert_equal(
       %w[ a a/b ],
-      r['variables']['__past_tags__'].collect { |e| e.first }.sort)
+      past_tags.collect(&:first).sort)
+
+    past_tag = past_tags.first
+
+    assert_equal(
+      [ String, String, NilClass, String ], past_tag.collect(&:class))
+
+    assert_equal(
+      Ruote::FlowExpressionId, Ruote.extract_fei(past_tag[1]).class)
+    assert_match(
+      / UTC$/, past_tag[3])
   end
 
   def test_tags_and_re_apply

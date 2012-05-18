@@ -932,7 +932,7 @@ module Ruote::Exp
       r.variables.delete(h.full_tagname)
 
       (r.variables['__past_tags__'] ||= []) <<
-        [ h.full_tagname, fei.sid, h.state ]
+        [ h.full_tagname, fei.sid, h.state, Ruote.now_to_utc_s ]
 
       r.do_persist unless r.fei == self.fei
     end
