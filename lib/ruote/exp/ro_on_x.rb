@@ -361,6 +361,13 @@ module Ruote::Exp
 
       new_tree[1]['_triggered'] = on
 
+      attributes.each { |k, v|
+        new_tree[1][k] = v if k.match(/^on_/) && k != on
+      }
+        #
+        # let the triggered tree have the same on_ attributes as the original
+        # expression, so that on_cancel/on_error/on_x effects still apply
+
       @context.storage.put_msg(
         'apply',
         { 'fei' => h.fei,

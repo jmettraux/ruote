@@ -654,5 +654,29 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal 'terminated', r['action']
     assert_equal %w[ n ], @tracer.to_a
   end
+
+  def test_on_error_and_on_cancel
+
+    pdef = Ruote.define do
+      define 'rollback' do
+        echo 'rollback'
+      end
+      sequence :on_cancel => 'rollback', :on_error => 'cancel_process' do
+        echo 'in'
+        error 'nada'
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+
+    assert_equal %w[ in rollback ], @tracer.to_a
+
+    assert_equal(
+      1,
+      @dashboard.logger.log.select { |m| m['action'] == 'cancel_process' }.size)
+  end
 end
 
