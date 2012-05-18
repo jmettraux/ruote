@@ -475,8 +475,7 @@
 [ ] StorageParticipant#proceed : accept fei ?
 [ ] Engine#reply(wi), should remove from storage...
 
-[ ] @engine.context['trust_block_participants'] = true
-[ ] @engine.context['trust_code_participants'] = true
+[o] @engine.context['participant_in_variable_enabled'] = true
 [ ] @engine.register(x, :trusted => true, &block)
 [ ] security service ? context['x'] but then, more advanced behaviours
 [ ] subaltern

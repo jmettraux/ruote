@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- 'participant_in_variable_enabled' switch
 - make re_apply use the applied workitem by default
 - ${mnemo_id} (along with ${expid} and ${subid})
 - Dashboard#remove_process (idea Claudio Petasecca Donati)

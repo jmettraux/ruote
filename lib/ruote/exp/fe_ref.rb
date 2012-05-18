@@ -78,9 +78,17 @@ module Ruote::Exp
 
       new_exp_name, new_exp_class = nil
 
-      if value.is_a?(String)
+      # warning: abusing on 'then' in order to have [somehow] more readability
 
-        if value.index("def consume(") && (Rufus::TreeChecker.parse(value) rescue false)
+      if
+        value.is_a?(String)
+      then
+
+        if
+          @context['participant_in_variable_enabled'] &&
+          value.match(/\bdef consume\(/) &&
+          (Rufus::TreeChecker.parse(value) rescue false)
+        then
           #
           # participant code passed
 
@@ -95,20 +103,27 @@ module Ruote::Exp
           new_exp_class = klass
         end
 
-      elsif value.is_a?(Hash) && value['on_workitem']
+      elsif
+        @context['participant_in_variable_enabled'] &&
+        value.is_a?(Hash) &&
+        value['on_workitem']
+      then
         #
         # participant 'defined' in var
 
         @h['participant'] = [ 'Ruote::BlockParticipant', value ]
 
-      elsif value.is_a?(Array) && value.size == 2 && value.last.is_a?(Hash)
+      elsif
+        value.is_a?(Array) &&
+        value.size == 2 && value.last.is_a?(Hash)
+      then
         #
         # participant 'registered' in var
 
         @h['participant'] = value
       end
 
-      if value == nil and @h['participant'] == nil
+      if value == nil && @h['participant'] == nil
         #
         # unknown participant or subprocess
 

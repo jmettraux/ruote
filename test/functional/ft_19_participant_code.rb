@@ -15,6 +15,8 @@ class FtParticipantCodeTest < Test::Unit::TestCase
 
   def test_block_participant
 
+    @dashboard.context['participant_in_variable_enabled'] = true
+
     pdef = Ruote.process_definition :name => 'def0' do
 
       set 'v:alpha' => {
@@ -27,8 +29,6 @@ class FtParticipantCodeTest < Test::Unit::TestCase
       alpha
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     r = @dashboard.wait_for(wfid)
@@ -39,6 +39,8 @@ class FtParticipantCodeTest < Test::Unit::TestCase
   end
 
   def test_code_participant
+
+    @dashboard.context['participant_in_variable_enabled'] = true
 
     pdef = Ruote.process_definition do
 
@@ -52,8 +54,6 @@ class FtParticipantCodeTest < Test::Unit::TestCase
 
       alpha
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
