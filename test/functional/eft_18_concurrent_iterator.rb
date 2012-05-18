@@ -21,7 +21,21 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
+    assert_trace('done.', pdef)
+  end
+
+  def test_empty_iterator_2
+
+    @dashboard.register 'nada', Ruote::NullParticipant
+
+    pdef = Ruote.process_definition :name => 'test' do
+      sequence do
+        concurrent_iterator :on_val => 'alice, bob, charly', :to_var => 'v' do
+          nada :if => 'false'
+        end
+        echo 'done.'
+      end
+    end
 
     assert_trace('done.', pdef)
   end
@@ -37,8 +51,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace('done.', pdef)
   end
 
@@ -51,8 +63,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     end
 
     register_catchall_participant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -73,8 +83,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     register_catchall_participant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef, 'assets' => %w[ a b c ])
 
     wait_for(wfid)
@@ -93,8 +101,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     end
 
     register_catchall_participant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -117,8 +123,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     end
 
     register_catchall_participant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -146,8 +150,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     sto = @dashboard.register_participant '.+', Ruote::StorageParticipant
 
     assert_equal 0, sto.size # just to be sure
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -190,8 +192,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       tracer << "p1:#{workitem.fields['f'].join(':')}\n"
     end
 
-    #noisy
-
     assert_trace %w[ p1:a:A out ], pdef
   end
 
@@ -203,8 +203,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace %w[ a a ], pdef
   end
 
@@ -215,8 +213,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
         echo 'a'
       end
     end
-
-    #noisy
 
     assert_trace %w[ a a ], pdef
   end
@@ -230,8 +226,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     end
 
     register_catchall_participant
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
@@ -250,8 +244,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
         echo '${v:i}'
       end
     end
-
-    #noisy
 
     #assert_trace(*%w[ a b c ].permutation.to_a, pdef)
       # this is not ruby 1.8.7p72 friendly
@@ -275,8 +267,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       nil
     end
 
-    #noisy
-
     assert_trace(%w[ . . . ], pdef)
 
     mf = ('0'..'2').to_a.map { |k| @dashboard.context.stash[:mf][k]['f'] }.sort
@@ -296,8 +286,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       stash[:mf] = workitem.fields
       nil
     end
-
-    #noisy
 
     assert_trace(%w[ . . ], pdef)
 
@@ -326,8 +314,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     @dashboard.context.stash[:a_count] = 0
     @dashboard.register_participant(:alpha) { |wi| stash[:a_count] += 1 }
     @dashboard.register_participant(:bravo, Ruote::NullParticipant)
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -360,8 +346,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       wi.fields['__add_branches__'] = %w[ a b ] if wi.fields['f'] == 2
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
@@ -380,8 +364,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       workitem.fields['a'] = [ 'x' ]
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
@@ -399,8 +381,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     @dashboard.register_participant :alpha do |workitem|
       workitem.fields['a'] = [ 'x' ]
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
@@ -437,8 +417,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
@@ -457,8 +435,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
       echo 'over.'
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
@@ -472,8 +448,6 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
         set '${v:i}' => 'x'
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
