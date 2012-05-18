@@ -316,6 +316,8 @@
 [x] exp : variable (not really necessary)
 [o] expression :concurrent => true idea (reply immediately, cancellable)
     `- covered by :flank => true
+[o] concurrence: allow empty
+[o] citerator: allow empty
 
 [ ] exp : at expression ? comparable to cron
 [x] exp : exp (restricted form of eval ?) (is it apply ?)
@@ -383,9 +385,6 @@
     ref="alpha && bravo", ref="alpha||bravo" (|| parallel :( )
 
 [ ] LocalParticipant def consume; handle; reply; end
-
-[ ] find better solution than "get all schedules"
-    ... or discard get_schedules completely
 
 [ ] worker : minuteman, make it cron triggerable
     trap SIGUSR1 or USR2
@@ -485,9 +484,6 @@
 [ ] subaltern for conditions?
 [ ] enhance radial/Parslet error messages (cf Raphael)
 
-[ ] concurrence: allow empty
-[o] citerator: allow empty
-
 [ ] concurrence: reply_to_parent instead of cease when no more children ?
     https://github.com/jmettraux/ruote/blob/1f9add961f90049ea951b8940622fbe8d136c45f/lib/ruote/exp/fe_concurrence.rb#L304-310
 
@@ -498,6 +494,9 @@
 [ ] on_timeout like on_error expression (or make timeout an error)
 
 [ ] #get_msgs to cover #get_schedules (make #get_schedules empty)
+    | | |
+[ ] find better solution than "get all schedules"
+    ... or discard get_schedules completely
 
 [ ] eft_6_concurrence : 2 Fs when running standalone...
 
@@ -507,4 +506,7 @@
 [ ] deprecate get_schedules
     (let the storage include triggered schedules as msgs)
 [ ] deprecate "trackers as variables"
+
+== 4.0
+[ ] deprecate listen (await?) or make it an alias of await?
 

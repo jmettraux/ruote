@@ -275,6 +275,8 @@ module Ruote::Exp
 
     def apply
 
+      return do_reply_to_parent(h.applied_workitem) if tree_children.empty?
+
       #
       # count and wait_for
 

@@ -24,9 +24,34 @@ class EftConcurrenceTest < Test::Unit::TestCase
       tracer << "alpha\n"
     end
 
-    #noisy
-
     assert_trace %w[ alpha alpha ], pdef
+  end
+
+  def test_empty
+
+    pdef = Ruote.process_definition do
+      concurrence do
+      end
+      echo 'done.'
+    end
+
+    assert_trace %w[ done. ], pdef
+  end
+
+  def test_accidental_empty
+
+    @dashboard.register_participant :nada do
+      tracer << "nada\n"
+    end
+
+    pdef = Ruote.process_definition do
+      concurrence do
+        nada :if => false
+      end
+      echo 'done.'
+    end
+
+    assert_trace %w[ done. ], pdef
   end
 
   def test_over_if
@@ -54,8 +79,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
       nil
     end
 
-    #noisy
-
     assert_trace(%w[ alpha ] * 3, pdef)
 
     #assert_equal(
@@ -78,8 +101,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
         alpha
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -157,8 +178,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
       fields = workitem.fields
     end
 
-    #noisy
-
     assert_trace(%w[ a a done. ], pdef)
   end
 
@@ -171,8 +190,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
       end
       echo 'done.'
     end
-
-    #noisy
 
     assert_trace %w[ a b done. ], %w[ b a done. ], pdef
   end
@@ -286,8 +303,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
   def test_count
 
-    #noisy
-
     wfid = run_test_count('cancel', false)
 
     #puts
@@ -301,8 +316,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
   end
 
   def test_count_remaining_forget
-
-    #noisy
 
     wfid = run_test_count('forget', false)
 
@@ -353,8 +366,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -389,8 +400,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
       echo 'over.'
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(wfid)
@@ -409,8 +418,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
       end
       echo 'over.'
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -434,8 +441,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
         end
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -461,8 +466,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     r = @dashboard.wait_for(wfid)
@@ -479,8 +482,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
       end
       echo 'c'
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
@@ -501,7 +502,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
     wfid = @dashboard.launch(pdef); r = @dashboard.wait_for(wfid)
 
     assert_equal(
