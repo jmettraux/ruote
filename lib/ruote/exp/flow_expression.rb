@@ -291,12 +291,14 @@ module Ruote::Exp
 
       fexp = nil
 
-      3.times do
-        fexp = fetch(context, msg['fei'])
-        break if fexp
-        sleep 0.028
+      n = context.storage.class.name.match(/Couch/) ? 3 : 1
+        #
+      n.times do |i|
+        if fexp = fetch(context, msg['fei']); break; end
+        sleep 0.028 unless i == (n - 1)
       end
-        # this retry system is only useful with ruote-couch
+        #
+        # Simplify that once ruote-couch behaves
 
       fexp.do(action, msg) if fexp
     end
