@@ -396,25 +396,13 @@ module Ruote::Exp
         @msg['flavour']
       end
 
-      # misc
-
-      filter(workitem) if h.state.nil?
-        # only filter on a normal reply (not cancelling)
-
-      leave_tag(workitem) if h.tagname
-
-      if h.state.nil? && f = attribute(:vars_to_f)
-
-        Ruote.set(workitem['fields'], f, h.variables)
-      end
-
       # deal with the timers and the schedules
 
       %w[ timeout_schedule_id job_id ].each do |sid|
         @context.storage.delete_schedule(h[sid]) if h[sid]
       end
         #
-        # legacy schedule ids, to be removed for ruote 2.2.2 or .3
+        # legacy schedule ids, to be removed for ruote 2.4.0
 
       @context.storage.delete_schedule(h.schedule_id) if h.schedule_id
         #
@@ -463,6 +451,13 @@ module Ruote::Exp
         trigger(h.trigger, workitem)
 
       else # vanilla reply
+
+        filter(workitem) if h.state.nil?
+
+        f = h.state.nil? && attribute(:vars_to_f)
+        Ruote.set(workitem['fields'], f, h.variables) if f
+
+        leave_tag(workitem) if h.tagname
 
         (do_unpersist || return) if delete
           # remove expression from storage
@@ -890,23 +885,31 @@ module Ruote::Exp
     #
     def consider_tag
 
-      if tag = attribute(:tag)
+      tag = attribute(:tag)
 
-        h.tagname = tag
-        h.full_tagname = (applied_workitem.tags + [ tag ]).join('/')
+      return unless tag
 
-        set_variable(h.tagname, h.fei)
-        set_variable('/' + h.full_tagname, h.fei)
+      h.tagname = tag
+      h.full_tagname = applied_workitem.tags.join('/')
 
-        applied_workitem.send(:add_tag, h.tagname)
+      return if h.trigger
+        #
+        # do not consider tags when the tree is applied for an
+        # on_x trigger
 
-        @context.storage.put_msg(
-          'entered_tag',
-          'tag' => h.tagname,
-          'full_tag' => h.full_tagname,
-          'fei' => h.fei,
-          'workitem' => h.applied_workitem)
-      end
+      h.full_tagname = (applied_workitem.tags + [ tag ]).join('/')
+
+      set_variable(h.tagname, h.fei)
+      set_variable('/' + h.full_tagname, h.fei)
+
+      applied_workitem.send(:add_tag, h.tagname)
+
+      @context.storage.put_msg(
+        'entered_tag',
+        'tag' => h.tagname,
+        'full_tag' => h.full_tagname,
+        'fei' => h.fei,
+        'workitem' => h.applied_workitem)
     end
 
     # Called when the expression is about to reply to its parent and wants
@@ -933,8 +936,15 @@ module Ruote::Exp
 
       r.variables.delete(h.full_tagname)
 
+      state = case h.trigger
+        when 'on_cancel' then 'cancelled'
+        when 'on_error' then 'failed'
+        when 'on_timeout' then 'timed out'
+        else nil
+      end
+
       (r.variables['__past_tags__'] ||= []) <<
-        [ h.full_tagname, fei.sid, h.state, Ruote.now_to_utc_s ]
+        [ h.full_tagname, fei.sid, state, Ruote.now_to_utc_s ]
 
       r.do_persist unless r.fei == self.fei
     end

@@ -362,11 +362,15 @@ module Ruote::Exp
       new_tree[1]['_triggered'] = on
 
       attributes.each { |k, v|
-        new_tree[1][k] = v if k.match(/^on_/) && k != on
+        new_tree[1][k] = v if (k.match(/^on_/) && k != on) || k == 'tag'
       }
         #
         # let the triggered tree have the same on_ attributes as the original
         # expression, so that on_cancel/on_error/on_x effects still apply
+        #
+        # 'tag' is copied as well. (so that 'left_tag' is emitted too)
+        #
+        # Should 'timeout', should other common attributes be copied as well?
 
       @context.storage.put_msg(
         'apply',

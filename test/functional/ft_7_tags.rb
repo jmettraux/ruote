@@ -23,8 +23,6 @@ class FtTagsTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
     wait_for(:alpha)
 
@@ -48,21 +46,19 @@ class FtTagsTest < Test::Unit::TestCase
   #
   def test_on_cancel
 
+    @dashboard.register_participant '.+', Ruote::StorageParticipant
+
     pdef = Ruote.process_definition do
       sequence do
         sequence :tag => 'a', :on_cancel => 'decom' do
           alpha
         end
-        alpha
+        bravo
       end
       define 'decom' do
-        alpha
+        charly
       end
     end
-
-    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -76,24 +72,35 @@ class FtTagsTest < Test::Unit::TestCase
 
     @dashboard.cancel_expression(fei)
 
-    wait_for(:alpha)
+    wait_for(:charly)
 
-    assert_equal 0, @dashboard.process(wfid).tags.size
+    assert_equal 1, @dashboard.process(wfid).tags.size
 
-    alpha.proceed(alpha.first)
+    @dashboard.storage_participant.proceed(@dashboard.storage_participant.first)
 
-    wait_for(:alpha)
+    wait_for(:bravo)
 
     ps = @dashboard.process(wfid)
 
     assert_equal 0, ps.tags.size
-    assert_equal 1, ps.root_expression.variables['__past_tags__'].size
     assert_equal 1, ps.past_tags.size
+    assert_equal 'a', ps.root_expression.variables['__past_tags__'].first.first
 
-    a = ps.root_expression.variables['__past_tags__'].first
+    @dashboard.storage_participant.proceed(@dashboard.storage_participant.first)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+
+    assert_equal 1, r['variables']['__past_tags__'].size
+
+    a = r['variables']['__past_tags__'].first
 
     assert_equal 'a', a[0]
-    assert_equal 'cancelling', a[2]
+    assert_match /^0_1_0!/, a[1]
+    assert_match /!#{wfid}$/, a[1]
+    assert_equal 'cancelled', a[2]
+    assert_match /\sUTC$/, a[3]
   end
 
   def test_unset_tag_when_parent_gone
@@ -107,8 +114,6 @@ class FtTagsTest < Test::Unit::TestCase
         end
       end
     end
-
-    #@dashboard.noisy = true
 
     @dashboard.register :alpha, Ruote::NullParticipant
     @dashboard.register :bravo, Ruote::NoOpParticipant
@@ -181,8 +186,6 @@ class FtTagsTest < Test::Unit::TestCase
       nil
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef, 'my_array' => [ 1 ])
     r = @dashboard.wait_for(wfid)
 
@@ -198,8 +201,6 @@ class FtTagsTest < Test::Unit::TestCase
     end
 
     @dashboard.register 'alpha', Ruote::StorageParticipant
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(:alpha)
@@ -278,6 +279,33 @@ class FtTagsTest < Test::Unit::TestCase
     r = @dashboard.wait_for('error_intercepted')
 
     assert_equal %w[ alpha alpha ], @tracer.to_a
+  end
+
+  def test_tag_and_on_handler
+
+    pdef = Ruote.define do
+      define 'h' do
+        echo 'in_handler'
+        wait '1s'
+        echo 'handler_out'
+      end
+      concurrence do
+        sequence do
+          await :left_tag => 'alpha'
+          echo 'left_tag'
+        end
+        sequence :tag => 'alpha', :on_error => 'h' do
+          error 'nada'
+        end
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+
+    assert_equal %w[ in_handler handler_out left_tag ], @tracer.to_a
   end
 end
 

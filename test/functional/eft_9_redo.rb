@@ -40,7 +40,7 @@ class EftRedoTest < Test::Unit::TestCase
     assert_equal 0, ps.errors.size
     assert_equal 3, ps.expressions.size
 
-    assert_equal 3, logger.log.select { |e| e['action'] == 'entered_tag' }.size
+    assert_equal 1, logger.log.select { |e| e['action'] == 'entered_tag' }.size
   end
 
   def test_redo_missing_tag

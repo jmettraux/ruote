@@ -35,8 +35,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
 
     @dashboard.register :alpha, AlphaParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(
       pdef,
       'private_a' => 'x', 'a' => 'y')
@@ -70,8 +68,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       wi.fields['other_thing'] = 'stolen'
     end
 
-    #noisy
-
     wfid = @dashboard.launch(
       pdef,
       'protected_thing' => 'here', 'other_thing' => 'here')
@@ -90,8 +86,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
     end
 
     @dashboard.register :alpha, Ruote::NoOpParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -112,8 +106,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
     end
 
     @dashboard.register :alpha, AlphaParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -137,8 +129,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
 
     @dashboard.register :alpha, AlphaParticipant
     @dashboard.register :filter_a, AaFilterParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -165,8 +155,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
     @dashboard.register :alpha, AlphaParticipant
     @dashboard.register :filter_b, BbFilterParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     r = @dashboard.wait_for(wfid)
@@ -189,8 +177,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
 
     @dashboard.register :alpha, AlphaParticipant
     @dashboard.register :filter_c, CcFilterParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -217,8 +203,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
     @dashboard.register :f0, DdFilterParticipant
     @dashboard.register :f1, DdFilterParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     r = @dashboard.wait_for(wfid)
@@ -239,8 +223,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
       charly :filter => { 'out' => [] }
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
@@ -250,8 +232,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
   def test_cancel_after_error
 
     @dashboard.register :alpha, Ruote::NoOpParticipant
-
-    #@dashboard.noisy = true
 
     pdef = Ruote.define do
       alpha :filter => { :in => [ { :field => 'x', :type => :number } ] }
@@ -271,8 +251,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
   def test_cancel_after_error_out
 
     @dashboard.register :alpha, Ruote::NoOpParticipant
-
-    #@dashboard.noisy = true
 
     pdef = Ruote.define do
       alpha :filter => { :out => [ { :field => 'x', :type => :number } ] }
@@ -300,8 +278,6 @@ class FtFilterAttributeTest < Test::Unit::TestCase
 #    end
 #
 #    @dashboard.register :alpha, AlphaParticipant
-#
-#    #noisy
 #
 #    wfid = @dashboard.launch(
 #      pdef,
