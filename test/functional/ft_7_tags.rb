@@ -103,6 +103,33 @@ class FtTagsTest < Test::Unit::TestCase
     assert_match /\sUTC$/, a[3]
   end
 
+  def test_cancel_tag
+
+    @dashboard.register_participant :alpha, Ruote::StorageParticipant
+
+    pdef = Ruote.define do
+      sequence :tag => 'a' do
+        alpha
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(:alpha)
+
+    ps = @dashboard.ps(wfid)
+    @dashboard.cancel(ps.expressions[1])
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal 1, r['variables']['__past_tags__'].size
+
+    a = r['variables']['__past_tags__'].first
+
+    assert_equal 'a', a[0]
+    assert_equal 'cancelled', a[2]
+  end
+
   def test_unset_tag_when_parent_gone
 
     pdef = Ruote.process_definition do

@@ -15,23 +15,34 @@ class EftUndoTest < Test::Unit::TestCase
 
   def test_undo_ref
 
-    pdef = Ruote.process_definition do
+    pdef = Ruote.define do
       concurrence do
         alpha :tag => 'kilroy'
         undo :ref => 'kilroy'
       end
-      echo 'over'
+      echo 'over.'
     end
 
-    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register(:alpha, Ruote::StorageParticipant)
 
-    assert_trace %w[ over ], pdef
+    wfid = @dashboard.launch(pdef)
+    r = @engine.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal 'over.', @tracer.to_s
 
     assert_equal 0, alpha.size
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'entered_tag' }.size
     assert_equal 1, logger.log.select { |e| e['action'] == 'cancel' }.size
     assert_equal 1, logger.log.select { |e| e['action'] == 'left_tag' }.size
+
+    assert_equal 1, r['variables']['__past_tags__'].size
+
+    kilroy = r['variables']['__past_tags__'].first
+
+    assert_equal 'kilroy', kilroy[0]
+    assert_equal 'cancelled', kilroy[2]
   end
 
   def test_undo

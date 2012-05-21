@@ -936,10 +936,15 @@ module Ruote::Exp
 
       r.variables.delete(h.full_tagname)
 
-      state = case h.trigger
+      state = case h.trigger || h.state
+
         when 'on_cancel' then 'cancelled'
         when 'on_error' then 'failed'
         when 'on_timeout' then 'timed out'
+        when 'on_re_apply' then nil
+
+        when 'cancelling' then 'cancelled'
+
         else nil
       end
 
