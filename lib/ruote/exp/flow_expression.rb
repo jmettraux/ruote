@@ -944,6 +944,7 @@ module Ruote::Exp
         when 'on_re_apply' then nil
 
         when 'cancelling' then 'cancelled'
+        when 'dying' then 'killed'
 
         else nil
       end
