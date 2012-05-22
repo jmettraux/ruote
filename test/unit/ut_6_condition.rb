@@ -220,6 +220,8 @@ class ConditionTest < Test::Unit::TestCase
     assert_e 'Loan', 'Loan'
     assert_e 'Loan/Grant', 'Loan/Grant'
     assert_e 'Loan/Grant', 'Loan / Grant'
+
+    assert_e 'redo', '"redo"'
   end
 
   def test_something_or_not

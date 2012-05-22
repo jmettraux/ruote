@@ -42,8 +42,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       tracer << "caught\n"
     end
 
-    #noisy
-
     assert_trace('caught', pdef)
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'fail' }.size
@@ -64,8 +62,6 @@ class FtOnErrorTest < Test::Unit::TestCase
     @dashboard.register_participant 'mark\_.+' do |workitem|
       stash[:marks] << workitem.participant_name
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -89,8 +85,6 @@ class FtOnErrorTest < Test::Unit::TestCase
     @dashboard.register_participant 'mark\_.+' do |workitem|
       stash[:marks] << workitem.participant_name
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -129,8 +123,6 @@ class FtOnErrorTest < Test::Unit::TestCase
         troublemaker
       end
     end
-
-    #noisy
 
     @dashboard.register_participant :troublemaker, TroubleMaker
 
@@ -179,8 +171,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     wfid = assert_trace(%w[ a b d ], pdef)
 
     assert_nil @dashboard.process(wfid)
@@ -220,8 +210,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     wfid = assert_trace(%w[ a b d ], pdef)
 
     assert_nil @dashboard.process(wfid)
@@ -232,8 +220,6 @@ class FtOnErrorTest < Test::Unit::TestCase
     pdef = Ruote.process_definition :on_error => 'failpath' do
       nemo
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
     wait_for(wfid)
@@ -252,8 +238,6 @@ class FtOnErrorTest < Test::Unit::TestCase
         echo 'failed.'
       end
     end
-
-    #noisy
 
     assert_trace('failed.', pdef)
   end
@@ -277,8 +261,6 @@ class FtOnErrorTest < Test::Unit::TestCase
     @dashboard.register_participant(:alpha) { |wi| stash[:a_count] += 1 }
     @dashboard.register_participant(:emil) { |wi| stash[:e_count] += 1 }
 
-    #noisy
-
     assert_trace 'done.', pdef
     assert_equal 1, @dashboard.context.stash[:a_count]
     assert_equal 1, @dashboard.context.stash[:e_count]
@@ -301,8 +283,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       stash[:workitem] = wi
       tracer << 'err...'
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
     wait_for(wfid)
@@ -348,8 +328,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       catchall
     end
 
-    #@dashboard.noisy = true
-
     @dashboard.launch(pdef)
 
     @dashboard.wait_for(:catcher)
@@ -389,8 +367,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       rescuer RescuerTwo
     end
 
-    #@dashboard.noisy = true
-
     assert_trace('two', pdef)
 
     assert_equal 1, logger.log.select { |e| e['action'] == 'fail' }.size
@@ -412,8 +388,6 @@ class FtOnErrorTest < Test::Unit::TestCase
     @dashboard.register_participant /alpha|bravo/ do |workitem|
       tracer << workitem.participant_name
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
@@ -438,8 +412,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       tracer << workitem.participant_name
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
@@ -462,8 +434,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
@@ -480,8 +450,6 @@ class FtOnErrorTest < Test::Unit::TestCase
         echo 'over.'
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
@@ -500,8 +468,6 @@ class FtOnErrorTest < Test::Unit::TestCase
         delta
       end
     end
-
-    #@dashboard.noisy = true
 
     @dashboard.register '.+' do |workitem|
       tracer << workitem.participant_name + "\n"
@@ -524,8 +490,6 @@ class FtOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
@@ -547,8 +511,6 @@ class FtOnErrorTest < Test::Unit::TestCase
         nemo1
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
