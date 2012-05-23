@@ -162,6 +162,7 @@ module Ruote
       end
 
       atts = atts.remap { |(k, v), h| h[k.to_s.gsub(/\_/, '-')] = v }
+      atts = atts.to_a.sort_by { |k, v| k }
 
       s.print ' ' * level
 
@@ -170,7 +171,7 @@ module Ruote
 
       if atts.any?
         s.print ' '
-        s.print atts.map { |k, v|
+        s.print atts.collect { |k, v|
           "#{k}=#{v.is_a?(String) ? v.inspect : v.inspect.inspect}"
         }.join(' ')
       end
@@ -306,10 +307,21 @@ module Ruote
       i = o.inspect
 
       return i if %w[ true false nil ].include?(s)
-      return i if s.match(/\s/)
+      return i if s.match(/[\s:]/)
       return s if i == "\"#{o.to_s}\""
 
       i
+    end
+
+    # split the txt => nil entry and sorts the rest of the attributes.
+    #
+    def self.split_atts(atts)
+
+      atts = atts.to_a.sort_by { |k, v| k }
+      txt = atts.find { |k, v| v == nil }
+      atts.delete(txt) if txt
+
+      [ txt ? txt.first : nil, atts ]
     end
 
     # As used by to_radial
@@ -317,13 +329,12 @@ module Ruote
     def self.atts_to_radial(atts, &block)
 
       s = []
+      txt, atts = split_atts(atts)
 
-      t = atts.find { |k, v| v == nil }
-      s << to_ra_string(t.first) if t
+      s << to_ra_string(txt) if txt
+      s += atts.collect { |k, v| "#{to_ra_string(k)}: #{to_ra_string(v)}" }
 
-      s = atts.each_with_object(s) { |(k, v), a|
-        a << "#{to_ra_string(k)}: #{to_ra_string(v)}" if t.nil? || k != t.first
-      }.join(', ')
+      s = s.join(', ')
 
       s.length > 0 ? " #{s}" : s
     end
@@ -333,13 +344,12 @@ module Ruote
     def self.atts_to_ruby(atts, &block)
 
       s = []
+      txt, atts = split_atts(atts)
 
-      t = atts.find { |k, v| v == nil }
-      s << t.first.inspect if t
+      s << txt.inspect if txt
+      s += atts.collect { |k, v| ":#{k} => #{v.inspect}" }
 
-      s = atts.each_with_object(s) { |(k, v), a|
-        a << ":#{k} => #{v.inspect}" if t.nil? || k != t.first
-      }.join(', ')
+      s = s.join(', ')
 
       s.length > 0 ? " #{s}" : s
     end

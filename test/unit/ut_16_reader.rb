@@ -28,6 +28,7 @@ class PdefReaderTest < Test::Unit::TestCase
       participant 'bravo', :timeout => '2d', :on_board => true
       participant 'charly', :on_board => false, :whatever => nil
       doug :a => 'false', :b => 'true', :c => 'nil', :d => 4.5
+      dec 'v:x'
     end
   })
 
@@ -66,9 +67,10 @@ class PdefReaderTest < Test::Unit::TestCase
 <?xml version="1.0" encoding="UTF-8"?>
 <define name="nada">
   <alpha/>
-  <participant timeout="2d" on-board="true" ref="bravo"/>
-  <participant on-board="false" whatever="nil" ref="charly"/>
+  <participant on-board="true" ref="bravo" timeout="2d"/>
+  <participant on-board="false" ref="charly" whatever="nil"/>
   <doug a="false" b="true" c="nil" d="4.5"/>
+  <dec ref="v:x"/>
 </define>
       }.strip,
       Ruote::Reader.to_xml(TREE1, :indent => 2).strip)
@@ -100,9 +102,10 @@ class PdefReaderTest < Test::Unit::TestCase
       %{
 Ruote.process_definition :name => "nada" do
   alpha
-  participant "bravo", :timeout => "2d", :on_board => true
+  participant "bravo", :on_board => true, :timeout => "2d"
   participant "charly", :on_board => false, :whatever => nil
   doug :a => "false", :b => "true", :c => "nil", :d => 4.5
+  dec "v:x"
 end
       }.strip,
       Ruote::Reader.to_ruby(TREE1).strip)
@@ -121,9 +124,10 @@ end
       %{
 define name: nada
   alpha
-  participant bravo, timeout: 2d, on_board: true
+  participant bravo, on_board: true, timeout: 2d
   participant charly, on_board: false, whatever: nil
   doug a: "false", b: "true", c: "nil", d: 4.5
+  dec "v:x"
       }.strip,
       Ruote::Reader.to_radial(TREE1).strip)
   end
@@ -152,9 +156,10 @@ define name: nada
     assert_equal(
       %{  0  define name: nada
 0_0    alpha
-0_1    participant bravo, timeout: 2d, on_board: true
+0_1    participant bravo, on_board: true, timeout: 2d
 0_2    participant charly, on_board: false, whatever: nil
-0_3    doug a: "false", b: "true", c: "nil", d: 4.5},
+0_3    doug a: "false", b: "true", c: "nil", d: 4.5
+0_4    dec "v:x"},
       Ruote::Reader.to_expid_radial(TREE1))
   end
 
