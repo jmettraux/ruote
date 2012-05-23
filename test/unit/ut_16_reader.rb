@@ -130,9 +130,21 @@ define name: nada
 
   def test_to_radial_back_and_forth
 
-    rad = Ruote::Reader.to_radial(TREE1).strip
+    rad = Ruote::Reader.to_radial(TREE1)
 
     assert_equal TREE1, Ruote::Reader.read(rad)
+  end
+
+  def test_to_radial_2
+
+    tree = Ruote.define do
+      participant 'bob', 'message' => "hello my\ndear world"
+      participant 'charly', 'message' => 'oh my'
+    end
+
+    rad = Ruote::Reader.to_radial(tree)
+
+    assert_equal tree, Ruote::Reader.read(rad)
   end
 
   def test_to_expid_radial

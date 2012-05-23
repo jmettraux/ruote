@@ -297,13 +297,17 @@ module Ruote
 
     def self.to_ra_string(o)
 
-      return o.to_s if [ true, false ].include?(o)
       return 'nil' if o == nil
+
+      s = o.to_s
+
+      return s if [ true, false ].include?(o)
 
       i = o.inspect
 
-      return i if %w[ true false nil ].include?(o.to_s)
-      return o.to_s if i == "\"#{o.to_s}\""
+      return i if %w[ true false nil ].include?(s)
+      return i if s.match(/\s/)
+      return s if i == "\"#{o.to_s}\""
 
       i
     end
