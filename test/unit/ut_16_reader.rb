@@ -24,10 +24,10 @@ class PdefReaderTest < Test::Unit::TestCase
 
   TREE1 = Ruote::Reader.read(%{
     Ruote.define :name => 'nada' do
-      sequence do
-        alpha
-        participant 'bravo', :timeout => '2d', :on_board => true
-      end
+      alpha
+      participant 'bravo', :timeout => '2d', :on_board => true
+      participant 'charly', :on_board => false, :whatever => nil
+      doug :a => 'false', :b => 'true', :c => 'nil', :d => 4.5
     end
   })
 
@@ -65,10 +65,10 @@ class PdefReaderTest < Test::Unit::TestCase
       %{
 <?xml version="1.0" encoding="UTF-8"?>
 <define name="nada">
-  <sequence>
-    <alpha/>
-    <participant timeout="2d" on-board="true" ref="bravo"/>
-  </sequence>
+  <alpha/>
+  <participant timeout="2d" on-board="true" ref="bravo"/>
+  <participant on-board="false" whatever="nil" ref="charly"/>
+  <doug a="false" b="true" c="nil" d="4.5"/>
 </define>
       }.strip,
       Ruote::Reader.to_xml(TREE1, :indent => 2).strip)
@@ -99,10 +99,10 @@ class PdefReaderTest < Test::Unit::TestCase
     assert_equal(
       %{
 Ruote.process_definition :name => "nada" do
-  sequence do
-    alpha
-    participant "bravo", :timeout => "2d", :on_board => true
-  end
+  alpha
+  participant "bravo", :timeout => "2d", :on_board => true
+  participant "charly", :on_board => false, :whatever => nil
+  doug :a => "false", :b => "true", :c => "nil", :d => 4.5
 end
       }.strip,
       Ruote::Reader.to_ruby(TREE1).strip)
@@ -119,21 +119,30 @@ end
 
     assert_equal(
       %{
-define name: "nada"
-  sequence
-    alpha
-    participant "bravo", timeout: "2d", on_board: true
+define name: nada
+  alpha
+  participant bravo, timeout: 2d, on_board: true
+  participant charly, on_board: false, whatever: nil
+  doug a: "false", b: "true", c: "nil", d: 4.5
       }.strip,
       Ruote::Reader.to_radial(TREE1).strip)
+  end
+
+  def test_to_radial_back_and_forth
+
+    rad = Ruote::Reader.to_radial(TREE1).strip
+
+    assert_equal TREE1, Ruote::Reader.read(rad)
   end
 
   def test_to_expid_radial
 
     assert_equal(
-      %{    0  define name: "nada"
-  0_0    sequence
-0_0_0      alpha
-0_0_1      participant "bravo", timeout: "2d", on_board: true},
+      %{  0  define name: nada
+0_0    alpha
+0_1    participant bravo, timeout: 2d, on_board: true
+0_2    participant charly, on_board: false, whatever: nil
+0_3    doug a: "false", b: "true", c: "nil", d: 4.5},
       Ruote::Reader.to_expid_radial(TREE1))
   end
 

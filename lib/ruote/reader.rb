@@ -202,12 +202,7 @@ module Ruote
       expname = tree[0]
       expname = 'Ruote.process_definition' if level == 0 && expname == 'define'
 
-      s =
-        '  ' * level +
-        expname +
-        atts_to_x(tree[1]) { |k, v|
-          ":#{k} => #{v.inspect}"
-        }
+      s = '  ' * level + expname + atts_to_ruby(tree[1])
 
       return "#{s}\n" if tree[2].empty?
 
@@ -222,13 +217,7 @@ module Ruote
     #
     def self.to_radial(tree, level=0)
 
-      s =
-        '  ' * level +
-        tree[0] +
-        atts_to_x(tree[1]) { |k, v|
-          "#{k}: #{v.inspect}"
-        } +
-        "\n"
+      s = '  ' * level + tree[0] + atts_to_radial(tree[1]) + "\n"
 
       return s if tree[2].empty?
 
@@ -272,12 +261,7 @@ module Ruote
       i = -1
 
       [
-        [
-          expid.split('_').size - 1, # level
-          expid,
-          tree[0],
-          atts_to_x(tree[1]) { |k, v| "#{k}: #{v.inspect}" }
-        ]
+        [ expid.split('_').size - 1, expid, tree[0], atts_to_radial(tree[1]) ]
       ] +
       tree[2].collect { |t|
         i = i + 1; to_raw_expid_radial(t, "#{expid}_#{i}")
@@ -311,9 +295,38 @@ module Ruote
       ((URI.parse(s); true) rescue false)
     end
 
-    # As used by to_ruby and to_radial
+    def self.to_ra_string(o)
+
+      return o.to_s if [ true, false ].include?(o)
+      return 'nil' if o == nil
+
+      i = o.inspect
+
+      return i if %w[ true false nil ].include?(o.to_s)
+      return o.to_s if i == "\"#{o.to_s}\""
+
+      i
+    end
+
+    # As used by to_radial
     #
-    def self.atts_to_x(atts, &block)
+    def self.atts_to_radial(atts, &block)
+
+      s = []
+
+      t = atts.find { |k, v| v == nil }
+      s << to_ra_string(t.first) if t
+
+      s = atts.each_with_object(s) { |(k, v), a|
+        a << "#{to_ra_string(k)}: #{to_ra_string(v)}" if t.nil? || k != t.first
+      }.join(', ')
+
+      s.length > 0 ? " #{s}" : s
+    end
+
+    # As used by to_ruby
+    #
+    def self.atts_to_ruby(atts, &block)
 
       s = []
 
@@ -321,7 +334,7 @@ module Ruote
       s << t.first.inspect if t
 
       s = atts.each_with_object(s) { |(k, v), a|
-        a << block.call(k, v) if t.nil? || k != t.first
+        a << ":#{k} => #{v.inspect}" if t.nil? || k != t.first
       }.join(', ')
 
       s.length > 0 ? " #{s}" : s

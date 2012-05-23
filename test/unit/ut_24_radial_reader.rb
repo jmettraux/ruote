@@ -58,6 +58,9 @@ class RadialReaderTest < Test::Unit::TestCase
     'concurrent-iterator')
   assert_read(
     [ 'define', { 'alpha' => nil }, [] ],
+    'define alpha')
+  assert_read(
+    [ 'define', { 'alpha' => nil }, [] ],
     'define "alpha"')
   assert_read(
     [ 'define', { 'bravo' => nil }, [] ],
