@@ -4,6 +4,8 @@
 
 == ruote - 2.3.0    not yet released
 
+- push/pop specialized aliases for inc/dec
+- inc/dec: 'v:x' => 2 shortcut
 - inc/dec: drop default 'v:d' and accept nested {in|de}crement
 - 'participant_in_variable_enabled' switch
 - make re_apply use the applied workitem by default

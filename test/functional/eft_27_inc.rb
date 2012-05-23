@@ -56,15 +56,20 @@ class EftIncTest < Test::Unit::TestCase
         inc 'v:x', :val => 2
         inc 'f:y', :val => 3
         inc 'v:z', :val => 1.0
+
         inc :var => 'x', :val => '4'
         inc :field => 'y', :val => 5
         inc 'v:z', :val => '2.0'
+
+        inc 'v:x' => 2
+        inc 'y' => 2
+        inc 'v:z' => 0.5
 
         echo '${v:x}|${f:y}|${v:z}'
       end
     end
 
-    assert_trace '6|8|3.0', pdef
+    assert_trace '8|10|3.5', pdef
   end
 
   def test_inc_v_val
@@ -263,6 +268,57 @@ class EftIncTest < Test::Unit::TestCase
 
     assert_equal 'terminated', r['action']
     assert_equal '3', @tracer.to_s
+  end
+
+  def test_push
+
+    pdef = Ruote.define do
+      push 'v:x' => 1
+      push 'v:x' => 2
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal [ 1, 2 ], r['variables']['x']
+  end
+
+  def test_pop
+
+    pdef = Ruote.define do
+      pop 'v:x'
+      push 'v:x' => false
+      push 'v:x' => 1
+      push 'v:x' => 2
+      pop 'v:x'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal [ false, 1 ], r['variables']['x']
+    assert_equal 2, r['workitem']['fields']['__result__']
+  end
+
+  def test_pop_2
+
+    pdef = Ruote.define do
+
+      set 'v:x' => 12
+      push 'v:x' => 4
+      pop 'v:x'
+
+      pop 'v:y'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal [ 12 ], r['variables']['x']
+    assert_equal [], r['variables']['y']
   end
 end
 

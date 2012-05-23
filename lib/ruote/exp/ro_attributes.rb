@@ -133,6 +133,16 @@ module Ruote::Exp
       dsub(text.to_s, workitem)
     end
 
+    # Equivalent to #attribute_text, but will return nil if there
+    # is no attribute whose values is nil.
+    #
+    def att_text(workitem=h.applied_workitem)
+
+      text = attributes.keys.find { |k| attributes[k] == nil }
+
+      text ? dsub(text.to_s, workitem) : nil
+    end
+
     protected
 
     # dollar substitution for expressions.

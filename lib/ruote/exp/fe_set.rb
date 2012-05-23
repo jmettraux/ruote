@@ -263,8 +263,9 @@ module Ruote::Exp
 
     def find_kv(atts)
 
-      atts.find { |k, v| ! %w[ escape over override ].include?(k) } ||
-      atts.first # finally...
+      forbidden = COMMON_ATT_KEYS + %w[ escape over override ]
+
+      atts.find { |k, v| ! forbidden.include?(k) }
     end
   end
 end

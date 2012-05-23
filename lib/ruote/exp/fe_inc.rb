@@ -128,9 +128,29 @@ module Ruote::Exp
   #
   # will increase the value of the variable x by 3.
   #
+  #
+  # == push and pop
+  #
+  # push and pop are aliases for inc and dec respectively. There is a major
+  # difference though: they'll force the target value into an array.
+  #
+  #   sequence do
+  #     set 'v:x' => 2
+  #     push 'v:x' => 3
+  #   end
+  #
+  # will result in a variable x holding [ 2, 3 ] as value.
+  #
+  # Likewise,
+  #
+  #   pop 'v:x'
+  #
+  # will force a value of [] into the variable x if it wasn't previously set
+  # or its value was not an array with more than one element.
+  #
   class IncExpression < SequenceExpression
 
-    names :inc, :dec, :increment, :decrement
+    names :inc, :dec, :increment, :decrement, :push, :pop
 
     def apply
 
@@ -147,23 +167,27 @@ module Ruote::Exp
 
         var = attribute(var_key)
 
-        [ "v:#{var}", new_value(:var, var) ]
+        [ "v:#{var}", new_value(:var, var, nil) ]
 
       elsif field_key = has_attribute(:f, :fld, :field)
 
         field = attribute(field_key)
 
-        [ field, new_value(:field, field) ]
+        [ field, new_value(:field, field, nil) ]
+
+      elsif kv = find_kv
+
+        k, v = kv
+
+        [ k, new_value(nil, k, v) ]
+
+      elsif k = att_text
+
+        [ k, new_value(nil, k, nil) ]
 
       else
 
-        k = attribute_text
-
-        raise(
-          ArgumentError.new('no variable or field to increment/decrement')
-        ) if k.length < 1
-
-        [ k, new_value(nil, k) ]
+        raise(ArgumentError.new('no variable or field to increment/decrement'))
       end
 
       h.variables = nil
@@ -182,19 +206,27 @@ module Ruote::Exp
 
     protected
 
-    def dec?
+    def find_kv
 
-      @dec ||= !!name.match(/^dec/)
+      compile_atts.reject { |k, v|
+        COMMON_ATT_KEYS.include?(k) ||
+        k.match(/^to_/)
+      }.first
     end
 
-    def new_value(type, key)
+    def dec?
+
+      @dec ||= !!(name.match(/^dec/) or name == 'pop')
+    end
+
+    def new_value(type, key, increment)
 
       if type == nil && m = PREFIX_REGEX.match(key)
         type = (m[1][0, 1] == 'f' ? :field : :var)
         key = m[2]
       end
 
-      delta = lookup_val
+      delta = increment.nil? ? lookup_val : increment
 
       if delta.nil? && @msg && @msg['action'] == 'reply'
         delta = h.applied_workitem['fields']['__result__']
@@ -206,6 +238,12 @@ module Ruote::Exp
       value = type == :var ?
         lookup_variable(key) :
         Ruote.lookup(h.applied_workitem['fields'], key)
+
+      value = case value
+        when NilClass then []
+        when Array then value
+        else [ value ]
+      end if (name == 'push' || name == 'pop')
 
       pos = attribute(:position) || attribute(:pos)
 
