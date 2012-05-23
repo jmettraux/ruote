@@ -169,7 +169,7 @@ class EftIncTest < Test::Unit::TestCase
     pdef = Ruote.define do
 
       set 'v:x' => %w[ a b c ]
-      set 'v:y' => %w[ a b c ]
+      set 'v:y' => %w[ d e f ]
 
       dec 'v:x'
       dec 'v:y', :position => :head
@@ -179,7 +179,7 @@ class EftIncTest < Test::Unit::TestCase
       echo '${__result__}'
     end
 
-    assert_trace %w[ a.b b.c a ], pdef
+    assert_trace %w[ a.b e.f d ], pdef
   end
 
   def test_dec_val

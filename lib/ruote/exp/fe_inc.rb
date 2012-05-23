@@ -175,15 +175,15 @@ module Ruote::Exp
 
         [ field, new_value(:field, field, nil) ]
 
+      elsif k = att_text
+
+        [ k, new_value(nil, k, nil) ]
+
       elsif kv = find_kv
 
         k, v = kv
 
         [ k, new_value(nil, k, v) ]
-
-      elsif k = att_text
-
-        [ k, new_value(nil, k, nil) ]
 
       else
 
