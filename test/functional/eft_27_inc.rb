@@ -28,8 +28,6 @@ class EftIncTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace '2|2', pdef
   end
 
@@ -46,8 +44,6 @@ class EftIncTest < Test::Unit::TestCase
         echo '${v:x}|${f:y}'
       end
     end
-
-    #noisy
 
     assert_trace '2|2', pdef
   end
@@ -68,8 +64,6 @@ class EftIncTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace '6|8|3.0', pdef
   end
 
@@ -85,8 +79,6 @@ class EftIncTest < Test::Unit::TestCase
         echo '${v:x}'
       end
     end
-
-    #noisy
 
     assert_trace '4', pdef
   end
@@ -105,8 +97,6 @@ class EftIncTest < Test::Unit::TestCase
         echo '${r:fe.lv("x").join("\n")}'
       end
     end
-
-    #noisy
 
     assert_trace %w[ alpha bravo charly ], pdef
   end
@@ -127,8 +117,6 @@ class EftIncTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace %w[ charly alpha bravo ], pdef
   end
 
@@ -146,8 +134,6 @@ class EftIncTest < Test::Unit::TestCase
         echo '${r:fe.lv("y").join(".")}'
       end
     end
-
-    #noisy
 
     assert_trace %w[ charly charly ], pdef
   end
@@ -168,8 +154,6 @@ class EftIncTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace '3|3|-1', pdef
   end
 
@@ -177,64 +161,52 @@ class EftIncTest < Test::Unit::TestCase
 
     @dashboard.context['ruby_eval_allowed'] = true
 
-    pdef = Ruote.process_definition do
-      sequence do
+    pdef = Ruote.define do
 
-        set 'v:x' => %w[ a b c ]
-        set 'v:y' => %w[ a b c ]
+      set 'v:x' => %w[ a b c ]
+      set 'v:y' => %w[ a b c ]
 
-        dec 'v:x'
-        dec 'v:y', :position => :head
+      dec 'v:x'
+      dec 'v:y', :position => :head
 
-        echo '${r:fe.lv("x").join(".")}'
-        echo '${r:fe.lv("y").join(".")}'
-        echo '${v:d}'
-      end
+      echo '${r:fe.lv("x").join(".")}'
+      echo '${r:fe.lv("y").join(".")}'
+      echo '${__result__}'
     end
-
-    #noisy
 
     assert_trace %w[ a.b b.c a ], pdef
-  end
-
-  def test_dec_to
-
-    @dashboard.context['ruby_eval_allowed'] = true
-
-    pdef = Ruote.process_definition do
-      sequence do
-
-        set 'v:x' => %w[ a b c ]
-
-        dec 'v:x', :to_var => 'y'
-
-        echo '${r:fe.lv("x").join(".")}'
-        echo '${v:y}'
-      end
-    end
-
-    #noisy
-
-    assert_trace %w[ a.b c ], pdef
   end
 
   def test_dec_val
 
     @dashboard.context['ruby_eval_allowed'] = true
 
-    pdef = Ruote.process_definition do
-      sequence do
+    pdef = Ruote.define do
 
-        set 'v:x' => %w[ a b c ]
+      set 'v:x' => %w[ a b c ]
 
-        dec 'v:x', :val => 'b'
+      dec 'v:x', :val => 'b'
 
-        echo '${r:fe.lv("x").join(".")}'
-        echo '${v:d}'
-      end
+      echo '${r:fe.lv("x").join(".")}'
+      echo '${__result__}'
     end
 
-    #noisy
+    assert_trace %w[ a.c b ], pdef
+  end
+
+  def test_dec_val_to_d
+
+    @dashboard.context['ruby_eval_allowed'] = true
+
+    pdef = Ruote.define do
+
+      set 'v:x' => %w[ a b c ]
+
+      dec 'v:x', :val => 'b', :to_v => 'd'
+
+      echo '${r:fe.lv("x").join(".")}'
+      echo '${v:d}'
+    end
 
     assert_trace %w[ a.c b ], pdef
   end
@@ -246,13 +218,11 @@ class EftIncTest < Test::Unit::TestCase
         set 'v:x' => %w[ a b c d ]
         repeat do
           dec 'v:x', :pos => :head
-          _break :unless => '${v:d}'
-          echo '${v:d}'
+          echo '${__result__}'
+          _break :unless => '${__result__}'
         end
       end
     end
-
-    #noisy
 
     assert_trace %w[ a b c d ], pdef
   end
@@ -266,8 +236,6 @@ class EftIncTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
@@ -275,6 +243,26 @@ class EftIncTest < Test::Unit::TestCase
     ps = @dashboard.process(wfid)
 
     assert_equal 1, ps.errors.size
+  end
+
+  def test_nested_inc
+
+    pdef = Ruote.define do
+
+      set :var => 'x', :value => 1
+
+      inc 'v:x' do
+        set '__result__' => 2
+      end
+
+      echo '${v:x}'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal '3', @tracer.to_s
   end
 end
 

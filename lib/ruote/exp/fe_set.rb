@@ -200,8 +200,7 @@ module Ruote::Exp
 
     def apply
 
-      h.variables ||= {}
-        # ensures a local scope
+      h.variables ||= {} # ensures a local scope
 
       reply(h.applied_workitem)
     end
