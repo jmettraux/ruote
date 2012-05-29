@@ -98,7 +98,8 @@ module Ruote
       @h['msg']['workitem'] && @h['msg']['workitem']['fields']
     end
 
-    # Returns an instance of Ruote::Workitem
+    # Returns an instance of Ruote::Workitem (the workitem as it was
+    # at the error point)
     #
     def workitem
       Ruote::Workitem.new(msg['workitem'])

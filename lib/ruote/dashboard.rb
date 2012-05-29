@@ -273,7 +273,7 @@ module Ruote
       do_misc('resume', wi_or_fei_or_wfid, opts)
     end
 
-    # Replays at a given error (hopefully you fixed the cause of the error
+    # Replays at a given error (hopefully the cause of the error got fixed
     # before replaying...)
     #
     def replay_at_error(err)
@@ -286,7 +286,11 @@ module Ruote
         #
         # as soon as there is a tree, it means it's a re_apply
 
-        re_apply(msg['fei'], 'tree' => tree, 'replay_at_error' => true)
+        re_apply(
+          msg['fei'],
+          'tree' => tree,
+          'replay_at_error' => true,
+          'workitem' => msg['workitem'])
 
       else
 

@@ -131,7 +131,7 @@ module Ruote::Exp
       h.participant_name = (attribute(:ref) || attribute_text).to_s
 
       raise ArgumentError.new(
-        "no participant name specified"
+        'no participant name specified'
       ) if h.participant_name == ''
 
       h.participant ||=
@@ -140,6 +140,16 @@ module Ruote::Exp
       raise(ArgumentError.new(
         "no participant named #{h.participant_name.inspect}")
       ) if h.participant.nil?
+
+      #
+      # trigger on_apply if the participant sports it
+
+      pa = @context.plist.instantiate(
+        h.participant, :if_respond_to? => :on_apply)
+
+      Ruote.participant_send(
+        pa, :on_apply, 'workitem' => Ruote::Workitem.new(h.applied_workitem)
+      ) if pa
 
       #
       # dispatch to participant
