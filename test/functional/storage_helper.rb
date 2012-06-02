@@ -8,9 +8,8 @@
 require 'ruote/storage/hash_storage'
 
 
-def locate_storage_impl(arg)
+def locate_storage_impl(pers)
 
-  pers = arg[2..-1]
   glob = File.expand_path("../../../../ruote-#{pers}*", __FILE__)
 
   path = Dir[glob].first
@@ -43,9 +42,15 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
   ps = ARGV.select { |a| a.match(/^--[a-z]/) }
   ps.delete('--split')
 
+  if sto = ENV['RUOTE_STORAGE']
+    ps = [ sto ]
+  end
+
+  ps = ps.collect { |s| m = s.match(/^--(.+)$/); m ? m[1] : s }
+
   persistent = opts.delete(:persistent)
 
-  if ps.include?('--fs')
+  if ps.include?('fs')
 
     require 'ruote/storage/fs_storage'
 
