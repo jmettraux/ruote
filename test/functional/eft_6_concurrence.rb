@@ -473,6 +473,37 @@ class EftConcurrenceTest < Test::Unit::TestCase
     assert_equal %w[ azuma bashamichi ], r['workitem']['fields']['seen'].sort
   end
 
+  def test_wait_for_one_tag
+
+    @dashboard.register do
+      administrator do |workitem|
+        tracer << "administrator\n"
+        sleep 0.7
+      end
+      evaluator Ruote::NullParticipant
+      #evaluator Ruote::NoOpParticipant
+    end
+
+    pdef = Ruote.process_definition do
+     concurrence :wait_for => 'first' do
+       sequence :tag => 'first' do
+         administrator
+       end
+       sequence :tag => 'second' do
+         evaluator
+       end
+     end
+     echo 'done.'
+    end
+
+    wfid = @dashboard.launch(pdef)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal "administrator\ndone.", @tracer.to_s
+  end
+
   def test_wait_for_unknown_tag
 
     pdef = Ruote.define do
