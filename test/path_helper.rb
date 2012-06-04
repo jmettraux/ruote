@@ -10,6 +10,6 @@
 puts `ruby -v`
 puts Time.now.to_s
 
-ruotelib = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
+ruotelib = File.expand_path('../../lib', __FILE__)
 $:.unshift(ruotelib) unless $:.include?(ruotelib)
 
