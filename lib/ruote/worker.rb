@@ -272,20 +272,24 @@ module Ruote
       $stderr.puts
       $stderr.puts '# ' * 40
       $stderr.puts
-      $stderr.puts 'error.to_s:'
-      $stderr.puts e.to_s
-      $stderr.puts
       $stderr.puts 'error class/message/backtrace:'
       $stderr.puts e.class.name
-      $stderr.p    e.message
+      $stderr.puts e.message.inspect
       $stderr.puts *e.backtrace
-      if msg
-        $stderr.puts
-        $stderr.puts 'msg:'
-        $stderr.p    msg.select { |k, v| %w[ action wfid fei ].include?(k) }
+      $stderr.puts e.details if e.respond_to?(:details)
+      $stderr.puts
+      $stderr.puts 'msg:'
+      if msg && msg.is_a?(Hash)
+        $stderr.puts msg.select { |k, v|
+          %w[ action wfid fei ].include?(k)
+        }.inspect
+      else
+        $stderr.puts msg.inspect
       end
       $stderr.puts
       $stderr.puts '#' * 80
+
+      $stderr.flush
     end
 
     # In order not to hammer the storage for msgs too much, take a rest.
