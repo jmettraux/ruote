@@ -67,8 +67,7 @@ module Ruote
         end
 
         doc = if opts[:update_rev]
-          doc['_rev'] = pre ? pre['_rev'] : -1
-          doc
+          doc.merge!('_rev' => pre ? pre['_rev'] : -1)
         else
           doc.merge('_rev' => doc['_rev'] || -1)
         end
