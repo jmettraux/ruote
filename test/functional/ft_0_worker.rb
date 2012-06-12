@@ -13,8 +13,6 @@ class FtWorkerTest < Test::Unit::TestCase
 
   def test_launch_terminate
 
-    #noisy
-
     pdef = Ruote.process_definition do
     end
 
@@ -75,8 +73,6 @@ class FtWorkerTest < Test::Unit::TestCase
       10.times { echo 'a' }
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.worker_state = 'paused'
@@ -107,8 +103,6 @@ class FtWorkerTest < Test::Unit::TestCase
       10.times { echo 'a' }
     end
 
-    #@dashboard.noisy = true
-
     assert_equal true, @dashboard.context.worker.running
 
     wfid = @dashboard.launch(pdef)
@@ -130,6 +124,43 @@ class FtWorkerTest < Test::Unit::TestCase
   def test_worker_thread_worker_name
 
     assert_equal 'worker', @dashboard.worker.run_thread['worker_name']
+  end
+
+  def test_handle_step_error_and_error_handler
+
+    $err = nil
+    $msg = nil
+
+    class << @dashboard.worker
+
+      def handle_step_error(err, msg)
+        $err = err
+        $msg = msg
+      end
+    end
+
+    class << @dashboard.storage
+
+      alias original_put_msg put_msg
+
+      def put_msg(action, details)
+        raise 'out of order' if action == 'error_intercepted'
+        original_put_msg(action, details)
+      end
+    end
+
+    wfid = @dashboard.launch(Ruote.define do
+      error 'pure fail'
+    end)
+
+    77.times { break if $msg; sleep 0.100 }
+
+    assert_equal 'error_intercepted', $msg['action']
+    assert_equal 'Ruote::ForcedError', $msg['error']['class']
+    assert_equal 'pure fail', $msg['error']['message']
+
+    assert_equal RuntimeError, $err.class
+    assert_equal 'out of order', $err.message
   end
 end
 

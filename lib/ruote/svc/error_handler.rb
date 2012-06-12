@@ -140,24 +140,17 @@ module Ruote
 
     rescue => e
 
-      # utter failure, can't store the error...
+      raise e unless @context.worker
 
-      puts 'err_______' * 8
-      puts
-      puts 'failed to store error'
-      puts
-      puts exception
-      puts *backtrace
-      puts
-      puts 'because of'
-      puts
-      p e
-      puts *e.backtrace
-      puts
-      puts '_______err' * 8
-
-      #exit 1
-        # maybe that'd be best
+      @context.worker.send(
+        :handle_step_error,
+        e,
+        { 'action' => 'error_intercepted',
+          'error' => {
+            'class' => exception.class.name,
+            'message' => exception.message,
+            'trace' => exception.backtrace },
+          'msg' => msg })
     end
   end
 end
