@@ -158,6 +158,8 @@ class FtWorkerTest < Test::Unit::TestCase
     assert_equal 'error_intercepted', $msg['action']
     assert_equal 'Ruote::ForcedError', $msg['error']['class']
     assert_equal 'pure fail', $msg['error']['message']
+    assert_equal wfid, $msg['wfid']
+    assert_equal '0_0', $msg['fei']['expid']
 
     assert_equal RuntimeError, $err.class
     assert_equal 'out of order', $err.message

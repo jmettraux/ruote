@@ -89,8 +89,8 @@ module Ruote
 
       meta = exception.is_a?(Ruote::MetaError)
 
-      wfid = msg['wfid'] || (msg['fei']['wfid'] rescue nil)
       fei = msg['fei'] || (fexp.h.fei rescue nil)
+      wfid = msg['wfid'] || (fei || {})['wfid']
 
       backtrace = exception.backtrace || []
 
@@ -150,6 +150,8 @@ module Ruote
             'class' => exception.class.name,
             'message' => exception.message,
             'trace' => exception.backtrace },
+          'fei' => fei,
+          'wfid' => wfid,
           'msg' => msg })
     end
   end
