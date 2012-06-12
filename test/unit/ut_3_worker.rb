@@ -53,7 +53,7 @@ class UtWorkerTest < Test::Unit::TestCase
     end
   end
 
-  def test_step_error_interception
+  def test_handle_step_error
 
     $err = nil
 

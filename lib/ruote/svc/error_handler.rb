@@ -94,27 +94,6 @@ module Ruote
 
       backtrace = exception.backtrace || []
 
-      # debug only
-
-      if $DEBUG || ARGV.include?('-d')
-
-        puts "\n== worker intercepted error =="
-        puts
-        p exception
-        puts backtrace[0, 20].join("\n")
-        puts '...'
-        puts
-        puts '-- msg --'
-        key_length = msg.keys.collect { |k| k.length }.max + 1
-        msg.keys.sort.each { |k|
-          v = msg[k]
-          v = (Ruote.sid(v) rescue nil) if k == 'fei' || k == 'parent_id'
-          printf("%*s : %s\n", key_length, k, v.inspect)
-        }
-        puts '-- . --'
-        puts
-      end
-
       # on_error ?
 
       return if ( ! meta) && fexp && fexp.handle_on_error(msg, exception)
