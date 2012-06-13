@@ -196,7 +196,7 @@ module Ruote
       pause resume dispatch_pause dispatch_resume
       regenerate
       pause_process resume_process cancel_process kill_process
-      reput noop
+      reput noop raise
     ]
 
     # Checks whether message msg matches any of interests being waited for.

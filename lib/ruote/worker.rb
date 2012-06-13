@@ -233,8 +233,9 @@ module Ruote
 
       take_a_rest(processed)
 
-    rescue => e
-      handle_step_error(e, msg) # msg may be nil
+    rescue => err
+
+      handle_step_error(err, msg) # msg may be nil
     end
 
     # This default implementation dumps error information to $stderr as
@@ -252,7 +253,7 @@ module Ruote
     # msg, then this message is passed to handle_step_error. msg will be
     # nil if the error occurred while doing get_msgs or get_schedules.
     #
-    def handle_step_error(e, msg)
+    def handle_step_error(err, msg)
 
       $stderr.puts '#' * 80
       $stderr.puts
@@ -273,10 +274,10 @@ module Ruote
       $stderr.puts '# ' * 40
       $stderr.puts
       $stderr.puts 'error class/message/backtrace:'
-      $stderr.puts e.class.name
-      $stderr.puts e.message.inspect
-      $stderr.puts *e.backtrace
-      $stderr.puts e.details if e.respond_to?(:details)
+      $stderr.puts err.class.name
+      $stderr.puts err.message.inspect
+      $stderr.puts *err.backtrace
+      $stderr.puts err.details if err.respond_to?(:details)
       $stderr.puts
       $stderr.puts 'msg:'
       if msg && msg.is_a?(Hash)
@@ -373,6 +374,10 @@ module Ruote
 
             reput(msg)
 
+          when 'raise'
+
+            handle_msg_error(msg['msg'], msg['error'])
+
           #else
             # no special processing required for message, let it pass
             # to the subscribers (the notify two lines after)
@@ -381,9 +386,9 @@ module Ruote
         @context.notify(msg)
           # notify subscribers of successfully processed msgs
 
-      rescue => exception
+      rescue => err
 
-        @context.error_handler.msg_handle(msg, exception)
+        handle_msg_error(msg, err)
       end
 
       @context.storage.done(self, msg) if @context.storage.respond_to?(:done)
@@ -392,6 +397,15 @@ module Ruote
         # for the stats
 
       true
+    end
+
+    # Passes the msg and the err it resulted in to the error_handler.
+    #
+    # Some storage/worker implementation may want to override this.
+    #
+    def handle_msg_error(msg, err)
+
+      @context.error_handler.msg_handle(msg, err)
     end
 
     # Works for both the 'launch' and the 'apply' msgs.

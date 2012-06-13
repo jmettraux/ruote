@@ -183,16 +183,14 @@ class Ruote::WaitLogger
       when 'te' then color('4;31', act)
       when 'ce' then color('31', act)
       when 'ca' then color('31', act)
-      when 'er' then color('31', act)
-      when 'rc' then color('4;33', act)
-      when 'di' then color('4;33', act)
-      when 'dd' then color('4;33', act)
       when 'dc' then color('4;31', act)
       when 'pz' then color('4;31', act)
       when 'rz' then color('4;32', act)
       when 'dp' then color('4;31', act)
       when 'dr' then color('4;32', act)
       when 'rp' then color('32', act)
+      when 'er', 'ra' then color('31', act)
+      when 'di', 'dd', 'rc' then color('4;33', act)
       else act
     end
     unless ACTIONS.include?(msg['action'])

@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- new 'raise' msg for passing back errors to worker
 - participant#on_apply
 - push/pop specialized aliases for inc/dec
 - inc/dec: 'v:x' => 2 shortcut
