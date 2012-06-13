@@ -205,7 +205,13 @@ class Ruote::WaitLogger
     tm = tm.strftime('%M:%S.') + ('%03d' % ((tm.to_f % 1.0) * 1000.0).to_i)
     tm = color(37, tm, false)
 
-    s = if msg['action'] == 'error_intercepted'
+    s = if %w[ error_intercepted raise ].include?(msg['action'])
+      #
+      # display backtraces
+
+      rst = insp(
+        rest.reject { |k, v| %w[ error msg ].include?(k) },
+        :trim => %[ updated_tree ])[1..-2]
 
       tail = []
       tail << "  #{wfid} #{rest['error']['class']}"
@@ -216,7 +222,7 @@ class Ruote::WaitLogger
 
       color(
         @color,
-        "#{@count} #{tm} #{ei} #{'  ' * depth}#{act} * #{i}",
+        "#{@count} #{tm} #{ei} #{'  ' * depth}#{act} * #{i} #{rst}",
         true
       ) +
       "\n" +
@@ -226,6 +232,8 @@ class Ruote::WaitLogger
         true)
 
     else
+      #
+      # regular "lines"
 
       pa = if %w[ receive dispatch dispatch_cancel ].include?(msg['action'])
         color('34', rest.delete('participant_name')) + ' '
@@ -244,6 +252,11 @@ class Ruote::WaitLogger
     s << radial_tree(msg) if fei.nil? && msg['action'] == 'launch'
 
     s
+
+  rescue => e
+    "* fancy_print fail\n" +
+    "** msg: #{msg.inspect}\n" +
+    "** err: #{e.to_s} / #{e.backtrace.first}"
   end
 end
 
