@@ -56,16 +56,34 @@ module Ruote
 
     # As used by the dispatch pool and the worker.
     #
-    def msg_handle(msg, err, resolve_fexp=true)
+    def msg_handle(msg, err)
 
-      fexp = resolve_fexp && Ruote::Exp::FlowExpression.fetch(
+      fexp = Ruote::Exp::FlowExpression.fetch(
         @context, msg['fei'] || msg['workitem']['fei']
       ) rescue nil
 
       handle(msg, fexp, err)
     end
 
+    # Packages the error in a 'raise' msg and places it in the storage,
+    # for a worker to pick it up.
+    #
+    def msg_raise(msg, err)
+
+      fei = msg['fei']
+      wfid = msg['wfid'] || msg.fetch('fei', {})['wfid']
+
+      @context.storage.put_msg(
+        'raise',
+        'fei' => fei,
+        'wfid' => wfid,
+        'msg' => msg,
+        'error' => deflate(err, fei))
+    end
+
     # As used by some receivers (see ruote-beanstalk's receiver).
+    #
+    # TODO: at some point, merge that with #msg_raise
     #
     def action_handle(action, fei, err)
 
@@ -94,8 +112,6 @@ module Ruote
       fei = msg['fei'] || (fexp.h.fei rescue nil)
       wfid = msg['wfid'] || (fei || {})['wfid']
 
-      backtrace = err.backtrace || []
-
       # on_error ?
 
       return if ( ! meta) && fexp && fexp.handle_on_error(msg, err)
@@ -104,18 +120,15 @@ module Ruote
       #
       # (this message might get intercepted by a tracker)
 
-      det = err.respond_to?(:ruote_details) ? err.ruote_details : nil
-      dev = err.respond_to?(:deviations) ? err.deviations : nil
-
       # fill error in the error journal
 
       @context.storage.put(
         'type' => 'errors',
         '_id' => "err_#{Ruote.to_storage_id(fei)}",
         'message' => err.inspect,
-        'trace' => backtrace.join("\n"),
-        'details' => det,
-        'deviations' => dev,
+        'trace' => (err.backtrace || []).join("\n"),
+        'details' => try(err, :ruote_details),
+        'deviations' => try(err, :deviations),
         'fei' => fei,
         'msg' => msg,
         'tree' => fexp ? fexp.tree : nil
@@ -125,15 +138,7 @@ module Ruote
 
       @context.storage.put_msg(
         'error_intercepted',
-        'error' => {
-          'fei' => fei,
-          'at' => Ruote.now_to_utc_s,
-          'class' => err.class.name,
-          'message' => err.message,
-          'trace' => backtrace,
-          'details' => det,
-          'deviations' => dev,
-          'tree' => fexp ? fexp.tree : nil },
+        'error' => deflate(err, fei, fexp),
         'wfid' => wfid,
         'fei' => fei,
         'msg' => msg)
@@ -146,13 +151,31 @@ module Ruote
         :handle_step_error,
         e,
         { 'action' => 'error_intercepted',
-          'error' => {
-            'class' => err.class.name,
-            'message' => err.message,
-            'trace' => err.backtrace },
+          'error' => deflate(err, fei),
           'fei' => fei,
           'wfid' => wfid,
           'msg' => msg })
+    end
+
+    # Returns a serializable hash with all the details of the error.
+    #
+    def deflate(err, fei, fexp=nil)
+
+      { 'fei' => fei,
+        'at' => Ruote.now_to_utc_s,
+        'class' => err.class.name,
+        'message' => err.message,
+        'trace' => err.backtrace || [],
+        'details' => try(err, :ruote_details),
+        'deviations' => try(err, :deviations),
+        'tree' => fexp ? fexp.tree : nil }
+    end
+
+    # TODO: maybe, later, move that to a utils file.
+    #
+    def try(target, method)
+
+      target.respond_to?(method) ? target.send(method) : nil
     end
 
     # The 'raise' action/msg passes deflated errors. This wrapper class

@@ -33,7 +33,7 @@ class FtRaiseMsgTest < Test::Unit::TestCase
     end
   end
 
-  def test_raise
+  def test_raise_via_put_msg
 
     # participant doesn't reply but places "raise" msg
 
@@ -41,7 +41,6 @@ class FtRaiseMsgTest < Test::Unit::TestCase
 
     pdef = Ruote.define do
       faulty
-      echo 'over.'
     end
 
     wfid = @dashboard.launch(pdef)
@@ -58,6 +57,51 @@ class FtRaiseMsgTest < Test::Unit::TestCase
       1, ps.errors.size)
     assert_equal(
       "raised: ArgumentError: that's very wrong", ps.errors.first.message)
+  end
+
+  class RaisyParticipant
+    include Ruote::LocalParticipant
+
+    def on_workitem
+
+      raise "I don't like pasta!"
+
+    rescue => err
+
+      @context.error_handler.msg_raise(
+        { 'fei' => workitem.h.fei,
+          'wfid' => workitem.h.fei['wfid'],
+          'workitem' => workitem.h },
+        err)
+
+      # do not reply
+    end
+  end
+
+  def test_raise_via_raise_msg
+
+    # participant doesn't reply but places "raise" msg
+
+    @dashboard.register :raisy, RaisyParticipant
+
+    pdef = Ruote.define do
+      raisy
+    end
+
+    wfid = @dashboard.launch(pdef)
+
+    r = @dashboard.wait_for('error_intercepted')
+
+    assert_equal 'RuntimeError', r['error']['class']
+    assert_equal "I don't like pasta!", r['error']['message']
+    assert_equal Array, r['error']['trace'].class
+
+    ps = @dashboard.ps(wfid)
+
+    assert_equal(
+      1, ps.errors.size)
+    assert_equal(
+      "raised: RuntimeError: I don't like pasta!", ps.errors.first.message)
   end
 end
 

@@ -40,8 +40,6 @@ class FtErrorsTest < Test::Unit::TestCase
       nada
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
     wait_for(wfid)
 
@@ -68,8 +66,6 @@ class FtErrorsTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       nada
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
     wait_for(wfid)
@@ -105,8 +101,6 @@ class FtErrorsTest < Test::Unit::TestCase
     @dashboard.register_participant :alpha do
       tracer << "alpha\n"
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
     wait_for(wfid)
@@ -145,8 +139,6 @@ class FtErrorsTest < Test::Unit::TestCase
       raise "something went wrong" if stash[:count] == 1
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
@@ -180,8 +172,6 @@ class FtErrorsTest < Test::Unit::TestCase
       tracer << "alpha\n"
       raise "something went wrong" if stash[:count] == 1
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -221,8 +211,6 @@ class FtErrorsTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant 'alpha', WeakCancelParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -265,8 +253,6 @@ class FtErrorsTest < Test::Unit::TestCase
       raise "something went wrong" if stash[:count] == 1
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
@@ -292,8 +278,6 @@ class FtErrorsTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       nada
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -356,8 +340,6 @@ class FtErrorsTest < Test::Unit::TestCase
 
   def test_replay_at_error_fei
 
-    #@dashboard.noisy = true
-
     @dashboard.register { catchall }
 
     wfid = @dashboard.launch(Ruote.define do
@@ -386,8 +368,6 @@ class FtErrorsTest < Test::Unit::TestCase
   end
 
   def test_error_details
-
-    #@dashboard.noisy = true
 
     @dashboard.register :alpha do |workitem|
       raise FtErrorsTest::MyError
