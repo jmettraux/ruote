@@ -52,6 +52,7 @@ Richard Jennings
 
 == Feedback
 
+chaofan - https://github.com/chaofoan
 Nagender Reddy Paduru - various design discussions
 Chris Conley - https://github.com/chrisconley
 Jim "MarsBomber" Li - :merge_type => 'deep'

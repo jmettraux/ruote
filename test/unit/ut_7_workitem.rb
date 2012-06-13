@@ -77,6 +77,14 @@ class UtWorkitemTest < Test::Unit::TestCase
     assert_equal '20101224-baba', w0.wfid
   end
 
+  def test_command
+
+    wi = Ruote::Workitem.new(
+      'fei' => 'x', 'fields' => { '__command__' => %w[ jump shark ] })
+
+    assert_equal %w[ jump shark ], wi.command
+  end
+
   WI = {
     'fei' => {
       'expid' => '0',

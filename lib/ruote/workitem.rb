@@ -351,7 +351,7 @@ module Ruote
     # __command__ is read by the 'cursor' and the 'iterator' expressions
     # when a workitem reaches it (apply and reply).
     #
-    def commmand
+    def command
 
       @h['fields']['__command__']
     end
