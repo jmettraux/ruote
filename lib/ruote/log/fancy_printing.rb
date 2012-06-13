@@ -117,7 +117,10 @@ class Ruote::WaitLogger
 
     @count = (@count + 1) % 10
 
-    ei = self.object_id.to_s[-2..-1]
+    ei = [
+      self.object_id.to_s[-2..-1],
+      Thread.current['worker_name'].to_s[0, 2]
+    ].join(':')
 
     fei = msg['fei']
     depth = fei ? fei['expid'].split('_').size : 0
