@@ -161,6 +161,8 @@ module Ruote
     #
     def deflate(err, fei, fexp=nil)
 
+      return err unless err.respond_to?(:backtrace)
+
       { 'fei' => fei,
         'at' => Ruote.now_to_utc_s,
         'class' => err.class.name,
