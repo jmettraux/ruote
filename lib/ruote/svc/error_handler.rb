@@ -199,6 +199,7 @@ module Ruote
       def to_s
         "raised: #{@h['class']}: #{@h['message']}"
       end
+      alias inspect to_s
     end
   end
 end
