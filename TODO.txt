@@ -346,6 +346,7 @@
 [ ] restore : implement merge strategies
 
 [ ] one file, no multi-process, persistence ? LateHashStorage ?
+[ ] one file per process ?
 
 [ ] apply : ruby or xml (instead of just ast) ?
 
@@ -460,6 +461,10 @@
 [ ] process supervise other process, listen...
     launch a process with a designed 'supervisor' ?
     listen to termination, listen to error, for a given process ?
+[ ] events for put_schedule/delete_schedule/trigger_schedule
+
+[ ] use 'raise' instead of error_handler.action_handle
+    (ruote-amqp, ruote-beanstalk)
 
 [ ] ruote cheatsheet
 [ ] ruote slides

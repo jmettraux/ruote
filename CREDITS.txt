@@ -52,6 +52,7 @@ Richard Jennings
 
 == Feedback
 
+Klaus Schmidtmamn - sub_wf_name inspiration
 chaofan - https://github.com/chaofoan
 Nagender Reddy Paduru - various design discussions
 Chris Conley - https://github.com/chrisconley
