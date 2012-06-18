@@ -314,5 +314,23 @@ class FtTimersTest < Test::Unit::TestCase
 
     assert_equal "#<ArgumentError: unknown time char 'x'>", err.message
   end
+
+  def test_process_status_and_timers
+
+    @dashboard.register :alpha, Ruote::StorageParticipant
+
+    pdef = Ruote.process_definition do
+      alpha :timers => '3h: x, 1d: timeout'
+    end
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for('dispatched')
+
+    ps = @dashboard.ps(wfid).inspect
+
+    assert_match /apply\n\s+\*\* no target \*\*/, ps
+    assert_match /cancel\n\s+0_0!/, ps
+  end
 end
 
