@@ -457,6 +457,9 @@ module Ruote::Exp
         f = h.state.nil? && attribute(:vars_to_f)
         Ruote.set(workitem['fields'], f, h.variables) if f
 
+        workitem['sub_wf_name'] = @h.applied_workitem['sub_wf_name']
+        workitem['sub_wf_revision'] = @h.applied_workitem['sub_wf_revision']
+
         leave_tag(workitem) if h.tagname
 
         (do_unpersist || return) if delete

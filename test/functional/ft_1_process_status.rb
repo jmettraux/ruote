@@ -19,8 +19,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
       participant :ref => 'alpha'
     end
 
-    #noisy
-
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
     wfid = @dashboard.launch(pdef, :workitem => { 'kilroy' => 'was here' })
@@ -186,8 +184,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -215,8 +211,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
     end
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
     wait_for(:alpha)
@@ -246,8 +240,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
     wait_for(:alpha)
 
@@ -262,8 +254,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
     pdef = Ruote.process_definition :name => 'my process' do
       participant :ref => 'alpha'
     end
-
-    #noisy
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
@@ -358,8 +348,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
       stash[:tree1] = fexp.context.engine.process(fexp.fei.wfid).current_tree
     end
 
-    #noisy
-
     assert_trace %w[ a c c d ], pdef
 
     assert_equal(
@@ -383,8 +371,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
     end
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -421,8 +407,6 @@ class FtProcessStatusTest < Test::Unit::TestCase
     pdef = Ruote.process_definition :name => 'my process' do
       participant :ref => 'alpha'
     end
-
-    #noisy
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
@@ -594,8 +578,6 @@ digraph "process wfid {
 
     @dashboard.register_participant '.+', Ruote::NullParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(Ruote.define { alpha :timeout => '2d' })
     @dashboard.wait_for(:alpha)
 
@@ -668,8 +650,6 @@ digraph "process wfid {
       end
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(4)
@@ -698,8 +678,6 @@ digraph "process wfid {
       alpha
     end
 
-    #noisy
-
     alpha = @dashboard.register_participant :alpha, Ruote::NullParticipant
 
     wfid = @dashboard.launch(pdef)
@@ -725,8 +703,6 @@ digraph "process wfid {
     end
 
     @dashboard.register_participant :alpha, Ruote::NullParticipant
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -756,8 +732,6 @@ digraph "process wfid {
     end
 
     @dashboard.register_participant :alpha, Ruote::NullParticipant
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -805,8 +779,6 @@ digraph "process wfid {
         nada
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(7)

@@ -426,10 +426,14 @@ module Ruote
 
       if is_launch?(msg, exp_class)
 
-        wi['wf_name'] ||= (
-          tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil })
-        wi['wf_revision'] ||= (
-          tree[1]['revision'] || tree[1]['rev'])
+        name = tree[1]['name'] || tree[1].keys.find { |k| tree[1][k] == nil }
+        revision = tree[1]['revision'] || tree[1]['rev']
+
+        wi['wf_name'] ||= name
+        wi['wf_revision'] ||= revision
+
+        wi['sub_wf_name'] = name
+        wi['sub_wf_revision'] = revision
       end
 
       exp_hash = {

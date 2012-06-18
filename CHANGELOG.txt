@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- workitem: sub_wf_name and sub_wf_revision
 - new 'raise' msg for passing back errors to worker
 - participant#on_apply
 - push/pop specialized aliases for inc/dec

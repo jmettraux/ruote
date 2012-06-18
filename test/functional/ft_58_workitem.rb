@@ -24,11 +24,9 @@ class FtWorkitemTest < Test::Unit::TestCase
     end
   end
 
-  def test_wf_info
+  def test_name_and_revision
 
     @dashboard.register :alpha, TraceParticipant
-
-    #@dashboard.noisy = true
 
     assert_trace(
       'x/y',
@@ -62,6 +60,74 @@ class FtWorkitemTest < Test::Unit::TestCase
       '/',
       Ruote.process_definition do
         alpha
+      end,
+      :clear)
+  end
+
+  class SubTraceParticipant
+    include Ruote::LocalParticipant
+
+    def consume(wi)
+      @context.tracer << "#{wi.sub_wf_name}/#{wi.sub_wf_revision}\n"
+      reply_to_engine(wi)
+    end
+  end
+
+  def test_sub_name_and_sub_revision
+
+    @dashboard.register :bravo, SubTraceParticipant
+
+    assert_trace(
+      'x/y',
+      Ruote.define('x', :revision => 'y') do
+        bravo
+      end,
+      :clear)
+
+    assert_trace(
+      'sub0/',
+      Ruote.define('x', :revision => 'y') do
+        sub0
+        define 'sub0' do
+          bravo
+        end
+      end,
+      :clear)
+
+    assert_trace(
+      'sub0/2.5',
+      Ruote.define('x', :revision => 'y') do
+        sub0
+        define 'sub0', :revision => '2.5' do
+          bravo
+        end
+      end,
+      :clear)
+
+    assert_trace(
+      'sub1/',
+      Ruote.define('x', :revision => 'y') do
+        sub0
+        define 'sub0', :revision => '2.5' do
+          sub1
+        end
+        define 'sub1' do
+          bravo
+        end
+      end,
+      :clear)
+
+    assert_trace(
+      'sub0/2.5',
+      Ruote.define('x', :revision => 'y') do
+        sub0
+        define 'sub0', :revision => '2.5' do
+          sub1
+          bravo
+        end
+        define 'sub1' do
+          noop
+        end
       end,
       :clear)
   end

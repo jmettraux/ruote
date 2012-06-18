@@ -109,22 +109,26 @@ module Ruote
 
     # Returns the name of the workflow to which this workitem belongs, or nil.
     #
-    def wf_name
-
-      @h['wf_name']
-    end
+    def wf_name; @h['wf_name']; end
 
     alias definition_name wf_name
 
     # Returns the revision of the workflow to which this workitem belongs,
     # or nil.
     #
-    def wf_revision
-
-      @h['wf_revision']
-    end
+    def wf_revision; @h['wf_revision']; end
 
     alias definition_revision wf_revision
+
+    # Returns the name of the sub-workflow the workitem is currently in.
+    # (If it's in the main flow, it will return the name of the main flow,
+    # if that flow has a name...)
+    #
+    def sub_wf_name; @h['sub_wf_name']; end
+
+    # The equivalent of #sub_wf_name for revisions.
+    #
+    def sub_wf_revision; @h['sub_wf_revision']; end
 
     # Used by some participants, returns the "owner" of the workitem. Mostly
     # used when reserving workitems.
