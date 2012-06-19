@@ -37,6 +37,26 @@ class FtVariablesTest < Test::Unit::TestCase
     assert_match /^>[a-z]+<$/, @tracer.to_s
   end
 
+  def test_tags
+
+    pdef = Ruote.define do
+      sequence :tag => 'a' do
+        sequence :tag => 'b' do
+          sequence :tag => 'c' do
+            echo '>${tags}<'
+            echo '>${tag}<'
+            echo '>${full_tag}<'
+          end
+        end
+      end
+    end
+
+    wfid = @dashboard.launch(pdef); r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal [ ">[\"a\", \"b\", \"c\"]<", ">c<", ">a/b/c<" ], @tracer.to_a
+  end
+
   def test_variables_event
 
     pdef = Ruote.process_definition do
@@ -74,8 +94,6 @@ class FtVariablesTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace(%w[ a0:b0:a0:b0 a1:b1:a0:b1 a0:b1:a0:b1 ], pdef)
   end
 
@@ -89,8 +107,6 @@ class FtVariablesTest < Test::Unit::TestCase
         echo 'done.'
       end
     end
-
-    #noisy
 
     @dashboard.variables['vb'] = 'b0'
 
@@ -126,8 +142,6 @@ class FtVariablesTest < Test::Unit::TestCase
       stash[:results] << fexp.locate_var('/a').first.fei.to_storage_id
       stash[:results] << fexp.locate_var('a').first.fei.to_storage_id
     end
-
-    #noisy
 
     assert_trace 'done.', pdef
 
@@ -165,8 +179,6 @@ class FtVariablesTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
@@ -199,8 +211,6 @@ class FtVariablesTest < Test::Unit::TestCase
         set 'v:/v3' => '${v:v3}'
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)

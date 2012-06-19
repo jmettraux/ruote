@@ -137,6 +137,10 @@ module Ruote
         return @fexp.fei.engine_id if key == 'engine_id'
         return @fexp.fei.mnemo_id if key == 'mnemo_id'
 
+        return @workitem['fields']['__tags__'] if key == 'tags'
+        return (@workitem['fields']['__tags__'] || []).last if key == 'tag'
+        return (@workitem['fields']['__tags__'] || []).join('/') if key == 'full_tag'
+
         pr, k = extract_prefix(key)
 
         # stage 0

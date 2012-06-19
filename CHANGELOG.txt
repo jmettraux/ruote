@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- ${tags}, ${tag} and ${full_tag}
 - StorageParticipant#flunk(workitem, err, *err_args)
 - ReceiverMixin#flunk(workitem, err, *err_args)
 - workitem: sub_wf_name and sub_wf_revision
