@@ -54,9 +54,29 @@ module Ruote::Exp
   #
   #   cancel 'invoicing_stage'
   #
+  # == kill
+  #
+  #   kill :ref => 'invoicing stage'
+  #
+  # will cancel the target expression and bypass any on_cancel handler set for
+  # it.
+  #
+  #   concurrence do
+  #     sequence :tag => 'x', :on_cancel => 'y' do
+  #       # ...
+  #     end
+  #     sequence do
+  #       # ...
+  #       kill 'x'
+  #     end
+  #   end
+  #
+  # In this example the :on_cancel => 'y' will get ignored if kill 'x' kicks
+  # in.
+  #
   class UndoExpression < FlowExpression
 
-    names :undo, :cancel
+    names :undo, :cancel, :kill
 
     def apply
 
@@ -65,7 +85,11 @@ module Ruote::Exp
 
       tag = (ref && ref != '') ? lookup_variable(ref) : nil
 
-      @context.storage.put_msg('cancel', 'fei' => tag) if Ruote.is_a_fei?(tag)
+      @context.storage.put_msg(
+        'cancel',
+        'fei' => tag,
+        'flavour' => self.name == 'kill' ? 'kill' : nil
+      ) if Ruote.is_a_fei?(tag)
 
       reply_to_parent(h.applied_workitem)
     end

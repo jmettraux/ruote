@@ -125,5 +125,27 @@ class EftUndoTest < Test::Unit::TestCase
     assert_equal 'terminated', r['action']
     assert_equal 'x', @tracer.to_s
   end
+
+  def test_kill
+
+    @dashboard.register :alpha, Ruote::StorageParticipant
+
+    pdef = Ruote.define do
+      concurrence do
+        alpha :tag => :kilroy, :on_cancel => :report
+        kill :kilroy
+      end
+      echo 'over.'
+      define 'report' do
+        echo 'xxx'
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal 'over.', @tracer.to_s
+  end
 end
 

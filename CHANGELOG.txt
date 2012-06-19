@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- "kill" expression (undo/cancel alias)
 - ${tags}, ${tag} and ${full_tag}
 - StorageParticipant#flunk(workitem, err, *err_args)
 - ReceiverMixin#flunk(workitem, err, *err_args)
