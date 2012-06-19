@@ -214,11 +214,13 @@ class Ruote::WaitLogger
         :trim => %[ updated_tree ])[1..-2]
 
       tail = []
-      tail << "  #{wfid} #{rest['error']['class']}"
-      tail << "  #{wfid} #{rest['error']['message']}"
-      rest['error']['trace'].each do |line|
-        tail << "  #{wfid} #{line}"
-      end
+      tail << "  #{wfid} * class:  #{rest['error']['class']}"
+      tail << "  #{wfid} * msg:    #{rest['error']['message']}"
+
+      trace = rest['error']['trace']
+      trace = trace[0, 2] + [ '...' ] if msg['action'] == 'raise'
+
+      trace.each { |line| tail << "  #{wfid} #{line}" }
 
       color(
         @color,

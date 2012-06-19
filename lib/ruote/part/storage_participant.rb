@@ -135,28 +135,27 @@ module Ruote
     #
     def proceed(workitem)
 
-      hwi = fetch(workitem)
-
-      fail ArgumentError.new(
-        "cannot proceed, workitem not found"
-      ) if hwi == nil
-
-      fail ArgumentError.new(
-        "cannot proceed, " +
-        "workitem is owned by '#{hwi['owner']}', not '#{workitem.owner}'"
-      ) if hwi['owner'] && hwi['owner'] != workitem.owner
-
-      r = @context.storage.delete(hwi)
-
-      fail ArgumentError.new(
-        "cannot proceed, workitem is gone"
-      ) if r == true
+      r = remove_workitem('proceed', workitem)
 
       return proceed(workitem) if r != nil
 
       workitem.h.delete('_rev')
 
       reply_to_engine(workitem)
+    end
+
+    # Removes the workitem and hands it back to the flow with an error to
+    # raise for the participant expression that emitted the workitem.
+    #
+    def flunk(workitem, err_class_or_instance, *err_arguments)
+
+      r = remove_workitem('reject', workitem)
+
+      return flunk(workitem) if r != nil
+
+      workitem.h.delete('_rev')
+
+      super(workitem, err_class_or_instance, *err_arguments)
     end
 
     # (soon to be removed)
@@ -476,6 +475,28 @@ module Ruote
       workitems_or_count.is_a?(Array) ?
         workitems_or_count.collect { |wi| Ruote::Workitem.new(wi) } :
         workitems_or_count
+    end
+
+    def remove_workitem(action, workitem)
+
+      hwi = fetch(workitem)
+
+      fail ArgumentError.new(
+        "cannot #{action}, workitem not found"
+      ) if hwi == nil
+
+      fail ArgumentError.new(
+        "cannot #{action}, " +
+        "workitem is owned by '#{hwi['owner']}', not '#{workitem.owner}'"
+      ) if hwi['owner'] && hwi['owner'] != workitem.owner
+
+      r = @context.storage.delete(hwi)
+
+      fail ArgumentError.new(
+        "cannot #{action}, workitem is gone"
+      ) if r == true
+
+      r
     end
   end
 end

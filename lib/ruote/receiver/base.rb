@@ -59,6 +59,49 @@ module Ruote
       receive(workitem)
     end
 
+    # Can be used to raise an error in the workflow instance.
+    #
+    # Can be called either with an error class and arguments, either with
+    # an error instance (and no arguments).
+    #
+    # The workitem can be either an instance of Ruote::Workitem or a workitem
+    # in its Hash representation.
+    #
+    #   receiver.flunk(workitem, ArgumentError, "not enough info")
+    #
+    #   rescue => e
+    #     receiver.flunk(workitem, e)
+    #   end
+    #
+    def flunk(workitem, error_class_or_instance, *err_arguments)
+
+      workitem = workitem.h if workitem.respond_to?(:h)
+
+      err = error_class_or_instance
+
+      if error_class_or_instance.is_a?(Class)
+        err = error_class_or_instance.new(*err_arguments)
+        err.set_backtrace(caller)
+      end
+
+      @context.storage.put_msg(
+        'raise',
+        'fei' => workitem['fei'],
+        'wfid' => workitem['wfid'],
+        'msg' => {
+          'action' => 'dispatch',
+          'fei' => workitem['fei'],
+          'participant_name' => workitem['participant_name'],
+          'participant' => nil,
+          'workitem' => workitem
+        },
+        'error' => {
+          'class' => err.class.name,
+          'message' => err.message,
+          'trace' => err.backtrace
+        })
+    end
+
     # Given a process definitions and optional initial fields and variables,
     # launches a new process instance.
     #

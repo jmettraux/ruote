@@ -4,6 +4,8 @@
 
 == ruote - 2.3.0    not yet released
 
+- StorageParticipant#flunk(workitem, err, *err_args)
+- ReceiverMixin#flunk(workitem, err, *err_args)
 - workitem: sub_wf_name and sub_wf_revision
 - new 'raise' msg for passing back errors to worker
 - participant#on_apply

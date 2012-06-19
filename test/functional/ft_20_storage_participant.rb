@@ -638,5 +638,61 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     assert_equal Ruote::StorageParticipant, @dashboard.storage_participant.class
     assert_equal Ruote::StorageParticipant, @dashboard.worklist.class
   end
+
+  def test_flunk
+
+    @dashboard.register :alpha, Ruote::StorageParticipant
+
+    wfid = @dashboard.launch(Ruote.define do
+      alpha
+    end)
+
+    @dashboard.wait_for('dispatched')
+
+    assert_equal 1, @dashboard.storage_participant.size
+
+    wi = @dashboard.storage_participant.first
+
+    @dashboard.storage_participant.flunk(wi, ArgumentError, 'sorry?')
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'ArgumentError', r['error']['class']
+    assert_equal 'sorry?', r['error']['message']
+    assert_match __FILE__, r['error']['trace'][1]
+
+    assert_equal 0, @dashboard.storage_participant.size
+  end
+
+  def test_flunk_error_instance
+
+    @dashboard.register :alpha, Ruote::StorageParticipant
+
+    wfid = @dashboard.launch(Ruote.define do
+      alpha
+    end)
+
+    @dashboard.wait_for('dispatched')
+
+    assert_equal 1, @dashboard.storage_participant.size
+
+    wi = @dashboard.storage_participant.first
+
+    begin
+      raise 'nada'
+    rescue => e
+      @dashboard.storage_participant.flunk(wi, e)
+    end
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'RuntimeError', r['error']['class']
+    assert_equal 'nada', r['error']['message']
+    assert_match __FILE__, r['error']['trace'].first
+
+    assert_equal 0, @dashboard.storage_participant.size
+  end
 end
 

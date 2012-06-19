@@ -80,8 +80,6 @@ class FtReceiverTest < Test::Unit::TestCase
 
     receiver = MyReceiver.new(@dashboard.context)
 
-    #noisy
-
     wfid = @dashboard.launch(@pdef)
 
     wait_for(:alpha)
@@ -153,8 +151,6 @@ class FtReceiverTest < Test::Unit::TestCase
       alpha
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(wfid)
@@ -178,19 +174,13 @@ class FtReceiverTest < Test::Unit::TestCase
 
   def test_receiver_fexp_and_wi
 
-    #@dashboard.register do
-    #  catchall Ruote::StorageParticipant
-    #end
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(Ruote.define do
       alpha
     end)
 
-    @dashboard.wait_for(:alpha)
-    @dashboard.wait_for(1)
+    @dashboard.wait_for('dispatched')
 
     wi = @dashboard.storage_participant.first
 
@@ -204,6 +194,36 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal wfid, @dashboard.workitem(wi).wfid
     assert_equal wfid, @dashboard.workitem(wi.fei).wfid
     assert_equal wfid, @dashboard.workitem(wi.fei.sid).wfid
+  end
+
+  class FlunkParticipant
+    include Ruote::LocalParticipant
+
+    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
+    #
+    def on_workitem
+      flunk(workitem, ArgumentError, 'out of order')
+    end
+
+    def on_cancel
+      # ...
+    end
+  end
+
+  def test_flunk
+
+    @dashboard.register :alpha, FlunkParticipant
+
+    wfid = @dashboard.launch(Ruote.define do
+      alpha
+    end)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'ArgumentError', r['error']['class']
+    assert_equal 'out of order', r['error']['message']
+    assert_match __FILE__, r['error']['trace'].first
   end
 end
 
