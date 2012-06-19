@@ -114,6 +114,8 @@ module Ruote
 
       doc = fetch(fei)
 
+      return unless doc
+
       r = @context.storage.delete(doc)
 
       on_cancel(fei, flavour) if r != nil

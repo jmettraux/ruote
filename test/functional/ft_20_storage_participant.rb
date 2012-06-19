@@ -694,5 +694,34 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal 0, @dashboard.storage_participant.size
   end
+
+  def test_flunk_with_on_error
+
+    @dashboard.register :alpha, Ruote::StorageParticipant
+
+    wfid = @dashboard.launch(Ruote.define do
+      sequence :on_error => 'report_error' do
+        alpha
+      end
+      define 'report_error' do
+        echo 'error...'
+      end
+    end)
+
+    @dashboard.wait_for('dispatched')
+
+    assert_equal 1, @dashboard.storage_participant.size
+
+    wi = @dashboard.storage_participant.first
+
+    @dashboard.storage_participant.flunk(wi, ArgumentError, 'pure fail')
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal 'error...', @tracer.to_s
+
+    assert_equal 0, @dashboard.storage_participant.size
+  end
 end
 
