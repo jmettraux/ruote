@@ -59,10 +59,15 @@ module Ruote::Exp
       workitem = msg['workitem']
       workitem['fields']['__error__'] = err
 
+      no_cancel = !!handler.match(/^!/)
+
+      # NOTE: why not pass the handler in the msg?
+
       @context.storage.put_msg(
         'fail',
         'fei' => oe_parent.h.fei,
-        'workitem' => workitem)
+        'workitem' => workitem,
+        'do_not_cancel_children' => no_cancel)
 
       true # yes, error is being handled.
     end
@@ -234,6 +239,10 @@ module Ruote::Exp
       err = h.applied_workitem['fields']['__error__']
 
       handler = on == 'on_error' ? local_on_error(err) : h[on]
+
+      if on == 'on_error' && handler.to_s.match(/^!(.+)$/)
+        handler = $1
+      end
 
       if handler.is_a?(Hash) # on_re_apply
 

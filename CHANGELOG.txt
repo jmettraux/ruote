@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- on_error: !do_not_cancel_children
 - "kill" expression (undo/cancel alias)
 - ${tags}, ${tag} and ${full_tag}
 - StorageParticipant#flunk(workitem, err, *err_args)

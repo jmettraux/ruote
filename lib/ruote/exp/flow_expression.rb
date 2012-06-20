@@ -659,7 +659,7 @@ module Ruote::Exp
       @h['state'] = 'failing'
       @h['applied_workitem'] = msg['workitem']
 
-      if h.children.size < 1
+      if h.children.size < 1 || msg['do_not_cancel_children']
         reply_to_parent(@h['applied_workitem'])
       else
         persist_or_raise
