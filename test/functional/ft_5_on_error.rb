@@ -661,5 +661,26 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal 'terminated', r['action']
     assert_equal %w[ in ], @tracer.to_a
   end
+
+  def test_on_error_immediate_with_tree
+
+    pdef = Ruote.define do
+      define 'rollback' do
+        echo 'rollback'
+      end
+      sequence :on_error => [ '!kill_process', {}, [] ] do
+        sequence :on_cancel => 'rollback' do
+          echo 'in'
+          error 'nada'
+        end
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal %w[ in ], @tracer.to_a
+  end
 end
 
