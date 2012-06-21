@@ -72,26 +72,39 @@ module Ruote::Exp
         msg = case action
 
           when 'timeout', 'undo', 'pass'
+
             { 'action' => 'cancel',
               'fei' => h.fei,
               'flavour' => action == 'timeout' ? 'timeout' : nil }
+
           when 'redo', 'retry'
+
             { 'action' => 'cancel',
               'fei' => h.fei,
               're_apply' => true }
-          when /^error( .+)?$/
+
+          when /^err(or)?( *.+)?$/
+
+            message = if $~[2]
+              $~[2].to_s.strip
+            else
+              "timer induced error (\"#{after}: #{action}\")"
+            end
+
             { 'action' => 'cancel',
               'fei' => h.fei,
-              're_apply' => {
-                'tree' => [
-                  'error', { $~[1].to_s.strip => nil }, [] ] } }
+              're_apply' => { 'tree' => [ 'error', { message => nil }, [] ] } }
+
           when CommandExpression::REGEXP
+
             { 'action' => 'cancel',
               'fei' => h.fei,
               're_apply' => {
                 'tree' => [
                   $~[1], { $~[2].split(' ').last.to_s => nil }, [] ] } }
+
           else
+
             { 'action' => 'apply',
               'wfid' => h.fei['wfid'],
               'expid' => h.fei['expid'],

@@ -21,8 +21,6 @@ class FtTimersTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(:alpha)
@@ -72,8 +70,6 @@ class FtTimersTest < Test::Unit::TestCase
       tracer << workitem.fei.expid
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(10)
@@ -89,8 +85,6 @@ class FtTimersTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant /alpha|bravo/, Ruote::StorageParticipant
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -118,8 +112,6 @@ class FtTimersTest < Test::Unit::TestCase
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
     @dashboard.register_participant :reminder, Ruote::NullParticipant
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(:reminder)
@@ -140,8 +132,6 @@ class FtTimersTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
     @dashboard.register_participant :reminder, Ruote::NullParticipant
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -169,8 +159,6 @@ class FtTimersTest < Test::Unit::TestCase
       alpha :timers => '1s: error'
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(wfid)
@@ -181,7 +169,7 @@ class FtTimersTest < Test::Unit::TestCase
     assert_equal 2, ps.expressions.size
 
     assert_equal(
-      '#<Ruote::ForcedError: error triggered from process definition>',
+      '#<Ruote::ForcedError: timer induced error ("1s: error")>',
       ps.errors.first.message)
   end
 
@@ -192,8 +180,6 @@ class FtTimersTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       alpha :timers => '1s: error it went wrong, 3d: nada'
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -214,8 +200,6 @@ class FtTimersTest < Test::Unit::TestCase
       alpha :timers => '3s: retry'
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(:alpha)
@@ -235,8 +219,6 @@ class FtTimersTest < Test::Unit::TestCase
       alpha :timers => '1s: pass'
       bravo
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -260,8 +242,6 @@ class FtTimersTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(:charly)
@@ -283,8 +263,6 @@ class FtTimersTest < Test::Unit::TestCase
 
     @dashboard.register 'alpha', MyParticipant
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(Ruote.define do
       alpha
     end)
@@ -303,8 +281,6 @@ class FtTimersTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
