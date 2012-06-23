@@ -660,6 +660,8 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_equal 'terminated', r['action']
     assert_equal %w[ in ], @tracer.to_a
+
+    assert_nil @dashboard.ps(wfid)
   end
 
   def test_on_error_immediate_with_tree
@@ -681,6 +683,8 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_equal 'terminated', r['action']
     assert_equal %w[ in ], @tracer.to_a
+
+    assert_nil @dashboard.ps(wfid)
   end
 end
 

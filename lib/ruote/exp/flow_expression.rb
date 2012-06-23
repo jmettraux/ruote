@@ -659,11 +659,19 @@ module Ruote::Exp
       @h['state'] = 'failing'
       @h['applied_workitem'] = msg['workitem']
 
-      if h.children.size < 1 || msg['do_not_cancel_children']
+      if h.children.size < 1
+
         reply_to_parent(@h['applied_workitem'])
+
       else
+
+        flavour = msg['immediate'] ? 'kill' : nil
+
         persist_or_raise
-        h.children.each { |i| @context.storage.put_msg('cancel', 'fei' => i) }
+
+        h.children.each do |i|
+          @context.storage.put_msg('cancel', 'fei' => i, 'flavour' => flavour)
+        end
       end
     end
 

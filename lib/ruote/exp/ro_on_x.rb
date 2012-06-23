@@ -59,7 +59,7 @@ module Ruote::Exp
       workitem = msg['workitem']
       workitem['fields']['__error__'] = err
 
-      no_cancel = if handler.is_a?(String)
+      immediate = if handler.is_a?(String)
         !! handler.match(/^!/)
       elsif handler.is_a?(Array)
         !! handler.first.to_s.match(/^!/)
@@ -74,7 +74,7 @@ module Ruote::Exp
         'fail',
         'fei' => oe_parent.h.fei,
         'workitem' => workitem,
-        'do_not_cancel_children' => no_cancel)
+        'immediate' => immediate)
 
       true # yes, error is being handled.
     end
