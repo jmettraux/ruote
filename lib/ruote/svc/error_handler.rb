@@ -120,28 +120,24 @@ module Ruote
       #
       # (this message might get intercepted by a tracker)
 
+      herr = deflate(err, fei, fexp)
+
       # fill error in the error journal
 
       @context.storage.put(
-        'type' => 'errors',
-        '_id' => "err_#{Ruote.to_storage_id(fei)}",
-        'message' => err.inspect,
-        'trace' => (err.backtrace || []).join("\n"),
-        'details' => try(err, :ruote_details),
-        'deviations' => try(err, :deviations),
-        'fei' => fei,
-        'msg' => msg,
-        'tree' => fexp ? fexp.tree : nil
+        herr.merge(
+          'type' => 'errors',
+          '_id' => "err_#{Ruote.to_storage_id(fei)}",
+          'message' => err.inspect,                     # :-(
+          'trace' => (err.backtrace || []).join("\n"),  # :-(
+          'msg' => msg)
       ) if fei
 
       # advertise 'error_intercepted'
 
       @context.storage.put_msg(
         'error_intercepted',
-        'error' => deflate(err, fei, fexp),
-        'wfid' => wfid,
-        'fei' => fei,
-        'msg' => msg)
+        'error' => herr, 'wfid' => wfid, 'fei' => fei, 'msg' => msg)
 
     rescue => e
 
@@ -163,21 +159,10 @@ module Ruote
 
       return err unless err.respond_to?(:backtrace)
 
-      { 'fei' => fei,
-        'at' => Ruote.now_to_utc_s,
-        'class' => err.class.name,
-        'message' => err.message,
-        'trace' => err.backtrace || [],
-        'details' => try(err, :ruote_details),
-        'deviations' => try(err, :deviations),
-        'tree' => fexp ? fexp.tree : nil }
-    end
+      fexp ||=
+        Ruote::Exp::FlowExpression.dummy('fei' => fei, 'original_tree' => nil)
 
-    # TODO: maybe, later, move that to a utils file.
-    #
-    def try(target, method)
-
-      target.respond_to?(method) ? target.send(method) : nil
+      fexp.deflate(err)
     end
 
     # The 'raise' action/msg passes deflated errors. This wrapper class

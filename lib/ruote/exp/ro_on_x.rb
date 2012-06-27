@@ -31,21 +31,42 @@ module Ruote::Exp
   #
   class FlowExpression
 
+    # Given this expression and an error, deflates the error into a hash
+    # (serializable).
+    #
+    def deflate(err)
+
+      {
+        'fei' => h.fei,
+        'at' => Ruote.now_to_utc_s,
+        'class' => err.class.to_s,
+        'message' => err.message,
+        'trace' => err.backtrace,
+        'details' => err.respond_to?(:ruote_details) ? err.ruote_details : nil,
+        'deviations' => err.respond_to?(:deviations) ? err.deviations : nil,
+        'tree' => tree
+      }
+    end
+
+    # Returns a dummy expression. Only used by the error_handler service.
+    #
+    def self.dummy(h)
+
+      class << h; include Ruote::HashDot; end
+
+      fe = self.allocate
+      fe.instance_variable_set(:@h, h)
+
+      fe
+    end
+
     # Looks up parent with on_error attribute and triggers it
     #
     def handle_on_error(msg, error)
 
       return false if h.state == 'failing'
 
-      err = {
-        'fei' => h.fei,
-        'at' => Ruote.now_to_utc_s,
-        'class' => error.class.to_s,
-        'message' => error.message,
-        'trace' => error.backtrace,
-        'tree' => tree
-      }
-
+      err = deflate(error)
       oe_parent = lookup_on_error(err)
 
       return false unless oe_parent

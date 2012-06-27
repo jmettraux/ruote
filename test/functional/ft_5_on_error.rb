@@ -295,10 +295,13 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     assert_equal 'err...', @tracer.to_s
     assert_equal 'RuntimeError', wi.error['class']
-    assert_equal %w[ at class fei message trace tree ], wi.error.keys.sort
     assert_equal 'Beijing, we have a problem !', wi.error['message']
     assert_equal Array, wi.error['trace'].class
     assert_equal true, wi.fields['seen']
+
+    assert_equal(
+      %w[ at class details deviations fei message trace tree ],
+      wi.error.keys.sort)
   end
 
   class Murphy
@@ -494,11 +497,14 @@ class FtOnErrorTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal(
-      'terminated', r['action'])
+      'terminated',
+      r['action'])
     assert_equal(
-      %w[ at class fei message trace tree ], r['variables']['a'].keys.sort)
+      %w[ at class details deviations fei message trace tree ],
+      r['variables']['a'].keys.sort)
     assert_equal(
-      [ 'error', { 'nada' => nil }, [] ], r['variables']['a']['tree'])
+      [ 'error', { 'nada' => nil }, [] ],
+      r['variables']['a']['tree'])
   end
 
   def test_on_error_kill_process
