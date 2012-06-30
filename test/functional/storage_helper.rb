@@ -41,12 +41,11 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   ps = ARGV.select { |a| a.match(/^--[a-z]/) }
   ps.delete('--split')
-
-  if sto = ENV['RUOTE_STORAGE']
-    ps = [ sto ]
-  end
-
   ps = ps.collect { |s| m = s.match(/^--(.+)$/); m ? m[1] : s }
+
+  ps = [ ENV['RUOTE_STORAGE'] ].compact if ps.empty?
+
+  ps = [] if ps == [ 'hash' ] || ps == [ 'memory' ]
 
   persistent = opts.delete(:persistent)
 
