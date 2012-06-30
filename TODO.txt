@@ -507,6 +507,8 @@
 
 [ ] get rid of the "web" test[s]
 
+[ ] remove #dump from all storage implementations
+
 == 3.0
 [ ] deprecate get_schedules
     (let the storage include triggered schedules as msgs)

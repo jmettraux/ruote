@@ -63,8 +63,6 @@ module Ruote
       @cloche = Rufus::Cloche.new(
         :dir => dir, :nolock => options['cloche_nolock'])
 
-      #@options = options
-
       replace_engine_configuration(options)
     end
 
@@ -75,7 +73,11 @@ module Ruote
 
     def put(doc, opts={})
 
-      @cloche.put(doc.merge!('put_at' => Ruote.now_to_utc_s), opts)
+      doc = doc.send(
+        opts[:update_rev] ? 'merge!' : 'merge',
+        'put_at' => Ruote.now_to_utc_s)
+
+      @cloche.put(doc, opts)
     end
 
     def get(type, key)
