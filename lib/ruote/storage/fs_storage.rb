@@ -121,18 +121,6 @@ module Ruote
       @cloche.purge_type!(type)
     end
 
-    def dump(type)
-
-      s = "=== #{type} ===\n"
-
-      @cloche.get_many(type).inject(s) do |s1, e|
-        s1 << "\n"
-        e.keys.sort.inject(s1) do |s2, k|
-          s2 << "  #{k} => #{e[k].inspect}\n"
-        end
-      end
-    end
-
     # Shuts this storage down.
     #
     def shutdown

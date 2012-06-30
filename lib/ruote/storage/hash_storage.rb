@@ -199,19 +199,6 @@ module Ruote
       @h[type] = {}
     end
 
-    def dump(type)
-
-      s = "=== #{type} ===\n"
-
-      @h[type].inject(s) do |s1, (k, v)|
-        s1 << "\n"
-        s1 << "#{k} :\n"
-        v.keys.sort.inject(s1) do |s2, k1|
-          s2 << "  #{k1} => #{v[k1].inspect}\n"
-        end
-      end
-    end
-
     # Shuts this storage down.
     #
     def shutdown

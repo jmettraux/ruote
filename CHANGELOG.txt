@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- StorageBase#dump: go with YAML
 - on_error: !immediate
 - "kill" expression (undo/cancel alias)
 - ${tags}, ${tag} and ${full_tag}

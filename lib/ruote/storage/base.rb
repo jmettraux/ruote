@@ -303,6 +303,13 @@ module Ruote
       end
     end
 
+    def dump(type)
+
+      require 'yaml'
+
+      YAML.dump({ type => get_many(type) })
+    end
+
     protected
 
     # Used by put_msg
