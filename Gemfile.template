@@ -5,7 +5,6 @@
 #   gem install bundler
 #   bundle install --path .ruote_dev_bundle
 
-#require 'rubygems'
 source 'http://rubygems.org'
 
 gem 'yajl-ruby', :require => 'yajl'
