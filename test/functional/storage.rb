@@ -96,7 +96,7 @@ class FtStorage < Test::Unit::TestCase
 
     r = @s.put(doc)
 
-    assert_equal Hash, r.class
+    assert_match /Hash$/, r.class.name
     assert_not_nil r['_rev']
     assert_not_nil r['put_at']
 
@@ -260,6 +260,7 @@ class FtStorage < Test::Unit::TestCase
 
     doc.delete('_rev')
     doc.delete('put_at')
+    doc.delete('_wfid') # ruote-mon
 
     assert_equal(
       { '_id' => 'toto', 'type' => 'errors', 'message' => 'testing' },
