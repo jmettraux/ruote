@@ -662,7 +662,11 @@ class FtStorage < Test::Unit::TestCase
 
       id = sprintf('yy!%0.2d', i)
 
-      @s.put('_id' => id, 'type' => 'errors', 'msg' => "whatever #{i}")
+      @s.put(
+        '_id' => id,
+        'type' => 'errors',
+        'msg' => "whatever #{i}",
+        'wfid' => id.split('!').last)
 
       id
     end
