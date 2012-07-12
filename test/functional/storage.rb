@@ -6,306 +6,426 @@
 #
 
 require File.expand_path('../../test_helper', __FILE__)
-
 require_json
-
 require File.expand_path('../../functional/storage_helper', __FILE__)
-
+require File.expand_path('../../functional/signals', __FILE__)
 require 'ruote'
 
 
+# Please note:
+
+# Operations return something trueish when they fail and nil
+# when they succeed.
 #
-# note : using the 'errors' type, but this test is about generic storage, not
-#        about errors per se.
-#
+# The pattern is: when it fails because the document passed as argument is
+# outdated, you will receive the current version of the document (trueish),
+# when it fails because the document is gone (deleted meanwhile), you will
+# receive true (which is obviously trueish).
 
 class FtStorage < Test::Unit::TestCase
+
+  #
+  # test preparation
 
   def setup
 
     @s = determine_storage({})
     @s = @s.storage if @s.respond_to?(:storage)
 
-    #@s.add_type('errors')
-
-    @s.purge_type!('errors')
-    @s.purge_type!('expressions')
-    @s.purge_type!('msgs')
-    @s.purge_type!('workitems')
-
-    @s.put(
-      '_id' => 'toto',
-      'type' => 'errors',
-      'message' => 'testing')
+    %w[ errors expressions msgs workitems ].each do |t|
+      @s.purge_type!(t)
+    end
   end
 
   def teardown
 
     return unless @s
 
-    @s.purge_type!('errors')
-    @s.purge_type!('expressions')
-    @s.purge_type!('msgs')
-    @s.purge_type!('workitems')
-    @s.purge_type!('schedules')
+    @s.purge!
 
     @s.shutdown
   end
 
-  def test_get_configuration
+  #
+  # helpers
 
-    assert_not_nil @s.get_configuration('engine')
+  def put_toto_doc
+
+    @s.put('_id' => 'toto', 'type' => 'errors', 'message' => 'testing')
   end
 
-  def test_get
+  def get_toto_doc
 
-    h = @s.get('errors', 'toto')
-
-    assert_not_nil h['_rev']
-
-    h = @s.get('errors', 'nada')
-
-    assert_nil h
+    @s.get('errors', 'toto')
   end
 
+  #
+  # the tests
+
+  # === put
+
+  # When successful, #put returns nil.
+  #
   def test_put
 
-    doc =  {
-      '_id' => 'test_put', 'type' => 'errors', 'message' => 'testing (2)' }
+    doc = { '_id' => 'toto', 'type' => 'errors', 'message' => 'testing' }
 
-    @s.put(doc)
+    r = @s.put(doc)
+
+    assert_nil r
 
     assert_nil doc['_rev']
+    assert_nil doc['put_at']
 
-    h = @s.get('errors', 'test_put')
-
-    assert_not_nil h['_rev']
-    assert_not_nil h['put_at']
-  end
-
-  def test_put_fail
-
-    r = @s.put('_id' => 'toto', 'type' => 'errors', 'message' => 'more')
-
-    assert_equal 'toto', r['_id']
-    assert_not_nil r['_rev']
-  end
-
-  def test_put_update_rev
-
-    doc = { '_id' => 'tpur', 'type' => 'errors', 'message' => 'more' }
-
-    r = @s.put(doc, :update_rev => true)
+    doc = @s.get('errors', 'toto')
 
     assert_not_nil doc['_rev']
-  end
-
-  def test_put_put_and_put
-
-    doc = { '_id' => 'whiskas', 'type' => 'errors', 'message' => 'miam' }
-
-    r = @s.put(doc)
-    doc = @s.get('errors', 'whiskas')
-
-    r = @s.put(doc)
-    assert_nil r
-
-    doc = @s.get('errors', 'whiskas')
-
     assert_not_nil doc['put_at']
 
+    assert_equal 'testing', doc['message']
+  end
+
+  # When a document with the same _id and type already existent, the put
+  # doesn't happen and #put returns that already existing document.
+  #
+  def test_put_when_already_existent
+
+    put_toto_doc
+
+    doc = { '_id' => 'toto', 'type' => 'errors', 'message' => 'two' }
+
     r = @s.put(doc)
-    assert_nil r
+
+    assert_equal Hash, r.class
+    assert_not_nil r['_rev']
+    assert_not_nil r['put_at']
+
+    assert_nil doc['_rev']
+    assert_nil doc['put_at']
   end
 
-  def test_put_update_rev_twice
+  # A successful reput (_id/type/_rev do match) returns nil.
+  #
+  def test_reput
 
-    doc = { '_id' => 'tpurt', 'type' => 'errors', 'message' => 'more' }
+    put_toto_doc
 
-    r = @s.put(doc, :update_rev => true)
+    d0 = get_toto_doc
+
+    d0['message'] = 'test_reput'
+
+    r = @s.put(d0)
+
     assert_nil r
 
-    doc = { '_id' => 'tpurt', 'type' => 'errors', 'message' => 'more' }
+    d1 = get_toto_doc
 
-    r = @s.put(doc, :update_rev => true)
+    assert_not_equal d1['_rev'], d0['_rev']
+    assert_not_equal d1['put_at'], d0['put_at']
+
+    assert_equal 'test_reput', d1['message']
+  end
+
+  # A reput with the wrong rev (our document is outdated probably) will
+  # not happen and #put will return the current (newest probably) document.
+  #
+  def test_reput_fail_wrong_rev
+
+    put_toto_doc
+
+    d1 = get_toto_doc
+
+    rev = d1['_rev']
+
+    @s.put(d1.merge('message' => 'x'))
+
+    d2 = get_toto_doc
+
+    r = @s.put(d2.merge('_rev' => rev, 'message' => 'y'))
+
     assert_not_nil r
+    assert_not_equal d1['_rev'], d2['_rev']
+    assert_equal 'x', d2['message']
   end
 
-  def test_delete_fail
+  # Attempting to put a document that is gone (got deleted meanwhile) will
+  # return true.
+  #
+  def test_reput_fail_gone
 
-    # missing _rev
+    put_toto_doc
 
-    assert_raise(ArgumentError) do
-      @s.delete('_id' => 'toto')
+    doc = get_toto_doc
+
+    @s.delete(doc)
+
+    r = @s.put(doc)
+
+    assert_equal true, r
+  end
+
+  # Attempting to put a document with a _rev directly will raise an
+  # ArgumentError.
+  #
+  def test_put_doc_with_rev
+
+    put_toto_doc; doc = get_toto_doc
+      # just to get a valid _rev
+
+    r = @s.put(
+      '_id' => 'doc_with_rev', 'type' => 'errors', '_rev' => doc['_rev'])
+
+    assert_equal true, r
+  end
+
+  # #put takes an optional :update_rev. When set to true and the put
+  # succeeds, the _rev of the document is set/updated.
+  #
+  def test_put_update_rev_new_document
+
+    doc = { '_id' => 'urev', 'type' => 'errors' }
+
+    r = @s.put(doc, :update_rev => true)
+
+    assert_nil r
+    assert_not_nil doc['_rev']
+    assert_not_nil doc['put_at']
+  end
+
+  def test_put_update_rev_existing_document
+
+    put_toto_doc; doc = get_toto_doc
+
+    initial_rev = doc['_rev']
+
+    r = @s.put(doc, :update_rev => true)
+
+    assert_nil r
+    assert_not_nil initial_rev
+    assert_not_nil doc['_rev']
+    assert_not_equal doc['_rev'], initial_rev
+  end
+
+  # put_at and _rev should not repeat
+  #
+  def test_put_sequence
+
+    revs = []
+    put_ats = []
+    doc = { '_id' => 'putseq', 'type' => 'errors' }
+
+    77.times do |i|
+
+      @s.put(doc)
+      doc = @s.get('errors', 'putseq')
+
+      revs << doc['_rev']
+      put_ats << doc['put_at']
+
+      assert_equal i + 1, revs.uniq.size
+      assert_equal i + 1, put_ats.uniq.size
     end
   end
 
+  def test_put_turns_symbols_into_strings
+
+    r = @s.put('_id' => 'skeys', 'type' => 'errors', :a => :b)
+
+    assert_nil r
+
+    doc = @s.get('errors', 'skeys')
+
+    return if doc.class != Hash
+      # MongoDB uses BSON::OrderedHash which is happy with symbols...
+
+    assert_equal 'b', doc['a']
+  end
+
+  # === get
+
+  # Getting a non-existent document returns nil.
+  #
+  def test_get_non_existent
+
+    assert_nil @s.get('errors', 'nemo')
+  end
+
+  # Getting a document returns it (well the most up-to-date revision of it).
+  #
+  def test_get
+
+    put_toto_doc
+
+    doc = @s.get('errors', 'toto')
+
+    doc.delete('_rev')
+    doc.delete('put_at')
+
+    assert_equal(
+      { '_id' => 'toto', 'type' => 'errors', 'message' => 'testing' },
+      doc)
+  end
+
+  # === delete
+
+  # When successful, #delete return nil.
+  #
   def test_delete
+
+    put_toto_doc
 
     doc = @s.get('errors', 'toto')
 
     r = @s.delete(doc)
 
-    assert_nil r
+    assert_equal nil, r
+
+    doc = @s.get('errors', 'toto')
+
+    assert_equal nil, doc
   end
 
-  def test_delete_missing
+  # When attempting to delete a document and that document argument has no
+  # _rev, it will raise an ArgumentError.
+  #
+  def test_delete_document_without_rev
 
-    r = @s.delete('_id' => 'x', '_rev' => '12-13231123132', 'type' => 'errors')
+    assert_raise(
+      ArgumentError, "can't delete doc without _rev"
+    ) do
+      @s.delete('_id' => 'without_rev', 'type' => 'errors')
+    end
+  end
+
+  # Deleting a document that doesn't exist returns true.
+  #
+  def test_delete_non_existent_document
+
+    put_toto_doc; doc = get_toto_doc
+      # just to get a valid _rev
+
+    r = @s.delete('_id' => 'ned', 'type' => 'errors', '_rev' => doc['_rev'])
 
     assert_equal true, r
   end
 
-  def test_keys_should_be_string
-
-    doc = { '_id' => 'h0', 'type' => 'errors', :m0 => :z, :m1 => [ :a, :b ] }
-
-    @s.put(doc)
-
-    doc = @s.get('errors', 'h0')
-
-    return if doc.class != Hash
-      # MongoDB uses BSON::OrderedHash which is happy with symbols...
-
-    assert_equal 'z', doc['m0']
-    assert_equal %w[ a b ], doc['m1']
-  end
-
-  # Updating a gone document must result in a 'true' reply.
+  # Deleting a document that is gone (got deleted meanwhile) returns true.
   #
-  def test_put_gone
+  def test_delete_gone_document
 
-    h = @s.get('errors', 'toto')
+    put_toto_doc
+    doc = get_toto_doc
+    @s.delete(doc)
 
-    assert_nil @s.delete(h)
+    r = @s.delete(doc)
 
-    h['colour'] = 'blue'
-
-    assert_equal true, @s.put(h)
+    assert_equal true, r
   end
 
-  def test_purge_type
-
-    @s.purge_type!('errors')
-
-    assert_equal 0, @s.get_many('errors').size
-  end
-
-  def test_clear
-
-    @s.clear
-
-    assert_equal 0, @s.get_many('errors').size
-  end
-
-  #def test_purge
-  #  @s.purge!
-  #  assert_equal 0, @s.get_many('errors').size
-  #end
-
-  def test_ids
-
-    @s.put('_id' => 't_ids0', 'type' => 'errors', 'message' => 'testing')
-    @s.put('_id' => 't_ids1', 'type' => 'errors', 'message' => 'testing')
-    @s.put('_id' => 't_ids2', 'type' => 'errors', 'message' => 'testing')
-
-    assert_equal %w[ t_ids0 t_ids1 t_ids2 toto ], @s.ids('errors').sort
-  end
+  # === get_many
 
   def test_get_many
 
-    30.times do |i|
-      @s.put(
-        '_id' => "xx!#{i}",
-        'type' => 'errors',
-        'wfid' => i.to_s,
-        'msg' => "whatever #{i}")
-    end
+    load_30_errors
 
-    assert_equal 31, @s.get_many('errors').size
-    assert_equal 1, @s.get_many('errors', '7').size
-    assert_equal 1, @s.get_many('errors', /!7$/).size
-    assert_equal 30, @s.get_many('errors', /^xx!/).size
-    assert_equal 30, @s.get_many('errors', /x/).size
-    assert_equal 10, @s.get_many('errors', nil, :limit => 10).size
+    assert_equal 30, @s.get_many('errors').size
+    assert_equal 0, @s.get_many('errors', '7').size
+    assert_equal 1, @s.get_many('errors', '07').size
+    assert_equal 1, @s.get_many('errors', /!07$/).size
+    assert_equal 30, @s.get_many('errors', /^yy!/).size
+    assert_equal 30, @s.get_many('errors', /y/).size
+
+    assert_equal 'yy!07', @s.get_many('errors', '07').first['_id']
+    assert_equal 'yy!07', @s.get_many('errors', /!07/).first['_id']
   end
 
-  def test_get_many_multi_keys
-
-    28.times do |i|
-      @s.put(
-        '_id' => "yy!#{i}",
-        'type' => 'errors',
-        'wfid' => i.to_s,
-        'msg' => "anyway #{i}")
-    end
-
-    assert_equal 29, @s.get_many('errors').size
-    assert_equal 2, @s.get_many('errors', [ '7', '8' ]).size
-    assert_equal 2, @s.get_many('errors', [ /!7$/, /!8$/ ]).size
-  end
-
-  def test_get_many_options
+  def test_get_many_array_of_keys
 
     load_30_errors
 
-    # limit
-
-    assert_equal 10, @s.get_many('errors', nil, :limit => 10).size
-
-    # count
-
-    assert_equal 31, @s.get_many('errors', nil, :count => true)
-
-    # skip and limit
+    assert_equal 30, @s.get_many('errors').size
+    assert_equal 2, @s.get_many('errors', [ '07', '08' ]).size
+    assert_equal 2, @s.get_many('errors', [ /!07$/, /!08$/ ]).size
 
     assert_equal(
-      %w[ toto yy!00 yy!01 yy!02 ],
+      %w[ yy!07 yy!08 ],
+      @s.get_many('errors', [ '07', '08' ]).collect { |d| d['_id'] }.sort)
+    assert_equal(
+      %w[ yy!07 yy!08 ],
+      @s.get_many('errors', [ /!07$/, /!08$/ ]).collect { |d| d['_id'] }.sort)
+  end
+
+  def test_get_many_limit
+
+    load_30_errors
+
+    assert_equal 10, @s.get_many('errors', nil, :limit => 10).size
+  end
+
+  def test_get_many_count
+
+    load_30_errors
+
+    assert_equal 30, @s.get_many('errors', nil, :count => true)
+  end
+
+  def test_get_many_skip_and_limit
+
+    load_30_errors
+
+    assert_equal(
+      %w[ yy!01 yy!02 yy!03 yy!04 ],
       @s.get_many(
         'errors', nil, :skip => 0, :limit => 4
       ).collect { |d| d['_id'] })
     assert_equal(
-      %w[ yy!02 yy!03 yy!04 ],
+      %w[ yy!04 yy!05 yy!06 ],
       @s.get_many(
         'errors', nil, :skip => 3, :limit => 3
       ).collect { |d| d['_id'] })
+  end
 
-    # skip, limit and reverse
+  def test_get_many_skip_limit_and_reverse
+
+    load_30_errors
 
     assert_equal(
-      %w[ yy!29 yy!28 yy!27 ],
+      %w[ yy!30 yy!29 yy!28 ],
       @s.get_many(
         'errors', nil, :skip => 0, :limit => 3, :descending => true
       ).collect { |d| d['_id'] })
     assert_equal(
-      %w[ yy!29 yy!28 yy!27 ],
+      %w[ yy!27 yy!26 yy!25 ],
       @s.get_many(
-        'errors', nil, :skip => 0, :limit => 3, :descending => true
+        'errors', nil, :skip => 3, :limit => 3, :descending => true
       ).collect { |d| d['_id'] })
   end
 
-  def test_dump
+  # === purge!
 
-    load_30_errors
+  # Purge removes all the documents in the storage.
+  #
+  def test_purge
 
-    assert @s.dump('errors').length > 0
+    put_toto_doc
+
+    assert_equal 1, @s.get_many('errors').size
+
+    @s.purge!
+
+    assert_equal 0, @s.get_many('errors').size
   end
 
-  def test_ids_and_errors
+  # === reserve
 
-    load_30_errors
-
-    assert_equal 31, @s.ids('errors').length
-  end
-
-  def test_ids_are_sorted
-
-    load_30_errors
-
-    assert_equal @s.ids('errors').sort, @s.ids('errors')
-  end
-
+  # Making sure that Storage#reserve(msg) returns true once and only once
+  # for a given msg. Stresses the storage for a while and then checks
+  # for collisions.
+  #
   def test_reserve
+
+    # TODO: eventually return here if the storage being tested has
+    #       no need for a real reserve implementation (ruote-swf for example).
 
     taoe = Thread.abort_on_exception
     Thread.abort_on_exception = true
@@ -350,70 +470,46 @@ class FtStorage < Test::Unit::TestCase
     assert_equal reserved.size, reserved.uniq.size
   end
 
-  def test_by_field
+  # === ids
 
-    return unless @s.respond_to?(:by_field)
+  # Storage#ids(type) returns all the ids present for a document type, in
+  # sorted order.
+  #
+  def test_ids
 
-    load_workitems
+    ids = load_30_errors
 
-    assert_equal 3, @s.by_field('workitems', 'place', 'kyouto').size
-    assert_equal 1, @s.by_field('workitems', 'place', 'sendai').size
-
-    assert_equal(
-      Ruote::Workitem, @s.by_field('workitems', 'place', 'sendai').first.class)
+    assert_equal ids.sort, @s.ids('errors')
   end
 
-  def test_by_participant
+  # === dump
 
-    return unless @s.respond_to?(:by_participant)
+  def test_dump
 
-    load_workitems
+    load_30_errors
 
-    assert_equal 2, @s.by_participant('workitems', 'fujiwara', {}).size
-    assert_equal 1, @s.by_participant('workitems', 'shingen', {}).size
+    dump = @s.dump('errors')
 
-    assert_equal(
-      Ruote::Workitem, @s.by_participant('workitems', 'shingen', {}).first.class)
+    assert_match /^- _id: yy!01\n/, dump
+    assert_match /^- _id: yy!21\n/, dump
   end
 
-  def test_query_workitems
+  # === clear
 
-    return unless @s.respond_to?(:query_workitems)
+  # #clear clears the storage
+  #
+  def test_clear
 
-    load_workitems
+    put_toto_doc
 
-    assert_equal 3, @s.query_workitems('place' => 'kyouto').size
-    assert_equal 1, @s.query_workitems('place' => 'kyouto', 'at' => 'kamo').size
+    assert_equal 1, @s.get_many('errors').size
 
-    assert_equal(
-      Ruote::Workitem, @s.query_workitems('place' => 'kyouto').first.class)
+    @s.clear
+
+    assert_equal 0, @s.get_many('errors').size
   end
 
-  def test_override_configuration
-
-    determine_storage('house' => 'taira')
-    s = determine_storage('house' => 'minamoto')
-
-    assert_equal 'minamoto', s.get_configuration('engine')['house']
-  end
-
-  def test_preserve_configuration
-
-    return if @s.class == Ruote::HashStorage
-      # this test makes no sense with an in-memory hash
-
-    determine_storage(
-      'house' => 'taira')
-    s = determine_storage(
-      'house' => 'minamoto', 'preserve_configuration' => true)
-
-    assert_equal 'taira', s.get_configuration('engine')['house']
-
-    # if this test is giving a
-    # "NoMethodError: undefined method `[]' for nil:NilClass"
-    # for ruote-dm, comment out the auto_upgrade! block in
-    # ruote-dm/test/functional_connection.rb
-  end
+  # === remove_process
 
   # Put documents for process 0 and process 1, remove_process(1), check that
   # only documents for process 0 are remaining.
@@ -464,15 +560,111 @@ class FtStorage < Test::Unit::TestCase
     dboard.shutdown rescue nil
   end
 
+  # === configuration
+
+  # Simply getting the engine configuration should work.
+  #
+  def test_get_configuration
+
+    assert_not_nil @s.get_configuration('engine')
+  end
+
+  # The initial configuration passed when initializing the storage overrides
+  # any previous configuration.
+  #
+  def test_override_configuration
+
+    determine_storage('house' => 'taira', 'domain' => 'harima')
+    s = determine_storage('house' => 'minamoto')
+
+    assert_equal 'minamoto', s.get_configuration('engine')['house']
+    assert_equal nil, s.get_configuration('engine')['domain']
+  end
+
+  # Testing the 'preserve_configuration' option for storage initialization.
+  #
+  def test_preserve_configuration
+
+    return if @s.class == Ruote::HashStorage
+      # this test makes no sense with an in-memory hash
+
+    determine_storage(
+      'house' => 'taira')
+    s = determine_storage(
+      'house' => 'minamoto', 'preserve_configuration' => true)
+
+    assert_equal 'taira', s.get_configuration('engine')['house']
+
+    # if this test is giving a
+    # "NoMethodError: undefined method `[]' for nil:NilClass"
+    # for ruote-dm, comment out the auto_upgrade! block in
+    # ruote-dm/test/functional_connection.rb
+  end
+
+  # === query workitems
+
+  def test_by_field
+
+    return unless @s.respond_to?(:by_field)
+
+    load_workitems
+
+    assert_equal 3, @s.by_field('workitems', 'place', 'kyouto').size
+    assert_equal 1, @s.by_field('workitems', 'place', 'sendai').size
+
+    assert_equal(
+      Ruote::Workitem, @s.by_field('workitems', 'place', 'sendai').first.class)
+  end
+
+  def test_by_participant
+
+    return unless @s.respond_to?(:by_participant)
+
+    load_workitems
+
+    assert_equal 2, @s.by_participant('workitems', 'fujiwara', {}).size
+    assert_equal 1, @s.by_participant('workitems', 'shingen', {}).size
+
+    assert_equal(
+      Ruote::Workitem, @s.by_participant('workitems', 'shingen', {}).first.class)
+  end
+
+  def test_query_workitems
+
+    return unless @s.respond_to?(:query_workitems)
+
+    load_workitems
+
+    assert_equal 3, @s.query_workitems('place' => 'kyouto').size
+    assert_equal 1, @s.query_workitems('place' => 'kyouto', 'at' => 'kamo').size
+
+    assert_equal(
+      Ruote::Workitem, @s.query_workitems('place' => 'kyouto').first.class)
+  end
+
+  # === misc
+
+  # Simply make sure the storage (well, at least its "error" type) is empty.
+  #
+  def test_starts_empty
+
+    assert_equal 0, @s.get_many('errors').size
+  end
+
   protected
+
+  #
+  # helpers
 
   def load_30_errors
 
-    30.times do |i|
-      @s.put(
-        '_id' => sprintf("yy!%0.2d", i),
-        'type' => 'errors',
-        'msg' => "whatever #{i}")
+    (1..30).to_a.shuffle.collect do |i|
+
+      id = sprintf('yy!%0.2d', i)
+
+      @s.put('_id' => id, 'type' => 'errors', 'msg' => "whatever #{i}")
+
+      id
     end
   end
 
