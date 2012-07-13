@@ -84,7 +84,7 @@ module Ruote
       value = fulldup(value)
       begin
         o.instance_variable_set(v, value)
-      rescue => e
+      rescue
         # ignore, must be readonly
       end
     end
@@ -162,6 +162,10 @@ module Ruote
       s.connect('64.233.187.99', 1)
       s.addr.last
     end
+
+  rescue
+
+    nil
 
   ensure
     Socket.do_not_reverse_lookup = orig
