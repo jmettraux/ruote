@@ -15,8 +15,6 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
   def test_participant_register
 
-    #noisy
-
     @dashboard.register_participant :alpha do |workitem|
       tracer << 'alpha'
     end
@@ -139,8 +137,6 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
   end
 
   def test_participant_unregister_by_name
-
-    #noisy
 
     @dashboard.register_participant :alpha do |workitem|
     end
@@ -335,13 +331,17 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
   def test_participant_list
 
-    #noisy
-
     @dashboard.register_participant 'alpha', Ruote::StorageParticipant
 
-    assert_equal(
-      [ '/^alpha$/ ==> Ruote::StorageParticipant {}' ],
-      @dashboard.participant_list.collect { |pe| pe.to_s })
+    #assert_equal(
+    #  [ '/^alpha$/ ==> Ruote::StorageParticipant {}' ],
+    #  @dashboard.participant_list.collect { |pe| pe.to_s })
+
+    plist = @dashboard.participant_list
+
+    assert_equal 1, plist.size
+    assert_equal '^alpha$', plist.first.regex
+    assert_equal 'Ruote::StorageParticipant', plist.first.classname
 
     # launching a process with a missing participant
 
@@ -371,9 +371,15 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
 
     @dashboard.register_participant 'alpha', Ruote::StorageParticipant
 
-    assert_equal(
-      [ '/^alpha$/ ==> Ruote::StorageParticipant {}' ],
-      @dashboard.participant_list.collect { |pe| pe.to_s })
+    #assert_equal(
+    #  [ '/^alpha$/ ==> Ruote::StorageParticipant {}' ],
+    #  @dashboard.participant_list.collect { |pe| pe.to_s })
+
+    plist = @dashboard.participant_list
+
+    assert_equal 1, plist.size
+    assert_equal '^alpha$', plist.first.regex
+    assert_equal 'Ruote::StorageParticipant', plist.first.classname
 
     # 0
 
@@ -386,12 +392,20 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
         'options' => {} }
     ]
 
-    assert_equal(
-      [
-        '/^bravo$/ ==> Ruote::StorageParticipant {}',
-        '/^charly$/ ==> Ruote::StorageParticipant {}'
-      ],
-      @dashboard.participant_list.collect { |pe| pe.to_s })
+    #assert_equal(
+    #  [
+    #    '/^bravo$/ ==> Ruote::StorageParticipant {}',
+    #    '/^charly$/ ==> Ruote::StorageParticipant {}'
+    #  ],
+    #  @dashboard.participant_list.collect { |pe| pe.to_s })
+
+    plist = @dashboard.participant_list
+
+    assert_equal 2, plist.size
+    assert_equal '^bravo$', plist.first.regex
+    assert_equal '^charly$', plist.last.regex
+    assert_equal 'Ruote::StorageParticipant', plist.first.classname
+    assert_equal 'Ruote::StorageParticipant', plist.last.classname
 
     # 1
 
@@ -400,12 +414,13 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       [ '^bravo$', [ 'Ruote::StorageParticipant', {} ] ]
     ]
 
-    assert_equal(
-      [
-        '/^charly$/ ==> Ruote::StorageParticipant {}',
-        '/^bravo$/ ==> Ruote::StorageParticipant {}'
-      ],
-      @dashboard.participant_list.collect { |pe| pe.to_s })
+    plist = @dashboard.participant_list
+
+    assert_equal 2, plist.size
+    assert_equal '^charly$', plist.first.regex
+    assert_equal '^bravo$', plist.last.regex
+    assert_equal 'Ruote::StorageParticipant', plist.first.classname
+    assert_equal 'Ruote::StorageParticipant', plist.last.classname
 
     # 2
 
@@ -414,12 +429,13 @@ class FtParticipantRegistrationTest < Test::Unit::TestCase
       [ '^echo$', 'Ruote::StorageParticipant', {} ]
     ]
 
-    assert_equal(
-      [
-        '/^delta$/ ==> Ruote::StorageParticipant {}',
-        '/^echo$/ ==> Ruote::StorageParticipant {}'
-      ],
-      @dashboard.participant_list.collect { |pe| pe.to_s })
+    plist = @dashboard.participant_list
+
+    assert_equal 2, plist.size
+    assert_equal '^delta$', plist.first.regex
+    assert_equal '^echo$', plist.last.regex
+    assert_equal 'Ruote::StorageParticipant', plist.first.classname
+    assert_equal 'Ruote::StorageParticipant', plist.last.classname
   end
 
   class ParticipantCharlie; end
