@@ -491,8 +491,8 @@ class FtStorage < Test::Unit::TestCase
 
     dump = @s.dump('errors')
 
-    assert_match /^- _id: yy!01\n/, dump
-    assert_match /^- _id: yy!21\n/, dump
+    assert_match /^[ -] _id: yy!01\n/, dump
+    assert_match /^[ -] _id: yy!21\n/, dump
   end
 
   # === clear
