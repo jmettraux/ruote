@@ -77,7 +77,8 @@ module Ruote
       @context.storage.put_msg(
         'dispatched',
         'fei' => msg['fei'],
-        'participant_name' => workitem.participant_name)
+        'participant_name' => workitem.participant_name,
+        'workitem' => msg['workitem'])
           # once the consume is done, asynchronously flag the
           # participant expression as 'dispatched'
     end

@@ -133,12 +133,15 @@ class EftParticipantTest < Test::Unit::TestCase
 
     wfid = @dashboard.launch(pdef)
 
-    @dashboard.wait_for('dispatched')
+    r = @dashboard.wait_for('dispatched')
     sleep 0.700
 
     fexp = @dashboard.ps(wfid).expressions.last
 
     assert_equal true, fexp.dispatched
+    assert r.has_key?('fei')
+    assert r.has_key?('workitem')
+    assert r.has_key?('participant_name')
   end
 
   def test_not_dispatched
