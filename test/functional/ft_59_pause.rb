@@ -19,8 +19,6 @@ class FtPauseTest < Test::Unit::TestCase
 
     pdef = Ruote.define { alice }
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(:alice)
@@ -61,8 +59,6 @@ class FtPauseTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       nada
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -105,8 +101,6 @@ class FtPauseTest < Test::Unit::TestCase
     @dashboard.register do
       catchall
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -158,11 +152,10 @@ class FtPauseTest < Test::Unit::TestCase
       alpha AlphaParticipant
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
-    @dashboard.wait_for(:alpha)
+    #@dashboard.wait_for(:alpha)
+    @dashboard.wait_for('dispatched')
 
     @dashboard.pause(wfid)
 
@@ -190,8 +183,6 @@ class FtPauseTest < Test::Unit::TestCase
     @dashboard.register do
       alpha AlphaParticipant
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -236,8 +227,6 @@ class FtPauseTest < Test::Unit::TestCase
       catchall
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(:alpha)
@@ -264,8 +253,6 @@ class FtPauseTest < Test::Unit::TestCase
     @dashboard.register do
       alpha AlphaParticipant
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -301,8 +288,6 @@ class FtPauseTest < Test::Unit::TestCase
     @dashboard.register do
       catchall
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
