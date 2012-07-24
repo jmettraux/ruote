@@ -3,7 +3,6 @@
 [o] logger service
 [o] test logger
 [o] object full_dup
-[o] engine#remove_service
 [o] :receive or :receive_back for when workitems come back from participant
 [o] emit :processes :launch :wfid
 [o] emit :processes :terminate :wfid only
@@ -507,7 +506,9 @@
 
 [ ] get rid of the "web" test[s]
 
-[ ] remove #dump from all storage implementations
+[.] remove #dump from all storage implementations
+
+[ ] engine#remove_service
 
 == 3.0
 [ ] deprecate get_schedules

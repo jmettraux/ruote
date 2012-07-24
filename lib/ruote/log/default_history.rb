@@ -31,8 +31,14 @@ module Ruote
   #
   # This class includes Enumerable.
   #
-  # NOTE : this default history is worthless when there are multiple workers.
-  # It only keeps track of the 'local' worker if there is one present.
+  # NOTE:
+  #
+  # this default history is worthless when there are multiple workers.
+  # It only keeps track of the msgs processed by the worker in the same
+  # context. Msgs processed by other workers (in different Ruby runtimes) are
+  # not seen (they are tracked by the DefaultHistory next to those workers).
+  #
+  # By default, this history keeps track of the latest 1'000 msgs.
   #
   class DefaultHistory
 
