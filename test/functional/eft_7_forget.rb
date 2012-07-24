@@ -26,8 +26,6 @@ class EftForgetTest < Test::Unit::TestCase
       tracer << "alpha\n"
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -37,7 +35,6 @@ class EftForgetTest < Test::Unit::TestCase
 
     assert_equal "alpha\nalpha", @tracer.to_s
 
-    #logger.log.each { |e| puts e['action'] }
     assert_equal 1, logger.log.select { |e| e['action'] == 'ceased' }.size
     assert_equal 1, logger.log.select { |e| e['action'] == 'terminated' }.size
   end
@@ -56,12 +53,9 @@ class EftForgetTest < Test::Unit::TestCase
       context.tracer << wi.participant_name + "\n"
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
-    @dashboard.wait_for(:charly)
-    @dashboard.wait_for(3)
+    3.times { @dashboard.wait_for('dispatched') }
 
     assert_equal %w[ alpha bravo charly ], @tracer.to_a.sort
   end
