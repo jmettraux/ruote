@@ -19,7 +19,11 @@ class FtDefaultHistoryTest < Test::Unit::TestCase
 
   def launch_processes(clear=true)
 
-    @dashboard.history.clear! if clear
+    if clear
+      @dashboard.history.clear!
+      sleep 0.050
+      @dashboard.history.clear!
+    end
 
     @dashboard.register_participant 'alpha', Ruote::NullParticipant
 
