@@ -38,6 +38,21 @@ module Ruote
     # in its flow, hopefully.
     #
     def receive(workitem)
+      @context.services.select { |s| s.respond_to?(:on_reply) }.each do |s|
+        observable = Ruote.fulldup(workitem)
+
+        s.on_reply(
+          :workitem    => observable,
+          :participant => self
+        )
+
+        shrunk  = observable.fields.length < workitem.fields.length
+        changed = (observable.fields.keys | workitem.fields.keys).length != observable.fields.length
+
+        if !shrunk && !changed
+          workitem.fields = observable.fields
+        end
+      end
 
       workitem = workitem.to_h if workitem.respond_to?(:to_h)
 
@@ -75,14 +90,23 @@ module Ruote
     #
     def flunk(workitem, error_class_or_instance, *err_arguments)
 
-      workitem = workitem.h if workitem.respond_to?(:h)
-
       err = error_class_or_instance
 
       if error_class_or_instance.is_a?(Class)
         err = error_class_or_instance.new(*err_arguments)
         err.set_backtrace(caller)
+
       end
+
+      @context.services.select { |s| s.respond_to?(:on_flunk) }.each do |s|
+        s.on_flunk(
+          :workitem    => workitem.dup,
+          :error       => err.clone,
+          :participant => self
+        )
+      end
+
+      workitem = workitem.h if workitem.respond_to?(:h)
 
       @context.storage.put_msg(
         'raise',
@@ -126,6 +150,19 @@ module Ruote
     def launch(process_definition, fields={}, variables={}, root_stash=nil)
 
       wfid = fields[:wfid] || @context.wfidgen.generate
+
+      observable_pdef = Ruote.fulldup(process_definition)
+      observable_wfid = Ruote.fulldup(wfid)
+
+      @context.services.select { |s| s.respond_to?(:on_launch) }.each do |o|
+        o.on_launch(
+          :pdef        => observable_pdef,
+          :wfid        => observable_wfid,
+          :fields      => fields,
+          :variables   => variables,
+          :participant => self
+        )
+      end
 
       @context.storage.put_msg(
         'launch',
