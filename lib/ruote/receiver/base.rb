@@ -105,8 +105,8 @@ module Ruote
     # Given a process definitions and optional initial fields and variables,
     # launches a new process instance.
     #
-    # This method is mostly used from the Ruote::Engine class (which includes
-    # this mixin).
+    # This method is mostly used from the Ruote::Dashboard class (which
+    # includes this mixin).
     #
     # process_definition must be a result of Ruote.process_definition call
     # or XML or JSON serialized process definition, as accepted by
