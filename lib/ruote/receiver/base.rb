@@ -73,16 +73,20 @@ module Ruote
     #     receiver.flunk(workitem, e)
     #   end
     #
-    def flunk(workitem, error_class_or_instance, *err_arguments)
+    def flunk(workitem, error_class_or_instance_or_message, *err_arguments)
 
-      workitem = workitem.h if workitem.respond_to?(:h)
+      err = error_class_or_instance_or_message
 
-      err = error_class_or_instance
+      if err.is_a?(String)
+        err = StandardError.new(err)
+        err.set_backtrace(caller)
 
-      if error_class_or_instance.is_a?(Class)
-        err = error_class_or_instance.new(*err_arguments)
+      elsif err.is_a?(Class)
+        err = err.new(*err_arguments)
         err.set_backtrace(caller)
       end
+
+      workitem = workitem.h if workitem.respond_to?(:h)
 
       @context.storage.put_msg(
         'raise',
