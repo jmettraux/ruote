@@ -26,8 +26,6 @@ class FtLoseTest < Test::Unit::TestCase
       tracer << wi.participant_name + "\n"
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(6)
@@ -58,11 +56,9 @@ class FtLoseTest < Test::Unit::TestCase
       tracer << wi.participant_name + "\n"
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
-    @dashboard.wait_for(13)
+    2.times { @dashboard.wait_for('dispatched') }
 
     assert_match /alpha/, @tracer.to_s
     assert_match /bravo/, @tracer.to_s
@@ -87,8 +83,6 @@ class FtLoseTest < Test::Unit::TestCase
     @dashboard.register_participant '.+' do |wi|
       tracer << wi.participant_name + "\n"
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
