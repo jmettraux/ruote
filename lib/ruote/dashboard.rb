@@ -25,6 +25,7 @@
 require 'ruote/context'
 require 'ruote/util/ometa'
 require 'ruote/receiver/base'
+require 'ruote/receiver/process_observer'
 require 'ruote/dboard/process_status'
 
 
