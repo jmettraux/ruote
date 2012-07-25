@@ -317,8 +317,8 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
 
     wfid = @dashboard.launch(pdef)
 
-    wait_for(2 + n * 5)
-    #p "=" * 80
+    #wait_for(2 + n * 5)
+    (2 * n).times { @dashboard.wait_for('dispatched') }
 
     assert_equal n, @dashboard.context.stash[:a_count]
 
