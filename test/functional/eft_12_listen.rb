@@ -25,8 +25,6 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     @dashboard.register_participant :alpha do
       tracer << "alpha\n"
     end
@@ -63,13 +61,9 @@ class EftListenTest < Test::Unit::TestCase
       tracer << "\n"
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
-    wait_for(:bravo)
-    wait_for(:bravo)
-    wait_for(4)
+    4.times { @dashboard.wait_for('dispatched') }
 
     a = @tracer.to_a
     assert_equal 2, a.select { |e| e == 'a' }.size
@@ -105,8 +99,6 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     @dashboard.register_participant :alpha do |workitem|
       tracer << "alpha\n"
       workitem.fields['seen'] = 'yes'
@@ -137,8 +129,6 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     @dashboard.register_participant :alpha do |wi|
       tracer << "alpha\n"
       wi.fields['name'] = 'William Mandella'
@@ -166,8 +156,6 @@ class EftListenTest < Test::Unit::TestCase
         end
       end
     end
-
-    #@dashboard.noisy = true
 
     stash[:count] = 0
 
@@ -228,8 +216,6 @@ class EftListenTest < Test::Unit::TestCase
       # nothing
     end
 
-    #noisy
-
     lwfid = @dashboard.launch(listening)
     ewfid = @dashboard.launch(emitting)
 
@@ -287,8 +273,6 @@ class EftListenTest < Test::Unit::TestCase
       end
       echo 'edone.'
     end
-
-    #noisy
 
     lwfid = @dashboard.launch(listening)
     ewfid = @dashboard.launch(emitting)
@@ -351,8 +335,6 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(wfid)
@@ -376,8 +358,6 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
@@ -385,8 +365,6 @@ class EftListenTest < Test::Unit::TestCase
   end
 
   def test_listen_does_not_work_for_errors_in_other_processes
-
-    #@dashboard.noisy = true
 
     wfid0 = @dashboard.launch(Ruote.define do
       listen :to => :errors do
@@ -427,8 +405,6 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     #sleep 1.000
@@ -461,8 +437,6 @@ class EftListenTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     4.times { @dashboard.wait_for(wfid) } # error, error, ceased, ceased
@@ -485,8 +459,6 @@ class EftListenTest < Test::Unit::TestCase
         end
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
