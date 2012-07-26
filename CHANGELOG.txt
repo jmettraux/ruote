@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- Dashboard#respark(wfid, errors_too=false)
 - StorageBase#dump: go with YAML
 - on_error: !immediate
 - "kill" expression (undo/cancel alias)

@@ -338,6 +338,29 @@ module Ruote
         're_apply' => Ruote.keys_to_s(opts))
     end
 
+    # This method re_apply all the leaves of a process instance. It's meant
+    # to be used against stalled workflows to give them back the spark of
+    # life.
+    #
+    # Stalled workflows can happen when msgs get lost. It also happens with
+    # some storage implementations where msgs are stored differently from
+    # expressions and co.
+    #
+    # By default, it doesn't re_apply leaves that are in error. If the
+    # errors_too argument is set to true, it will re_apply leaves in error
+    # as well.
+    #
+    def respark(wfid, errors_too=false)
+
+      pro = process(wfid)
+      error_feis = pro.errors.collect(&:fei)
+
+      pro.leaves.each do |fexp|
+        next if errors_too == false && error_feis.include?(fexp.fei)
+        re_apply(fexp.fei)
+      end
+    end
+
     # Returns a ProcessStatus instance describing the current status of
     # a process instance.
     #
