@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Hartog C. de Mik - https://github.com/coffeeaddict
 Doug Bryant - re_dispatch bug and 'dispatched' << 'workitem'
 Sjors - https://github.com/xtr3me - missing "concat" tactic for concurrence
 Islam Amer - https://github.com/iamer
