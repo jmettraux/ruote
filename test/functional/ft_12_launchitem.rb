@@ -23,8 +23,6 @@ class FtLaunchitemTest < Test::Unit::TestCase
       nil
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef, 'a' => 0, 'b' => 1)
     wait_for(wfid)
 

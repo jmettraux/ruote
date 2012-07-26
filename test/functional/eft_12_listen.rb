@@ -69,7 +69,7 @@ class EftListenTest < Test::Unit::TestCase
 
     wait_for(:bravo)
     wait_for(:bravo)
-    wait_for(3)
+    wait_for(4)
 
     a = @tracer.to_a
     assert_equal 2, a.select { |e| e == 'a' }.size
