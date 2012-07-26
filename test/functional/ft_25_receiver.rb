@@ -210,6 +210,20 @@ class FtReceiverTest < Test::Unit::TestCase
     end
   end
 
+  class StringFlunkParticipant
+    include Ruote::LocalParticipant
+
+    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
+    #
+    def on_workitem
+      flunk(workitem, 'out of order')
+    end
+
+    def on_cancel
+      # ...
+    end
+  end
+
   def test_flunk
 
     @dashboard.register :alpha, FlunkParticipant
@@ -222,6 +236,22 @@ class FtReceiverTest < Test::Unit::TestCase
 
     assert_equal 'error_intercepted', r['action']
     assert_equal 'ArgumentError', r['error']['class']
+    assert_equal 'out of order', r['error']['message']
+    assert_match __FILE__, r['error']['trace'].first
+  end
+
+  def test_string_flunk
+
+    @dashboard.register :alpha, StringFlunkParticipant
+
+    wfid = @dashboard.launch(Ruote.define do
+      alpha
+    end)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'RuntimeError', r['error']['class']
     assert_equal 'out of order', r['error']['message']
     assert_match __FILE__, r['error']['trace'].first
   end
