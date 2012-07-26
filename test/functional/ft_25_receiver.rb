@@ -251,7 +251,7 @@ class FtReceiverTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal 'error_intercepted', r['action']
-    assert_equal 'StandardError', r['error']['class']
+    assert_equal 'RuntimeError', r['error']['class']
     assert_equal 'out of order', r['error']['message']
     assert_match __FILE__, r['error']['trace'].first
   end

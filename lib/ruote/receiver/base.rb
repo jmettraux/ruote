@@ -78,7 +78,7 @@ module Ruote
       err = error_class_or_instance_or_message
 
       if err.is_a?(String)
-        err = StandardError.new(err)
+        err = RuntimeError.new(err)
         err.set_backtrace(caller)
 
       elsif err.is_a?(Class)
