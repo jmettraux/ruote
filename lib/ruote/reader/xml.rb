@@ -37,7 +37,7 @@ module Ruote
     #
     def self.understands?(s)
 
-      s.match(/<[a-z]+>/) != nil
+      !! s.strip.match(/<.+>/)
     end
 
     #
