@@ -16,7 +16,10 @@ class FtWorkerTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
     end
 
-    assert_trace '', pdef
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
 
     #puts; logger.log.each { |e| p e }; puts
     assert_equal %w[ launch terminated ], logger.log.map { |e| e['action'] }
