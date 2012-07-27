@@ -179,10 +179,11 @@ class Ruote::WaitLogger
       when 'resume', 'resume_process' then 'rz'
       when 'regenerate' then 'rg'
       when 'reput' then 'rp'
+      when 'respark' then 'sk'
       else act
     end
     act = case act
-      when 'la', 'rg' then color('4;32', act)
+      when 'la', 'rg', 'sk' then color('4;32', act)
       when 'te' then color('4;31', act)
       when 'ce' then color('31', act)
       when 'ca' then color('31', act)

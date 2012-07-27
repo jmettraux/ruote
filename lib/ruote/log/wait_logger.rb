@@ -197,6 +197,7 @@ module Ruote
       regenerate
       pause_process resume_process cancel_process kill_process
       reput noop raise
+      respark
     ]
 
     # Checks whether message msg matches any of interests being waited for.

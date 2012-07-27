@@ -347,18 +347,17 @@ module Ruote
     # expressions and co.
     #
     # By default, it doesn't re_apply leaves that are in error. If the
-    # errors_too argument is set to true, it will re_apply leaves in error
-    # as well.
+    # 'errors_too' option is set to true, it will re_apply leaves in error
+    # as well. For example:
     #
-    def respark(wfid, errors_too=false)
+    #   $dashboard.respark(wfid, 'errors_too' => true)
+    #
+    def respark(wfid, opts={})
 
-      pro = process(wfid)
-      error_feis = pro.errors.collect(&:fei)
-
-      pro.leaves.each do |fexp|
-        next if errors_too == false && error_feis.include?(fexp.fei)
-        re_apply(fexp.fei)
-      end
+      @context.storage.put_msg(
+        'respark',
+        'wfid' => wfid,
+        'respark' => Ruote.keys_to_s(opts))
     end
 
     # Returns a ProcessStatus instance describing the current status of

@@ -94,7 +94,7 @@ class FtResparkTest < Test::Unit::TestCase
 
     @dashboard.register 'alpha', Ruote::StorageParticipant
 
-    @dashboard.respark(wfid, true)
+    @dashboard.respark(wfid, 'errors_too' => true)
 
     @dashboard.wait_for('error_intercepted')
     sleep 0.100

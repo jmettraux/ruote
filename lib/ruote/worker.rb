@@ -378,6 +378,10 @@ module Ruote
 
             handle_msg_error(msg['msg'], msg['error'])
 
+          when 'respark'
+
+            respark(msg)
+
           #else
             # no special processing required for message, let it pass
             # to the subscribers (the notify two lines after)
@@ -546,6 +550,30 @@ module Ruote
       elsif msg = msg['msg']
 
         @storage.put_msg(msg['action'], msg)
+      end
+    end
+
+    # This action resparks a stalled workflow instance. It's usually
+    # triggered via Dashboard#respark
+    #
+    # It's been made into a msg (worker action) in order to facilitate
+    # migration tooling (ruote-swf for example).
+    #
+    def respark(msg)
+
+      wfid = msg['wfid']
+      opts = msg['respark']
+
+      ps = @context.dashboard.process(wfid)
+      error_feis = ps.errors.collect(&:fei)
+      errors_too = !! opts['errors_too']
+
+      ps.leaves.each do |fexp|
+
+        next if errors_too == false && error_feis.include?(fexp.fei)
+
+        @context.storage.put_msg(
+          'cancel', 'fei' => fexp.fei.h, 're_apply' => {})
       end
     end
 
