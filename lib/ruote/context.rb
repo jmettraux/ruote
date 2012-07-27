@@ -163,6 +163,16 @@ module Ruote
       service
     end
 
+    # Gives a chance to a subscribed service to look (and even modify) a
+    # msg before it's processed.
+    #
+    def pre_notify(msg)
+
+      @services.values.each do |s|
+        s.on_pre_msg(msg) if s.respond_to?(:on_pre_msg)
+      end
+    end
+
     # This method is called by the worker each time it sucessfully processed
     # a msg. This method calls in turn the #on_msg method for each of the
     # services (that respond to that method).
