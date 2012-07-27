@@ -526,7 +526,7 @@ module Ruote
 
       swfids = wfids.collect { |wfid| /!#{wfid}-\d+$/ }
 
-      batch = "#{Thread.current.object_id}-#{Time.now.to_f}"
+      batch = { 'id' => "#{Thread.current.object_id}-#{Time.now.to_f}" }
         #
         # some storages may optimize when they can distinguish
         # which get_many fit in the same batch...
