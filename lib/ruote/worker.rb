@@ -564,7 +564,8 @@ module Ruote
       wfid = msg['wfid']
       opts = msg['respark']
 
-      ps = @context.dashboard.process(wfid)
+      ps = ProcessStatus.fetch(@context, [ wfid ], {}).first
+
       error_feis = ps.errors.collect(&:fei)
       errors_too = !! opts['errors_too']
 
