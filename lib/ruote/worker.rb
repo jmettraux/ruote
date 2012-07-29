@@ -175,12 +175,11 @@ module Ruote
       @storage.get_msgs(self)
     end
 
-    # One worker step, fetches schedules and triggers those whose time has
-    # came, then fetches msgs and processes them.
+    # Gets schedules from the storage and if their time has come,
+    # turns them into msg (for immediate execution).
     #
-    def step
+    def process_schedules
 
-      msg = nil
       now = Time.now.utc
       delta = now - @last_time
 
@@ -193,42 +192,53 @@ module Ruote
 
         @last_time = now
 
-        @storage.get_schedules(delta, now).each { |sche| trigger(sche) }
+        @storage.get_schedules(delta, now).each { |s| turn_schedule_to_msg(s) }
       end
+    end
 
-      #
-      # process msgs (atomic workflow operations)
+    # Gets msgs from the storage (if needed) and processes them one by one.
+    #
+    def process_msgs
 
       @msgs = get_msgs if @msgs.empty?
 
-      processed = 0
       collisions = 0
 
-      while msg = @msgs.shift
+      while @msg = @msgs.shift
 
-        r = process(msg)
+        r = process(@msg)
 
         if r != false
-          processed += 1
+          @processed_msgs += 1
         else
           collisions += 1
         end
 
         if collisions > 2
           @msgs = @msgs[(@msgs.size / 2)..-1] || []
+          collisions = 0
         end
 
         break if Time.now.utc - @last_time >= 0.8
       end
+    end
 
-      #
-      # batch over, let's rest
+    # One worker step, fetches schedules and triggers those whose time has
+    # came, then fetches msgs and processes them.
+    #
+    def step
 
-      take_a_rest(processed)
+      @msg = nil
+      @processed_msgs = 0
+
+      process_schedules
+      process_msgs
+
+      take_a_rest
 
     rescue => err
 
-      handle_step_error(err, msg) # msg may be nil
+      handle_step_error(err, @msg) # msg may be nil
     end
 
     # This default implementation dumps error information to $stderr as
@@ -294,11 +304,11 @@ module Ruote
     # If @sleep_time is nil (restless_worker option set to true), the worker
     # will never rest.
     #
-    def take_a_rest(msgs_processed)
+    def take_a_rest
 
       return if @sleep_time == nil
 
-      if msgs_processed == 0
+      if @processed_msgs < 1
 
         @sleep_time += 0.001
         @sleep_time = 0.499 if @sleep_time > 0.499
@@ -318,7 +328,7 @@ module Ruote
     # The schedule is triggered if the reservation was successful, true
     # is returned.
     #
-    def trigger(schedule)
+    def turn_schedule_to_msg(schedule)
 
       msg = Ruote.fulldup(schedule['msg'])
 
