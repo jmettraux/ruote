@@ -23,11 +23,8 @@
 #++
 
 
-require 'rufus/json'
-Rufus::Json.detect_backend
-
-require 'rufus/cloche'
-  # gem install rufus-cloche
+require 'rufus-json/automatic'
+require 'rufus-cloche'
 
 require 'ruote/storage/base'
 
