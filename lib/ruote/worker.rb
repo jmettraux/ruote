@@ -172,12 +172,7 @@ module Ruote
 
       # green, let's get the next batch of messages to process
 
-      if @storage.method(:get_msgs).arity == 0
-        # fortunately method and arity are cheap
-        @storage.get_msgs
-      else
-        @storage.get_msgs(self)
-      end
+      @storage.get_msgs(self)
     end
 
     # One worker step, fetches schedules and triggers those whose time has
