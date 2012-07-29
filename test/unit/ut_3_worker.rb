@@ -15,12 +15,6 @@ class UtWorkerTest < Test::Unit::TestCase
 
   class StorageA < Ruote::HashStorage
     attr_accessor :caller
-    def get_msgs
-      @caller = :nemo
-      []
-    end
-  end
-  class StorageB < StorageA
     def get_msgs(worker)
       @caller = worker
       []
@@ -34,21 +28,11 @@ class UtWorkerTest < Test::Unit::TestCase
 
     assert_nil storage.caller
     worker.send(:step)
-    assert_equal :nemo, storage.caller
-  end
-
-  def test_get_msgs_with_worker_name
-
-    storage = StorageB.new
-    worker = Ruote::Worker.new(storage)
-
-    assert_nil storage.caller
-    worker.send(:step)
     assert_equal worker, storage.caller
   end
 
   class StorageX < Ruote::HashStorage
-    def get_msgs
+    def get_msgs(worker)
       raise('failing...')
     end
   end

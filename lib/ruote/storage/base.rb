@@ -80,28 +80,12 @@ module Ruote
       msg = prepare_msg_doc(action, options)
 
       put(msg)
-
-      #put(msg, :update_rev => true)
-      #(@local_msgs ||= []) << Ruote.fulldup(msg)
     end
 
-    #--
-    #def get_local_msgs
-    #  p @local_msgs
-    #  if @local_msgs
-    #    r = @local_msgs
-    #    @local_msgs = nil
-    #    r
-    #  else
-    #    []
-    #  end
-    #end
-    #++
-
-    def get_msgs
+    def get_msgs(worker)
 
       get_many(
-        'msgs', nil, :limit => 300
+        'msgs', nil, :limit => 300, :worker => worker
       ).sort { |a, b|
         a['put_at'] <=> b['put_at']
       }

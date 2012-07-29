@@ -16,7 +16,9 @@ end
 class Ruote::Engine
 
   def peek_msg
-    @msgs = @context.storage.get_msgs if ( ! @msgs) || @msgs.size < 1
+    if ( ! @msgs) || @msgs.size < 1
+      @msgs = @context.storage.get_msgs(@context.worker)
+    end
     @msgs.shift
   end
 

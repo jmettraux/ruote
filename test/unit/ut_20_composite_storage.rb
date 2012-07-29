@@ -28,8 +28,8 @@ class UtCompositeStorageTest < Test::Unit::TestCase
 
     assert_equal 0, @default.h['msgs'].size
     assert_equal 1, @default.h['schedules'].size
-    assert_equal 2, @cs.get_msgs.size
-    assert_equal 2, @msgs.get_msgs.size
+    assert_equal 2, @cs.get_msgs(:nada).size
+    assert_equal 2, @msgs.get_msgs(:nada).size
     assert_equal 0, @msgs.h['schedules'].size
   end
 
