@@ -46,8 +46,8 @@ module Ruote
     attr_reader :storage
     attr_reader :context
 
+    attr_reader :state
     attr_reader :run_thread
-    attr_reader :running
 
     # Given a storage, creates a new instance of a Worker.
     #
@@ -75,7 +75,7 @@ module Ruote
 
       @last_time = Time.at(0.0).utc # 1970...
 
-      @running = true
+      @state = 'running'
       @run_thread = nil
 
       @msgs = []
@@ -90,7 +90,7 @@ module Ruote
     #
     def run
 
-      step while @running
+      step while @state != 'stopped'
     end
 
     # Triggers the run method of the worker in a dedicated thread.
@@ -99,7 +99,7 @@ module Ruote
 
       #Thread.abort_on_exception = true
 
-      @running = true
+      @state = 'running'
 
       @run_thread = Thread.new { run }
       @run_thread['worker_name'] = @name
@@ -110,7 +110,7 @@ module Ruote
     #
     def join
 
-      @run_thread.join if @run_thread
+      @run_thread.join rescue nil
     end
 
     # Shuts down this worker (makes sure it won't fetch further messages
@@ -118,12 +118,9 @@ module Ruote
     #
     def shutdown
 
-      @running = false
+      @state = 'stopped'
 
-      begin
-        @run_thread.join
-      rescue => e
-      end
+      join
     end
 
     # Returns true if the engine system is inactive, ie if all the process
@@ -154,25 +151,13 @@ module Ruote
 
     protected
 
-    # Hiding the details of @storage.get_msgs away.
+    # If worker_state_enabled is set, check for a potential new state.
     #
-    def get_msgs
+    def determine_state
 
-      # since we have to access the storage, let's ask him if we should
-      # stop or pause.
-
-      state =
-        @context['worker_state_enabled'] &&
-        (@storage.get('variables', 'worker') || {})['state']
-
-      case state
-        when 'stopped' then (@running = false; return [])
-        when 'paused' then return []
+      if @context['worker_state_enabled']
+        @state = (@storage.get('variables', 'worker') || {})['state']
       end
-
-      # green, let's get the next batch of messages to process
-
-      @storage.get_msgs(self)
     end
 
     # Gets schedules from the storage and if their time has come,
@@ -183,24 +168,21 @@ module Ruote
       now = Time.now.utc
       delta = now - @last_time
 
-      #
-      # trigger schedules whose time has come
-
-      if delta >= 0.8
+      return if delta < 0.8
         #
-        # at most once per second, deal with 'ats' and 'crons'
+        # consider schedules at most twice per second (don't do that job
+        # too often)
 
-        @last_time = now
+      @last_time = now
 
-        @storage.get_schedules(delta, now).each { |s| turn_schedule_to_msg(s) }
-      end
+      @storage.get_schedules(delta, now).each { |s| turn_schedule_to_msg(s) }
     end
 
     # Gets msgs from the storage (if needed) and processes them one by one.
     #
     def process_msgs
 
-      @msgs = get_msgs if @msgs.empty?
+      @msgs = @storage.get_msgs(self) if @msgs.empty?
 
       collisions = 0
 
@@ -231,8 +213,14 @@ module Ruote
       @msg = nil
       @processed_msgs = 0
 
-      process_schedules
-      process_msgs
+      determine_state
+
+      return if @state == 'stopped'
+
+      if @state == 'running'
+        process_schedules
+        process_msgs
+      end
 
       take_a_rest
 

@@ -29,11 +29,11 @@ class FtWorkerTest < Test::Unit::TestCase
 
     sleep 0.010 # warm up time
 
-    assert_equal true, @dashboard.context.worker.running
+    assert_equal 'running', @dashboard.context.worker.state
 
     @dashboard.shutdown
 
-    assert_equal false, @dashboard.context.worker.running
+    assert_equal 'stopped', @dashboard.context.worker.state
 
     pdef = Ruote.process_definition do; end
 
@@ -106,7 +106,7 @@ class FtWorkerTest < Test::Unit::TestCase
       10.times { echo 'a' }
     end
 
-    assert_equal true, @dashboard.context.worker.running
+    assert_equal 'running', @dashboard.context.worker.state
 
     wfid = @dashboard.launch(pdef)
 
@@ -121,7 +121,7 @@ class FtWorkerTest < Test::Unit::TestCase
     assert_equal s, @tracer.to_a.size
 
     assert_equal 'stopped', @dashboard.worker_state
-    assert_equal false, @dashboard.context.worker.running
+    assert_equal 'stopped', @dashboard.context.worker.state
   end
 
   def test_worker_thread_worker_name
