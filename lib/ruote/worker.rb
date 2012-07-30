@@ -102,6 +102,8 @@ module Ruote
       @state = 'running'
 
       @run_thread = Thread.new { run }
+
+      @run_thread['worker'] = self
       @run_thread['worker_name'] = @name
     end
 
