@@ -16,7 +16,7 @@ class UtWorkerTest < Test::Unit::TestCase
   class StorageA < Ruote::HashStorage
     attr_accessor :caller
     def get_msgs
-      @caller = Thread.current['worker']
+      @caller = Thread.current['ruote_worker']
       []
     end
   end
