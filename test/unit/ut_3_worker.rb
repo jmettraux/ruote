@@ -15,8 +15,8 @@ class UtWorkerTest < Test::Unit::TestCase
 
   class StorageA < Ruote::HashStorage
     attr_accessor :caller
-    def get_msgs(worker)
-      @caller = worker
+    def get_msgs
+      @caller = Thread.current['worker']
       []
     end
   end
@@ -32,7 +32,7 @@ class UtWorkerTest < Test::Unit::TestCase
   end
 
   class StorageX < Ruote::HashStorage
-    def get_msgs(worker)
+    def get_msgs
       raise('failing...')
     end
   end

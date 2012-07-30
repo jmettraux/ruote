@@ -44,7 +44,7 @@ class FtWorkerTest < Test::Unit::TestCase
     #assert_equal 1, @dashboard.storage.get_many('msgs').size
       # won't work with the latest ruote-redis implementations
 
-    assert_equal 1, @dashboard.storage.get_msgs(@dashboard.worker).size
+    assert_equal 1, @dashboard.storage.get_msgs.size
   end
 
   def test_remaining_messages
@@ -58,7 +58,7 @@ class FtWorkerTest < Test::Unit::TestCase
 
     sleep 0.300
 
-    assert_equal [], @dashboard.storage.get_msgs(@dashboard.worker)
+    assert_equal 0, @dashboard.storage.get_msgs.size
   end
 
   def test_stop_workers_not_enabled

@@ -446,7 +446,7 @@ class FtStorage < Test::Unit::TestCase
 
       threads << Thread.new do
         loop do
-          msgs = @s.get_msgs(:nada_worker)
+          msgs = @s.get_msgs
           msgs[0, 100].each do |msg|
             next if msg['tree'].nil?
             next unless @s.reserve(msg)

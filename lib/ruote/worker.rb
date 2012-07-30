@@ -184,7 +184,7 @@ module Ruote
     #
     def process_msgs
 
-      @msgs = @storage.get_msgs(self) if @msgs.empty?
+      @msgs = @storage.get_msgs if @msgs.empty?
 
       collisions = 0
 
@@ -207,10 +207,31 @@ module Ruote
       end
     end
 
+    # Some storage implementations cache information before a step
+    # begins, reducing the number of requests to the underlying
+    # data system. This begin step notifies the storage that
+    # a new step is on and it should refresh the cached information.
+    #
+    # The storage implementation, if it supports this feature, will cache
+    # the information in the thread local info.
+    #
+    def begin_step
+
+      Thread.current['worker'] = self
+      Thread.current['worker_name'] = @name
+        #
+        # not sure if it's necessary for now, the @run_thread enforces
+        # that info, but what about a worker that's not using the @run_thread?
+
+      @storage.begin_step if @storage.respond_to?(:begin_step)
+    end
+
     # One worker step, fetches schedules and triggers those whose time has
     # came, then fetches msgs and processes them.
     #
     def step
+
+      begin_step
 
       @msg = nil
       @processed_msgs = 0

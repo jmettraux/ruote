@@ -82,10 +82,10 @@ module Ruote
       put(msg)
     end
 
-    def get_msgs(worker)
+    def get_msgs
 
       get_many(
-        'msgs', nil, :limit => 300, :worker => worker
+        'msgs', nil, :limit => 300
       ).sort { |a, b|
         a['put_at'] <=> b['put_at']
       }
