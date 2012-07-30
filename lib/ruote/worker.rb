@@ -403,7 +403,7 @@ module Ruote
         handle_msg_error(msg, err)
       end
 
-      @context.storage.done(self, msg) if @context.storage.respond_to?(:done)
+      @context.storage.done(msg) if @context.storage.respond_to?(:done)
 
       @info << msg if @info
         # for the stats
