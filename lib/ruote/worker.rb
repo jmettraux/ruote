@@ -360,6 +360,8 @@ module Ruote
 
       begin
 
+        @context.pre_notify(msg)
+
         case msg['action']
 
           when 'launch', 'apply', 'regenerate'

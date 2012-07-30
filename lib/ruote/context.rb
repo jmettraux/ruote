@@ -163,6 +163,22 @@ module Ruote
       service
     end
 
+    # This is kind of evil. Notifies services responding to #on_pre_msg
+    # with the msg before it gets processed.
+    #
+    # Might be useful in some cases. Use with great care.
+    #
+    def pre_notify(msg)
+
+      waiters, observers = @services.select { |n, s|
+        s.respond_to?(:on_pre_msg)
+      }.sort_by { |n, s|
+        n
+      }.each { |n, s|
+        s.on_pre_msg(msg)
+      }
+    end
+
     # This method is called by the worker each time it sucessfully processed
     # a msg. This method calls in turn the #on_msg method for each of the
     # services (that respond to that method).

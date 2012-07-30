@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- Ruote::Observer (a base classing for observing a ruote engine's activity)
 - thread['ruote_worker']
 - Dashboard#respark(wfid, opts={})
 - StorageBase#dump: go with YAML
