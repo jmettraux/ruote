@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- thread['ruote_worker']
 - Dashboard#respark(wfid, opts={})
 - StorageBase#dump: go with YAML
 - on_error: !immediate

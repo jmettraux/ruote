@@ -102,9 +102,7 @@ module Ruote
       @state = 'running'
 
       @run_thread = Thread.new { run }
-
-      @run_thread['worker'] = self
-      @run_thread['worker_name'] = @name
+      flag_thread(@run_thread)
     end
 
     # Joins the run thread of this worker (if there is no such thread, this
@@ -152,6 +150,18 @@ module Ruote
     end
 
     protected
+
+    # Used by #run_in_thread and #begin_step, makes sure the thread
+    # contains the worker name (legacy) and a reference to the worker.
+    #
+    # Some storage implementation rely on that information (ruote-swf,
+    # ruote-sequel).
+    #
+    def flag_thread(t)
+
+      t['ruote_worker'] = self
+      t['worker_name'] = @name
+    end
 
     # If worker_state_enabled is set, check for a potential new state.
     #
@@ -217,11 +227,7 @@ module Ruote
     #
     def begin_step
 
-      Thread.current['worker'] = self
-      Thread.current['worker_name'] = @name
-        #
-        # not sure if it's necessary for now, the @run_thread enforces
-        # that info, but what about a worker that's not using the @run_thread?
+      flag_thread(Thread.current)
 
       @storage.begin_step if @storage.respond_to?(:begin_step)
     end
