@@ -23,21 +23,88 @@
 #++
 
 module Ruote
-  # an empty base class for observers, just to provide convenience and
-  # documentation on how observers operate
+
+  # A base class for process observers, just to provide convenience. It 
+  # (heavily) sugar coats the Ruote::Observer and translate the messages into
+  # actions. Each such action is provided with pre-distilled information 
+  # relevant for processes.
   #
-  # TODO: Add docs for on_$everything
-  # TODO: Rename to ProcessObserver
+  # == Example implementation
+  #   class WebsocketSubscriber < Ruote::ProcessObserver
+  #      # override initialize to warm-up a websocket client
+  #      def initialize(context, options={})
+  #        super
+  #        @client = WebsocketClient.new()
+  #      end
   #
-  class ProcessSubscriber
-    attr_reader :context, :options
+  #      # tell the listeners that a new process launched
+  #      def on_launch(wfid, opts)
+  #        @client.publish(
+  #          "/process/launch",
+  #          { :pdef => opts[:workitem].wf_name, :wfid => wfid }
+  #        )
+  #      end
+  #
+  #      # tell the listeners that a new process ended
+  #      def on_end(wfid)
+  #        @client.publish("/process/#{wfid}", { :end => true })
+  #      end
+  #   end
+  #
+  # == Actions
+  # The ProcessObserver adheres closely to the message actions, it calls the
+  # following methods:
+  #
+  # on_launch::   When a process or sub-process starts
+  # on_end::      When a process ends
+  # on_error::    When an error was intercepted
+  # on_cancel::   When a process or sub-process was canceled
+  # on_dispatch:: When a participant is dispatched  
+  # on_receive::  Whenever a workitem is received
+  # 
+  # == Arguments
+  # The methods are called with (wfid[, options])
+  #
+  # You can provide a method-signature like:
+  #
+  #   def on_launch(wfid, options)
+  #   def on_launch(wfid)
+  #
+  # If the ProcessObserver cannot call the method with the options, it tries
+  # to call without options
+  #
+  # === Options
+  # The following options are provided:
+  #
+  # :workitem::  The (last known) workitem - The ProcessObserver will try to
+  #              obtain it from storage or history if it was not supplied in
+  #              the message
+  # :action::    The original name of the action
+  # :child::     Boolean; This is an event of a child, or sub-flow
+  # :error::     The error intercepted (only provided with #on_error)
+  # :pdef::      The (sub-)process definition (only provided with #on_launch)
+  # :variables:: The process variables, if available
+  #
+  # == Error handling
+  #
+  # If anywhere in your implementation an action raises an error, it is caught
+  # by the ProcessObserver and silently ignored.
+  #
+  class ProcessObserver
+    attr_reader :context, :options, :filtered_actions
+
     def initialize(context, options={})
+      @filtered_actions = options.delete(:filtered_actions)
+      @filtered_actions ||= []
+      @filtered_actions |=  %w[dispatched participant_registered variable_set]
+
       @context = context;
       @options = options
     end
 
-    def on_msg(msg)
-      return if %w[ participant_registered variable_set ].include? msg['action']
+    def on_msg(msg) # :nodoc:
+      return if !msg['action']
+      return if @filtered_actions.include? msg['action']
 
       wfid  = msg['wfid']
       child = false
@@ -50,6 +117,7 @@ module Ruote
         wfid = msg['fei']['wfid']
 
       elsif !wfid
+        # There is nothing to report about a workflow w/o a workflow id
         return
       end
 
@@ -62,19 +130,21 @@ module Ruote
       rescue Exception => ex
         Ruote::Workitem.new({})
       end
-        
 
       fields = {
-        :wfid     => wfid,
-        :workitem => workitem,
-        :action   => msg['action'],
-        :child    => child,
-        :parent   => child
+        :workitem  => workitem,
+        :action    => msg['action'],
+        :child     => child,
+        :variables => msg['variables'],
       }
 
       method = msg['action'].split('_').first
 
+      # change method or fields based on the action
       case msg['action']
+      when 'launch'
+        fields[:pdef] = msg['tree']
+
       when 'terminated'
         method = 'end'
 
@@ -83,14 +153,23 @@ module Ruote
         error.set_backtrace msg['error']['trace']
 
         fields[:error] = error
-
       end
 
       method = :"on_#{method}"
+      
       if self.respond_to?(method)
-        self.send(method, fields)
+        begin
+          self.send(method, wfid, fields)
+        rescue ArgumentError => ae
+          if ae.message =~ /2 for 1/
+            # perhaps they dont want fields?
+            self.send(method, wfid)
+          end
+        end
       end
 
+      return nil
+    rescue Exception => ex
       return nil
     end
 

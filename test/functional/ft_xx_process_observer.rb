@@ -6,92 +6,146 @@
 #
 
 require File.expand_path('../base', __FILE__)
-
-require 'ruote/util/process_subscriber'
+require 'ruote/util/process_observer'
 
 class FtProcessObservingTest < Test::Unit::TestCase
   include FunctionalBase
 
-  class MySubscriber < Ruote::ProcessObserver
-    class << self
-      attr_accessor :counter
+  def test_on_launch
+    observer = Class.new(Ruote::ProcessObserver) do
+      class << self
+        attr_accessor :started
+      end
 
-      def reset
-        @counter = {
-          :launched => 0,
-          :ended    => 0,
-          :flunked  => 0,
-          :canceled => 0,
-
-          :step_total => 0,
-        }
+      def on_launch(wfid)
+        self.class.started = true
       end
     end
 
-    def initialize(context, options)
-      super
-      MySubscriber.reset
-    end
-
-    def on_launch(wfid, workitem)
-      MySubscriber.counter[:launched] += 1
-    end
-
-    def on_end(wfid, workitem)
-      MySubscriber.counter[:ended] += 1
-    end
-
-    def on_error(wfid, workitem, error)
-      MySubscriber.counter[:flunked] += 1
-    end
-
-    def on_cancel(wfid, workitem)
-      MySubscriber.counter[:canceled] += 1
-    end
-  end
-
-  def test_on_launch
-    @dashboard.add_service('process_subscriber', MySubscriber)
+    @dashboard.add_service('start_subscriber', observer)
 
     wfid = @dashboard.launch Ruote.define do; echo "hello"; end
     res  = @dashboard.wait_for(wfid)
 
-    assert_equal 1, MySubscriber.counter[:launched]
+    assert_equal true, observer.started
+  end
+
+  def test_on_sub_launch
+    observer = Class.new(Ruote::ProcessObserver) do
+      class << self
+        attr_accessor :opts, :launches
+      end
+
+      def on_launch(wfid, opts)
+        self.class.opts = opts.dup
+        self.class.launches += 1
+      end
+    end
+    observer.launches = 0
+
+    @dashboard.add_service("sub_launch_observer", observer)
+    pdef = Ruote.define do
+      sequence do
+        alpha
+      end
+
+      define :alpha do
+        echo "I am the sub"
+      end
+    end
+
+    wfid = @dashboard.launch pdef
+    @dashboard.wait_for(wfid)
+
+    assert_not_nil observer.opts
+    assert_equal 2, observer.launches
+    assert_equal true, observer.opts[:child]
+    assert_not_nil observer.opts[:pdef]
   end
 
   def test_on_end
-    @dashboard.add_service('process_subscriber', MySubscriber)
+    observer = Class.new(Ruote::ProcessObserver) do
+      class << self
+        attr_accessor :stopped
+      end
+
+      def on_end(wfid)
+        self.class.stopped = true
+      end
+    end
+    @dashboard.add_service('stop_server', observer)
 
     wfid = @dashboard.launch Ruote.define do; echo "hello"; end
     res  = @dashboard.wait_for(wfid)
 
-    assert_equal 1, MySubscriber.counter[:ended]
+    assert_equal true, observer.stopped
   end
 
   def test_on_error
-    @dashboard.add_service('process_subscriber', MySubscriber)
+    observer = Class.new(Ruote::ProcessObserver) do
+      class << self
+        attr_accessor :flunked, :opts
+      end
 
-    Ruote.register_participant :pinky do |wi|
-      flunk(wi, "Narf!")
+      def on_error(wfid, opts)
+        self.class.flunked = true
+        self.class.opts    = opts
+      end
     end
 
-    wfid = @dashboard.launch Ruote.define do; pinky; end
+    @dashboard.add_service('flunk_subscriber', observer)
+
+    @dashboard.register_participant :pinky do |wi|
+      raise "hell"
+    end
+
+    wfid = @dashboard.launch Ruote.define() { pinky }
     res  = @dashboard.wait_for(wfid)
 
-    assert_equal 1, MySubscriber.counter[:flunked]
+    assert_equal true, observer.flunked
+    assert_not_nil observer.opts
+    assert_not_nil observer.opts[:error]
+    assert_equal "hell", observer.opts[:error].message
   end
 
   def test_on_cancel
-    @dashboard.add_service('process_subscriber', MySubscriber)
+    observer = Class.new(Ruote::ProcessObserver) do
+      class << self
+        attr_accessor :canceled
+      end
 
-    Ruote.register_participant :brain do |wi|
-      @dashboard.cancel(wi.fei.wfid)
+      def on_cancel(wfid)
+        self.class.canceled = true
+      end
     end
 
-    wfid = @dashboard.launch Ruote.define do; brain; end
+    @dashboard.add_service('cancel_subscriber', observer)
+
+    @dashboard.register_participant :brain do |wi|
+      context.dashboard.cancel(wi.wfid)
+    end
+
+    wfid = @dashboard.launch Ruote.define() { brain }
     res  = @dashboard.wait_for(wfid)
 
-    assert_equal 1, MySubscriber.counter[:canceled]
+    assert_equal true, observer.canceled
   end
 
+  def test_error_handling
+    observer = Class.new(Ruote::ProcessObserver) do
+      class << self; attr_accessor :flunked; end
+      def on_launch(wfid)
+        raise "Sit still! I'm trying to kill you!"
+      end
+      def on_error(wfid)
+        self.class.flunked = true
+      end
+    end
+
+    @dashboard.add_service('process_timer', observer)
+    wfid = @dashboard.launch Ruote.define do; echo('hi'); end
+    res  = @dashboard.wait_for(wfid)
+    
+    assert_equal nil, observer.flunked
+  end
 end
