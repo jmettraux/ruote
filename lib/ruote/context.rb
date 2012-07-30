@@ -171,13 +171,15 @@ module Ruote
     #
     def notify(msg)
 
-      waiters, observers = @services.values.select { |s|
+      waiters, observers = @services.select { |n, s|
         s.respond_to?(:on_msg)
-      }.partition { |s|
+      }.sort_by { |n, s|
+        n
+      }.partition { |n, s|
         s.respond_to?(:wait_for)
       }
 
-      (observers + waiters).each { |o| o.on_msg(msg) }
+      (observers + waiters).each { |n, s| s.on_msg(msg) }
     end
 
     # Takes care of shutting down every service registered in this context.
