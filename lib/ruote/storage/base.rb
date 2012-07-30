@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'ostruct'
 require 'ruote/util/time'
 
 
@@ -31,6 +32,10 @@ module Ruote
   # Base methods for storage implementations.
   #
   module StorageBase
+
+    #--
+    # misc
+    #++
 
     def context
 
@@ -48,6 +53,21 @@ module Ruote
     def reserve(doc)
 
       delete(doc).nil?
+    end
+
+    # A helper for the #worker method, it returns that dummy worker
+    # when there is no reference to the calling worker in the current
+    # thread's local variables.
+    #
+    DUMMY_WORKER = OpenStruct.new(
+      :name => 'worker', :identity => 'unknown', :state => 'running')
+
+    # Warning, this is not equivalent to doing @context.worker, this method
+    # fetches the worker from the local thread variables.
+    #
+    def worker
+
+      Thread.current['ruote_worker'] || DUMMY_WORKER
     end
 
     #--
