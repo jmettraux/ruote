@@ -94,6 +94,7 @@ module Ruote
   # by the ProcessObserver and silently ignored.
   #
   class ProcessObserver
+
     attr_reader :context, :options, :filtered_actions
 
     def initialize(context, options={})
@@ -101,12 +102,12 @@ module Ruote
       @filtered_actions ||= []
       @filtered_actions |=  %w[dispatched participant_registered variable_set]
 
-      @context = context;
+      @context = context
       @options = options
     end
 
     def on_msg(msg) # :nodoc:
-      return if !msg['action']
+
       return if @filtered_actions.include? msg['action']
 
       wfid  = msg['wfid']
@@ -115,14 +116,10 @@ module Ruote
       if !wfid && msg['parent_id']
         wfid  = msg['parent_id']['wfid']
         child = true
-
-      elsif !wfid && msg['fei']
-        wfid = msg['fei']['wfid']
-
-      elsif !wfid
-        # There is nothing to report about a workflow w/o a workflow id
-        return
       end
+
+      wfid ||= Ruote.extract_wfid(msg)
+      return if !wfid
 
       workitem = begin
         if msg['workitem']
@@ -130,76 +127,59 @@ module Ruote
         else
           fetch_workitem(wfid)
         end
-      rescue Exception => ex
+      rescue
         Ruote::Workitem.new({})
       end
 
-      fields = {
+      data = {
         :workitem  => workitem,
         :action    => msg['action'],
         :child     => child,
         :variables => msg['variables'],
       }
 
+      # the prelimenary method name
       method = msg['action'].split('_').first
 
       # change method or fields based on the action
       case msg['action']
       when 'launch'
-        fields[:pdef] = msg['tree']
+        data[:pdef] = msg['tree']
 
-      when 'terminated'
-        method = 'end'
+      when 'cancel'
+        data[:flavour] = msg['flavour']
 
       when 'error_intercepted'
         error = Kernel.const_get(msg['error']['class']).new(msg['error']['message'])
         error.set_backtrace msg['error']['trace']
 
-        fields[:error] = error
+        data[:error] = error
+        method = msg['action']
       end
 
-      method = :"on_#{method}"
-      
-      if self.respond_to?(method)
-        begin
-          self.send(method, wfid, fields)
-        rescue ArgumentError => ae
-          if ae.message =~ /2 for 1/
-            # perhaps they dont want fields?
-            self.send(method, wfid)
-          end
-        end
+      callback = "on_#{method}"
+
+      if self.respond_to?(callback)
+        args = [ wfid ]
+        args << data if self.method(callback).arity.abs == 2
+
+        self.send(callback, *args)
       end
 
-      return nil
-    rescue Exception => ex
-      return nil
+      return
+    rescue
+      return
     end
 
-    def fetch_workitem(wfid) # :nodoc:
-      workitem = begin
-        fetched = @context.dashboard.storage_participant.by_wfid(wfid)
-        if fetched && fetched.first
-          Ruote::Workitem.new(fetched.first)
-        end
+    private
+      def fetch_workitem(fei) # :nodoc:
 
-      rescue Exception => ex
-        nil
+        fexp = @context.storage.get('expressions', Ruote.to_storage_id(fei))
+
+        fexp ?
+          Ruote::Workitem.new(fexp['applied_workitem']) :
+          Ruote::Workitem.new({})
       end
 
-      workitem ||= begin
-        fetched = @context.dashboard.history.by_wfid(wfid)
-        if fetched && fetched.first
-          Ruote::Workitem.new(fetched.first['workitem'])
-        end
-
-      rescue Exception => ex
-        Ruote::Workitem.new({})
-      end
-
-      return workitem
-    end
-
-    private :fetch_workitem
   end
 end
