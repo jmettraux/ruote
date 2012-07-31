@@ -41,7 +41,10 @@ module Ruote
   #      def on_launch(wfid, opts)
   #        @client.publish(
   #          "/process/launch",
-  #          { :pdef => opts[:workitem].wf_name, :wfid => wfid }
+  #          { :name       => opts[:workitem].wf_name,
+  #            :wfid       => wfid,
+  #            :definition => opts[:pdef],
+  #          }
   #        )
   #      end
   #
