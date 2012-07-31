@@ -1,8 +1,8 @@
-
 #
-# testing ruote
+# Testing process observers
 #
-# Thu Dec 24 18:05:39 JST 2009
+# Made in Germany
+# by Hartog de Mik
 #
 
 require File.expand_path('../base', __FILE__)
@@ -145,7 +145,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
     @dashboard.add_service('process_timer', observer)
     wfid = @dashboard.launch Ruote.define do; echo('hi'); end
     res  = @dashboard.wait_for(wfid)
-    
+
     assert_equal nil, observer.flunked
   end
 end
