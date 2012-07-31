@@ -20,6 +20,12 @@ class FtProcessObservingTest < Test::Unit::TestCase
       def on_launch(wfid)
         self.class.started = true
       end
+
+      def on_error_intercepted(wfid, fields)
+        ex = fields[:error]
+        STDERR.puts "#{ex.class.name}: #{ex.message}"
+        STDERR.puts "\t#{ex.backtrace.join("\n\t")}"
+      end
     end
 
     @dashboard.add_service('start_subscriber', observer)
@@ -69,7 +75,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
         attr_accessor :stopped
       end
 
-      def on_end(wfid)
+      def on_terminated(wfid)
         self.class.stopped = true
       end
     end
@@ -87,7 +93,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
         attr_accessor :flunked, :opts
       end
 
-      def on_error(wfid, opts)
+      def on_error_intercepted(wfid, opts)
         self.class.flunked = true
         self.class.opts    = opts
       end
@@ -137,7 +143,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
       def on_launch(wfid)
         raise "Sit still! I'm trying to kill you!"
       end
-      def on_error(wfid)
+      def on_error_intercepted(wfid)
         self.class.flunked = true
       end
     end
