@@ -128,7 +128,7 @@ module Ruote
         if msg['workitem']
           Ruote::Workitem.new(Rufus::Json.dup(msg['workitem']))
         else
-          fetch_workitem(wfid)
+          Ruote::Workitem.new({})
         end
       rescue
         Ruote::Workitem.new({})
@@ -161,7 +161,6 @@ module Ruote
       end
 
       callback = "on_#{method}"
-
       if self.respond_to?(callback)
         args = [ wfid ]
         args << data if self.method(callback).arity.abs == 2
@@ -173,16 +172,6 @@ module Ruote
     rescue
       return
     end
-
-    private
-      def fetch_workitem(fei) # :nodoc:
-
-        fexp = @context.storage.get('expressions', Ruote.to_storage_id(fei))
-
-        fexp ?
-          Ruote::Workitem.new(fexp['applied_workitem']) :
-          Ruote::Workitem.new({})
-      end
 
   end
 end
