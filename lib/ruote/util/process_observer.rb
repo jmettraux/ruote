@@ -24,9 +24,9 @@
 
 module Ruote
 
-  # A base class for process observers, just to provide convenience. It 
+  # A base class for process observers, just to provide convenience. It
   # (heavily) sugar coats the Ruote::Observer and translate the messages into
-  # actions. Each such action is provided with pre-distilled information 
+  # actions. Each such action is provided with pre-distilled information
   # relevant for processes.
   #
   # == Example implementation
@@ -58,13 +58,16 @@ module Ruote
   # The ProcessObserver adheres closely to the message actions, it calls the
   # following methods:
   #
-  # on_launch::   When a process or sub-process starts
-  # on_end::      When a process ends
-  # on_error::    When an error was intercepted
-  # on_cancel::   When a process or sub-process was canceled
-  # on_dispatch:: When a participant is dispatched  
-  # on_receive::  Whenever a workitem is received
-  # 
+  # on_launch::            When a process or sub-process starts
+  # on_terminated::        When a process ends
+  # on_error_intercepted:: When an error was intercepted
+  # on_cancel::            When a process or sub-process was canceled
+  # on_dispatch::          When a participant is dispatched
+  # on_receive::           Whenever a workitem is received
+  #
+  # And others, but if you are interested in those; you might be better of
+  # using the more low-level Ruote::Observer
+  #
   # == Arguments
   # The methods are called with (wfid[, options])
   #
@@ -79,14 +82,14 @@ module Ruote
   # === Options
   # The following options are provided:
   #
-  # :workitem::  The (last known) workitem - The ProcessObserver will try to
-  #              obtain it from storage or history if it was not supplied in
-  #              the message
+  # :workitem::  The workitem, if available
   # :action::    The original name of the action
   # :child::     Boolean; This is an event of a child, or sub-flow
-  # :error::     The error intercepted (only provided with #on_error)
+  # :error::     The intercepted error (only provided with
+  #              #on_error_intercepted)
   # :pdef::      The (sub-)process definition (only provided with #on_launch)
   # :variables:: The process variables, if available
+  # :flavour::   The flavour of canceling (only on_cancel)
   #
   # == Error handling
   #
