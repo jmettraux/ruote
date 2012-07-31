@@ -23,7 +23,6 @@
 #++
 
 require 'ruote/util/misc'
-require 'ruote/util/lookup'
 
 
 module Ruote

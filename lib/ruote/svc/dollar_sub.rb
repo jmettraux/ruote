@@ -25,7 +25,6 @@
 
 require 'rufus/dollar' # gem 'rufus-dollar'
 require 'ruote/svc/treechecker'
-require 'ruote/util/lookup'
 
 
 module Ruote

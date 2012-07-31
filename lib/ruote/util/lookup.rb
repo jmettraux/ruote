@@ -25,6 +25,11 @@
 
 module Ruote
 
+  #--
+  # methods that accept a small "dot notation" for looking up
+  # into nested hashes and arrays
+  #++
+
   #   h = { 'a' => { 'b' => [ 1, 3, 4 ] } }
   #
   #   p Ruote.lookup(h, 'a.b.1') # => 3
@@ -102,16 +107,6 @@ module Ruote
     else
       nil
     end
-  end
-
-  # Given a hash and a key, deletes all the entries with that key, in child
-  # hashes too.
-  #
-  def self.delete_all(h, key)
-
-    h.delete(key)
-
-    h.each { |k, v| delete_all(v, key) if v.is_a?(Hash) }
   end
 
   protected # well...
