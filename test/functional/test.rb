@@ -7,7 +7,7 @@
 
 def l(t)
 
-  if ARGV.include?('--split')
+  if ENV['RUOTE_TEST_SPLIT'].to_s == 'true'
 
     puts
     puts "=== #{t} :"
