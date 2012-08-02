@@ -77,6 +77,7 @@ module Ruote
 
       @state = 'running'
       @run_thread = nil
+      @state_mutex = Mutex.new
 
       @msgs = []
 
@@ -110,7 +111,7 @@ module Ruote
     #
     def join
 
-      @run_thread.join if @run_thread
+      @run_thread.join rescue nil
     end
 
     # Shuts down this worker (makes sure it won't fetch further messages
@@ -118,9 +119,9 @@ module Ruote
     #
     def shutdown
 
-      @state = 'stopped'
+      @state_mutex.synchronize { @state = 'stopped' }
 
-      @run_thread.join rescue nil
+      join
     end
 
     # Returns true if the engine system is inactive, ie if all the process
@@ -155,8 +156,11 @@ module Ruote
     #
     def determine_state
 
-      if @context['worker_state_enabled']
-        @state = (@storage.get('variables', 'worker') || {})['state']
+      @state_mutex.synchronize do
+
+        if @state != 'stopped' && @context['worker_state_enabled']
+          @state = (@storage.get('variables', 'worker') || {})['state']
+        end
       end
     end
 
@@ -232,14 +236,14 @@ module Ruote
 
       determine_state
 
-      return if @state == 'stopped'
-
-      if @state == 'running'
+      if @state == 'stopped'
+        return
+      elsif @state == 'running'
         process_schedules
         process_msgs
       end
 
-      take_a_rest
+      take_a_rest # 'running' or 'paused'
 
     rescue => err
 
