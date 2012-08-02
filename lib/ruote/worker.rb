@@ -110,7 +110,7 @@ module Ruote
     #
     def join
 
-      @run_thread.join rescue nil
+      @run_thread.join if @run_thread
     end
 
     # Shuts down this worker (makes sure it won't fetch further messages
@@ -120,7 +120,7 @@ module Ruote
 
       @state = 'stopped'
 
-      join
+      @run_thread.join rescue nil
     end
 
     # Returns true if the engine system is inactive, ie if all the process
