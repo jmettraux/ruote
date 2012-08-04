@@ -111,13 +111,17 @@ module Ruote
     #
     def wf_name; @h['wf_name']; end
 
-    alias definition_name wf_name
-
     # Returns the revision of the workflow to which this workitem belongs,
     # or nil.
     #
     def wf_revision; @h['wf_revision']; end
 
+    # Returns the UTC time string indicating when the workflow was launched.
+    #
+    def wf_launched_at; @h['wf_launched_at']; end
+
+    alias launched_at wf_launched_at
+    alias definition_name wf_name
     alias definition_revision wf_revision
 
     # Returns the name of the sub-workflow the workitem is currently in.
@@ -129,6 +133,10 @@ module Ruote
     # The equivalent of #sub_wf_name for revisions.
     #
     def sub_wf_revision; @h['sub_wf_revision']; end
+
+    # Returns the UTC time string indicating when the sub-workflow was launched.
+    #
+    def sub_wf_launched_at; @h['sub_wf_launched_at']; end
 
     # Used by some participants, returns the "owner" of the workitem. Mostly
     # used when reserving workitems.

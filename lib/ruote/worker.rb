@@ -449,9 +449,11 @@ module Ruote
 
         wi['wf_name'] ||= name
         wi['wf_revision'] ||= revision
+        wi['wf_launched_at'] ||= Ruote.now_to_utc_s
 
         wi['sub_wf_name'] = name
         wi['sub_wf_revision'] = revision
+        wi['sub_wf_launched_at'] = Ruote.now_to_utc_s
       end
 
       exp_hash = {

@@ -64,6 +64,21 @@ class FtWorkitemTest < Test::Unit::TestCase
       :clear)
   end
 
+  def test_wf_launched_at
+
+    pdef = Ruote.define do
+      sub0
+      define 'sub0' do
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_not_nil r['workitem']['wf_launched_at']
+    assert_not_nil r['workitem']['sub_wf_launched_at']
+  end
+
   class SubTraceParticipant
     include Ruote::LocalParticipant
 
