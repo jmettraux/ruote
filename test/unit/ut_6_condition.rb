@@ -171,6 +171,12 @@ class ConditionTest < Test::Unit::TestCase
     assert_b false, "some other dude == 'some dude'"
   end
 
+  def test_numbers
+
+    assert_b true, '2.310000 > 0'
+    assert_b false, '2.310000 < 0'
+  end
+
   def test_and_or
 
     assert_b "1 and 2 and 3"

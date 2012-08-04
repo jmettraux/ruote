@@ -138,5 +138,28 @@ class FtConditionalTest < Test::Unit::TestCase
     assert_equal 'terminated', r['action']
     assert_equal '..c.d', @tracer.to_a.join
   end
+
+  def test_with_numbers
+
+    pdef = Ruote.define do
+
+      set 'commission' => 2.310000
+      set 'scommission' => '2.310000'
+
+      echo 'a', :if => '${f:commission} > 0'
+      echo '.'
+      echo 'b', :unless => '${f:commission} > 0'
+      echo '.'
+      echo 'c', :if => '${f:scommission} > 0'
+      echo '.'
+      echo 'c', :unless => '${f:scommission} > 0'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal 'a..c.', @tracer.to_a.join
+  end
 end
 
