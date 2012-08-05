@@ -97,14 +97,13 @@ module Ruote
 
       puts(fancy_print(msg, @noisy)) if @noisy
 
-      if msg['action'] != 'noop'
+      return if msg['action'] == 'noop'
 
-        @seen << msg
-        @log << msg
+      @seen << msg
+      @log << msg
 
-        while @log.size > @log_max; @log.shift; end
-        while @seen.size > @log_max; @seen.shift; end
-      end
+      while @log.size > @log_max; @log.shift; end
+      while @seen.size > @log_max; @seen.shift; end
     end
 
     # Returns an array of the latest msgs, but fancy-printed. The oldest
@@ -113,6 +112,13 @@ module Ruote
     def fancy_log
 
       @log.collect { |msg| fancy_print(msg) }
+    end
+
+    # Debug only : dumps all the seen events to $stdout
+    #
+    def dump
+
+      @seen.collect { |msg| fancy_print(msg) }.join("\n")
     end
 
     # Blocks until one or more interests are satisfied.
@@ -152,13 +158,6 @@ module Ruote
       end
 
       Thread.current['__result__']
-    end
-
-    # Debug only : dumps all the seen events to $stdout
-    #
-    def dump
-
-      @seen.collect { |msg| fancy_print(msg) }.join("\n")
     end
 
     def color=(c)
