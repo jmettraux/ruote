@@ -204,7 +204,7 @@ module Ruote::Exp
 
         count = (list.first.to_i rescue nil)
 
-        list = (h.list_size + 1..h.list_size + count) if count
+        list = (h.list_size + 0...h.list_size + count) if count
       end
 
       list.each do |val|
