@@ -44,8 +44,6 @@ class EftAwaitTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
@@ -77,8 +75,6 @@ class EftAwaitTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
@@ -109,8 +105,6 @@ class EftAwaitTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
 
@@ -133,8 +127,6 @@ class EftAwaitTest < Test::Unit::TestCase
         end
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for(wfid)
@@ -169,8 +161,6 @@ class EftAwaitTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for('terminated')
 
@@ -198,8 +188,6 @@ class EftAwaitTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for('terminated')
 
@@ -224,8 +212,6 @@ class EftAwaitTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     r = @dashboard.wait_for('terminated')
 
@@ -233,8 +219,6 @@ class EftAwaitTest < Test::Unit::TestCase
   end
 
   def test_other_process
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(Ruote.define do
       await :tags => 'a'

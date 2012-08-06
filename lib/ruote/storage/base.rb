@@ -104,11 +104,7 @@ module Ruote
 
     def get_msgs
 
-      get_many(
-        'msgs', nil, :limit => 300
-      ).sort { |a, b|
-        a['put_at'] <=> b['put_at']
-      }
+      get_many('msgs', nil, :limit => 300).sort_by { |d| d['put_at'] }
     end
 
     def empty?(type)
