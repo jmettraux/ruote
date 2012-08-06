@@ -42,7 +42,7 @@ module Ruote::Exp
 
       if count = attribute(:times) || attribute(:branches)
 
-        list = ((1..count.to_i).to_a rescue nil)
+        list = ((0...count.to_i).to_a rescue nil)
 
         if list
           h.times_iterator = true
