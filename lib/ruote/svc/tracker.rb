@@ -72,7 +72,7 @@ module Ruote
 
         # prepare and emit/put 'reaction' message
 
-        m = tracker['msg']
+        m = Ruote.fulldup(tracker['msg'])
 
         action = m.delete('action')
 
