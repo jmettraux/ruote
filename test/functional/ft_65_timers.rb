@@ -305,7 +305,7 @@ class FtTimersTest < Test::Unit::TestCase
 
     ps = @dashboard.ps(wfid).inspect
 
-    #puts @dashboard.logger.fancy_log
+    puts @dashboard.logger.fancy_log if ps == 'nil'
 
     assert_match /apply\n\s+\*\* no target \*\*/, ps
     assert_match /cancel\n\s+0_0!/, ps
