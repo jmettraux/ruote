@@ -783,11 +783,7 @@ digraph "process wfid {
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(7)
 
-    ps = @dashboard.ps(wfid)
-
-    assert_equal Hash, eval(ps.to_h.inspect).class
-      #
-      # making sure the output of to_h is JSONifiable...
+    assert_equal Hash, @dashboard.ps(wfid).to_h.class
   end
 end
 
