@@ -301,15 +301,10 @@ class FtTimersTest < Test::Unit::TestCase
 
     wfid = @dashboard.launch(pdef)
 
-    r = @dashboard.wait_for('dispatched')
+    @dashboard.wait_for('launch')
+    @dashboard.wait_for('dispatched')
 
     ps = @dashboard.ps(wfid).inspect
-
-    if ps == 'nil'
-      p r
-      puts @dashboard.logger.fancy_log
-      p [ :launched, wfid ]
-    end
 
     assert_match /apply\n\s+\*\* no target \*\*/, ps
     assert_match /cancel\n\s+0_0!/, ps
