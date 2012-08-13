@@ -81,7 +81,7 @@ module Ruote
     #
     def engine_id
 
-      get_conf['engine_id'] || 'engine'
+      conf['engine_id'] || 'engine'
     end
 
     # Used for things like
@@ -92,7 +92,7 @@ module Ruote
     #
     def [](key)
 
-      SERVICE_PREFIX.match(key) ? @services[key] : get_conf[key]
+      SERVICE_PREFIX.match(key) ? @services[key] : conf[key]
     end
 
     # Mostly used by engine#configure
@@ -103,10 +103,7 @@ module Ruote
         ArgumentError.new('use context#add_service to register services')
       ) if SERVICE_PREFIX.match(key)
 
-      cf = get_conf
-      cf[key] = value
-
-      @storage.put(cf)
+      @storage.put(conf.merge(key => value))
         # TODO blindly trust the put ? retry in case of failure ?
 
       value
@@ -116,7 +113,7 @@ module Ruote
     #
     def keys
 
-      (@services.keys + get_conf.keys).uniq.sort
+      (@services.keys + conf.keys).uniq.sort
     end
 
     # Called by Ruote::Dashboard#add_service
@@ -230,14 +227,14 @@ module Ruote
 
     protected
 
-    def get_conf
+    def conf
 
-      @storage.get_configuration('engine') || {}
+      @storage.get_configuration('engine')# || {}
     end
 
     def initialize_services
 
-      default_conf.merge(get_conf).each do |key, value|
+      default_conf.merge(conf).each do |key, value|
 
         add_service(key, *value) if SERVICE_PREFIX.match(key)
       end
@@ -283,7 +280,7 @@ module Ruote
 
     protected
 
-    def get_conf
+    def conf
 
       {}
     end
