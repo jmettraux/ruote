@@ -33,6 +33,8 @@ module Ruote
   #
   # An in-memory storage.
   #
+  # Useful for testing or for transient engines.
+  #
   class HashStorage
 
     include StorageBase
@@ -48,8 +50,9 @@ module Ruote
       @options = options
 
       purge!
+        # which initializes @h
 
-      put(options.merge('type' => 'configurations', '_id' => 'engine'))
+      replace_engine_configuration(options)
     end
 
     def put(doc, opts={})

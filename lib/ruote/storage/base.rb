@@ -79,13 +79,13 @@ module Ruote
       get('configurations', key)
     end
 
-    def replace_engine_configuration(opts)
+    def replace_engine_configuration(options)
 
-      return if opts.delete('preserve_configuration')
+      return if options.delete('preserve_configuration')
 
       conf = get('configurations', 'engine')
 
-      doc = opts.merge('type' => 'configurations', '_id' => 'engine')
+      doc = options.merge('type' => 'configurations', '_id' => 'engine')
       doc['_rev'] = conf['_rev'] if conf
 
       put(doc)
