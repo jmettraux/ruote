@@ -173,9 +173,6 @@ class RadialReaderTest < Test::Unit::TestCase
     end
 
     assert_equal Parslet::UnconsumedInput, e.class
-    assert_not_nil e.error_tree
-
-    #puts e.error_tree
   end
 
   def test_error_on_empty_string

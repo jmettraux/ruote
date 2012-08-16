@@ -297,11 +297,6 @@ module Ruote
       end
 
       root.to_a
-
-    rescue Parslet::ParseFailed => e
-      class << e; attr_accessor :error_tree; end
-      e.error_tree = parser.root.error_tree
-      raise e
     end
   end
 end
