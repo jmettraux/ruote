@@ -179,7 +179,7 @@ class FtStorage < Test::Unit::TestCase
   end
 
   # #put takes an optional :update_rev. When set to true and the put
-  # succeeds, the _rev of the document is set/updated.
+  # succeeds, the _rev and the put_at of the [local] document are set/updated.
   #
   def test_put_update_rev_new_document
 
@@ -192,18 +192,25 @@ class FtStorage < Test::Unit::TestCase
     assert_not_nil doc['put_at']
   end
 
+  # When putting a document with the :update_rev option set, the just put
+  # document will get the new _rev (and the put_at)
+  #
   def test_put_update_rev_existing_document
 
     put_toto_doc; doc = get_toto_doc
 
     initial_rev = doc['_rev']
+    initial_put_at = doc['put_at']
 
     r = @s.put(doc, :update_rev => true)
 
     assert_nil r
     assert_not_nil initial_rev
+    assert_not_nil initial_put_at
     assert_not_nil doc['_rev']
     assert_not_equal doc['_rev'], initial_rev
+    assert_not_nil doc['put_at']
+    assert_not_equal doc['put_at'], initial_put_at
   end
 
   # put_at and _rev should not repeat
@@ -227,6 +234,8 @@ class FtStorage < Test::Unit::TestCase
     end
   end
 
+  # Be lenient with the input (accept symbols, but turn them into strings).
+  #
   def test_put_turns_symbols_into_strings
 
     r = @s.put('_id' => 'skeys', 'type' => 'errors', :a => :b)
@@ -269,7 +278,7 @@ class FtStorage < Test::Unit::TestCase
 
   # === delete
 
-  # When successful, #delete return nil.
+  # When successful, #delete returns nil (like the other methods...).
   #
   def test_delete
 
@@ -325,6 +334,8 @@ class FtStorage < Test::Unit::TestCase
 
   # === get_many
 
+  # Get many documents at once, use a string or regex key, or not.
+  #
   def test_get_many
 
     load_30_errors
@@ -340,6 +351,8 @@ class FtStorage < Test::Unit::TestCase
     assert_equal 'yy!07', @s.get_many('errors', /!07/).first['_id']
   end
 
+  # Get many documents at once, use an array of string or regex keys.
+  #
   def test_get_many_array_of_keys
 
     load_30_errors
@@ -356,6 +369,8 @@ class FtStorage < Test::Unit::TestCase
       @s.get_many('errors', [ /!07$/, /!08$/ ]).collect { |d| d['_id'] }.sort)
   end
 
+  # Limit the number of documents received.
+  #
   def test_get_many_limit
 
     load_30_errors
@@ -363,6 +378,8 @@ class FtStorage < Test::Unit::TestCase
     assert_equal 10, @s.get_many('errors', nil, :limit => 10).size
   end
 
+  # Count the documents (in a type).
+  #
   def test_get_many_count
 
     load_30_errors
@@ -370,6 +387,8 @@ class FtStorage < Test::Unit::TestCase
     assert_equal 30, @s.get_many('errors', nil, :count => true)
   end
 
+  # Paginate documents.
+  #
   def test_get_many_skip_and_limit
 
     load_30_errors
@@ -386,6 +405,8 @@ class FtStorage < Test::Unit::TestCase
       ).collect { |d| d['_id'] })
   end
 
+  # Pagination and :descending are not incompatible.
+  #
   def test_get_many_skip_limit_and_reverse
 
     load_30_errors
@@ -485,6 +506,9 @@ class FtStorage < Test::Unit::TestCase
 
   # === dump
 
+  # #dump returns a string representation of the storage's content. Warning,
+  # this is a debug/test method.
+  #
   def test_dump
 
     load_30_errors
@@ -604,6 +628,8 @@ class FtStorage < Test::Unit::TestCase
 
   # === query workitems
 
+  # Query by workitem field.
+  #
   def test_by_field
 
     return unless @s.respond_to?(:by_field)
@@ -617,6 +643,8 @@ class FtStorage < Test::Unit::TestCase
       Ruote::Workitem, @s.by_field('workitems', 'place', 'sendai').first.class)
   end
 
+  # Query by participant name.
+  #
   def test_by_participant
 
     return unless @s.respond_to?(:by_participant)
@@ -630,6 +658,8 @@ class FtStorage < Test::Unit::TestCase
       Ruote::Workitem, @s.by_participant('workitems', 'shingen', {}).first.class)
   end
 
+  # General #query_workitems method.
+  #
   def test_query_workitems
 
     return unless @s.respond_to?(:query_workitems)
