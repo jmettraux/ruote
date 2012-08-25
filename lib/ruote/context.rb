@@ -167,7 +167,7 @@ module Ruote
     #
     def pre_notify(msg)
 
-      waiters, observers = @services.select { |n, s|
+      @services.select { |n, s|
         s.respond_to?(:on_pre_msg)
       }.sort_by { |n, s|
         n
