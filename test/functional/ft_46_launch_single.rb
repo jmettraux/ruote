@@ -67,13 +67,13 @@ class FtLaunchSingleTest < Test::Unit::TestCase
 
     @dashboard.cancel(wfid0)
 
-    @dashboard.wait_for(6)
+    @dashboard.wait_for('terminated')
     assert_nil @dashboard.process(wfid0)
 
     sleep 0.700
     wfid1 = @dashboard.launch_single(pdef)
 
-    @dashboard.wait_for(2)
+    @dashboard.wait_for('apply')
 
     assert_not_equal wfid0, wfid1
     assert_nil @dashboard.process(wfid0)
