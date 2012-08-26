@@ -158,9 +158,9 @@ module Ruote
 
       @state_mutex.synchronize do
 
-        if @state != 'stopped' && @context['worker_state_enabled']
-          @state = (@storage.get('variables', 'worker') || {})['state']
-        end
+        @state = (
+          @storage.get('variables', 'worker') || { 'state' => 'running' }
+        )['state'] if @state != 'stopped' && @context['worker_state_enabled']
       end
     end
 
