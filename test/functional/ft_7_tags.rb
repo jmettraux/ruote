@@ -303,7 +303,7 @@ class FtTagsTest < Test::Unit::TestCase
     past_tag = past_tags.first
 
     assert_equal(
-      [ String, String, NilClass, String ], past_tag.collect(&:class))
+      [ String, String, NilClass, String, NilClass ], past_tag.collect(&:class))
 
     assert_equal(
       Ruote::FlowExpressionId, Ruote.extract_fei(past_tag[1]).class)

@@ -173,19 +173,21 @@ module Ruote
     #
     # The list elements look like:
     #
-    #   [ full_tagname, fei_as_string, nil_or_left_status ]
+    #   [ full_tagname, fei_as_string, nil_or_left_status, variables ]
     #
     # For example:
     #
-    #   [ 'a', '0_1_0!8f233fb935c!20120106-jagitepi', nil ]
+    #   [ 'a', '0_1_0!8f233fb935c!20120106-jagitepi', nil, {} ]
     #
     # or
     #
-    #   [ 'stage0/stage1', '0_1_0!8fb935c666d!20120106-jagitepi', 'cancelling' ]
+    #   [ 'stage0/stage1', '0_1_0!8fb935c666d!20120106-jagitepi', 'cancelling', nil ]
     #
-    # The last entry is nil when the tag (its expression) replied normally,
-    # if it was cancelled or something else, the entry contains a string
-    # describing the reason ('cancelling' here).
+    # The second to last entry is nil when the tag (its expression) replied
+    # normally, if it was cancelled or something else, the entry contains
+    # a string describing the reason ('cancelling' here).
+    # The last entry is the variables as they were at the tag point when
+    # the execution left the tag.
     #
     def past_tags
 

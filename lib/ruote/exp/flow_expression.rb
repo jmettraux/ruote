@@ -947,7 +947,7 @@ module Ruote::Exp
 
       r.variables.delete(h.full_tagname)
 
-      state = case h.trigger || h.state
+      state = case (h.trigger || h.state)
 
         when 'on_cancel' then 'cancelled'
         when 'on_error' then 'failed'
@@ -960,8 +960,14 @@ module Ruote::Exp
         else nil
       end
 
-      (r.variables['__past_tags__'] ||= []) <<
-        [ h.full_tagname, fei.sid, state, Ruote.now_to_utc_s ]
+      (r.variables['__past_tags__'] ||= []) << [
+        h.full_tagname,
+        fei.sid,
+        state,
+        Ruote.now_to_utc_s,
+        Ruote.fulldup(h.variables)
+          # not fullduping here triggers a segfault at some point with YAJL
+      ]
 
       r.do_persist unless r.fei == self.fei
     end
