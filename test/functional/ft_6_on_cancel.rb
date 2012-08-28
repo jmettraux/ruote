@@ -233,7 +233,7 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     wfid = @dashboard.launch(pdef)
 
-    @dashboard.wait_for(6)
+    @dashboard.wait_for('action' => 'apply', 'exp_name' => 'wait')
 
     @dashboard.cancel(@dashboard.process(wfid).expressions.last)
 
