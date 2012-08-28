@@ -248,6 +248,13 @@ module Ruote
               true
             end
 
+          when Hash
+
+            interest.all? { |k, v|
+              k = 'tree.0' if k == 'exp_name'
+              Ruote.lookup(msg, k) == v
+            }
+
           when /^[a-z_]+$/
 
             (action == interest)

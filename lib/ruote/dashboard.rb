@@ -564,6 +564,22 @@ module Ruote
     # action on them, but services that are listening to the ruote activity
     # might want to do something about them.
     #
+    #
+    # == ruote 2.3.0 and wait_for(hash)
+    #
+    # For more precise testing, wait_for accepts hashes, for example:
+    #
+    #   r = dashboard.wait_for('action' => 'apply', 'exp_name' => 'wait')
+    #
+    # will block until a wait expression is applied.
+    #
+    # If you know ruote msgs, you can pinpoint at will:
+    #
+    #   r = dashboard.wait_for(
+    #     'action' => 'apply',
+    #     'exp_name' => 'wait',
+    #     'fei.wfid' => wfid)
+    #
     # == what wait_for returns
     #
     # #wait_for returns the intercepted event. It's useful when testing/
@@ -598,7 +614,7 @@ module Ruote
     #
     def wait_for(*items)
 
-      opts = items.last.is_a?(Hash) ? items.pop : {}
+      opts = (items.size > 1 && items.last.is_a?(Hash)) ? items.pop : {}
 
       @context.logger.wait_for(items, opts)
     end

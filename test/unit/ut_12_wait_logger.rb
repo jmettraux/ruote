@@ -101,5 +101,23 @@ class UtWaitLoggerTest < Test::Unit::TestCase
     assert_equal i1, r['wfid']
     assert_equal 'error_intercepted', r['action']
   end
+
+  def test_wait_for_hash
+
+    #@engine.noisy = true
+
+    wfid = @engine.launch(Ruote.define do
+      sequence do
+        cursor do
+          wait '1d'
+        end
+      end
+    end)
+
+    r = @engine.wait_for('action' => 'apply', 'exp_name' => 'wait')
+
+    assert_equal 'apply', r['action']
+    assert_equal 'wait', r['tree'][0]
+  end
 end
 

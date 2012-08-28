@@ -4,6 +4,7 @@
 
 == ruote - 2.3.0    not yet released
 
+- Dashboard#wait_for('action' => 'apply', 'name' => 'wait')
 - past_tags: track variables
 - Workitem#launched_at and #sub_wf_launched_at
 - Ruote.deep_delete and .deep_mutate
