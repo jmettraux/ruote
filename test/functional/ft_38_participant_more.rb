@@ -190,7 +190,7 @@ class FtParticipantMoreTest < Test::Unit::TestCase
     t = times.last - times.first
 
     assert t >= 1.0, "took less that 1 second"
-    assert t < 2.0, "took more than 1.99 second"
+    assert t < 2.8, "took more than 2.8 second"
   end
 
   # Making sure that when a process gets cancelled, its 'later' re-dispatches
