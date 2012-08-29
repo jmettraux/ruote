@@ -653,7 +653,9 @@ module Ruote
         hour_count = @msgs.size < 1 ? 1 : @msgs.size
         minute_count = mm.size < 1 ? 1 : mm.size
 
-        key = [ @worker.name, @ip, $$.to_s ].join('/')
+        key = [
+          @worker.name, @ip.gsub(/\./, '_'), $$.to_s
+        ].join('/')
 
         (doc['workers'] ||= {})[key] = {
 

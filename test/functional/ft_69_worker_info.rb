@@ -30,7 +30,7 @@ class FtWorkerInfoTest < Test::Unit::TestCase
     info = @dashboard.worker_info
 
     assert_equal(
-      "worker/#{Ruote.local_ip}/#{$$}",
+      "worker/#{Ruote.local_ip.gsub(/\./, '_')}/#{$$}",
       info.keys.first)
     assert_equal(
       %w[
