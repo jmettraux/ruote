@@ -321,7 +321,7 @@ module Ruote
       @counter ||= 0
 
       t = Time.now.utc
-      ts = "#{t.strftime('%Y-%m-%d')}!#{t.to_i}.#{'%06d' % t.usec}"
+      ts = "#{t.strftime('%Y-%m-%d')}!#{t.to_i}_#{'%06d' % t.usec}"
       _id = "#{$$}!#{Thread.current.object_id}!#{ts}!#{'%03d' % @counter}"
 
       @counter = (@counter + 1) % 1000
