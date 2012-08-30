@@ -100,5 +100,19 @@ class DeepTest < Test::Unit::TestCase
         { 'user.toto' => 'x', 'stuff.toto' => :y } ],
       a)
   end
+
+  def test_deep_mutate_with_key_addition
+
+    h = { 'a' => 0 }
+
+    Ruote.deep_mutate(h, 'a') do |coll, k, v|
+      coll.delete(k)
+      coll['b'] = 10
+    end
+
+    assert_equal(
+      { 'b' => 10 },
+      h)
+  end
 end
 

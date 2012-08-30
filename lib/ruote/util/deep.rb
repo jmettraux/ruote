@@ -104,7 +104,7 @@ module Ruote
 
     if coll.is_a?(Hash)
 
-      coll.each do |k, v|
+      coll.dup.each do |k, v|
 
         if keys.find { |kk| kk.is_a?(Regexp) ? kk.match(k) : kk == k }
 
