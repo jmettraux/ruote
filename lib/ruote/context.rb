@@ -229,7 +229,7 @@ module Ruote
 
     def conf
 
-      @storage.get_configuration('engine')# || {}
+      @storage.get_configuration('engine')
     end
 
     def initialize_services
