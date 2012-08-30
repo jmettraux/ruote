@@ -44,6 +44,7 @@ class FtWaitLoggerTest < Test::Unit::TestCase
   def test_wait_logger_seen
 
     @dashboard = Ruote::Engine.new(Ruote::Worker.new(determine_storage({})))
+    #@dashboard.noisy = true
 
     counter = Object.new
     class << counter
@@ -58,20 +59,20 @@ class FtWaitLoggerTest < Test::Unit::TestCase
 
     @dashboard.add_service('counter', counter)
 
-    #@dashboard.noisy = true
-
-    pdef = Ruote.process_definition { }
+    pdef = Ruote.process_definition {}
 
     wfid = @dashboard.launch(pdef)
 
     counter.wait_for(2)
 
-    assert_equal 2, @dashboard.context.logger.instance_variable_get(:@seen).size
+    seen = @dashboard.context.logger.instance_variable_get(:@seen)
+
+    assert_equal %w[ launch terminated ], seen.collect { |m| m['action'] }
 
     r = @dashboard.wait_for(wfid)
 
     assert_equal 'terminated', r['action']
-    assert_equal 0, @dashboard.context.logger.instance_variable_get(:@seen).size
+    assert_equal 0, seen.size
   end
 
   def test_wait_for_goes_last
