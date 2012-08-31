@@ -92,7 +92,11 @@ module Ruote
     #
     def [](key)
 
-      SERVICE_PREFIX.match(key) ? @services[key] : conf[key]
+      if SERVICE_PREFIX.match(key)
+        @services[key]
+      else
+        conf[key]
+      end
     end
 
     # Mostly used by engine#configure
