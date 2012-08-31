@@ -114,5 +114,18 @@ class DeepTest < Test::Unit::TestCase
       { 'b' => 10 },
       h)
   end
+
+  def test_deep_mutate_force_string
+
+    h = { :a => 1, :b => { :a => 2 } }
+
+    Ruote.deep_mutate(h, 'a') do |coll, k, v|
+      coll[k] = v * 2
+    end
+
+    assert_equal(
+      { 'a' => 2, 'b' => { 'a' => 4 } },
+      h)
+  end
 end
 

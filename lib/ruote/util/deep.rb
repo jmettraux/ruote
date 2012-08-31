@@ -60,6 +60,8 @@ module Ruote
   # 3 arguments: collection, key and value
   # 4 arguments: parent collection, collection, key and value
   #
+  # Warning: .deep_mutate forces hash keys to be strings. It's a JSON world.
+  #
   # == example
   #
   #   h = {
@@ -105,6 +107,16 @@ module Ruote
     if coll.is_a?(Hash)
 
       coll.dup.each do |k, v|
+
+        # ensure that all keys are strings
+
+        unless k.is_a?(String)
+          coll.delete(k)
+          k = k.to_s
+          coll[k] = v
+        end
+
+        # call the mutation blocks for each match
 
         if keys.find { |kk| kk.is_a?(Regexp) ? kk.match(k) : kk == k }
 
