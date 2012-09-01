@@ -134,6 +134,16 @@ module Ruote
     h.remap { |(k, v), h| h[k.to_s] = v }
   end
 
+  # Makes sure all they keys in the given hash are turned into symbols
+  # in the resulting hash.
+  #
+  # Mostly used in ruote-amqp.
+  #
+  def self.keys_to_sym(h)
+
+    h.remap { |(k, v), h| h[k.to_sym] = v }
+  end
+
   REGEX_IN_STRING = /^\s*\/(.*)\/\s*$/
 
   #   regex_or_s("/nada/") #==> /nada/
