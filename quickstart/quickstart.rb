@@ -1,15 +1,5 @@
 
-$:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-  # running from ruote/ probably
-
-require 'rubygems'
-
-begin
-  require 'yajl'
-rescue LoadError => le
-  require 'json'
-end
-
+require 'rufus-json/automatic'
 require 'ruote'
 require 'ruote/storage/fs_storage'
 
@@ -28,6 +18,7 @@ dashboard.register_participant :alpha do |workitem|
 end
 
 dashboard.register_participant :bravo do |workitem|
+  puts
   puts "I received a message from #{workitem.fields['message']['author']}"
 end
 
