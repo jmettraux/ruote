@@ -92,7 +92,7 @@
 - get_many :batch option (used by some storages for optimization)
 - 'stall' expression (mostly for testing)
 - context and worker : subscription reworked
-- worker : 'restless_worker' option
+- worker: 'restless_worker' option
 - Ruote::Dashboard (will slowly phase Ruote::Engine out)
 - :on_timeout => 'rewind', :on_timeout => 'jump to alpha'
 - :on_error => 'rewind', :on_error => 'jump to alpha'
@@ -112,19 +112,19 @@
 - dollar substitution in expression name as well
 - Engine#replay_at_error(err_or_fei_or_wi)
 - Engine#error(wi_or_fei)
-- storages : #replace_engine_configuration(opts)
-- FsStorage : saving newer configuration (Thanks Nicholas Faiz)
-- ProcessStatus context : linking expression <-> error
+- storages: #replace_engine_configuration(opts)
+- FsStorage: saving newer configuration (Thanks Nicholas Faiz)
+- ProcessStatus context: linking expression <-> error
 - ProcessStatus#root_workitem
 - ProcessStatus#leaves
 - filter 'includes' and 'is' (Thanks Nando Sola)
 - trailing fields (a Simone Carletti idea)
 - concurrence vs history issue fixed (Thanks Juris Galang)
-- unset and fields : made sure the field is removed (Thanks jpgilman)
+- unset and fields: made sure the field is removed (Thanks jpgilman)
 - sourcify, using to_raw_source from now on
 - filter expression and blocks
 - set 'v:display' => 'echo', aliasing of expressions
-- Reader.read(s) : better error raised when failed to 'parse'
+- Reader.read(s): better error raised when failed to 'parse'
 - :on_field => 'my.nested.field' now possible
 - [concurrent-]iterator :to => 'v:x' / 'f:y' / 'y'
 - concurrence :merge_type => 'union'
