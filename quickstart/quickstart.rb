@@ -1,5 +1,4 @@
 
-require 'pp'
 require 'rufus-json/automatic'
 require 'ruote'
 require 'ruote/storage/fs_storage'
