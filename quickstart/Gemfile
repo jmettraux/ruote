@@ -4,5 +4,6 @@ source :rubygems
 gem 'yajl-ruby', '1.0.0', :require => 'yajl'
 
 #gem 'ruote', '>= 2.3.0'
-gem 'ruote', :git => 'git://github.com/jmettraux/ruote.git'
+#gem 'ruote', :git => 'git://github.com/jmettraux/ruote.git'
+gem 'ruote', :path => '..'
 
