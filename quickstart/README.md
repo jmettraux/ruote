@@ -1,7 +1,7 @@
 
 # ruote quickstart
 
-A very silly demo of ruote, it's all in <quickstart.rb>.
+A very silly demo of ruote, it's all in [quickstart.rb](quickstart.rb).
 
 Provided you have decent versions of Ruby and Bundler, you can run the quickstart with:
 
