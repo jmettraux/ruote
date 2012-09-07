@@ -24,7 +24,7 @@ ruote is an open source Ruby workflow engine
     '*.gemspec', '*.txt', '*.rdoc', '*.md'
   ]
 
-  s.add_runtime_dependency 'blankslate', '>= 2.1.2.4'
+  s.add_runtime_dependency 'blankslate', '2.1.2.4'
   s.add_runtime_dependency 'parslet', '>= 1.4.0'
     # blankslate 2.1.2.3 is to avoid...
 
