@@ -2,6 +2,9 @@
 = ruote - CHANGELOG.txt
 
 
+== ruote - 2.3.1    not yet released
+
+
 == ruote - 2.3.0    released 2012/09/04
 
 - Dashboard#wait_for('action' => 'apply', 'name' => 'wait')
