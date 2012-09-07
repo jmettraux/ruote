@@ -4,6 +4,8 @@
 
 == ruote - 2.3.1    not yet released
 
+- FlowExpression#root(stubborn=false)
+
 
 == ruote - 2.3.0    released 2012/09/04
 

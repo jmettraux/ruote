@@ -184,19 +184,35 @@ module Ruote::Exp
         nil
     end
 
-    # Returns the root expression of this expression.
+    # An expensive method, looks up all the expressions with the same wfid
+    # in the storage (for some storages this is not expensive at all),
+    # and determine the root of this expression.
+    # It does this by recursively going from an expression to its parent,
+    # starting with this expression. The root is when the parent can't be
+    # reached.
     #
-    # The result is an instance of Ruote::FlowExpression or nil if the
-    # parent cannot be found.
+    # By default, this method will always return an expression, but if
+    # stubborn is set to true and the top expression points to a gone parent
+    # then nil will be returned.
+    # The default (stubborn=true) is probably what you want anyway.
     #
-    def root
+    def root(stubborn=false)
 
+      previous = nil
       current = @h
-      exps = @context.storage.find_expressions(h.fei['wfid'])
+
+      exps = @context.storage.find_expressions(
+        @h['fei']['wfid']
+      ).each_with_object({}) { |exp, h|
+        h[exp['fei']] = exp
+      }
 
       while current && current['parent_id']
-        current = exps.find { |e| e['fei'] == current['parent_id'] }
+        previous = current
+        current = exps[current['parent_id']]
       end
+
+      current ||= previous unless stubborn
 
       current ? Ruote::Exp::FlowExpression.from_h(@context, current) : nil
     end
@@ -204,9 +220,11 @@ module Ruote::Exp
     # Returns the fei of the root expression of this expression.
     # The result is an instance of Ruote::FlowExpressionId.
     #
-    def root_id
+    # Uses #root behind the scenes, hence the stubborn option.
+    #
+    def root_id(stubborn=false)
 
-      root.fei
+      root(stubborn).fei
     end
 
     # Turns this FlowExpression instance into a Hash (well, just hands back
