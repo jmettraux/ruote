@@ -26,20 +26,100 @@
 module Ruote::Exp
 
   #
-  # Here are examples of the 'if' expression in use :
+  # The 'if' construct found in many programming languages.
+  #
+  # == _if ?
+  #
+  # Why the "_if" in all the examples below? Well, all the examples are using
+  # the Ruby DSL, using 'if' alone isn't possible, the Ruby parser would think
+  # it's the Ruby's own if...
+  #
+  # But process definitions written in Radial
+  # (see http://jmettraux.github.com/2012-09-03-ruote-2.3.0.html) don't have
+  # this restriction:
+  #
+  #   if '${customer} == fred'
+  #     salesman_henry  # then clause
+  #     salesman_josh   # else clause
+  #
+  # == then / else clauses
+  #
+  # The 'if' expression accepts two or three children branches, in pseudo-code
+  # it looks like:
+  #
+  #   _if do
+  #     <condition>
+  #     <then clause>
+  #   end
+  #
+  #   # or
+  #
+  #   _if <condition> do
+  #     <then clause>
+  #   end
+  #
+  #   # or
+  #
+  #   _if do
+  #     <condition>
+  #     <then clause>
+  #     <else clause>
+  #   end
+  #
+  #   # or
+  #
+  #   _if <condition> do
+  #     <then clause>
+  #     <else clause>
+  #   end
+  #
+  # This piece of process definition:
+  #
+  #   _if '${customer} == fred' do
+  #     salesman_henry
+  #     salesman_josh
+  #   end
+  #
+  # is thus interpreted as:
+  #
+  #   _if '${customer} == fred' do
+  #     salesman_henry  # then clause
+  #     salesman_josh   # else clause
+  #   end
+  #
+  # If the intent was to express a sequence henry - josh, it should be
+  # written as:
+  #
+  #   _if '${customer} == fred' do
+  #     sequence do # then clause
+  #       salesman_henry
+  #       salesman_josh
+  #     end
+  #   end
+  #
+  # Note this can be alternatively written as:
+  #
+  #   sequence :if => '${customer} == fred' do
+  #     salesman_henry
+  #     salesman_josh
+  #   end
+  #
+  # == examples
+  #
+  # Here are some examples:
   #
   #   _if do
   #     equals :field_value => 'customer', :other_value => 'British Petroleum'
   #     participant :ref => 'Allister'
   #   end
   #
-  # and :
+  # and:
   #
   #   _if :test => '${f:customer} == British Petroleum' do
   #     participant :ref => 'Allister'
   #   end
   #
-  # An else clause is accepted :
+  # An else clause is accepted:
   #
   #   _if do
   #     equals :field_value => 'customer', :other_value => 'British Petroleum'
@@ -47,14 +127,14 @@ module Ruote::Exp
   #     participant :ref => 'Bernardo'
   #   end
   #
-  # or :
+  # or:
   #
   #   _if :test => '${f:customer} == British Petroleum' do
   #     participant :ref => 'Allister'
   #     participant :ref => 'Bernardo'
   #   end
   #
-  # Note that any expression accepts an :if attribute :
+  # Note that any expression accepts an :if attribute:
   #
   #   participant :ref => 'Al', :if => '${f:customer} == British Petroleum'
   #
@@ -68,7 +148,7 @@ module Ruote::Exp
   #     subprocess 'regular_course'
   #   end
   #
-  # When using Ruby to generate the process definition tree, you can simply do :
+  # When using Ruby to generate the process definition tree, you can simply do:
   #
   #   _if '${f:customer.name} == Fred' do
   #     subprocess 'premium_course'
