@@ -69,7 +69,7 @@ module Ruote
       #
       # date
 
-      Rufus.to_ruby_time(s)# rescue nil
+      DateTime.parse(s)
 
     else
       #
@@ -87,7 +87,7 @@ module Ruote
 
   # Waiting for a better implementation of it in rufus-scheduler 2.0.4
   #
-  def self.is_cron_string(s)
+  def self.cron_string?(s)
 
     ss = s.split(' ')
 
