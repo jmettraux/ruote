@@ -379,6 +379,13 @@ process_definition name: "nada"
       tree)
   end
 
+  def test_string_escaping_directly
+
+    pa = Ruote::RadialReader::Parser.new
+
+    assert_equal "brown\\\"fox", pa.string.parse('"brown\"fox"')[:string].to_s
+  end
+
   def test_regex
 
     tree = Ruote::RadialReader.read(%{

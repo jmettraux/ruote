@@ -63,16 +63,16 @@ module Ruote
 
       rule(:string) {
         str('"') >> (
-          str('\\') >> any | str('"').absent? >> any
+          str('\\') >> any | match('[^"]')
         ).repeat.as(:string) >> str('"') |
         str("'") >> (
-          str('\\') >> any | str("'").absent? >> any
+          str('\\') >> any | match("[^']")
         ).repeat.as(:string) >> str("'")
       }
 
       rule(:regex) {
         str('/') >> (
-          str('\\') >> any | str('/').absent? >> any
+          str('\\') >> any | match("[^\/]")
         ).repeat.as(:regex) >> str('/')
       }
 
