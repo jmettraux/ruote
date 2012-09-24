@@ -81,6 +81,9 @@ module Ruote
         'workitem' => msg['workitem'])
           # once the consume is done, asynchronously flag the
           # participant expression as 'dispatched'
+
+    rescue => err
+      @context.error_handler.msg_handle(msg, err)
     end
 
     # Wraps the call to do_dispatch in a thread.
@@ -97,15 +100,7 @@ module Ruote
       # would be OK.
       # Or maybe it's the job of an extension / subclass
 
-      Thread.new do
-        begin
-
-          do_dispatch(participant, msg)
-
-        rescue => exception
-          @context.error_handler.msg_handle(msg, exception)
-        end
-      end
+      Thread.new { do_dispatch(participant, msg) }
     end
 
     # Returns true if the participant doesn't want the #consume to happen
