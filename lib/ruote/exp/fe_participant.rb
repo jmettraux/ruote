@@ -144,12 +144,7 @@ module Ruote::Exp
       #
       # trigger on_apply if the participant sports it
 
-      pa = @context.plist.instantiate(
-        h.participant, :if_respond_to? => :on_apply)
-
-      Ruote.participant_send(
-        pa, :on_apply, 'workitem' => Ruote::Workitem.new(h.applied_workitem)
-      ) if pa
+      trigger_callback(:on_apply, h.applied_workitem)
 
       #
       # dispatch to participant
@@ -202,15 +197,7 @@ module Ruote::Exp
 
     def reply(workitem)
 
-      pinfo =
-        h.participant ||
-        @context.plist.lookup_info(h.participant_name, workitem)
-
-      pa = @context.plist.instantiate(pinfo, :if_respond_to? => :on_reply)
-
-      Ruote.participant_send(
-        pa, :on_reply, 'workitem' => Ruote::Workitem.new(workitem)
-      ) if pa
+      trigger_callback(:on_reply, workitem)
 
       super(workitem)
     end
@@ -222,7 +209,53 @@ module Ruote::Exp
       super(workitem)
     end
 
+    # Overrides FlowExpression#handle_on_error. Attempts to call a
+    # potential #on_error method in the participant implementation.
+    #
+    # If that method exists and returns something true-ish, will not call
+    # the super #handle_on_error, it will directly reply to the parent.
+    #
+    def handle_on_error(msg, err)
+
+      r = trigger_callback(:on_error, msg, err)
+
+      if r
+        reply_to_parent(msg['workitem'])
+        true # yes, we've dealt with the error.
+      else
+        super(msg, err)
+      end
+    end
+
     protected
+
+    # Used to trigger #on_apply, #on_reply, #on_cancel and #on_error in
+    # the participant implementation.
+    #
+    def trigger_callback(meth, wi_or_msg, err=nil)
+
+      wi, msg, err = if err
+        [ wi_or_msg['workitem'], wi_or_msg, err ]
+      elsif wi_or_msg['workitem']
+        [ wi_or_msg['workitem'], wi_or_msg, nil ]
+      else
+        [ wi_or_msg, nil, nil ]
+      end
+
+      pinfo =
+        h.participant ||
+        @context.plist.lookup_info(h.participant_name, wi)
+
+      pa = @context.plist.instantiate(pinfo, :if_respond_to? => meth)
+
+      return nil unless pa
+
+      args = { 'workitem' => Ruote::Workitem.new(wi) }
+      args['error'] = err if err
+      args['msg'] = msg if msg
+
+      Ruote.participant_send(pa, meth, args)
+    end
 
     # Once the dispatching work (done by the dispatch pool) is done, a
     # 'dispatched' msg is sent, we have to flag the participant expression

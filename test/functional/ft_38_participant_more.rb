@@ -4,7 +4,7 @@
 #
 # Mon Apr 19 14:38:54 JST 2010
 #
-# Qcon Tokyo, special day
+# Qcon Tokyo, special day (12/19 plus tard)
 #
 
 require File.expand_path('../base', __FILE__)

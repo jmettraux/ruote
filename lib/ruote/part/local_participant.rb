@@ -57,6 +57,14 @@ module Ruote
     #
     attr_accessor :flavour
 
+    # Set right before a call to #on_error
+    #
+    attr_accessor :error
+
+    # Set right before a call to #on_error
+    #
+    attr_accessor :msg
+
     # Returns the current workitem if no fei is given.
     # If a fei is given, it will return the applied workitem for that fei
     # (if any).

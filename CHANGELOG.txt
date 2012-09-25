@@ -4,6 +4,8 @@
 
 == ruote - 2.3.1    not yet released
 
+- participant#on_error
+
 
 == ruote - 2.3.0.1    released 2012/09/08
 

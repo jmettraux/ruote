@@ -128,11 +128,9 @@ class FtParticipantOnReplyTest < Test::Unit::TestCase
 
     @dashboard.register :alpha, MyOtherAwkwardParticipant
 
-    pdef = Ruote.process_definition do
-      sequence do
-        alpha
-        echo 'over.'
-      end
+    pdef = Ruote.define do
+      alpha
+      echo 'over.'
     end
 
     wfid = @dashboard.launch(pdef)
@@ -156,6 +154,66 @@ class FtParticipantOnReplyTest < Test::Unit::TestCase
     assert_equal 'terminated', r['action']
 
     assert_equal 'over.', @tracer.to_s
+  end
+
+  class MyFailingParticipant < Ruote::Participant
+    def on_workitem
+      raise 'flunk!'
+    end
+    def on_error
+      @context.tracer <<
+        "on_error: #{error.class}: #{error.message}: #{msg['action']}\n"
+      workitem.fields['hello'] = 'world'
+      true # returning true to signify we're dealing with the error
+    end
+  end
+
+  def test_participant_on_error
+
+    @dashboard.register :alpha, MyFailingParticipant
+
+    pdef = Ruote.define do
+      alpha
+      echo 'over.'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal 'world', r['workitem']['fields']['hello']
+    assert_equal "on_error: RuntimeError: flunk!: dispatch\nover.", @tracer.to_s
+  end
+
+  class MyVeryFailingParticipant < Ruote::Participant
+    def on_workitem
+      raise 'flunkito!'
+    end
+    def on_error
+      @context.tracer << "on_error...\n"
+      workitem.fields['hello'] = 'world'
+      false # returning false to signify we're NOT dealing with the error
+    end
+  end
+
+  def test_participant_on_error_return_false
+
+    @dashboard.register :alpha, MyVeryFailingParticipant
+
+    pdef = Ruote.define do
+      alpha
+      echo 'over.'
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'world', r['msg']['workitem']['fields']['hello']
+    assert_equal 'on_error...', @tracer.to_s
+
+    # Error has not been dealt with within the participant implementation,
+    # it went straight to the common error handler
   end
 end
 

@@ -173,16 +173,17 @@ module Ruote
       pinfo = participant_name.is_a?(String) ?
         lookup_info(participant_name, workitem) : participant_name
 
-      pinfo ?
-        instantiate(pinfo, opts) : nil
+      instantiate(pinfo, opts)
     end
 
-    # Given a participant name, returns
+    # Given a participant name, returns participant details.
     #
     # Returns nil if there is no participant registered that covers the given
     # participant name.
     #
     def lookup_info(pname, workitem)
+
+      return nil unless pname
 
       wi = workitem ?
         Ruote::Workitem.new(workitem.merge('participant_name' => pname)) :
@@ -205,9 +206,11 @@ module Ruote
       nil
     end
 
-    # Returns an instance of a participant
+    # Returns an instance of a participant.
     #
     def instantiate(pinfo, opts={})
+
+      return nil unless pinfo
 
       pa_class_name, options = pinfo
 
