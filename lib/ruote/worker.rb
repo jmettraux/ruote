@@ -390,7 +390,7 @@ module Ruote
 
           when 'raise'
 
-            handle_msg_error(msg['msg'], msg['error'])
+            @context.error_handler.msg_handle(msg['msg'], msg['error'])
 
           when 'respark'
 
@@ -406,7 +406,7 @@ module Ruote
 
       rescue => err
 
-        handle_msg_error(msg, err)
+        @context.error_handler.msg_handle(msg, err)
       end
 
       @context.storage.done(msg) if @context.storage.respond_to?(:done)
@@ -415,15 +415,6 @@ module Ruote
         # for the stats
 
       true
-    end
-
-    # Passes the msg and the err it resulted in to the error_handler.
-    #
-    # Some storage/worker implementation may want to override this.
-    #
-    def handle_msg_error(msg, err)
-
-      @context.error_handler.msg_handle(msg, err)
     end
 
     # Works for both the 'launch' and the 'apply' msgs.
