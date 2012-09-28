@@ -41,22 +41,24 @@ module Ruote
 
     def handle(msg)
 
-      case msg['action']
-        when 'dispatch' then dispatch(msg)
-        when 'dispatch_cancel' then dispatch_cancel(msg)
-        when 'dispatch_pause', 'dispatch_resume' then dispatch_pause(msg)
-        else # simply discard the message
-      end
+      return unless msg['action'].match(/^dispatch/)
+
+      send(msg['action'], msg)
     end
 
     protected
 
+    # Dispatching the msg.
+    #
     def dispatch(msg)
 
       participant = @context.plist.lookup(
         msg['participant'] || msg['participant_name'], msg['workitem'])
 
-      if (@context['participant_threads_enabled'] == false) || do_not_thread?(participant, msg)
+      if
+        @context['participant_threads_enabled'] == false ||
+        do_not_thread?(participant, msg)
+      then
         do_dispatch(participant, msg)
       else
         do_threaded_dispatch(participant, msg)
@@ -65,7 +67,10 @@ module Ruote
 
     # The actual dispatching (call to Participant#consume or #on_workitem).
     #
-    def do_dispatch(participant, msg)
+    # No error rescuing so it might be interesting for some extension
+    # classes (like in ruote-swf).
+    #
+    def do_raw_dispatch(participant, msg)
 
       workitem = Ruote::Workitem.new(msg['workitem'])
 
@@ -81,6 +86,13 @@ module Ruote
         'workitem' => msg['workitem'])
           # once the consume is done, asynchronously flag the
           # participant expression as 'dispatched'
+    end
+
+    # The raw dispatch work, wrapped in error handling.
+    #
+    def do_dispatch(participant, msg)
+
+      do_raw_dispatch(participant, msg)
 
     rescue => err
       @context.error_handler.msg_handle(msg, err)
@@ -160,6 +172,10 @@ module Ruote
         action,
         'fei' => Ruote::FlowExpressionId.new(msg['fei']), :default => false)
     end
+
+    # Route to dispatch_pause which handles both pause and resume.
+    #
+    alias dispatch_resume dispatch_pause
   end
 
   # Given a participant, a method name or an array of method names and
