@@ -139,7 +139,6 @@ module FunctionalBase
 
   def noisy(on=true)
 
-    puts "\nnoisy " + caller[0] if on
     @dashboard.context.logger.noisy = true
   end
 

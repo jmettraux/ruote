@@ -129,6 +129,12 @@ module Ruote
     #
     def launch(process_definition, fields={}, variables={}, root_stash=nil)
 
+      puts caller.select { |l|
+        ! l.match(/test\/unit[\.\/]/)
+      } if @context.logger.noisy
+        #
+        # this is useful when noisy and running through a set of tests
+
       wfid = fields[:wfid] || @context.wfidgen.generate
 
       @context.storage.put_msg(
