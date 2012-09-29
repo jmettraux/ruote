@@ -117,10 +117,13 @@ class Ruote::WaitLogger
 
     @count = (@count + 1) % 10
 
-    ei = [
-      self.object_id.to_s[-2..-1],
-      Thread.current['worker_name'].to_s[0, 2]
-    ].join(':')
+    wo = Ruote.current_worker
+    woi = [ wo.object_id.to_s[-2..-1] ]
+    if wo.class != Ruote::Worker || wo.name != 'worker'
+      woi << wo.class.name.split('::').last[0, 2]
+      woi << wo.name[0, 2]
+    end
+    woi = woi.join(':')
 
     fei = msg['fei']
     depth = fei ? fei['expid'].split('_').size : 0
@@ -225,7 +228,7 @@ class Ruote::WaitLogger
 
       color(
         @color,
-        "#{@count} #{tm} #{ei} #{'  ' * depth}#{act} * #{i} #{rst}",
+        "#{@count} #{tm} #{woi} #{'  ' * depth}#{act} * #{i} #{rst}",
         true
       ) +
       "\n" +
@@ -248,7 +251,7 @@ class Ruote::WaitLogger
 
       color(
         @color,
-        "#{@count} #{tm} #{ei} #{'  ' * depth}#{act} * #{i} #{pa}#{rest}",
+        "#{@count} #{tm} #{woi} #{'  ' * depth}#{act} * #{i} #{pa}#{rest}",
         true)
     end
 

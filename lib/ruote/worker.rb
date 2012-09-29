@@ -27,6 +27,21 @@ require 'ruote/fei'
 
 module Ruote
 
+  # A helper for the #worker method, it returns that dummy worker
+  # when there is no reference to the calling worker in the current
+  # thread's local variables.
+  #
+  DUMMY_WORKER = OpenStruct.new(
+    :name => 'worker', :identity => 'unknown', :state => 'running')
+
+  # Warning, this is not equivalent to doing @context.worker, this method
+  # fetches the worker from the local thread variables.
+  #
+  def self.current_worker
+
+    Thread.current['ruote_worker'] || DUMMY_WORKER
+  end
+
   #
   # Workers fetch 'msgs' and 'schedules' from the storage and process them.
   #
