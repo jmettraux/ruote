@@ -178,6 +178,38 @@ module Ruote
       wfid
     end
 
+    # Given a flow expression id, locates the corresponding ruote
+    # expression and attaches a subprocess to it.
+    #
+    # Accepts the fei as a Hash or as a FlowExpressionId instance.
+    #
+    # Returns the fei of the attached [root] expression
+    # (as a FlowExpressionId instance).
+    #
+    def attach(fei, definition)
+
+      fei = Ruote::FlowExpressionId.extract_h(fei)
+
+      cfei = fei.merge(
+        'expid' => '0',
+        'subid' => Ruote.generate_subid(fei.inspect))
+
+      fe = fetch_flow_expression(fei)
+
+      tree = @context.reader.read(definition)
+      tree[0] = 'sequence'
+
+      @context.storage.put_msg(
+        'launch', # "apply" is OK, but "launch" stands out better
+        'fei' => cfei,
+        'parent_id' => fei,
+        'tree' => tree,
+        'workitem' => fe.h.applied_workitem,
+        'attached' => true)
+
+      Ruote::FlowExpressionId.new(cfei)
+    end
+
     # Given a workitem or a fei, will do a cancel_expression,
     # else it's a wfid and it does a cancel_process.
     #

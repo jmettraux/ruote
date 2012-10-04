@@ -483,7 +483,7 @@ module Ruote::Exp
         (do_unpersist || return) if delete
           # remove expression from storage
 
-        if h.parent_id
+        if h.parent_id && ! h.attached
 
           @context.storage.put_msg(
             'reply',
@@ -495,15 +495,18 @@ module Ruote::Exp
         else
 
           @context.storage.put_msg(
-            h.forgotten ? 'ceased' : 'terminated',
+            (h.forgotten || h.attached) ? 'ceased' : 'terminated',
             'wfid' => h.fei['wfid'],
             'fei' => h.fei,
             'workitem' => workitem,
             'variables' => h.variables,
             'flavour' => flavour)
 
-          if h.state.nil? && h.on_terminate == 'regenerate' && ! h.forgotten
-
+          if
+            h.state.nil? &&
+            h.on_terminate == 'regenerate' &&
+            ! (h.forgotten || h.attached)
+          then
             @context.storage.put_msg(
               'regenerate',
               'wfid' => h.fei['wfid'],

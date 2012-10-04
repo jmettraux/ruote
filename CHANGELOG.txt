@@ -4,6 +4,7 @@
 
 == ruote - 2.3.1    not yet released
 
+- Dashboard#attach(fei, pdef)
 - participant#on_error
 
 

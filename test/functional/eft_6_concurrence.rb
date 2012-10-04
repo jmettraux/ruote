@@ -326,6 +326,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
     #@dashboard.context.storage.get_many('expressions').each { |e| p e['fei'] }
     #puts @dashboard.context.storage.dump('expressions')
+    #p @dashboard.ps(wfid)
     assert_equal 2, @dashboard.context.storage.get_many('expressions').size
     assert_not_nil @dashboard.process(wfid)
 

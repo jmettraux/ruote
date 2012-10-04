@@ -463,21 +463,27 @@ module Ruote
       end
 
       exp_hash = {
+
         'fei' => msg['fei'] || {
           'engine_id' => @context.engine_id,
           'wfid' => msg['wfid'],
           'subid' => Ruote.generate_subid(msg.inspect),
           'expid' => msg['expid'] || '0' },
+
         'parent_id' => msg['parent_id'],
         'variables' => variables,
         'applied_workitem' => wi,
+
         'forgotten' => msg['forgotten'],
         'lost' => msg['lost'],
         'flanking' => msg['flanking'],
+        'attached' => msg['attached'],
+        'supplanted' => msg['supplanted'],
+
         'stash' => msg['stash'],
         'trigger' => msg['trigger'],
-        'on_reply' => msg['on_reply'],
-        'supplanted' => msg['supplanted'] }
+        'on_reply' => msg['on_reply']
+      }
 
       if not exp_class
 
