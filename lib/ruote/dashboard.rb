@@ -183,28 +183,39 @@ module Ruote
     #
     # Accepts the fei as a Hash or as a FlowExpressionId instance.
     #
+    # By default, the workitem of the expression you attach to provides
+    # the initial workitem for the attached branch. By using the
+    # :fields/:workitem or :merge_fields options, one can change that.
+    #
     # Returns the fei of the attached [root] expression
     # (as a FlowExpressionId instance).
     #
-    def attach(fei, definition)
+    def attach(fei, definition, opts={})
 
       fei = Ruote::FlowExpressionId.extract_h(fei)
+
+      fe = fetch_flow_expression(fei)
 
       cfei = fei.merge(
         'expid' => '0',
         'subid' => Ruote.generate_subid(fei.inspect))
 
-      fe = fetch_flow_expression(fei)
-
       tree = @context.reader.read(definition)
       tree[0] = 'sequence'
 
+      fields = fe.h.applied_workitem['fields']
+      if fs = opts[:fields] || opts[:workitem]
+        fields = fs
+      elsif fs = opts[:merge_fields]
+        fields.merge!(fs)
+      end
+
       @context.storage.put_msg(
         'launch', # "apply" is OK, but "launch" stands out better
-        'fei' => cfei,
         'parent_id' => fei,
+        'fei' => cfei,
         'tree' => tree,
-        'workitem' => fe.h.applied_workitem,
+        'workitem' => { 'fields' => fields },
         'attached' => true)
 
       Ruote::FlowExpressionId.new(cfei)

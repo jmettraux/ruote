@@ -20,11 +20,12 @@ class FtAttachTest < Test::Unit::TestCase
       bravo
     end
 
-    wfid = @dashboard.launch(pdef)
+    wfid = @dashboard.launch(pdef, 'message' => 'hello planet')
     r = @dashboard.wait_for('dispatched')
 
     adef = Ruote.define do
       echo '${v:message}'
+      echo '${f:message}'
     end
 
     fei = @dashboard.attach(r['fei'], adef)
@@ -35,11 +36,41 @@ class FtAttachTest < Test::Unit::TestCase
     assert_equal '0', fei.expid
     assert_equal wfid, fei.wfid
 
-    assert_equal 'hello world', @tracer.to_s
+    assert_equal "hello world\nhello planet", @tracer.to_s
 
     assert_equal 0, ps.errors.size
     assert_equal 2, ps.expressions.size
     assert_equal 1, ps.stored_workitems.size
   end
+
+  def test_attach_fields_option
+
+    @dashboard.register '.+', Ruote::StorageParticipant
+
+    pdef = Ruote.define do
+      set 'v:message' => 'hello world'
+      bravo
+    end
+
+    wfid = @dashboard.launch(pdef, 'message' => 'hello planet')
+    r = @dashboard.wait_for('dispatched')
+
+    adef = Ruote.define do
+      echo '${v:message}'
+      echo '${f:message}'
+    end
+
+    fei = @dashboard.attach(r['fei'], adef, :fields => { 'message' => 'nada' })
+    r = @dashboard.wait_for('ceased')
+
+    ps = @dashboard.ps(wfid)
+
+    assert_equal "hello world\nnada", @tracer.to_s
+  end
+
+  # Well, let's not test those 3 lines of code.
+  #
+  #def test_attach_merge_fields_option
+  #end
 end
 
