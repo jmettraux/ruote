@@ -39,85 +39,53 @@ module Ruote
       @context = context
     end
 
-    # The context calls this method for each successfully processed msg
-    # in the worker.
+    # The worker calls this method via the context before each msg gets
+    # processed.
     #
-    def on_msg(message)
+    def on_pre_msg(msg)
 
-      m_error = message['error']
-      m_wfid = message['wfid'] || (message['fei']['wfid'] rescue nil)
-      m_action = message['action']
+      on_message(true, msg)
+    end
 
-      msg = m_action == 'error_intercepted' ? message['msg'] : message
+    # The worker calls this method via the context after each successful
+    # msg processing.
+    #
+    def on_msg(msg)
 
-      @context.storage.get_trackers['trackers'].each do |tracker_id, tracker|
-
-        # filter msgs
-
-        t_wfid = tracker['wfid']
-        t_action = tracker['action']
-
-        next if t_wfid && t_wfid != m_wfid
-        next if t_action && t_action != m_action
-
-        next unless does_match?(message, tracker['conditions'])
-
-        if tracker_id == 'on_error' || tracker_id == 'on_terminate'
-
-          fields = msg['workitem']['fields']
-
-          next if m_action == 'error_intercepted' && fields['__error__']
-          next if m_action == 'terminated' && (fields['__error__'] || fields['__terminate__'])
-        end
-
-        # prepare and emit/put 'reaction' message
-
-        m = Ruote.fulldup(tracker['msg'])
-
-        action = m.delete('action')
-
-        m['wfid'] = m_wfid if m['wfid'] == 'replace'
-        m['wfid'] ||= @context.wfidgen.generate
-
-        m['workitem'] = msg['workitem'] if m['workitem'] == 'replace'
-
-        if t_action == 'error_intercepted'
-          m['workitem']['fields']['__error__'] = m_error
-        elsif tracker_id == 'on_error' && m_action == 'error_intercepted'
-          m['workitem']['fields']['__error__'] = m_error
-        elsif tracker_id == 'on_terminate' && m_action == 'terminated'
-          m['workitem']['fields']['__terminate__'] = { 'wfid' => m_wfid }
-        end
-
-        if m['variables'] == 'compile'
-          fexp = Ruote::Exp::FlowExpression.fetch(@context, msg['fei'])
-          m['variables'] = fexp ? fexp.compile_variables : {}
-        end
-
-        @context.storage.put_msg(action, m)
-      end
+      on_message(false, msg)
     end
 
     # Adds a tracker (usually when a 'listen' expression gets applied).
     #
-    def add_tracker(wfid, action, id, conditions, msg)
+    # The tracker_id may be nil (one will then get generated).
+    #
+    # Returns the tracker_id.
+    #
+    def add_tracker(wfid, action, tracker_id, conditions, msg)
+
+      tracker_id ||= [
+        'tracker', wfid, action,
+        Ruote.generate_subid(conditions.hash.to_s + msg.hash.to_s)
+      ].collect(&:to_s).join('_')
 
       conditions =
         conditions && conditions.remap { |(k, v), h| h[k] = Array(v) }
 
       doc = @context.storage.get_trackers
 
-      doc['trackers'][id] =
+      doc['trackers'][tracker_id] =
         { 'wfid' => wfid,
           'action' => action,
-          'id' => id,
+          'id' => tracker_id,
           'conditions' => conditions,
           'msg' => msg }
 
       r = @context.storage.put(doc)
 
-      add_tracker(wfid, action, id, conditions, msg) if r
+      add_tracker(wfid, action, tracker_id, conditions, msg) if r
         # the put failed, have to redo the work
+
+      tracker_id
     end
 
     # Removes a tracker (usually when a 'listen' expression replies to its
@@ -137,6 +105,106 @@ module Ruote
 
     protected
 
+    # The method behind on_pre_msg and on_msg. Filters msgs against trackers.
+    # Triggers trackers if there is a match.
+    #
+    def on_message(pre, message)
+
+      m_wfid = message['wfid'] || (message['fei']['wfid'] rescue nil)
+      m_error = message['error']
+
+      m_action = message['action']
+      m_action = "pre_#{m_action}" if pre
+
+      msg = m_action == 'error_intercepted' ? message['msg'] : message
+
+      trackers.each do |tracker_id, tracker|
+
+        # filter msgs
+
+        t_wfid = tracker['wfid']
+        t_action = tracker['action']
+
+        next if t_wfid && t_wfid != m_wfid
+        next if t_action && t_action != m_action
+
+        next unless does_match?(message, tracker['conditions'])
+
+        if tracker_id == 'on_error' || tracker_id == 'on_terminate'
+
+          fs = msg['workitem']['fields']
+
+          next if m_action == 'error_intercepted' && fs['__error__']
+          next if m_action == 'terminated' && (fs['__error__'] || fs['__terminate__'])
+        end
+
+        # OK, have to pull the trigger (or alter the message) then
+
+        if pre && tracker['msg']['alter']
+          alter(m_wfid, m_error, m_action, msg, tracker)
+        else
+          trigger(m_wfid, m_error, m_action, msg, tracker)
+        end
+      end
+    end
+
+    # Alters the msg,
+    # Only called in "pre" mode.
+    #
+    def alter(m_wfid, m_error, m_action, msg, tracker)
+
+      case tracker['msg'].delete('alter')
+        when 'merge' then msg.merge!(tracker['msg'])
+        #else ...
+      end
+    end
+
+    # Prepares the message that get placed on the ruote msg queue.
+    #
+    def trigger(m_wfid, m_error, m_action, msg, tracker)
+
+      t_action = tracker['action']
+      tracker_id = tracker['id']
+
+      m = Ruote.fulldup(tracker['msg'])
+
+      action = m.delete('action')
+
+      m['wfid'] = m_wfid if m['wfid'] == 'replace'
+      m['wfid'] ||= @context.wfidgen.generate
+
+      m['workitem'] = msg['workitem'] if m['workitem'] == 'replace'
+
+      if t_action == 'error_intercepted'
+        m['workitem']['fields']['__error__'] = m_error
+      elsif tracker_id == 'on_error' && m_action == 'error_intercepted'
+        m['workitem']['fields']['__error__'] = m_error
+      elsif tracker_id == 'on_terminate' && m_action == 'terminated'
+        m['workitem']['fields']['__terminate__'] = { 'wfid' => m_wfid }
+      end
+
+      if m['variables'] == 'compile'
+        fexp = Ruote::Exp::FlowExpression.fetch(@context, msg['fei'])
+        m['variables'] = fexp ? fexp.compile_variables : {}
+      end
+
+      @context.storage.put_msg(action, m)
+    end
+
+    # Returns the trackers currently registered.
+    #
+    # Note: this is called from on_pre_msg and on_msg, hence two times
+    # for a single msg. We trust the storage implementation to cache it
+    # for us.
+    #
+    def trackers
+
+      @context.storage.get_trackers['trackers']
+    end
+
+    # Given a msg and a hash of conditions, returns true if the msg
+    # matches the conditions.
+    #
     def does_match?(msg, conditions)
 
       return true unless conditions
@@ -151,12 +219,14 @@ module Ruote
           vv = Ruote.regex_or_s(vv)
 
           val = case k
+
             when 'class' then msg['error']['class']
             when 'message' then msg['error']['message']
-            else msg[k]
+
+            else Ruote.lookup(msg, k)
           end
 
-          val && (vv.is_a?(String) ? (vv == val) : vv.match(val))
+          val && (vv.is_a?(Regexp) ? vv.match(val) : vv == val)
         end
       end
 

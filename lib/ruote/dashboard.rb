@@ -1120,15 +1120,48 @@ module Ruote
     #
     def on_terminate=(target)
 
+      msg = {
+        'action' => 'launch',
+        'tree' => target.is_a?(String) ?
+          [ 'define', {}, [ [ target, {}, [] ] ] ] : target,
+        'workitem' => 'replace' }
+
       @context.tracker.add_tracker(
-        nil, # do not track a specific wfid
-        'terminated', # react on 'error_intercepted' msgs
-        'on_terminate', # the identifier
-        nil, # no specific condition
-        { 'action' => 'launch',
-          'tree' => target.is_a?(String) ?
-            [ 'define', {}, [ [ target, {}, [] ] ] ] : target,
-          'workitem' => 'replace' })
+        nil,             # do not track a specific wfid
+        'terminated',    # react on 'error_intercepted' msgs
+        'on_terminate',  # the identifier
+        nil,             # no specific condition
+        msg)             # the message that gets triggered
+    end
+
+    # /!\ warning: advanced method.
+    #
+    # Adds a tracker to the ruote engine.
+    #
+    # === Arguments
+    #
+    # * wfid:
+    #   When nil will track any workflow execution, when set will only
+    #   react on msgs for the given wfid.
+    # * action:
+    #   A string like "apply", "reply" or "receive", the action being tracked
+    #   May begin with a "pre_" prefix.
+    # * tracker_id:
+    #   When nil, ruote chooses a tracker_id, else its the unique identifier
+    #   for the new tracker.
+    # * conditions:
+    #   A Hash of keys pointing to arrays of expected values.
+    #   For example { 'tree.0' ~=> [ 'alfred', 'knuth' ] } will trigger
+    #   if the first element of msg['tree'] equals alfred or knuth.
+    # * msg:
+    #   The msg to place in the msg queue if the tracker matches the msg,
+    #   the reaction.
+    #
+    # Returns the tracker_id.
+    #
+    def add_tracker(wfid, action, tracker_id, conditions, msg)
+
+      @context.tracker.add_tracker(wfid, action, tracker_id, conditions, msg)
     end
 
     # A debug helper :
