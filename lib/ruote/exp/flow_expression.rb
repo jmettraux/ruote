@@ -336,6 +336,11 @@ module Ruote::Exp
     #
     def do_apply(msg)
 
+      if msg['state'] == 'paused'
+
+        return pause_on_apply(msg)
+      end
+
       unless Condition.apply?(attribute(:if), attribute(:unless))
 
         return do_reply_to_parent(h.applied_workitem)
@@ -383,6 +388,20 @@ module Ruote::Exp
       consider_timers
 
       apply
+    end
+
+    # Called by #do_apply when msg['state'] == 'paused'. Covers the
+    # "apply/launch it but it's immediately paused" case. Freezes the
+    # apply message in h.paused_apply and saves the expression.
+    #
+    def pause_on_apply(msg)
+
+      msg['state'] = nil
+
+      h.state = 'paused'
+      h.paused_apply = msg
+
+      persist_or_raise
     end
 
     # FlowExpression call this method when they're done and they want their
@@ -723,6 +742,11 @@ module Ruote::Exp
       return if h.state != 'paused'
 
       h['state'] = nil
+
+      m = h.delete('paused_apply')
+      return do_apply(m) if m
+        # if it's a paused apply, pipe it directly to #do_apply
+
       replies = h.delete('paused_replies') || []
 
       do_persist || return

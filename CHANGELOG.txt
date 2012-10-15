@@ -4,6 +4,7 @@
 
 == ruote - 2.3.1    not yet released
 
+- pause on apply concept brought in
 - Dashboard#add_tracker
 - Dashboard#attach(fei, pdef)
 - participant#on_error

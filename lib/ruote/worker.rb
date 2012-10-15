@@ -445,8 +445,8 @@ module Ruote
 
       exp_class = @context.expmap.expression_class(tree.first)
 
-      # msg['wfid'] only : it's a launch
-      # msg['fei'] : it's a sub launch (a supplant ?)
+      # msg['wfid'] only:  it's a launch
+      # msg['fei']:        it's a sub launch (a supplant ?)
 
       if is_launch?(msg, exp_class)
 

@@ -8,10 +8,10 @@
 require File.expand_path('../base', __FILE__)
 
 
-class FtPrePauseTest < Test::Unit::TestCase
+class FtPauseOnApplyTest < Test::Unit::TestCase
   include FunctionalBase
 
-  def test_pre_pause
+  def test_pause_apply_then_resume
 
     @dashboard.register do
       alpha Ruote::StorageParticipant
@@ -44,9 +44,19 @@ class FtPrePauseTest < Test::Unit::TestCase
     @dashboard.wait_for('apply')      # echo 'b'
     r = @dashboard.wait_for('apply')  # bravo :pos => [ 1, 1 ]
 
-    assert_equal 'paused', r['state']
+    assert_equal nil, r['state']
 
-    1.times { @dashboard.wait_for('apply') }
+    ps = @dashboard.ps(wfid)
+    bravo = ps.expressions.last
+
+    assert_equal 'paused', bravo.state
+    assert_not_nil bravo.h.paused_apply
+
+    @dashboard.resume(bravo)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
   end
 end
 
