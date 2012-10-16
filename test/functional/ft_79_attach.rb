@@ -33,7 +33,7 @@ class FtAttachTest < Test::Unit::TestCase
 
     ps = @dashboard.ps(wfid)
 
-    assert_equal '0', fei.expid
+    assert_equal '0_1_0', fei.expid
     assert_equal wfid, fei.wfid
 
     assert_equal "hello world\nhello planet", @tracer.to_s
@@ -62,8 +62,7 @@ class FtAttachTest < Test::Unit::TestCase
 
     fei = @dashboard.attach(r['fei'], adef, :fields => { 'message' => 'nada' })
     r = @dashboard.wait_for('ceased')
-
-    ps = @dashboard.ps(wfid)
+    #ps = @dashboard.ps(wfid)
 
     assert_equal "hello world\nnada", @tracer.to_s
   end

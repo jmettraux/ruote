@@ -197,7 +197,7 @@ module Ruote
       fe = fetch_flow_expression(fei)
 
       cfei = fei.merge(
-        'expid' => '0',
+        'expid' => "#{fei['expid']}_0",
         'subid' => Ruote.generate_subid(fei.inspect))
 
       tree = @context.reader.read(definition)
