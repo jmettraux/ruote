@@ -202,7 +202,7 @@ module Ruote
         when Ruote::FlowExpressionId
           [ fei_or_fe.h, fetch_flow_expression(fei_or_fe.h).h ]
         when Ruote::Exp::FlowExpression
-          [ fei_or_fe.fei.h, fei_or_fe ]
+          [ fei_or_fe.fei.h, fei_or_fe.h ]
       end
 
       cfei = fei.merge(
