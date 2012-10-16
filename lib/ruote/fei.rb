@@ -285,7 +285,8 @@ module Ruote
           'engine_id' => ss[-4] || 'engine',
           'expid' => ss[-3],
           'subid' => ss[-2],
-          'wfid' => ss[-1] }
+          'wfid' => ss[-1]
+        }
       end
 
       raise ArgumentError.new(

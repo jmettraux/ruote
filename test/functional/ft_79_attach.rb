@@ -71,5 +71,38 @@ class FtAttachTest < Test::Unit::TestCase
   #
   #def test_attach_merge_fields_option
   #end
+
+  def test_attach_with_fe
+
+    @dashboard.register '.+', Ruote::StorageParticipant
+
+    pdef = Ruote.define do
+      set 'v:message' => 'hello world'
+      bravo
+    end
+
+    wfid = @dashboard.launch(pdef, 'message' => 'hello planet')
+    r = @dashboard.wait_for('dispatched')
+
+    adef = Ruote.define do
+      echo '${v:message}'
+      echo '${f:message}'
+    end
+
+    fe = @dashboard.ps(wfid).expressions.last
+    fei = @dashboard.attach(fe.h, adef)
+    r = @dashboard.wait_for('ceased')
+
+    ps = @dashboard.ps(wfid)
+
+    assert_equal '0_1_0', fei.expid
+    assert_equal wfid, fei.wfid
+
+    assert_equal "hello world\nhello planet", @tracer.to_s
+
+    assert_equal 0, ps.errors.size
+    assert_equal 2, ps.expressions.size
+    assert_equal 1, ps.stored_workitems.size
+  end
 end
 

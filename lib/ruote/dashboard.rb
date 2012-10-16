@@ -190,11 +190,20 @@ module Ruote
     # Returns the fei of the attached [root] expression
     # (as a FlowExpressionId instance).
     #
-    def attach(fei, definition, opts={})
+    def attach(fei_or_fe, definition, opts={})
 
-      fei = Ruote::FlowExpressionId.extract_h(fei)
-
-      fe = fetch_flow_expression(fei)
+      fei, fe = case fei_or_fe
+        when Hash
+          if fei_or_fe['fei']
+            [ fei_or_fe['fei'], fei_or_fe ]
+          else
+            [ fei_or_fe, fetch_flow_expression(fei_or_fe).h ]
+          end
+        when Ruote::FlowExpressionId
+          [ fei_or_fe.h, fetch_flow_expression(fei_or_fe.h).h ]
+        when Ruote::Exp::FlowExpression
+          [ fei_or_fe.fei.h, fei_or_fe ]
+      end
 
       cfei = fei.merge(
         'expid' => "#{fei['expid']}_0",
@@ -203,7 +212,7 @@ module Ruote
       tree = @context.reader.read(definition)
       tree[0] = 'sequence'
 
-      fields = fe.h.applied_workitem['fields']
+      fields = fe['applied_workitem']['fields']
       if fs = opts[:fields] || opts[:workitem]
         fields = fs
       elsif fs = opts[:merge_fields]
