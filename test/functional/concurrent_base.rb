@@ -79,7 +79,7 @@ module ConcurrentBase
 
     @dashboard1.context.logger.color = '32' # green
 
-    noisy if ARGV.include?('-N')
+    noisy if ENV['NOISY'] == 'true'
   end
 
   def teardown
