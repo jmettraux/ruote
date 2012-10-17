@@ -140,9 +140,9 @@ module Ruote
 
       return nil if @expressions.empty?
 
-      @expressions.each_with_object({}) do |exp, h|
+      @expressions.each_with_object({}) { |exp, h|
         h[exp.fei] = exp.variables if exp.variables
-      end
+      }
     end
 
     # Returns a hash tagname => fei of tags set at the root of the process
@@ -152,11 +152,7 @@ module Ruote
     #
     def tags
 
-      if variables
-        Hash[variables.select { |k, v| FlowExpressionId.is_a_fei?(v) }]
-      else
-        nil
-      end
+      variables ? Hash[variables.select { |k, v| Ruote.is_a_fei?(v) }] : nil
     end
 
     # Returns a hash tagname => array of feis of all the tags set in the process
@@ -165,7 +161,7 @@ module Ruote
     def all_tags
 
       all_variables.remap do |(fei, vars), h|
-        vars.each { |k, v| (h[k] ||= []) << v if FlowExpressionId.is_a_fei?(v) }
+        vars.each { |k, v| (h[k] ||= []) << v if Ruote.is_a_fei?(v) }
       end
     end
 

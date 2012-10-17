@@ -114,9 +114,8 @@ module Ruote::Exp
 
         fei = lookup_variable(ref)
 
-        target = Ruote::FlowExpressionId.is_a_fei?(fei) ?
+        target = Ruote.is_a_fei?(fei) ?
           Ruote::Exp::FlowExpression.fetch(@context, fei) : nil
-
         target = target.is_a?(Ruote::Exp::CommandedExpression) ?
           target : nil
 

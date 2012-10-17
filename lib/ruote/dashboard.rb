@@ -192,18 +192,8 @@ module Ruote
     #
     def attach(fei_or_fe, definition, opts={})
 
-      fei, fe = case fei_or_fe
-        when Hash
-          if fei_or_fe['fei']
-            [ fei_or_fe['fei'], fei_or_fe ]
-          else
-            [ fei_or_fe, fetch_flow_expression(fei_or_fe).h ]
-          end
-        when Ruote::FlowExpressionId
-          [ fei_or_fe.h, fetch_flow_expression(fei_or_fe.h).h ]
-        when Ruote::Exp::FlowExpression
-          [ fei_or_fe.fei.h, fei_or_fe.h ]
-      end
+      fe = Ruote.extract_fexp(@context, fei_or_fe).h
+      fei = fe['fei']
 
       cfei = fei.merge(
         'expid' => "#{fei['expid']}_0",

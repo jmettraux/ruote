@@ -25,79 +25,13 @@
 require 'digest/md5'
 
 require 'ruote/version'
+require 'ruote/extract'
 require 'ruote/workitem'
 require 'ruote/util/misc'
 require 'ruote/util/hashdot'
 
 
 module Ruote
-
-  # A shortcut for
-  #
-  #   Ruote::FlowExpressionId.to_storage_id(fei)
-  #
-  def self.to_storage_id(fei)
-
-    Ruote::FlowExpressionId.to_storage_id(fei)
-  end
-
-  # A shorter shortcut for
-  #
-  #   Ruote::FlowExpressionId.to_storage_id(fei)
-  #
-  def self.sid(fei)
-
-    Ruote::FlowExpressionId.to_storage_id(fei)
-  end
-
-  # A shortcut for
-  #
-  #   Ruote::FlowExpressionId.is_a_fei?(o)
-  #
-  def self.is_a_fei?(o)
-
-    Ruote::FlowExpressionId.is_a_fei?(o)
-  end
-
-  # Will do its best to return a wfid (String) or a fei (Hash instance)
-  # extract from the given o argument.
-  #
-  def self.extract_id(o)
-
-    return o if o.is_a?(String) and o.index('!').nil? # wfid
-
-    Ruote::FlowExpressionId.extract_h(o)
-  end
-
-  # Given something, tries to return the fei (Ruote::FlowExpressionId) in it.
-  #
-  def self.extract_fei(o)
-
-    Ruote::FlowExpressionId.extract(o)
-  end
-
-  # Given an object, will return the wfid (workflow instance id) nested into
-  # it (or nil if it can't find or doesn't know how to find).
-  #
-  # The wfid is a String instance.
-  #
-  def self.extract_wfid(o)
-
-    return o.strip == '' ? nil : o if o.is_a?(String)
-    return o.wfid if o.respond_to?(:wfid)
-    return o['wfid'] || o.fetch('fei', {})['wfid'] if o.respond_to?(:[])
-    nil
-  end
-
-  # This function is used to generate the subids. Each flow
-  # expression receives such an id (it's useful for cursors, loops and
-  # forgotten branches).
-  #
-  def self.generate_subid(salt)
-
-    Digest::MD5.hexdigest(
-      "#{rand}-#{salt}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
-  end
 
   #
   # The FlowExpressionId (fei for short) is an process expression identifier.
@@ -162,11 +96,13 @@ module Ruote
 
     def self.to_storage_id(hfei)
 
-      hfei.respond_to?(:to_storage_id) ?
-        hfei.to_storage_id :
-        "#{hfei['expid']}!#{hfei['subid'] || hfei['sub_wfid']}!#{hfei['wfid']}"
-
       # TODO : for 2.1.13, remove the subid || sub_wfid trick
+
+      if hfei.respond_to?(:to_storage_id)
+        hfei.to_storage_id
+      else
+        "#{hfei['expid']}!#{hfei['subid'] || hfei['sub_wfid']}!#{hfei['wfid']}"
+      end
     end
 
     # Turns the result of to_storage_id back to a FlowExpressionId instance.
@@ -216,16 +152,6 @@ module Ruote
     end
 
     alias eql? ==
-
-    SUBS = %w[ subid sub_wfid ]
-    IDS = %w[ engine_id expid wfid ]
-
-    # Returns true if the h is a representation of a FlowExpressionId instance.
-    #
-    def self.is_a_fei?(h)
-
-      h.respond_to?(:keys) && (h.keys - SUBS).sort == IDS
-    end
 
     # Returns child_id... For an expid of '0_1_4', this will be 4.
     #

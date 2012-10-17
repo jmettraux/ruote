@@ -58,11 +58,11 @@ class UtFeiTest < Test::Unit::TestCase
 
     assert_equal(
       true,
-      Ruote::FlowExpressionId.is_a_fei?(
+      Ruote.is_a_fei?(
         'expid' => '0', 'wfid' => '20101224-bababa', 'engine_id' => 'engine'))
     assert_equal(
       false,
-      Ruote::FlowExpressionId.is_a_fei?(
+      Ruote.is_a_fei?(
         'nada' => '0', 'wfid' => '20101224-bababa', 'engine_id' => 'engine'))
   end
 
