@@ -1,4 +1,6 @@
 
+require 'ruby_parser'
+
 require 'ruote/util/deep'
 require 'ruote/util/lookup'
 require 'ruote/util/mpatch'
