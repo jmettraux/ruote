@@ -4,6 +4,7 @@
 
 == ruote - 2.3.1    not yet released
 
+- _auto_remove (and _alter) for trackers (pause on apply++)
 - pause on apply concept brought in
 - Dashboard#add_tracker
 - Dashboard#attach(fei, pdef)

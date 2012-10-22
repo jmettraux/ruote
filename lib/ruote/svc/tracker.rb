@@ -93,17 +93,25 @@ module Ruote
     #
     def remove_tracker(fei, doc=nil)
 
-      doc ||= @context.storage.get_trackers
-
-      doc['trackers'].delete(Ruote.to_storage_id(fei))
-
-      r = @context.storage.put(doc)
-
-      remove_tracker(fei, r) if r
-        # the put failed, have to redo the work
+      remove([ Ruote.to_storage_id(fei) ])
     end
 
     protected
+
+    # Removes a set of tracker ids and updated the tracker document.
+    #
+    def remove(tracker_ids, doc=nil)
+
+      return if tracker_ids.empty?
+
+      doc ||= @context.storage.get_trackers
+
+      tracker_ids.each { |ti| doc['trackers'].delete(ti) }
+      r = @context.storage.put(doc)
+
+      remove(tracker_ids) if r
+        # the put failed, have to redo the work
+    end
 
     # The method behind on_pre_msg and on_msg. Filters msgs against trackers.
     # Triggers trackers if there is a match.
@@ -117,6 +125,8 @@ module Ruote
       m_action = "pre_#{m_action}" if pre
 
       msg = m_action == 'error_intercepted' ? message['msg'] : message
+
+      ids_to_remove = []
 
       trackers.each do |tracker_id, tracker|
 
@@ -138,28 +148,33 @@ module Ruote
           next if m_action == 'terminated' && (fs['__error__'] || fs['__terminate__'])
         end
 
+        # remove the message post-trigger?
+
+        ids_to_remove << tracker_id if tracker['msg'].delete('_auto_remove')
+
         # OK, have to pull the trigger (or alter the message) then
 
-        if pre && tracker['msg']['alter']
+        if pre && tracker['msg']['_alter']
           alter(m_wfid, m_error, m_action, msg, tracker)
         else
           trigger(m_wfid, m_error, m_action, msg, tracker)
         end
       end
+
+      remove(ids_to_remove)
     end
 
-    # Alters the msg,
-    # Only called in "pre" mode.
+    # Alters the msg, only called in "pre" mode.
     #
     def alter(m_wfid, m_error, m_action, msg, tracker)
 
-      case tracker['msg'].delete('alter')
+      case tracker['msg'].delete('_alter')
         when 'merge' then msg.merge!(tracker['msg'])
         #else ...
       end
     end
 
-    # Prepares the message that get placed on the ruote msg queue.
+    # Prepares the message that gets placed on the ruote msg queue.
     #
     def trigger(m_wfid, m_error, m_action, msg, tracker)
 

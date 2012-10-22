@@ -17,8 +17,6 @@ class FtStorageCopyTest < Test::Unit::TestCase
 
     @dashboard.register_participant '.+', Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(Ruote.process_definition do
       sequence do
         alpha :timeout => '2d'
@@ -43,7 +41,7 @@ class FtStorageCopyTest < Test::Unit::TestCase
 
     dash = Ruote::Dashboard.new(Ruote::Worker.new(Ruote::HashStorage.new()))
 
-    #dash.noisy = true
+    dash.noisy = ENV['NOISY'] == 'true'
 
     dash.register_participant '.+', Ruote::StorageParticipant
 

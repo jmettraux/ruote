@@ -34,7 +34,7 @@ class FtPauseOnApplyTest < Test::Unit::TestCase
       'pre_apply',
       nil,
       { 'tree.1.pos' => [ [ 1, 1 ] ] },
-      { 'alter' => 'merge', 'state' => 'paused' })
+      { '_auto_remove' => true, '_alter' => 'merge', 'state' => 'paused' })
 
     assert_equal String, tid.class
 
@@ -57,6 +57,8 @@ class FtPauseOnApplyTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal 'terminated', r['action']
+
+    assert_equal 0, @dashboard.storage.get_trackers['trackers'].size
   end
 end
 
