@@ -218,19 +218,18 @@ class FtStorage < Test::Unit::TestCase
   def test_put_sequence
 
     revs = []
-    put_ats = []
     doc = { '_id' => 'putseq', 'type' => 'errors' }
 
     77.times do |i|
 
-      @s.put(doc)
+      r = @s.put(doc)
       doc = @s.get('errors', 'putseq')
 
       revs << doc['_rev']
-      put_ats << doc['put_at']
 
+      assert_nil r
+      assert_not_nil doc['put_at']
       assert_equal i + 1, revs.uniq.size
-      assert_equal i + 1, put_ats.uniq.size
     end
   end
 
