@@ -367,6 +367,11 @@ module Ruote
     #   dashboard.re_apply(
     #     fei, :fields => { 'customer' => 'bob' })
     #
+    # :workitem is ok too
+    #
+    #   dashboard.re_apply(
+    #     fei, :workitem => { 'fields' => { 'customer' => 'bob' } })
+    #
     # :merge_in_fields is used to add / override fields
     #
     #   dashboard.re_apply(
