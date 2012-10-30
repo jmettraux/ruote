@@ -566,6 +566,17 @@ module Ruote
     #end
     #++
 
+    # Given a fei, returns the flow expression with that fei (only looks
+    # in the expressions stored here, in this ProcessStatus instance, doesn't
+    # query the storage).
+    #
+    def fexp(fei)
+
+      fei = Ruote.extract_fei(fei)
+
+      @expressions.find { |e| e.fei == fei }
+    end
+
     protected
 
     def original_tree_from_parent(e)

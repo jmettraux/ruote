@@ -78,6 +78,16 @@ module Ruote
     Ruote::FlowExpressionId.extract(o)
   end
 
+  # Given something that might be a fei, extract the child_id (the last
+  # portion of the expid in the fei).
+  #
+  def self.extract_child_id(o)
+
+    fei = Ruote::FlowExpressionId.extract(o)
+
+    fei ? fei.child_id : nil
+  end
+
   # Given an object, will return the wfid (workflow instance id) nested into
   # it (or nil if it can't find or doesn't know how to find).
   #

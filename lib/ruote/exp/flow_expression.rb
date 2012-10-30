@@ -242,6 +242,25 @@ module Ruote::Exp
       @awi ||= Ruote::Workitem.new(h.applied_workitem)
     end
 
+    # Given an index, returns the child fei (among the currently registered
+    # children feis) whose fei.expid ends with this index (whose child_id
+    # is equal to that index).
+    #
+    # Returns nil if not found or a child fei as a Hash.
+    #
+    def cfei_at(i)
+
+      children.find { |cfei| Ruote.extract_child_id(cfei) == i }
+    end
+
+    # Returns the list of child_ids (last part of the fei.expid) for the
+    # currently registered (active) children.
+    #
+    def child_ids
+
+      children.collect { |cfei| Ruote.extract_child_id(cfei) }
+    end
+
     # Instantiates expression back from hash.
     #
     def self.from_h(context, h)
