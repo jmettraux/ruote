@@ -25,6 +25,7 @@
 require 'ruote/context'
 require 'ruote/util/ometa'
 require 'ruote/receiver/base'
+require 'ruote/dboard/mutation'
 require 'ruote/dboard/process_status'
 
 
@@ -385,6 +386,22 @@ module Ruote
         're_apply' => Ruote.keys_to_s(opts))
     end
 
+    # TODO
+    #
+    def compute_mutation(wfid, pdef)
+
+      Mutation.new(self, wfid, @context.reader.read(pdef))
+    end
+
+    # TODO
+    #
+    # () return Mutation instance anyway (from #apply)?
+    #
+    def apply_mutation(wfid, pdef)
+
+      Mutation.new(self, wfid, @context.reader.read(pdef)).apply
+    end
+
     # This method re_apply all the leaves of a process instance. It's meant
     # to be used against stalled workflows to give them back the spark of
     # life.
@@ -723,11 +740,11 @@ module Ruote
     #     def initialize(opts)
     #       @name = opts['name']
     #     end
-    #     def consume(workitem)
+    #     def on_workitem
     #       workitem.fields['rocket_name'] = @name
     #       send_to_the_moon(workitem)
     #     end
-    #     def cancel(fei, flavour)
+    #     def on_cancel
     #       # do nothing
     #     end
     #   end
@@ -740,11 +757,14 @@ module Ruote
     #   class TotalParticipant
     #     include Ruote::LocalParticipant
     #
-    #     def consume(workitem)
+    #     def on_workitem
     #       workitem['total'] = workitem.fields['items'].inject(0.0) { |t, item|
     #         t + item['count'] * PricingService.lookup(item['id'])
     #       }
-    #       reply_to_engine(workitem)
+    #       reply
+    #     end
+    #
+    #     def on_cancel
     #     end
     #   end
     #   dashboard.register_participant 'total', TotalParticipant
