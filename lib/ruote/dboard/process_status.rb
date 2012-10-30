@@ -496,11 +496,7 @@ module Ruote
 
       h = Ruote.decompose_tree(original_tree)
 
-      @expressions.sort { |e0, e1|
-
-        e0.fei.expid <=> e1.fei.expid
-
-      }.each { |e|
+      @expressions.each { |e|
 
         trigger = e.tree[1]['_triggered']
 
