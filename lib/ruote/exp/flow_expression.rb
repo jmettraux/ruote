@@ -227,6 +227,14 @@ module Ruote::Exp
       root(stubborn).fei
     end
 
+    # Concurrent expressions (expressions that apply more than one child
+    # at a time) are supposed to return true here.
+    #
+    def is_concurrent?
+
+      false
+    end
+
     # Turns this FlowExpression instance into a Hash (well, just hands back
     # the base hash behind it).
     #

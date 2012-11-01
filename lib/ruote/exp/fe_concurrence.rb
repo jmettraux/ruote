@@ -273,6 +273,14 @@ module Ruote::Exp
 
     COUNT_R = /^-?\d+$/
 
+    # This method is used by some walking routines when analyzsing
+    # execution trees. Returns true for concurrence (and concurrent iterator).
+    #
+    def is_concurrent?
+
+      true
+    end
+
     def apply
 
       return do_reply_to_parent(h.applied_workitem) if tree_children.empty?

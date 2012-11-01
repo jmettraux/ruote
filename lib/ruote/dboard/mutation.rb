@@ -52,15 +52,15 @@ module Ruote
     def initialize(dboard, wfid, tree)
 
       @points = []
-      ps = dboard.ps(wfid)
+      @ps = dboard.ps(wfid)
 
-      traverse(ps, ps.root_expression, tree)
+      walk(@ps.root_expression, tree)
     end
 
     def to_h
 
       @points.each_with_object({}) { |pt, h|
-        h[pt.fei.sid] = {
+        h[pt.fei.h] = {
           'action' => pt.re_apply ? 're-apply' : 'update',
           'tree' => pt.tree
         }
@@ -69,7 +69,11 @@ module Ruote
 
     protected
 
-    def traverse(ps, fexp, tree)
+    # TODO: fexp.tree != ps.current_tree(fexp) //!\\
+
+    def walk(fexp, tree)
+
+      #p [ :walk, fexp.class, tree ]
 
       if fexp.tree[0] != tree[0] || fexp.tree[1] != tree[1]
 
@@ -77,24 +81,65 @@ module Ruote
 
       elsif fexp.tree[2] == tree[2]
 
-        fexp.children.each_with_index do |cfei, i|
-          traverse(ps, ps.fexp(cfei), tree[2][i])
-        end
+        return
 
-      #elsif fexp is a concurrence
+      elsif fexp.is_concurrent?
 
-      else # fexp is a sequence of some kind
+        walk_concurrence(fexp, tree)
 
-        ft = fexp.tree[2]
-        t = tree[2]
-        i = fexp.child_ids.first + 1
+      else
 
-        fleft = ft.take(i)
-        fright = ft.drop(i)
-        left = t.take(i)
-        right = t.drop(i)
+        walk_sequence(fexp, tree)
 
-        @points << MutationPoint.new(fexp.fei, tree, fleft != left)
+      end
+    end
+
+    def walk_concurrence(fexp, tree)
+
+      if fexp.tree[2].size != tree[2].size
+        #
+        # that's lazy, but why not?
+        #
+        # we could add/apply a new child...
+
+        @points << MutationPoint.new(fexp.fei, tree, true)
+
+      else
+
+        # ???
+      end
+    end
+
+    def walk_sequence(fexp, tree)
+
+      i = fexp.child_ids.first
+
+      ehead = fexp.tree[2].take(i)
+      ecurrent = fexp.tree[2][i]
+      etail = fexp.tree[2].drop(i + 1)
+      head = tree[2].take(i)
+      current = tree[2][i]
+      tail = tree[2].drop(i + 1)
+
+      #puts ','
+      #p ehead
+      #p ecurrent
+      #p etail
+      #puts ','
+      #p head
+      #p current
+      #p tail
+
+      if ehead != head
+        @points << MutationPoint.new(fexp.fei, tree, true)
+        return
+      end
+
+      if ecurrent != current
+        walk(@ps.fexp(fexp.children.first), current)
+      end
+      if etail != tail
+        @points << MutationPoint.new(fexp.fei, tree, false)
       end
     end
   end
