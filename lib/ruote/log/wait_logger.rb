@@ -267,7 +267,11 @@ module Ruote
         interests.delete(interest) if satisfied
       end
 
-      (interests.size < 1)
+      if interests.include?(:or_error)
+        (interests.size < 2)
+      else
+        (interests.size < 1)
+      end
     end
   end
 end
