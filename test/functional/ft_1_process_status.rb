@@ -82,7 +82,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal 1, @dashboard.errors(:count => true)
   end
 
-  def test_tree
+  def test_current_tree
 
     pdef = Ruote.process_definition 'my process' do
       sequence do
@@ -91,10 +91,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register :alpha, Ruote::NullParticipant
     wfid = @dashboard.launch(pdef)
 
-    wait_for(:alpha)
+    wait_for('dispatched')
 
     ps = @dashboard.process(wfid)
 
@@ -123,15 +123,51 @@ class FtProcessStatusTest < Test::Unit::TestCase
       ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
-          ["participant", {"ref"=>"bravo"}, []]]]]],
-      ps.current_tree)
+          ["participant", {"ref"=>"alpha"}, []]]]]],
+      ps.original_tree)
 
     assert_equal(
       ["define", {"my process"=>nil}, [
         ["sequence", {}, [
           ["echo", {"ok"=>nil}, []],
-          ["participant", {"ref"=>"alpha"}, []]]]]],
-      ps.original_tree)
+          ["participant", {"ref"=>"bravo"}, []]]]]],
+      ps.current_tree)
+  end
+
+  def test_current_tree_and_re_apply
+
+    pdef = Ruote.process_definition 'my process' do
+      sequence do
+        echo 'ok'
+        participant :ref => :alpha
+      end
+    end
+
+    alpha = @dashboard.register :alpha, Ruote::NullParticipant
+    wfid = @dashboard.launch(pdef)
+
+    wait_for('dispatched')
+
+    ps = @dashboard.process(wfid)
+    exp = ps.expressions.find { |fexp| fexp.fei.expid == '0_0_1' }
+
+    @dashboard.re_apply(
+      exp,
+      :tree =>
+        [ 'sequence', {}, [ [ 'alpha', {}, [] ], [ 'alpha', {}, [] ] ] ])
+
+    wait_for('dispatched')
+
+    ps = @dashboard.process(wfid)
+
+    assert_equal(
+      ["define", {"my process"=>nil}, [
+        ["sequence", {}, [
+          ["echo", {"ok"=>nil}, []],
+          ["sequence", {"_triggered"=>"on_re_apply"}, [
+            ["participant", {"ref"=>"alpha"}, []],
+            ["alpha", {}, []]]]]]]],
+      ps.current_tree)
   end
 
   def test_tree_when_define_rewrites_it
@@ -156,13 +192,15 @@ class FtProcessStatusTest < Test::Unit::TestCase
 
     assert_equal(
       ["define", {"my process"=>nil}, [
-        ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]],
+        ["define", {"sub0"=>nil}, [
+          ["echo", {"meh"=>nil}, []]]],
         ["participant", {"ref"=>"alpha"}, []]]],
       ps.current_tree)
 
     assert_equal(
       ["define", {"my process"=>nil}, [
-        ["define", {"sub0"=>nil}, [["echo", {"meh"=>nil}, []]]],
+        ["define", {"sub0"=>nil}, [
+          ["echo", {"meh"=>nil}, []]]],
         ["participant", {"ref"=>"alpha"}, []]]],
       ps.original_tree)
   end
@@ -351,11 +389,21 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_trace %w[ a c c d ], pdef
 
     assert_equal(
-      ["define", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["participant", {"ref"=>"charly"}, []]]], ["delta", {}, []]]],
+      ["define", {"name"=>"test"}, [
+        ["sequence", {}, [
+          ["alpha", {}, []],
+          ["charly", {}, []],
+          ["participant", {"ref"=>"charly"}, []]]],
+        ["delta", {}, []]]],
       @dashboard.context.stash[:tree0])
 
     assert_equal(
-      ["define", {"name"=>"test"}, [["sequence", {}, [["alpha", {}, []], ["charly", {}, []], ["charly", {}, []]]], ["participant", {"ref"=>"delta"}, []]]],
+      ["define", {"name"=>"test"}, [
+        ["sequence", {}, [
+          ["alpha", {}, []],
+          ["charly", {}, []],
+          ["charly", {}, []]]],
+        ["participant", {"ref"=>"delta"}, []]]],
       @dashboard.context.stash[:tree1])
   end
 
@@ -370,7 +418,7 @@ class FtProcessStatusTest < Test::Unit::TestCase
       end
     end
 
-    alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
+    alpha = @dashboard.register :alpha, Ruote::StorageParticipant
 
     wfid = @dashboard.launch(pdef)
 
@@ -396,9 +444,10 @@ class FtProcessStatusTest < Test::Unit::TestCase
     assert_equal(
       ["define", {"name"=>"test"}, [
         ["define", {"sub0"=>nil}, [
-          ["participant", {"ref"=>"alpha"}, []]]],
-        ["sequence", {"on_cancel"=>"sub0", "_triggered"=>"on_cancel"}, [
-          ["alpha", {}, []]]]]],
+          ["alpha", {}, []]]],
+        ["subprocess", {"_triggered"=>"on_cancel", "ref"=>"sub0"}, [
+          ["define", {"sub0"=>nil}, [
+            ["participant", {"ref"=>"alpha"}, []]]]]]]],
       @dashboard.process(wfid).current_tree)
   end
 

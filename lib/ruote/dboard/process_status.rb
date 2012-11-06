@@ -490,28 +490,45 @@ module Ruote
     # Returns nil if there are no expressions (happens in the case of an
     # orphan workitem)
     #
-    def current_tree
+    def current_tree(fexp=root_expression)
 
-      return nil if @expressions.empty?
+      return nil unless fexp
 
-      h = Ruote.decompose_tree(original_tree)
+      t = Ruote.fulldup(fexp.tree)
 
-      @expressions.each { |e|
+      fexp.children.each do |cfei|
 
-        trigger = e.tree[1]['_triggered']
+        cexp = fexp(cfei)
+        next unless cexp
 
-        tree = if trigger && trigger != 'on_re_apply'
-          t = original_tree_from_parent(e).dup
-          t[1]['_triggered'] = trigger
-          t
-        else
-          e.tree
-        end
+        ct = current_tree(cexp)
 
-        h.merge!(Ruote.decompose_tree(tree, e.fei.expid))
-      }
+        #trigger = ct[1]['_triggered']
+        #if trigger && trigger != 'on_re_apply'
+        #    #
+        #  # ignore any on_cancel / on_error / ...
+        #  #
+        #  #ct = t[2][cexp.child_id]
+        #  # loses any change in the re_applied tree
+        #    #
+        #  # just flag the original tree as _triggered
+        #  # loses any change in the re_applied tree
+        #  #
+        #  #ct = t[2][cexp.child_id]
+        #  #ct[1]['_triggered'] = trigger
+        #    #
+        #  # extracts the new tree, discards the layers around it
+        #  #
+        #  ot = t[2][cexp.child_id]
+        #  ct = ct[2][0][2][0]
+        #  ct[1]['_triggered'] = [ trigger, ot[1][trigger] ].join('/')
+        #end
+          # return the real current tree, do not tweak with it!
 
-      Ruote.recompose_tree(h)
+        t[2][cexp.child_id] = ct
+      end
+
+      t
     end
 
     # Used by Ruote::Dashboard#process and #processes
@@ -575,15 +592,6 @@ module Ruote
       fei = Ruote.extract_fei(fei)
 
       @expressions.find { |e| e.fei == fei }
-    end
-
-    protected
-
-    def original_tree_from_parent(e)
-
-      parent = @expressions.find { |exp| exp.fei == e.parent_id }
-
-      parent ? parent.tree[2][e.fei.child_id] : e.tree
     end
   end
 end

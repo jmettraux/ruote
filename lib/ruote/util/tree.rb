@@ -38,7 +38,10 @@ module Ruote
   #   end
   #
   #   p pdef
-  #     # => ["define", {"name"=>"def0"}, [["sequence", {}, [["alpha", {}, []], ["bravo", {}, []]]]]]
+  #     # => ["define", {"name"=>"def0"}, [
+  #     #      ["sequence", {}, [
+  #     #        ["alpha", {}, []],
+  #     #        ["bravo", {}, []]]]]]
   #
   #   puts Ruote.tree_to_s(pdef)
   #     # =>
@@ -53,68 +56,6 @@ module Ruote
     s = "#{' ' * d * 2}#{expid}  #{tree[0]} #{tree[1].inspect}\n"
     tree[2].each_with_index { |t, i| s << tree_to_s(t, "#{expid}_#{i}") }
     s
-  end
-
-  # Used by Ruote::ProcessStatus.
-  #
-  # Given a tree
-  #
-  #   [ 'define', { 'name' => 'nada' }, [
-  #     [ 'sequence', {}, [ [ 'alpha', {}, [] ], [ 'bravo', {}, [] ] ] ]
-  #   ] ]
-  #
-  # will output something like
-  #
-  #   { '0' => [ 'define', { 'name' => 'nada' } ],
-  #     '0_0' => [ 'sequence', {} ],
-  #     '0_0_0' => [ 'alpha', {} ],
-  #     '0_0_1' => [ 'bravo', {} ] },
-  #
-  # An initial offset can be specifid with the 'pos' argument.
-  #
-  # Don't touch 'h', it's an accumulator.
-  #
-  def self.decompose_tree(t, pos='0', h={})
-
-    h[pos] = t[0, 2]
-    t[2].each_with_index { |c, i| decompose_tree(c, "#{pos}_#{i}", h) }
-    h
-  end
-
-  # Used by Ruote::ProcessStatus.
-  #
-  # Given a decomposed tree like
-  #
-  #   { '0' => [ 'define', { 'name' => 'nada' } ],
-  #     '0_0' => [ 'sequence', {} ],
-  #     '0_0_0' => [ 'alpha', {} ],
-  #     '0_0_1' => [ 'bravo', {} ] },
-  #
-  # will recompose it to
-  #
-  #   [ 'define', { 'name' => 'nada' }, [
-  #     [ 'sequence', {}, [ [ 'alpha', {}, [] ], [ 'bravo', {}, [] ] ] ]
-  #   ] ]
-  #
-  # A starting point in the recomposition can be given with the 'pos' argument.
-  #
-  def self.recompose_tree(h, pos='0')
-
-    t = h[pos]
-
-    return nil unless t
-
-    t << []
-    i = 0
-
-    loop do
-      tt = recompose_tree(h, "#{pos}_#{i}")
-      break unless tt
-      t.last << tt
-      i = i + 1
-    end
-
-    t
   end
 end
 

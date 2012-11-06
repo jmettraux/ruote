@@ -145,6 +145,11 @@ class FtComputeMutationTest < Test::Unit::TestCase
     wfid = @dash.launch(pdef0)
     3.times { @dash.wait_for('dispatched') }
 
+    ps = @dash.ps(wfid)
+#    puts "-" * 80
+#    p ps.current_tree
+#    puts "-" * 80
+
     pdef1 = Ruote.define do
       nick
       sequence do
@@ -167,7 +172,7 @@ class FtComputeMutationTest < Test::Unit::TestCase
   #
   # concurrence testing
 
-  def launch_nick_nick_concurrence
+  def launch_sam_sam_concurrence
 
     # TODO
   end

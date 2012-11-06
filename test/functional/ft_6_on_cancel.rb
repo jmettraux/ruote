@@ -27,8 +27,6 @@ class FtOnCancelTest < Test::Unit::TestCase
       tracer << "caught\n"
     end
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
     wait_for(:nemo)
 
@@ -47,8 +45,6 @@ class FtOnCancelTest < Test::Unit::TestCase
     end
 
     nemo = @dashboard.register_participant :nemo, Ruote::StorageParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
     wait_for(:nemo)
@@ -80,8 +76,6 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -110,8 +104,6 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
     sto = @dashboard.register_participant :bravo, Ruote::StorageParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -142,8 +134,6 @@ class FtOnCancelTest < Test::Unit::TestCase
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
     @dashboard.register_participant :bravo, Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -154,13 +144,18 @@ class FtOnCancelTest < Test::Unit::TestCase
 
     assert_equal(
       ["define", {"name"=>"test"}, [
-        ["define", {"sub0"=>nil}, [["bravo", {}, []]]],
-        ["sequence", {"on_cancel"=>"sub0"}, [["alpha", {}, []]]]]],
+        ["define", {"sub0"=>nil}, [
+          ["bravo", {}, []]]],
+        ["sequence", {"on_cancel"=>"sub0"}, [
+          ["alpha", {}, []]]]]],
       @dashboard.process(wfid).original_tree)
     assert_equal(
       ["define", {"name"=>"test"}, [
-        ["define", {"sub0"=>nil}, [["participant", {"ref"=>"bravo"}, []]]],
-        ["sequence", {"on_cancel"=>"sub0", "_triggered"=>"on_cancel"}, [["alpha", {}, []]]]]],
+        ["define", {"sub0"=>nil}, [
+          ["bravo", {}, []]]],
+        ["subprocess", {"_triggered"=>"on_cancel", "ref"=>"sub0"}, [
+          ["define", {"sub0"=>nil}, [
+            ["participant", {"ref"=>"bravo"}, []]]]]]]],
       @dashboard.process(wfid).current_tree)
   end
 
@@ -177,8 +172,6 @@ class FtOnCancelTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -204,8 +197,6 @@ class FtOnCancelTest < Test::Unit::TestCase
     end
 
     @dashboard.register :alpha, Ruote::StorageParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 

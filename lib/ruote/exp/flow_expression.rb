@@ -174,6 +174,14 @@ module Ruote::Exp
         nil
     end
 
+    # Returns the child_id for this expression. (The rightmost part of the
+    # fei.expid).
+    #
+    def child_id
+
+      fei.child_id
+    end
+
     # Fetches the parent expression, or returns nil if there is no parent
     # expression.
     #
