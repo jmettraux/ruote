@@ -82,10 +82,6 @@ class FtComputeMutationTest < Test::Unit::TestCase
 
     #pprint(@pdef, pdef1, h)
     assert_equal(0, h.size)
-    #assert_equal(1, h.size)
-    #assert_equal(2, Ruote.extract_child_id(h.keys.first))
-    #assert_equal('re-apply', h.values.first['action'])
-    #assert_equal([ 'sam', {}, [] ], h.values.first['tree'])
   end
 
   def test_sequence_change_post_child
@@ -146,9 +142,6 @@ class FtComputeMutationTest < Test::Unit::TestCase
     3.times { @dash.wait_for('dispatched') }
 
     ps = @dash.ps(wfid)
-#    puts "-" * 80
-#    p ps.current_tree
-#    puts "-" * 80
 
     pdef1 = Ruote.define do
       nick

@@ -54,7 +54,7 @@ module Ruote
       @points = []
       @ps = dboard.ps(wfid)
 
-      walk(@ps.root_expression, tree)
+      walk(@ps.root_expression, Ruote.compact_tree(tree))
     end
 
     def to_h
@@ -73,30 +73,30 @@ module Ruote
 
     def walk(fexp, tree)
 
-      #p [ :walk, fexp.class, tree ]
+      ftree = Ruote.compact_tree(@ps.current_tree(fexp))
 
-      if fexp.tree[0] != tree[0] || fexp.tree[1] != tree[1]
+      if ftree[0] != tree[0] || ftree[1] != tree[1]
 
         @points << MutationPoint.new(fexp.fei, tree, true)
 
-      elsif fexp.tree[2] == tree[2]
+      elsif ftree[2] == tree[2]
 
         return
 
       elsif fexp.is_concurrent?
 
-        walk_concurrence(fexp, tree)
+        walk_concurrence(fexp, ftree, tree)
 
       else
 
-        walk_sequence(fexp, tree)
+        walk_sequence(fexp, ftree, tree)
 
       end
     end
 
-    def walk_concurrence(fexp, tree)
+    def walk_concurrence(fexp, ftree, tree)
 
-      if fexp.tree[2].size != tree[2].size
+      if ftree[2].size != tree[2].size
         #
         # that's lazy, but why not?
         #
@@ -110,13 +110,13 @@ module Ruote
       end
     end
 
-    def walk_sequence(fexp, tree)
+    def walk_sequence(fexp, ftree, tree)
 
       i = fexp.child_ids.first
 
-      ehead = fexp.tree[2].take(i)
-      ecurrent = fexp.tree[2][i]
-      etail = fexp.tree[2].drop(i + 1)
+      ehead = ftree[2].take(i)
+      ecurrent = ftree[2][i]
+      etail = ftree[2].drop(i + 1)
       head = tree[2].take(i)
       current = tree[2][i]
       tail = tree[2].drop(i + 1)

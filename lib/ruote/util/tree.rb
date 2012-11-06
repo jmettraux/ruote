@@ -57,5 +57,41 @@ module Ruote
     tree[2].each_with_index { |t, i| s << tree_to_s(t, "#{expid}_#{i}") }
     s
   end
+
+  # Compacts
+  #
+  #   [ 'participant', { 'ref' => 'sam' }, [] ] # and
+  #   [ 'subprocess', { 'ref' => 'compute_prime' }, [] ]
+  #
+  # into
+  #
+  #   [ 'sam', {}, [] ] # and
+  #   [ 'compute_prime', {}, [] ]
+  #
+  # to simplify tree comparisons.
+  #
+  def self.compact_tree(tree)
+
+    tree = tree.dup
+
+    if %w[ participant subprocess ].include?(tree[0])
+
+      ref =
+        tree[1].delete('ref') ||
+        begin
+          kv = tree[1].find { |k, v| v == nil }
+          tree[1].delete(kv[0])
+          kv[0]
+        end
+
+      tree[0] = ref
+
+    else
+
+      tree[2] = tree[2].collect { |t| compact_tree(t) }
+    end
+
+    tree
+  end
 end
 
