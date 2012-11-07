@@ -575,14 +575,6 @@ module Ruote
       }.compact
     end
 
-    #--
-    #def self.from_h(h)
-    #  self.new(
-    #    nil,
-    #    *%w[ expressions workitems errors schedules trackers ].map { |k| h[k] })
-    #end
-    #++
-
     # Given a fei, returns the flow expression with that fei (only looks
     # in the expressions stored here, in this ProcessStatus instance, doesn't
     # query the storage).

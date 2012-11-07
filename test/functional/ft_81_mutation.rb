@@ -167,70 +167,146 @@ class FtComputeMutationTest < Test::Unit::TestCase
 
   def launch_sam_sam_concurrence
 
-    # TODO
-  end
+    print_header
 
-##
-
-  def _test_mutation_of_concurrence
-
-    #
-    # prepare workflow execution to mutate
-
-    @dashboard.register do
-      sam Ruote::StorageParticipant
-      nick Ruote::NoOpParticipant
-    end
-
-    pdef0 = Ruote.define do
+    @pdef = Ruote.define do
       concurrence do
-        nick
+        sam
         sam
       end
     end
 
-    wfid = @dashboard.launch(pdef0)
-    2.times { @dashboard.wait_for('dispatched') }
+    @wfid = @dash.launch(@pdef)
+    2.times { @dash.wait_for('dispatched') }
+  end
 
-    #
-    # compute mutations
+  def test_concurrence_add_branch
 
-    # always a re-apply
+    launch_sam_sam_concurrence
 
     pdef1 = Ruote.define do
       concurrence do
-        nick
+        sam
+        sam
         nick
       end
     end
 
-    mutation = @dashboard.compute_mutation(wfid, pdef1)
+    mutation = @dash.compute_mutation(@wfid, pdef1)
     h = mutation.to_h
 
-    pprint(pdef0, pdef1, h)
-    #assert_equal(1, h.size)
-    #assert_equal("0_0", h.keys.first['expid'])
-    #assert_equal("", h.values.first['action'])
-    #assert_equal("", h.values.first['tree'])
+    #pprint(@pdef, pdef1, h)
+    assert_equal(1, h.size)
+    assert_equal('0_0', h.keys.first['expid'])
+    assert_equal('re-apply', h.values.first['action'])
+    assert_equal(pdef1[2][0], h.values.first['tree'])
+  end
 
-    # always a re-apply
+  def test_concurrence
+
+    launch_sam_sam_concurrence
 
     pdef1 = Ruote.define do
       concurrence do
+        sam
         nick
+      end
+    end
+
+    mutation = @dash.compute_mutation(@wfid, pdef1)
+    h = mutation.to_h
+
+    #pprint(@pdef, pdef1, h)
+    assert_equal(1, h.size)
+    assert_equal('0_0_1', h.keys[0]['expid'])
+    assert_equal('re-apply', h.values[0]['action'])
+    assert_equal('nick', h.values[0]['tree'][0])
+  end
+
+  def launch_sam_nick_concurrence
+
+    print_header
+
+    @pdef = Ruote.define do
+      concurrence do
+        sam
+        nick
+      end
+    end
+
+    @wfid = @dash.launch(@pdef)
+    2.times { @dash.wait_for('dispatched') }
+  end
+
+  def test_concurrence_change_child_that_already_replied
+
+    launch_sam_nick_concurrence
+
+    pdef1 = Ruote.define do
+      concurrence do
+        sam
         sam
       end
     end
 
-    mutation = @dashboard.compute_mutation(wfid, pdef1)
+    mutation = @dash.compute_mutation(@wfid, pdef1)
     h = mutation.to_h
 
-    pprint(pdef0, pdef1, h)
+    #pprint(@pdef, pdef1, h)
+    assert_equal(1, h.size)
+    assert_equal('0_0', h.keys[0]['expid'])
+    assert_equal('re-apply', h.values[0]['action'])
+    assert_equal('concurrence', h.values[0]['tree'][0])
   end
 
-  def test_mutation_in_concurrence
+  def launch_deep_concurrence
 
-    #flunk
+    print_header
+
+    @pdef = Ruote.define do
+      concurrence do
+        sam
+        sequence do
+          nick
+          sam
+        end
+      end
+    end
+
+    @wfid = @dash.launch(@pdef)
+    2.times { @dash.wait_for('dispatched') }
+  end
+
+  def test_deep_inside_of_concurrence
+
+    launch_deep_concurrence
+
+    pdef1 = Ruote.define do
+      concurrence do
+        sam
+        sequence do
+          nick
+          sam
+          sam
+        end
+      end
+    end
+
+    mutation = @dash.compute_mutation(@wfid, pdef1)
+    h = mutation.to_h
+
+    #pprint(@pdef, pdef1, h)
+
+    assert_equal(1, h.size)
+    assert_equal('0_0_1', h.keys[0]['expid'])
+    assert_equal('update', h.values[0]['action'])
+
+    assert_equal(
+      [ "sequence", {}, [
+        [ "nick", {}, [] ],
+        [ "sam", {}, [] ],
+        [ "sam", {}, [] ] ] ],
+      h.values[0]['tree'])
   end
 end
 

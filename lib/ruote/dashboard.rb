@@ -386,7 +386,11 @@ module Ruote
         're_apply' => Ruote.keys_to_s(opts))
     end
 
-    # TODO
+    # Returns a Mutation instance listing all the operations necessary
+    # to transform the current tree of the process (wfid) into
+    # the given definition tree (pdef).
+    #
+    # See also #apply_mutation
     #
     def compute_mutation(wfid, pdef)
 
@@ -394,6 +398,8 @@ module Ruote
     end
 
     # TODO
+    #
+    # See #compute_mutation
     #
     # () return Mutation instance anyway (from #apply)?
     #
