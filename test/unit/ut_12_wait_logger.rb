@@ -116,6 +116,30 @@ class UtWaitLoggerTest < Test::Unit::TestCase
     assert_equal 'alpha', r['participant_name']
   end
 
+  # this test will *sometimes* fail with WaitLogger#check_waiting
+  # in revision 92adc70950087637ec76fa394f9bb149fd8a61f4 and earlier
+  # due to an elusive race condition that is not possible to replicate
+  # in this test.
+  # with the current code (as of this writing) it will never fail
+  def test_or_error_when_alpha_multiple_interests
+
+    @engine.register :alpha,  Ruote::NoOpParticipant
+    @engine.register :bravo, Ruote::NullParticipant
+
+    d0 = Ruote.define do
+      alpha
+      bravo
+    end
+
+    i0 = @engine.launch(d0)
+
+    r0 = @engine.wait_for(:alpha, :or_error)
+    r1 = @engine.wait_for(:bravo)
+
+    assert_equal 'dispatch', r1['action']
+    assert_equal 'bravo', r1['participant_name']
+  end
+
   def test_wait_for_hash
 
     #@engine.noisy = true
