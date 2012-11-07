@@ -179,7 +179,6 @@ module Ruote
 
         @waiting.delete_if do |thread, interests|
           thread['__result__'] = msg if matches(interests, msg)
-          (interests.size < 1)
         end
       end
     end
