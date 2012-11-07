@@ -42,6 +42,21 @@ module Ruote
       @tree = tree
       @re_apply = re_apply
     end
+
+    def to_s
+
+      s = []
+      s << self.class.name
+      s << "  at:      #{@fei.sid} (#{@fei.expid})"
+      s << "  action:  #{@re_apply ? 're_apply' : 'update'}"
+      s << "  tree:"
+
+      s.concat(
+        Ruote::Reader.to_expid_radial(@tree).split("\n").map { |l|
+          "      #{l}" })
+
+      s.join("\n")
+    end
   end
 
   #
@@ -69,6 +84,11 @@ module Ruote
           'tree' => pt.tree
         }
       }
+    end
+
+    def to_s
+
+      @points.collect(&:to_s).join("\n")
     end
 
     protected
