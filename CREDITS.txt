@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Peter Brindisi - https://gitbhub.com/npj
 Gvozden Neskovic - https://github.com/ladenBrain
 Hartog C. de Mik - https://github.com/coffeeaddict
 Doug Bryant - re_dispatch bug and 'dispatched' << 'workitem'
