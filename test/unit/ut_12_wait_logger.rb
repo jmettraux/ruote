@@ -102,6 +102,21 @@ class UtWaitLoggerTest < Test::Unit::TestCase
     assert_equal 'error_intercepted', r['action']
   end
 
+  def test_or_error_without_error
+
+    @engine.register :alpha, Ruote::NullParticipant
+
+    pdef = Ruote.define do
+      alpha
+    end
+
+    @engine.launch(pdef)
+
+    r = @engine.wait_for(:alpha, :or_error)
+
+    assert_equal 'dispatch', r['action']
+  end
+
   def test_wait_for_hash
 
     #@engine.noisy = true
