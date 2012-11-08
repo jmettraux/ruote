@@ -85,10 +85,11 @@ module Ruote
       walk(@ps.root_expression, Ruote.compact_tree(tree))
     end
 
-    def to_h
+    def to_a
 
-      @points.each_with_object({}) { |pt, h|
-        h[pt.fei.h] = {
+      @points.collect { |pt|
+        {
+          'fei' => pt.fei,
           'action' => pt.re_apply ? 're-apply' : 'update',
           'tree' => pt.tree
         }

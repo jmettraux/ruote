@@ -35,11 +35,7 @@ class FtComputeMutationTest < Test::Unit::TestCase
     puts '>' + '-' * 79
     p t0
     p t1
-    if mutation.is_a?(Hash)
-      pp mutation
-    else
-      puts mutation
-    end
+    puts mutation
     puts '<' + '-' * 79
   end
 
@@ -83,10 +79,10 @@ class FtComputeMutationTest < Test::Unit::TestCase
     end
 
     mutation = @dash.compute_mutation(@wfid, pdef1)
-    h = mutation.to_h
+    a = mutation.to_a
 
-    #pprint(@pdef, pdef1, h)
-    assert_equal(0, h.size)
+    #pprint(@pdef, pdef1, mutation)
+    assert_equal(0, a.size)
   end
 
   def test_sequence_change_post_child
@@ -101,13 +97,13 @@ class FtComputeMutationTest < Test::Unit::TestCase
     end
 
     mutation = @dash.compute_mutation(@wfid, pdef1)
-    h = mutation.to_h
+    a = mutation.to_a
 
-    #pprint(@pdef, pdef1, h)
-    assert_equal(1, h.size)
-    assert_equal(0, Ruote.extract_child_id(h.keys.first))
-    assert_equal('update', h.values.first['action'])
-    assert_equal(pdef1, h.values.first['tree'])
+    #pprint(@pdef, pdef1, mutation)
+    assert_equal(1, a.size)
+    assert_equal(0, Ruote.extract_child_id(a.first['fei']))
+    assert_equal('update', a.first['action'])
+    assert_equal(pdef1, a.first['tree'])
   end
 
   def test_sequence_change_pre_child
@@ -121,13 +117,13 @@ class FtComputeMutationTest < Test::Unit::TestCase
     end
 
     mutation = @dash.compute_mutation(@wfid, pdef1)
-    h = mutation.to_h
+    a = mutation.to_a
 
-    #pprint(@pdef, pdef1, h)
-    assert_equal(1, h.size)
-    assert_equal(0, Ruote.extract_child_id(h.keys.first))
-    assert_equal('re-apply', h.values.first['action'])
-    assert_equal(pdef1, h.values.first['tree'])
+    #pprint(@pdef, pdef1, mutation)
+    assert_equal(1, a.size)
+    assert_equal(0, Ruote.extract_child_id(a.first['fei']))
+    assert_equal('re-apply', a.first['action'])
+    assert_equal(pdef1, a.first['tree'])
   end
 
   def test_deeper_sequence
@@ -158,13 +154,13 @@ class FtComputeMutationTest < Test::Unit::TestCase
     end
 
     mutation = @dash.compute_mutation(wfid, pdef1)
-    h = mutation.to_h
+    a = mutation.to_a
 
-    #pprint(pdef0, pdef1, h)
-    assert_equal(1, h.size)
-    assert_equal('0_1_1', h.keys.first['expid'])
-    assert_equal('re-apply', h.values.first['action'])
-    assert_equal([ 'hector', {}, [] ], h.values.first['tree'])
+    #pprint(pdef0, pdef1, mutation)
+    assert_equal(1, a.size)
+    assert_equal('0_1_1', a.first['fei'].expid)
+    assert_equal('re-apply', a.first['action'])
+    assert_equal([ 'hector', {}, [] ], a.first['tree'])
   end
 
   def test_mutation_apply
@@ -232,13 +228,13 @@ class FtComputeMutationTest < Test::Unit::TestCase
     end
 
     mutation = @dash.compute_mutation(@wfid, pdef1)
-    h = mutation.to_h
+    a = mutation.to_a
 
-    #pprint(@pdef, pdef1, h)
-    assert_equal(1, h.size)
-    assert_equal('0_0', h.keys.first['expid'])
-    assert_equal('re-apply', h.values.first['action'])
-    assert_equal(pdef1[2][0], h.values.first['tree'])
+    #pprint(@pdef, pdef1, mutation)
+    assert_equal(1, a.size)
+    assert_equal('0_0', a.first['fei'].expid)
+    assert_equal('re-apply', a.first['action'])
+    assert_equal(pdef1[2][0], a.first['tree'])
   end
 
   def test_concurrence
@@ -253,13 +249,13 @@ class FtComputeMutationTest < Test::Unit::TestCase
     end
 
     mutation = @dash.compute_mutation(@wfid, pdef1)
-    h = mutation.to_h
+    a = mutation.to_a
 
-    #pprint(@pdef, pdef1, h)
-    assert_equal(1, h.size)
-    assert_equal('0_0_1', h.keys[0]['expid'])
-    assert_equal('re-apply', h.values[0]['action'])
-    assert_equal('nick', h.values[0]['tree'][0])
+    #pprint(@pdef, pdef1, mutation)
+    assert_equal(1, a.size)
+    assert_equal('0_0_1', a[0]['fei'].expid)
+    assert_equal('re-apply', a[0]['action'])
+    assert_equal('nick', a[0]['tree'][0])
   end
 
   def launch_sam_nick_concurrence
@@ -289,13 +285,13 @@ class FtComputeMutationTest < Test::Unit::TestCase
     end
 
     mutation = @dash.compute_mutation(@wfid, pdef1)
-    h = mutation.to_h
+    a = mutation.to_a
 
-    #pprint(@pdef, pdef1, h)
-    assert_equal(1, h.size)
-    assert_equal('0_0', h.keys[0]['expid'])
-    assert_equal('re-apply', h.values[0]['action'])
-    assert_equal('concurrence', h.values[0]['tree'][0])
+    #pprint(@pdef, pdef1, mutation)
+    assert_equal(1, a.size)
+    assert_equal('0_0', a[0]['fei'].expid)
+    assert_equal('re-apply', a[0]['action'])
+    assert_equal('concurrence', a[0]['tree'][0])
   end
 
   def launch_deep_concurrence
@@ -332,20 +328,19 @@ class FtComputeMutationTest < Test::Unit::TestCase
     end
 
     mutation = @dash.compute_mutation(@wfid, pdef1)
-    h = mutation.to_h
+    a = mutation.to_a
 
-    #pprint(@pdef, pdef1, h)
-
-    assert_equal(1, h.size)
-    assert_equal('0_0_1', h.keys[0]['expid'])
-    assert_equal('update', h.values[0]['action'])
+    #pprint(@pdef, pdef1, mutation)
+    assert_equal(1, a.size)
+    assert_equal('0_0_1', a[0]['fei'].expid)
+    assert_equal('update', a[0]['action'])
 
     assert_equal(
       [ "sequence", {}, [
         [ "nick", {}, [] ],
         [ "sam", {}, [] ],
         [ "sam", {}, [] ] ] ],
-      h.values[0]['tree'])
+      a[0]['tree'])
   end
 end
 
