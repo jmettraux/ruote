@@ -74,6 +74,10 @@ module Ruote
   #
   class Mutation
 
+    # ProcessStatus instance (advanced stuff).
+    #
+    attr_reader :ps
+
     attr_reader :points
 
     def initialize(dboard, wfid, tree)
