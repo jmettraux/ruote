@@ -83,6 +83,8 @@ module Ruote
       @ps = @dboard.ps(wfid)
 
       walk(@ps.root_expression, Ruote.compact_tree(tree))
+
+      @points = @points.sort_by { |point| point.fei.expid }
     end
 
     def to_a
@@ -103,9 +105,7 @@ module Ruote
 
     def apply
 
-      @points.sort_by { |point| point.fei.expid }.each do |point|
-        point.apply(@dboard)
-      end
+      @points.each { |point| point.apply(@dboard) }
 
       self
     end
