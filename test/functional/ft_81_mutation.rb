@@ -16,6 +16,7 @@ class FtComputeMutationTest < Test::Unit::TestCase
   def setup
 
     @dash = Ruote::Dashboard.new(Ruote::Worker.new(Ruote::HashStorage.new))
+    @dash.noisy = ENV['NOISY'] == 'true'
 
     @dash.register do
       sam Ruote::StorageParticipant
@@ -28,13 +29,17 @@ class FtComputeMutationTest < Test::Unit::TestCase
     @dash.shutdown
   end
 
-  def pprint(t0, t1, hmutations)
+  def pprint(t0, t1, mutation)
 
     puts
     puts '>' + '-' * 79
     p t0
     p t1
-    pp hmutations
+    if mutation.is_a?(Hash)
+      pp mutation
+    else
+      puts mutation
+    end
     puts '<' + '-' * 79
   end
 
@@ -160,6 +165,40 @@ class FtComputeMutationTest < Test::Unit::TestCase
     assert_equal('0_1_1', h.keys.first['expid'])
     assert_equal('re-apply', h.values.first['action'])
     assert_equal([ 'hector', {}, [] ], h.values.first['tree'])
+  end
+
+  def test_mutation_apply
+
+    print_header
+
+    pdef0 = Ruote.define do
+      sequence do
+        nick
+        error "nada"
+        sam
+      end
+    end
+
+    wfid = @dash.launch(pdef0)
+    @dash.wait_for('error_intercepted')
+
+    ps = @dash.ps(wfid)
+
+    pdef1 = Ruote.define do
+      sequence do
+        nick
+        nick
+      end
+    end
+
+    mutation = @dash.compute_mutation(wfid, pdef1)
+    #puts mutation
+
+    mutation.apply
+
+    @dash.wait_for('terminated')
+
+    # the last sam is gone... He didn't get invoked...
   end
 
   #

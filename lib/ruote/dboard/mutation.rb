@@ -52,10 +52,18 @@ module Ruote
       s << "  tree:"
 
       s.concat(
-        Ruote::Reader.to_expid_radial(@tree).split("\n").map { |l|
-          "      #{l}" })
+        Ruote::Reader.to_radial(@tree).split("\n").map { |l| "    | #{l}" })
 
       s.join("\n")
+    end
+
+    def apply(dboard)
+
+      if @re_apply
+        dboard.re_apply(@fei, :tree => @tree)
+      else
+        dboard.update_expression(@fei, :tree => @tree)
+      end
     end
   end
 
@@ -70,8 +78,9 @@ module Ruote
 
     def initialize(dboard, wfid, tree)
 
+      @dboard = dboard
       @points = []
-      @ps = dboard.ps(wfid)
+      @ps = @dboard.ps(wfid)
 
       walk(@ps.root_expression, Ruote.compact_tree(tree))
     end
@@ -89,6 +98,15 @@ module Ruote
     def to_s
 
       @points.collect(&:to_s).join("\n")
+    end
+
+    def apply
+
+      @points.sort_by { |point| point.fei.expid }.each do |point|
+        point.apply(@dboard)
+      end
+
+      self
     end
 
     protected

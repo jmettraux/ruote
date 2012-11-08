@@ -397,11 +397,11 @@ module Ruote
       Mutation.new(self, wfid, @context.reader.read(pdef))
     end
 
-    # TODO
+    # Computes mutation and immediately applies it...
     #
     # See #compute_mutation
     #
-    # () return Mutation instance anyway (from #apply)?
+    # Return the mutation instance (forensic?)
     #
     def apply_mutation(wfid, pdef)
 
@@ -1204,6 +1204,32 @@ module Ruote
     def noisy=(b)
 
       @context.logger.noisy = b
+    end
+
+    # Warning: advanced method.
+    #
+    # Currently only used by mutations.
+    #
+    def update_expression(fei, opts)
+
+      fei = Ruote.extract_fei(fei)
+      fexp = Ruote::Exp::FlowExpression::fetch(@context, fei)
+
+      raise ArgumentError.new(
+        "no expression found with fei #{fei.sid}"
+      ) unless fexp
+
+      if t = opts[:tree]
+        fexp.h.updated_tree = opts[:tree]
+      end
+
+      r = @context.storage.put(fexp.h)
+
+      raise ArgumentError.new(
+        "expression #{fei.sid} is gone"
+      ) if r == true
+
+      return update_expression(fei, opts) unless r.nil?
     end
 
     protected
