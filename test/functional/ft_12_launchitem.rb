@@ -5,6 +5,7 @@
 # Tue Jun 23 10:55:16 JST 2009
 #
 
+#require 'rufus-json/automatic'
 require File.expand_path('../base', __FILE__)
 
 
@@ -36,6 +37,20 @@ class FtLaunchitemTest < Test::Unit::TestCase
     assert_equal(
       {"a"=>0, "b"=>1, "params"=>{"ref"=>"alpha"}},
       @dashboard.context.stash[:fields])
+  end
+
+  # Warning: this test requires rufus-json to have a backend ready.
+  #
+  def test_launch_and_variables_with_symbol_keys
+
+    pdef = Ruote.define do
+      echo '${f} / ${v:v}'
+    end
+
+    wfid = @dashboard.launch(pdef, { :f => 'x' }, { :v => 'y' })
+    wait_for(wfid)
+
+    assert_equal 'x / y', @tracer.to_s
   end
 end
 

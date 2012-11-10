@@ -137,6 +137,12 @@ module Ruote
 
       wfid = fields[:wfid] || @context.wfidgen.generate
 
+      fields = Rufus::Json.dup(fields)
+      variables = Rufus::Json.dup(variables)
+      root_stash = Rufus::Json.dup(root_stash)
+        #
+        # making sure symbols are turned to strings
+
       @context.storage.put_msg(
         'launch',
         'wfid' => wfid,
