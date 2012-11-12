@@ -4,6 +4,7 @@
 
 == ruote - 2.3.1    not yet released
 
+- revise "$x" (literal dollars), now return nil instead of "$x" when missing
 - _auto_remove (and _alter) for trackers (pause on apply++)
 - pause on apply concept brought in
 - Dashboard#add_tracker

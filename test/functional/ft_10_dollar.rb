@@ -21,8 +21,6 @@ class FtDollarTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace 'field', pdef
   end
 
@@ -37,8 +35,6 @@ class FtDollarTest < Test::Unit::TestCase
         echo 'd${variable:v0}'
       end
     end
-
-    #noisy
 
     assert_trace(%w[ a b0 c0 d0 ], pdef)
   end
@@ -57,8 +53,6 @@ class FtDollarTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace(%w[ a:toto b:atlantic_city ], pdef)
   end
 
@@ -73,8 +67,6 @@ class FtDollarTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace(%w[ a btoto cAsia ], pdef)
   end
 
@@ -85,8 +77,6 @@ class FtDollarTest < Test::Unit::TestCase
         echo '>${r:1 + 2}<'
       end
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -106,8 +96,6 @@ class FtDollarTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     @dashboard.context['ruby_eval_allowed'] = true
 
     assert_trace('>3<', pdef)
@@ -124,8 +112,6 @@ class FtDollarTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     @dashboard.context['ruby_eval_allowed'] = true
 
     assert_trace [ 'person' ] * 3, pdef
@@ -139,8 +125,6 @@ class FtDollarTest < Test::Unit::TestCase
         echo "${r:d('f:toto')}"
       end
     end
-
-    #noisy
 
     @dashboard.context['ruby_eval_allowed'] = true
 
@@ -156,8 +140,6 @@ class FtDollarTest < Test::Unit::TestCase
         echo '${v:${f:a}}'
       end
     end
-
-    #noisy
 
     assert_trace 'AA', pdef
   end
@@ -189,8 +171,6 @@ class FtDollarTest < Test::Unit::TestCase
 
     @dashboard.context['ruby_eval_allowed'] = true
 
-    #noisy
-
     assert_trace 'alpha/bravo/charly', pdef
   end
 
@@ -221,10 +201,11 @@ class FtDollarTest < Test::Unit::TestCase
       set 'f:F' => '$a'
       set 'f:G' => '$nada'
       set 'f:H' => '$a '
+      set 'f:I' => '$v:a '
+      set 'f:J' => ' $a'
+      set 'f:K' => ' $v:a'
       filter :f => /^[a-c]$/, :del => true
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -235,11 +216,14 @@ class FtDollarTest < Test::Unit::TestCase
         'A' => %w[ A B C ],
         'B' => %w[ A B C ],
         'C' => %w[ venture capitalist ],
-        'D' => '$f:nada',
-        'E' => '$v:nada',
+        'D' => nil,
+        'E' => nil,
         'F' => %w[ A B C ],
-        'G' => '$nada',
-        'H' => '$a '
+        'G' => nil,
+        'H' => '$a ',
+        'I' => '$v:a ',
+        'J' => ' $a',
+        'K' => ' $v:a'
       },
       r['workitem']['fields'])
   end
@@ -254,8 +238,6 @@ class FtDollarTest < Test::Unit::TestCase
     @dashboard.register_participant :alpha do |wi|
       wi.fields['parameters'] = wi.fields['params']
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -303,8 +285,6 @@ class FtDollarTest < Test::Unit::TestCase
   end
 
   def test_participant_params
-
-    #@dashboard.noisy = true
 
     @dashboard.register :toto do |workitem, fexp|
       workitem['a'] = fexp.compile_atts
