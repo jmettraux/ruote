@@ -204,6 +204,8 @@ class FtDollarTest < Test::Unit::TestCase
       set 'f:I' => '$v:a '
       set 'f:J' => ' $a'
       set 'f:K' => ' $v:a'
+      set 'f:L' => '$$'
+      set 'f:M' => '$$a'
       filter :f => /^[a-c]$/, :del => true
     end
 
@@ -223,7 +225,9 @@ class FtDollarTest < Test::Unit::TestCase
         'H' => '$a ',
         'I' => '$v:a ',
         'J' => ' $a',
-        'K' => ' $v:a'
+        'K' => ' $v:a',
+        'L' => '$$',
+        'M' => '$$a'
       },
       r['workitem']['fields'])
   end

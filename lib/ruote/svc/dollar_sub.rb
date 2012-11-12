@@ -92,16 +92,15 @@ module Ruote
     def literal_sub(s, fexp, wi)
 
       case s
-        when /^\$(?:variable|var|v):([^{}\s]+)$/
+        when /^\$(?:variable|var|v):([^{}\s\$]+)$/
           fexp.lookup_variable($~[1])
-        when /^\$([^{}:\s]+)$/, /^\$(?:field|fld|f):([^{}\s]+)$/
+        when /^\$([^{}:\s\$]+)$/, /^\$(?:field|fld|f):([^{}\s\$]+)$/
           Ruote.lookup(wi['fields'], $~[1])
         else
           s
       end
     end
   end
-
 
   #
   # A mini-namespace Ruote::Dollar for Dict and RubyContext, just to separate
