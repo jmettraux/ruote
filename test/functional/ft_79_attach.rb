@@ -104,5 +104,35 @@ class FtAttachTest < Test::Unit::TestCase
     assert_equal 2, ps.expressions.size
     assert_equal 1, ps.stored_workitems.size
   end
+
+  def test_attach_with_error
+
+    @dashboard.register '.+', Ruote::NullParticipant
+
+    pdef = Ruote.define do
+      nancy
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for('dispatched')
+
+    adef = Ruote.define do
+      error 'failing in style'
+    end
+
+    fei = @dashboard.attach(r['fei'], adef)
+    r = @dashboard.wait_for('error_intercepted')
+
+    ps = @dashboard.ps(wfid)
+
+    assert_equal 1, ps.errors.size
+
+    @dashboard.cancel(fei)
+    r = @dashboard.wait_for('ceased')
+
+    ps = @dashboard.ps(wfid)
+
+    assert_equal 0, ps.errors.size
+  end
 end
 

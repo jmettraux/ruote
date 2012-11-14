@@ -376,6 +376,7 @@ module Ruote
       vars = variables rescue nil
       avars = (all_variables || {}).remap { |(k, v), h| h[Ruote.sid(k)] = v }
 
+
       s = [ "== #{self.class} ==" ]
       s << ''
       s << "  wfid:           #{wfid}"
@@ -384,9 +385,15 @@ module Ruote
       s << "  last_active:    #{last_active}"
       s << "  launched_time:  #{launched_time}"
       s << ''
+
       s << "  expressions: #{@expressions.size}"
       s << ''
       @expressions.each do |e|
+
+        eflags = %w[
+          flanking forgotten attached
+        ].each_with_object([]) { |f, a| a << f if e.h[f] }
+
         s << "     #{e.fei.to_storage_id}"
         s << "       | #{e.name}"
         s << "       | _rev: #{e.h._rev.inspect}"
@@ -396,9 +403,11 @@ module Ruote
           s << "       | . child-> #{Ruote.sid(ce)}"
         end if e.children.any?
         s << "       | timers: #{e.h.timers.collect { |t| t[1] }}" if e.h.timers
-        s << "       | (flanking)" if e.h.flanking
+        s << "       | tagname: #{e.h.tagname}" if e.h.tagname
+        s << "       | (#{eflags.join(', ')})" if eflags.any?
         s << "       `-parent--> #{e.h.parent_id ? e.parent_id.to_storage_id : 'nil'}"
       end
+
       s << ''
       s << "  schedules: #{@schedules.size}"
       if @schedules.size > 0
@@ -410,6 +419,7 @@ module Ruote
         end
         s << ''
       end
+
       s << "  stored workitems: #{@stored_workitems.size}"
 
       s << ''
