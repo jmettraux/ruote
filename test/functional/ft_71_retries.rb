@@ -11,12 +11,9 @@ require File.expand_path('../base', __FILE__)
 class FtRetriesTest < Test::Unit::TestCase
   include FunctionalBase
 
-  class BadParticipant
-    include Ruote::LocalParticipant
+  class BadParticipant < Ruote::Participant
     def on_workitem
       fail 'badly'
-    end
-    def on_cancel
     end
   end
 
@@ -30,8 +27,6 @@ class FtRetriesTest < Test::Unit::TestCase
     pdef = Ruote.process_definition do
       alpha :on_error => '4s: retry'
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -60,8 +55,6 @@ class FtRetriesTest < Test::Unit::TestCase
       alpha :on_error => '4x: retry'
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for('error_intercepted')
@@ -82,8 +75,6 @@ class FtRetriesTest < Test::Unit::TestCase
       alpha :on_error => '1s: retry, pass'
       echo 'over.'
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -112,8 +103,6 @@ class FtRetriesTest < Test::Unit::TestCase
       alpha :on_error => '1s: retry * 3'
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for('fail')
@@ -139,6 +128,30 @@ class FtRetriesTest < Test::Unit::TestCase
     assert_equal(
       '#<RuntimeError: badly>',
       @dashboard.ps(wfid).errors.first.message)
+
+    fails = @dashboard.logger.log.select { |m| m['action'] == 'fail' }
+    assert_equal 3, fails.size
+  end
+
+  #
+  # :on_error => 'retry * 2'
+  #
+  # retry twice, immediately
+
+  def test_retry_star_two
+
+    @dashboard.register_participant :alpha, BadParticipant
+
+    pdef = Ruote.process_definition do
+      alpha :on_error => 'retry * 2'
+    end
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for('error_intercepted')
+
+    fails = @dashboard.logger.log.select { |m| m['action'] == 'fail' }
+    assert_equal 2, fails.size
   end
 end
 

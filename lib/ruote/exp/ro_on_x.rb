@@ -205,7 +205,9 @@ module Ruote::Exp
     def schedule_retries(handler, err)
 
       retries = handler.split(/\s*,\s*/)
+
       after, action = retries.shift.split(/:/)
+      (after, action = '0', after) if action.nil?
 
       # deal with "* 3"
 
@@ -299,7 +301,7 @@ module Ruote::Exp
         workitem = h.supplanted['applied_workitem']
       end
 
-      if on == 'on_error' && handler.respond_to?(:match) && handler.match(/:/)
+      if on == 'on_error' && handler.respond_to?(:match) && handler.match(/[,:\*]/)
         return schedule_retries(handler, err)
       end
 
