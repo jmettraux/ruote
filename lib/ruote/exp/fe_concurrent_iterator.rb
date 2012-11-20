@@ -150,8 +150,8 @@ module Ruote::Exp
   # the concurrent_iterator accepts the same options for merging as its bigger
   # brother, the concurrence expression.
   #
-  # :count, :merge (override, mix, isolate), remaining (cancel, forget) and
-  # :over.
+  # :count, :merge (override, mix, isolate, stack, union, concat, deep, ignore),
+  # :remaining (cancel, forget) and :over.
   #
   #
   # == add branches
@@ -238,9 +238,10 @@ module Ruote::Exp
 
         add_branches(ab)
 
-        if h.fei['wfid'] != workitem['fei']['wfid'] ||
-           ( ! workitem['fei']['expid'].match(/^#{h.fei['expid']}_\d+$/))
-
+        if
+          h.fei['wfid'] != workitem['fei']['wfid'] ||
+          ( ! workitem['fei']['expid'].match(/^#{h.fei['expid']}_\d+$/))
+        then
           do_persist
           return
         end

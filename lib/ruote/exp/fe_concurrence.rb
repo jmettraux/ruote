@@ -94,6 +94,25 @@ module Ruote::Exp
   #
   # :wait_for can be shortened to :wf.
   #
+  #
+  # === :over_if (and :over_unless) attribute
+  #
+  # Like the :count attribute controls how many branches have to reply before
+  # a concurrence ends, the :over attribute is used to specify a condition
+  # upon which the concurrence will [prematurely] end.
+  #
+  #   concurrence :over_if => '${f:over}'
+  #     alpha
+  #     bravo
+  #     charly
+  #   end
+  #
+  # will end the concurrence as soon as one of the branches replies with a
+  # workitem whose field 'over' is set to true. (the remaining branches will
+  # get cancelled unless :remaining => :forget is set).
+  #
+  # :over_unless needs no explanation.
+  #
   # === :remaining
   #
   # As said for :count, the remaining branches get cancelled. By setting
@@ -152,23 +171,23 @@ module Ruote::Exp
   #
   # === :merge_type
   #
-  # ==== :override
+  # ==== :merge_type => :override (default)
   #
   # By default, the merge type is set to 'override', which means that the
   # 'winning' workitem's payload supplants all other workitems' payloads.
   #
-  # ==== :mix
+  # ==== :merge_type => :mix
   #
   # Setting :merge_type to :mix, will actually attempt to merge field by field,
   # making sure that the field value of the winner(s) are used.
   #
-  # ==== :isolate
+  # ==== :merge_type => :isolate
   #
   # :isolate will rearrange the resulting workitem payload so that there is
   # a new field for each branch. The name of each field is the index of the
   # branch from '0' to ...
   #
-  # ==== :stack
+  # ==== :merge_type => :stack
   #
   # :stack will stack the workitems coming back from the concurrence branches
   # in an array whose order is determined by the :merge attributes. The array
@@ -194,7 +213,7 @@ module Ruote::Exp
   # This could prove useful for participant having to deal with multiple merge
   # strategy results.
   #
-  # ==== :union
+  # ==== :merge_type => :union
   #
   # (Available from ruote 2.3.0)
   #
@@ -214,7 +233,7 @@ module Ruote::Exp
   # Warning: duplicates in arrays present _before_ the merge will be removed
   # as well.
   #
-  # ==== :concat
+  # ==== :merge_type => :concat
   #
   # (Available from ruote 2.3.0)
   #
@@ -229,14 +248,14 @@ module Ruote::Exp
   #     'b' => [ 'x', 'y', 'y', 'z' ],
   #     'c' => { 'aa' => 'bb', 'cc' => 'dd' } }
   #
-  # ==== :deep
+  # ==== :merge_type => :deep
   #
   # (Available from ruote 2.3.0)
   #
   # Identical to :concat but hashes are merged with deep_merge (ActiveSupport
   # flavour).
   #
-  # ==== :ignore
+  # ==== :merge_type => :ignore
   #
   # (Available from ruote 2.3.0)
   #
@@ -245,25 +264,6 @@ module Ruote::Exp
   # is used to reply to the parent expression (of the concurrence expression).
   #
   # :merge_type can be shortened to :mt.
-  #
-  #
-  # === :over_if (and :over_unless) attribute
-  #
-  # Like the :count attribute controls how many branches have to reply before
-  # a concurrence ends, the :over attribute is used to specify a condition
-  # upon which the concurrence will [prematurely] end.
-  #
-  #   concurrence :over_if => '${f:over}'
-  #     alpha
-  #     bravo
-  #     charly
-  #   end
-  #
-  # will end the concurrence as soon as one of the branches replies with a
-  # workitem whose field 'over' is set to true. (the remaining branches will
-  # get cancelled unless :remaining => :forget is set).
-  #
-  # :over_unless needs no explanation.
   #
   class ConcurrenceExpression < FlowExpression
 
