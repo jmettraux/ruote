@@ -256,7 +256,7 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
   def test_merge_type_isolate
 
     pdef = Ruote.process_definition do
-      concurrent_iterator :on => 'a, b, c', :to_f => 'f', :merge_type => 'isolate' do
+      concurrent_iterator :on => 'a, b, c', :to_f => 'f', :mt => 'isolate' do
         echo '.'
       end
       bravo
@@ -456,6 +456,37 @@ class EftConcurrentIteratorTest < Test::Unit::TestCase
     assert_equal 'x', r['workitem']['fields']['b']
     assert_equal nil, r['workitem']['fields']['c']
     assert_equal nil, r['workitem']['fields']['d']
+  end
+
+  #class MeasureParticipant < Ruote::Participant
+  #  def on_workitem
+  #    sleep(10 * rand)
+  #    ps = @context.dashboard.ps(workitem.wfid)
+  #    ci = ps.expressions.find { |e| e.name == 'citerator' }
+  #    $volume = [ $volume, ci.h.inspect.length ].max
+  #    reply
+  #  end
+  #end
+
+  def test_merge_volume_xxx
+
+    $volume = 0
+
+    #@dashboard.register 'measure', MeasureParticipant
+    @dashboard.register 'measure', Ruote::NoOpParticipant
+
+    n = 20
+
+    pdef = Ruote.define do
+      citerator :on => (1..n).to_a do
+        measure
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
   end
 
   protected

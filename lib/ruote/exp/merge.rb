@@ -28,6 +28,8 @@ module Ruote::Exp
   #
   # Gathering methods for merging workitems.
   #
+  # Has to be included (calls #compile_atts for 'stack').
+  #
   module MergeMixin
 
     # Given a list of workitems and a merge_type, will merge according to
@@ -60,14 +62,14 @@ module Ruote::Exp
     #
     def merge_workitem(index, target, source, merge_type)
 
-      return source if merge_type == 'override'
+      if merge_type == 'override'
+
+        return source
+      end
 
       if target == nil
 
         case merge_type
-
-          #when 'mix'
-             # do nothing
 
           when 'stack'
             source['fields'] = { 'stack' => [ source['fields'] ] }
@@ -75,48 +77,51 @@ module Ruote::Exp
           when 'isolate'
             source['fields'] = { index.to_s => source['fields'] }
 
+          #when 'mix'
+             # do nothing
+
           #when 'union', 'concat'
              # do nothing
         end
 
-        source
-
-      else
-
-        case merge_type
-
-          when 'mix'
-
-            target['fields'].merge!(source['fields'])
-
-          when 'stack'
-
-            target['fields']['stack'] << source['fields']
-            target['fields']['stack_attributes'] = compile_atts
-
-          when 'isolate'
-
-            target['fields'][index.to_s] = source['fields']
-
-          when 'union', 'concat', 'deep'
-
-            source['fields'].each do |k, sv|
-
-              tv = target['fields'][k]
-
-              if sv.is_a?(Array) and tv.is_a?(Array)
-                tv.concat(sv)
-                tv.uniq! if merge_type == 'union'
-              elsif sv.is_a?(Hash) and tv.is_a?(Hash)
-                merge_type == 'deep' ? deep_merge!(tv, sv) : tv.merge!(sv)
-              else
-                target['fields'][k] = sv
-              end
-            end
-        end
-
-        target
+        return source
       end
+
+      # else, regular merge
+
+      case merge_type
+
+        when 'mix'
+
+          target['fields'].merge!(source['fields'])
+
+        when 'stack'
+
+          target['fields']['stack'] << source['fields']
+          target['fields']['stack_attributes'] = compile_atts
+
+        when 'isolate'
+
+          target['fields'][index.to_s] = source['fields']
+
+        when 'union', 'concat', 'deep'
+
+          source['fields'].each do |k, sv|
+
+            tv = target['fields'][k]
+
+            if sv.is_a?(Array) and tv.is_a?(Array)
+              tv.concat(sv)
+              tv.uniq! if merge_type == 'union'
+            elsif sv.is_a?(Hash) and tv.is_a?(Hash)
+              merge_type == 'deep' ? deep_merge!(tv, sv) : tv.merge!(sv)
+            else
+              target['fields'][k] = sv
+            end
+          end
+      end
+
+      target
     end
 
     protected
