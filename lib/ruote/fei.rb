@@ -33,6 +33,16 @@ require 'ruote/util/hashdot'
 
 module Ruote
 
+  # This function is used to generate the subids. Each flow
+  # expression receives such an id (it's useful for cursors, loops and
+  # forgotten branches).
+  #
+  def self.generate_subid(salt)
+
+    Digest::MD5.hexdigest(
+      "#{rand}-#{salt}-#{$$}-#{Thread.current.object_id}#{Time.now.to_f}")
+  end
+
   #
   # The FlowExpressionId (fei for short) is an process expression identifier.
   # Each expression when instantiated gets a unique fei.
