@@ -309,13 +309,12 @@ module Ruote::Exp
         [ :remaining, :rem, :r ],
         %w[ cancel forget wait ])
 
-      h.workitems = []
       #h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}
         #
         # now merging iteratively, not keeping track of all the workitems,
         # but still able to deal with old flows with active h.workitems
         #
-      #h.workitems = [] if %w[ highest lowest ].include?(h.cmerge)
+      h.workitems = [] if %w[ highest lowest ].include?(h.cmerge)
         #
         # still need to keep track of rank to get the right merging
 
@@ -338,14 +337,15 @@ module Ruote::Exp
         # a copy of the workitem (so that history, coming afterwards,
         # doesn't see a modified version of the workitem)
 
-      keep(workitem)
-
       if h.wait_for && tag = workitem['fields']['__left_tag__']
         h.wait_for.delete(tag)
       end
 
       over = h.over
       h.over = over || over?(workitem)
+
+      keep(workitem)
+        # is done after the over? determination for its looks at 'winner'
 
       if (not over) && h.over
         #
@@ -382,18 +382,30 @@ module Ruote::Exp
         # the old way (still used for highest / lowest)
 
         h.workitems << workitem
-
-      else
-        #
-        # the new way, merging immediately
-
-        #h.workitem_count = (
-        #  h.workitem_count || 0) + 1
-        #h.workitem = merge_workitem(
-        #  workitem_index(workitem), h.workitem, workitem, h.cmerge_type)
-          #
-          # TODO: implement me!
+        return
       end
+
+      #
+      # the new way, merging immediately
+
+      h.workitem_count = (h.workitem_count || 0) + 1
+
+      return if h.cmerge_type == 'ignore'
+
+      # preparing target and source in the right order for merging
+
+      target, source = h.workitem, workitem
+      if
+        h.cmerge == 'first' &&
+        ! %w[ stack union concat deep isolate ].include?(h.cmerge_type)
+      then
+        target, source = source, target
+      end
+      target, source = source, target if target && target.delete('winner')
+      target, source = source, target if source == nil
+
+      h.workitem = Ruote.merge_workitem(
+        workitem_index(workitem), target, source, h.cmerge_type)
     end
 
     def apply_children
@@ -427,8 +439,8 @@ module Ruote::Exp
       elsif h.wait_for
         h.wait_for.empty?
       else
-        #(h.workitems.size >= expected_count)
-        (workitem_count >= expected_count)
+        (workitem_count + 1 >= expected_count)
+          # the + 1 is necessary since #keep hasn't yet been called
       end
     end
 
@@ -553,14 +565,17 @@ module Ruote::Exp
       wi
     end
 
-    # TODO
+    # Returns the current count of workitem replies.
     #
     def workitem_count
 
       h.workitems ? h.workitems.size : (h.workitem_count || 0)
     end
 
-    # TODO
+    # Given a workitem, returns its index (highest to lowest in the tree
+    # children... z-index?).
+    #
+    # Is overriden by the concurrent-iterator.
     #
     def workitem_index(workitem)
 
