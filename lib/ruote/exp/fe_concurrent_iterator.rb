@@ -228,7 +228,11 @@ module Ruote::Exp
         end
 
         launch_sub(
-          expid, subtree, :workitem => workitem, :variables => variables)
+          expid,
+          subtree,
+          :workitem => workitem,
+          :variables => variables,
+          :child_id => h.list_size - 1)
       end
     end
 
@@ -275,6 +279,19 @@ module Ruote::Exp
     def count_list_size
 
       h.list_size
+    end
+
+    # TODO
+    #
+    def workitem_index(workitem)
+
+      if %w[ highest lowest ].include?(h.cmerge)
+        nil
+      elsif m = workitem['fei']['subid'].match(/k(\d)+$/)
+        m[1].to_i
+      else
+        nil
+      end
     end
   end
 end

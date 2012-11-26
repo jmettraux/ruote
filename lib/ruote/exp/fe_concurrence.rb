@@ -312,7 +312,15 @@ module Ruote::Exp
         [ :remaining, :rem, :r ],
         %w[ cancel forget wait ])
 
-      h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}
+      h.workitems = []
+      #h.workitems = (h.cmerge == 'first' || h.cmerge == 'last') ? [] : {}
+        #
+        # now merging iteratively, not keeping track of all the workitems,
+        # but still able to deal with old flows with active h.workitems
+        #
+      #h.workitems = [] if %w[ highest lowest ].include?(h.cmerge)
+        #
+        # still need to keep track of rank to get the right merging
 
       h.over = false
 
@@ -333,11 +341,7 @@ module Ruote::Exp
         # a copy of the workitem (so that history, coming afterwards,
         # doesn't see a modified version of the workitem)
 
-      if h.cmerge == 'first' || h.cmerge == 'last'
-        h.workitems << workitem
-      else
-        h.workitems[workitem['fei']['expid']] = workitem
-      end
+      keep(workitem)
 
       if h.wait_for && tag = workitem['fields']['__left_tag__']
         h.wait_for.delete(tag)
@@ -347,6 +351,7 @@ module Ruote::Exp
       h.over = over || over?(workitem)
 
       if (not over) && h.over
+        #
         # just became 'over'
 
         reply_to_parent(nil)
@@ -369,6 +374,30 @@ module Ruote::Exp
     end
 
     protected
+
+    def keep(workitem)
+
+      h.workitems = h.workitems.values if h.workitems.is_a?(Hash)
+        # align legacy expressions on new simplified way
+
+      if h.workitems
+        #
+        # the old way (still used for highest / lowest)
+
+        h.workitems << workitem
+
+      else
+        #
+        # the new way, merging immediately
+
+        #h.workitem_count = (
+        #  h.workitem_count || 0) + 1
+        #h.workitem = merge_workitem(
+        #  workitem_index(workitem), h.workitem, workitem, h.cmerge_type)
+          #
+          # TODO: implement me!
+      end
+    end
 
     def apply_children
 
@@ -401,7 +430,8 @@ module Ruote::Exp
       elsif h.wait_for
         h.wait_for.empty?
       else
-        (h.workitems.size >= expected_count)
+        #(h.workitems.size >= expected_count)
+        (workitem_count >= expected_count)
       end
     end
 
@@ -433,13 +463,13 @@ module Ruote::Exp
 
       if h.remaining == 'wait'
 
-        if h.workitems.size >= count_list_size
+        if workitem_count >= count_list_size
           #
           # all children have replied
 
-          workitem = merge_all_workitems
+          h.workitem = final_merge
 
-          do_unpersist && super(workitem, false)
+          do_unpersist && super(h.workitem, false)
 
         elsif h.children_cancelled == nil
           #
@@ -458,17 +488,17 @@ module Ruote::Exp
       #
       # remaining 'forget' and 'cancel' cases
 
-      workitem = merge_all_workitems
+      h.workitem = final_merge
 
       if h.children.empty?
 
-        do_unpersist && super(workitem, false)
+        do_unpersist && super(h.workitem, false)
 
       elsif h.remaining == 'cancel'
 
         if do_unpersist
 
-          super(workitem, false)
+          super(h.workitem, false)
 
           h.children.each { |i| @context.storage.put_msg('cancel', 'fei' => i) }
         end
@@ -478,35 +508,66 @@ module Ruote::Exp
         h.variables = compile_variables
         h.forgotten = true
 
-        do_persist && super(workitem, false)
+        do_persist && super(h.workitem, false)
       end
     end
 
     # Called by #reply_to_parent, returns the unique, merged, workitem that
     # will be fed back to the parent expression.
     #
-    def merge_all_workitems
+    def final_merge
 
-      return h.applied_workitem if h.workitems.size < 1
-      return h.applied_workitem if h.cmerge_type == 'ignore'
+      wi = if h.workitem
 
-      wis = case h.cmerge
-        when 'first'
-          h.workitems.reverse
-        when 'last'
-          h.workitems
-        when 'highest', 'lowest'
-          is = h.workitems.keys.sort.collect { |k| h.workitems[k] }
-          h.cmerge == 'highest' ? is.reverse : is
+        h.workitem
+
+      elsif h.cmerge_type == 'ignore' || h.workitems.nil? || h.workitems.empty?
+
+        h.applied_workitem
+
+      else
+
+        wis = h.workitems
+
+        if %w[ highest lowest ].include?(h.cmerge)
+          wis = h.workitems.sort_by { |wi| wi['fei']['expid'] }
+        end
+
+        if
+          %w[ first highest ].include?(h.cmerge) &&
+          ! %w[ stack union concat deep ].include?(h.cmerge_type)
+        then
+          wis = wis.reverse
+        end
+
+        as, bs = wis.partition { |wi| wi.delete('winner') }
+        wis = bs + as
+          #
+          # the 'winner' is the workitem that triggered successfully the
+          # :over_if or :over_unless, let's take him precedence in the merge...
+
+        merge_workitems(wis, h.cmerge_type)
       end
 
-      as, bs = wis.partition { |wi| wi.delete('winner') }
-      wis = bs + as
-        #
-        # the 'winner' is the workitem that triggered successfully the
-        # :over_if or :over_unless, let's take him precedence in the merge...
+      if h.cmerge_type == 'stack'
+        wi['fields']['stack_attributes'] = compile_atts
+      end
 
-      merge_workitems(wis, h.cmerge_type)
+      wi
+    end
+
+    # TODO
+    #
+    def workitem_count
+
+      h.workitems ? h.workitems.size : (h.workitem_count || 0)
+    end
+
+    # TODO
+    #
+    def workitem_index(workitem)
+
+      Ruote.extract_child_id(workitem['fei'])
     end
   end
 end

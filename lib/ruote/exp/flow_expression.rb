@@ -806,6 +806,10 @@ module Ruote::Exp
         'subid' => Ruote.generate_subid(h.fei.inspect),
         'expid' => pos)
 
+      if ci = opts[:child_id]
+        i['subid'] = "#{i['subid']}k#{ci}"
+      end
+
       #p '=== launch_sub ==='
       #p [ :launcher, h.fei['expid'], h.fei['subid'], h.fei['wfid'] ]
       #p [ :launched, i['expid'], i['subid'], i['wfid'] ]

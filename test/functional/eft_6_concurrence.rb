@@ -196,30 +196,32 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
   # helper
   #
-  def run_concurrence(concurrence_attributes, noise)
+  def run_concurrence(concurrence_attributes)
 
-    pdef = Ruote.process_definition do
-      sequence do
-        concurrence(concurrence_attributes) do
-          alpha
-          alpha
-        end
+    reverse_reply_order = concurrence_attributes.delete(:_reverse_reply_order)
+
+    pdef = Ruote.define do
+      concurrence(concurrence_attributes) do
+        alpha
+        alpha
+        alpha
       end
       alpha
     end
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    noisy if noise
-
     wfid = @dashboard.launch(pdef)
 
-    wait_for(:alpha)
-    wait_for(:alpha)
+    3.times { wait_for('dispatched') }
 
-    2.times do
-      wi = alpha.first
+    wis = @dashboard.storage_participant.to_a
+    wis.reverse! if reverse_reply_order
+    wis.each do |wi|
       wi.fields['seen'] = wi.fei.expid
+      wi.fields[wi.fei.expid] = 'alpha'
+      wi.fields['a'] = [ wi.fei.expid, 'x' ]
+      wi.fields['h'] = { wi.fei.expid => 9 }
       alpha.proceed(wi)
     end
 
@@ -233,51 +235,165 @@ class EftConcurrenceTest < Test::Unit::TestCase
     wi
   end
 
-  def test_default_merge
+  #
+  # merge tests
 
-    wi = run_concurrence({}, false)
+  def test_default_merge # first
 
-    assert_equal '0_1', wi.fei.expid
-    assert_not_nil wi.fields['seen']
+    wi = run_concurrence({})
+
+    assert_equal '0_0_0', wi.fields['seen']
+  end
+
+  def test_default_merge__reverse # first
+
+    wi = run_concurrence(:_reverse_reply_order => true)
+
+    assert_equal '0_0_2', wi.fields['seen']
   end
 
   def test_merge_last
 
-    wi = run_concurrence({ :merge => :last }, false)
+    wi = run_concurrence(:merge => :last)
 
-    assert_equal '0_1', wi.fei.expid
-    assert_not_nil wi.fields['seen']
+    assert_equal '0_0_2', wi.fields['seen']
   end
 
-  def test_concurrence_merge_type_isolate
+  def test_merge_last__reverse
 
-    wi = run_concurrence({ :merge_type => :isolate }, false)
+    wi = run_concurrence(:merge => :last, :_reverse_reply_order => true)
+
+    assert_equal '0_0_0', wi.fields['seen']
+  end
+
+  def test_merge_highest
+
+    wi = run_concurrence(:merge => :highest)
+
+    assert_equal '0_0_0', wi.fields['seen']
+  end
+
+  def test_merge_highest__reverse
+
+    wi = run_concurrence(:merge => :highest, :_reverse_reply_order => true)
+
+    assert_equal '0_0_0', wi.fields['seen']
+  end
+
+  def test_merge_lowest
+
+    wi = run_concurrence(:merge => :lowest)
+
+    assert_equal '0_0_2', wi.fields['seen']
+  end
+
+  def test_merge_lowest__reverse
+
+    wi = run_concurrence(:merge => :lowest, :_reverse_reply_order => true)
+
+    assert_equal '0_0_2', wi.fields['seen']
+  end
+
+  #
+  # merge_type tests
+
+  #def test_merge_type_override # already tested above
+  #end
+
+  def test_merge_type_mix
+
+    wi = run_concurrence(:merge_type => :mix)
 
     assert_equal(
-      %w[ 0 1 dispatched_at params ],
+      %w[ 0_0_0 0_0_1 0_0_2 a dispatched_at h params seen ],
+      wi.fields.keys.collect { |k| k.to_s }.sort)
+
+    assert_equal('0_0_0', wi.fields['seen'])
+  end
+
+  def test_merge_type_isolate
+
+    wi = run_concurrence(:merge_type => :isolate)
+
+    assert_equal(
+      %w[ 0 1 2 dispatched_at params ],
       wi.fields.keys.collect { |k| k.to_s }.sort)
 
     assert_equal({ 'ref' => 'alpha' }, wi.fields['params'])
-    assert_equal(%w[ seen ], wi.fields['0'].keys)
-    assert_equal(%w[ seen ], wi.fields['1'].keys)
+    assert_equal(%w[ seen 0_0_0 a h ], wi.fields['0'].keys)
+    assert_equal(%w[ seen 0_0_1 a h ], wi.fields['1'].keys)
+    assert_equal(%w[ seen 0_0_2 a h ], wi.fields['2'].keys)
   end
 
-  def test_concurrence_merge_type_stack
+  def test_merge_type_stack
 
-    wi = run_concurrence({ :merge_type => :stack }, false)
+    wi = run_concurrence(:merge_type => :stack)
 
     assert_equal(
       %w[ dispatched_at params stack stack_attributes ],
       wi.fields.keys.collect { |k| k.to_s }.sort)
 
     assert_equal({ 'ref' => 'alpha' }, wi.fields['params'])
-    assert_equal(%w[ seen ], wi.fields['stack'][0].keys)
-    assert_equal(%w[ seen ], wi.fields['stack'][1].keys)
+    assert_equal(%w[ seen 0_0_0 a h ], wi.fields['stack'][0].keys)
+    assert_equal(%w[ seen 0_0_1 a h ], wi.fields['stack'][1].keys)
+    assert_equal(%w[ seen 0_0_2 a h ], wi.fields['stack'][2].keys)
   end
+
+  def test_merge_type_union
+
+    wi = run_concurrence(:merge_type => :union)
+
+    assert_equal(
+      %w[ 0_0_0 0_0_1 0_0_2 a dispatched_at h params seen ],
+      wi.fields.keys.collect { |k| k.to_s }.sort)
+
+    assert_equal('0_0_2', wi.fields['seen'])
+    assert_equal(%w[ 0_0_0 x 0_0_1 0_0_2 ], wi.fields['a'])
+    assert_equal(%w[ 0_0_0 0_0_1 0_0_2 ], wi.fields['h'].keys.sort)
+  end
+
+  def test_merge_type_concat
+
+    wi = run_concurrence(:merge_type => :concat)
+
+    assert_equal(
+      %w[ 0_0_0 0_0_1 0_0_2 a dispatched_at h params seen ],
+      wi.fields.keys.collect { |k| k.to_s }.sort)
+
+    assert_equal('0_0_2', wi.fields['seen'])
+    assert_equal(%w[ 0_0_0 x 0_0_1 x 0_0_2 x], wi.fields['a'])
+    assert_equal(%w[ 0_0_0 0_0_1 0_0_2 ], wi.fields['h'].keys.sort)
+  end
+
+  # not deep enough though
+  #
+  def test_merge_type_deep
+
+    wi = run_concurrence(:merge_type => :deep)
+
+    assert_equal(
+      %w[ 0_0_0 0_0_1 0_0_2 a dispatched_at h params seen ],
+      wi.fields.keys.collect { |k| k.to_s }.sort)
+
+    assert_equal('0_0_2', wi.fields['seen'])
+    assert_equal(%w[ 0_0_0 x 0_0_1 x 0_0_2 x ], wi.fields['a'])
+    assert_equal(%w[ 0_0_0 0_0_1 0_0_2 ], wi.fields['h'].keys.sort)
+  end
+
+  def test_merge_type_ignore
+
+    wi = run_concurrence(:merge_type => :ignore)
+
+    assert_equal(
+      %w[ dispatched_at params ], wi.fields.keys.collect { |k| k.to_s }.sort)
+  end
+
+  #
+  # count tests
 
   # helper
   #
-  def run_test_count(remaining, noise)
+  def run_test_count(remaining)
 
     pdef = Ruote.process_definition do
       concurrence :count => 1, :remaining => remaining do
@@ -287,8 +403,6 @@ class EftConcurrenceTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant '.+', Ruote::StorageParticipant
-
-    noisy if noise
 
     wfid = @dashboard.launch(pdef)
 
@@ -303,7 +417,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
   def test_count
 
-    wfid = run_test_count('cancel', false)
+    wfid = run_test_count('cancel')
 
     #puts
     #logger.log.each { |e| p e }
@@ -317,7 +431,7 @@ class EftConcurrenceTest < Test::Unit::TestCase
 
   def test_count_remaining_forget
 
-    wfid = run_test_count('forget', false)
+    wfid = run_test_count('forget')
 
     #assert_equal 1, logger.log.select { |e| e['action'] == 'forget' }.size
 

@@ -37,10 +37,13 @@ module Ruote::Exp
     #
     # The return value is the merged workitem.
     #
+    # (Still used when dealing with highest/lowest merge_type and legacy
+    # concurrence/citerator expressions)
+    #
     def merge_workitems(workitems, merge_type)
 
       workitems.inject(nil) do |t, wi|
-        merge_workitem(workitems.index(wi), t, wi, merge_type)
+        merge_workitem(workitem_index(wi), t, wi, merge_type)
       end
     end
 
@@ -72,14 +75,15 @@ module Ruote::Exp
         case merge_type
 
           when 'stack'
+
             source['fields'] = { 'stack' => [ source['fields'] ] }
 
           when 'isolate'
-            source['fields'] = { index.to_s => source['fields'] }
+
+            source['fields'] = { (index || 0).to_s => source['fields'] }
 
           #when 'mix'
              # do nothing
-
           #when 'union', 'concat'
              # do nothing
         end
@@ -98,9 +102,10 @@ module Ruote::Exp
         when 'stack'
 
           target['fields']['stack'] << source['fields']
-          target['fields']['stack_attributes'] = compile_atts
 
         when 'isolate'
+
+          index ||= target['fields'].keys.select { |k| k.match(/^\d+$/) }.size
 
           target['fields'][index.to_s] = source['fields']
 
