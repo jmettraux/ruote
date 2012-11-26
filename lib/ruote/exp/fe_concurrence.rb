@@ -22,8 +22,7 @@
 # Made in Japan.
 #++
 
-
-require 'ruote/exp/merge'
+require 'ruote/merge'
 
 
 module Ruote::Exp
@@ -266,8 +265,6 @@ module Ruote::Exp
   # :merge_type can be shortened to :mt.
   #
   class ConcurrenceExpression < FlowExpression
-
-    include MergeMixin
 
     names :concurrence
 
@@ -568,6 +565,21 @@ module Ruote::Exp
     def workitem_index(workitem)
 
       Ruote.extract_child_id(workitem['fei'])
+    end
+
+    # Given a list of workitems and a merge_type, will merge according to
+    # the merge type.
+    #
+    # The return value is the merged workitem.
+    #
+    # (Still used when dealing with highest/lowest merge_type and legacy
+    # concurrence/citerator expressions)
+    #
+    def merge_workitems(workitems, merge_type)
+
+      workitems.inject(nil) do |t, wi|
+        Ruote.merge_workitem(workitem_index(wi), t, wi, merge_type)
+      end
     end
   end
 end

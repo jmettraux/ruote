@@ -8,23 +8,21 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 require 'ruote/fei'
+require 'ruote/merge'
 require 'ruote/extract'
 require 'ruote/exp/flow_expression'
-require 'ruote/exp/merge'
+require 'ruote/exp/fe_concurrence'
 
 
 class MergeTest < Test::Unit::TestCase
 
-  class Merger < Ruote::Exp::FlowExpression
-    include Ruote::Exp::MergeMixin
+  class Merger < Ruote::Exp::ConcurrenceExpression
     def initialize
     end
     def tree
       [ 'nada', {}, [] ]
     end
-    def workitem_index(wi)
-      Ruote.extract_child_id(wi['fei'])
-    end
+    public :merge_workitems
   end
 
   def new_workitem(expid, fields)
