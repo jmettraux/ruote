@@ -34,13 +34,13 @@ module Ruote
 
     attr_reader :fei
     attr_reader :tree
-    attr_reader :re_apply # true or false
+    attr_reader :type # :re_apply or :update
 
-    def initialize(fei, tree, re_apply)
+    def initialize(fei, tree, type)
 
       @fei = fei
       @tree = tree
-      @re_apply = re_apply
+      @type = type
     end
 
     def to_s
@@ -48,7 +48,7 @@ module Ruote
       s = []
       s << self.class.name
       s << "  at:      #{@fei.sid} (#{@fei.expid})"
-      s << "  action:  #{@re_apply ? 're_apply' : 'update'}"
+      s << "  action:  #{@type.inspect}"
       s << "  tree:"
 
       s.concat(
@@ -59,7 +59,7 @@ module Ruote
 
     def apply(dboard)
 
-      if @re_apply
+      if @type == :re_apply
         dboard.re_apply(@fei, :tree => @tree)
       else
         dboard.update_expression(@fei, :tree => @tree)
@@ -94,11 +94,7 @@ module Ruote
     def to_a
 
       @points.collect { |pt|
-        {
-          'fei' => pt.fei,
-          'action' => pt.re_apply ? 're-apply' : 'update',
-          'tree' => pt.tree
-        }
+        { 'fei' => pt.fei, 'action' => pt.type, 'tree' => pt.tree }
       }
     end
 
@@ -107,14 +103,34 @@ module Ruote
       @points.collect(&:to_s).join("\n")
     end
 
-    def apply
+    # Applies the mutation, :update points first then :re_apply points.
+    #
+    def apply(type=nil)
 
-      @points.each { |point| point.apply(@dboard) }
+      updates, re_applies = @points.partition { |pt| pt.type == :update }
+
+      points = []
+      points += updates if type == nil || type == :update
+      points += re_applies if type == nil || type == :re_apply
+
+      points.each { |pt| pt.apply(@dboard) }
 
       self
     end
 
     protected
+
+    def register(point)
+
+      pt = @points.find { |p| p.fei == point.fei }
+
+      if pt && point.type == :re_apply
+        @points.delete(pt)
+        @points << point
+      else
+        @points << point
+      end
+    end
 
     # Look for mutation points in an expression and its children.
     #
@@ -127,7 +143,7 @@ module Ruote
         # if there is anything different between the current tree and the
         # desired tree, let's force a re-apply
 
-        @points << MutationPoint.new(fexp.fei, tree, true)
+        register(MutationPoint.new(fexp.fei, tree, :re_apply))
 
       elsif ftree[2] == tree[2]
         #
@@ -135,18 +151,25 @@ module Ruote
 
         return
 
-      elsif fexp.is_concurrent?
-        #
-        # concurrent expressions follow a different heuristic
-
-        walk_concurrence(fexp, ftree, tree)
-
       else
-        #
-        # all other expressions are considered sequence-like
 
-        walk_sequence(fexp, ftree, tree)
+        register(MutationPoint.new(fexp.fei, tree, :update))
+          #
+          # NOTE: maybe a switch for this mutation not to be added would
+          #       be necessary...
 
+        if fexp.is_concurrent?
+          #
+          # concurrent expressions follow a different heuristic
+
+          walk_concurrence(fexp, ftree, tree)
+
+        else
+          #
+          # all other expressions are considered sequence-like
+
+          walk_sequence(fexp, ftree, tree)
+        end
       end
     end
 
@@ -161,7 +184,7 @@ module Ruote
         #
         # we could add/apply a new child...
 
-        @points << MutationPoint.new(fexp.fei, tree, true)
+        register(MutationPoint.new(fexp.fei, tree, :re_apply))
 
       else
         #
@@ -193,7 +216,7 @@ module Ruote
           # there is at least one branch that replied,
           # this forces re-apply for the whole concurrence
 
-          @points << MutationPoint.new(fexp.fei, tree, true)
+          register(MutationPoint.new(fexp.fei, tree, :re_apply))
           return
         end
 
@@ -225,7 +248,7 @@ module Ruote
         # if the name and/or attributes of the exp are supposed to change
         # then we have to reapply it
         #
-        @points << MutationPoint.new(fexp.fei, tree, true)
+        register(MutationPoint.new(fexp.fei, tree, :re_apply))
         return
       end
 
@@ -237,13 +260,13 @@ module Ruote
         walk(@ps.fexp(fexp.children.first), current)
       end
 
-      if etail != tail
-        #
-        # if elements are added at the end of the sequence, let's register
-        # a mutation that simply changes the tree (no need to re-apply)
-        #
-        @points << MutationPoint.new(fexp.fei, tree, false)
-      end
+      #if etail != tail
+      #  #
+      #  # if elements are added at the end of the sequence, let's register
+      #  # a mutation that simply changes the tree (no need to re-apply)
+      #  #
+      #  register(MutationPoint.new(fexp.fei, tree, :update))
+      #end
     end
   end
 end

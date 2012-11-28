@@ -102,7 +102,7 @@ class FtComputeMutationTest < Test::Unit::TestCase
     #pprint(@pdef, pdef1, mutation)
     assert_equal(1, a.size)
     assert_equal(0, Ruote.extract_child_id(a.first['fei']))
-    assert_equal('update', a.first['action'])
+    assert_equal(:update, a.first['action'])
     assert_equal(pdef1, a.first['tree'])
   end
 
@@ -122,7 +122,7 @@ class FtComputeMutationTest < Test::Unit::TestCase
     #pprint(@pdef, pdef1, mutation)
     assert_equal(1, a.size)
     assert_equal(0, Ruote.extract_child_id(a.first['fei']))
-    assert_equal('re-apply', a.first['action'])
+    assert_equal(:re_apply, a.first['action'])
     assert_equal(pdef1, a.first['tree'])
   end
 
@@ -157,10 +157,19 @@ class FtComputeMutationTest < Test::Unit::TestCase
     a = mutation.to_a
 
     #pprint(pdef0, pdef1, mutation)
-    assert_equal(1, a.size)
-    assert_equal('0_1_1', a.first['fei'].expid)
-    assert_equal('re-apply', a.first['action'])
-    assert_equal([ 'hector', {}, [] ], a.first['tree'])
+    assert_equal(3, a.size)
+
+    assert_equal('0', a[0]['fei'].expid)
+    assert_equal(:update, a[0]['action'])
+    assert_equal('define', a[0]['tree'].first)
+
+    assert_equal('0_1', a[1]['fei'].expid)
+    assert_equal(:update, a[1]['action'])
+    assert_equal('sequence', a[1]['tree'].first)
+
+    assert_equal('0_1_1', a[2]['fei'].expid)
+    assert_equal(:re_apply, a[2]['action'])
+    assert_equal('hector', a[2]['tree'].first)
   end
 
   def test_mutation_apply
@@ -231,10 +240,15 @@ class FtComputeMutationTest < Test::Unit::TestCase
     a = mutation.to_a
 
     #pprint(@pdef, pdef1, mutation)
-    assert_equal(1, a.size)
-    assert_equal('0_0', a.first['fei'].expid)
-    assert_equal('re-apply', a.first['action'])
-    assert_equal(pdef1[2][0], a.first['tree'])
+    assert_equal(2, a.size)
+
+    assert_equal('0', a[0]['fei'].expid)
+    assert_equal(:update, a[0]['action'])
+    assert_equal(pdef1, a[0]['tree'])
+
+    assert_equal('0_0', a[1]['fei'].expid)
+    assert_equal(:re_apply, a[1]['action'])
+    assert_equal(pdef1[2][0], a[1]['tree'])
   end
 
   def test_concurrence
@@ -252,10 +266,19 @@ class FtComputeMutationTest < Test::Unit::TestCase
     a = mutation.to_a
 
     #pprint(@pdef, pdef1, mutation)
-    assert_equal(1, a.size)
-    assert_equal('0_0_1', a[0]['fei'].expid)
-    assert_equal('re-apply', a[0]['action'])
-    assert_equal('nick', a[0]['tree'][0])
+    assert_equal(3, a.size)
+
+    assert_equal('0', a[0]['fei'].expid)
+    assert_equal(:update, a[0]['action'])
+    assert_equal('define', a[0]['tree'][0])
+
+    assert_equal('0_0', a[1]['fei'].expid)
+    assert_equal(:update, a[1]['action'])
+    assert_equal('concurrence', a[1]['tree'][0])
+
+    assert_equal('0_0_1', a[2]['fei'].expid)
+    assert_equal(:re_apply, a[2]['action'])
+    assert_equal('nick', a[2]['tree'][0])
   end
 
   def launch_sam_nick_concurrence
@@ -288,10 +311,15 @@ class FtComputeMutationTest < Test::Unit::TestCase
     a = mutation.to_a
 
     #pprint(@pdef, pdef1, mutation)
-    assert_equal(1, a.size)
-    assert_equal('0_0', a[0]['fei'].expid)
-    assert_equal('re-apply', a[0]['action'])
-    assert_equal('concurrence', a[0]['tree'][0])
+    assert_equal(2, a.size)
+
+    assert_equal('0', a[0]['fei'].expid)
+    assert_equal(:update, a[0]['action'])
+    assert_equal('define', a[0]['tree'][0])
+
+    assert_equal('0_0', a[1]['fei'].expid)
+    assert_equal(:re_apply, a[1]['action'])
+    assert_equal('concurrence', a[1]['tree'][0])
   end
 
   def launch_deep_concurrence
@@ -331,16 +359,25 @@ class FtComputeMutationTest < Test::Unit::TestCase
     a = mutation.to_a
 
     #pprint(@pdef, pdef1, mutation)
-    assert_equal(1, a.size)
-    assert_equal('0_0_1', a[0]['fei'].expid)
-    assert_equal('update', a[0]['action'])
+    assert_equal(3, a.size)
+
+    assert_equal('0', a[0]['fei'].expid)
+    assert_equal(:update, a[0]['action'])
+    assert_equal('define', a[0]['tree'].first)
+
+    assert_equal('0_0', a[1]['fei'].expid)
+    assert_equal(:update, a[1]['action'])
+    assert_equal('concurrence', a[1]['tree'].first)
+
+    assert_equal('0_0_1', a[2]['fei'].expid)
+    assert_equal(:update, a[2]['action'])
 
     assert_equal(
       [ "sequence", {}, [
         [ "nick", {}, [] ],
         [ "sam", {}, [] ],
         [ "sam", {}, [] ] ] ],
-      a[0]['tree'])
+      a[2]['tree'])
   end
 end
 
