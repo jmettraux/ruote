@@ -57,9 +57,16 @@ module Ruote
       s.join("\n")
     end
 
-    def apply(dboard)
+    def apply(dboard, option=nil)
 
-      if @type == :re_apply
+      option ||= @type
+      option = option.to_sym
+
+      return if option != :force_update && option != @type
+
+      type = option == :force_update ? :update : @type
+
+      if type == :re_apply
         dboard.re_apply(@fei, :tree => @tree)
       else
         dboard.update_expression(@fei, :tree => @tree)
@@ -105,15 +112,17 @@ module Ruote
 
     # Applies the mutation, :update points first then :re_apply points.
     #
-    def apply(type=nil)
+    # Accepts an option, nil means apply all, :update means apply only
+    # update mutations points, :re_apply means apply on re_apply points,
+    # :force_update means apply all but turn re_apply points into update
+    # points.
+    #
+    def apply(option=nil)
 
       updates, re_applies = @points.partition { |pt| pt.type == :update }
+      points = updates + re_applies
 
-      points = []
-      points += updates if type == nil || type == :update
-      points += re_applies if type == nil || type == :re_apply
-
-      points.each { |pt| pt.apply(@dboard) }
+      points.each { |pt| pt.apply(@dboard, option) }
 
       self
     end

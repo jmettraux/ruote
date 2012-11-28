@@ -187,8 +187,6 @@ class FtComputeMutationTest < Test::Unit::TestCase
     wfid = @dash.launch(pdef0)
     @dash.wait_for('error_intercepted')
 
-    ps = @dash.ps(wfid)
-
     pdef1 = Ruote.define do
       sequence do
         nick
@@ -204,6 +202,42 @@ class FtComputeMutationTest < Test::Unit::TestCase
     @dash.wait_for('terminated')
 
     # the last sam is gone... He didn't get invoked...
+  end
+
+  def test_mutation_apply_force_update
+
+    print_header
+
+    pdef0 = Ruote.define do
+      sequence do
+        nick
+        error "nada"
+        sam
+      end
+    end
+
+    wfid = @dash.launch(pdef0)
+    @dash.wait_for('error_intercepted')
+
+    pdef1 = Ruote.define do
+      sequence do
+        nick
+        nick
+      end
+    end
+
+    mutation = @dash.compute_mutation(wfid, pdef1)
+
+    mutation.apply(:force_update)
+
+    ps = @dash.ps(wfid)
+
+    assert_equal(
+      [ [ 'define', {}, [
+          [ 'sequence', {}, [ ['nick', {}, [] ], ['nick', {}, [] ] ] ] ] ],
+        [  'sequence', {}, [ ['nick', {}, [] ], [ 'nick', {}, [] ] ] ],
+        [  'nick', {}, [] ] ],
+      ps.expressions.collect { |e| e.tree })
   end
 
   #
@@ -373,10 +407,10 @@ class FtComputeMutationTest < Test::Unit::TestCase
     assert_equal(:update, a[2]['action'])
 
     assert_equal(
-      [ "sequence", {}, [
-        [ "nick", {}, [] ],
-        [ "sam", {}, [] ],
-        [ "sam", {}, [] ] ] ],
+      [ 'sequence', {}, [
+        [ 'nick', {}, [] ],
+        [ 'sam', {}, [] ],
+        [ 'sam', {}, [] ] ] ],
       a[2]['tree'])
   end
 end
