@@ -55,6 +55,7 @@ Richard Jennings
 
 == Feedback
 
+Tobias Neubert - jump to participant 'x'
 tsdeng - https://github.com/tsdeng
 Klaus Schmidtmamn - sub_wf_name inspiration
 chaofan - https://github.com/chaofoan

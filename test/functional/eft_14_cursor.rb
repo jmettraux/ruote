@@ -20,8 +20,6 @@ class EftCursorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace('', pdef)
   end
 
@@ -33,8 +31,6 @@ class EftCursorTest < Test::Unit::TestCase
         echo 'b'
       end
     end
-
-    #noisy
 
     assert_trace(%w[ a b ], pdef)
   end
@@ -50,8 +46,6 @@ class EftCursorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace(%w[ a c ], pdef)
   end
 
@@ -64,8 +58,6 @@ class EftCursorTest < Test::Unit::TestCase
         echo 'b'
       end
     end
-
-    #noisy
 
     assert_trace('a', pdef)
   end
@@ -80,8 +72,6 @@ class EftCursorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace('a', pdef)
   end
 
@@ -95,8 +85,6 @@ class EftCursorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace('a', pdef)
   end
 
@@ -105,13 +93,11 @@ class EftCursorTest < Test::Unit::TestCase
     pdef = Ruote.process_definition :name => 'test' do
       cursor do
         echo 'a'
-        jump :to => 'c'
+        jump :to => 'ctag'
         echo 'b'
-        echo 'c', :tag => 'c'
+        echo 'c', :tag => 'ctag'
       end
     end
-
-    #noisy
 
     assert_trace(%w[ a c ], pdef)
   end
@@ -121,18 +107,14 @@ class EftCursorTest < Test::Unit::TestCase
     pdef = Ruote.process_definition :name => 'test' do
       cursor do
         echo 'a'
-        jump :to => 'd'
+        set :var => 'v0', :val => 'ctag'
+        jump :to => '${v:v0}'
         echo 'b'
-        set :var => 'v0', :val => 'd'
-        jump :to => 'd'
-        echo 'c'
-        echo 'd', :tag => '${v:v0}'
+        echo 'c', :tag => '${v:v0}'
       end
     end
 
-    #noisy
-
-    assert_trace(%w[ a b d ], pdef)
+    assert_trace(%w[ a c ], pdef)
   end
 
   def test_rewind_if
@@ -152,8 +134,6 @@ class EftCursorTest < Test::Unit::TestCase
       workitem.fields['rewind'] = workitem.fields['counter'] < 5
       tracer << "a\n"
     end
-
-    #noisy
 
     assert_trace(%w[ a ] * 5, pdef)
   end
@@ -182,10 +162,44 @@ class EftCursorTest < Test::Unit::TestCase
       tracer << "p\n"
     end
 
-    #noisy
-
     assert_trace %w[ a r a r a r p ], pdef
       # ARP nostalgy....
+  end
+
+  def test_jump_to_participant_name
+
+    @dashboard.register '.+' do |workitem|
+      tracer << workitem.participant_name + "\n"
+    end
+
+    pdef = Ruote.define do
+      cursor do
+        participant 'a'
+        jump :to => 'c'
+        participant 'b'
+        participant 'c'
+      end
+    end
+
+    assert_trace %w[ a c ], pdef
+  end
+
+  def test_jump_to_participant_ref_name
+
+    @dashboard.register '.+' do |workitem|
+      tracer << workitem.participant_name + "\n"
+    end
+
+    pdef = Ruote.define do
+      cursor do
+        participant :ref => 'a'
+        jump :to => 'c'
+        participant :ref => 'b'
+        participant :ref => 'c'
+      end
+    end
+
+    assert_trace %w[ a c ], pdef
   end
 
   def test_deep_rewind
@@ -199,8 +213,6 @@ class EftCursorTest < Test::Unit::TestCase
         end
       end
     end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -228,8 +240,6 @@ class EftCursorTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, Ruote::NoOpParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -255,8 +265,6 @@ class EftCursorTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace %w[ a b ], pdef
   end
 
@@ -269,8 +277,6 @@ class EftCursorTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    #noisy
-
     assert_trace 'done.', pdef
   end
 
@@ -282,8 +288,6 @@ class EftCursorTest < Test::Unit::TestCase
       end
       echo 'done.'
     end
-
-    #noisy
 
     assert_trace 'done.', pdef
   end
@@ -317,8 +321,6 @@ class EftCursorTest < Test::Unit::TestCase
       echo 'done.'
     end
 
-    #noisy
-
     @dashboard.register do
       alpha EftCursorTest::Alpha
       bravo EftCursorTest::Bravo
@@ -334,8 +336,6 @@ class EftCursorTest < Test::Unit::TestCase
         rewind
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 
@@ -369,8 +369,6 @@ class EftCursorTest < Test::Unit::TestCase
 
   def test_workitem_command_and_jump_array
 
-    #noisy
-
     @dashboard.register do
       charly EftCursorTest::Charly, 'command' => [ 'jump', 'delta' ]
       catchall Ruote::NoOpParticipant
@@ -381,8 +379,6 @@ class EftCursorTest < Test::Unit::TestCase
 
   def test_workitem_command_and_jump_string
 
-    #noisy
-
     @dashboard.register do
       charly EftCursorTest::Charly, 'command' => 'jump delta'
       catchall Ruote::NoOpParticipant
@@ -392,8 +388,6 @@ class EftCursorTest < Test::Unit::TestCase
   end
 
   def test_workitem_command_and_jump_to_string
-
-    #noisy
 
     @dashboard.register do
       charly EftCursorTest::Charly, 'command' => 'jump to delta'
@@ -414,8 +408,6 @@ class EftCursorTest < Test::Unit::TestCase
     end
 
     @dashboard.register { catchall }
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(:alpha)
@@ -439,8 +431,6 @@ class EftCursorTest < Test::Unit::TestCase
     end
 
     @dashboard.register { catchall }
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(:alpha)

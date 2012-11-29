@@ -304,17 +304,16 @@ module Ruote::Exp
 
       tree_children.each_with_index do |c, i|
 
-        exp_name = c[0]
-        ref = c[1]['ref']
-        tag = c[1]['tag']
+        found = [
+          c[0],                                      # exp_name
+          c[1]['ref'],                               # ref
+          c[1]['tag'],                               # tag
+          (c[1].find { |k, v| v.nil? } || []).first  # participant 'xxx'
+        ].find do |v|
+          v ? (dsub(v, workitem) == arg) : false
+        end
 
-        ref = dsub(ref, workitem) if ref
-        tag = dsub(tag, workitem) if tag
-
-        next if exp_name != arg && ref != arg && tag != arg
-
-        pos = i
-        break
+        if found then pos = i; break; end
       end
 
       pos ? pos : position
