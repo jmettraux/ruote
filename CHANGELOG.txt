@@ -4,6 +4,7 @@
 
 == ruote - 2.3.1    not yet released
 
+- stop tripping on empty tags ("")
 - jump to 'x' where x in "participant 'x'" unlocked (thanks Tobias Neubert)
 - unlock on_error more (on_error: "retry * 3, pass" for example)
 - revise "$x" (literal dollars), now return nil instead of "$x" when missing

@@ -982,7 +982,7 @@ module Ruote::Exp
 
       tag = attribute(:tag)
 
-      return unless tag
+      return unless tag && tag.strip.size > 0
 
       h.tagname = tag
       h.full_tagname = applied_workitem.tags.join('/')

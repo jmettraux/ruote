@@ -361,5 +361,32 @@ class FtTagsTest < Test::Unit::TestCase
 
     assert_equal %w[ in_handler handler_out left_tag ], @tracer.to_a
   end
+
+  # Those empty tags tests were fixed during the Fukuoka RubyKaigi 01
+  # (2012/12/01).
+  #
+  def test_empty_tag
+
+    pdef = Ruote.define do
+      noop :tag => ''
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+  end
+
+  def test_empty_untrimmed_tag
+
+    pdef = Ruote.define do
+      noop :tag => ' '
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+  end
 end
 
