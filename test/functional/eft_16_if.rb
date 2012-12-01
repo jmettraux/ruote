@@ -20,8 +20,6 @@ class EftIfTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace('then', pdef)
   end
 
@@ -33,8 +31,6 @@ class EftIfTest < Test::Unit::TestCase
         echo 'else'
       end
     end
-
-    #noisy
 
     assert_trace('else', pdef)
   end
@@ -48,8 +44,6 @@ class EftIfTest < Test::Unit::TestCase
         echo 'done.'
       end
     end
-
-    #noisy
 
     assert_trace('done.', pdef)
   end
@@ -65,8 +59,6 @@ class EftIfTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace('done.', pdef)
   end
 
@@ -79,8 +71,6 @@ class EftIfTest < Test::Unit::TestCase
         echo 'else'
       end
     end
-
-    #noisy
 
     assert_trace('then', pdef)
   end
@@ -95,8 +85,6 @@ class EftIfTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace('else', pdef)
   end
 
@@ -110,8 +98,6 @@ class EftIfTest < Test::Unit::TestCase
         echo 'done.'
       end
     end
-
-    #noisy
 
     assert_trace('done.', pdef)
   end
@@ -139,9 +125,31 @@ class EftIfTest < Test::Unit::TestCase
       end
     end
 
-    #noisy
-
     assert_trace(%w[ then else else else ], pdef)
+  end
+
+  # For ruote-mon and its dot/dollar escaping scheme.
+  #
+  # (Fukuoka Ruby Kaigi 01 2012/12/01)
+  #
+  def test_attribute_text_and_dots
+
+    @dashboard.context['ruby_eval_allowed'] = true
+
+    pdef = Ruote.define do
+      _if '${r:"".length == 0}' do
+      #_if :test => '${r:"".length == 0}' do
+        echo 'a'
+        echo 'b'
+      end
+      _if '${r:"".length == 1}' do
+      #_if :test => '${r:"".length == 1}' do
+        echo 'a'
+        echo 'b'
+      end
+    end
+
+    assert_trace(%w[ a b ], pdef)
   end
 
   def test_xml_equals

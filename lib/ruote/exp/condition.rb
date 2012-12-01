@@ -37,6 +37,7 @@ module Ruote::Exp
     class ConditionError < RuntimeError
 
       def initialize(code)
+
         super(
           "couldn't interpret >#{code}<, " +
           "if it comes from a ${xx} construct, please use ${\"xx} or ${'yy}")
