@@ -111,6 +111,7 @@ module Ruote
         # ensure that all keys are strings
 
         unless k.is_a?(String)
+
           coll.delete(k)
           k = k.to_s
           coll[k] = v
@@ -125,8 +126,9 @@ module Ruote
           else
             block.call(coll, k, v)
           end
+        end
 
-        elsif v.is_a?(Array) || v.is_a?(Hash)
+        if v.is_a?(Array) || v.is_a?(Hash)
 
           deep_mutate(v, keys, coll, &block)
         end

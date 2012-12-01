@@ -127,5 +127,19 @@ class DeepTest < Test::Unit::TestCase
       { 'a' => 2, 'b' => { 'a' => 4 } },
       h)
   end
+
+  def test_deep_mutate_key_mutation
+
+    h = { 'a' => { 'a' => 'b' } }
+
+    Ruote.deep_mutate(h, 'a') do |coll, k, v|
+      coll.delete('a')
+      coll['A'] = v
+    end
+
+    assert_equal(
+      { 'A' => { 'A' => 'b' } },
+      h)
+  end
 end
 
