@@ -227,15 +227,16 @@ module Ruote::Exp
       #
       # gathering info
 
-      direction, type, value = attributes.collect { |k, v|
-        if m = SPLIT_R.match(k)
-          [ m[1], m[2], v ]
-        elsif m = SINGLE_R.match(k)
-          [ 'in', m[1] || m[2], v ]
-        else
-          nil
-        end
-      }.compact.first
+      direction, type, value =
+        attributes.collect { |k, v|
+          if m = SPLIT_R.match(k)
+            [ m[1], m[2], v ]
+          elsif m = SINGLE_R.match(k)
+            [ 'in', m[1] || m[2], v ]
+          else
+            nil
+          end
+        }.compact.first
 
       raise ArgumentError.new(
         "couldn't determine which event to listen to from: " +
@@ -247,13 +248,14 @@ module Ruote::Exp
 
       h.amerge = attribute(:merge).to_s
 
-      action = if type == 'tag'
-        INS.include?(direction) ? 'entered_tag' : 'left_tag'
-      elsif type == 'participant'
-        INS.include?(direction) ? 'dispatch' : 'receive'
-      else # error
-        'error_intercepted'
-      end
+      action =
+        if type == 'tag'
+          INS.include?(direction) ? 'entered_tag' : 'left_tag'
+        elsif type == 'participant'
+          INS.include?(direction) ? 'dispatch' : 'receive'
+        else # error
+          'error_intercepted'
+        end
 
       persist_or_raise
 
@@ -284,12 +286,13 @@ module Ruote::Exp
 
       wi = h.applied_workitem.dup
 
-      wi['fields'] = case h.amerge
-        when 'ignore', 'drop' then wi['fields']
-        when 'incoming' then wi['fields'].merge(workitem['fields'])
-        when 'awaiting' then workitem['fields'].merge(wi['fields'])
-        else workitem['fields'] # 'override'
-      end
+      wi['fields'] =
+        case h.amerge
+          when 'ignore', 'drop' then wi['fields']
+          when 'incoming' then wi['fields'].merge(workitem['fields'])
+          when 'awaiting' then workitem['fields'].merge(wi['fields'])
+          else workitem['fields'] # 'override'
+        end
 
       #
       # actual trigger
