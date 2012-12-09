@@ -216,46 +216,22 @@ module Ruote::Exp
 
     names :await
 
-    INS = %w[ in entered reached]
-    OUTS = %w[ out left ]
-
-    SPLIT_R = /^(#{(INS + OUTS).join('|')})_(tag|participant)s?$/
-    SINGLE_R = /^(tag)s|(participant|error)s?$/ # not 'tag' alone
-
     def apply
 
       #
       # gathering info
 
-      direction, type, value =
-        attributes.collect { |k, v|
-          if m = SPLIT_R.match(k)
-            [ m[1], m[2], v ]
-          elsif m = SINGLE_R.match(k)
-            [ 'in', m[1] || m[2], v ]
-          else
-            nil
-          end
-        }.compact.first
+      action, condition = self.class.extract_await_ac(attributes)
 
       raise ArgumentError.new(
         "couldn't determine which event to listen to from: " +
         attributes.inspect
-      ) unless direction
+      ) unless action
 
       global = (attribute(:global).to_s == 'true')
-      global = false if type == 'error'
+      global = false if action == 'error_intercepted'
 
       h.amerge = attribute(:merge).to_s
-
-      action =
-        if type == 'tag'
-          INS.include?(direction) ? 'entered_tag' : 'left_tag'
-        elsif type == 'participant'
-          INS.include?(direction) ? 'dispatch' : 'receive'
-        else # error
-          'error_intercepted'
-        end
 
       persist_or_raise
 
@@ -266,7 +242,7 @@ module Ruote::Exp
         global ? nil : h.fei['wfid'],
         action,
         Ruote.to_storage_id(h.fei),
-        determine_condition(type, value),
+        condition,
         { 'action' => 'reply',
           'fei' => h.fei,
           'workitem' => 'replace',
@@ -326,34 +302,70 @@ module Ruote::Exp
       super(workitem)
     end
 
-    # Matches Ruby class names, like "Ruote::ForcedError" or "::ArgumentError"
-    #
+    INS = %w[ in entered reached ]
+    OUTS = %w[ out left ]
+
+    SPLIT_R = /^(#{(INS + OUTS).join('|')})_(tag|participant)s?$/
+    SINGLE_R = /^(tag)s|(participant|error)s?$/ # not 'tag' alone
+
+    # attribute wait regex
+    AAWAIT_R = /^(#{(INS + OUTS).join('|')})_(tag|participant)s?\s*:\s*(.+)$/
+
+    # matches Ruby class names, like "Ruote::ForcedError" or "::ArgumentError"
     KLASS_R = /^(::)?([A-Z][a-z]+)+(::([A-Z][a-z]+)+)*$/
 
-    # Builds the condition used by the tracker service to filter msgs.
+    # Made into a class method, so that the :await common attribute can
+    # use it when parsing :await...
     #
-    def determine_condition(type, value)
+    def self.extract_await_ac(atts)
+
+      direction, type, value =
+        atts.collect { |k, v|
+          if k == :await && m = AAWAIT_R.match(v)
+            [ m[1], m[2], m[3] ]
+          elsif m = SPLIT_R.match(k)
+            [ m[1], m[2], v ]
+          elsif m = SINGLE_R.match(k)
+            [ 'in', m[1] || m[2], v ]
+          else
+            nil
+          end
+        }.compact.first
+
+      return nil if direction == nil
+
+      action =
+        if type == 'tag'
+          INS.include?(direction) ? 'entered_tag' : 'left_tag'
+        elsif type == 'participant'
+          INS.include?(direction) ? 'dispatch' : 'receive'
+        else # error
+          'error_intercepted'
+        end
 
       value = Ruote.comma_split(value)
 
-      if type == 'participant'
+      condition =
+        if type == 'participant'
 
-        { 'participant_name' => value }
+          { 'participant_name' => value }
 
-      elsif type == 'error'
+        elsif type == 'error'
 
-        # array or comma string or string ?
+          # array or comma string or string ?
 
-        h = { 'class' => [], 'message' => [] }
+          h = { 'class' => [], 'message' => [] }
 
-        value.each { |e| (KLASS_R.match(e) ? h['class'] : h['message']) << e }
+          value.each { |e| (KLASS_R.match(e) ? h['class'] : h['message']) << e }
 
-        h.delete_if { |k, v| v == nil or v == [] }
+          h.delete_if { |k, v| v == nil or v == [] }
 
-      else # 'tag'
+        else # 'tag'
 
-        { (value.first.to_s.match(/\//) ? 'full_tag' : 'tag') => value }
-      end
+          { (value.first.to_s.match(/\//) ? 'full_tag' : 'tag') => value }
+        end
+
+      [ action, condition ]
     end
   end
 end

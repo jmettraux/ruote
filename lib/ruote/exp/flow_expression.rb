@@ -376,6 +376,11 @@ module Ruote::Exp
         return pause_on_apply(msg)
       end
 
+      if msg['flavour'].nil? && (aw = attribute(:await))
+
+        return await(aw, msg)
+      end
+
       unless Condition.apply?(attribute(:if), attribute(:unless))
 
         return do_reply_to_parent(h.applied_workitem)
@@ -437,6 +442,35 @@ module Ruote::Exp
       h.paused_apply = msg
 
       persist_or_raise
+    end
+
+    # TODO
+    #
+    def await(att, msg)
+
+      action, condition =
+        Ruote::Exp::AwaitExpression.extract_await_ac(:await => att)
+
+      raise ::ArgumentError.new(
+        ":await does not understand #{att.inspect}"
+      ) if action == nil
+
+      msg.merge!('flavour' => 'awaiting')
+
+      h.state = 'awaiting'
+      h.paused_apply = msg
+
+      persist_or_raise
+
+      @context.tracker.add_tracker(
+        h.fei['wfid'],
+        action,
+        Ruote.to_storage_id(h.fei),
+        condition,
+        { '_auto_remove' => true,
+          'action' => 'resume',
+          'fei' => h.fei,
+          'flavour' => 'awaiting' })
     end
 
     # FlowExpression call this method when they're done and they want their
@@ -774,7 +808,7 @@ module Ruote::Exp
     #
     def do_resume(msg)
 
-      return if h.state != 'paused'
+      return unless h.state == 'paused' || h.state == 'awaiting'
 
       h['state'] = nil
 
