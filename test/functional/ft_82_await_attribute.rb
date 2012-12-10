@@ -30,6 +30,8 @@ class FtAwaitAttributeTest < Test::Unit::TestCase
 
     assert_equal('terminated', r['action'])
     assert_equal(%w[ a b ], @tracer.to_a)
+
+    assert_equal 0, @dashboard.storage.get_trackers['trackers'].size
   end
 end
 

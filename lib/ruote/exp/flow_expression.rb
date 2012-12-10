@@ -444,7 +444,10 @@ module Ruote::Exp
       persist_or_raise
     end
 
-    # TODO
+    # If the expression has an :await attribute, the expression gets
+    # into a special "awaiting" state until the condition in the value
+    # of :await gets triggered and the trigger calls resume on the
+    # expression.
     #
     def await(att, msg)
 
