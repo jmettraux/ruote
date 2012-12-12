@@ -723,5 +723,30 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal 0, @dashboard.storage_participant.size
   end
+
+  class IuriParticipant < Ruote::StorageParticipant
+    def on_workitem
+      super
+      workitem.fields['count'] = 777
+      do_update
+    end
+  end
+
+  def test_do_update
+
+    @dashboard.register :alpha, IuriParticipant
+
+    wfid = @dashboard.launch(
+      Ruote.define do
+        alpha
+      end)
+
+    @dashboard.wait_for('dispatched')
+    sleep 0.350
+
+    wi = @dashboard.storage_participant.first
+
+    assert_equal(777, wi.fields['count'])
+  end
 end
 

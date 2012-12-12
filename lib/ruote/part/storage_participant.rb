@@ -106,6 +106,17 @@ module Ruote
       r.is_a?(Hash) ? Ruote::Workitem.new(r) : r
     end
 
+    def do_update(workitem=@workitem)
+
+      r = update(workitem)
+
+      fail ArgumentError.new("workitem is gone") if r == true
+      return nil if r.nil?
+
+      r.h['fields'] = workitem.fields
+      do_update(r)
+    end
+
     # Removes the document/workitem from the storage.
     #
     # Warning: this method is called by the engine (worker), i.e. not by you.
