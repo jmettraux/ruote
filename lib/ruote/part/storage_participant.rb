@@ -106,6 +106,12 @@ module Ruote
       r.is_a?(Hash) ? Ruote::Workitem.new(r) : r
     end
 
+    # Added for https://groups.google.com/forum/?fromgroups#!topic/openwferu-users/5bpV2yfKwM0
+    #
+    # Makes sure the workitem get saved to the storage. Fails if the workitem
+    # is already gone.
+    # Returns nil in case of success.
+    #
     def do_update(workitem=@workitem)
 
       r = update(workitem)
