@@ -320,9 +320,9 @@ class EftConcurrenceTest < Test::Unit::TestCase
       wi.fields.keys.collect { |k| k.to_s }.sort)
 
     assert_equal({ 'ref' => 'alpha' }, wi.fields['params'])
-    assert_equal(%w[ seen 0_0_0 a h ], wi.fields['0'].keys)
-    assert_equal(%w[ seen 0_0_1 a h ], wi.fields['1'].keys)
-    assert_equal(%w[ seen 0_0_2 a h ], wi.fields['2'].keys)
+    assert_equal(%w[ 0_0_0 a h seen ], wi.fields['0'].keys.sort)
+    assert_equal(%w[ 0_0_1 a h seen ], wi.fields['1'].keys.sort)
+    assert_equal(%w[ 0_0_2 a h seen ], wi.fields['2'].keys.sort)
   end
 
   def test_merge_type_stack
@@ -334,9 +334,9 @@ class EftConcurrenceTest < Test::Unit::TestCase
       wi.fields.keys.collect { |k| k.to_s }.sort)
 
     assert_equal({ 'ref' => 'alpha' }, wi.fields['params'])
-    assert_equal(%w[ seen 0_0_0 a h ], wi.fields['stack'][0].keys)
-    assert_equal(%w[ seen 0_0_1 a h ], wi.fields['stack'][1].keys)
-    assert_equal(%w[ seen 0_0_2 a h ], wi.fields['stack'][2].keys)
+    assert_equal(%w[ 0_0_0 a h seen ], wi.fields['stack'][0].keys.sort)
+    assert_equal(%w[ 0_0_1 a h seen ], wi.fields['stack'][1].keys.sort)
+    assert_equal(%w[ 0_0_2 a h seen ], wi.fields['stack'][2].keys.sort)
   end
 
   def test_merge_type_union
