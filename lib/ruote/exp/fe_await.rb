@@ -305,14 +305,16 @@ module Ruote::Exp
     INS = %w[ in entered reached ]
     OUTS = %w[ out left ]
 
-    SPLIT_R = /^(#{(INS + OUTS).join('|')})_(tag|participant)s?$/
-    SINGLE_R = /^(tag)s|(participant|error)s?$/ # not 'tag' alone
+    SPLIT_R =
+      /^(?:(#{(INS + OUTS).join('|')})_)?(tag|participant|error)s?$/
 
     # attribute wait regex
-    AAWAIT_R = /^(#{(INS + OUTS).join('|')})_(tag|participant)s?\s*:\s*(.+)$/
+    AAWAIT_R =
+      /^(?:(#{(INS + OUTS).join('|')})_)?(tag|participant)s?\s*:\s*(.+)$/
 
     # matches Ruby class names, like "Ruote::ForcedError" or "::ArgumentError"
-    KLASS_R = /^(::)?([A-Z][a-z]+)+(::([A-Z][a-z]+)+)*$/
+    KLASS_R =
+      /^(::)?([A-Z][a-z]+)+(::([A-Z][a-z]+)+)*$/
 
     # Made into a class method, so that the :await common attribute can
     # use it when parsing :await...
@@ -322,11 +324,9 @@ module Ruote::Exp
       direction, type, value =
         atts.collect { |k, v|
           if k == :await && m = AAWAIT_R.match(v)
-            [ m[1], m[2], m[3] ]
+            [ m[1] || 'in', m[2], m[3] ]
           elsif m = SPLIT_R.match(k)
-            [ m[1], m[2], v ]
-          elsif m = SINGLE_R.match(k)
-            [ 'in', m[1] || m[2], v ]
+            [ m[1] || 'in', m[2], v ]
           else
             nil
           end
