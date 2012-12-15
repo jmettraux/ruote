@@ -325,6 +325,8 @@ module Ruote::Exp
         atts.collect { |k, v|
           if k == :await && m = AAWAIT_R.match(v)
             [ m[1] || 'in', m[2], m[3] ]
+          elsif k == :await && v.index(':').nil?
+            [ 'left', 'tag', v ]
           elsif m = SPLIT_R.match(k)
             [ m[1] || 'in', m[2], v ]
           else

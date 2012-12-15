@@ -43,7 +43,7 @@ class FtAwaitAttributeTest < Test::Unit::TestCase
         end
         sequence do
           echo 'a'
-          wait (0.350)
+          wait 0.350
           echo 'b', :tag => 'x'
         end
       end
@@ -54,6 +54,29 @@ class FtAwaitAttributeTest < Test::Unit::TestCase
 
     assert_equal('terminated', r['action'])
     assert_equal(%w[ a b c ], @tracer.to_a)
+
+    assert_equal 0, @dashboard.storage.get_trackers['trackers'].size
+  end
+
+  def test_default_to_left_tag
+
+    pdef = Ruote.define do
+      concurrence do
+        sequence do
+          echo 'b', :await => 'x'
+        end
+        sequence :tag => 'x' do
+          wait '.350'
+          echo 'a'
+        end
+      end
+    end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal('terminated', r['action'])
+    assert_equal(%w[ a b ], @tracer.to_a)
 
     assert_equal 0, @dashboard.storage.get_trackers['trackers'].size
   end
