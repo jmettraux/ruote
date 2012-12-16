@@ -212,6 +212,38 @@ module Ruote::Exp
   # Note: the :where guard is always about the event's workitem (not the
   # workitem as it reached the 'await' expression).
   #
+  #
+  # == note: the "await" attribute
+  #
+  # (since ruote 3.2.1)
+  #
+  # "listen" and "await" are both ruote expressions. There is also an
+  # attribute common to all the expressions: :await.
+  #
+  #   concurrence do
+  #     sequence do
+  #       alice
+  #       sequence :tag => 'stage2' do
+  #         bob
+  #       end
+  #     end
+  #     sequence do
+  #       charly
+  #       diana :await => 'left_tag:stage2'
+  #       eliza
+  #     end
+  #     frank
+  #   end
+  #
+  # The expressions with an await attribute suspends its application until
+  # the awaited event happens.
+  #
+  # This await attribute, defaults to "left_tag:", so
+  #
+  #   diana :await => 'stage2'
+  #     # is equivalent to
+  #   diana :await => 'left_tag:stage2'
+  #
   class AwaitExpression < FlowExpression
 
     names :await
