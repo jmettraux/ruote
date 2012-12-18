@@ -111,12 +111,18 @@ module Ruote
 
       return if tracker_ids.empty?
 
-      doc ||= @context.storage.get_trackers#(wfid)
+      doc ||= @context.storage.get_trackers(wfid)
+
+      return if (doc['trackers'].keys & tracker_ids).empty?
+
+      doc['wfid'] = wfid
+        # a little helper for some some storage implementations like ruote-swf
+        # they need to know what workflow execution is targetted.
 
       tracker_ids.each { |ti| doc['trackers'].delete(ti) }
       r = @context.storage.put(doc)
 
-      remove(tracker_ids) if r
+      remove(tracker_ids, wfid) if r
         # the put failed, have to redo the work
     end
 
