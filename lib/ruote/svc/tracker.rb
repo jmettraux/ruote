@@ -91,16 +91,16 @@ module Ruote
     # Removes a tracker (usually when a 'listen' expression replies to its
     # parent expression or is cancelled).
     #
-    def remove_tracker(fei)
+    def remove_tracker(fei_sid_or_id)
 
-      sid =
-        if fei.is_a?(String)
-          fei
+      tracker_id =
+        if fei_sid_or_id.is_a?(String)
+          fei_sid_or_id
         else
-          Ruote.to_storage_id(fei)
+          Ruote.to_storage_id(fei_sid_or_id)
         end
 
-      remove([ sid ])
+      remove([ tracker_id ])
     end
 
     protected

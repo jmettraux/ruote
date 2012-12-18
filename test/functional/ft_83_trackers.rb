@@ -67,7 +67,13 @@ class FtTrackersTest < Test::Unit::TestCase
 
   def test_remove_string_id_tracker
 
-    flunk
+    @dashboard.add_tracker(nil, 'apply', 'xyz', {}, {})
+
+    assert_equal 1, @dashboard.get_trackers.size
+
+    @dashboard.remove_tracker('xyz')
+
+    assert_equal 0, @dashboard.get_trackers.size
   end
 end
 

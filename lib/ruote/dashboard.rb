@@ -1199,11 +1199,11 @@ module Ruote
     # Removes a tracker from the ruote system.
     #
     # The argument is a FlowExpressionId, in its instance form, hash form or
-    # shortened (sid) string form.
+    # shortened (sid) string form. It can also be any string (any tracker id).
     #
-    def remove_tracker(fei)
+    def remove_tracker(fei_sid_or_id)
 
-      @context.tracker.remove_tracker(fei)
+      @context.tracker.remove_tracker(fei_sid_or_id)
     end
 
     # Returns a hash { tracker_id => tracker_hash } enumerating all
