@@ -4,6 +4,8 @@
 
 == ruote - 2.3.1    not yet released
 
+- Dashboard#remove_tracker(fei_or_id)
+- :await attribute
 - let Ruote.deep_mutate mutate matching keys and their collection values
 - stop tripping on empty tags ("")
 - jump to 'x' where x in "participant 'x'" unlocked (thanks Tobias Neubert)
