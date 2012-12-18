@@ -26,20 +26,25 @@ class FtTrackersTest < Test::Unit::TestCase
         await :left_tag => 'nada1' do
           echo 'nada1'
         end
+        await :left_tag => 'nada2' do
+          echo 'nada2'
+        end
       end
     end
 
     wfid = @dashboard.launch(pdef)
-    3.times { @dashboard.wait_for('apply') }
+    (1 + 3).times { @dashboard.wait_for('apply') }
 
-    assert_equal 2, @dashboard.storage.get_trackers['trackers'].size
+    assert_equal 3, @dashboard.storage.get_trackers['trackers'].size
 
     ps = @dashboard.ps(wfid)
     fei = ps.leaves[0].fei
     hfei = ps.leaves[1].fei.h
+    sfei = ps.leaves[2].fei.sid
 
     @dashboard.remove_tracker(fei)
     @dashboard.remove_tracker(hfei)
+    @dashboard.remove_tracker(sfei)
 
     assert_equal 0, @dashboard.storage.get_trackers['trackers'].size
   end

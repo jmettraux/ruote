@@ -93,7 +93,14 @@ module Ruote
     #
     def remove_tracker(fei)
 
-      remove([ Ruote.to_storage_id(fei) ])
+      sid =
+        if fei.is_a?(String)
+          fei
+        else
+          Ruote.to_storage_id(fei)
+        end
+
+      remove([ sid ])
     end
 
     protected
