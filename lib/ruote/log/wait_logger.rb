@@ -38,7 +38,7 @@ module Ruote
   #
   # The logic behind Ruote::Dashboard#wait_for is implemented here.
   #
-  # This logger keeps track of the last 147 events. This number can
+  # This logger keeps track of the last 56 events. This number can
   # be tweaked via the 'wait_logger_max' storage option
   # (http://ruote.rubyforge.org/configuration.html)
   #
@@ -51,7 +51,7 @@ module Ruote
   # === options (storage initialization options)
   #
   # wait_logger_max(Integer)::
-  #   defaults to 147, max number of recent records to keep track of
+  #   defaults to 56, max number of recent records to keep track of
   # wait_logger_timeout(Integer)::
   #   defaults to 60 (seconds), #wait_for times out after how many seconds?
   #
@@ -84,7 +84,7 @@ module Ruote
       @color = 33
       @noisy = false
 
-      @log_max = context['wait_logger_max'] || 147
+      @log_max = context['wait_logger_max'] || 56
       @timeout = context['wait_logger_timeout'] || 60 # in seconds
 
       @check_mutex = Mutex.new
