@@ -157,7 +157,10 @@ module Ruote
     # trackers
     #++
 
-    def get_trackers
+    # Some storage implementation might need the wfid information when
+    # adding or removing trackers.
+    #
+    def get_trackers(wfid=nil)
 
       get('variables', 'trackers') ||
         { '_id' => 'trackers', 'type' => 'variables', 'trackers' => {} }

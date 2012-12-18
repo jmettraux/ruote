@@ -1198,20 +1198,24 @@ module Ruote
     #
     # Removes a tracker from the ruote system.
     #
-    # The argument is a FlowExpressionId, in its instance form, hash form or
+    # The first arg is a FlowExpressionId, in its instance form, hash form or
     # shortened (sid) string form. It can also be any string (any tracker id).
     #
-    def remove_tracker(fei_sid_or_id)
+    # The second arg is optional, it's a wfid. It's useful for some storage
+    # implementations (like ruote-swf) and helps determine how to grab
+    # the tracker list. Most of the ruote deployments don't need that arg set.
+    #
+    def remove_tracker(fei_sid_or_id, wfid=nil)
 
-      @context.tracker.remove_tracker(fei_sid_or_id)
+      @context.tracker.remove_tracker(fei_sid_or_id, wfid)
     end
 
     # Returns a hash { tracker_id => tracker_hash } enumerating all
     # the trackers in the ruote system.
     #
-    def get_trackers
+    def get_trackers(wfid=nil)
 
-      @context.storage.get_trackers['trackers']
+      @context.storage.get_trackers(wfid)['trackers']
     end
 
     # A debug helper :

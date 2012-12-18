@@ -91,7 +91,7 @@ module Ruote
     # Removes a tracker (usually when a 'listen' expression replies to its
     # parent expression or is cancelled).
     #
-    def remove_tracker(fei_sid_or_id)
+    def remove_tracker(fei_sid_or_id, wfid=nil)
 
       tracker_id =
         if fei_sid_or_id.is_a?(String)
@@ -100,18 +100,18 @@ module Ruote
           Ruote.to_storage_id(fei_sid_or_id)
         end
 
-      remove([ tracker_id ])
+      remove([ tracker_id ], wfid)
     end
 
     protected
 
     # Removes a set of tracker ids and updated the tracker document.
     #
-    def remove(tracker_ids)
+    def remove(tracker_ids, wfid)
 
       return if tracker_ids.empty?
 
-      doc ||= @context.storage.get_trackers
+      doc ||= @context.storage.get_trackers#(wfid)
 
       tracker_ids.each { |ti| doc['trackers'].delete(ti) }
       r = @context.storage.put(doc)
@@ -168,7 +168,7 @@ module Ruote
         end
       end
 
-      remove(ids_to_remove)
+      remove(ids_to_remove, nil)
     end
 
     # Alters the msg, only called in "pre" mode.
