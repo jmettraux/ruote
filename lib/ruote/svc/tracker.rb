@@ -91,7 +91,7 @@ module Ruote
     # Removes a tracker (usually when a 'listen' expression replies to its
     # parent expression or is cancelled).
     #
-    def remove_tracker(fei, doc=nil)
+    def remove_tracker(fei)
 
       remove([ Ruote.to_storage_id(fei) ])
     end
@@ -100,7 +100,7 @@ module Ruote
 
     # Removes a set of tracker ids and updated the tracker document.
     #
-    def remove(tracker_ids, doc=nil)
+    def remove(tracker_ids)
 
       return if tracker_ids.empty?
 

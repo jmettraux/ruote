@@ -1194,6 +1194,18 @@ module Ruote
       @context.tracker.add_tracker(wfid, action, tracker_id, conditions, msg)
     end
 
+    # /!\ warning: advanced method.
+    #
+    # Removes a tracker from the ruote system.
+    #
+    # The argument is a FlowExpressionId, in its instance form, hash form or
+    # shortened (sid) string form.
+    #
+    def remove_tracker(fei)
+
+      @context.tracker.remove_tracker(fei)
+    end
+
     # A debug helper :
     #
     #   dashboard.noisy = true
