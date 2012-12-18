@@ -1206,6 +1206,14 @@ module Ruote
       @context.tracker.remove_tracker(fei)
     end
 
+    # Returns a hash { tracker_id => tracker_hash } enumerating all
+    # the trackers in the ruote system.
+    #
+    def get_trackers
+
+      @context.storage.get_trackers['trackers']
+    end
+
     # A debug helper :
     #
     #   dashboard.noisy = true

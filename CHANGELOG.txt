@@ -4,6 +4,7 @@
 
 == ruote - 2.3.1    not yet released
 
+- Dashboard#get_trackers
 - Dashboard#remove_tracker(fei_or_id)
 - :await attribute
 - let Ruote.deep_mutate mutate matching keys and their collection values

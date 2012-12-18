@@ -13,29 +13,44 @@ class FtTrackersTest < Test::Unit::TestCase
 
   def test_get_trackers
 
-    flunk
+    pdef =
+      Ruote.define do
+        await :left_tag => 'nada0' do
+          echo 'nada0'
+        end
+      end
+
+    wfid = @dashboard.launch(pdef)
+    @dashboard.wait_for('apply')
+
+    exp = @dashboard.ps(wfid).expressions.last
+
+    assert_equal Hash, @dashboard.get_trackers.class
+    assert_equal [ Ruote.sid(exp.fei) ], @dashboard.get_trackers.keys
   end
 
   def test_remove_fei_sid_tracker
 
-    pdef = Ruote.define do
-      concurrence do
-        await :left_tag => 'nada0' do
-          echo 'nada0'
-        end
-        await :left_tag => 'nada1' do
-          echo 'nada1'
-        end
-        await :left_tag => 'nada2' do
-          echo 'nada2'
+    pdef =
+      Ruote.define do
+        concurrence do
+          await :left_tag => 'nada0' do
+            echo 'nada0'
+          end
+          await :left_tag => 'nada1' do
+            echo 'nada1'
+          end
+          await :left_tag => 'nada2' do
+            echo 'nada2'
+          end
         end
       end
-    end
 
     wfid = @dashboard.launch(pdef)
     (1 + 3).times { @dashboard.wait_for('apply') }
 
     assert_equal 3, @dashboard.storage.get_trackers['trackers'].size
+    assert_equal 3, @dashboard.get_trackers.size
 
     ps = @dashboard.ps(wfid)
     fei = ps.leaves[0].fei
@@ -47,6 +62,7 @@ class FtTrackersTest < Test::Unit::TestCase
     @dashboard.remove_tracker(sfei)
 
     assert_equal 0, @dashboard.storage.get_trackers['trackers'].size
+    assert_equal 0, @dashboard.get_trackers.size
   end
 
   def test_remove_string_id_tracker
