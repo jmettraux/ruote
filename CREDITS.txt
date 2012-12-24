@@ -55,6 +55,7 @@ Richard Jennings
 
 == Feedback
 
+Larry Marburger - await attribute clarifications
 Tobias Neubert - jump to participant 'x'
 tsdeng - https://github.com/tsdeng
 Klaus Schmidtmamn - sub_wf_name inspiration
