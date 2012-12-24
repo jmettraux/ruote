@@ -77,6 +77,7 @@ module Ruote
 
         doc['put_at'] = Ruote.now_to_utc_s
         doc['_rev'] = doc['_rev'] + 1
+        doc = Ruote.keys_to_s(doc)
 
         @h[doc['type']][doc['_id']] = Rufus::Json.dup(doc)
 

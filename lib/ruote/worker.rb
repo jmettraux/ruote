@@ -354,9 +354,9 @@ module Ruote
     #
     def turn_schedule_to_msg(schedule)
 
-      msg = Ruote.fulldup(schedule['msg'])
-
       return false unless @storage.reserve(schedule)
+
+      msg = Ruote.fulldup(schedule['msg'])
 
       @storage.put_msg(msg.delete('action'), msg)
 

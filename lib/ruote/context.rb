@@ -240,6 +240,7 @@ module Ruote
 
       default_conf.merge(conf).each do |key, value|
 
+        key = key.to_s
         add_service(key, *value) if SERVICE_PREFIX.match(key)
       end
     end

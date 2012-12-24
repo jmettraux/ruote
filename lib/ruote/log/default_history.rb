@@ -33,12 +33,14 @@ module Ruote
   #
   # NOTE:
   #
-  # this default history is worthless when there are multiple workers.
+  # This default history is worthless when there are multiple workers.
   # It only keeps track of the msgs processed by the worker in the same
   # context. Msgs processed by other workers (in different Ruby runtimes) are
   # not seen (they are tracked by the DefaultHistory next to those workers).
   #
   # By default, this history keeps track of the latest 1'000 msgs.
+  # This can be changed by passing a 'history_max_size' option to the storage
+  # when initializing ruote ('history_max_size' => 0) is acceptable.
   #
   class DefaultHistory
 
@@ -51,6 +53,8 @@ module Ruote
 
       @context = context
       @options = options
+
+      @max_size = context['history_max_size'] || DEFAULT_MAX_SIZE
 
       @history = []
     end
@@ -122,14 +126,24 @@ module Ruote
     #
     def on_msg(msg)
 
+      return if @max_size < 1
+
       msg = Ruote.fulldup(msg)
       msg['seen_at'] = Ruote.now_to_utc_s
 
       @history << msg
 
-      while (@history.size > (@options[:max_size] || DEFAULT_MAX_SIZE)) do
+      while (@history.size > @max_size) do
         @history.shift
       end
+
+    rescue => e
+
+      $stderr.puts '>' + '-' * 79
+      $stderr.puts "#{self.class} issue, skipping"
+      $stderr.puts e.inspect
+      $stderr.puts e.backtrace[0, 2]
+      $stderr.puts '<' + '-' * 79
     end
   end
 end

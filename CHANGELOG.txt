@@ -4,6 +4,7 @@
 
 == ruote - 2.3.1    not yet released
 
+- expose 'history_max_size' config option
 - Dashboard#get_trackers
 - Dashboard#remove_tracker(fei_sid_or_id, wfid)
 - :await attribute
