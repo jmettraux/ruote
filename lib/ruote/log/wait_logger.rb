@@ -51,7 +51,7 @@ module Ruote
   # === options (storage initialization options)
   #
   # wait_logger_max(Integer)::
-  #   defaults to 56, max number of recent records to keep track of
+  #   defaults to 77, max number of recent records to keep track of
   # wait_logger_timeout(Integer)::
   #   defaults to 60 (seconds), #wait_for times out after how many seconds?
   #
@@ -84,7 +84,7 @@ module Ruote
       @color = 33
       @noisy = false
 
-      @log_max = context['wait_logger_max'] || 56
+      @log_max = context['wait_logger_max'] || 77
       @timeout = context['wait_logger_timeout'] || 60 # in seconds
 
       @check_mutex = Mutex.new
