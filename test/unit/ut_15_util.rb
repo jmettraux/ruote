@@ -53,5 +53,21 @@ class UtMiscTest < Test::Unit::TestCase
     assert_not_equal a.object_id, b.object_id
     assert_equal 'hello', b.instance_variable_get(:@s)
   end
+
+  def test_camelize
+
+    assert_equal(
+      'alphaBravoCharly', Ruote.camelize('alpha_bravo_charly'))
+    assert_equal(
+      'AlphaBravoCharly', Ruote.camelize('alpha_bravo_charly', true))
+  end
+
+  def test_decamelize
+
+    assert_equal(
+      'alpha_bravo_charly', Ruote.decamelize('alphaBravoCharly'))
+    assert_equal(
+      'alpha_bravo_charly', Ruote.decamelize('AlphaBravoCharly'))
+  end
 end
 

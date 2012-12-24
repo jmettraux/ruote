@@ -200,5 +200,25 @@ module Ruote
 
     o.is_a?(Array) ? o : o.to_s.split(/\s*,\s*/).collect { |e| e.strip }
   end
+
+  #--
+  # [de]camelize
+  #++
+
+  # Our own quick camelize implementation (no need to require active support).
+  #
+  def self.camelize(s, first_up=false)
+
+    s = s.capitalize if first_up
+
+    s.gsub(/(_.)/) { |x| x[1, 1].upcase }
+  end
+
+  # Quick decamelize implementation.
+  #
+  def self.decamelize(s)
+
+    s.gsub(/(.)([A-Z])/, '\1_\2').downcase
+  end
 end
 
