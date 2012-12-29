@@ -201,6 +201,31 @@ module Ruote
     o.is_a?(Array) ? o : o.to_s.split(/\s*,\s*/).collect { |e| e.strip }
   end
 
+  # A bit like #inspect but produces a tighter output (ambiguous to machines).
+  #
+  def self.insp(o, opts={})
+
+    case o
+      when nil
+        'nil'
+      when Hash
+        trim = opts[:trim] || []
+        '{' +
+        o.reject { |k, v|
+          v.nil? && trim.include?(k.to_s)
+        }.collect { |k, v|
+          "#{k}: #{insp(v)}"
+        }.join(', ') +
+        '}'
+      when Array
+        '[' + o.collect { |e| insp(e) }.join(', ') + ']'
+      when String
+        o.match(/\s/) ? o.inspect : o
+      else
+        o.inspect
+    end
+  end
+
   #--
   # [de]camelize
   #++

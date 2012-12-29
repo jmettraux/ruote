@@ -77,29 +77,6 @@ class Ruote::WaitLogger
     ].join('!')
   end
 
-  def insp(o, opts={})
-
-    case o
-      when nil
-        'nil'
-      when Hash
-        trim = opts[:trim] || []
-        '{' +
-        o.reject { |k, v|
-          v.nil? && trim.include?(k.to_s)
-        }.collect { |k, v|
-          "#{k}: #{insp(v)}"
-        }.join(', ') +
-        '}'
-      when Array
-        '[' + o.collect { |e| insp(e) }.join(', ') + ']'
-      when String
-        o.match(/\s/) ? o.inspect : o
-      else
-        o.inspect
-    end
-  end
-
   def radial_tree(msg)
 
     _, t = Ruote::Exp::DefineExpression.reorganize(msg['tree'])
@@ -213,7 +190,7 @@ class Ruote::WaitLogger
       #
       # display backtraces
 
-      rst = insp(
+      rst = Ruote.insp(
         rest.reject { |k, v| %w[ error msg ].include?(k) },
         :trim => %[ updated_tree ])[1..-2]
 
@@ -247,7 +224,7 @@ class Ruote::WaitLogger
         ''
       end
 
-      rest = insp(rest, :trim => %[ updated_tree ])[1..-2]
+      rest = Ruote.insp(rest, :trim => %[ updated_tree ])[1..-2]
 
       color(
         @color,
