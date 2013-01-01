@@ -76,5 +76,12 @@ class UtMiscTest < Test::Unit::TestCase
       '{a: [a, b], c: 3, d: true}',
       Ruote.insp({ 'a' => %w[ a b ], 'c' => 3, 'd' => true }))
   end
+
+  def test_pps
+
+    assert_equal(
+      "{\"a\"=>[\"a\", \"b\"], \"c\"=>3, \"d\"=>true}\n",
+      Ruote.pps({ 'a' => %w[ a b ], 'c' => 3, 'd' => true }))
+  end
 end
 

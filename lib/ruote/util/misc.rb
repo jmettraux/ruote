@@ -226,6 +226,11 @@ module Ruote
     end
   end
 
+  def self.pps(o, w=79)
+
+    PP.pp(o, StringIO.new, w).string
+  end
+
   #--
   # [de]camelize
   #++
