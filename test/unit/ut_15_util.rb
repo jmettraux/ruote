@@ -69,5 +69,12 @@ class UtMiscTest < Test::Unit::TestCase
     assert_equal(
       'alpha_bravo_charly', Ruote.decamelize('AlphaBravoCharly'))
   end
+
+  def test_insp
+
+    assert_equal(
+      '{a: [a, b], c: 3, d: true}',
+      Ruote.insp({ 'a' => %w[ a b ], 'c' => 3, 'd' => true }))
+  end
 end
 
