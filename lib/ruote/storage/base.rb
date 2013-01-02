@@ -396,9 +396,7 @@ module Ruote
       end
     end
 
-    # (Only used by ruote-couch 2.2.x)
-    #
-    # TODO: remove me at some point
+    # Used by ruote-couch and ruote-asw
     #
     def self.key_match?(keys, doc)
 
