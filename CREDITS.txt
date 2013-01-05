@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Mario Camou - lots of help
 Peter Brindisi - https://gitbhub.com/npj
 Gvozden Neskovic - https://github.com/ladenBrain
 Hartog C. de Mik - https://github.com/coffeeaddict

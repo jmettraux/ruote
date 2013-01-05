@@ -547,7 +547,13 @@ module Ruote::Exp
 
         trigger('on_reply', workitem)
 
-      elsif (h.lost || h.flanking) && h.state.nil?
+      elsif h.flanking && h.state.nil?
+        #
+        # do vanish
+
+        do_unpersist
+
+      elsif h.lost && h.state.nil?
         #
         # do not reply, sit here (and wait for cancellation probably)
 

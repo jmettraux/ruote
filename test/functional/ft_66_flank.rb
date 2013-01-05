@@ -129,5 +129,46 @@ class FtFlankTest < Test::Unit::TestCase
     assert_equal 0, @dashboard.storage.get_many('expressions').size
     assert_equal 0, @dashboard.storage.get_many('workitems').size
   end
+
+  # for https://groups.google.com/forum/?fromgroups=#!topic/openwferu-users/dZ--leQgEns
+  #
+  def test_ceasing_flank
+
+    @dashboard.register { catchall }
+
+    pdef =
+      Ruote.define do
+        sequence :tag => 'x' do
+          alice :flank => true
+          bob
+        end
+      end
+
+    wfid = @dashboard.launch(pdef)
+
+    2.times { @dashboard.wait_for('dispatched') }
+
+    alice =
+      @dashboard.storage_participant.find { |wi|
+        wi.participant_name == 'alice'
+      }
+
+    @dashboard.storage_participant.proceed(alice)
+    @dashboard.wait_for('receive')
+
+    ps = @dashboard.ps(wfid)
+
+    assert_equal %w[ 0 0_0 0_0_1 ], ps.expressions.collect { |e| e.fei.expid }
+    assert_equal 0, ps.errors.size
+
+    bob = @dashboard.storage_participant.first
+
+    @dashboard.storage_participant.proceed(bob)
+    @dashboard.wait_for('terminated')
+
+    sleep 0.350
+
+    assert_equal nil, @dashboard.ps(wfid)
+  end
 end
 
