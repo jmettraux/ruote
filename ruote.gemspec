@@ -29,7 +29,7 @@ ruote is an open source Ruby workflow engine
     # will rather go the ripper way (full 19 or even 20)...
 
   s.add_runtime_dependency 'blankslate', '2.1.2.4'
-  s.add_runtime_dependency 'parslet', '~> 1.4'
+  s.add_runtime_dependency 'parslet', '~> 1.4.1'
     # blankslate 2.1.2.3 is to avoid...
 
   s.add_runtime_dependency 'sourcify', '0.5.0'
