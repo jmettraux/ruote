@@ -29,8 +29,8 @@ ruote is an open source Ruby workflow engine
     # will rather go the ripper way (full 19 or even 20)...
 
   s.add_runtime_dependency 'blankslate', '2.1.2.4'
-  s.add_runtime_dependency 'parslet', '~> 1.4.1'
-    # blankslate 2.1.2.3 is to avoid...
+  s.add_runtime_dependency 'parslet', '1.4.0'
+    # not yet Parslet 1.5.x ready
 
   s.add_runtime_dependency 'sourcify', '0.5.0'
   s.add_runtime_dependency 'rufus-json', '>= 1.0.1'
