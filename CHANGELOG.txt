@@ -4,6 +4,10 @@
 
 == ruote - 2.3.1    not yet released
 
+
+== ruote - 2.3.0.2    not yet released
+
+- pin ruote.gemspec to ruby_parser ~>2.3 and parslet 1.4.0
 - add Ruote.[de]camelize
 - expose 'history_max_size' config option
 - Dashboard#get_trackers
