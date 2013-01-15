@@ -1,4 +1,3 @@
-
 require 'rufus-json/automatic'
 require 'ruote'
 require 'ruote/storage/fs_storage'
@@ -103,8 +102,8 @@ ruote.register 'logistics', Logistics
 # the resulting 'spotted' field is the concatenation of the three 'spotted'
 # fields emitted by each scout.
 
-# The process definition is written in 'radial' a mini language understood
-# understood by ruote.
+# The process definition is written in 'radial', a mini language understood
+# by ruote.
 
 pdef = %q{
   define
