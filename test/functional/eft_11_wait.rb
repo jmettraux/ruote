@@ -13,16 +13,13 @@ class EftWaitTest < Test::Unit::TestCase
 
   def test_wait_for
 
-    pdef = Ruote.process_definition do
-      sequence do
+    pdef =
+      Ruote.define do
         alpha
         wait :for => '2s'
         alpha
         echo 'done.'
       end
-    end
-
-    #noisy
 
     @dashboard.context.stash[:ts] = []
 
@@ -44,15 +41,12 @@ class EftWaitTest < Test::Unit::TestCase
 
   def test_cancel_wait
 
-    pdef = Ruote.process_definition do
-      sequence do
+    pdef =
+      Ruote.define do
         echo 'a'
         wait :for => '3d'
         echo 'b'
       end
-    end
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -72,16 +66,13 @@ class EftWaitTest < Test::Unit::TestCase
 
     @dashboard.register_participant(:alpha) { stash[:ts] << Time.now }
 
-    pdef = Ruote.process_definition do
-      sequence do
+    pdef =
+      Ruote.define do
         alpha
         wait :until => (Time.now + 2.0).to_s
         alpha
         echo 'done.'
       end
-    end
-
-    #noisy
 
     assert_trace 'done.', pdef
 
@@ -93,15 +84,12 @@ class EftWaitTest < Test::Unit::TestCase
 
   def test_wait_until_now
 
-    pdef = Ruote.process_definition do
-      sequence do
+    pdef =
+      Ruote.define do
         echo 'a'
         wait Time.now
         echo 'b'
       end
-    end
-
-    #noisy
 
     assert_trace %w[ a b ], pdef
   end
