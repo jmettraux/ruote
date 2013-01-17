@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Chris D - https://github.com/randomcamel
 Max Gfeller - https://github.com/MaxGfeller - quickstart sanity check
 Mario Camou - lots of help
 Peter Brindisi - https://gitbhub.com/npj
