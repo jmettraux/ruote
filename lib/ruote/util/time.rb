@@ -65,18 +65,19 @@ module Ruote
   #
   def self.s_to_at(s)
 
-    at = if s.index(' ')
-      #
-      # date
+    at =
+      if s.match(/[ :]/)
+        #
+        # date
 
-      DateTime.parse(s)
+        DateTime.parse(s)
 
-    else
-      #
-      # duration
+      else
+        #
+        # duration
 
-      Time.now.utc.to_f + Rufus.parse_time_string(s)
-    end
+        Time.now.utc.to_f + Rufus.parse_time_string(s)
+      end
 
     case at
       when DateTime then at.to_time.utc

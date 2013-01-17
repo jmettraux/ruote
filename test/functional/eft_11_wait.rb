@@ -93,5 +93,20 @@ class EftWaitTest < Test::Unit::TestCase
 
     assert_trace %w[ a b ], pdef
   end
+
+  # https://github.com/jmettraux/ruote/issues/73
+  #
+  def test_wait_until_tz_string
+
+    pdef =
+      Ruote.define do
+        wait :until => '1913-02-08T17:36:10Z'
+      end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+  end
 end
 

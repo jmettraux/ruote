@@ -4,6 +4,8 @@
 
 == ruote - 2.3.1    not yet released
 
+- fix parsing '2013-02-08T17:36:10Z' (reported by Hartog de Mik)
+
 
 == ruote - 2.3.0.2    not yet released
 
