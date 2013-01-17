@@ -77,6 +77,9 @@ class ConditionTest < Test::Unit::TestCase
     assert_apply :if => '"a" == "a"'
 
     assert_apply :if => 'blah blah blah'
+
+    assert_apply :if => '1x == 1x'
+    assert_skip :if => '1x == 2x'
   end
 
   def test_unless

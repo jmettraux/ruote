@@ -98,7 +98,7 @@ module Ruote::Exp
       raise ConditionError.new(code)
     end
 
-    protected
+    protected # somehow
 
     def self.parse(conditional)
 
@@ -106,11 +106,29 @@ module Ruote::Exp
 
     rescue SyntaxError => se
 
-      [ :str, conditional ]
+      split_comparison(conditional)
 
     rescue => e
 
       [ :false ]
+    end
+
+    COMPREGEXES = %w[ == != ].collect { |c| /^ *(.+?) *(#{c}) *(.+) *$/ }
+
+    # try harder if it's comparison (== or !=)
+    #
+    def self.split_comparison(conditional)
+
+      COMPREGEXES.each do |r|
+
+        m = r.match(conditional)
+        next unless m
+
+        return [
+          :call, [ :str, m[1] ], m[2].to_sym, [ :arglist, [ :str, m[3] ] ] ]
+      end
+
+      [ :str, conditional ]
     end
 
     def self.unescape(s)
