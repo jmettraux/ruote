@@ -121,7 +121,7 @@ class FtStorage < Test::Unit::TestCase
     d1 = get_toto_doc
 
     assert_not_equal d1['_rev'], d0['_rev']
-    assert_not_equal d1['put_at'], d0['put_at']
+    assert d1['put_at'] >= d0['put_at']
 
     assert_equal 'test_reput', d1['message']
   end
@@ -210,7 +210,7 @@ class FtStorage < Test::Unit::TestCase
     assert_not_nil doc['_rev']
     assert_not_equal doc['_rev'], initial_rev
     assert_not_nil doc['put_at']
-    assert_not_equal doc['put_at'], initial_put_at
+    assert doc['put_at'] >= initial_put_at
   end
 
   # put_at and _rev should not repeat

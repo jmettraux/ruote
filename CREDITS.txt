@@ -58,6 +58,7 @@ Richard Jennings
 
 == Feedback
 
+Herve Chardenoux - tests on Windows
 Larry Marburger - await attribute clarifications
 Tobias Neubert - jump to participant 'x'
 tsdeng - https://github.com/tsdeng

@@ -183,7 +183,7 @@ end
       ["define", {}, [["sequence", {}, [["alpha", {}, []], ["set", {"field"=>"f", "value"=>"v"}, []], ["bravo", {}, []]]]]],
       Ruote::Reader.read(fn))
 
-    FileUtils.rm(fn)
+    FileUtils.rm(fn) rescue nil
   end
 
   # Make sure that ruby method names like 'freeze' or 'clone' can be used
