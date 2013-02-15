@@ -30,6 +30,9 @@ module Ruote
   # relevant for processes.
   #
   # == Example implementation
+  #
+  #   require 'ruote/util/process_observer'
+  #
   #   class WebsocketSubscriber < Ruote::ProcessObserver
   #      # override initialize to warm-up a websocket client
   #      def initialize(context, options={})
@@ -54,7 +57,12 @@ module Ruote
   #      end
   #   end
   #
+  #   # Bind the observer to the Ruote::Dashboard instance
+  #   #
+  #   dashboard.add_service('websocket_subscriber', WebsocketSubscriber)
+  #
   # == Actions
+  #
   # The ProcessObserver adheres closely to the message actions, it calls the
   # following methods:
   #
@@ -69,6 +77,7 @@ module Ruote
   # using the more low-level Ruote::Observer
   #
   # == Arguments
+  #
   # The methods are called with (wfid[, options])
   #
   # You can provide a method-signature like:
@@ -80,6 +89,7 @@ module Ruote
   # to call without options
   #
   # === Options
+  #
   # The following options are provided:
   #
   # :workitem::  The workitem, if available
@@ -90,6 +100,7 @@ module Ruote
   # :pdef::      The (sub-)process definition (only provided with #on_launch)
   # :variables:: The process variables, if available
   # :flavour::   The flavour of canceling (only on_cancel)
+  #
   #
   # == Error handling
   #

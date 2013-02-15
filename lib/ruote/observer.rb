@@ -39,6 +39,8 @@ module Ruote
   #     end
   #   end
   #
+  #   # Bind the observer to the Ruote::Dashboard instance
+  #   #
   #   dashboard.add_service('launch_observer', MyLaunchObserver)
   #
   #   # ...
@@ -73,9 +75,7 @@ module Ruote
 
       target = [ 'on', time, 'msg', msg['action'] ].compact.join('_')
 
-      return unless self.respond_to?(target)
-
-      send(target, msg)
+      send(target, msg) if self.respond_to?(target)
     end
   end
 end
