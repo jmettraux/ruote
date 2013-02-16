@@ -4,6 +4,7 @@ require 'ruby_parser'
 require 'ruote/util/deep'
 require 'ruote/util/lookup'
 require 'ruote/util/mpatch'
+require 'ruote/util/dlog'
 require 'ruote/storage/hash_storage'
 require 'ruote/worker'
 require 'ruote/engine' # for backward compatibility
