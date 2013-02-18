@@ -1,5 +1,7 @@
 ruote_rdoc/
 work/
+tmp/
+pkg/
 *.swp
 tags
 .bundle/
