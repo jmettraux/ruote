@@ -9,7 +9,7 @@ require File.join(File.dirname(__FILE__), 'path_helper')
 
 require 'pp'
 require 'test/unit'
-require 'rubygems'
+require 'rubygems' unless defined?(Bundler)
 
 # Fail fast, especially when testing
 #

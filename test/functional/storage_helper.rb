@@ -51,10 +51,8 @@ else uses the in-memory Ruote::Engine (fastest, but no persistence at all)
 
   if ps.include?('fs')
 
+    require 'rufus-json/automatic'
     require 'ruote/storage/fs_storage'
-
-    require_json
-    Rufus::Json.detect_backend
 
     Ruote::FsStorage.new('work', opts)
 

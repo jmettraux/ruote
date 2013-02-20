@@ -58,7 +58,11 @@ module Ruote::Exp
 
     def try_persist
 
+      Ruote::D.log('PUT', h)
+
       r = @context.storage.put(@h)
+
+      Ruote::D.log('PUT', h, r.class) #if h.fei['expid'] == '0_1_0'
 
       #t = Thread.current.object_id.to_s[-3..-1]
       #puts "+ per #{debug_id} #{tree[0]} r#{h._rev} t#{t} -> #{r.class}"
@@ -70,7 +74,11 @@ module Ruote::Exp
 
     def try_unpersist
 
+      Ruote::D.log('DEL', h)
+
       r = @context.storage.delete(@h)
+
+      Ruote::D.log('DEL', h, r.class) #if h.fei['expid'] == '0_1_0'
 
       #t = Thread.current.object_id.to_s[-3..-1]
       #puts "- unp #{debug_id} #{tree[0]} r#{h._rev} t#{t} -> #{r.class}"

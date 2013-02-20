@@ -34,7 +34,7 @@ module Ruote
 
       @@log ||=
         begin
-          f = File.open('_log.txt', 'wb')
+          f = File.open("dlog_#{$$}.txt", 'wb')
           f.sync = true
           f
         end
