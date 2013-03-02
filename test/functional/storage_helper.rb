@@ -25,7 +25,7 @@ def locate_storage_impl(pers)
   # implementation) directly.
 
   path = File.expand_path('.')
-  base = File.basename(dir)
+  base = File.basename(path)
 
   return [ pers, path ] if base == "ruote-#{pers}"
 
