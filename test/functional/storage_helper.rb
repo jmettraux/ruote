@@ -18,7 +18,7 @@ def locate_storage_impl(pers)
 
   path = Dir[glob].first
 
-  return [ pers, path ] if File.directory?(path)
+  return [ pers, path ] if path && File.directory?(path)
 
   #
   # second variant, we're running from ruote-xxx/ (the storage
@@ -32,7 +32,7 @@ def locate_storage_impl(pers)
   #
   # persistence not found
 
-  return nil
+  nil
 end
 
 # Returns an instance of the storage to use (the ARGV determines which
