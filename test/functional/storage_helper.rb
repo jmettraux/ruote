@@ -10,15 +10,29 @@ require 'ruote/storage/hash_storage'
 
 def locate_storage_impl(pers)
 
+  #
+  # first variant, we're running from ruote/, locate the storage
+  # implementation in an adjacent dir
+
   glob = File.expand_path("../../../../ruote-#{pers}*", __FILE__)
 
   path = Dir[glob].first
 
-  if path
-    File.directory?(path) ? [ pers, path ] : nil
-  elsif glob.split('/').include?('bundler')
-    glob.match(/^(.+\/ruote-#{pers}\/).+/) ? [ pers, $~[1] ] : nil
-  end
+  return [ pers, path ] if File.directory?(path)
+
+  #
+  # second variant, we're running from ruote-xxx/ (the storage
+  # implementation) directly.
+
+  path = File.expand_path('.')
+  base = File.basename(dir)
+
+  return [ pers, path ] if base == "ruote-#{pers}"
+
+  #
+  # persistence not found
+
+  return nil
 end
 
 # Returns an instance of the storage to use (the ARGV determines which
