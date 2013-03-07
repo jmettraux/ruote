@@ -59,9 +59,7 @@ class FtRetriesTest < Test::Unit::TestCase
 
     @dashboard.wait_for('error_intercepted')
 
-    assert_equal(
-      "#<Ruote::MetaError: schedule_retries: unknown time char 'x'>",
-      @dashboard.ps(wfid).errors.first.message)
+    assert_equal 'Ruote::MetaError', @dashboard.ps(wfid).errors.first.klass
   end
 
   #

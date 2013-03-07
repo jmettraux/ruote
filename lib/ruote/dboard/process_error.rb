@@ -40,36 +40,28 @@ module Ruote
       @h = h
     end
 
-    def message
-      @h['message']
-    end
+    def klass;    @h['class']; end
+    def message;  @h['message']; end
+    def trace;    @h['trace']; end
+    def msg;      @h['msg']; end
+    def details;  @h['details']; end
+    def tree;     @h['msg']['tree']; end
+    def at;       @h['msg']['put_at']; end
 
-    def trace
-      @h['trace']
-    end
+    def wfid;  msg['fei']['wfid']; end
 
-    def msg
-      @h['msg']
-    end
+    # 'apply', 'reply', 'receive', ... Indicates in which "direction" the
+    # error occured.
+    #
+    def action; @h['msg']['action']; end
 
-    def details
-      @h['details']
-    end
+    # Returns an array of deviations (see the 'filter' expression) if the
+    # error is a Ruote::ValidationError.
+    #
+    def deviations; @h['deviations']; end
 
     def fei
       Ruote::FlowExpressionId.new(msg['fei'])
-    end
-
-    def wfid
-      msg['fei']['wfid']
-    end
-
-    def tree
-      @h['msg']['tree']
-    end
-
-    def at
-      @h['msg']['put_at']
     end
 
     # A shortcut for modifying the tree of an expression when it has had
@@ -85,13 +77,6 @@ module Ruote
 
     alias h to_h
 
-    # 'apply', 'reply', 'receive', ... Indicates in which "direction" the
-    # error occured.
-    #
-    def action
-      @h['msg']['action']
-    end
-
     # Exposes the workitem fields directly.
     #
     def fields
@@ -103,13 +88,6 @@ module Ruote
     #
     def workitem
       Ruote::Workitem.new(msg['workitem'])
-    end
-
-    # Returns an array of deviations (see the 'filter' expression) if the
-    # error is a Ruote::ValidationError.
-    #
-    def deviations
-      @h['deviations']
     end
 
     protected

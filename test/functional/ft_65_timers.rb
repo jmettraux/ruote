@@ -288,7 +288,7 @@ class FtTimersTest < Test::Unit::TestCase
 
     err = @dashboard.ps(wfid).errors.first
 
-    assert_equal "#<ArgumentError: unknown time char 'x'>", err.message
+    assert_equal 'ArgumentError', err.klass
   end
 
   def test_process_status_and_timers
