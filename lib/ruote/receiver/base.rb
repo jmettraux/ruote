@@ -78,12 +78,16 @@ module Ruote
       err = error_class_or_instance_or_message
 
       if err.is_a?(String)
+
         err = RuntimeError.new(err)
         err.set_backtrace(caller)
 
       elsif err.is_a?(Class)
+
+        trace = err_arguments.last.is_a?(Array) ? err_arguments.pop : nil
+
         err = err.new(*err_arguments)
-        err.set_backtrace(caller)
+        err.set_backtrace(trace || caller)
       end
 
       workitem = workitem.h if workitem.respond_to?(:h)

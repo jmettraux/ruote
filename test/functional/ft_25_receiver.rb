@@ -224,6 +224,14 @@ class FtReceiverTest < Test::Unit::TestCase
     end
   end
 
+  class BacktraceFlunkParticipant < Ruote::Participant
+
+    def on_workitem
+
+      flunk(workitem, ArgumentError, 'nada', %w[ aaa bbb ccc ])
+    end
+  end
+
   def test_flunk
 
     @dashboard.register :alpha, FlunkParticipant
@@ -254,6 +262,23 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal 'RuntimeError', r['error']['class']
     assert_equal 'out of order', r['error']['message']
     assert_match __FILE__, r['error']['trace'].first
+  end
+
+  def test_backtrace_flunk
+
+    @dashboard.register :alpha, BacktraceFlunkParticipant
+
+    wfid =
+      @dashboard.launch(Ruote.define do
+        alpha
+      end)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'ArgumentError', r['error']['class']
+    assert_equal 'nada', r['error']['message']
+    assert_equal %w[ aaa bbb ccc ], r['error']['trace']
   end
 end
 
