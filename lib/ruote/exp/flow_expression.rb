@@ -361,8 +361,6 @@ module Ruote::Exp
     #
     def do(action, msg)
 
-      Ruote::D.log('do', msg)
-
       @msg = Ruote.fulldup(msg)
 
       send("do_#{action}", msg)
@@ -494,8 +492,6 @@ module Ruote::Exp
     #
     def do_reply_to_parent(workitem, delete=true)
 
-      Ruote::D.log(:drtp, h, "delete:#{delete}")
-
       # propagate the cancel "flavour" back, so that one can know
       # why a branch got cancelled.
 
@@ -581,8 +577,6 @@ module Ruote::Exp
 
         leave_tag(workitem) if h.tagname
 
-        Ruote::D.log("delete?", h, "delete:#{delete}")
-        #
         (do_unpersist || return) if delete
           # remove expression from storage
 

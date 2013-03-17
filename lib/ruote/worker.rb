@@ -377,8 +377,6 @@ module Ruote
 
       return false unless @storage.reserve(msg)
 
-      Ruote::D.log('processing', msg)
-
       begin
 
         @context.pre_notify(msg)
