@@ -87,6 +87,7 @@ module Ruote
       @log_max = context['wait_logger_max'] || 77
       @timeout = context['wait_logger_timeout'] || 60 # in seconds
 
+      @on_msg_mutex = Mutex.new
       @check_mutex = Mutex.new
     end
 
@@ -99,11 +100,14 @@ module Ruote
 
       return if msg['action'] == 'noop'
 
-      @seen << msg
-      @log << msg
+      @on_msg_mutex.synchronize do
 
-      while @log.size > @log_max; @log.shift; end
-      while @seen.size > @log_max; @seen.shift; end
+        @seen << msg
+        @log << msg
+
+        while @log.size > @log_max; @log.shift; end
+        while @seen.size > @log_max; @seen.shift; end
+      end
     end
 
     # Returns an array of the latest msgs, but fancy-printed. The oldest

@@ -4,6 +4,7 @@
 
 == ruote - 2.3.1    not yet released
 
+- fix issue with @seen in wait_logger on JRuby (thanks Mark Wotton)
 - Receiver#flunk accepts stacktrace as final argument
 - allow for "1x == 2x" (turn it into "'1x' == '2x'") (== and !=)
 - fix parsing '2013-02-08T17:36:10Z' (reported by Hartog de Mik)
