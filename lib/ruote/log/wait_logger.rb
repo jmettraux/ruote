@@ -87,8 +87,7 @@ module Ruote
       @log_max = context['wait_logger_max'] || 77
       @timeout = context['wait_logger_timeout'] || 60 # in seconds
 
-      @on_msg_mutex = Mutex.new
-      @check_mutex = Mutex.new
+      @mutex = Mutex.new
     end
 
     # The context will call this method for each msg sucessfully processed
@@ -100,7 +99,7 @@ module Ruote
 
       return if msg['action'] == 'noop'
 
-      @on_msg_mutex.synchronize do
+      @mutex.synchronize do
 
         @seen << msg
         @log << msg
@@ -154,7 +153,7 @@ module Ruote
           Ruote::LoggerTimeout.new(interests, to)
         ) if to && (Time.now - start) > to
 
-        @check_mutex.synchronize { check_waiting }
+        @mutex.synchronize { check_waiting }
 
         break if Thread.current['__result__']
 
