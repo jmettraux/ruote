@@ -27,7 +27,7 @@ class FtObserverTest < Test::Unit::TestCase
     end
   end
 
-  def test_respark
+  def test_observer
 
     @dashboard.register 'alpha', Ruote::NoOpParticipant
 
