@@ -103,23 +103,37 @@ class FtResparkTest < Test::Unit::TestCase
     assert_not_equal error_at, @dashboard.process(wfid).errors.first.at
   end
 
-  def test_respark_cursor
-
-    @dashboard.register 'alpha', Ruote::LostReplyParticipant
-
-    pdef =
-      Ruote.define do
-        cursor do
-          alpha
-        end
-      end
-
-    wfid = @dashboard.launch(pdef)
-
-    @dashboard.wait_for('dispatched')
-    sleep 1
-
-    p @dashboard.ps(wfid)
-  end
+#  def test_respark_cursor
+#
+#    @dashboard.register 'alpha', Ruote::LostReplyParticipant
+#
+#    pdef =
+#      Ruote.define do
+#        cursor do
+#          alpha
+#        end
+#      end
+#
+#    wfid = @dashboard.launch(pdef)
+#
+#    @dashboard.wait_for('dispatched')
+#
+#    ps = @dashboard.ps(wfid)
+#
+#    assert_equal 0, ps.errors.size
+#    assert_equal 2, ps.expressions.size
+#      # somehow, these are assertions for LostReplyParticipant...
+#
+#    ps.leaves.each do |l|
+#      p l.class
+#      p l.applied_workitem
+#    end
+#
+#    @dashboard.respark(wfid)
+#    @dashboard.wait_for('dispatched')
+#  end
+  #
+  # not good: the respark fails since the child is gone...
+  # for now, work on Dashboard#reply(fei, workitem=nil)...
 end
 

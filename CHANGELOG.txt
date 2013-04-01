@@ -4,13 +4,14 @@
 
 == ruote - 2.3.1    not yet released
 
+- implement Dashboard#reply_to_parent(fei, wi=nil)
 - fix issue with @seen in wait_logger on JRuby (thanks Mark Wotton)
 - Receiver#flunk accepts stacktrace as final argument
 - allow for "1x == 2x" (turn it into "'1x' == '2x'") (== and !=)
 - fix parsing '2013-02-08T17:36:10Z' (reported by Hartog de Mik)
 
 
-== ruote - 2.3.0.2    not yet released
+== ruote - 2.3.0.2    released 2013/01/10
 
 - pin ruote.gemspec to ruby_parser ~>2.3 and parslet 1.4.0
 - add Ruote.[de]camelize

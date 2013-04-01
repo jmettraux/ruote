@@ -386,6 +386,31 @@ module Ruote
         're_apply' => Ruote.keys_to_s(opts))
     end
 
+    # Given an expression or its fei (FlowExpressionId), forces a reply
+    # to its parent.
+    #
+    # An optional workitem can be given, it will then be used in the reply.
+    #
+    # Warning, this method doesn't cancel the children of the target
+    # expression. Applying it to an expression with active children will
+    # result in making those children orphans.
+    #
+    # This method was introduced for: https://groups.google.com/forum/?fromgroups=#!topic/openwferu-users/MUXnymy-z70
+    #
+    def reply_to_parent(fexp_or_fei, workitem=nil)
+
+      fei = FlowExpressionId.extract_h(fexp_or_fei)
+      fexp = Ruote::Exp::FlowExpression.fetch(@context, fei)
+
+      workitem ||= fexp.applied_workitem
+      workitem = workitem.h if workitem.respond_to?(:h)
+      workitem['fei'] = fei
+
+      fexp.reply_to_parent(workitem)
+
+      workitem
+    end
+
     # Returns a Mutation instance listing all the operations necessary
     # to transform the current tree of the process (wfid) into
     # the given definition tree (pdef).

@@ -58,10 +58,23 @@ module Ruote
     end
   end
 
+  #
+  # This participant removes itself (well, the corresponding participant
+  # expression) and never replies.
+  #
+  # Used to simulate lost replies.
+  #
   class LostReplyParticipant < Participant
 
     def on_workitem
+
+      r = context.storage.delete(fexp.h)
+      raise "failed to remove self" if r != nil
+
+      # do not reply.
     end
+
+    def do_not_thread; true; end
   end
 end
 
