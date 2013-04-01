@@ -105,7 +105,7 @@ class FtResparkTest < Test::Unit::TestCase
 
   def test_respark_cursor
 
-    @dashboard.register 'alpha', Ruote::NullParticipant
+    @dashboard.register 'alpha', Ruote::LostReplyParticipant
 
     pdef =
       Ruote.define do

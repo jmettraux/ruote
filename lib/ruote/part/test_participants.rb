@@ -22,7 +22,6 @@
 # Made in Japan.
 #++
 
-
 require 'ruote/part/local_participant'
 
 
@@ -34,24 +33,14 @@ module Ruote
   # For testing purposes, but could be useful when used in conjunction with
   # 'listen'.
   #
-  class NoOpParticipant
-
-    include LocalParticipant
-
-    def initialize(opts=nil)
-    end
+  class NoOpParticipant < Participant
 
     #
     # No operation : simply replies immediately.
     #
-    def consume(workitem)
+    def on_workitem
 
-      reply(workitem)
-    end
-
-    def cancel(fei, flavour)
-
-      # nothing to do
+      reply
     end
   end
 
@@ -61,21 +50,17 @@ module Ruote
   #
   # For testing purposes only.
   #
-  class NullParticipant
-
-    include LocalParticipant
-
-    def initialize(opts=nil)
-    end
+  class NullParticipant < Participant
 
     # Does nothing, discards the workitem it receives.
     #
-    def consume(workitem)
+    def on_workitem
     end
+  end
 
-    # Does nothing.
-    #
-    def cancel(fei, flavour)
+  class LostReplyParticipant < Participant
+
+    def on_workitem
     end
   end
 end
