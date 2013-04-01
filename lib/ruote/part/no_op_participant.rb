@@ -39,16 +39,14 @@ module Ruote
     include LocalParticipant
 
     def initialize(opts=nil)
-
-      @items = {}
     end
 
     #
-    # No operation : simply replies immediately to the engine.
+    # No operation : simply replies immediately.
     #
     def consume(workitem)
 
-      reply_to_engine(workitem)
+      reply(workitem)
     end
 
     def cancel(fei, flavour)
