@@ -8,7 +8,7 @@
 require File.expand_path('../base', __FILE__)
 require File.expand_path('../restart_base', __FILE__)
 
-require 'ruote/part/null_participant'
+require 'ruote/part/test_participants'
 
 
 class RtTimeoutTest < Test::Unit::TestCase
@@ -27,8 +27,6 @@ class RtTimeoutTest < Test::Unit::TestCase
 
     @dashboard.register_participant 'alpha', Ruote::NullParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(3)
@@ -41,8 +39,6 @@ class RtTimeoutTest < Test::Unit::TestCase
     # restart...
 
     start_new_engine
-
-    #noisy
 
     @dashboard.register_participant 'alpha', Ruote::NullParticipant
 

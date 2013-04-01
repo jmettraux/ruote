@@ -7,7 +7,7 @@
 
 require File.expand_path('../base', __FILE__)
 
-require 'ruote/part/no_op_participant'
+require 'ruote/part/test_participants'
 
 
 class EftCursorTest < Test::Unit::TestCase

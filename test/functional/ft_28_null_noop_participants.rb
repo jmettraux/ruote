@@ -7,8 +7,7 @@
 
 require File.expand_path('../base', __FILE__)
 
-require 'ruote/part/no_op_participant'
-require 'ruote/part/null_participant'
+require 'ruote/part/test_participants'
 
 
 class FtNullNoopParticipantsTest < Test::Unit::TestCase
@@ -21,8 +20,6 @@ class FtNullNoopParticipantsTest < Test::Unit::TestCase
     end
 
     alpha = @dashboard.register_participant :alpha, Ruote::NullParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -42,8 +39,6 @@ class FtNullNoopParticipantsTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha, Ruote::NoOpParticipant
-
-    #noisy
 
     assert_trace "done.", pdef
   end

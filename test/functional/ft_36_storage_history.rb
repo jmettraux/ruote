@@ -8,7 +8,7 @@
 require File.expand_path('../base', __FILE__)
 
 require 'ruote/log/storage_history'
-require 'ruote/part/no_op_participant'
+require 'ruote/part/test_participants'
 
 
 class FtStorageHistoryTest < Test::Unit::TestCase
@@ -25,8 +25,6 @@ class FtStorageHistoryTest < Test::Unit::TestCase
       'history', 'ruote/log/storage_history', 'Ruote::StorageHistory')
 
     @dashboard.register_participant :alpha, Ruote::NoOpParticipant
-
-    #noisy
 
     wfid0 = assert_trace('done.', pdef)
     wfid1 = assert_trace("done.\ndone.", pdef)
@@ -129,8 +127,6 @@ class FtStorageHistoryTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, Ruote::NullParticipant
     @dashboard.register_participant :bravo, Ruote::NoOpParticipant
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)

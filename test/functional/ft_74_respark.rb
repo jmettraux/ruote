@@ -102,5 +102,24 @@ class FtResparkTest < Test::Unit::TestCase
     assert_equal 1, @dashboard.storage_participant.size
     assert_not_equal error_at, @dashboard.process(wfid).errors.first.at
   end
+
+  def test_respark_cursor
+
+    @dashboard.register 'alpha', Ruote::NullParticipant
+
+    pdef =
+      Ruote.define do
+        cursor do
+          alpha
+        end
+      end
+
+    wfid = @dashboard.launch(pdef)
+
+    @dashboard.wait_for('dispatched')
+    sleep 1
+
+    p @dashboard.ps(wfid)
+  end
 end
 
