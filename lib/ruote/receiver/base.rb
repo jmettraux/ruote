@@ -101,7 +101,8 @@ module Ruote
           'fei' => workitem['fei'],
           'participant_name' => workitem['participant_name'],
           'participant' => nil,
-          'workitem' => workitem
+          'workitem' => workitem,
+          'put_at' => Ruote.now_to_utc_s
         },
         'error' => {
           'class' => err.class.name,

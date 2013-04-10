@@ -246,6 +246,9 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal 'ArgumentError', r['error']['class']
     assert_equal 'out of order', r['error']['message']
     assert_match __FILE__, r['error']['trace'].first
+
+    ps = @dashboard.ps(wfid)
+    assert_equal String, ps.errors.first.at.class
   end
 
   def test_string_flunk
@@ -262,6 +265,9 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal 'RuntimeError', r['error']['class']
     assert_equal 'out of order', r['error']['message']
     assert_match __FILE__, r['error']['trace'].first
+
+    ps = @dashboard.ps(wfid)
+    assert_equal String, ps.errors.first.at.class
   end
 
   def test_backtrace_flunk
@@ -279,6 +285,9 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal 'ArgumentError', r['error']['class']
     assert_equal 'nada', r['error']['message']
     assert_equal %w[ aaa bbb ccc ], r['error']['trace']
+
+    ps = @dashboard.ps(wfid)
+    assert_equal String, ps.errors.first.at.class
   end
 end
 
