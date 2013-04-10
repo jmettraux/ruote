@@ -58,6 +58,7 @@ Richard Jennings
 
 == Feedback
 
+Adrien Kohlbecker - https://github.com/adrienkohlbecker - error/flunk put_at
 Mark Wotton - https://github.com/mwotton - issue with @seen on JRuby
 Herve Chardenoux - tests on Windows
 Larry Marburger - await attribute clarifications
