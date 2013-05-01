@@ -62,12 +62,16 @@ module Ruote
     # Can be used to raise an error in the workflow instance.
     #
     # Can be called either with an error class and arguments, either with
-    # an error instance (and no arguments).
+    # an error instance (and no arguments), or a string message and no arguments.
     #
     # The workitem can be either an instance of Ruote::Workitem or a workitem
     # in its Hash representation.
     #
     #   receiver.flunk(workitem, ArgumentError, "not enough info")
+    #   receiver.flunk(workitem, "ArgumentError", "not enough info")
+    #   receiver.flunk(workitem, ArgumentError, "not enough info", backtrace)
+    #   receiver.flunk(workitem, "ArgumentError", "not enough info", backtrace)
+    #   receiver.flunk(workitem, "not enough info")
     #
     #   rescue => e
     #     receiver.flunk(workitem, e)
@@ -77,20 +81,39 @@ module Ruote
 
       err = error_class_or_instance_or_message
 
-      if err.is_a?(String)
+      if err_arguments.empty? # err is a message or exception instance
 
-        err = RuntimeError.new(err)
-        err.set_backtrace(caller)
+        if err.is_a?(String) # err is a message
+          klass = 'RuntimeError'
+          message = err
+          backtrace = caller
+        else # err is an instance
+          klass = err.class.name
+          message = err.message
+          backtrace = err.backtrace
+        end
 
-      elsif err.is_a?(Class)
+      else # err is a class
 
-        trace = err_arguments.last.is_a?(Array) ? err_arguments.pop : nil
+        if err_arguments.length > 2 # exception needs more than a message, instantiate it
 
-        err = err.new(*err_arguments)
-        err.set_backtrace(trace || caller)
+          trace = err_arguments.last.is_a?(Array) ? err_arguments.pop : nil
+
+          err = err.new(*err_arguments)
+          err.set_backtrace(trace || caller)
+
+        else # regular exception, no need to instantiate (class may be remote)
+
+          klass = err
+          message = err_arguments[0]
+          backtrace = err_arguments[1]
+
+        end
+
       end
 
       workitem = workitem.h if workitem.respond_to?(:h)
+      backtrace ||= caller
 
       @context.storage.put_msg(
         'raise',
@@ -105,9 +128,9 @@ module Ruote
           'put_at' => Ruote.now_to_utc_s
         },
         'error' => {
-          'class' => err.class.name,
-          'message' => err.message,
-          'trace' => err.backtrace
+          'class' => klass,
+          'message' => message,
+          'trace' => backtrace
         })
     end
 
