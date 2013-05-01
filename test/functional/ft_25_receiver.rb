@@ -232,6 +232,60 @@ class FtReceiverTest < Test::Unit::TestCase
     end
   end
 
+  class NonInstantiationFlunkParticipant
+    include Ruote::LocalParticipant
+
+    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
+    #
+    def on_workitem
+      flunk(workitem, 'SomeUndefinedConstant', 'out of order', ['some backtrace'])
+    end
+
+    def on_cancel
+      # ...
+    end
+  end
+
+  class ExceptionInstanceFlunkParticipant
+    include Ruote::LocalParticipant
+
+    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
+    #
+    def on_workitem
+      e = RuntimeError.new('out of order')
+      flunk(workitem, e)
+    end
+
+    def on_cancel
+      # ...
+    end
+  end
+
+  class ::MultipleArgumentsError < RuntimeError
+    def initialize(a, b)
+      @a = a
+      @b = b
+    end
+
+    def message
+      "#{@a} #{@b}"
+    end
+  end
+
+  class MultipleArgumentsFlunkParticipant
+    include Ruote::LocalParticipant
+
+    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
+    #
+    def on_workitem
+      flunk(workitem, MultipleArgumentsError, 'first', 'second', ['some backtrace'])
+    end
+
+    def on_cancel
+      # ...
+    end
+  end
+
   def test_flunk
 
     @dashboard.register :alpha, FlunkParticipant
@@ -285,6 +339,66 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal 'ArgumentError', r['error']['class']
     assert_equal 'nada', r['error']['message']
     assert_equal %w[ aaa bbb ccc ], r['error']['trace']
+
+    ps = @dashboard.ps(wfid)
+    assert_equal String, ps.errors.first.at.class
+  end
+
+  def test_exception_instance_flunk
+
+    @dashboard.register :alpha, ExceptionInstanceFlunkParticipant
+
+    wfid =
+      @dashboard.launch(Ruote.define do
+        alpha
+      end)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'RuntimeError', r['error']['class']
+    assert_equal 'out of order', r['error']['message']
+    assert_match __FILE__, r['error']['trace'].first
+
+    ps = @dashboard.ps(wfid)
+    assert_equal String, ps.errors.first.at.class
+  end
+
+  def test_non_instanciation_flunk
+
+    @dashboard.register :alpha, NonInstantiationFlunkParticipant
+
+    wfid =
+      @dashboard.launch(Ruote.define do
+        alpha
+      end)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'SomeUndefinedConstant', r['error']['class']
+    assert_equal 'out of order', r['error']['message']
+    assert_match 'some backtrace', r['error']['trace'].first
+
+    ps = @dashboard.ps(wfid)
+    assert_equal String, ps.errors.first.at.class
+  end
+
+  def test_multiple_arguments_flunk
+
+    @dashboard.register :alpha, MultipleArgumentsFlunkParticipant
+
+    wfid =
+      @dashboard.launch(Ruote.define do
+        alpha
+      end)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'MultipleArgumentsError', r['error']['class']
+    assert_equal 'first second', r['error']['message']
+    assert_match 'some backtrace', r['error']['trace'].first
 
     ps = @dashboard.ps(wfid)
     assert_equal String, ps.errors.first.at.class
