@@ -102,9 +102,13 @@ module Ruote
           err = err.new(*err_arguments)
           err.set_backtrace(trace || caller)
 
+          klass = err.class.name
+          message = err.message
+          backtrace = err.backtrace
+
         else # regular exception, no need to instantiate (class may be remote)
 
-          klass = err
+          klass = err.to_s
           message = err_arguments[0]
           backtrace = err_arguments[1]
 

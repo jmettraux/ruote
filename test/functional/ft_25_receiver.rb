@@ -232,7 +232,7 @@ class FtReceiverTest < Test::Unit::TestCase
     end
   end
 
-  class NoInstanciationFlunkParticipant
+  class NonInstantiationFlunkParticipant
     include Ruote::LocalParticipant
 
     # Since LocalParticipant extends ReceiverMixin, we can call #flunk
@@ -261,9 +261,14 @@ class FtReceiverTest < Test::Unit::TestCase
     end
   end
 
-  class MultipleArgumentsError < RuntimeError
+  class ::MultipleArgumentsError < RuntimeError
     def initialize(a, b)
-      self.message = "#{a} #{b}"
+      @a = a
+      @b = b
+    end
+
+    def message
+      "#{@a} #{@b}"
     end
   end
 
@@ -361,7 +366,7 @@ class FtReceiverTest < Test::Unit::TestCase
 
   def test_non_instanciation_flunk
 
-    @dashboard.register :alpha, NonInstanciationFlunkParticipant
+    @dashboard.register :alpha, NonInstantiationFlunkParticipant
 
     wfid =
       @dashboard.launch(Ruote.define do
