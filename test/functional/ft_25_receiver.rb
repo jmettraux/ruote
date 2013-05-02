@@ -27,10 +27,9 @@ class FtReceiverTest < Test::Unit::TestCase
     @dashboard.register_participant 'alpha', MyParticipant
   end
 
-  class MyParticipant
-    include Ruote::LocalParticipant
+  class MyParticipant < Ruote::Participant
 
-    def consume(workitem)
+    def on_workitem
 
       @context.stash[:wi] = workitem
 
@@ -47,6 +46,7 @@ class FtReceiverTest < Test::Unit::TestCase
   end
 
   class MyReceiver < Ruote::Receiver
+
     attr_reader :context
   end
 
@@ -115,9 +115,8 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal 'Ruote::Dashboard', rcv['receiver']
   end
 
-  class MyOtherParticipant
-    include Ruote::LocalParticipant
-    def consume(workitem)
+  class MyOtherParticipant < Ruote::Participant
+    def on_workitem
       @context.receiver.pass(workitem.to_h)
     end
   end
@@ -196,93 +195,12 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal wfid, @dashboard.workitem(wi.fei.sid).wfid
   end
 
-  class FlunkParticipant
-    include Ruote::LocalParticipant
+  class FlunkParticipant < Ruote::Participant
 
-    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
+    # Since Participant extends ReceiverMixin, we can call #flunk
     #
     def on_workitem
       flunk(workitem, ArgumentError, 'out of order')
-    end
-
-    def on_cancel
-      # ...
-    end
-  end
-
-  class StringFlunkParticipant
-    include Ruote::LocalParticipant
-
-    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
-    #
-    def on_workitem
-      flunk(workitem, 'out of order')
-    end
-
-    def on_cancel
-      # ...
-    end
-  end
-
-  class BacktraceFlunkParticipant < Ruote::Participant
-
-    def on_workitem
-
-      flunk(workitem, ArgumentError, 'nada', %w[ aaa bbb ccc ])
-    end
-  end
-
-  class NonInstantiationFlunkParticipant
-    include Ruote::LocalParticipant
-
-    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
-    #
-    def on_workitem
-      flunk(workitem, 'SomeUndefinedConstant', 'out of order', ['some backtrace'])
-    end
-
-    def on_cancel
-      # ...
-    end
-  end
-
-  class ExceptionInstanceFlunkParticipant
-    include Ruote::LocalParticipant
-
-    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
-    #
-    def on_workitem
-      e = RuntimeError.new('out of order')
-      flunk(workitem, e)
-    end
-
-    def on_cancel
-      # ...
-    end
-  end
-
-  class ::MultipleArgumentsError < RuntimeError
-    def initialize(a, b)
-      @a = a
-      @b = b
-    end
-
-    def message
-      "#{@a} #{@b}"
-    end
-  end
-
-  class MultipleArgumentsFlunkParticipant
-    include Ruote::LocalParticipant
-
-    # Since LocalParticipant extends ReceiverMixin, we can call #flunk
-    #
-    def on_workitem
-      flunk(workitem, MultipleArgumentsError, 'first', 'second', ['some backtrace'])
-    end
-
-    def on_cancel
-      # ...
     end
   end
 
@@ -290,9 +208,10 @@ class FtReceiverTest < Test::Unit::TestCase
 
     @dashboard.register :alpha, FlunkParticipant
 
-    wfid = @dashboard.launch(Ruote.define do
-      alpha
-    end)
+    wfid =
+      @dashboard.launch(Ruote.define do
+        alpha
+      end)
 
     r = @dashboard.wait_for(wfid)
 
@@ -305,13 +224,21 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal String, ps.errors.first.at.class
   end
 
+  class StringFlunkParticipant < Ruote::Participant
+
+    def on_workitem
+      flunk(workitem, 'out of order')
+    end
+  end
+
   def test_string_flunk
 
     @dashboard.register :alpha, StringFlunkParticipant
 
-    wfid = @dashboard.launch(Ruote.define do
-      alpha
-    end)
+    wfid =
+      @dashboard.launch(Ruote.define do
+        alpha
+      end)
 
     r = @dashboard.wait_for(wfid)
 
@@ -322,6 +249,26 @@ class FtReceiverTest < Test::Unit::TestCase
 
     ps = @dashboard.ps(wfid)
     assert_equal String, ps.errors.first.at.class
+  end
+
+  class BacktraceFlunkParticipant < Ruote::Participant
+
+    def on_workitem
+
+      flunk(workitem, ArgumentError, 'nada', %w[ aaa bbb ccc ])
+    end
+  end
+
+  class ::MultipleArgumentsError < RuntimeError
+
+    def initialize(a, b)
+      @a = a
+      @b = b
+    end
+
+    def message
+      "#{@a} #{@b}"
+    end
   end
 
   def test_backtrace_flunk
@@ -344,6 +291,13 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal String, ps.errors.first.at.class
   end
 
+  class ExceptionInstanceFlunkParticipant < Ruote::Participant
+
+    def on_workitem
+      flunk(workitem, RuntimeError.new('out of order'))
+    end
+  end
+
   def test_exception_instance_flunk
 
     @dashboard.register :alpha, ExceptionInstanceFlunkParticipant
@@ -364,7 +318,15 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_equal String, ps.errors.first.at.class
   end
 
-  def test_non_instanciation_flunk
+  class NonInstantiationFlunkParticipant < Ruote::Participant
+
+    def on_workitem
+      flunk(
+        workitem, 'SomeUndefinedConstant', 'out of order', [ 'some backtrace' ])
+    end
+  end
+
+  def test_non_instantiation_flunk
 
     @dashboard.register :alpha, NonInstantiationFlunkParticipant
 
@@ -382,6 +344,18 @@ class FtReceiverTest < Test::Unit::TestCase
 
     ps = @dashboard.ps(wfid)
     assert_equal String, ps.errors.first.at.class
+  end
+
+  class MultipleArgumentsFlunkParticipant < Ruote::Participant
+
+    def on_workitem
+      flunk(
+        workitem,
+        MultipleArgumentsError,
+        'first',
+        'second',
+        [ 'some backtrace' ])
+    end
   end
 
   def test_multiple_arguments_flunk
