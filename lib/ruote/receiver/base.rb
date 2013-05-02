@@ -62,7 +62,8 @@ module Ruote
     # Can be used to raise an error in the workflow instance.
     #
     # Can be called either with an error class and arguments, either with
-    # an error instance (and no arguments), or a string message and no arguments.
+    # an error instance (and no arguments), or a string message and no
+    # arguments.
     #
     # The workitem can be either an instance of Ruote::Workitem or a workitem
     # in its Hash representation.
@@ -77,47 +78,29 @@ module Ruote
     #     receiver.flunk(workitem, e)
     #   end
     #
+    # TODO: implement the "pass an argument class as a String case".
+    #
     def flunk(workitem, error_class_or_instance_or_message, *err_arguments)
 
       err = error_class_or_instance_or_message
+      trace = err_arguments.last.is_a?(Array) ? err_arguments.pop : nil
 
-      if err_arguments.empty? # err is a message or exception instance
-
-        if err.is_a?(String) # err is a message
-          klass = 'RuntimeError'
-          message = err
-          backtrace = caller
-        else # err is an instance
-          klass = err.class.name
-          message = err.message
-          backtrace = err.backtrace
+      err =
+        case err
+          when Exception
+            err
+          when String
+            RuntimeError.new(err)
+          when Class
+            err.new(*err_arguments)
+          else
+            ArgumentError.new(
+              "flunk() failed, cannot bring back err from #{err.inspect}")
         end
 
-      else # err is a class
-
-        if err_arguments.length > 2 # exception needs more than a message, instantiate it
-
-          trace = err_arguments.last.is_a?(Array) ? err_arguments.pop : nil
-
-          err = err.new(*err_arguments)
-          err.set_backtrace(trace || caller)
-
-          klass = err.class.name
-          message = err.message
-          backtrace = err.backtrace
-
-        else # regular exception, no need to instantiate (class may be remote)
-
-          klass = err.to_s
-          message = err_arguments[0]
-          backtrace = err_arguments[1]
-
-        end
-
-      end
+      err.set_backtrace(trace || err.backtrace || caller)
 
       workitem = workitem.h if workitem.respond_to?(:h)
-      backtrace ||= caller
 
       @context.storage.put_msg(
         'raise',
@@ -132,9 +115,9 @@ module Ruote
           'put_at' => Ruote.now_to_utc_s
         },
         'error' => {
-          'class' => klass,
-          'message' => message,
-          'trace' => backtrace
+          'class' => err.class.name,
+          'message' => err.message,
+          'trace' => err.backtrace
         })
     end
 
