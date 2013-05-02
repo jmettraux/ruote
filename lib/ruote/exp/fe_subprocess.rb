@@ -53,7 +53,7 @@ module Ruote::Exp
   # The attributes of the subprocess expression are passed as variables of
   # the new subprocess instance.
   #
-  #   Ruote.process_definition do
+  #   Ruote.define do
   #     subprocess 'sub0', :a => 'A', :b => 'B'
   #     define :sub0 do
   #       echo '${v:a}:${v:b}'
@@ -61,6 +61,36 @@ module Ruote::Exp
   #   end
   #
   # This example (and useless) process example will output "A:B" to STDOUT.
+  #
+  #   Ruote.define :name => 'whatever' do
+  #
+  #     call :who => 'the cops', :when => 'if I\'m not back at 3'
+  #
+  #     define 'call' do
+  #       participant :ref => '${v:who}', :msg => 'this is a call'
+  #     end
+  #   end
+  #
+  # This binds the variables 'who' and 'when' in the subprocess instance.
+  #
+  # Of course you can combine parameters and blocks passing.
+  #
+  # Using a "f:" or "field:" prefix is OK to pass arguments as workitem
+  # fields instead of process variables:
+  #
+  #   Ruote.define do
+  #     set 'address' => { 'city' => 'boston' }
+  #     sub0(
+  #       'f:a' => 'fa',
+  #       'field:b' => 'mi',
+  #       'var:c' => 'sol',
+  #       'f:address.city' => 'nyc')
+  #     define 'sub0' do
+  #       echo '${a} ${b} ${v:c} ${address.city}'
+  #     end
+  #   end
+  #     #
+  #     # will output 'fa mi sol nyc'
   #
   #
   # == passing 'blocks' to subprocesses
@@ -90,22 +120,6 @@ module Ruote::Exp
   # This example will send 2 x 3 concurrent workitems to the participant
   # named 'review_board' (note that it could also be the name of another
   # subprocess).
-  #
-  #
-  # == passing 'parameters' to subprocess
-  #
-  #   Ruote.process_definition :name => 'whatever' do
-  #
-  #     call :who => 'the cops', :when => 'if I\'m not back at 3'
-  #
-  #     process_definition 'call' do
-  #       participant :ref => '${v:who}', :msg => 'this is a call'
-  #     end
-  #   end
-  #
-  # This binds the variables 'who' and 'when' in the subprocess instance.
-  #
-  # Of course you can combine parameters and blocks passing.
   #
   #
   # == pointing to subprocesses via their URI

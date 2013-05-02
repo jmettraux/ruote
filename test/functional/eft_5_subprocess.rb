@@ -170,6 +170,11 @@ class EftSubprocessTest < Test::Unit::TestCase
         'field:b' => 'mi',
         'var:c' => 'sol',
         'f:address.city' => 'nyc')
+      sub0(
+        'f:a' => 'fa',
+        'field:b' => 'mi',
+        'var:c' => 'sol',
+        'f:address.city' => 'nyc')
       define 'sub0' do
         echo '${a} ${b} ${v:c} ${address.city}'
       end
@@ -178,7 +183,7 @@ class EftSubprocessTest < Test::Unit::TestCase
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
-    assert_equal 'fa mi sol nyc', @tracer.to_s
+    assert_equal "fa mi sol nyc\nfa mi sol nyc", @tracer.to_s
   end
 end
 
