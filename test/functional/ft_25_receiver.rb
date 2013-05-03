@@ -259,18 +259,6 @@ class FtReceiverTest < Test::Unit::TestCase
     end
   end
 
-  class ::MultipleArgumentsError < RuntimeError
-
-    def initialize(a, b)
-      @a = a
-      @b = b
-    end
-
-    def message
-      "#{@a} #{@b}"
-    end
-  end
-
   def test_backtrace_flunk
 
     @dashboard.register :alpha, BacktraceFlunkParticipant
@@ -321,7 +309,14 @@ class FtReceiverTest < Test::Unit::TestCase
   class NonInstantiationFlunkParticipant < Ruote::Participant
 
     def on_workitem
-      flunk(workitem, 'SomeUnknownError', 'out of order', [ 'some backtrace' ])
+      #flunk(
+      #  workitem, 'SomeUnknownConstant', 'out of order', [ 'some backtrace' ])
+        #
+        # Rather
+        #
+      flunk(
+        workitem,
+        Ruote::ReceivedError.new('SomeConstant', 'out of order', [ 'trace' ]))
     end
   end
 
@@ -338,11 +333,51 @@ class FtReceiverTest < Test::Unit::TestCase
 
     assert_equal 'error_intercepted', r['action']
     assert_equal 'Ruote::ReceivedError', r['error']['class']
-    assert_equal 'out of order', r['error']['message']
-    assert_match 'some backtrace', r['error']['trace'].first
+    assert_equal 'SomeConstant: out of order', r['error']['message']
+    assert_match 'trace', r['error']['trace'].first
 
     ps = @dashboard.ps(wfid)
     assert_equal String, ps.errors.first.at.class
+  end
+
+  class AutoInstantiationFlunkParticipant < Ruote::Participant
+
+    def on_workitem
+      flunk(
+        workitem, 'ArgumentError', 'out of order', [ 'some backtrace' ])
+    end
+  end
+
+  def test_auto_instantiation_flunk
+
+    @dashboard.register :alpha, AutoInstantiationFlunkParticipant
+
+    wfid =
+      @dashboard.launch(Ruote.define do
+        alpha
+      end)
+
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'error_intercepted', r['action']
+    assert_equal 'ArgumentError', r['error']['class']
+    assert_equal 'out of order', r['error']['message']
+    assert_match 'trace', r['error']['trace'].first
+
+    ps = @dashboard.ps(wfid)
+    assert_equal String, ps.errors.first.at.class
+  end
+
+  class ::MultipleArgumentsError < RuntimeError
+
+    def initialize(a, b)
+      @a = a
+      @b = b
+    end
+
+    def message
+      "#{@a} #{@b}"
+    end
   end
 
   class MultipleArgumentsFlunkParticipant < Ruote::Participant

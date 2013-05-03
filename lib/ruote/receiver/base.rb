@@ -25,6 +25,15 @@
 
 module Ruote
 
+  # Used to extract a backtrace if present as the last item of a list
+  # of arguments. Modifies the argument list if found...
+  #
+  def self.pop_trace(args)
+
+    l = args.last
+    ( ! l.is_a?(Array)) || l.find { |e| ( ! e.is_a?(String)) } ? nil : args.pop
+  end
+
   #
   # For remote/received errors, errors whose class is unknown in
   # the ruote worker process.
@@ -34,12 +43,15 @@ module Ruote
     attr_reader :classname
     attr_reader :arguments
 
-    def initialize(classname, args)
+    def initialize(classname, *args)
 
-      super(args.first)
+      trace = Ruote.pop_trace(args)
+
+      super("#{classname}: #{args.first}")
 
       @classname = classname
       @arguments = args
+      set_backtrace(trace)
     end
   end
 
@@ -99,18 +111,20 @@ module Ruote
     def flunk(workitem, error_class_or_instance_or_message, *err_arguments)
 
       err = error_class_or_instance_or_message
-      trace = err_arguments.last.is_a?(Array) ? err_arguments.pop : nil
+      trace = Ruote.pop_trace(err_arguments)
 
       err =
         case err
           when Exception
             err
-          when /^[A-Za-z:]+Error$/
-            ReceivedError.new(err, err_arguments)
-          when String
-            RuntimeError.new(err)
           when Class
             err.new(*err_arguments)
+          when String
+            begin
+              Ruote.constantize(err).new(*err_arguments)
+            rescue #NameError # rescue instanciation errors too
+              RuntimeError.new(err)
+            end
           else
             ArgumentError.new(
               "flunk() failed, cannot bring back err from #{err.inspect}")
