@@ -321,8 +321,7 @@ class FtReceiverTest < Test::Unit::TestCase
   class NonInstantiationFlunkParticipant < Ruote::Participant
 
     def on_workitem
-      flunk(
-        workitem, 'SomeUndefinedConstant', 'out of order', [ 'some backtrace' ])
+      flunk(workitem, 'SomeUnknownError', 'out of order', [ 'some backtrace' ])
     end
   end
 
@@ -338,7 +337,7 @@ class FtReceiverTest < Test::Unit::TestCase
     r = @dashboard.wait_for(wfid)
 
     assert_equal 'error_intercepted', r['action']
-    assert_equal 'SomeUndefinedConstant', r['error']['class']
+    assert_equal 'Ruote::ReceivedError', r['error']['class']
     assert_equal 'out of order', r['error']['message']
     assert_match 'some backtrace', r['error']['trace'].first
 

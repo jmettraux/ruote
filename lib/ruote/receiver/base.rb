@@ -26,6 +26,24 @@
 module Ruote
 
   #
+  # For remote/received errors, errors whose class is unknown in
+  # the ruote worker process.
+  #
+  class ReceivedError < StandardError
+
+    attr_reader :classname
+    attr_reader :arguments
+
+    def initialize(classname, args)
+
+      super(args.first)
+
+      @classname = classname
+      @arguments = args
+    end
+  end
+
+  #
   # The core methods for the Receiver class (sometimes a Mixin is easier
   # to integrate).
   #
@@ -78,8 +96,6 @@ module Ruote
     #     receiver.flunk(workitem, e)
     #   end
     #
-    # TODO: implement the "pass an argument class as a String case".
-    #
     def flunk(workitem, error_class_or_instance_or_message, *err_arguments)
 
       err = error_class_or_instance_or_message
@@ -89,6 +105,8 @@ module Ruote
         case err
           when Exception
             err
+          when /^[A-Za-z:]+Error$/
+            ReceivedError.new(err, err_arguments)
           when String
             RuntimeError.new(err)
           when Class
