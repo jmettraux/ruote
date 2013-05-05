@@ -4,6 +4,7 @@
 
 == ruote - 2.3.1    not yet released
 
+- let radial accept \r\n strings
 - implement Dashboard#reply_to_parent(fei, wi=nil)
 - fix issue with @seen in wait_logger on JRuby (thanks Mark Wotton)
 - Receiver#flunk accepts stacktrace as final argument

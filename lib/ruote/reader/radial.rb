@@ -37,9 +37,12 @@ module Ruote
     #
     class Parser < Parslet::Parser
 
+      # TODO: do something about \r\n appearing in :spaces and in :lines
+
       rule(:spaces) {
-        match('\s').repeat >>
-        (str('#') >> match('[^\n]').repeat >> str("\n").present?).maybe >>
+        match('\s').repeat >> (
+          str('#') >> match('[^\r\n]').repeat >> match('[\r\n]').present?
+        ).maybe >>
         match('\s').repeat
       }
       rule(:spaces?) { spaces.maybe }
@@ -113,7 +116,7 @@ module Ruote
       rule(:line) {
         (
           str(' ').repeat.as(:ind) >>
-          match('[^ \n#"\',]').repeat(1).as(:exp) >>
+          match('[^ \r\n#"\',]').repeat(1).as(:exp) >>
           (
             (comma | blanks) >> attribute >> (comma >> attribute).repeat
           ).as(:atts).maybe
@@ -122,12 +125,15 @@ module Ruote
 
       rule(:comment) {
         str(' ').repeat >>
-        (str('#') >> match('[^\n]').repeat).maybe >>
-        str("\n").present?
+        (str('#') >> match('[^\r\n]').repeat).maybe >>
+        (str("\r") | str("\n")).present?
       }
 
       rule(:lines) {
-        (str("\n") >> (line | blank_line) >> comment.maybe).repeat
+        (
+          str("\r").maybe >> str("\n") >>
+          (line | blank_line) >> comment.maybe
+        ).repeat
       }
 
       root(:lines)

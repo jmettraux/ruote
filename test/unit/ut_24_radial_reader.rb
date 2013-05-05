@@ -461,5 +461,19 @@ process_definition name: "nada"
       ]],
       tree)
   end
+
+  def test_crlf
+
+    tree =
+      Ruote::RadialReader.read(
+        "define\r\n  participant nada, t: hello\r\n  participant ulf, t: world")
+
+    assert_equal(
+      [ 'define', {}, [
+        [ 'participant', { 'nada' => nil, 't' => 'hello' }, [] ],
+        [ 'participant', { 'ulf' => nil, 't' => 'world' }, [] ]
+      ]],
+      tree)
+  end
 end
 
