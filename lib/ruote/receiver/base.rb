@@ -53,6 +53,11 @@ module Ruote
       @arguments = args
       set_backtrace(trace)
     end
+
+    def ruote_details
+
+      [ @classname, *@arguments ]
+    end
   end
 
   #
@@ -134,6 +139,8 @@ module Ruote
 
       workitem = workitem.h if workitem.respond_to?(:h)
 
+      at = Ruote.now_to_utc_s
+
       @context.storage.put_msg(
         'raise',
         'fei' => workitem['fei'],
@@ -144,12 +151,14 @@ module Ruote
           'participant_name' => workitem['participant_name'],
           'participant' => nil,
           'workitem' => workitem,
-          'put_at' => Ruote.now_to_utc_s
+          'put_at' => at
         },
         'error' => {
           'class' => err.class.name,
           'message' => err.message,
-          'trace' => err.backtrace
+          'trace' => err.backtrace,
+          'at' => at,
+          'details' => err.respond_to?(:ruote_details) ? err.ruote_details : nil
         })
     end
 

@@ -38,7 +38,7 @@ module Ruote::Exp
 
       {
         'fei' => h.fei,
-        'at' => Ruote.now_to_utc_s,
+        'at' => err.respond_to?(:at) ? err.at : Ruote.now_to_utc_s,
         'class' => err.class.to_s,
         'message' => err.message,
         'trace' => err.backtrace,

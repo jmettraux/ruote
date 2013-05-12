@@ -337,7 +337,9 @@ class FtReceiverTest < Test::Unit::TestCase
     assert_match 'trace', r['error']['trace'].first
 
     ps = @dashboard.ps(wfid)
-    assert_equal String, ps.errors.first.at.class
+    err = ps.errors.first
+    assert_equal String, err.at.class
+    assert_equal [ 'SomeConstant', 'out of order' ], err.details
   end
 
   class AutoInstantiationFlunkParticipant < Ruote::Participant

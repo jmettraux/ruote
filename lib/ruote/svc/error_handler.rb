@@ -181,6 +181,12 @@ module Ruote
       def backtrace
         @h['trace']
       end
+      def at
+        @h['at']
+      end
+      def ruote_details
+        @h['details']
+      end
       def to_s
         "raised: #{@h['class']}: #{@h['message']}"
       end
