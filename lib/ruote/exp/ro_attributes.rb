@@ -149,12 +149,7 @@ module Ruote::Exp
     #
     def dsub(o, wi=h.applied_workitem)
 
-      case o
-        when String; @context.dollar_sub.s(o, self, wi)
-        when Array; o.collect { |e| dsub(e, wi) }
-        when Hash; o.remap { |(k, v), h| h[dsub(k, wi)] = dsub(v, wi) }
-        else o
-      end
+      @context.dollar_sub.s(o, self, wi)
     end
 
     # 'tos' meaning 'many "to"'
