@@ -99,21 +99,43 @@ class FtVariablesTest < Test::Unit::TestCase
 
   def test_engine_variables
 
-    pdef = Ruote.process_definition do
-      sequence do
-        set 'v:va' => 'a0'
-        echo '${v:va}:${v://va}'
-        echo '${v:vb}:${v://vb}'
-        echo 'done.'
+    pdef =
+      Ruote.process_definition do
+        sequence do
+          set 'v:va' => 'a0'
+          echo '${v:va}:${v://va}'
+          echo '${v:vb}:${v://vb}'
+          echo '$v:vb'
+          echo 'done.'
+        end
       end
-    end
 
     @dashboard.variables['vb'] = 'b0'
 
-    assert_trace(%w[ a0: b0:b0 done. ], pdef)
+    assert_trace(%w[ a0: b0:b0 b0 done. ], pdef)
 
     assert_equal(
       1, logger.log.select { |e| e['action'] == 'variable_set' }.size)
+  end
+
+  # fighting https://github.com/jmettraux/ruote/issues/80
+  #
+  def test_hash_engine_variable
+
+    pdef =
+      Ruote.process_definition do
+        sequence do
+          set 'v:va' => 'a'
+          echo '${v:vh}'
+          echo '${v:vh.k}'
+          echo '$v:vh.k'
+          echo 'done.'
+        end
+      end
+
+    @dashboard.variables['vh'] = { 'k' => 'v' }
+
+    assert_trace(%w[ {"k"=>"v"} v v done. ], pdef)
   end
 
   # A test about a protected method in FlowExpression, quite low level.

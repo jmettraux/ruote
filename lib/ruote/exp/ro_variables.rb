@@ -76,7 +76,12 @@ module Ruote::Exp
           # if the lookup fails (parent gone) then rescue and let go
       end
 
-      @context.storage.get_engine_variable(var)
+      k = var.split('.').first
+      vars = { k => @context.storage.get_engine_variable(k) }
+        #
+        # engine var lookup might be expensive, only lookup the var we need
+
+      Ruote.lookup(vars, var)
     end
 
     # A shortcut for #lookup_variable
