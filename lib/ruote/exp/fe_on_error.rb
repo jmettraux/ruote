@@ -63,6 +63,9 @@ module Ruote::Exp
 
     names :on_error
 
+    # on_error works by fetching the [direct] parent expression and
+    # adding the error handlers to it
+    #
     def apply
 
       regex = nil

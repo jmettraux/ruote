@@ -22,8 +22,6 @@ class EftOnErrorTest < Test::Unit::TestCase
       echo 'over.'
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for(wfid)
@@ -41,8 +39,6 @@ class EftOnErrorTest < Test::Unit::TestCase
     @dashboard.register_participant :catcher do
       tracer << "caught\n"
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
@@ -63,8 +59,6 @@ class EftOnErrorTest < Test::Unit::TestCase
       tracer << workitem.participant_name
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
@@ -79,8 +73,6 @@ class EftOnErrorTest < Test::Unit::TestCase
       end
       nada
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
@@ -100,8 +92,6 @@ class EftOnErrorTest < Test::Unit::TestCase
       nada
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
 
@@ -119,8 +109,6 @@ class EftOnErrorTest < Test::Unit::TestCase
     @dashboard.register_participant /alpha|bravo/ do |workitem|
       tracer << workitem.participant_name
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
     @dashboard.wait_for(wfid)
@@ -149,8 +137,6 @@ class EftOnErrorTest < Test::Unit::TestCase
       end
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for('dispatch_cancel')
@@ -175,8 +161,6 @@ class EftOnErrorTest < Test::Unit::TestCase
         participant 'toto'
       end
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef)
 

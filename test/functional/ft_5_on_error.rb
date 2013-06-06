@@ -116,6 +116,8 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal(1, ps.errors.size)
   end
 
+  # redo and retry are aliases, the faulty segment is retried
+  #
   def test_on_error_redo
 
     pdef = Ruote.process_definition do
@@ -129,6 +131,8 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_trace(%w[ 1 2 done. ], pdef)
   end
 
+  # redo and retry are aliases, the faulty segment is retried
+  #
   def test_on_error_retry
 
     pdef = Ruote.process_definition do
@@ -648,6 +652,9 @@ class FtOnErrorTest < Test::Unit::TestCase
   end
 
   def test_on_error_immediate
+
+    # the rollback isn't performed,
+    # the !kill_process short circuits cancelling the errored segment...
 
     pdef = Ruote.define do
       define 'rollback' do
