@@ -97,5 +97,20 @@ class EftErrorTest < Test::Unit::TestCase
     assert_equal 'fail!', r['msg']['workitem']['fields']['err']['message']
     assert_equal 'fail!', r['error']['message']
   end
+
+  # When there is no value for the field/variable, don't raise.
+  #
+  def test_error_no_re
+
+    pdef =
+      Ruote.define do
+        error :re => '$f:err'
+      end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal('terminated', r['action'])
+  end
 end
 

@@ -49,7 +49,7 @@ module Ruote::Exp
   #
   # Replaying the error will 'unlock' the process.
   #
-  # == re[raise]
+  # == re[raise] (since ruote 2.3.1)
   #
   # The re or reraise attribute can be used to bring back an error
   # placed in a workitem field or a process variable and raise it
@@ -98,9 +98,9 @@ module Ruote::Exp
 
     protected
 
-    def raise_new_error
+    def raise_new_error(m=nil)
 
-      msg = attribute(:msg) || attribute(:message) || attribute_text
+      msg = m || attribute(:msg) || attribute(:message) || attribute_text
       msg = 'error triggered from process definition' if msg.strip == ''
 
       h.triggered = true
@@ -113,6 +113,9 @@ module Ruote::Exp
     def re_raise
 
       re = attribute(:reraise) || attribute(:re)
+
+      return reply_to_parent(h.applied_workitem) if re.nil?
+      return raise_new_error(re.to_s) unless re.is_a?(Hash)
 
       @context.error_handler.msg_handle(@msg, re)
     end
