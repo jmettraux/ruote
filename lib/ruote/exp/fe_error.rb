@@ -49,6 +49,27 @@ module Ruote::Exp
   #
   # Replaying the error will 'unlock' the process.
   #
+  # == re[raise]
+  #
+  # The re or reraise attribute can be used to bring back an error
+  # placed in a workitem field or a process variable and raise it
+  # again.
+  #
+  #   Ruote.define do
+  #
+  #     define 'handler' do
+  #       set 'f:err' => '$f:__error__'
+  #     end
+  #     sequence :on_error => 'handler' do
+  #       error 'fail!'
+  #     end
+  #
+  #     # error was intercepted and is now stashed in
+  #     # workitem field 'err'
+  #
+  #     error :re => '$f:err'
+  #   end
+  #
   class ErrorExpression < FlowExpression
 
     names :error
@@ -68,6 +89,17 @@ module Ruote::Exp
 
       return reply_to_parent(workitem) if h.triggered
 
+      if has_attribute('re', 'reraise')
+        re_raise
+      else
+        raise_new_error
+      end
+    end
+
+    protected
+
+    def raise_new_error
+
       msg = attribute(:msg) || attribute(:message) || attribute_text
       msg = 'error triggered from process definition' if msg.strip == ''
 
@@ -76,6 +108,13 @@ module Ruote::Exp
       persist_or_raise # to keep track of h.triggered
 
       raise(Ruote::ForcedError.new(msg))
+    end
+
+    def re_raise
+
+      re = attribute(:reraise) || attribute(:re)
+
+      @context.error_handler.msg_handle(@msg, re)
     end
   end
 end

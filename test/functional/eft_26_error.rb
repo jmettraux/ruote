@@ -73,5 +73,29 @@ class EftErrorTest < Test::Unit::TestCase
     assert_nil @dashboard.process(wfid)
     assert_equal 'a', @tracer.to_s
   end
+
+  #
+  # Error re-raising, recall an error stored in a field or a variable.
+  # If the value is nil, don't re-raise.
+
+  def test_error_re
+
+    pdef =
+      Ruote.define do
+        define 'handler' do
+          set 'f:err' => '$f:__error__'
+        end
+        sequence :on_error => 'handler' do
+          error 'fail!'
+        end
+        error :re => '$f:err'
+      end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'fail!', r['msg']['workitem']['fields']['err']['message']
+    assert_equal 'fail!', r['error']['message']
+  end
 end
 

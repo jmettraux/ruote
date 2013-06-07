@@ -68,6 +68,8 @@ module Ruote
     # Packages the error in a 'raise' msg and places it in the storage,
     # for a worker to pick it up.
     #
+    # TODO: investigate: is it still used, relevant? (probably yes, ruote-swf)
+    #
     def msg_raise(msg, err)
 
       fei = msg['fei']
