@@ -18,8 +18,6 @@ class FtTakeAndDiscardAttributesTest < Test::Unit::TestCase
       workitem.fields['b'] = 'B'
     end
 
-    #@dashboard.noisy = true
-
     wfid = @dashboard.launch(Ruote.define do
       set 'f:x' => 'X'
       set 'f:y' => 'Y'
@@ -39,13 +37,12 @@ class FtTakeAndDiscardAttributesTest < Test::Unit::TestCase
       workitem.fields['b'] = 'B'
     end
 
-    #@dashboard.noisy = true
-
-    wfid = @dashboard.launch(Ruote.define do
-      set 'f:x' => 'X'
-      set 'f:y' => 'Y'
-      alpha :take => /^a/
-    end)
+    wfid =
+      @dashboard.launch(Ruote.define do
+        set 'f:x' => 'X'
+        set 'f:y' => 'Y'
+        alpha :take => /^a/
+      end)
 
     r = @dashboard.wait_for(wfid)
 
@@ -60,13 +57,12 @@ class FtTakeAndDiscardAttributesTest < Test::Unit::TestCase
       workitem.fields['c'] = 'C'
     end
 
-    #@dashboard.noisy = true
-
-    wfid = @dashboard.launch(Ruote.define do
-      set 'f:x' => 'X'
-      set 'f:y' => 'Y'
-      alpha :discard => [ 'a', 'b' ]
-    end)
+    wfid =
+      @dashboard.launch(Ruote.define do
+        set 'f:x' => 'X'
+        set 'f:y' => 'Y'
+        alpha :discard => [ 'a', 'b' ]
+      end)
 
     r = @dashboard.wait_for(wfid)
 
@@ -79,12 +75,11 @@ class FtTakeAndDiscardAttributesTest < Test::Unit::TestCase
       workitem.fields['a'] = 'A'
     end
 
-    #@dashboard.noisy = true
-
-    wfid = @dashboard.launch(Ruote.define do
-      set 'f:x' => 'X'
-      alpha :discard => true
-    end)
+    wfid =
+      @dashboard.launch(Ruote.define do
+        set 'f:x' => 'X'
+        alpha :discard => true
+      end)
 
     r = @dashboard.wait_for(wfid)
 
