@@ -51,15 +51,18 @@ class FtRetriesTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, BadParticipant
 
-    pdef = Ruote.process_definition do
-      alpha :on_error => '4x: retry'
-    end
+    pdef =
+      Ruote.process_definition do
+        alpha :on_error => '4x: retry'
+      end
 
     wfid = @dashboard.launch(pdef)
 
     @dashboard.wait_for('error_intercepted')
 
-    assert_equal 'Ruote::MetaError', @dashboard.ps(wfid).errors.first.klass
+    assert_equal(
+      "#<RuntimeError: unknown participant or subprocess '4x: retry'>",
+      @dashboard.ps(wfid).errors.first.message)
   end
 
   #

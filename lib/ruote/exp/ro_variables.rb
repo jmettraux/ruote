@@ -230,10 +230,12 @@ module Ruote::Exp
 
     def set_f(key, value, opts={})
 
+      workitem = opts[:workitem] || h.applied_workitem
+
       if opts[:unset]
-        Ruote.unset(h.applied_workitem['fields'], key)
+        Ruote.unset(workitem['fields'], key)
       else
-        Ruote.set(h.applied_workitem['fields'], key, value)
+        Ruote.set(workitem['fields'], key, value)
       end
     end
 
@@ -242,13 +244,18 @@ module Ruote::Exp
 
     def set_vf(key, value, opts={})
 
-      field, key = if m = PREFIX_REGEX.match(key)
-        [ F_PREFIX_REGEX.match(m[1]), m[2] ]
-      else
-        [ true, key ]
-      end
+      field, key =
+        if m = PREFIX_REGEX.match(key)
+          [ F_PREFIX_REGEX.match(m[1]), m[2] ]
+        else
+          [ true, key ]
+        end
 
-      field ? set_f(key, value, opts) : set_v(key, value, opts)
+      if field
+        set_f(key, value, opts)
+      else
+        set_v(key, value, opts)
+      end
     end
   end
 end

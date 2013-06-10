@@ -80,13 +80,14 @@ module Ruote::Exp
       workitem = msg['workitem']
       workitem['fields']['__error__'] = err
 
-      immediate = if handler.is_a?(String)
-        !! handler.match(/^!/)
-      elsif handler.is_a?(Array)
-        !! handler.first.to_s.match(/^!/)
-      else
-        false
-      end
+      immediate =
+        if handler.is_a?(String)
+          !! handler.match(/^!/)
+        elsif handler.is_a?(Array)
+          !! handler.first.to_s.match(/^!/)
+        else
+          false
+        end
 
       # NOTE: why not pass the handler in the msg?
       #       no, because of HandlerEntry (not JSON serializable)
@@ -280,13 +281,14 @@ module Ruote::Exp
         fi = handler['fields']
         me = handler['merge_in_fields']
 
-        workitem = if wi == 'applied' || me
-          h.applied_workitem
-        elsif wi
-          wi
-        else
-          workitem
-        end
+        workitem =
+          if wi == 'applied' || me
+            h.applied_workitem
+          elsif wi
+            wi
+          else
+            workitem
+          end
 
         workitem['fields'] = fi if fi
         workitem['fields'].merge!(me) if me
@@ -301,16 +303,21 @@ module Ruote::Exp
         workitem = h.supplanted['applied_workitem']
       end
 
-      if on == 'on_error' && handler.respond_to?(:match) && handler.match(/[,:\*]/)
+      if
+        on == 'on_error' &&
+        handler.respond_to?(:match) &&
+        handler.match(/([,\*]|\d+[wdhmsMy]? *:)/)
+      then
         return schedule_retries(handler, err)
       end
 
-      new_tree = case handler
-        when Hash then handler['tree']
-        when Array then handler
-        when HandlerEntry then [ handler.action, {}, [] ]
-        else [ handler.to_s, {}, [] ]
-      end
+      new_tree =
+        case handler
+          when Hash then handler['tree']
+          when Array then handler
+          when HandlerEntry then [ handler.action, {}, [] ]
+          else [ handler.to_s, {}, [] ]
+        end
 
       handler = handler.action if handler.is_a?(HandlerEntry)
       handler = handler.strip if handler.respond_to?(:strip)
@@ -357,6 +364,13 @@ module Ruote::Exp
           # re-raise
 
           raise Ruote.constantize(err['class']), err['message'], err['trace']
+
+        when /^store *: *(.+)/
+
+          h.state = 'failed'
+          set_vf($1, err, :workitem => workitem)
+
+          reply_to_parent(workitem); return
 
         when CommandExpression::REGEXP
           #

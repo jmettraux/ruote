@@ -654,7 +654,7 @@ class FtOnErrorTest < Test::Unit::TestCase
   def test_on_error_immediate
 
     # the rollback isn't performed,
-    # the !kill_process short circuits cancelling the errored segment...
+    # the !kill_process short-circuits cancelling the errored segment...
 
     pdef = Ruote.define do
       define 'rollback' do
@@ -698,6 +698,23 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal %w[ in ], @tracer.to_a
 
     assert_nil @dashboard.ps(wfid)
+  end
+
+  def test_on_error_store_to_field
+
+    pdef =
+      Ruote.define do
+        sequence :on_error => 'store: x' do
+          error 'nada'
+        end
+        echo 'out'
+      end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal %w[ out ], @tracer.to_a
+    assert_equal 'Ruote::ForcedError', r['workitem']['fields']['x']['class']
   end
 end
 

@@ -21,8 +21,6 @@ class EftErrorTest < Test::Unit::TestCase
 
   def test_error
 
-    #noisy
-
     wfid = @dashboard.launch(PDEF0)
 
     wait_for(wfid)
@@ -39,8 +37,6 @@ class EftErrorTest < Test::Unit::TestCase
   end
 
   def test_error_replay
-
-    #noisy
 
     wfid = @dashboard.launch(PDEF0)
 

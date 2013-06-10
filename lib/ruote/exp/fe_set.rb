@@ -222,39 +222,40 @@ module Ruote::Exp
         # the local scope is over,
         # variables set here will be set in the parent scope
 
-      value = if tree_children.empty?
-        lookup_val(opts)
-      else
-        h.applied_workitem['fields']['__result__']
-      end
-        #
-        # a nil value is totally OK
+      value =
+        if tree_children.empty?
+          lookup_val(opts)
+        else
+          h.applied_workitem['fields']['__result__']
+        end
+          #
+          # a nil value is totally OK
 
-      result = if var_key = has_attribute(:v, :var, :variable)
+      h.applied_workitem['fields']['__result__'] =
 
-        set_v(attribute(var_key), value, :unset => unset, :override => over)
+        if var_key = has_attribute(:v, :var, :variable)
 
-      elsif field_key = has_attribute(:f, :fld, :field)
+          set_v(attribute(var_key), value, :unset => unset, :override => over)
 
-        set_f(attribute(field_key), value, :unset => unset)
+        elsif field_key = has_attribute(:f, :fld, :field)
 
-      elsif value == nil && kv
+          set_f(attribute(field_key), value, :unset => unset)
 
-        kv << { :unset => unset, :override => over }
+        elsif value == nil && kv
 
-        set_vf(*kv)
+          kv << { :unset => unset, :override => over }
 
-      elsif kv
+          set_vf(*kv)
 
-        set_vf(kv.first, value, :unset => unset, :override => over)
+        elsif kv
 
-      else
+          set_vf(kv.first, value, :unset => unset, :override => over)
 
-        raise ArgumentError.new(
-          "missing a variable or field target in #{tree.inspect}")
-      end
+        else
 
-      h.applied_workitem['fields']['__result__'] = result
+          raise ArgumentError.new(
+            "missing a variable or field target in #{tree.inspect}")
+        end
 
       super(h.applied_workitem)
     end
