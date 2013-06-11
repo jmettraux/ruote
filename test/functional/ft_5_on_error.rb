@@ -716,5 +716,23 @@ class FtOnErrorTest < Test::Unit::TestCase
     assert_equal %w[ out ], @tracer.to_a
     assert_equal 'Ruote::ForcedError', r['workitem']['fields']['x']['class']
   end
+
+  def test_on_error_store_to_variable
+
+    pdef =
+      Ruote.define do
+        sequence :on_error => 'store:v:y' do
+          error 'nada'
+        end
+        echo 'out'
+      end
+
+    wfid = @dashboard.launch(pdef)
+    r = @dashboard.wait_for(wfid)
+
+    assert_equal 'terminated', r['action']
+    assert_equal %w[ out ], @tracer.to_a
+    assert_equal 'Ruote::ForcedError', r['variables']['y']['class']
+  end
 end
 
