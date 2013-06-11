@@ -721,7 +721,8 @@ class FtOnErrorTest < Test::Unit::TestCase
 
     pdef =
       Ruote.define do
-        sequence :on_error => 'store:v:y' do
+        #sequence :on_error => 'store:v:y' do
+        sequence :on_error => 'bury:v:y' do
           error 'nada'
         end
         echo 'out'

@@ -365,7 +365,7 @@ module Ruote::Exp
 
           raise Ruote.constantize(err['class']), err['message'], err['trace']
 
-        when /^store *: *(.+)/
+        when /^(?:store|bury) *: *(.+)/
 
           h.state = 'failed'
           set_vf($1, err, :workitem => workitem)
