@@ -1,0 +1,8 @@
+
+source 'https://rubygems.org'
+
+gem 'ruote', :path =>  '../..'
+gem 'sinatra'
+gem 'haml'
+gem 'sass'
+

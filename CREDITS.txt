@@ -59,6 +59,7 @@ Richard Jennings
 
 == Feedback
 
+Denis Ahearn - feedback on barley.rb
 Chiradeep Vittal - https://github.com/chiradeep - dashboard.reply(fei)
 Idan Moyal - issue with engine variables and nested keys
 Mark Wotton - https://github.com/mwotton - issue with @seen on JRuby

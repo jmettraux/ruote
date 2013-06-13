@@ -1,6 +1,6 @@
 
 #--
-# Copyright (c) 2010, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2010-2013, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,6 @@
 # featured in
 #   http://jmettraux.wordpress.com/2010/01/29/barley/
 
-
-require 'rubygems'
 
 #
 # the users
@@ -160,10 +158,10 @@ post '/work' do
     workitem.fields['next'] = params['next']
     workitem.fields['task'] = params['task']
     workitem.fields['last'] = Ruote.now_to_utc_s
-    PART.reply(workitem)
+    PART.proceed(workitem)
   else # params['action'] == 'terminate'
     workitem.fields.delete('next')
-    PART.reply(workitem)
+    PART.proceed(workitem)
   end
 
   sleep 0.5
@@ -184,93 +182,92 @@ __END__
     %link( href='http://barley.s3.amazonaws.com/reset.css' type='text/css' rel='stylesheet' )
     %link( href='http://ruote.rubyforge.org/images/ruote.png' type='image/png' rel='icon' )
 
-    %style
-      :sass
-        body
-          font-family: "helvetica neue", helvetica
-          font-size: 14pt
-          margin-left: 20%
-          margin-right: 20%
-          margin-top: 20pt
+    :sass
+      body
+        font-family: "helvetica neue", helvetica
+        font-size: 14pt
+        margin-left: 20%
+        margin-right: 20%
+        margin-top: 20pt
 
-          background: #C0DEED url('http://a3.twimg.com/a/1264550348/images/bg-clouds.png') repeat-x
-        p
-          margin-bottom: 5pt
-        input[type='text']
-          width: 100%
-        img
-          width: 38px
-        a
-          color: black
-          text-decoration: none
-        a:visited
-          color: black
-          text-decoration: none
-        a:active
-          color: black
-          text-decoration: none
-        #barley
-          font-size: 350%
-          font-weight: lighter
-          color: white
-          padding-left: 2pt
-          padding-bottom: 7pt
-        #buttons
-          font-size: 90%
-          color: white
-          margin-bottom: 14pt
-        #buttons a
-          color: white
-        #buttons a:visited
-          color: white
-        .workitem
-          margin-bottom: 7pt
-        .workitem > *
-          float: left
-        .workitem:after
-          display: block
-          clear: both
-          visibility: hidden
-          content: ''
-        .wi_info
-          margin-left: 3pt
-        .wi_user
-          font-weight: bold
-        .wi_task
-          opacity: 0.37
-          cursor: pointer
-        .wi_wfid
-          font-size: 70%
-          vertical-align: middle
-          font-weight: lighter
-        table
-          width: 100%
-        tr.buttons > td
-          text-align: center
-          padding-top: 4pt
-        td
-          vertical-align: middle
-        td.constrained
-          width: 1%
-          padding-right: 1em
-        td.label
-          font-weight: lighter
-        .trace
-          opacity: 0.37
-          margin-bottom: 4pt
-          cursor: pointer
-        .trace_detail
-          padding-left: 2pt
-          border-left: 2.5pt solid #8EC1DA
-        .trace_step
-          width: 100%
-        .trace_step_time
-          font-size: 70%
-        .trace_step_user
-          font-weight: bold
-          opacity: 0.6
-        .trace_step_task
-          opacity: 0.37
+        background: #C0DEED url('http://a3.twimg.com/a/1264550348/images/bg-clouds.png') repeat-x
+      p
+        margin-bottom: 5pt
+      input[type='text']
+        width: 100%
+      img
+        width: 38px
+      a
+        color: black
+        text-decoration: none
+      a:visited
+        color: black
+        text-decoration: none
+      a:active
+        color: black
+        text-decoration: none
+      #barley
+        font-size: 350%
+        font-weight: lighter
+        color: white
+        padding-left: 2pt
+        padding-bottom: 7pt
+      #buttons
+        font-size: 90%
+        color: white
+        margin-bottom: 14pt
+      #buttons a
+        color: white
+      #buttons a:visited
+        color: white
+      .workitem
+        margin-bottom: 7pt
+      .workitem > *
+        float: left
+      .workitem:after
+        display: block
+        clear: both
+        visibility: hidden
+        content: ''
+      .wi_info
+        margin-left: 3pt
+      .wi_user
+        font-weight: bold
+      .wi_task
+        opacity: 0.37
+        cursor: pointer
+      .wi_wfid
+        font-size: 70%
+        vertical-align: middle
+        font-weight: lighter
+      table
+        width: 100%
+      tr.buttons > td
+        text-align: center
+        padding-top: 4pt
+      td
+        vertical-align: middle
+      td.constrained
+        width: 1%
+        padding-right: 1em
+      td.label
+        font-weight: lighter
+      .trace
+        opacity: 0.37
+        margin-bottom: 4pt
+        cursor: pointer
+      .trace_detail
+        padding-left: 2pt
+        border-left: 2.5pt solid #8EC1DA
+      .trace_step
+        width: 100%
+      .trace_step_time
+        font-size: 70%
+      .trace_step_user
+        font-weight: bold
+        opacity: 0.6
+      .trace_step_task
+        opacity: 0.37
 
   %body
 
