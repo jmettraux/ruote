@@ -185,9 +185,9 @@ module Ruote
     #
     def launch(process_definition, fields={}, variables={}, root_stash=nil)
 
-      puts caller.select { |l|
-        ! (l.match(/test\/unit[\.\/]/) or l.match(/\/rspec-core-/))
-      } if @context.logger.noisy
+      #puts caller.select { |l|
+      #  ! (l.match(/test\/unit[\.\/]/) or l.match(/\/rspec-core-/))
+      #} if @context.logger.noisy
         #
         # this is useful when noisy and running through a set of tests
 
