@@ -313,7 +313,9 @@ module Ruote
     # (alpha and bravo).
     #
     # Warning : do not confuse the workitems here with the workitems held
-    # in a storage participant or equivalent.
+    # in a storage participant or equivalent. The workitem returned here
+    # are the workitems as they were right before being sent out to the
+    # participant.
     #
     def workitems
 
