@@ -317,6 +317,12 @@ module Ruote
     # are the workitems as they were right before being sent out to the
     # participant.
     #
+    # Note: the workitems handed out here are not "workitem documents",
+    # they are extracted from the 'participant' expressions in the
+    # expression trees not from the stored workitems lot, they cannot
+    # be updated/proceeded via a storage participant. Consider them
+    # "read only".
+    #
     def workitems
 
       @expressions.select { |fexp|

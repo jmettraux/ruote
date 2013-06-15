@@ -517,6 +517,8 @@
 
 [ ] get rid of the StorageParticipnat class, put the methods on Ruote::Workitem
     (see ft_20 test_update_workitem_alt
+[ ] get rid of separate workitem storage/category? place an index on
+    expression/nodes containing workitems available for update?
 
 == 4.0
 [ ] deprecate listen (await?) or make it an alias of await?
