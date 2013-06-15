@@ -57,6 +57,10 @@ module Ruote
 
     def put(doc, opts={})
 
+      raise ArgumentError.new(
+        "document is missing key 'type' and/or '_id', cannot store it"
+      ) if doc['type'] == nil || doc['_id'] == nil
+
       synchronize do
 
         pre = get(doc['type'], doc['_id'])
@@ -100,6 +104,10 @@ module Ruote
     end
 
     def delete(doc)
+
+      raise ArgumentError.new(
+        "document is missing key 'type' and/or '_id', cannot locate it"
+      ) if doc['type'] == nil || doc['_id'] == nil
 
       drev = doc['_rev']
 
