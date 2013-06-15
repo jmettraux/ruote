@@ -515,6 +515,9 @@
     (let the storage include triggered schedules as msgs)
 [ ] deprecate "trackers as variables"
 
+[ ] get rid of the StorageParticipnat class, put the methods on Ruote::Workitem
+    (see ft_20 test_update_workitem_alt
+
 == 4.0
 [ ] deprecate listen (await?) or make it an alias of await?
 

@@ -748,5 +748,36 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal(777, wi.fields['count'])
   end
+
+  # Originally written by Doug Bryant in
+  # https://groups.google.com/forum/?fromgroups#!topic/openwferu-users/u9NZOurZxXk
+  #
+  def test_update_workitem_alt
+
+    @dashboard.register_participant 'alpha', Ruote::StorageParticipant
+
+    wfid = @dashboard.launch(Ruote.process_definition { alpha })
+
+    wait_for(:alpha)
+
+    #wi = @dashboard.process(wfid).workitems.first
+      # doesn't work: the returned workitem isn't a workite document, it's
+      # just a fragment of info
+
+    wi = @dashboard.process(wfid).stored_workitems.first
+      # works OK
+
+    #wi = alpha.first
+      # works OK, but you have to grab alpha first...
+
+    alpha = @dashboard.participant(wi.participant_name)
+
+    wi.set_field('my_field', 'abc123')
+
+    alpha.update(wi)
+
+    assert_equal nil, @dashboard.process(wfid).workitems.first.fields['my_field']
+    assert_equal 'abc123', alpha.first.fields['my_field']
+  end
 end
 
