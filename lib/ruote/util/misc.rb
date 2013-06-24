@@ -23,6 +23,7 @@
 #++
 
 require 'socket'
+require 'pp'
 
 
 module Ruote
@@ -228,7 +229,7 @@ module Ruote
 
   def self.pps(o, w=79)
 
-    ::PP.pp(o, StringIO.new, w).string
+    PP.pp(o, StringIO.new, w).string
   end
 
   #--
