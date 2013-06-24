@@ -11,7 +11,6 @@
 # gem 'ruote', :git => 'git://github.com/jmettraux/ruote.git'
 # --->8---
 
-require 'pp'
 require 'ruote'
 
 ruote =
