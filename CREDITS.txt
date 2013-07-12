@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Josef Pospíšil - https://github.com/pepe
 Adrien Kohlbecker - https://github.com/adrienkohlbecker
 Chris D - https://github.com/randomcamel
 Max Gfeller - https://github.com/MaxGfeller - quickstart sanity check
