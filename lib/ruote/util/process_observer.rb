@@ -123,7 +123,9 @@ module Ruote
 
     def on_msg(msg) # :nodoc:
 
-      return if @filtered_actions.include? msg['action']
+      action = msg['action']
+
+      return if @filtered_actions.include?(action)
 
       wfid  = msg['wfid']
       child = false
@@ -148,32 +150,30 @@ module Ruote
 
       info = {
         :workitem  => workitem,
-        :action    => msg['action'],
+        :action    => action,
         :child     => child,
         :variables => msg['variables'],
       }
 
-      # the prelimenary method name
-      method = msg['action'].split('_').first
+      # change info based on the action
+      case action
+        when 'launch'
+          info[:pdef] = msg['tree']
 
-      # change method or fields based on the action
-      case msg['action']
-      when 'launch'
-        info[:pdef] = msg['tree']
+        when 'cancel'
+          info[:flavour] = msg['flavour']
 
-      when 'cancel'
-        info[:flavour] = msg['flavour']
+        when 'error_intercepted'
+          error = Kernel.const_get(msg['error']['class']).new(msg['error']['message'])
+          error.set_backtrace msg['error']['trace']
 
-      when 'error_intercepted'
-        error = Kernel.const_get(msg['error']['class']).new(msg['error']['message'])
-        error.set_backtrace msg['error']['trace']
-
-        info[:error] = error
-        method = msg['action']
+          info[:error] = error
       end
 
-      callback = "on_#{method}"
+      callback = "on_#{action}"
+
       if self.respond_to?(callback)
+
         args = [ wfid ]
         args << info if self.method(callback).arity.abs == 2
 
