@@ -12,6 +12,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
   include FunctionalBase
 
   def test_on_launch
+
     observer = Class.new(Ruote::ProcessObserver) do
       class << self
         attr_accessor :started
@@ -21,8 +22,8 @@ class FtProcessObservingTest < Test::Unit::TestCase
         self.class.started = true
       end
 
-      def on_error_intercepted(wfid, fields)
-        ex = fields[:error]
+      def on_error_intercepted(wfid, info)
+        ex = info[:error]
         STDERR.puts "#{ex.class.name}: #{ex.message}"
         STDERR.puts "\t#{ex.backtrace.join("\n\t")}"
       end
@@ -37,13 +38,14 @@ class FtProcessObservingTest < Test::Unit::TestCase
   end
 
   def test_on_sub_launch
+
     observer = Class.new(Ruote::ProcessObserver) do
       class << self
-        attr_accessor :opts, :launches
+        attr_accessor :info, :launches
       end
 
-      def on_launch(wfid, opts)
-        self.class.opts = opts.dup
+      def on_launch(wfid, info)
+        self.class.info = info.dup
         self.class.launches += 1
       end
     end
@@ -63,13 +65,14 @@ class FtProcessObservingTest < Test::Unit::TestCase
     wfid = @dashboard.launch pdef
     @dashboard.wait_for(wfid)
 
-    assert_not_nil observer.opts
+    assert_not_nil observer.info
     assert_equal 2, observer.launches
-    assert_equal true, observer.opts[:child]
-    assert_not_nil observer.opts[:pdef]
+    assert_equal true, observer.info[:child]
+    assert_not_nil observer.info[:pdef]
   end
 
   def test_on_end
+
     observer = Class.new(Ruote::ProcessObserver) do
       class << self
         attr_accessor :stopped
@@ -88,14 +91,15 @@ class FtProcessObservingTest < Test::Unit::TestCase
   end
 
   def test_on_error
+
     observer = Class.new(Ruote::ProcessObserver) do
       class << self
-        attr_accessor :flunked, :opts
+        attr_accessor :flunked, :info
       end
 
-      def on_error_intercepted(wfid, opts)
+      def on_error_intercepted(wfid, info)
         self.class.flunked = true
-        self.class.opts    = opts
+        self.class.info = info
       end
     end
 
@@ -109,12 +113,13 @@ class FtProcessObservingTest < Test::Unit::TestCase
     res  = @dashboard.wait_for(wfid)
 
     assert_equal true, observer.flunked
-    assert_not_nil observer.opts
-    assert_not_nil observer.opts[:error]
-    assert_equal "hell", observer.opts[:error].message
+    assert_not_nil observer.info
+    assert_not_nil observer.info[:error]
+    assert_equal "hell", observer.info[:error].message
   end
 
   def test_on_cancel
+
     observer = Class.new(Ruote::ProcessObserver) do
       class << self
         attr_accessor :canceled
@@ -138,6 +143,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
   end
 
   def test_error_handling
+
     observer = Class.new(Ruote::ProcessObserver) do
       class << self; attr_accessor :flunked; end
       def on_launch(wfid)
@@ -155,3 +161,4 @@ class FtProcessObservingTest < Test::Unit::TestCase
     assert_equal nil, observer.flunked
   end
 end
+

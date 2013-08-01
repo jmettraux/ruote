@@ -41,12 +41,12 @@ module Ruote
   #      end
   #
   #      # tell the listeners that a new process launched
-  #      def on_launch(wfid, opts)
+  #      def on_launch(wfid, info)
   #        @client.publish(
   #          "/process/launch",
-  #          { :name       => opts[:workitem].wf_name,
+  #          { :name       => info[:workitem].wf_name,
   #            :wfid       => wfid,
-  #            :definition => opts[:pdef],
+  #            :definition => info[:pdef],
   #          }
   #        )
   #      end
@@ -78,19 +78,19 @@ module Ruote
   #
   # == Arguments
   #
-  # The methods are called with (wfid[, options])
+  # The methods are called with (wfid[, info])
   #
   # You can provide a method-signature like:
   #
-  #   def on_launch(wfid, options)
+  #   def on_launch(wfid, info)
   #   def on_launch(wfid)
   #
-  # If the ProcessObserver cannot call the method with the options, it tries
-  # to call without options
+  # If the ProcessObserver cannot call the method with the info, it tries
+  # to call without info. The info contains a hash of key/value entries.
   #
-  # === Options
+  # === Info
   #
-  # The following options are provided:
+  # The following info is provided:
   #
   # :workitem::  The workitem, if available
   # :action::    The original name of the action
@@ -104,14 +104,15 @@ module Ruote
   #
   # == Error handling
   #
-  # If anywhere in your implementation an action raises an error, it is caught
-  # by the ProcessObserver and silently ignored.
+  # If anywhere in your implementation an action raises a StandardError,
+  # it is caught by the ProcessObserver and silently ignored.
   #
   class ProcessObserver
 
     attr_reader :context, :options, :filtered_actions
 
     def initialize(context, options={})
+
       @filtered_actions = options.delete(:filtered_actions)
       @filtered_actions ||= []
       @filtered_actions |=  %w[dispatched participant_registered variable_set]
@@ -145,7 +146,7 @@ module Ruote
         Ruote::Workitem.new({})
       end
 
-      data = {
+      info = {
         :workitem  => workitem,
         :action    => msg['action'],
         :child     => child,
@@ -158,31 +159,30 @@ module Ruote
       # change method or fields based on the action
       case msg['action']
       when 'launch'
-        data[:pdef] = msg['tree']
+        info[:pdef] = msg['tree']
 
       when 'cancel'
-        data[:flavour] = msg['flavour']
+        info[:flavour] = msg['flavour']
 
       when 'error_intercepted'
         error = Kernel.const_get(msg['error']['class']).new(msg['error']['message'])
         error.set_backtrace msg['error']['trace']
 
-        data[:error] = error
+        info[:error] = error
         method = msg['action']
       end
 
       callback = "on_#{method}"
       if self.respond_to?(callback)
         args = [ wfid ]
-        args << data if self.method(callback).arity.abs == 2
+        args << info if self.method(callback).arity.abs == 2
 
         self.send(callback, *args)
       end
 
-      return
     rescue
-      return
+      # swallow any StandardError
     end
-
   end
 end
+
