@@ -14,6 +14,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
   def test_on_launch
 
     observer = Class.new(Ruote::ProcessObserver) do
+
       class << self
         attr_accessor :started
       end
@@ -29,7 +30,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
       end
     end
 
-    @dashboard.add_service('start_subscriber', observer)
+    @dashboard.add_service('start_observer', observer)
 
     wfid = @dashboard.launch Ruote.define do; echo "hello"; end
     res  = @dashboard.wait_for(wfid)
@@ -40,6 +41,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
   def test_on_sub_launch
 
     observer = Class.new(Ruote::ProcessObserver) do
+
       class << self
         attr_accessor :info, :launches
       end
@@ -51,7 +53,8 @@ class FtProcessObservingTest < Test::Unit::TestCase
     end
     observer.launches = 0
 
-    @dashboard.add_service("sub_launch_observer", observer)
+    @dashboard.add_service('sub_launch_observer', observer)
+
     pdef = Ruote.define do
       sequence do
         alpha
@@ -74,6 +77,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
   def test_on_end
 
     observer = Class.new(Ruote::ProcessObserver) do
+
       class << self
         attr_accessor :stopped
       end
@@ -82,6 +86,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
         self.class.stopped = true
       end
     end
+
     @dashboard.add_service('stop_server', observer)
 
     wfid = @dashboard.launch Ruote.define do; echo "hello"; end
@@ -93,6 +98,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
   def test_on_error
 
     observer = Class.new(Ruote::ProcessObserver) do
+
       class << self
         attr_accessor :flunked, :info
       end
@@ -103,7 +109,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
       end
     end
 
-    @dashboard.add_service('flunk_subscriber', observer)
+    @dashboard.add_service('observer', observer)
 
     @dashboard.register_participant :pinky do |wi|
       raise "hell"
@@ -121,6 +127,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
   def test_on_cancel
 
     observer = Class.new(Ruote::ProcessObserver) do
+
       class << self
         attr_accessor :canceled
       end
@@ -142,19 +149,25 @@ class FtProcessObservingTest < Test::Unit::TestCase
     assert_equal true, observer.canceled
   end
 
-  def test_error_handling
+  def test_observer_discards_any_error_it_endures
 
     observer = Class.new(Ruote::ProcessObserver) do
-      class << self; attr_accessor :flunked; end
+
+      class << self
+        attr_accessor :flunked
+      end
+
       def on_launch(wfid)
         raise "Sit still! I'm trying to kill you!"
       end
+
       def on_error_intercepted(wfid)
         self.class.flunked = true
       end
     end
 
-    @dashboard.add_service('process_timer', observer)
+    @dashboard.add_service('observer', observer)
+
     wfid = @dashboard.launch Ruote.define do; echo('hi'); end
     res  = @dashboard.wait_for(wfid)
 
