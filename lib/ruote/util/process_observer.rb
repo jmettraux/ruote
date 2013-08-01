@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2012, Hartog de Mik <hartog@organisedminds.com>
+# Copyright (c) 2012-2013, Hartog de Mik <hartog@organisedminds.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -127,6 +127,10 @@ module Ruote
 
       return if @filtered_actions.include?(action)
 
+      callback = "on_#{action}"
+
+      return unless self.respond_to?(callback)
+
       wfid  = msg['wfid']
       child = false
 
@@ -138,47 +142,42 @@ module Ruote
       wfid ||= Ruote.extract_wfid(msg)
       return if !wfid
 
-      workitem = begin
-        if msg['workitem']
-          Ruote::Workitem.new(Rufus::Json.dup(msg['workitem']))
-        else
-          Ruote::Workitem.new({})
-        end
-      rescue
-        Ruote::Workitem.new({})
-      end
-
       info = {
-        :workitem  => workitem,
+        :workitem  => msg['workitem'] || {},
         :action    => action,
         :child     => child,
         :variables => msg['variables'],
       }
 
       # change info based on the action
+
       case action
+
         when 'launch'
+
           info[:pdef] = msg['tree']
 
         when 'cancel'
+
           info[:flavour] = msg['flavour']
 
         when 'error_intercepted'
-          error = Kernel.const_get(msg['error']['class']).new(msg['error']['message'])
-          error.set_backtrace msg['error']['trace']
+
+          error =
+            Kernel.const_get(msg['error']['class']).new(msg['error']['message'])
+          error.set_backtrace(msg['error']['trace'])
 
           info[:error] = error
+
+          info[:workitem] = msg['msg']['workitem']
       end
 
-      callback = "on_#{action}"
+      info[:workitem] = Ruote::Workitem.new(info[:workitem])
 
-      if self.respond_to?(callback)
+      args = [ wfid ]
+      args << info if self.method(callback).arity.abs == 2
 
-        args = [ wfid ]
-        args << info if self.method(callback).arity.abs == 2
-
-        self.send(callback, *args)
-      end
+      self.send(callback, *args)
 
     rescue
       # swallow any StandardError

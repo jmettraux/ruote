@@ -137,7 +137,7 @@ class FtProcessObservingTest < Test::Unit::TestCase
       end
     end
 
-    @dashboard.add_service('cancel_subscriber', observer)
+    @dashboard.add_service('cancel_observer', observer)
 
     @dashboard.register_participant :brain do |wi|
       context.dashboard.cancel(wi.wfid)
@@ -147,6 +147,31 @@ class FtProcessObservingTest < Test::Unit::TestCase
     res  = @dashboard.wait_for(wfid)
 
     assert_equal true, observer.canceled
+  end
+
+  def test_on_error_intercepted
+
+    observer = Class.new(Ruote::ProcessObserver) do
+
+      class << self
+        attr_accessor :wfid
+        attr_accessor :info
+      end
+
+      def on_error_intercepted(wfid, info)
+        self.class.wfid = wfid
+        self.class.info = info
+      end
+    end
+
+    @dashboard.add_service('observer', observer)
+
+    wfid = @dashboard.launch(Ruote.define { nada })
+    @dashboard.wait_for(wfid)
+
+    assert_equal(wfid, observer.wfid)
+    assert_equal(RuntimeError, observer.info[:error].class)
+    assert_equal(wfid, observer.info[:workitem].wfid)
   end
 
   def test_observer_discards_any_error_it_endures
