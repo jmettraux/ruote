@@ -116,7 +116,7 @@ module FunctionalBase
 
     assert_engine_clean(wfid)
 
-    trace = r['workitem']['fields']['_trace']
+    trace = r['workitem'] ? r['workitem']['fields']['_trace'] : nil
     trace = trace ? trace.join('') : @tracer.to_s
 
     if expected_traces.length > 0
