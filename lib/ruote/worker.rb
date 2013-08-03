@@ -31,8 +31,8 @@ module Ruote
   # when there is no reference to the calling worker in the current
   # thread's local variables.
   #
-  DUMMY_WORKER = OpenStruct.new(
-    :name => 'worker', :identity => 'unknown', :state => 'running')
+  DUMMY_WORKER =
+    Struct.new(:name, :identity, :state).new('worker', 'unknown', 'running')
 
   # Warning, this is not equivalent to doing @context.worker, this method
   # fetches the worker from the local thread variables.

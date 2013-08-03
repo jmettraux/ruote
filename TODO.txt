@@ -317,6 +317,8 @@
     `- covered by :flank => true
 [o] concurrence: allow empty
 [o] citerator: allow empty
+[o] remove ostruct in lib/ruote/storage/base.rb
+[o] remove ostruct in lib/ruote/reader.rb
 
 [ ] exp : at expression ? comparable to cron
 [x] exp : exp (restricted form of eval ?) (is it apply ?)
@@ -325,9 +327,6 @@
 [x] exp : parameter
 [ ] exp : log : or could it be a participant ?
 [x] wait_for(:participant) what about 'dispatched' instead of 'dispatch' ?
-
-[ ] remove ostruct in lib/ruote/storage/base.rb
-[ ] remove ostruct in lib/ruote/reader.rb
 
 [ ] define without name (__result__)
 

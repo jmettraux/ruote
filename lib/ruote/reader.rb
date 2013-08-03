@@ -122,14 +122,14 @@ module Ruote
     #
     def self.read(d)
 
-      unless @reader
+      @reader ||=
+        begin
 
-        require 'ostruct'
-        require 'ruote/svc/treechecker'
+          require 'ruote/svc/treechecker'
 
-        @reader = Ruote::Reader.new(
-          OpenStruct.new('treechecker' => Ruote::TreeChecker.new({})))
-      end
+          Ruote::Reader.new(
+            Struct.new(:treechecker).new(Ruote::TreeChecker.new({})))
+        end
 
       @reader.read(d)
     end

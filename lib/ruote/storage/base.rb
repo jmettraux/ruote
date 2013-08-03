@@ -22,7 +22,6 @@
 # Made in Japan.
 #++
 
-require 'ostruct'
 require 'ruote/util/time'
 
 
