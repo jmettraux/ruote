@@ -602,7 +602,7 @@ module Ruote
         next if errors_too == false && error_feis.include?(fexp.fei)
 
         @context.storage.put_msg(
-          'cancel', 'fei' => fexp.fei.h, 're_apply' => {})
+          'cancel', 'fei' => fexp.fei.to_h, 're_apply' => {})
       end
     end
 

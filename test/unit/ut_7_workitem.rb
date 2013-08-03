@@ -101,8 +101,8 @@ class UtWorkitemTest < Test::Unit::TestCase
 
   def test_from_json
 
-    assert_equal WI, Ruote::Workitem.from_json(WI_JSON).h
-    assert_equal WI, Ruote::Workitem.from_json(WI_PRETTY_JSON).h
+    assert_equal WI, Ruote::Workitem.from_json(WI_JSON).to_h
+    assert_equal WI, Ruote::Workitem.from_json(WI_PRETTY_JSON).to_h
   end
 
   def test_as_json

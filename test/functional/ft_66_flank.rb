@@ -31,7 +31,7 @@ class FtFlankTest < Test::Unit::TestCase
     ps = @dashboard.ps(wfid)
 
     assert_equal 4, ps.expressions.size
-    assert_equal [ ps.expressions[2].fei.h ], ps.expressions[1].h.flanks
+    assert_equal [ ps.expressions[2].fei.to_h ], ps.expressions[1].h.flanks
 
     assert_equal(
       [ ["participant", { "flank" => true, "ref" => "bravo" }, [] ],

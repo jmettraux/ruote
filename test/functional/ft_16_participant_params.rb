@@ -23,8 +23,6 @@ class FtParticipantParamsTest < Test::Unit::TestCase
 
     alpha = @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -50,8 +48,6 @@ class FtParticipantParamsTest < Test::Unit::TestCase
     end
 
     @dashboard.register { catchall }
-
-    #@dashboard.noisy = true
 
     @dashboard.launch(pdef)
 
@@ -83,8 +79,6 @@ class FtParticipantParamsTest < Test::Unit::TestCase
       context.tracer << "pof_theme:#{workitem.param_or_field(:theme)}\n"
       context.tracer << "fop_theme:#{workitem.field_or_param(:theme)}\n"
     end
-
-    #@dashboard.noisy = true
 
     wfid = @dashboard.launch(pdef, 'theme' => 'mozart')
     @dashboard.wait_for(wfid)

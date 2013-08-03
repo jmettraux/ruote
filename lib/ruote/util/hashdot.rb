@@ -25,52 +25,68 @@
 
 module Ruote
 
-  module HashDot
+  class HashWrapper
+
+    DELEGATED = %w[ delete size length [] []= ]
+
+    def initialize(h)
+
+      @h = h
+    end
+
+    def to_h
+
+      @h
+    end
 
     def method_missing(m, *args)
 
-      m = m.to_s
+      k = m.to_s
 
-      if m[-1, 1] == '='
-        if args.first.nil?
-          self.delete(m[0..-2]); nil
-        else
-          self[m[0..-2]] = args.first
-        end
-      else
-        self[m]
+      return @h.send(k, *args) if DELEGATED.include?(k)
+
+      if k[-1, 1] == '=' && args.size == 1
+        @h[k[0..-2]] = args.first
+      elsif args.size == 0
+        @h[k]
       end
     end
-
-    def dump
-
-      s = "~~ h ~~\n"
-      each do |k, v|
-        s << "  * '#{k}' => "
-        s << v.inspect
-        s << "\n"
-      end
-      s << "~~ . ~~"
-    end
-
-    #--
-    # Useful when debugging some 'stack too deep' issue
-    #
-    #def self.included(target)
-    #  raise target.to_s unless target.to_s.match(/\bHash\b/)
-    #end
-    #++
   end
 
   module WithH
 
+#    def h=(hash)
+#
+#      @h = hash
+#      @hw = nil
+#    end
+
+    def h
+
+      @hw ||= HashWrapper.new(@h)
+    end
+
+    def to_h
+
+      @h
+    end
+
     def self.included(target)
 
       def target.h_reader(*names)
+
         names.each do |name|
-          define_method(name) do
-            @h[name.to_s]
-          end
+
+          define_method(name) { @h[name.to_s] }
+        end
+      end
+
+      def target.h_accessor(*names)
+
+        names.each do |name|
+
+          define_method(name) { @h[name.to_s] }
+          define_method("#{name}=") { |val| @h[name.to_s] = val }
         end
       end
     end

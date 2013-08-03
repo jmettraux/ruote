@@ -61,31 +61,27 @@ module Ruote
   #
   class FlowExpressionId
 
+    include WithH
+
     CHILD_SEP = '_'
 
-    attr_reader :h
+    def initialize(hash)
 
-    def initialize(h)
+      @h = hash
 
-      @h = h
-      class << h; include Ruote::HashDot; end
-
-      sub_wfid = @h.delete('sub_wfid')
-      @h['subid'] ||= sub_wfid
+      sub_wfid = h.delete('sub_wfid')
+      h.subid ||= sub_wfid
         #
         # TODO : for 2.2.2, remove those two lines
     end
 
-    def expid; @h['expid']; end
-    def wfid; @h['wfid']; end
-    def engine_id; @h['engine_id']; end
-    def subid; @h['subid']; end
+    h_reader :expid, :wfid, :engine_id, :subid
 
     alias sub_wfid subid
 
     def to_storage_id
 
-      "#{@h['expid']}!#{@h['subid']}!#{@h['wfid']}"
+      [ expid, subid, wfid ].join('!')
     end
 
     alias sid to_storage_id
@@ -94,14 +90,14 @@ module Ruote
     #
     def short_sid
 
-      "#{@h['expid']}!#{@h['subid'][0, 5]}!#{@h['wfid']}"
+      [ expid, subid[0, 5], wfid ].join('!')
     end
 
     #   wfid!!expid
     #
     def to_sortable_id
 
-      "#{@h['wfid']}!!#{@h['expid']}"
+      [ wfid, expid ].join('!!')
     end
 
     def self.to_storage_id(hfei)
@@ -134,7 +130,7 @@ module Ruote
     #
     def mnemo_id
 
-      Rufus::Mnemo.from_i(@h['subid'][0, 9].to_i(16))
+      Rufus::Mnemo.from_i(h.subid[0, 9].to_i(16))
     end
 
     # For proper hashing and sorting.
@@ -168,11 +164,6 @@ module Ruote
     def self.child_id(h)
 
       h['expid'].split(CHILD_SEP).last.to_i
-    end
-
-    def to_h
-
-      @h
     end
 
     # Returns true if other_fei is the fei of a child expression of
@@ -210,8 +201,8 @@ module Ruote
       end
 
       return extract_h(arg.fei) if arg.respond_to?(:fei)
-      return arg.h if arg.is_a?(Ruote::FlowExpressionId)
-      return arg.h['fei'] if arg.is_a?(Ruote::Workitem)
+      return arg.to_h if arg.is_a?(Ruote::FlowExpressionId)
+      return arg.h.fei if arg.is_a?(Ruote::Workitem)
 
       if arg.is_a?(String)
 

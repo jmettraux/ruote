@@ -35,7 +35,7 @@ class FtLaunchitemTest < Test::Unit::TestCase
       @dashboard.context.stash[:fields].delete('dispatched_at'))
 
     assert_equal(
-      {"a"=>0, "b"=>1, "params"=>{"ref"=>"alpha"}},
+      { 'a' => 0, 'b' => 1, 'params' => { 'ref' => 'alpha' } },
       @dashboard.context.stash[:fields])
   end
 

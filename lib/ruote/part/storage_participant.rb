@@ -101,7 +101,7 @@ module Ruote
     #
     def update(workitem)
 
-      r = @context.storage.put(workitem.h)
+      r = @context.storage.put(workitem.to_h)
 
       r.is_a?(Hash) ? Ruote::Workitem.new(r) : r
     end

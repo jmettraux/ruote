@@ -193,7 +193,7 @@ module Ruote
     #
     def attach(fei_or_fe, definition, opts={})
 
-      fe = Ruote.extract_fexp(@context, fei_or_fe).h
+      fe = Ruote.extract_fexp(@context, fei_or_fe).to_h
       fei = fe['fei']
 
       cfei = fei.merge(
@@ -403,7 +403,7 @@ module Ruote
       fexp = Ruote::Exp::FlowExpression.fetch(@context, fei)
 
       workitem ||= fexp.applied_workitem
-      workitem = workitem.h if workitem.respond_to?(:h)
+      workitem = workitem.to_h if workitem.respond_to?(:to_h)
       workitem['fei'] = fei
 
       fexp.reply_to_parent(workitem)
@@ -1272,7 +1272,7 @@ module Ruote
         fexp.h.updated_tree = opts[:tree]
       end
 
-      r = @context.storage.put(fexp.h)
+      r = @context.storage.put(fexp.to_h)
 
       raise ArgumentError.new(
         "expression #{fei.sid} is gone"
@@ -1300,7 +1300,7 @@ module Ruote
         feis = exps.collect { |fexp| fexp.fei }
 
         roots = exps.inject([]) { |a, fexp|
-          a << fexp.fei.h unless feis.include?(fexp.parent_id)
+          a << fexp.fei.to_h unless feis.include?(fexp.parent_id)
           a
         }
 

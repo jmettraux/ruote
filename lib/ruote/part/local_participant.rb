@@ -159,12 +159,12 @@ module Ruote
       wi ||= workitem()
       opts ||= {}
 
-      wi.h['re_dispatch_count'] = wi.h['re_dispatch_count'].to_s.to_i + 1
+      wi.h.re_dispatch_count = wi.h.re_dispatch_count.to_s.to_i + 1
 
       msg = {
         'action' => 'dispatch',
         'fei' => wi.h.fei,
-        'workitem' => wi.h,
+        'workitem' => wi.to_h,
         'participant_name' => wi.participant_name
       }
 
@@ -212,7 +212,7 @@ module Ruote
     #
     def unschedule_re_dispatch(fei=nil)
 
-      if s = fexp.h['re_dispatch_sched_id']
+      if s = fexp.h.re_dispatch_sched_id
         @context.storage.delete_schedule(s)
       end
     end

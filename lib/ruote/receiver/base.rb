@@ -137,7 +137,7 @@ module Ruote
 
       err.set_backtrace(trace || err.backtrace || caller)
 
-      workitem = workitem.h if workitem.respond_to?(:h)
+      workitem = workitem.to_h if workitem.respond_to?(:to_h)
 
       at = Ruote.now_to_utc_s
 

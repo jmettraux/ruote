@@ -52,8 +52,6 @@ module Ruote::Exp
     #
     def self.dummy(h)
 
-      class << h; include Ruote::HashDot; end
-
       fe = self.allocate
       fe.instance_variable_set(:@h, h)
 

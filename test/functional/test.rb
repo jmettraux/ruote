@@ -16,6 +16,7 @@ def l(t)
     es = $?.exitstatus
     es = es.nil? ? 66 : es.to_s.to_i
 
+    #return if es != 0 && t.match(/eft_6_/)
     exit(es) if es != 0
 
   else

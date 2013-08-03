@@ -90,7 +90,7 @@ class FtAttachTest < Test::Unit::TestCase
     end
 
     fe = @dashboard.ps(wfid).expressions.last
-    fei = @dashboard.attach(fe.h, adef)
+    fei = @dashboard.attach(fe.to_h, adef)
     r = @dashboard.wait_for('ceased')
 
     ps = @dashboard.ps(wfid)

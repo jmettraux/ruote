@@ -37,31 +37,11 @@ module Ruote
   #
   class Workitem
 
-    attr_reader :h
+    include WithH
 
     def initialize(h)
 
       @h = h
-      class << @h; include Ruote::HashDot; end
-
-      #class << @h['fields']
-      #  alias_method :__get, :[]
-      #  alias_method :__set, :[]=
-      #  def [](key)
-      #    __get(key.to_s)
-      #  end
-      #  def []=(key, value)
-      #    __set(key.to_s, value)
-      #  end
-      #end
-        # indifferent access, not activated for now
-    end
-
-    # Returns the underlying Hash instance.
-    #
-    def to_h
-
-      @h
     end
 
     # Returns the String id for this workitem (something like
@@ -88,7 +68,7 @@ module Ruote
     #
     def fei
 
-      FlowExpressionId.new(@h['fei'])
+      FlowExpressionId.new(h.fei)
     end
 
     # Returns a complete copy of this workitem.
@@ -104,21 +84,21 @@ module Ruote
     #
     def participant_name
 
-      @h['participant_name']
+      h.participant_name
     end
 
     # Returns the name of the workflow to which this workitem belongs, or nil.
     #
-    def wf_name; @h['wf_name']; end
+    def wf_name; h.wf_name; end
 
     # Returns the revision of the workflow to which this workitem belongs,
     # or nil.
     #
-    def wf_revision; @h['wf_revision']; end
+    def wf_revision; h.wf_revision; end
 
     # Returns the UTC time string indicating when the workflow was launched.
     #
-    def wf_launched_at; @h['wf_launched_at']; end
+    def wf_launched_at; h.wf_launched_at; end
 
     alias launched_at wf_launched_at
     alias definition_name wf_name
@@ -128,30 +108,24 @@ module Ruote
     # (If it's in the main flow, it will return the name of the main flow,
     # if that flow has a name...)
     #
-    def sub_wf_name; @h['sub_wf_name']; end
+    def sub_wf_name; h.sub_wf_name; end
 
     # The equivalent of #sub_wf_name for revisions.
     #
-    def sub_wf_revision; @h['sub_wf_revision']; end
+    def sub_wf_revision; h.sub_wf_revision; end
 
     # Returns the UTC time string indicating when the sub-workflow was launched.
     #
-    def sub_wf_launched_at; @h['sub_wf_launched_at']; end
+    def sub_wf_launched_at; h.sub_wf_launched_at; end
 
     # Used by some participants, returns the "owner" of the workitem. Mostly
     # used when reserving workitems.
     #
-    def owner
-
-      @h['owner']
-    end
+    def owner; h.owner; end
 
     # Returns the payload, ie the fields hash.
     #
-    def fields
-
-      @h['fields']
-    end
+    def fields; h.fields; end
 
     # Sets all the fields in one sweep.
     #
@@ -159,7 +133,7 @@ module Ruote
     #
     def fields=(fields)
 
-      @h['fields'] = fields
+      h.fields = fields
     end
 
     # A shortcut to the value in the field named __result__
@@ -193,7 +167,7 @@ module Ruote
     def ==(other)
 
       return false if other.class != self.class
-      self.h['fei'] == other.h['fei']
+      self.h.fei == other.h.fei
     end
 
     alias eql? ==
@@ -202,7 +176,7 @@ module Ruote
     #
     def hash
 
-      self.h['fei'].hash
+      self.h.fei.hash
     end
 
     # For a simple key
@@ -223,7 +197,7 @@ module Ruote
     #
     def lookup(key, container_lookup=false)
 
-      Ruote.lookup(@h['fields'], key, container_lookup)
+      Ruote.lookup(h.fields, key, container_lookup)
     end
 
     # 'lf' for 'lookup field'
@@ -241,7 +215,7 @@ module Ruote
     #
     def set_field(key, value)
 
-      Ruote.set(@h['fields'], key, value)
+      Ruote.set(h.fields, key, value)
     end
 
     # Shortcut for #lookup(key)
@@ -274,14 +248,14 @@ module Ruote
     #
     def timed_out
 
-      @h['fields']['__timed_out__']
+      h.fields['__timed_out__']
     end
 
     # Shortcut for wi.fields['__error__']
     #
     def error
 
-      @h['fields']['__error__']
+      h.fields['__error__']
     end
 
     # Shortcut for wi.fields['params']
@@ -297,7 +271,7 @@ module Ruote
     #
     def params
 
-      @h['fields']['params'] || {}
+      h.fields['params'] || {}
     end
 
     # When a participant is invoked like in
@@ -336,7 +310,7 @@ module Ruote
 
       key = key.to_s
 
-      (@h['fields']['params'] || {})[key] || @h['fields'][key]
+      (h.fields['params'] || {})[key] || h.fields[key]
     end
 
     # Like #param_or_field, but priority is given to the field.
@@ -345,15 +319,19 @@ module Ruote
 
       key = key.to_s
 
-      @h['fields'][key] || (@h['fields']['params'] || {})[key]
+      h.fields[key] || (h.fields['params'] || {})[key]
     end
+
+    alias pof param_or_field
+    alias fop field_or_param
 
     # Shortcut to the temporary/trailing fields
     #
     # http://groups.google.com/group/openwferu-users/browse_thread/thread/981dba6204f31ccc
     #
     def t
-      @h['fields']['t'] ||= {}
+
+      h.fields['t'] ||= {}
     end
 
     # (advanced)
@@ -365,7 +343,7 @@ module Ruote
     #
     def command
 
-      @h['fields']['__command__']
+      h.fields['__command__']
     end
 
     # (advanced)
@@ -381,14 +359,14 @@ module Ruote
       com = [ com.first, com.last ]
       com[1] = com[1].to_i if com[1] and com[0] != 'jump'
 
-      @h['fields']['__command__'] = com
+      h.fields['__command__'] = com
     end
 
     # Shortcut for wi.fields['__tags__']
     #
     def tags
 
-      @h['fields']['__tags__'] || []
+      h.fields['__tags__'] || []
     end
 
     # How many times was this workitem re_dispatched ?
@@ -398,7 +376,7 @@ module Ruote
     #
     def re_dispatch_count
 
-      @h['re_dispatch_count'] || 0
+      h.re_dispatch_count || 0
     end
 
     # Encodes this workitem as JSON. If pretty is set to true, will output
@@ -429,7 +407,7 @@ module Ruote
     #
     def add_tag(tag)
 
-      (@h['fields']['__tags__'] ||= []) << tag
+      (h.fields['__tags__'] ||= []) << tag
     end
 
     # Used by FlowExpression when leaving a tag.
@@ -441,13 +419,13 @@ module Ruote
       # normally, it should only be a tags.pop(), but since user have
       # access to the workitem and its fields... better be safe than sorry
 
-      tags = (@h['fields']['__tags__'] || [])
+      tags = (h.fields['__tags__'] || [])
 
       if index = tags.rindex(tag)
         tags.delete_at(index)
       end
 
-      @h['fields']['__left_tag__'] = tag
+      h.fields['__left_tag__'] = tag
     end
   end
 end

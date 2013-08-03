@@ -90,9 +90,7 @@ module Ruote
 
     def put_msg(action, options)
 
-      msg = prepare_msg_doc(action, options)
-
-      put(msg)
+      put(prepare_msg_doc(action, options))
     end
 
     def get_msgs

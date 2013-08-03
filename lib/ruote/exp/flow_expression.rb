@@ -96,8 +96,6 @@ module Ruote::Exp
       on_error on_cancel on_timeout
     ]
 
-    attr_reader :h
-
     h_reader :variables
     h_reader :created_time
     h_reader :original_tree
@@ -121,14 +119,14 @@ module Ruote::Exp
     #
     attr_accessor :error
 
-    def initialize(context, h)
+    def initialize(context, hash)
 
       @context = context
 
       @msg = nil
         # contains generally the msg the expression got instantiated for
 
-      self.h = h
+      @h = hash
 
       h._id ||= Ruote.to_storage_id(h.fei)
       h['type'] ||= 'expressions'
@@ -141,12 +139,6 @@ module Ruote::Exp
       h.on_error ||= attribute(:on_error)
       h.on_timeout ||= attribute(:on_timeout)
       h.on_terminate ||= attribute(:on_terminate)
-    end
-
-    def h=(hash)
-
-      @h = hash
-      class << @h; include Ruote::HashDot; end
     end
 
     # Returns the Ruote::FlowExpressionId for this expression.
@@ -210,7 +202,7 @@ module Ruote::Exp
       current = @h
 
       exps = @context.storage.find_expressions(
-        @h['fei']['wfid']
+        h.fei['wfid']
       ).each_with_object({}) { |exp, h|
         h[exp['fei']] = exp
       }
@@ -241,14 +233,6 @@ module Ruote::Exp
     def is_concurrent?
 
       false
-    end
-
-    # Turns this FlowExpression instance into a Hash (well, just hands back
-    # the base hash behind it).
-    #
-    def to_h
-
-      @h
     end
 
     # Returns a one-off Ruote::Workitem instance (the applied workitem).
@@ -572,8 +556,8 @@ module Ruote::Exp
         f = h.state.nil? && attribute(:vars_to_f)
         Ruote.set(workitem['fields'], f, h.variables) if f
 
-        workitem['sub_wf_name'] = @h.applied_workitem['sub_wf_name']
-        workitem['sub_wf_revision'] = @h.applied_workitem['sub_wf_revision']
+        workitem['sub_wf_name'] = h.applied_workitem['sub_wf_name']
+        workitem['sub_wf_revision'] = h.applied_workitem['sub_wf_revision']
 
         leave_tag(workitem) if h.tagname
 
@@ -647,7 +631,7 @@ module Ruote::Exp
 
       if h.state == 'paused'
 
-        (h['paused_replies'] ||= []) << msg
+        (h.paused_replies ||= []) << msg
 
         do_persist
 
@@ -774,12 +758,12 @@ module Ruote::Exp
     #
     def do_fail(msg)
 
-      @h['state'] = 'failing'
-      @h['applied_workitem'] = msg['workitem']
+      h.state = 'failing'
+      h.applied_workitem = msg['workitem']
 
       if h.children.size < 1
 
-        reply_to_parent(@h['applied_workitem'])
+        reply_to_parent(h.applied_workitem)
 
       else
 
@@ -803,7 +787,7 @@ module Ruote::Exp
 
       return if h.state != nil
 
-      h['state'] = 'paused'
+      h.state = 'paused'
 
       do_persist || return
 
@@ -819,7 +803,7 @@ module Ruote::Exp
 
       return unless h.state == 'paused' || h.state == 'awaiting'
 
-      h['state'] = nil
+      h.state = nil
 
       m = h.delete('paused_apply')
       return do_apply(m) if m
