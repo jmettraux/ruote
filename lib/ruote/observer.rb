@@ -34,6 +34,10 @@ module Ruote
   #
   #   class MyLaunchObserver < Ruote::Observer
   #
+  #     def on_pre_msg_launch(msg)
+  #       puts "about to launch process instance #{msg['wfid']}"
+  #     end
+  #
   #     def on_msg_launch(msg)
   #       puts "just launched process instance #{msg['wfid']}"
   #     end
@@ -45,8 +49,8 @@ module Ruote
   #
   #   # ...
   #
-  # Simply add a "on_msg_<msg_name>" method for it to intercept the
-  # given messages.
+  # Simply add a "on_pre_msg_<msg_name>" or "on_msg_<msg_name>" method
+  # for it to intercept the given messages.
   #
   # See Ruote::ProcessObserver for a base class with precisely defined
   # methods with helpful arguments if you don't want to investigate
