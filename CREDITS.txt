@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Denis Ahearn - https://github.com/denisahearn
 Josef Pospíšil - https://github.com/pepe
 Adrien Kohlbecker - https://github.com/adrienkohlbecker
 Chris D - https://github.com/randomcamel
@@ -60,7 +61,6 @@ Richard Jennings
 
 == Feedback
 
-Denis Ahearn - feedback on barley.rb
 Chiradeep Vittal - https://github.com/chiradeep - dashboard.reply(fei)
 Idan Moyal - issue with engine variables and nested keys
 Mark Wotton - https://github.com/mwotton - issue with @seen on JRuby
