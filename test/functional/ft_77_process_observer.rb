@@ -38,6 +38,33 @@ class FtProcessObservingTest < Test::Unit::TestCase
     assert_equal true, observer.started
   end
 
+  def test_on_pre_launch
+
+    observer = Class.new(Ruote::ProcessObserver) do
+
+      class << self
+        attr_accessor :about_to_start
+      end
+
+      def on_pre_launch(wfid)
+        self.class.about_to_start = true
+      end
+
+      def on_error_intercepted(wfid, info)
+        ex = info[:error]
+        STDERR.puts "#{ex.class.name}: #{ex.message}"
+        STDERR.puts "\t#{ex.backtrace.join("\n\t")}"
+      end
+    end
+
+    @dashboard.add_service('start_observer', observer)
+
+    wfid = @dashboard.launch Ruote.define do; echo "hello"; end
+    res  = @dashboard.wait_for(wfid)
+
+    assert_equal true, observer.about_to_start
+  end
+
   def test_on_sub_launch
 
     observer = Class.new(Ruote::ProcessObserver) do
@@ -93,6 +120,27 @@ class FtProcessObservingTest < Test::Unit::TestCase
     res  = @dashboard.wait_for(wfid)
 
     assert_equal true, observer.stopped
+  end
+
+  def test_on_pre_end
+
+    observer = Class.new(Ruote::ProcessObserver) do
+
+      class << self
+        attr_accessor :about_to_stop
+      end
+
+      def on_pre_terminated(wfid)
+        self.class.about_to_stop = true
+      end
+    end
+
+    @dashboard.add_service('stop_server', observer)
+
+    wfid = @dashboard.launch Ruote.define do; echo "hello"; end
+    res  = @dashboard.wait_for(wfid)
+
+    assert_equal true, observer.about_to_stop
   end
 
   def test_on_error

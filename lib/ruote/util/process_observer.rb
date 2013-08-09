@@ -85,6 +85,12 @@ module Ruote
   #   def on_launch(wfid, info)
   #   def on_launch(wfid)
   #
+  # ProcessObserver also supports on_pre methods.  You can provide a
+  # method-signature like:
+  #
+  #   def on_pre_launch(wfid, info)
+  #   def on_pre_launch(wfid)
+  #
   # If the ProcessObserver cannot call the method with the info, it tries
   # to call without info. The info contains a hash of key/value entries.
   #
@@ -121,13 +127,25 @@ module Ruote
       @options = options
     end
 
-    def on_msg(msg) # :nodoc:
+    def on_pre_msg(msg)
+
+      route('pre', msg)
+    end
+
+    def on_msg(msg)
+
+      route(nil, msg)
+    end
+
+    protected
+
+    def route(time, msg)
 
       action = msg['action']
 
       return if @filtered_actions.include?(action)
 
-      callback = "on_#{action}"
+      callback = [ 'on', time, action ].compact.join('_')
 
       return unless self.respond_to?(callback)
 
