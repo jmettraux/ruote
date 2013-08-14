@@ -89,7 +89,7 @@ module Ruote
 
       doc['store_name'] = @store_name if @store_name
 
-      @context.storage.put(doc)
+      @context.storage.put(doc, :update_rev => true)
     end
 
     # Used by client code when "saving" a workitem (fields may have changed).
