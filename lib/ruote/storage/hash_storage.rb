@@ -73,7 +73,7 @@ module Ruote
           return true
         end
 
-        puts caller unless doc.is_a?(Hash)
+        #puts caller unless doc.is_a?(Hash)
 
         doc =
           if opts[:update_rev]
