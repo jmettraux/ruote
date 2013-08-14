@@ -61,6 +61,7 @@ Richard Jennings
 
 == Feedback
 
+Eric Haney - StorageParticipant#update in #on_workitem
 Chiradeep Vittal - https://github.com/chiradeep - dashboard.reply(fei)
 Idan Moyal - issue with engine variables and nested keys
 Mark Wotton - https://github.com/mwotton - issue with @seen on JRuby

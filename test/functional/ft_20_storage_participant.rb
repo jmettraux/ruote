@@ -21,8 +21,6 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -53,8 +51,6 @@ class FtStorageParticipantTest < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
-
-    #noisy
 
     wfid = @dashboard.launch(pdef)
 
@@ -343,8 +339,6 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     @dashboard.register_participant :alpha, Ruote::StorageParticipant
 
-    #noisy
-
     wfid = @dashboard.launch(pdef)
 
     wait_for(:alpha)
@@ -542,8 +536,6 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
   def test_reserve
 
-    #@dashboard.noisy = true
-
     @dashboard.register { catchall }
 
     wfid = @dashboard.launch(Ruote.define do
@@ -588,8 +580,6 @@ class FtStorageParticipantTest < Test::Unit::TestCase
   end
 
   def test_delegate
-
-    #@dashboard.noisy = true
 
     @dashboard.register { catchall }
 
@@ -778,6 +768,33 @@ class FtStorageParticipantTest < Test::Unit::TestCase
 
     assert_equal nil, @dashboard.process(wfid).workitems.first.fields['my_field']
     assert_equal 'abc123', alpha.first.fields['my_field']
+  end
+
+  #
+  # fighting the issue in
+  # https://groups.google.com/forum/#!topic/openwferu-users/J2LfW2Bk6Hk
+
+  class MyStorageParticipant < Ruote::StorageParticipant
+    def on_workitem
+      super
+      workitem.fields['toto'] = 'nada'
+      update(workitem)
+      workitem.fields['toto'] = 'nada2'
+      update(workitem)
+    end
+  end
+
+  def test_update_workitem_in_in_workitem
+
+    @dashboard.register 'msp', MyStorageParticipant
+
+    wfid = @dashboard.launch(Ruote.define do; msp; end)
+
+    wait_for(:msp)
+
+    wi = @dashboard.process(wfid).stored_workitems.first
+
+    assert_equal 'nada2', wi.fields['toto']
   end
 end
 
