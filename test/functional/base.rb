@@ -225,25 +225,23 @@ end
 # Our tracer class.
 #
 class Tracer
-  attr_reader :s
-  def initialize
-    super
-    @s = ''
-  end
   def to_s
-    @s.to_s.strip
+    s.to_s.strip
   end
   def to_a
     to_s.split("\n")
   end
   def << s
-    @s << s
+    self.s << s
   end
   def clear
-    @s = ''
+    self.s.clear
   end
   def puts(s)
-    @s << "#{s}\n"
+    self.s << "#{s}\n"
+  end
+  def s
+    @s ||= ''
   end
 end
 
