@@ -154,8 +154,8 @@ module Ruote::Exp
         when true
           false # do not go on
         when Hash
-          self.h = r
-          self.send("do_#{@msg['action']}", @msg)
+          @h = r
+          self.send("do_#{@msg['action']}", @msg) if @msg
           false # do not go on
         else
           true # success, do go on
