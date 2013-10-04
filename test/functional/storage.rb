@@ -696,7 +696,7 @@ class FtStorage < Test::Unit::TestCase
         '_id' => id,
         'type' => 'errors',
         'msg' => "whatever #{i}",
-        'wfid' => id.split('!').last)
+        'fei' => { 'wfid' => id.split('!').last } )
 
       id
     end
