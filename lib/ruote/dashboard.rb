@@ -1255,6 +1255,13 @@ module Ruote
       @context.logger.noisy = b
     end
 
+    # Returns true or false, whether the noisy in on or off.
+    #
+    def noisy
+
+      @context.logger.noisy
+    end
+
     # Warning: advanced method.
     #
     # Currently only used by mutations.

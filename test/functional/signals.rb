@@ -10,7 +10,11 @@
 #
 trap 'INT' do
 
-  if $_dashboard && ! (ARGV.include?('-N') || ENV['NOISY'])
+  if
+    $_dashboard &&
+    ! (ARGV.include?('-N') || ENV['NOISY']) &&
+    ! $_dashboard.noisy
+  then
     puts
     puts '-' * 80
     puts $_dashboard.context.logger.fancy_log

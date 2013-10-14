@@ -97,7 +97,8 @@ class Ruote::WaitLogger
     wo = Ruote.current_worker
     woi = [ wo.object_id.to_s[-2..-1] ]
     if wo.class != Ruote::Worker || wo.name != 'worker'
-      woi << wo.class.name.split('::').last[0, 2]
+      #woi << wo.class.name.split('::').last[0, 2]
+      woi << (wo.class.name.split('::').last[0, 2] rescue 'ni')
       woi << wo.name[0, 2]
     end
     woi = woi.join(':')
