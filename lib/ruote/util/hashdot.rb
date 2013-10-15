@@ -55,11 +55,11 @@ module Ruote
 
   module WithH
 
-#    def h=(hash)
-#
-#      @h = hash
-#      @hw = nil
-#    end
+    def h=(hash)
+
+      @h = hash
+      @hw = nil
+    end
 
     def h
 

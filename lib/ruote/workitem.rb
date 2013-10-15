@@ -41,7 +41,7 @@ module Ruote
 
     def initialize(h)
 
-      @h = h
+      self.h = h
     end
 
     # Returns the String id for this workitem (something like

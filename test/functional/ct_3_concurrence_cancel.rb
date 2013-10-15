@@ -18,10 +18,9 @@ class CtHeavyConcurrence < Test::Unit::TestCase
   class FooParticipant < Ruote::StorageParticipant
   end
 
-  def test_merge_with_tags_with_many_concurrent_processes
+  def test_cancel_concurrence
 
-    #n = 10
-    n = 7
+    n = 10
 
     pdef = Ruote.process_definition do
       #sequence do
@@ -43,7 +42,7 @@ class CtHeavyConcurrence < Test::Unit::TestCase
     end
 
     @dashboard.register_participant :foo, FooParticipant
-    @dashboard.noisy = true
+    @dashboard.noisy = (ENV['NOISY'] == 'true')
 
     # A worker process is required in order to reproduce the issue.
     # If this test is run just on the @dashboard, it works perfectly.
@@ -54,7 +53,7 @@ class CtHeavyConcurrence < Test::Unit::TestCase
     fork {
       worker = Ruote::Worker.new(determine_storage({}))
       dboard = Ruote::Dashboard.new(worker)
-      dboard.noisy = true
+      dboard.noisy = (ENV['NOISY'] == 'true')
       class << worker
         def handle_step_error
           #puts "=========== aborting!!!"
@@ -82,7 +81,7 @@ class CtHeavyConcurrence < Test::Unit::TestCase
       #
       # this work with dispatch happening in this or the forked worker
 
-    # The cancel triggers the bug.
+    # The cancel triggers the bug
     @dashboard.cancel_process(wfid)
 
     #wait_for(wfid)
@@ -97,19 +96,18 @@ class CtHeavyConcurrence < Test::Unit::TestCase
 
       break if ps == nil # success, process has terminated
 
-      #ps.expressions.each do |exp|
-      #  p [ exp.class, exp.fei.sid, exp.state ]
-      #  if exp.is_a?(Ruote::Exp::ConcurrenceExpression)
-      #    p exp.h.children.collect { |i| i['expid'] }
-      #  end
-      #end
-      #puts "expressions: #{ps.expressions.size}"
+      ps.expressions.each do |exp|
+        p [ exp.class, exp.fei.sid, exp.state ]
+        if exp.is_a?(Ruote::Exp::ConcurrenceExpression)
+          p [ :expecting, exp.h.children.collect { |i| i['expid'] } ]
+        end
+      end if count > 34
 
       sleep 0.1
 
       count += 1
 
-      assert_equal(true, false, "process is stuck") if count > 35
+      assert_equal(true, false, '/!\ process is stuck /!\ ') if count > 35
     end
 
     assert_equal true, true

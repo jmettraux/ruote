@@ -67,7 +67,7 @@ module Ruote
 
     def initialize(hash)
 
-      @h = hash
+      self.h = hash
 
       sub_wfid = h.delete('sub_wfid')
       h.subid ||= sub_wfid

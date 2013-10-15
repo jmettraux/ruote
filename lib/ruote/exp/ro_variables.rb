@@ -141,7 +141,7 @@ module Ruote::Exp
 
       if should_persist && r = try_persist # persist failed, have to retry
 
-        @h = r
+        self.h = r
         un_set_variable(op, var, val, true)
 
       else # success (even when should_persist == false)

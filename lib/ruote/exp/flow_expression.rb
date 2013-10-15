@@ -126,7 +126,7 @@ module Ruote::Exp
       @msg = nil
         # contains generally the msg the expression got instantiated for
 
-      @h = hash
+      self.h = hash
 
       h._id ||= Ruote.to_storage_id(h.fei)
       h['type'] ||= 'expressions'
@@ -640,7 +640,8 @@ module Ruote::Exp
         if h.children.size < 1
           reply_to_parent(workitem)
         else
-          persist_or_raise # for the updated h.children
+          #persist_or_raise # for the updated h.children
+          do_persist
         end
 
       else # vanilla reply
