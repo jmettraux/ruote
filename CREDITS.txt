@@ -13,6 +13,7 @@ Kenneth Kalmer - http://www.opensourcery.co.za
 
 == Contributors
 
+Marcello Barnaba - https://github.com/vjt
 Denis Ahearn - https://github.com/denisahearn
 Josef Pospíšil - https://github.com/pepe
 Adrien Kohlbecker - https://github.com/adrienkohlbecker
