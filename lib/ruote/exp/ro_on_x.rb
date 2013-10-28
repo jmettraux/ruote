@@ -34,7 +34,7 @@ module Ruote::Exp
     # Given this expression and an error, deflates the error into a hash
     # (serializable).
     #
-    def deflate(err)
+    def deflate(err, level=0)
 
       {
         'fei' => h.fei,
@@ -46,6 +46,11 @@ module Ruote::Exp
         'deviations' => err.respond_to?(:deviations) ? err.deviations : nil,
         'tree' => tree
       }
+
+    rescue => errr
+
+      # could degenerate (and get stopped by a SystemStackError)
+      deflate(errr, level + 1)
     end
 
     # Returns a dummy expression. Only used by the error_handler service.

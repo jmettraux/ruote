@@ -383,5 +383,31 @@ class FtErrorsTest < Test::Unit::TestCase
 
     #p @dashboard.ps(wfid)
   end
+
+  # fighting https://github.com/jmettraux/ruote/issues/90
+  #
+  def test_error_in_error
+
+    stderr = $stderr
+
+    result = String.new
+    err = StringIO.new(result, 'w+')
+
+    $stderr = err
+
+    @dashboard.register :alpha do |wi|
+      raise NameError, String
+    end
+
+    wfid = @dashboard.launch(Ruote.define { alpha })
+
+    sleep 1.0
+
+    assert_match /Please report issue/, result
+    assert_match /TypeError/, result
+    assert_match /can't convert Class into String/, result
+
+    $stderr = stderr
+  end
 end
 
