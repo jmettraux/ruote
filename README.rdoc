@@ -1,4 +1,15 @@
 
+*Important Note*
+
+Active development on ruote ceased.
+
+See [scaling down ruote](https://groups.google.com/forum/#!topic/openwferu-users/g0jZuWeoXOA).
+
+Do not involve ruote in your new project.
+
+I still offer support on the ruote mailing list for existing projects, though.
+
+
 = ruote
 
 Ruote is a Ruby workflow engine. It's thus a workflow definition interpreter. If you're enterprisey, you might say business process definition.
