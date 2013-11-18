@@ -10,7 +10,7 @@ Do not involve ruote in your new project.
 I still offer support on the ruote mailing list for existing projects, though.
 
 
-= ruote
+# ruote
 
 Ruote is a Ruby workflow engine. It's thus a workflow definition interpreter. If you're enterprisey, you might say business process definition.
 
@@ -21,73 +21,80 @@ Persistent mostly means that you can stop Ruote and later restart it without los
 Process definitions are mainly describing how workitems are routed to participants. These participants may represent worklists for users or group of users, pieces of code, ...
 
 
-== usage
+## usage
 
 grab ruote
 
-  gem install ruote
-  gem install yajl-ruby
+```
+gem install yajl-ruby
+gem install rufus-scheduler -v 2.0.24
+gem install ruote
+```
+
+or better, use a Gemfile like this one: https://gist.github.com/jmettraux/22f24fca70c5a116b01c
 
 Then
 
-  require 'rubygems'
-  require 'ruote'
-  require 'ruote/storage/fs_storage'
+```ruby
+require 'rubygems'
+require 'ruote'
+require 'ruote/storage/fs_storage'
 
-  # preparing the engine
+# preparing the engine
 
-  engine = Ruote::Engine.new(
-    Ruote::Worker.new(
-      Ruote::FsStorage.new('ruote_work')))
+engine = Ruote::Engine.new(
+  Ruote::Worker.new(
+    Ruote::FsStorage.new('ruote_work')))
 
-  # registering participants
+# registering participants
 
-  engine.register_participant :alpha do |workitem|
-    workitem.fields['message'] = { 'text' => 'hello !', 'author' => 'Alice' }
+engine.register_participant :alpha do |workitem|
+  workitem.fields['message'] = { 'text' => 'hello !', 'author' => 'Alice' }
+end
+
+engine.register_participant :bravo do |workitem|
+  puts "I received a message from #{workitem.fields['message']['author']}"
+end
+
+# defining a process
+
+pdef = Ruote.process_definition :name => 'test' do
+  sequence do
+    participant :alpha
+    participant :bravo
   end
+end
 
-  engine.register_participant :bravo do |workitem|
-    puts "I received a message from #{workitem.fields['message']['author']}"
-  end
+# launching, creating a process instance
 
-  # defining a process
+wfid = engine.launch(pdef)
 
-  pdef = Ruote.process_definition :name => 'test' do
-    sequence do
-      participant :alpha
-      participant :bravo
-    end
-  end
+engine.wait_for(wfid)
+  # blocks current thread until our process instance terminates
 
-  # launching, creating a process instance
-
-  wfid = engine.launch(pdef)
-
-  engine.wait_for(wfid)
-    # blocks current thread until our process instance terminates
-
-  # => 'I received a message from Alice'
+# => 'I received a message from Alice'
+```
 
 
-== test suite
+## test suite
 
 see http://github.com/jmettraux/ruote/tree/master/test
 
 
-== license
+## license
 
 MIT
 
 
-== links
+## links
 
 * http://ruote.rubyforge.org
 * http://github.com/jmettraux/ruote
 * http://jmettraux.wordpress.com (blog)
 
 
-== feedback
+## feedback
 
-* mailing list : http://groups.google.com/group/openwferu-users
-* irc : irc.freenode.net #ruote
+* mailing list: http://groups.google.com/group/openwferu-users
+* irc: irc.freenode.net #ruote
 
