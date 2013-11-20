@@ -2,7 +2,9 @@
 = ruote - CHANGELOG.txt
 
 
-== ruote - 2.3.1    not yet released
+== ruote - 2.3.0.3    not yet released
+
+- peg rufus-scheduler at 2.0.24 in gemspec
 
 
 == ruote - 2.3.0.2    not yet released
