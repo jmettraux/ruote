@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.email = [ 'jmettraux@gmail.com' ]
   s.homepage = 'http://ruote.rubyforge.org'
   s.rubyforge_project = 'ruote'
+  s.license = 'MIT'
   s.summary = 'an open source Ruby workflow engine'
   s.description = %{
 ruote is an open source Ruby workflow engine
