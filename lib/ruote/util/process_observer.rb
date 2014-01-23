@@ -115,6 +115,20 @@ module Ruote
   #
   class ProcessObserver
 
+    # This error is used when handling an 'error_intercepted' message when we're
+    # unable to recreate the original exception by passing the error message as
+    # the only argument to the constructor (i.e. the call to 'new').  Some
+    # exception classes require different arguments on their constructor.
+    #
+    class Error < StandardError
+      attr_accessor :original_class
+
+      def initialize(original_class, message)
+        super(message)
+        @original_class = original_class
+      end
+    end
+
     attr_reader :context, :options, :filtered_actions
 
     def initialize(context, options={})
@@ -181,8 +195,12 @@ module Ruote
 
         when 'error_intercepted'
 
-          error =
-            Kernel.const_get(msg['error']['class']).new(msg['error']['message'])
+          error_class = Kernel.const_get(msg['error']['class'])
+          begin
+            error = error_class.new(msg['error']['message'])
+          rescue
+            error = Ruote::ProcessObserver::Error.new(error_class, msg['error']['message'])
+          end
           error.set_backtrace(msg['error']['trace'])
 
           info[:error] = error
