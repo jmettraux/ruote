@@ -8,6 +8,7 @@
 require File.expand_path('../base', __FILE__)
 require 'ruote/util/process_observer'
 
+
 class FtProcessObservingTest < Test::Unit::TestCase
   include FunctionalBase
 
@@ -222,6 +223,47 @@ class FtProcessObservingTest < Test::Unit::TestCase
     assert_equal(wfid, observer.info[:workitem].wfid)
   end
 
+  def test_on_error_intercepted_for_error_with_custom_initialize
+
+    observer = Class.new(Ruote::ProcessObserver) do
+
+      class << self
+        attr_accessor :wfid
+        attr_accessor :info
+      end
+
+      def on_error_intercepted(wfid, info)
+        self.class.wfid = wfid
+        self.class.info = info
+      end
+    end
+
+    explosive_error = Class.new(StandardError) do
+      def initialize(power, reach)
+        super("#{power} megatons of TNT just blew up #{reach}% of this application!")
+      end
+    end
+    Object.const_set('ExplosiveError', explosive_error)
+
+    @dashboard.add_service('observer', observer)
+
+    @dashboard.register_participant :kaboom do |wi|
+      raise Object.const_get('ExplosiveError').new(10, 75)
+    end
+
+    wfid = @dashboard.launch(Ruote.define { kaboom })
+    @dashboard.wait_for(wfid)
+
+    error = observer.info[:error]
+
+    assert_not_nil(error)
+    assert_equal(wfid, observer.wfid)
+    assert_equal(wfid, observer.info[:workitem].wfid)
+    assert_equal(Ruote::ProcessObserver::Error, error.class)
+    assert_equal(explosive_error, error.original_class)
+    assert_equal("10 megatons of TNT just blew up 75% of this application!", error.message)
+  end
+
   def test_observer_discards_any_error_it_endures
 
     observer = Class.new(Ruote::ProcessObserver) do
@@ -247,4 +289,3 @@ class FtProcessObservingTest < Test::Unit::TestCase
     assert_equal nil, observer.flunked
   end
 end
-
