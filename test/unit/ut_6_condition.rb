@@ -86,6 +86,11 @@ class ConditionTest < Test::Unit::TestCase
 
     assert_apply :unless => 'true == false'
     assert_skip :unless => 'false == false'
+
+    assert_skip :unless => 'true'
+    assert_skip :unless => '20235ef'
+    assert_skip :unless => '020235ef'
+    assert_skip :unless => '020235ef-9541-46b3-9f05-b1832daf440d'
   end
 
   def test_set
