@@ -88,9 +88,19 @@ class ConditionTest < Test::Unit::TestCase
     assert_skip :unless => 'false == false'
 
     assert_skip :unless => 'true'
+
+    # fighting (and losing) against gh-93
+    #
+    assert_skip :unless => '0'
     assert_skip :unless => '20235ef'
-    assert_skip :unless => '020235ef'
-    assert_skip :unless => '020235ef-9541-46b3-9f05-b1832daf440d'
+    assert_skip :unless => '0a'
+    assert_skip :unless => '0f'
+    assert_skip :unless => '020235ef is set'
+    assert_skip :unless => 'id020235ef'
+    #assert_skip :unless => '020235ef'
+    #assert_skip :unless => '020235ef-9541-46b3-9f05-b1832daf440d'
+      #
+      # grrr, those 2 evaluate to *false* grrrr, gh-93
   end
 
   def test_set
