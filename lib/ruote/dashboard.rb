@@ -1409,27 +1409,31 @@ module Ruote
   # easier to present.
   #
   def self.schedule_to_h(sched)
+    begin
+      h = sched.dup
 
-    h = sched.dup
+      class << h; attr_accessor :h; end
+      h.h = sched
+        #
+        # for the sake of ProcessStatus#to_h
 
-    class << h; attr_accessor :h; end
-    h.h = sched
-      #
-      # for the sake of ProcessStatus#to_h
+      h.delete('_rev')
+      h.delete('type')
+      msg = h.delete('msg')
+      owner = h.delete('owner')
 
-    h.delete('_rev')
-    h.delete('type')
-    msg = h.delete('msg')
-    owner = h.delete('owner')
+      h['wfid'] = owner['wfid']
+      h['action'] = msg['action']
+      h['type'] = msg['flavour']
+      h['owner'] = Ruote::FlowExpressionId.new(owner)
 
-    h['wfid'] = owner['wfid']
-    h['action'] = msg['action']
-    h['type'] = msg['flavour']
-    h['owner'] = Ruote::FlowExpressionId.new(owner)
+      h['target'] = Ruote::FlowExpressionId.new(msg['fei']) if msg['fei']
 
-    h['target'] = Ruote::FlowExpressionId.new(msg['fei']) if msg['fei']
-
-    h
+      h
+    rescue Exception => e
+      puts "Dashboard.schedule_to_h got exception #{e.to_s}\n\t#{e.backtrace.join("\n\t")}"
+      {}
+    end
   end
 end
 
