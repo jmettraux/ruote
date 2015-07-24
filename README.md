@@ -5,7 +5,7 @@ Active development on ruote ceased.
 
 See [scaling down ruote](https://groups.google.com/forum/#!topic/openwferu-users/g0jZuWeoXOA).
 
-Do not involve ruote in your new project.
+** Do not involve ruote in your new project. **
 
 I still offer support on the ruote mailing list for existing projects, though.
 
