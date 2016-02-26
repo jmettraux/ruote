@@ -197,6 +197,8 @@ module Ruote
         configurations
         workitems
 
+        _grd
+
       ].each_with_object({}) { |k, h|
         h[k] = {}
       }
