@@ -3,7 +3,7 @@
 
 == ruote - 2.3.2    not yet released
 
-- Add '_grd' type to HashStorage
+- Add 'guard' type to HashStorage
 
 == ruote - 2.3.1    released 2013/05/05
 

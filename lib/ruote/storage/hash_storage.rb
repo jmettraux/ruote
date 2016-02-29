@@ -197,7 +197,7 @@ module Ruote
         configurations
         workitems
 
-        _grd
+        guard
 
       ].each_with_object({}) { |k, h|
         h[k] = {}
