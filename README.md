@@ -1,5 +1,5 @@
 
-*Important Note*
+**Important Note**
 
 Active development on ruote ceased.
 
@@ -7,7 +7,11 @@ See [scaling down ruote](https://groups.google.com/forum/#!topic/openwferu-users
 
 Do not involve ruote in your new project.
 
-I still offer support on the ruote mailing list for existing projects, though.
+** 2016-12-12 Update **
+
+Ruote development moved to a new Ruby workflow engine named [flor](https://github.com/floraison/flor).
+
+The team is named [floraison](https://github.com/floraison/) and there is also a "flor behind Rack" project named [flack](https://github.com/floraison/flack).
 
 
 # ruote
