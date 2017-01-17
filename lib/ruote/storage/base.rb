@@ -139,7 +139,6 @@ module Ruote
     # provide a view for it).
     #
     def expression_wfids(opts)
-
       wfids = ids('expressions').collect { |fei| fei.split('!').last }.uniq.sort
 
       wfids = wfids.reverse if opts[:descending]
@@ -147,7 +146,7 @@ module Ruote
       skip = opts[:skip] || 0
       limit = opts[:limit] || wfids.length
 
-      wfids[skip, limit]
+      wfids[skip, limit] || []
     end
 
     #--
