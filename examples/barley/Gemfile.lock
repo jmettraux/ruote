@@ -7,9 +7,9 @@ PATH
       ruby_parser (~> 2.3)
       rufus-cloche (>= 1.0.2)
       rufus-dollar (>= 1.0.4)
-      rufus-json (>= 1.0.1)
+      rufus-json (>= 1.0.5)
       rufus-mnemo (>= 1.2.2)
-      rufus-scheduler (>= 2.0.16)
+      rufus-scheduler (>= 3.0.0)
       rufus-treechecker (>= 1.0.8)
       sourcify (= 0.5.0)
 
@@ -17,13 +17,20 @@ GEM
   remote: https://rubygems.org/
   specs:
     blankslate (2.1.2.4)
-    file-tail (1.0.12)
-      tins (~> 0.5)
+    concurrent-ruby (1.1.5)
+    et-orbi (1.2.1)
+      tzinfo
+    file-tail (1.2.0)
+      tins (~> 1.0)
+    fugit (1.3.1)
+      et-orbi (~> 1.1, >= 1.1.8)
+      raabro (~> 1.1)
     haml (4.0.3)
       tilt
     parslet (1.4.0)
       blankslate (~> 2.0)
-    rack (1.5.2)
+    raabro (1.1.6)
+    rack (1.6.11)
     rack-protection (1.5.0)
       rack
     ruby2ruby (1.3.1)
@@ -34,10 +41,10 @@ GEM
     rufus-cloche (1.0.4)
       rufus-json (>= 1.0.3)
     rufus-dollar (1.0.4)
-    rufus-json (1.0.4)
+    rufus-json (1.0.6)
     rufus-mnemo (1.2.3)
-    rufus-scheduler (2.0.19)
-      tzinfo (>= 0.3.23)
+    rufus-scheduler (3.6.0)
+      fugit (~> 1.1, >= 1.1.6)
     rufus-treechecker (1.0.8)
       ruby_parser (>= 2.0.5)
     sass (3.2.9)
@@ -52,8 +59,9 @@ GEM
       ruby_parser (>= 2.0.5)
       sexp_processor (>= 3.0.5)
     tilt (1.4.1)
-    tins (0.8.0)
-    tzinfo (1.0.0)
+    tins (1.21.1)
+    tzinfo (2.0.0)
+      concurrent-ruby (~> 1.0)
 
 PLATFORMS
   ruby
