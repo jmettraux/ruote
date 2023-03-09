@@ -34,7 +34,7 @@ GEM
     parslet (1.4.0)
       blankslate (~> 2.0)
     raabro (1.1.6)
-    rack (2.2.6.2)
+    rack (2.2.6.3)
     rack-protection (3.0.4)
       rack
     rb-fsevent (0.10.3)
