@@ -25,7 +25,7 @@ ruote is an open source Ruby workflow engine
     '*.gemspec', '*.txt', '*.rdoc', '*.md'
   ]
 
-  s.add_runtime_dependency 'ruby_parser', '~> 2.3'
+  s.add_runtime_dependency 'ruby_parser', '>= 2.3', '< 4.0'
     # ruby_parser 3.x is very different,
     # will rather go the ripper way (full 19 or even 20)...
 
