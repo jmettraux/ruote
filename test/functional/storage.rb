@@ -580,6 +580,14 @@ class FtStorage < Test::Unit::TestCase
     assert_equal 1, @s.get_many('errors').size
     assert_equal 1, @s.get_trackers['trackers'].size
 
+    @s.remove_process(nil)
+
+    assert_equal 6, @s.get_many('expressions').size
+    assert_equal 1, @s.get_many('schedules').size
+    assert_equal 1, @s.get_many('workitems').size
+    assert_equal 1, @s.get_many('errors').size
+    assert_equal 1, @s.get_trackers['trackers'].size
+
   ensure
     dboard.shutdown rescue nil
   end
