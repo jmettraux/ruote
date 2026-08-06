@@ -278,6 +278,7 @@ module Ruote
     # the process.
     #
     def remove_process(wfid)
+      return if wfid.nil?
 
       2.times do
         # two passes
